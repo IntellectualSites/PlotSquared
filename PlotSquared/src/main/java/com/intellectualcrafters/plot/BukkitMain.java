@@ -57,6 +57,7 @@ import com.intellectualcrafters.plot.commands.DebugUUID;
 import com.intellectualcrafters.plot.commands.Delete;
 import com.intellectualcrafters.plot.commands.Deny;
 import com.intellectualcrafters.plot.commands.Disable;
+import com.intellectualcrafters.plot.commands.Download;
 import com.intellectualcrafters.plot.commands.FlagCmd;
 import com.intellectualcrafters.plot.commands.Help;
 import com.intellectualcrafters.plot.commands.Home;
@@ -269,6 +270,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerCommands() {
         new MainCommand();
+        MainCommand.subCommands.add(new Download());
         MainCommand.subCommands.add(new Disable());
         MainCommand.subCommands.add(new Update());
         MainCommand.subCommands.add(new Template());

@@ -1222,6 +1222,10 @@ public class PS {
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
         
+        // Web
+        options.put("web.url", Settings.WEB_URL);
+        options.put("web.server-ip", Settings.WEB_IP);
+        
         // Caching
         options.put("cache.permissions", Settings.PERMISSION_CACHING);
         options.put("cache.ratings", Settings.CACHE_RATINGS);
@@ -1305,6 +1309,10 @@ public class PS {
         
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
+        
+        // Web
+        Settings.WEB_URL = config.getString("web.url");
+        Settings.WEB_IP = config.getString("web.server-ip");
         
         // Caching
         Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");

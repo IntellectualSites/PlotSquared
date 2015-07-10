@@ -38,6 +38,13 @@ public class Settings {
     public static boolean PERMISSION_CACHING = false;
     public static boolean CACHE_RATINGS = true;
     public static boolean UUID_FROM_DISK = false;
+    
+    /**
+     * Web
+     */
+    public static String WEB_URL = "http://empcraft.com/plots/";
+    public static String WEB_IP = "your.ip.here";
+    
     /**
      * Ratings
      */

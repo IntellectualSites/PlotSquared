@@ -38,13 +38,11 @@ public enum Command {
     ADD("add","a"),
     TRUST("trust", "t"),
     DENY("deny", "d"),
-    
     REMOVE("remove", "r"),
     UNTRUST("untrust", "ut"),
     UNDENY("undeny", "ud"),
-    
     TOGGLE("toggle", "attribute"),
-    
+    DOWNLOAD("download", "dl"),
     MOVE("move"),
     FLAG("flag", "f"),
     TARGET("target"),

@@ -362,7 +362,7 @@ public class SQLManager implements AbstractDB {
             for (int j = 0; j <= amount; j++) {
                 final List<T> subList = objList.subList(j * packet, Math.min(size, (j + 1) * packet));
                 if (subList.size() == 0) {
-                    return;
+                    break;
                 }
                 if (last == -1) {
                     last = subList.size();

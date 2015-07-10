@@ -28,7 +28,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 
 /**
  * Created 2014-08-01 for PlotSquared
@@ -52,7 +52,7 @@ public class Move extends SubCommand {
         if (plot1 == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Perm.ADMIN.s))  {
+        if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Permissions.ADMIN.s))  {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }

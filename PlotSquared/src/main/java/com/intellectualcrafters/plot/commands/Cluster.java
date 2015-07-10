@@ -40,7 +40,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Cluster extends SubCommand {
@@ -60,7 +60,7 @@ public class Cluster extends SubCommand {
         switch (sub) {
             case "l":
             case "list": {
-                if (!Perm.hasPermission(plr, "plots.cluster.list")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.list")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.list");
                     return false;
                 }
@@ -87,7 +87,7 @@ public class Cluster extends SubCommand {
             }
             case "c":
             case "create": {
-                if (!Perm.hasPermission(plr, "plots.cluster.create")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.create")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.create");
                     return false;
                 }
@@ -157,7 +157,7 @@ public class Cluster extends SubCommand {
             case "disband":
             case "del":
             case "delete": {
-                if (!Perm.hasPermission(plr, "plots.cluster.delete")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.delete")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.delete");
                     return false;
                 }
@@ -180,7 +180,7 @@ public class Cluster extends SubCommand {
                     }
                 }
                 if (!cluster.owner.equals(UUIDHandler.getUUID(plr))) {
-                    if (!Perm.hasPermission(plr, "plots.cluster.delete.other")) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.delete.other")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.delete.other");
                         return false;
                     }
@@ -210,7 +210,7 @@ public class Cluster extends SubCommand {
             }
             case "res":
             case "resize": {
-                if (!Perm.hasPermission(plr, "plots.cluster.resize")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.resize")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize");
                     return false;
                 }
@@ -232,7 +232,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (!cluster.hasHelperRights(UUIDHandler.getUUID(plr))) {
-                    if (!Perm.hasPermission(plr, "plots.cluster.resize.other")) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.resize.other")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize.other");
                         return false;
                     }
@@ -252,7 +252,7 @@ public class Cluster extends SubCommand {
             case "reg":
             case "regenerate":
             case "regen": {
-                if (!Perm.hasPermission(plr, "plots.cluster.delete")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.delete")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.regen");
                     return false;
                 }
@@ -275,7 +275,7 @@ public class Cluster extends SubCommand {
                     }
                 }
                 if (!cluster.owner.equals(UUIDHandler.getUUID(plr))) {
-                    if (!Perm.hasPermission(plr, "plots.cluster.regen.other")) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.regen.other")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.regen.other");
                         return false;
                     }
@@ -287,7 +287,7 @@ public class Cluster extends SubCommand {
             case "add":
             case "inv":
             case "invite": {
-                if (!Perm.hasPermission(plr, "plots.cluster.invite")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.invite")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.invite");
                     return false;
                 }
@@ -302,7 +302,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (!cluster.hasHelperRights(UUIDHandler.getUUID(plr))) {
-                    if (!Perm.hasPermission(plr, "plots.cluster.invite.other")) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.invite.other")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.invite.other");
                         return false;
                     }
@@ -329,7 +329,7 @@ public class Cluster extends SubCommand {
             case "k":
             case "remove":
             case "kick": {
-                if (!Perm.hasPermission(plr, "plots.cluster.kick")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.kick")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.kick");
                     return false;
                 }
@@ -343,7 +343,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (!cluster.hasHelperRights(UUIDHandler.getUUID(plr))) {
-                    if (!Perm.hasPermission(plr, "plots.cluster.kick.other")) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.kick.other")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.kick.other");
                         return false;
                     }
@@ -381,7 +381,7 @@ public class Cluster extends SubCommand {
             }
             case "quit":
             case "leave": {
-                if (!Perm.hasPermission(plr, "plots.cluster.leave")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.leave")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.leave");
                     return false;
                 }
@@ -431,7 +431,7 @@ public class Cluster extends SubCommand {
             case "admin":
             case "helper":
             case "helpers": {
-                if (!Perm.hasPermission(plr, "plots.cluster.helpers")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.helpers")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.helpers");
                     return false;
                 }
@@ -465,7 +465,7 @@ public class Cluster extends SubCommand {
             case "spawn":
             case "home":
             case "tp": {
-                if (!Perm.hasPermission(plr, "plots.cluster.tp")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.tp")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.tp");
                     return false;
                 }
@@ -480,7 +480,7 @@ public class Cluster extends SubCommand {
                 }
                 final UUID uuid = UUIDHandler.getUUID(plr);
                 if (!cluster.isAdded(uuid)) {
-                    if (!Perm.hasPermission(plr, "plots.cluster.tp.other")) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.tp.other")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.tp.other");
                         return false;
                     }
@@ -492,7 +492,7 @@ public class Cluster extends SubCommand {
             case "info":
             case "show":
             case "information": {
-                if (!Perm.hasPermission(plr, "plots.cluster.info")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.info")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.info");
                     return false;
                 }
@@ -534,7 +534,7 @@ public class Cluster extends SubCommand {
             case "sh":
             case "setspawn":
             case "sethome": {
-                if (!Perm.hasPermission(plr, "plots.cluster.sethome")) {
+                if (!Permissions.hasPermission(plr, "plots.cluster.sethome")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome");
                     return false;
                 }
@@ -548,7 +548,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (!cluster.hasHelperRights(UUIDHandler.getUUID(plr))) {
-                    if (!Perm.hasPermission(plr, "plots.cluster.sethome.other")) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.sethome.other")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome.other");
                         return false;
                     }

@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.DataCollection;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
@@ -65,7 +65,7 @@ public class SchematicCmd extends SubCommand {
                     PS.log(C.IS_CONSOLE.s());
                     return false;
                 }
-                if (!Perm.hasPermission(plr, "plots.schematic.paste")) {
+                if (!Permissions.hasPermission(plr, "plots.schematic.paste")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.paste");
                     return false;
                 }
@@ -162,7 +162,7 @@ public class SchematicCmd extends SubCommand {
                     PS.log(C.IS_CONSOLE.s());
                     return false;
                 }
-                if (!Perm.hasPermission(plr, "plots.schematic.test")) {
+                if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
                     return false;
                 }
@@ -226,7 +226,7 @@ public class SchematicCmd extends SubCommand {
             }
             case "export":
             case "save": {
-                if (!Perm.hasPermission(plr, "plots.schematic.save")) {
+                if (!Permissions.hasPermission(plr, "plots.schematic.save")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
                 }

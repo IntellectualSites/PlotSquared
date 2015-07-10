@@ -37,7 +37,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 
 public class FlagCmd extends SubCommand {
     public FlagCmd() {
@@ -67,7 +67,7 @@ public class FlagCmd extends SubCommand {
             sendMessage(player, C.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.isAdded(player.getUUID()) && !Perm.hasPermission(player, "plots.set.flag.other")) {
+        if (!plot.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.set.flag.other")) {
             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag.other");
             return false;
         }
@@ -77,7 +77,7 @@ public class FlagCmd extends SubCommand {
         }
         switch (args[0].toLowerCase()) {
             case "info": {
-                if (!Perm.hasPermission(player, "plots.set.flag")) {
+                if (!Permissions.hasPermission(player, "plots.set.flag")) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.flag.info");
                     return false;
                 }
@@ -100,7 +100,7 @@ public class FlagCmd extends SubCommand {
                 return true;
             }
             case "set": {
-                if (!Perm.hasPermission(player, "plots.set.flag")) {
+                if (!Permissions.hasPermission(player, "plots.set.flag")) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag");
                     return false;
                 }
@@ -113,7 +113,7 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
-                if (!Perm.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
+                if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
@@ -134,7 +134,7 @@ public class FlagCmd extends SubCommand {
                 return true;
             }
             case "remove": {
-                if (!Perm.hasPermission(player, "plots.flag.remove")) {
+                if (!Permissions.hasPermission(player, "plots.flag.remove")) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.flag.remove");
                     return false;
                 }
@@ -147,7 +147,7 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
-                if (!Perm.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
+                if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
@@ -172,7 +172,7 @@ public class FlagCmd extends SubCommand {
                 return true;
             }
             case "add": {
-                if (!Perm.hasPermission(player, "plots.flag.add")) {
+                if (!Permissions.hasPermission(player, "plots.flag.add")) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.flag.add");
                     return false;
                 }
@@ -185,7 +185,7 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
-                if (!Perm.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
+                if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
@@ -212,7 +212,7 @@ public class FlagCmd extends SubCommand {
                 return true;
             }
             case "list": {
-                if (!Perm.hasPermission(player, "plots.flag.list")) {
+                if (!Permissions.hasPermission(player, "plots.flag.list")) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.flag.list");
                     return false;
                 }

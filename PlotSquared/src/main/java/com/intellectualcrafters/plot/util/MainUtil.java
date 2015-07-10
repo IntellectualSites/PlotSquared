@@ -353,7 +353,7 @@ public class MainUtil {
             else {
                 location = getDefaultHome(plot);
             }
-            if ((Settings.TELEPORT_DELAY == 0) || Perm.hasPermission(player, "plots.teleport.delay.bypass")) {
+            if ((Settings.TELEPORT_DELAY == 0) || Permissions.hasPermission(player, "plots.teleport.delay.bypass")) {
                 sendMessage(player, C.TELEPORTED_TO_PLOT);
                 player.teleport(location);
                 return true;
@@ -1093,7 +1093,7 @@ public class MainUtil {
         if (Settings.ENABLE_CLUSTERS) {
             PlotCluster cluster = ClusterManager.getCluster(plot);
             if (cluster != null) {
-                if (!cluster.isAdded(player.getUUID()) && !Perm.hasPermission(player, "plots.admin.command.claim")) {
+                if (!cluster.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.claim")) {
                     return false;
                 }
             }
@@ -1558,7 +1558,7 @@ public class MainUtil {
      * @return int
      */
     public static int getAllowedPlots(final PlotPlayer p) {
-        return Perm.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
+        return Permissions.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
     }
 
     public static Plot getPlot(final Location loc) {

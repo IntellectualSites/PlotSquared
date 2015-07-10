@@ -51,7 +51,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -175,7 +175,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (FlagManager.isBooleanFlag(plot, "notify-enter", false)) {
             final Player trespasser = event.getPlayer();
             final PlotPlayer pt = BukkitUtil.getPlayer(trespasser);
-            if (Perm.hasPermission(pt, "plots.flag.notify-enter.bypass")) {
+            if (Permissions.hasPermission(pt, "plots.flag.notify-enter.bypass")) {
                 return;
             }
             if (plot.hasOwner()) {
@@ -214,7 +214,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         feedRunnable.remove(leaver.getName());
         healRunnable.remove(leaver.getName());
         if (FlagManager.isBooleanFlag(plot, "notify-leave", false)) {
-            if (Perm.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
+            if (Permissions.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
                 return;
             }
             if (plot.hasOwner()) {

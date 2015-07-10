@@ -42,7 +42,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.util.bukkit.chat.FancyMessage;
@@ -123,7 +123,7 @@ public class list extends SubCommand {
                 if (plr == null) {
                     break;
                 }
-                if (!Perm.hasPermission(plr, "plots.list.mine")) {
+                if (!Permissions.hasPermission(plr, "plots.list.mine")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.mine");
                     return false;
                 }
@@ -134,7 +134,7 @@ public class list extends SubCommand {
                 if (plr == null) {
                     break;
                 }
-                if (!Perm.hasPermission(plr, "plots.list.shared")) {
+                if (!Permissions.hasPermission(plr, "plots.list.shared")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.shared");
                     return false;
                 }
@@ -147,11 +147,11 @@ public class list extends SubCommand {
                 break;
             }
             case "world": {
-                if (!Perm.hasPermission(plr, "plots.list.world")) {
+                if (!Permissions.hasPermission(plr, "plots.list.world")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world");
                     return false;
                 }
-                if (!Perm.hasPermission(plr, "plots.list.world." + world)) {
+                if (!Permissions.hasPermission(plr, "plots.list.world." + world)) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + world);
                     return false;
                 }
@@ -159,7 +159,7 @@ public class list extends SubCommand {
                 break;
             }
             case "all": {
-                if (!Perm.hasPermission(plr, "plots.list.all")) {
+                if (!Permissions.hasPermission(plr, "plots.list.all")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.all");
                     return false;
                 }
@@ -167,7 +167,7 @@ public class list extends SubCommand {
                 break;
             }
             case "top": {
-                if (!Perm.hasPermission(plr, "plots.list.top")) {
+                if (!Permissions.hasPermission(plr, "plots.list.top")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.top");
                     return false;
                 }
@@ -203,7 +203,7 @@ public class list extends SubCommand {
                 break;
             }
             case "forsale": {
-                if (!Perm.hasPermission(plr, "plots.list.forsale")) {
+                if (!Permissions.hasPermission(plr, "plots.list.forsale")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.forsale");
                     return false;
                 }
@@ -220,7 +220,7 @@ public class list extends SubCommand {
                 break;
             }
             case "unowned": {
-                if (!Perm.hasPermission(plr, "plots.list.unowned")) {
+                if (!Permissions.hasPermission(plr, "plots.list.unowned")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.unowned");
                     return false;
                 }
@@ -233,7 +233,7 @@ public class list extends SubCommand {
                 break;
             }
             case "unknown": {
-                if (!Perm.hasPermission(plr, "plots.list.unknown")) {
+                if (!Permissions.hasPermission(plr, "plots.list.unknown")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.unknown");
                     return false;
                 }
@@ -250,11 +250,11 @@ public class list extends SubCommand {
             }
             default: {
                 if (PS.get().isPlotWorld(args[0])) {
-                    if (!Perm.hasPermission(plr, "plots.list.world")) {
+                    if (!Permissions.hasPermission(plr, "plots.list.world")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world");
                         return false;
                     }
-                    if (!Perm.hasPermission(plr, "plots.list.world." + args[0])) {
+                    if (!Permissions.hasPermission(plr, "plots.list.world." + args[0])) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + args[0]);
                         return false;
                     }
@@ -263,7 +263,7 @@ public class list extends SubCommand {
                 }
                 UUID uuid = UUIDHandler.getUUID(args[0]);
                 if (uuid != null) {
-                    if (!Perm.hasPermission(plr, "plots.list.player")) {
+                    if (!Permissions.hasPermission(plr, "plots.list.player")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.player");
                         return false;
                     }

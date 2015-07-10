@@ -3,7 +3,7 @@ package com.intellectualcrafters.plot.util;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 
-public enum Perm {
+public enum Permissions {
     // ADMIN
     ADMIN("plots.admin", "do-not-change"),
     // BUILD
@@ -22,7 +22,7 @@ public enum Perm {
     public String s;
     public String cat;
     
-    Perm(String perm, String cat) {
+    Permissions(String perm, String cat) {
         this.s = perm;
         this.cat = cat;
     }

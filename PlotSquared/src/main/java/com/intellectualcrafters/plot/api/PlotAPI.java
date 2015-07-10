@@ -46,7 +46,7 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
@@ -247,11 +247,11 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return MainUtil
      *
-     * @see com.intellectualcrafters.plot.util.Perm
+     * @see com.intellectualcrafters.plot.util.Permissions
      */
     @Deprecated
-    public Perm[] getPermissions() {
-        return Perm.values();
+    public Permissions[] getPermissions() {
+        return Permissions.values();
     }
 
     /**

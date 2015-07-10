@@ -5,7 +5,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class InboxReport extends CommentInbox {
@@ -13,25 +13,25 @@ public class InboxReport extends CommentInbox {
     @Override
     public boolean canRead(Plot plot, PlotPlayer player) {
         if (plot == null) {
-            return Perm.hasPermission(player, "plots.inbox.read." + toString());
+            return Permissions.hasPermission(player, "plots.inbox.read." + toString());
         }
-        return (Perm.hasPermission(player, "plots.inbox.read." + toString()) && (PlotHandler.isOwner(plot, player.getUUID()) || Perm.hasPermission(player, "plots.inbox.read." + toString() + ".other")));
+        return (Permissions.hasPermission(player, "plots.inbox.read." + toString()) && (PlotHandler.isOwner(plot, player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.read." + toString() + ".other")));
     }
 
     @Override
     public boolean canWrite(Plot plot, PlotPlayer player) {
         if (plot == null) {
-            return Perm.hasPermission(player, "plots.inbox.write." + toString());
+            return Permissions.hasPermission(player, "plots.inbox.write." + toString());
         }
-        return (Perm.hasPermission(player, "plots.inbox.write." + toString()) && (PlotHandler.isOwner(plot, player.getUUID()) || Perm.hasPermission(player, "plots.inbox.write." + toString() + ".other")));
+        return (Permissions.hasPermission(player, "plots.inbox.write." + toString()) && (PlotHandler.isOwner(plot, player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.write." + toString() + ".other")));
     }
 
     @Override
     public boolean canModify(Plot plot, PlotPlayer player) {
         if (plot == null) {
-            return Perm.hasPermission(player, "plots.inbox.modify." + toString());
+            return Permissions.hasPermission(player, "plots.inbox.modify." + toString());
         }
-        return (Perm.hasPermission(player, "plots.inbox.modify." + toString()) && (PlotHandler.isOwner(plot, player.getUUID()) || Perm.hasPermission(player, "plots.inbox.modify." + toString() + ".other")));
+        return (Permissions.hasPermission(player, "plots.inbox.modify." + toString()) && (PlotHandler.isOwner(plot, player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.modify." + toString() + ".other")));
     }
 
     @Override

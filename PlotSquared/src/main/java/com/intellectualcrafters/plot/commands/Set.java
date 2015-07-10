@@ -43,7 +43,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
@@ -71,7 +71,7 @@ public class Set extends SubCommand {
             return false;
         }
         if (!plot.isAdded(plr.getUUID())) {
-            if (!Perm.hasPermission(plr, "plots.set.other")) {
+            if (!Permissions.hasPermission(plr, "plots.set.other")) {
                 MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.other");
                 return false;
             }
@@ -106,7 +106,7 @@ public class Set extends SubCommand {
                 MainUtil.sendMessage(plr, C.NOT_VALID_FLAG);
                 return false;
             }
-            if (!Perm.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase())) {
+            if (!Permissions.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase())) {
                 MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                 return false;
             }
@@ -146,7 +146,7 @@ public class Set extends SubCommand {
             }
         }
         if (args[0].equalsIgnoreCase("home")) {
-            if (!Perm.hasPermission(plr, "plots.set.home")) {
+            if (!Permissions.hasPermission(plr, "plots.set.home")) {
                 MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.home");
                 return false;
             }
@@ -167,7 +167,7 @@ public class Set extends SubCommand {
             return MainUtil.sendMessage(plr, C.POSITION_SET);
         }
         if (args[0].equalsIgnoreCase("alias")) {
-            if (!Perm.hasPermission(plr, "plots.set.alias")) {
+            if (!Permissions.hasPermission(plr, "plots.set.alias")) {
                 MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.alias");
                 return false;
             }
@@ -195,7 +195,7 @@ public class Set extends SubCommand {
             return true;
         }
         if (args[0].equalsIgnoreCase("biome")) {
-            if (!Perm.hasPermission(plr, "plots.set.biome")) {
+            if (!Permissions.hasPermission(plr, "plots.set.biome")) {
                 MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.biome");
                 return false;
             }
@@ -231,7 +231,7 @@ public class Set extends SubCommand {
         final String[] components = manager.getPlotComponents(plotworld, plot.id);
         for (final String component : components) {
             if (component.equalsIgnoreCase(args[0])) {
-                if (!Perm.hasPermission(plr, "plots.set." + component)) {
+                if (!Permissions.hasPermission(plr, "plots.set." + component)) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + component);
                 }
                 PlotBlock[] blocks;

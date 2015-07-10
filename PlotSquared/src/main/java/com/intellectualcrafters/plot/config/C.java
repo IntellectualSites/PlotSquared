@@ -52,6 +52,11 @@ public enum C {
     COPY_SUCCESS("$4Successfully copied plot.", "Move"),
     REQUIRES_UNOWNED("$2The location specified is already occupied.", "Move"),
     /*
+     * Web
+     */
+    GENERATING_LINK("$1Processing plot...", "Web"),
+    GENERATING_LINK_FAILED("$2Failed to generate download link!", "Web"),
+    /*
      * Compass
      */
     COMPASS_TARGET("$4Successfully targeted plot with compass", "Compass"),

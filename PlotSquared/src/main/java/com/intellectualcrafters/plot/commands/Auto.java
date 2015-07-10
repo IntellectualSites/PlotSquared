@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 
 public class Auto extends SubCommand {
     public Auto() {
@@ -85,7 +85,7 @@ public class Auto extends SubCommand {
             }
         }
         if (args.length > 0) {
-            if (Perm.hasPermission(plr, "plots.auto.mega")) {
+            if (Permissions.hasPermission(plr, "plots.auto.mega")) {
                 try {
                     final String[] split = args[0].split(",");
                     size_x = Integer.parseInt(split[0]);
@@ -146,7 +146,7 @@ public class Auto extends SubCommand {
                 sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
-            if (!Perm.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
+            if (!Permissions.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
                 MainUtil.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 return true;
             }

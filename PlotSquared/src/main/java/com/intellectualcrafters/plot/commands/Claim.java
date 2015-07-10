@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
@@ -113,7 +113,7 @@ public class Claim extends SubCommand {
                 if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
                     return sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 }
-                if (!Perm.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
+                if (!Permissions.hasPermission(plr, "plots.claim." + schematic) && !plr.hasPermission("plots.admin.command.schematic")) {
                     return sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 }
             }

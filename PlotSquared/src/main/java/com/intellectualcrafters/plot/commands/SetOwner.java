@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Perm;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class SetOwner extends SubCommand {
@@ -68,13 +68,13 @@ public class SetOwner extends SubCommand {
         
         PlotPlayer other = UUIDHandler.getPlayer(args[0]);
         if (other == null) {
-        	if (!Perm.hasPermission(plr, "plots.admin.command.setowner")) {
+        	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
         		MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
         		return false;
         	}
         }
         else {
-        	if (!Perm.hasPermission(plr, "plots.admin.command.setowner")) {
+        	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
         		int size = plots.size();
                 final int currentPlots = (Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(other) : MainUtil.getPlayerPlotCount(loc.getWorld(), other)) + size;
         		if (currentPlots > MainUtil.getAllowedPlots(other)) {
@@ -85,7 +85,7 @@ public class SetOwner extends SubCommand {
         }
         
         if (!plot.isOwner(plr.getUUID())) {
-        	if (!Perm.hasPermission(plr, "plots.admin.command.setowner")) {
+        	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
         		MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
         		return false;
         	}

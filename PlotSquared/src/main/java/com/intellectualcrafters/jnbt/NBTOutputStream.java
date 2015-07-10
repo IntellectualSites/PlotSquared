@@ -270,4 +270,12 @@ public final class NBTOutputStream implements Closeable {
     public void close() throws IOException {
         this.os.close();
     }
+
+    /**
+     * Flush output
+     * @throws IOException 
+     */
+    public void flush() throws IOException {
+        this.os.flush();
+    }
 }
