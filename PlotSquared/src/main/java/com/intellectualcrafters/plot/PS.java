@@ -1351,7 +1351,7 @@ public class PS {
             log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");
-        if (!config.getBoolean("chat.fancy") || !IMP.checkVersion(1, 7, 0)) {
+        if (!config.getBoolean("chat.fancy") || !IMP.checkVersion(1, 8, 0)) {
             Settings.FANCY_CHAT = false;
         }
         Settings.METRICS = config.getBoolean("metrics");

@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 
@@ -58,19 +59,19 @@ public class Rate extends SubCommand {
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
                     public int compare(Plot p1, Plot p2) {
-                        int v1 = 0;
-                        int v2 = 0;
+                        double v1 = 0;
+                        double v2 = 0;
                         if (p1.settings.ratings != null) {
-                            for (Entry<UUID, Integer> entry : p1.settings.ratings.entrySet()) {
-                                v1 -= 11 - entry.getValue();
+                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
+                                v1 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
                         if (p2.settings.ratings != null) {
-                            for (Entry<UUID, Integer> entry : p2.settings.ratings.entrySet()) {
-                                v2 -= 11 - entry.getValue();
+                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                                v2 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
-                        return v2 - v1;
+                        return v2 > v1 ? 1 : -1;
                     }
                 });
                 UUID uuid = player.getUUID();

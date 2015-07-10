@@ -22,7 +22,9 @@ package com.intellectualcrafters.plot.object;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
@@ -64,7 +66,9 @@ public class Plot implements Cloneable {
      */
     public ArrayList<UUID> denied;
     /**
-     * External settings class
+     * External settings class<br>
+     *  - Please favor the methods over direct access to this class<br>
+     *  - The methods are more likely to be left unchanged from version changes<br>
      */
     public PlotSettings settings;
     /**
@@ -295,6 +299,19 @@ public class Plot implements Cloneable {
      */
     public Location getHome() {
         return MainUtil.getPlotHome(this);
+    }
+    
+    /**
+     * Get the ratings associated with a plot<br>
+     *  - The rating object may contain multiple categories
+     * @return Map of user who rated to the rating
+     */
+    public HashMap<UUID, Rating> getRatings() {
+        HashMap<UUID, Rating> map = new HashMap<UUID, Rating>();
+        for (Entry<UUID, Integer> entry : settings.ratings.entrySet()) {
+            map.put(entry.getKey(), new Rating(entry.getValue()));
+        }
+        return map;
     }
     
     /**

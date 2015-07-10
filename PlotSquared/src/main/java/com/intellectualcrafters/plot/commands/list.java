@@ -39,6 +39,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Perm;
@@ -177,15 +178,17 @@ public class list extends SubCommand {
                         double v1 = 0;
                         double v2 = 0;
                         if (p1.settings.ratings != null && p1.settings.ratings.size() > 0) {
-                            for (Entry<UUID, Integer> entry : p1.settings.ratings.entrySet()) {
-                                v1 += entry.getValue() * entry.getValue();
+                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
+                                double av = entry.getValue().getAverageRating();
+                                v1 += av * av;
                             }
                             v1 /= p1.settings.ratings.size();
                             v2 += p2.settings.ratings.size();
                         }
                         if (p2.settings.ratings != null && p2.settings.ratings.size() > 0) {
-                            for (Entry<UUID, Integer> entry : p2.settings.ratings.entrySet()) {
-                                v2 += entry.getValue() * entry.getValue();
+                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                                double av = entry.getValue().getAverageRating();
+                                v2 += av * av;
                             }
                             v2 /= p2.settings.ratings.size();
                             v2 += p2.settings.ratings.size();
