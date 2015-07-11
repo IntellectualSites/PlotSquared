@@ -473,7 +473,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                     public void run() {
                                        scheduleRoadUpdate(world, regions, extend); 
                                     }
-                                }, 2400);
+                                }, 600);
                                 return;
                     		}
                     		if (System.currentTimeMillis() - last < 1000) {
