@@ -5,6 +5,7 @@ import java.net.URL;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -19,6 +20,10 @@ public class Download extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, String... args) {
+        if (!Settings.METRICS) {
+            MainUtil.sendMessage(plr, "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
+            return false;
+        }
         final String world = plr.getLocation().getWorld();
         if (!PS.get().isPlotWorld(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);

@@ -326,8 +326,16 @@ public class BukkitUtil extends BlockManager {
             Material material = Material.getMaterial(block.id);
             if (material.isBlock() && material.isSolid() && !material.hasGravity()) {
                 Class<? extends MaterialData> data = material.getData();
-                if (data.equals(MaterialData.class) || data.equals(Tree.class) || data.equals(Sandstone.class) || data.equals(Wool.class) || data.equals(Step.class)) {
-                    return true;
+                if ((data.equals(MaterialData.class) && !material.isTransparent() && material.isOccluding()) || data.equals(Tree.class) || data.equals(Sandstone.class) || data.equals(Wool.class) || data.equals(Step.class)) {
+                    System.out.print((data.equals(MaterialData.class) && !material.isTransparent() && material.isOccluding()) + " | " + data.getCanonicalName());
+                    switch (material) {
+                        case NOTE_BLOCK:
+                        case MOB_SPAWNER: {
+                            return false;
+                        }
+                        default:
+                            return true;
+                    }
                 }
             }
             return false;

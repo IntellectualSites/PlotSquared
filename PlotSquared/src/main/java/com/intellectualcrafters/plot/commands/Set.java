@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Material;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -240,10 +241,6 @@ public class Set extends SubCommand {
                         MainUtil.sendMessage(plr, C.NEED_BLOCK);
                         return true;
                     }
-//                    if (!Configuration.BLOCKLIST.validateValue(args[1])) {
-//                        MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, args[1]);
-//                        return false;
-//                    }
                     String[] split = args[1].split(",");
                     blocks = Configuration.BLOCKLIST.parseString(args[1]);
                     for (int i = 0; i < blocks.length; i++) {

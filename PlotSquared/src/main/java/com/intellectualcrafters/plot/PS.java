@@ -112,6 +112,7 @@ public class PS {
     private File storageFile;
     private File FILE = null; // This file
     private String VERSION = null;
+    private String LAST_VERSION;
     private boolean LOADING_WORLD = false;
     private LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
     private Database database;
@@ -200,6 +201,9 @@ public class PS {
                     log("&8 - &3Use: &7/plot update");
                     log("&8 - &3Or: &7" + url);
                 }
+                else if (LAST_VERSION != null && !VERSION.equals(LAST_VERSION)) {
+                    log("&aThanks for updating from: " + LAST_VERSION + " to " + VERSION);
+                }
             }
         });
         
@@ -239,6 +243,22 @@ public class PS {
      */
     public static PS get() {
         return instance;
+    }
+    
+    /**
+     * Get the last PlotSquared version
+     * @return last version in config or null
+     */
+    public String getLastVersion() {
+        return LAST_VERSION;
+    }
+    
+    /**
+     * Get the current PlotSquared version
+     * @return current version in config or null
+     */
+    public String getVersion() {
+        return VERSION;
     }
 
     /**
@@ -1179,6 +1199,7 @@ public class PS {
      * Setup the default configuration (settings.yml)
      */
     public void setupConfig() {
+        LAST_VERSION = config.getString("version");
         config.set("version", VERSION);
         
         final Map<String, Object> options = new HashMap<>();

@@ -224,7 +224,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         try {
             unloadRecursively(this);
         }
-        catch (Exception e) {};
+        catch (Exception e) {
+            e.printStackTrace();
+        };
         THIS = null;
     }
     

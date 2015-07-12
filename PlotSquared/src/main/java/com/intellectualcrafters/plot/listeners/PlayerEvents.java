@@ -843,12 +843,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         Location loc = BukkitUtil.getLocation(block.getLocation());
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        
         PlayerBlockEventType eventType = null;
-        
-        
         BukkitLazyBlock lb;
-        
         switch (action) {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
@@ -924,6 +920,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     lb = new BukkitLazyBlock(block);
                     break;
                 }
+                
                 
                 // TODO calls both:
                 // redstone ore

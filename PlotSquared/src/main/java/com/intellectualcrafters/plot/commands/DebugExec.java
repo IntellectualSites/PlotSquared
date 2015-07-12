@@ -92,7 +92,7 @@ public class DebugExec extends SubCommand {
                 }
                 case "remove-flag": {
                     if (args.length != 2) {
-                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec reset-flat <flag>");
+                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec remove-flag <flag>");
                         return false;
                     }
                     String flag = args[1];
