@@ -17,7 +17,9 @@ public enum Permissions {
     // BREAK
     BREAK_OTHER("plots.admin.break.other", "break"),
     BREAK_ROAD("plots.admin.break.road", "break"),
-    BREAK_UNOWNED("plots.admin.break.unowned", "break");
+    BREAK_UNOWNED("plots.admin.break.unowned", "break"),
+    // MERGE
+    MERGE_OTHER("plots.merge.other", "merge");
     
     public String s;
     public String cat;
@@ -25,6 +27,10 @@ public enum Permissions {
     Permissions(String perm, String cat) {
         this.s = perm;
         this.cat = cat;
+    }
+    
+    public static boolean hasPermission(final PlotPlayer player, final Permissions perm) {
+        return hasPermission(player, perm.s);
     }
 
     public static boolean hasPermission(final PlotPlayer player, final String perm) {

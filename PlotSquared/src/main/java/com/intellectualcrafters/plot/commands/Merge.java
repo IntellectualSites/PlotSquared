@@ -159,6 +159,10 @@ public class Merge extends SubCommand {
             multiUUID.add(u2);
         }
         if (multiMerge) {
+            if (!Permissions.hasPermission(plr, Permissions.MERGE_OTHER)) {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, Permissions.MERGE_OTHER);
+                return false;
+            }
             for (final UUID uuid : multiUUID) {
                 PlotPlayer accepter = UUIDHandler.getPlayer(uuid);
                 CmdConfirm.addPending(accepter, C.MERGE_REQUEST_CONFIRM.s().replaceAll("%s", plr.getName()), new Runnable() {
