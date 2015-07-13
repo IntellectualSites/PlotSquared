@@ -29,22 +29,13 @@ import org.apache.commons.lang.StringUtils;
  * String comparison library
  *
  * @author Citymonstret
+ * @author Empire92
  */
 @SuppressWarnings("unused")
 public class StringComparison<T> {
-    /**
-     * Best Match
-     */
+
     private T bestMatch;
-    /**
-     * Match Value
-     * 
-     * Can be checked for low match (< .25 or something)
-     */
     private double match = Integer.MAX_VALUE;
-    /**
-     * The actual object
-     */
     private T bestMatchObject;
 
     /**
@@ -154,11 +145,21 @@ public class StringComparison<T> {
     public ComparisonResult getBestMatchAdvanced() {
         return new ComparisonResult(this.match, this.bestMatch);
     }
-    
+
+    /**
+     * The comparison result
+     */
     public class ComparisonResult {
-        public T best;
+
+        public final T best;
         public final double match;
-        public ComparisonResult(double match, T best) {
+
+        /**
+         * The constructor
+         * @param match Match value
+         * @param best Best Match
+         */
+        public ComparisonResult(final double match, final T best) {
             this.match = match;
             this.best = best;
         }
