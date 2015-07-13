@@ -192,18 +192,18 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else {
             log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
         }
-        File file = new File(this.getDirectory() + File.separator + "disabled.yml");
-        if (file.exists()) {
-            try {
-                String[] split = new String(Files.readAllBytes(file.toPath())).split(",");
-                for (String plugin : split) {
-                    loadPlugin(plugin);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            file.delete();
-        }
+//        File file = new File(this.getDirectory() + File.separator + "disabled.yml");
+//        if (file.exists()) {
+//            file.delete();
+//            try {
+//                String[] split = new String(Files.readAllBytes(file.toPath())).split(",");
+//                for (String plugin : split) {
+//                    loadPlugin(plugin);
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
         List<World> worlds = Bukkit.getWorlds();
         if (worlds.size() > 0) {
             UUIDHandler.cacheAll(worlds.get(0).getName());

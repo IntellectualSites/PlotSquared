@@ -15,6 +15,7 @@ import org.bukkit.World;
 
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.object.Location;
@@ -57,18 +58,18 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Plots`");
         r = stmt.executeQuery();
         boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
-        boolean merge = !plugin.equals("plotme");
+        boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
         while (r.next()) {
             final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
             final String name = r.getString("owner");
             final String world = LikePlotMeConverter.getWorld(r.getString("world"));
             if (!plots.containsKey(world)) {
-                int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
-                int path = PS.get().config.getInt("worlds." + world + ".road.width");
-                plotWidth.put(world, plot);
-                roadWidth.put(world, path);
                 plots.put(world, new HashMap<PlotId, Plot>());
                 if (merge) {
+                    int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
+                    int path = PS.get().config.getInt("worlds." + world + ".road.width");
+                    plotWidth.put(world, plot);
+                    roadWidth.put(world, path);
                     merges.put(world, new HashMap<PlotId,boolean[]>());
                 }
             }
