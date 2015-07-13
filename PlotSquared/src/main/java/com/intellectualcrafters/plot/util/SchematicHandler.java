@@ -1,7 +1,40 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.jnbt.*;
-import com.intellectualcrafters.plot.PlotSquared;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import org.bukkit.Bukkit;
+
+import com.intellectualcrafters.jnbt.ByteArrayTag;
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.jnbt.IntTag;
+import com.intellectualcrafters.jnbt.ListTag;
+import com.intellectualcrafters.jnbt.NBTInputStream;
+import com.intellectualcrafters.jnbt.NBTOutputStream;
+import com.intellectualcrafters.jnbt.ShortTag;
+import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -10,12 +43,6 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.object.schematic.StateWrapper;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import org.bukkit.Bukkit;
-
-import java.io.*;
-import java.util.*;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
     public static SchematicHandler manager = new BukkitSchematicHandler();
@@ -64,7 +91,7 @@ public abstract class SchematicHandler {
                 else {
                 	directory = outputDir.getPath();
                 }
-                if (PlotSquared.getInstance().worldEdit != null) {
+                if (PS.get().worldEdit != null) {
                     new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
                 }
                 else {
@@ -104,7 +131,7 @@ public abstract class SchematicHandler {
      */
     public boolean paste(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
-            PlotSquared.log("Schematic == null :|");
+            PS.log("Schematic == null :|");
             return false;
         }
         try {
@@ -152,7 +179,7 @@ public abstract class SchematicHandler {
     
     public boolean pasteStates(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
-            PlotSquared.log("Schematic == null :|");
+            PS.log("Schematic == null :|");
             return false;
         }
         HashSet<PlotItem> items = schematic.getItems();
@@ -194,8 +221,7 @@ public abstract class SchematicHandler {
         final short[] blocks = new short[b.length];
         final Dimension dimension = new Dimension(width, height, length);
         for (int index = 0; index < b.length; index++) {
-            if ((index >> 1) >= addId.length) { // No corresponding
-                // AddBlocks index
+            if ((index >> 1) >= addId.length) {
                 blocks[index] = (short) (b[index] & 0xFF);
             } else {
                 if ((index & 1) == 0) {
@@ -236,14 +262,14 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(final String name) {
         {
-            final File parent = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "schematics");
+            final File parent = new File(PS.get().IMP.getDirectory() + File.separator + "schematics");
             if (!parent.exists()) {
                 if (!parent.mkdir()) {
                     throw new RuntimeException("Could not create schematic parent directory");
                 }
             }
         }
-        final File file = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
+        final File file = new File(PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
         return getSchematic(file);
     }
     
@@ -256,7 +282,7 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(File file) {
         if (!file.exists()) {
-            PlotSquared.log(file.toString() + " doesn't exist");
+            PS.log(file.toString() + " doesn't exist");
             return null;
         }
         try {
@@ -266,9 +292,59 @@ public abstract class SchematicHandler {
             stream.close();
             return getSchematic(tag, file);
         } catch (final Exception e) {
-            PlotSquared.log(file.toString() + " is not in GZIP format");
+            PS.log(file.toString() + " is not in GZIP format");
             return null;
         }
+    }
+    
+    public URL upload(final CompoundTag tag) {
+        if (tag == null) {
+            PS.log("&cCannot save empty tag");
+            return null;
+        }
+        try {
+            UUID uuid = UUID.randomUUID();
+            String website = Settings.WEB_URL + "upload.php?" + uuid;
+            String charset = "UTF-8";
+            String param = "value";
+            String boundary = Long.toHexString(System.currentTimeMillis());
+            String CRLF = "\r\n";
+            URLConnection con = new URL(website).openConnection();
+            con.setDoOutput(true);
+            con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+            try (
+                OutputStream output = con.getOutputStream();
+                PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);
+            ) {
+                writer.append("--" + boundary).append(CRLF);
+                writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
+                writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
+                writer.append(CRLF).append(param).append(CRLF).flush();
+                writer.append("--" + boundary).append(CRLF);
+                writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + "plot.schematic" + "\"").append(CRLF);
+                writer.append("Content-Type: " + URLConnection.guessContentTypeFromName("plot.schematic")).append(CRLF);
+                writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+                writer.append(CRLF).flush();
+                GZIPOutputStream gzip = new GZIPOutputStream(output);
+                NBTOutputStream nos = new NBTOutputStream(gzip);
+                nos.writeTag(tag);
+                gzip.finish();
+                nos.flush();
+                output.flush();
+                writer.append(CRLF).flush();
+                writer.append("--" + boundary + "--").append(CRLF).flush();
+                nos.close();
+                output.close();
+            }
+            int responseCode = ((HttpURLConnection) con).getResponseCode();
+            if (responseCode != 200) {
+                return null;
+            }
+            return new URL(Settings.WEB_URL + "?key=" + uuid + "&ip=" + Settings.WEB_IP);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     /**
@@ -281,7 +357,7 @@ public abstract class SchematicHandler {
      */
     public boolean save(final CompoundTag tag, final String path) {
         if (tag == null) {
-            PlotSquared.log("&cCannot save empty tag");
+            PS.log("&cCannot save empty tag");
             return false;
         }
         try {
@@ -308,7 +384,7 @@ public abstract class SchematicHandler {
      * @return tag
      */
     public CompoundTag getCompoundTag(final String world, final PlotId id) {
-        if (!PlotSquared.getInstance().getPlots(world).containsKey(id)) {
+        if (!PS.get().getPlots(world).containsKey(id)) {
             return null;
         }
         final Location pos1 = MainUtil.getPlotBottomLoc(world, id).add(1, 0, 1);

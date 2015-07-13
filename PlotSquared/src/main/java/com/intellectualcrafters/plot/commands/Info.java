@@ -21,14 +21,12 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -38,7 +36,6 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -74,9 +71,7 @@ public class Info extends SubCommand {
                     plot = MainUtil.getPlotFromString(player, null, player == null);
                     break;
                 default:
-                    System.out.print("CHECKING: " + arg);
                     plot = MainUtil.getPlotFromString(player, arg, player == null);
-                    System.out.print(plot);
                     if (args.length == 2) {
                         arg = args[1];
                     }
@@ -123,13 +118,6 @@ public class Info extends SubCommand {
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             MainUtil.sendMessage(player, C.PLOT_INFO_UNCLAIMED, (plot.id.x + ";" + plot.id.y));
             return true;
-        }
-        String owner = "none";
-        if (plot.owner == null) {
-            owner = "unowned";
-        }
-        else {
-            owner = getPlayerList(plot.getOwners());
         }
         String info = C.PLOT_INFO.s();
         if (arg != null) {
@@ -207,7 +195,6 @@ public class Info extends SubCommand {
         info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
         info = info.replaceAll("%build%", build + "");
         info = info.replaceAll("%desc%", "No description set.");
-
         if (info.contains("%rating%")) {
             final String newInfo = info;
             TaskManager.runTaskAsync(new Runnable() {

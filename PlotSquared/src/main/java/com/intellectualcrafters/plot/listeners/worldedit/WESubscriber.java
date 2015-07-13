@@ -1,6 +1,8 @@
 package com.intellectualcrafters.plot.listeners.worldedit;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import java.util.HashSet;
+
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -13,13 +15,11 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 
-import java.util.HashSet;
-
 public class WESubscriber {
     @Subscribe(priority=Priority.VERY_EARLY)
     public void onEditSession(EditSessionEvent event) {
         String world = event.getWorld().getName();
-        if (!PlotSquared.getInstance().isPlotWorld(world)) {
+        if (!PS.get().isPlotWorld(world)) {
             return;
         }
         Actor actor = event.getActor();

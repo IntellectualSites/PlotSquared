@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,6 +27,18 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 public class Trim extends SubCommand {
     public static boolean TASK = false;
@@ -66,7 +70,7 @@ public class Trim extends SubCommand {
                                 final ChunkLoc loc = new ChunkLoc(x, z);
                                 empty.add(loc);
                             } catch (final Exception e) {
-                                PlotSquared.log("INVALID MCA: " + name);
+                                PS.log("INVALID MCA: " + name);
                             }
                         } else {
                             final Path path = Paths.get(file.getPath());
@@ -83,7 +87,7 @@ public class Trim extends SubCommand {
                                         final ChunkLoc loc = new ChunkLoc(x, z);
                                         empty.add(loc);
                                     } catch (final Exception e) {
-                                        PlotSquared.log("INVALID MCA: " + name);
+                                        PS.log("INVALID MCA: " + name);
                                     }
                                 }
                             } catch (final Exception e) {
@@ -106,7 +110,7 @@ public class Trim extends SubCommand {
         System.currentTimeMillis();
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
-        plots.addAll(PlotSquared.getInstance().getPlots(world).values());
+        plots.addAll(PS.get().getPlots(world).values());
         final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
@@ -120,19 +124,19 @@ public class Trim extends SubCommand {
                         empty.addAll(chunks);
                         Trim.TASK = false;
                         TaskManager.runTaskAsync(whenDone);
-                        PlotSquared.getInstance().TASK.cancelTask(Trim.TASK_ID);
+                        PS.get().TASK.cancelTask(Trim.TASK_ID);
                         return;
                     }
                     final Plot plot = plots.get(0);
                     plots.remove(0);
                     final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id);
                     final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
-                    final Location pos3 = new Location(world, pos1.getX(), 64, pos2.getZ());
-                    final Location pos4 = new Location(world, pos2.getX(), 64, pos1.getZ());
-                    chunks.remove(ChunkManager.getChunkChunk(pos1));
-                    chunks.remove(ChunkManager.getChunkChunk(pos2));
-                    chunks.remove(ChunkManager.getChunkChunk(pos3));
-                    chunks.remove(ChunkManager.getChunkChunk(pos4));
+                    for (int x = pos1.getX(); x <= pos2.getX(); x += 512 ) {
+                        for (int z = pos1.getZ(); z <= pos2.getZ(); z += 512 ) {
+                            ChunkLoc chunk = ChunkManager.getChunkChunk(new Location(world, x, 0, z));
+                            chunks.remove(chunk);
+                        }
+                    }
                 }
             }
         }, 20);
@@ -145,7 +149,7 @@ public class Trim extends SubCommand {
     }
 
     public static void sendMessage(final String message) {
-        PlotSquared.log("&3PlotSquared -> World trim&8: &7" + message);
+        PS.log("&3PlotSquared -> World trim&8: &7" + message);
     }
 
     public PlotId getId(final String id) {
@@ -187,7 +191,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final String world = args[1];
-        if (!BlockManager.manager.isWorld(world) || (PlotSquared.getInstance().getPlotWorld(world) == null)) {
+        if (!BlockManager.manager.isWorld(world) || (PS.get().getPlotWorld(world) == null)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }

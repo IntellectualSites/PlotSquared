@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.Plot;
  * @author Empire92
  */
 public class PlayerLeavePlotEvent extends PlayerEvent {
+
     private static HandlerList handlers = new HandlerList();
     private final Plot plot;
 

@@ -1,20 +1,21 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 
 /**
  * An utility that can be used to send chunks, rather than using bukkit code to do so (uses heavy NMS)
@@ -29,7 +30,7 @@ public class SendChunk {
     private static final RefClass classChunkCoordIntPair = getRefClass("{nms}.ChunkCoordIntPair");
     private static final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
     private static final RefClass classChunk = getRefClass("{nms}.Chunk");
-    private static boolean v1_7_10 = PlotSquared.getInstance().IMP.checkVersion(1, 7, 10) && !PlotSquared.getInstance().IMP.checkVersion(1, 8, 0);
+    private static boolean v1_7_10 = PS.get().IMP.checkVersion(1, 7, 10) && !PS.get().IMP.checkVersion(1, 8, 0);
     // Ref Method
     private static RefMethod methodGetHandle;
     // Ref Field

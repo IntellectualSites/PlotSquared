@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.bukkit.Chunk;
-import org.bukkit.block.Block;
 
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -121,8 +120,8 @@ public class SetBlockFast extends BukkitSetBlockManager {
         }
         if (!MainUtil.canSendChunk) {
             for (Chunk chunk : chunks) {
+                chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
                 chunk.unload(true, false);
-//                chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
                 chunk.load();
             }
             return;

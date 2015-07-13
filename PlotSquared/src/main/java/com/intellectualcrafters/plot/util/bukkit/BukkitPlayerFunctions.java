@@ -20,17 +20,18 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util.bukkit;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.MainUtil;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import org.bukkit.entity.Player;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * Functions involving players, plots and locations.
@@ -85,8 +86,8 @@ public class BukkitPlayerFunctions {
     }
 
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
-        final Plot plot1 = PlotSquared.getInstance().getPlots(world).get(pos1);
-        final Plot plot2 = PlotSquared.getInstance().getPlots(world).get(pos2);
+        final Plot plot1 = PS.get().getPlots(world).get(pos1);
+        final Plot plot2 = PS.get().getPlots(world).get(pos2);
         if (plot1 != null) {
             pos1 = MainUtil.getBottomPlot(plot1).id;
         }
@@ -110,7 +111,7 @@ public class BukkitPlayerFunctions {
      * @return boolean
      */
     public static Plot getCurrentPlot(final Player player) {
-        if (!PlotSquared.getInstance().isPlotWorld(player.getWorld().getName())) {
+        if (!PS.get().isPlotWorld(player.getWorld().getName())) {
             return null;
         }
         final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(player));
@@ -118,10 +119,10 @@ public class BukkitPlayerFunctions {
         if (id == null) {
             return null;
         }
-        if (PlotSquared.getInstance().getPlots(world).containsKey(id)) {
-            return PlotSquared.getInstance().getPlots(world).get(id);
+        if (PS.get().getPlots(world).containsKey(id)) {
+            return PS.get().getPlots(world).get(id);
         }
-        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
+        return new Plot(world, id, null);
     }
 
     /**
@@ -132,7 +133,7 @@ public class BukkitPlayerFunctions {
      * @return boolean
      */
     public static Set<Plot> getPlayerPlots(final String world, final Player plr) {
-        final Set<Plot> p = PlotSquared.getInstance().getPlots(world, plr.getName());
+        final Set<Plot> p = PS.get().getPlots(world, plr.getName());
         if (p == null) {
             return new HashSet<>();
         }

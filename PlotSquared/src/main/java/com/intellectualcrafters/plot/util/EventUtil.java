@@ -1,11 +1,21 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.*;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue.PlotBlockListValue;
+import com.intellectualcrafters.plot.listeners.PlayerBlockEventType;
+import com.intellectualcrafters.plot.object.LazyBlock;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public abstract class EventUtil {
     
@@ -17,7 +27,7 @@ public abstract class EventUtil {
             SetupUtils.setupMap.remove(name);
         }
         CmdConfirm.removePending(name);
-        PlotSquared.getInstance().IMP.unregister(player);
+        PS.get().IMP.unregister(player);
     }
     
     public abstract boolean callClaim(final PlotPlayer player, final Plot plot, final boolean auto);
@@ -47,4 +57,244 @@ public abstract class EventUtil {
     public abstract void callTrusted(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
     
     public abstract void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
+    
+    public boolean checkPlayerBlockEvent(PlotPlayer pp, PlayerBlockEventType type, Location loc, LazyBlock block, boolean notifyPerms) {
+        Plot plot = MainUtil.getPlot(loc);
+        UUID uuid = pp.getUUID();
+        if (plot == null) {
+            if (!MainUtil.isPlotAreaAbs(loc)) {
+                return true;
+            }
+        }
+        else if (plot.isAdded(uuid)) {
+            return true;
+        }
+        switch (type) {
+            case TELEPORT_OBJECT: {
+                return false;
+            }
+            case EAT:
+            case READ: {
+                return true;
+            }
+            case BREAK_BLOCK: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.BREAK_ROAD.s, notifyPerms);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.BREAK_UNOWNED.s, notifyPerms);
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "break");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.BREAK_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            case BREAK_HANGING:
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.BREAK_ROAD.s, notifyPerms);
+                }
+                if (FlagManager.isPlotFlagTrue(plot, "hanging-break")) {
+                    return true;
+                }
+                if (plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.BREAK_OTHER.s, notifyPerms);
+                }
+                return Permissions.hasPermission(pp, Permissions.BREAK_UNOWNED.s, notifyPerms);
+            case BREAK_MISC:
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.BREAK_ROAD.s, notifyPerms);
+                }
+                if (FlagManager.isPlotFlagTrue(plot, "misc-break")) {
+                    return true;
+                }
+                if (plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.BREAK_OTHER.s, notifyPerms);
+                }
+                return Permissions.hasPermission(pp, Permissions.BREAK_UNOWNED.s, notifyPerms);
+            case BREAK_VEHICLE:
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.BREAK_ROAD.s, notifyPerms);
+                }
+                if (FlagManager.isPlotFlagTrue(plot, "vehicle-break")) {
+                    return true;
+                }
+                if (plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.BREAK_OTHER.s, notifyPerms);
+                }
+                return Permissions.hasPermission(pp, Permissions.BREAK_UNOWNED.s, notifyPerms);
+            case INTERACT_BLOCK: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_ROAD.s, notifyPerms);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_UNOWNED.s, notifyPerms);
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "use");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            case PLACE_BLOCK: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.BUILD_ROAD.s, notifyPerms);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.BUILD_UNOWNED.s, notifyPerms);
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "place");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.BUILD_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            case TRIGGER_PHYSICAL: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_ROAD.s, false);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_UNOWNED.s, false);
+                }
+                if (FlagManager.isPlotFlagTrue(plot, "device-interact")) {
+                    return true;
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "use");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            case INTERACT_HANGING: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_ROAD.s, notifyPerms);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_UNOWNED.s, notifyPerms);
+                }
+                if (FlagManager.isPlotFlagTrue(plot, "hanging-interact")) {
+                    return true;
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "use");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            case INTERACT_MISC: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_ROAD.s, notifyPerms);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_UNOWNED.s, notifyPerms);
+                }
+                if (FlagManager.isPlotFlagTrue(plot, "misc-interact")) {
+                    return true;
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "use");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            case INTERACT_VEHICLE: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_ROAD.s, notifyPerms);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_UNOWNED.s, notifyPerms);
+                }
+                if (FlagManager.isPlotFlagTrue(plot, "vehicle-use")) {
+                    return true;
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "use");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            case SPAWN_MOB: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_UNOWNED.s, notifyPerms);
+                }
+                
+                if (FlagManager.isPlotFlagTrue(plot, "mob-place")) {
+                    return true;
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "place");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            case PLACE_HANGING: {
+//                if (plot == null) {
+//                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+//                }
+//                if (!plot.hasOwner()) {
+//                    return Permissions.hasPermission(pp, Permissions.INTERACT_UNOWNED.s, notifyPerms);
+//                }
+//                
+//                if (FlagManager.isPlotFlagTrue(plot, "hanging-place")) {
+//                    return true;
+//                }
+//                Flag flag = FlagManager.getPlotFlag(plot, "place");
+//                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+//                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+//                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+//                }
+                return true;
+            }
+            case PLACE_MISC: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_UNOWNED.s, notifyPerms);
+                }
+                
+                if (FlagManager.isPlotFlagTrue(plot, "misc-place")) {
+                    return true;
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "place");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            case PLACE_VEHICLE: {
+                if (plot == null) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                if (!plot.hasOwner()) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_UNOWNED.s, notifyPerms);
+                }
+                
+                if (FlagManager.isPlotFlagTrue(plot, "vehicle-place")) {
+                    return true;
+                }
+                Flag flag = FlagManager.getPlotFlag(plot, "place");
+                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
+                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
+                    return Permissions.hasPermission(pp, Permissions.INTERACT_OTHER.s, notifyPerms);
+                }
+                return true;
+            }
+            default:
+                break;
+        }
+        return true;
+    }
 }

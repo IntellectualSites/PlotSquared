@@ -20,20 +20,21 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.EconHandler;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.ConfigurationSection;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Jesse Boyd
@@ -110,7 +111,7 @@ public abstract class PlotWorld {
             return false;
         }
         PlotWorld plotworld = (PlotWorld) obj;
-        ConfigurationSection section = PlotSquared.getInstance().config.getConfigurationSection("worlds");
+        ConfigurationSection section = PS.get().config.getConfigurationSection("worlds");
         for (ConfigurationNode setting : plotworld.getSettingNodes()) {
             Object constant = section.get(plotworld.worldname + "." + setting.getConstant());
             if (constant == null) {
@@ -185,7 +186,7 @@ public abstract class PlotWorld {
             this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
         } catch (final Exception e) {
             e.printStackTrace();
-            PlotSquared.log("&cInvalid default flags for " + this.worldname + ": " + StringUtils.join(flags, ","));
+            PS.log("&cInvalid default flags for " + this.worldname + ": " + StringUtils.join(flags, ","));
             this.DEFAULT_FLAGS = new HashMap<>();
         }
         this.PVP = config.getBoolean("event.pvp");

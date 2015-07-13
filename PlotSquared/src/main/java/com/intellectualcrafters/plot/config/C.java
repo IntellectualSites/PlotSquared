@@ -20,14 +20,18 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
+import java.io.File;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.ChatColor;
 
-import com.intellectualsites.translation.TranslationFile;
-import com.intellectualsites.translation.TranslationLanguage;
-import com.intellectualsites.translation.TranslationManager;
-import com.intellectualsites.translation.TranslationObject;
-import com.intellectualsites.translation.YamlTranslationFile;
-import com.intellectualsites.translation.bukkit.BukkitTranslation;
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * Captions class.
@@ -40,13 +44,18 @@ public enum C {
      * Confirm
      */
     FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),
-    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?\n$2This cannot be undone! If you are sure: $1/plot confirm", "Confirm"),
+    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?&-$2This cannot be undone! If you are sure: $1/plot confirm", "Confirm"),
     /*
      * Move
      */
     MOVE_SUCCESS("$4Successfully moved plot.", "Move"),
     COPY_SUCCESS("$4Successfully copied plot.", "Move"),
     REQUIRES_UNOWNED("$2The location specified is already occupied.", "Move"),
+    /*
+     * Web
+     */
+    GENERATING_LINK("$1Processing plot...", "Web"),
+    GENERATING_LINK_FAILED("$2Failed to generate download link!", "Web"),
     /*
      * Compass
      */
@@ -56,7 +65,7 @@ public enum C {
      */
     CLUSTER_AVAILABLE_ARGS("$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2, $4tp$2, $4sethome", "Cluster"),
     CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
-    CLUSTER_LIST_ELEMENT("$2 - $1%s\n", "Cluster"),
+    CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster"),
     CLUSTER_INTERSECTION("$2The proposed area overlaps with $1%s$2 existing cluster/s", "Cluster"),
     CLUSTER_ADDED("$4Successfully created the cluster.", "Cluster"),
     CLUSTER_DELETED("$4Successfully deleted the cluster.", "Cluster"),
@@ -73,7 +82,7 @@ public enum C {
     CLUSTER_REMOVED_HELPER("$4Successfully removed a helper from the cluster", "Cluster"),
     CLUSTER_REGENERATED("$4Successfully started cluster regeneration", "Cluster"),
     CLUSTER_TELEPORTING("$4Teleporting...", "Cluster"),
-    CLUSTER_INFO("$1Current cluster: $2%id%\n$1Name: $2%name%\n$1Owner: $2%owner%\n$1Size: $2%size%\n$1Rights: $2%rights%", "Cluster"),
+    CLUSTER_INFO("$1Current cluster: $2%id%&-$1Name: $2%name%&-$1Owner: $2%owner%&-$1Size: $2%size%&-$1Rights: $2%rights%", "Cluster"),
     CLUSTER_CURRENT_PLOTID("$1Current plot: $2%s", "Cluster"),
     /*
      * Border
@@ -114,7 +123,7 @@ public enum C {
     NOT_VALID_INBOX_INDEX("$2No comment at index %s", "Comment"),
     INBOX_ITEM("$2 - $4%s", "Comment"),
     COMMENT_SYNTAX("$2Use /plots comment [X;Z] <%s> <comment>", "Comment"),
-    INVALID_INBOX("$2That is not a valid inbox.\n$1Accepted values: %s", "Comment"),
+    INVALID_INBOX("$2That is not a valid inbox.&-$1Accepted values: %s", "Comment"),
     NO_PERM_INBOX("$2You do not have permission for that inbox", "Comment"),
     NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox", "Comment"),
     NO_PLOT_INBOX("$2You must  stand in or supply a plot argument", "Comment"),
@@ -177,8 +186,8 @@ public enum C {
     SETUP_VALID_ARG("$2Value $1%s $2set to %s", "Setup"),
     SETUP_FINISHED("$3If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml", "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a registered plotworld", "Setup"),
-    SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)\n$1Additional commands:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel", "Setup"),
-    SETUP_MISSING_GENERATOR("$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)\n$1Additional commands:\n$2 - $1/plot setup <value>\n$2 - $1/plot setup back\n$2 - $1/plot setup cancel", "Setup"),
+    SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
+    SETUP_MISSING_GENERATOR("$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
     SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
     /*
      * Schematic Stuff
@@ -314,9 +323,9 @@ public enum C {
     /*
      * Debug
      */
-    DEUBG_HEADER("$1Debug Information\\n", "Debug"),
+    DEUBG_HEADER("$1Debug Information&-", "Debug"),
     DEBUG_SECTION("$2>> $1&l%val%", "Debug"),
-    DEBUG_LINE("$2>> $1%var%$2:$1 %val%\\n", "Debug"),
+    DEBUG_LINE("$2>> $1%var%$2:$1 %val%&-", "Debug"),
     /*
      * Invalid
      */
@@ -350,7 +359,7 @@ public enum C {
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3====== $1INFO $3======", false, "Info"),
-    PLOT_INFO("$1ID: $2%id%$1\n" + "$1Alias: $2%alias%$1\n" + "$1Owner: $2%owner%$1\n" + "$1Biome: $2%biome%$1\n" + "$1Can Build: $2%build%$1\n" + "$1Rating: $2%rating%\n" + "$1Trusted: $2%trusted%$1\n" + "$1Members: $2%members%$1\n" + "$1Denied: $2%denied%$1\n" + "$1Flags: $2%flags%", "Info"),
+    PLOT_INFO("$1ID: $2%id%$1&-" + "$1Alias: $2%alias%$1&-" + "$1Owner: $2%owner%$1&-" + "$1Biome: $2%biome%$1&-" + "$1Can Build: $2%build%$1&-" + "$1Rating: $2%rating%&-" + "$1Trusted: $2%trusted%$1&-" + "$1Members: $2%members%$1&-" + "$1Denied: $2%denied%$1&-" + "$1Flags: $2%flags%", "Info"),
     PLOT_INFO_TRUSTED("$1Trusted:$2 %trusted%", "Info"),
     PLOT_INFO_MEMBERS("$1Members:$2 %members%", "Info"),
     PLOT_INFO_DENIED("$1Denied:$2 %denied%", "Info"),
@@ -468,7 +477,7 @@ public enum C {
     HELP_CATEGORY("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2,$1 Displaying: $2%dis%$3/$2%total%", "Help"),
     HELP_INFO("$3====== $1Choose a Category $3======", false, "Help"),
     HELP_INFO_ITEM("$1/plots help %category% $3- $2%category_desc%", "Help"),
-    HELP_ITEM("$1%usage% [%alias%]\n $3- $2%desc%\n", "Help"),
+    HELP_ITEM("$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
     /*
      * Direction
      */
@@ -478,32 +487,13 @@ public enum C {
      */
     CUSTOM_STRING("-", "-");
     /**
-     * Special Language
-     *
-     * @see com.intellectualsites.translation.TranslationLanguage
+     * Translated
      */
-    protected final static TranslationLanguage lang = new TranslationLanguage("PlotSquared", "this", "use");
-    public static String COLOR_1 = "&6", COLOR_2 = "&7", COLOR_3 = "&8", COLOR_4 = "&3";
-    /**
-     * The TranslationManager
-     *
-     * @see com.intellectualsites.translation.TranslationManager
-     */
-    private static TranslationManager manager;
-    /**
-     * The default file
-     *
-     * @see com.intellectualsites.translation.TranslationFile
-     */
-    private static TranslationFile defaultFile;
+    private String s;
     /**
      * Default
      */
     private String d;
-    /**
-     * Translated
-     */
-    private String s;
     /**
      * What locale category should this translation fall under
      */
@@ -545,41 +535,97 @@ public enum C {
     C(final String d, String cat) {
         this(d, true, cat.toLowerCase());
     }
-
-    public static void setupTranslations() {
-        manager = new TranslationManager();
-        defaultFile = new YamlTranslationFile(BukkitTranslation.getParent(), lang, "PlotSquared", manager, true).read();
-        // register everything in this class
-        for (final C c : values()) {
-            manager.addTranslationObject(new TranslationObject(c.toString(), c.d, "", ""));
+    
+    public static String format(C c, Object... args) {
+        String m = c.s;
+        for (int i = args.length - 1 ; i >= 0; i--) {
+            if (args[i] == null) {
+                continue;
+            }
+            m = m.replaceAll("%s" + i, args[i].toString());
         }
+        if (args.length > 0) {
+            m = m.replaceAll("%s", args[0].toString());
+        }
+        return m;
     }
-
-    public static void saveTranslations() {
+    
+    public static void load(File file) {
         try {
-            manager.saveAll(defaultFile).saveFile(defaultFile);
-        } catch (final Exception e) {
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+            YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+            Set<String> keys = yml.getKeys(true);
+            EnumSet<C> all = EnumSet.allOf(C.class);
+            HashSet<String> allNames = new HashSet<>();
+            HashSet<String> allCats = new HashSet<>();
+            HashSet<String> toRemove = new HashSet<>();
+            for (C c: all) {
+                allNames.add(c.name());
+                allCats.add(c.cat.toLowerCase());
+            }
+            HashSet<C> captions = new HashSet<>();
+            boolean changed = false;
+            for (String key : keys) {
+                if (!yml.isString(key)) {
+                    if (!allCats.contains(key)) {
+                        toRemove.add(key);
+                    }
+                    continue;
+                }
+                String[] split = key.split("\\.");
+                String node = split[split.length - 1].toUpperCase();
+                C caption = allNames.contains(node) ? valueOf(node) : null;
+                if (caption != null) {
+                    String value = yml.getString(key);
+                    if (!split[0].equalsIgnoreCase(caption.cat)) {
+                        changed = true;
+                        yml.set(key, null);
+                        yml.set(caption.cat + "." + caption.name().toLowerCase(), value);
+                    }
+                    captions.add(caption);
+                    caption.s = value;
+                }
+                else {
+                    toRemove.add(key);
+                }
+            }
+            for (String remove : toRemove) {
+                changed = true;
+                yml.set(remove, null);
+            }
+            ConfigurationSection config = PS.get().style.getConfigurationSection("color");
+            Set<String> styles = config.getKeys(false);
+            HashMap<String, String> replacements = new HashMap<>();
+            for (String style : styles) {
+                replacements.put("$" + style, "\u00a7" + config.getString(style));
+            }
+            for (char letter : "1234567890abcdefklmnor".toCharArray()) {
+                replacements.put("&" + letter, "\u00a7" + letter);
+            }
+            replacements.put("\\\\n", "\n");
+            replacements.put("\\n", "\n");
+            replacements.put("&-", "\n");
+            for (C caption : all) {
+                if (!captions.contains(caption)) {
+                    changed = true;
+                    yml.set(caption.cat + "." + caption.name().toLowerCase(), caption.d);
+                }
+                caption.s = StringMan.replaceFromMap(caption.s, replacements);
+            }
+            if (changed) {
+                yml.save(file);
+            }
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    /**
-     * Get the default string
-     *
-     * @return default
-     */
-    public String d() {
-        return this.d;
-    }
-
-    /**
-     * Get translated if exists
-     *
-     * @return translated if exists else default
-     */
+    
     public String s() {
-        final String s = manager.getTranslated(toString(), lang).getTranslated().replaceAll("&-", "\n").replaceAll("\\n", "\n");
-        return s.replace("$1", COLOR_1.toString()).replace("$2", COLOR_2.toString()).replace("$3", COLOR_3.toString()).replace("$4", COLOR_4.toString());
+        return this.s;
     }
 
     public boolean usePrefix() {
@@ -597,9 +643,5 @@ public enum C {
 
     public String getCat() {
         return cat;
-    }
-
-    public void setCat(String cat) {
-        this.cat = cat;
     }
 }

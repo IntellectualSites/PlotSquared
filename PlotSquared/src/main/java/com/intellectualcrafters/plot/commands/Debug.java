@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.Lag;
@@ -51,7 +51,7 @@ public class Debug extends SubCommand {
         }
         {
             final StringBuilder worlds = new StringBuilder("");
-            for (final String world : PlotSquared.getInstance().getPlotWorlds()) {
+            for (final String world : PS.get().getPlotWorlds()) {
                 worlds.append(world).append(" ");
             }
             information.append(header);
@@ -61,7 +61,7 @@ public class Debug extends SubCommand {
             information.append(getLine(line, "TPS Percentage", (int) Lag.getFullPercentage() + "%"));
             information.append(getSection(section, "PlotWorld"));
             information.append(getLine(line, "Plot Worlds", worlds));
-            information.append(getLine(line, "Owned Plots", PlotSquared.getInstance().getPlots().size()));
+            information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
             information.append(getSection(section, "Messages"));
             information.append(getLine(line, "Total Messages", C.values().length));
             information.append(getLine(line, "View all captions", "/plot debug msg"));

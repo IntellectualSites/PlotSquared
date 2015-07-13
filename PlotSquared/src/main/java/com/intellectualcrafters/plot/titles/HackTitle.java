@@ -2,7 +2,7 @@ package com.intellectualcrafters.plot.titles;
 
 import org.bukkit.ChatColor;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -16,7 +16,7 @@ public class HackTitle extends AbstractTitle {
             title.setSubtitleColor(sub_color);
             title.send(((BukkitPlayer) player).player);
         } catch (final Throwable e) {
-            PlotSquared.log("&cYour server version does not support titles!");
+            PS.log("&cYour server version does not support titles!");
             Settings.TITLES = false;
             AbstractTitle.TITLE_CLASS = null;
         }

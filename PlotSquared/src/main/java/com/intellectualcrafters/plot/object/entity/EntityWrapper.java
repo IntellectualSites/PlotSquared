@@ -31,7 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 
 public class EntityWrapper {
     public short id;
@@ -212,7 +212,7 @@ public class EntityWrapper {
                 return;
             }
             default: {
-                PlotSquared.log("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
+                PS.log("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return;
             }
             // MISC //
@@ -469,7 +469,7 @@ public class EntityWrapper {
                 return entity;
             }
             default: {
-                PlotSquared.log("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
+                PS.log("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
                 return entity;
             }
             // MISC //

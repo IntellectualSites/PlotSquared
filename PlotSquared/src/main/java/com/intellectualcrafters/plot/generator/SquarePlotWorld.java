@@ -1,8 +1,7 @@
 package com.intellectualcrafters.plot.generator;
 
-import org.bukkit.configuration.ConfigurationSection;
-
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.plot.PS;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
     public static int PLOT_WIDTH_DEFAULT = 42;
@@ -13,7 +12,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
         if (!config.contains("plot.height")) {
-            PlotSquared.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
+            PS.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
         }
         this.PLOT_WIDTH = config.getInt("plot.size");
         this.ROAD_WIDTH = config.getInt("road.width");

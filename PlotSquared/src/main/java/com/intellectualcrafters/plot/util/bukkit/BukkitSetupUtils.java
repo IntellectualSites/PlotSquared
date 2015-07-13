@@ -1,11 +1,8 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.SetupUtils;
+import java.io.IOException;
+import java.util.Map.Entry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -13,8 +10,12 @@ import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
-import java.io.IOException;
-import java.util.Map.Entry;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.util.SetupUtils;
 
 public class BukkitSetupUtils extends SetupUtils {
     
@@ -28,7 +29,7 @@ public class BukkitSetupUtils extends SetupUtils {
             if (plugin.isEnabled()) {
                 final ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
                 if (generator != null) {
-                    PlotSquared.getInstance().removePlotWorld(testWorld);
+                    PS.get().removePlotWorld(testWorld);
                     final String name = plugin.getDescription().getName();
 //                        final PlotGenerator pgen = (PlotGenerator) generator;
 //                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
@@ -46,14 +47,14 @@ public class BukkitSetupUtils extends SetupUtils {
         final ConfigurationNode[] steps = object.step;
         final String world = object.world;
         for (final ConfigurationNode step : steps) {
-            PlotSquared.getInstance().config.set("worlds." + world + "." + step.getConstant(), step.getValue());
+            PS.get().config.set("worlds." + world + "." + step.getConstant(), step.getValue());
         }
         if (object.type != 0) {
-            PlotSquared.getInstance().config.set("worlds." + world + "." + "generator.type", object.type);
-            PlotSquared.getInstance().config.set("worlds." + world + "." + "generator.terrain", object.terrain);
-            PlotSquared.getInstance().config.set("worlds." + world + "." + "generator.plugin", object.plotManager);
+            PS.get().config.set("worlds." + world + "." + "generator.type", object.type);
+            PS.get().config.set("worlds." + world + "." + "generator.terrain", object.terrain);
+            PS.get().config.set("worlds." + world + "." + "generator.plugin", object.plotManager);
             if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
-                PlotSquared.getInstance().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
+                PS.get().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
             }
             ChunkGenerator gen = generators.get(object.setupGenerator);
             if (gen instanceof PlotGenerator) {
@@ -61,7 +62,7 @@ public class BukkitSetupUtils extends SetupUtils {
             }
         }
         try {
-            PlotSquared.getInstance().config.save(PlotSquared.getInstance().configFile);
+            PS.get().config.save(PS.get().configFile);
         } catch (final IOException e) {
             e.printStackTrace();
         }

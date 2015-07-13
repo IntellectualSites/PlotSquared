@@ -112,6 +112,7 @@ permissions:
       plots.set.biome: true
       plots.set.home: true
       plots.merge: true
+      plots.merge.other: true
       plots.unlink: true
       plots.denied: true
       plots.add: true

@@ -24,11 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.intellectualcrafters.plot.PlotSquared;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 
 /**
@@ -111,9 +109,6 @@ public class MainCommand {
     }
     
     public static boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
-        if (!Permissions.hasPermission(player, PlotSquared.MAIN_PERMISSION)) {
-            return no_permission(player, PlotSquared.MAIN_PERMISSION);
-        }
         if ((args.length < 1) || ((args.length >= 1) && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("he")))) {
             if (args.length < 2) {
                 final StringBuilder builder = new StringBuilder();

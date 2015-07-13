@@ -32,6 +32,7 @@ import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 public class MusicSubcommand extends SubCommand {
     public MusicSubcommand() {
@@ -52,8 +53,19 @@ public class MusicSubcommand extends SubCommand {
         PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox") {
             public boolean onClick(int index) {
                 PlotItemStack item = getItem(index);
-                FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), item.id));
-                PlotListener.manager.plotEntry(player, plot);
+                int id = item.id == 7 ? 0 : item.id;
+                if (id == 0) {
+                    FlagManager.removePlotFlag(plot, "music");
+                }
+                else {
+                    FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), id));
+                }
+                TaskManager.runTaskLater(new Runnable() {
+                    @Override
+                    public void run() {
+                         PlotListener.manager.plotEntry(player, plot);                        
+                    }
+                }, 1);
                 close();
                 return false;
             }
@@ -65,6 +77,11 @@ public class MusicSubcommand extends SubCommand {
             PlotItemStack item = new PlotItemStack(i, (byte) 0, 1, name, lore);
             inv.setItem(index, item);
             index++;
+        }
+        if (player.getMeta("music") != null) {
+            String name = "&r&6Cancel music";
+            String[] lore = {"&r&cClick to cancel!"};
+            inv.setItem(index, new PlotItemStack(7, (short) 0, 1, name, lore));
         }
         inv.openInventory();
         return true;

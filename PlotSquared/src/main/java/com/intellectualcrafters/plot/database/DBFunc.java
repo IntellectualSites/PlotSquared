@@ -56,6 +56,9 @@ public class DBFunc {
     public static AbstractDB dbManager;
 
     public static void movePlot(final Plot originalPlot, final Plot newPlot) {
+        if (originalPlot.temp || newPlot.temp) {
+            return;
+        }
         dbManager.movePlot(originalPlot, newPlot);
     }
     /**
@@ -87,6 +90,9 @@ public class DBFunc {
      * @param uuid New Owner
      */
     public static void setOwner(final Plot plot, final UUID uuid) {
+        if (plot.temp) {
+            return;
+        }
         dbManager.setOwner(plot, uuid);
     }
 
@@ -105,6 +111,9 @@ public class DBFunc {
      * @param plot Plot to create
      */
     public static void createPlot(final Plot plot) {
+        if (plot.temp) {
+            return;
+        }
         dbManager.createPlot(plot);
     }
 
@@ -114,6 +123,9 @@ public class DBFunc {
      * @param plot Plot to create
      */
     public static void createPlotAndSettings(final Plot plot) {
+        if (plot.temp) {
+            return;
+        }
         dbManager.createPlotAndSettings(plot);
     }
 
@@ -131,8 +143,11 @@ public class DBFunc {
      *
      * @param plot Plot to delete
      */
-    public static void delete(final String world, final Plot plot) {
-        dbManager.delete(world, plot);
+    public static void delete(final Plot plot) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.delete(plot);
     }
 
     public static void delete(final PlotCluster toDelete) {
@@ -146,6 +161,9 @@ public class DBFunc {
      * @param plot Plot Object
      */
     public static void createPlotSettings(final int id, final Plot plot) {
+        if (plot.temp) {
+            return;
+        }
         dbManager.createPlotSettings(id, plot);
     }
 
@@ -158,7 +176,7 @@ public class DBFunc {
      * @return ID
      */
     /*
-     * public static int getId(String world, PlotId id2) { Statement stmt =
+     * public static int getId(String plotId id2) { Statement stmt =
      * null; try { stmt = connection.createStatement(); ResultSet r =
      * stmt.executeQuery("SELECT `id` FROM `plot` WHERE `plot_id_x` = '" + id2.x
      * + "' AND `plot_id_z` = '" + id2.y + "' AND `world` = '" + world +
@@ -178,12 +196,18 @@ public class DBFunc {
         return dbManager.getPlots();
     }
 
-    public static void setMerged(final String world, final Plot plot, final boolean[] merged) {
-        dbManager.setMerged(world, plot, merged);
+    public static void setMerged(final Plot plot, final boolean[] merged) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.setMerged(plot, merged);
     }
 
-    public static void setFlags(final String world, final Plot plot, final Collection<Flag> flags) {
-        dbManager.setFlags(world, plot, flags);
+    public static void setFlags(final Plot plot, final Collection<Flag> flags) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.setFlags(plot, flags);
     }
 
     public static void setFlags(final PlotCluster cluster, final Collection<Flag> flags) {
@@ -194,8 +218,11 @@ public class DBFunc {
      * @param plot
      * @param alias
      */
-    public static void setAlias(final String world, final Plot plot, final String alias) {
-        dbManager.setAlias(world, plot, alias);
+    public static void setAlias(final Plot plot, final String alias) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.setAlias(plot, alias);
     }
 
     public static void purgeIds(final String world, final Set<Integer> uniqueIds) {
@@ -210,8 +237,11 @@ public class DBFunc {
      * @param plot
      * @param position
      */
-    public static void setPosition(final String world, final Plot plot, final String position) {
-        dbManager.setPosition(world, plot, position);
+    public static void setPosition(final Plot plot, final String position) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.setPosition(plot, position);
     }
 
     /**
@@ -227,11 +257,17 @@ public class DBFunc {
      * @param plot
      * @param comment
      */
-    public static void removeComment(final String world, final Plot plot, final PlotComment comment) {
-        dbManager.removeComment(world, plot, comment);
+    public static void removeComment(final Plot plot, final PlotComment comment) {
+        if (plot != null && plot.temp) {
+            return;
+        }
+        dbManager.removeComment(plot, comment);
     }
     
     public static void clearInbox(final Plot plot, final String inbox) {
+        if (plot != null && plot.temp) {
+            return;
+        }
         dbManager.clearInbox(plot, inbox);
     }
 
@@ -239,23 +275,32 @@ public class DBFunc {
      * @param plot
      * @param comment
      */
-    public static void setComment(final String world, final Plot plot, final PlotComment comment) {
-        dbManager.setComment(world, plot, comment);
+    public static void setComment(final Plot plot, final PlotComment comment) {
+        if (plot != null && plot.temp) {
+            return;
+        }
+        dbManager.setComment(plot, comment);
     }
 
     /**
      * @param plot
      */
-    public static void getComments(final String world, final Plot plot, final String inbox, RunnableVal whenDone) {
-        dbManager.getComments(world, plot, inbox, whenDone);
+    public static void getComments(final Plot plot, final String inbox, RunnableVal whenDone) {
+        if (plot != null && plot.temp) {
+            return;
+        }
+        dbManager.getComments(plot, inbox, whenDone);
     }
 
     /**
      * @param plot
      * @param uuid
      */
-    public static void removeTrusted(final String world, final Plot plot, final UUID uuid) {
-        dbManager.removeTrusted(world, plot, uuid);
+    public static void removeTrusted(final Plot plot, final UUID uuid) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.removeTrusted(plot, uuid);
     }
 
     /**
@@ -286,8 +331,11 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void removeMember(final String world, final Plot plot, final UUID uuid) {
-        dbManager.removeMember(world, plot, uuid);
+    public static void removeMember(final Plot plot, final UUID uuid) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.removeMember(plot, uuid);
     }
 
     /**
@@ -304,8 +352,11 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void setTrusted(final String world, final Plot plot, final UUID uuid) {
-        dbManager.setTrusted(world, plot, uuid);
+    public static void setTrusted(final Plot plot, final UUID uuid) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.setTrusted(plot, uuid);
     }
 
     public static void setHelper(final PlotCluster cluster, final UUID uuid) {
@@ -317,12 +368,15 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void setMember(final String world, final Plot plot, final UUID uuid) {
-        dbManager.setMember(world, plot, uuid);
+    public static void setMember(final Plot plot, final UUID uuid) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.setMember(plot, uuid);
     }
 
     public static void setInvited(final String world, final PlotCluster cluster, final UUID uuid) {
-        dbManager.setInvited(world, cluster, uuid);
+        dbManager.setInvited(cluster, uuid);
     }
 
     /**
@@ -330,8 +384,11 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void removeDenied(final String world, final Plot plot, final UUID uuid) {
-        dbManager.removeDenied(world, plot, uuid);
+    public static void removeDenied(final Plot plot, final UUID uuid) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.removeDenied(plot, uuid);
     }
 
     /**
@@ -339,15 +396,24 @@ public class DBFunc {
      * @param plot
      * @param uuid
      */
-    public static void setDenied(final String world, final Plot plot, final UUID uuid) {
-        dbManager.setDenied(world, plot, uuid);
+    public static void setDenied(final Plot plot, final UUID uuid) {
+        if (plot.temp) {
+            return;
+        }
+        dbManager.setDenied(plot, uuid);
     }
 
     public static HashMap<UUID, Integer> getRatings(final Plot plot) {
+        if (plot.temp) {
+            return new HashMap<>();
+        }
         return dbManager.getRatings(plot);
     }
     
     public static void setRating(Plot plot, UUID rater, int value) {
+        if (plot.temp) {
+            return;
+        }
         dbManager.setRating(plot, rater, value);
     }
 

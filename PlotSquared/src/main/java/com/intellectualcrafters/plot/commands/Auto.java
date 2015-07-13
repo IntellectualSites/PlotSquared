@@ -20,10 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -70,11 +75,11 @@ public class Auto extends SubCommand {
         int size_x = 1;
         int size_z = 1;
         String schematic = "";
-        if (PlotSquared.getInstance().getPlotWorlds().size() == 1) {
-            world = PlotSquared.getInstance().getPlotWorlds().iterator().next();
+        if (PS.get().getPlotWorlds().size() == 1) {
+            world = PS.get().getPlotWorlds().iterator().next();
         } else {
             world = plr.getLocation().getWorld();
-            if (!PlotSquared.getInstance().isPlotWorld(world)) {
+            if (!PS.get().isPlotWorld(world)) {
                 MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
                 return false;
             }
@@ -122,7 +127,7 @@ public class Auto extends SubCommand {
             }
             return false;
         }
-        final PlotWorld pWorld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotWorld pWorld = PS.get().getPlotWorld(world);
         if ((EconHandler.manager != null) && pWorld.USE_ECONOMY) {
             double cost = pWorld.PLOT_PRICE;
             cost = (size_x * size_z) * cost;
@@ -148,7 +153,7 @@ public class Auto extends SubCommand {
             // }
         }
         final String worldname = world;
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(worldname);
+        final PlotWorld plotworld = PS.get().getPlotWorld(worldname);
         if (plotworld.TYPE == 2) {
             final Location loc = plr.getLocation();
             final Plot plot = MainUtil.getPlot(new Location(worldname, loc.getX(), loc.getY(), loc.getZ()));
@@ -199,7 +204,7 @@ public class Auto extends SubCommand {
                 MainUtil.lastPlot.put(worldname, start);
                 if (lastPlot) {
                 }
-                if ((PlotSquared.getInstance().getPlots(worldname).get(start) != null) && (PlotSquared.getInstance().getPlots(worldname).get(start).owner != null)) {
+                if ((PS.get().getPlots(worldname).get(start) != null) && (PS.get().getPlots(worldname).get(start).owner != null)) {
                     continue;
                 } else {
                     lastPlot = false;

@@ -20,26 +20,36 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.sql.Timestamp;
-import java.util.*;
 
 public class DebugExec extends SubCommand {
     public DebugExec() {
@@ -82,11 +92,11 @@ public class DebugExec extends SubCommand {
                 }
                 case "remove-flag": {
                     if (args.length != 2) {
-                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec reset-flat <flag>");
+                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec remove-flag <flag>");
                         return false;
                     }
                     String flag = args[1];
-                    for (Plot plot : PlotSquared.getInstance().getPlots()) {
+                    for (Plot plot : PS.get().getPlots()) {
                         if (FlagManager.getPlotFlag(plot, flag) != null) {
                             FlagManager.removePlotFlag(plot, flag);
                         }
@@ -95,11 +105,11 @@ public class DebugExec extends SubCommand {
                 }
                 case "start-rgar": {
                     if (args.length != 2) {
-                        PlotSquared.log("&cInvalid syntax: /plot debugexec start-rgar <world>");
+                        PS.log("&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
                     boolean result;
-                    if (!PlotSquared.getInstance().isPlotWorld(args[1])) {
+                    if (!PS.get().isPlotWorld(args[1])) {
                         MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;
                     }
@@ -110,26 +120,26 @@ public class DebugExec extends SubCommand {
                         result = HybridUtils.manager.scheduleRoadUpdate(args[1], 0);
                     }
                     if (!result) {
-                        PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
+                        PS.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
                         return false;
                     }
                     return true;
                 }
                 case "stop-rgar": {
                     if (((BukkitHybridUtils)(HybridUtils.manager)).task == 0) {
-                        PlotSquared.log("&cTASK NOT RUNNING!");
+                        PS.log("&cTASK NOT RUNNING!");
                         return false;
                     }
                     ((BukkitHybridUtils)(HybridUtils.manager)).task = 0;
                     Bukkit.getScheduler().cancelTask(((BukkitHybridUtils)(HybridUtils.manager)).task);
-                    PlotSquared.log("&cCancelling task...");
+                    PS.log("&cCancelling task...");
                     while (BukkitHybridUtils.chunks.size() > 0) {
                         ChunkLoc chunk = BukkitHybridUtils.chunks.get(0);
                         BukkitHybridUtils.chunks.remove(0);
                         HybridUtils.manager.regenerateRoad(BukkitHybridUtils.world, chunk, 0);
                         ChunkManager.manager.unloadChunk(BukkitHybridUtils.world, chunk);
                     }
-                    PlotSquared.log("&cCancelled!");
+                    PS.log("&cCancelled!");
                     return true;
                 }
                 case "start-expire": {
@@ -197,7 +207,7 @@ public class DebugExec extends SubCommand {
                         return MainUtil.sendMessage(player, "&7 - Run after plot expiry has run");
                     }
                     final String world = args[1];
-                    if (!BlockManager.manager.isWorld(world) || !PlotSquared.getInstance().isPlotWorld(args[1])) {
+                    if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(args[1])) {
                         return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
                     }
                     final ArrayList<ChunkLoc> empty = new ArrayList<>();
@@ -208,7 +218,7 @@ public class DebugExec extends SubCommand {
                             Trim.sendMessage(" - MCA #: " + empty.size());
                             Trim.sendMessage(" - CHUNKS: " + (empty.size() * 1024) + " (max)");
                             Trim.sendMessage("Exporting log for manual approval...");
-                            final File file = new File(PlotSquared.getInstance().IMP.getDirectory() + File.separator + "trim.txt");
+                            final File file = new File(PS.get().IMP.getDirectory() + File.separator + "trim.txt");
                             PrintWriter writer;
                             try {
                                 writer = new PrintWriter(file);

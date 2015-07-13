@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
@@ -38,7 +38,7 @@ public class DebugRoadRegen extends SubCommand {
     public boolean execute(final PlotPlayer player, final String... args) {
         final Location loc = player.getLocation();
         final String world = loc.getWorld();
-        if (!(PlotSquared.getInstance().getPlotWorld(world) instanceof HybridPlotWorld)) {
+        if (!(PS.get().getPlotWorld(world) instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
         final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);

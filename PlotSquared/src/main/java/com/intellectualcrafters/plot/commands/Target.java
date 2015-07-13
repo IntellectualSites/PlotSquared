@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -35,7 +35,7 @@ public class Target extends SubCommand {
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
         final Location ploc = plr.getLocation();
-        if (!PlotSquared.getInstance().isPlotWorld(ploc.getWorld())) {
+        if (!PS.get().isPlotWorld(ploc.getWorld())) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }

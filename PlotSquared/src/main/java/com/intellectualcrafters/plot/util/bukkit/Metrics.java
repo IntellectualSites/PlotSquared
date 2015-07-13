@@ -42,14 +42,14 @@ import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.configuration.InvalidConfigurationException;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.PS;
 
 public class Metrics {
     /**
@@ -525,7 +525,7 @@ public class Metrics {
         connection.addRequestProperty("Connection", "close");
         connection.setDoOutput(true);
         if (this.debug) {
-            PlotSquared.log("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
+            PS.log("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
         }
         // Write the data
         final OutputStream os = connection.getOutputStream();

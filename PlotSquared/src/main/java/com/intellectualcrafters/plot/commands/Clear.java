@@ -20,7 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import java.util.Set;
+
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -33,8 +35,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-import java.util.Set;
-
 public class Clear extends SubCommand {
     public Clear() {
         super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS, false);
@@ -45,25 +45,25 @@ public class Clear extends SubCommand {
         if (plr == null) {
             // Is console
             if (args.length < 2) {
-                PlotSquared.log("You need to specify two arguments: ID (0;0) & World (world)");
+                PS.log("You need to specify two arguments: ID (0;0) & World (world)");
             } else {
                 final PlotId id = PlotId.fromString(args[0]);
                 final String world = args[1];
                 if (id == null) {
-                    PlotSquared.log("Invalid Plot ID: " + args[0]);
+                    PS.log("Invalid Plot ID: " + args[0]);
                 } else {
-                    if (!PlotSquared.getInstance().isPlotWorld(world)) {
-                        PlotSquared.log("Invalid plot world: " + world);
+                    if (!PS.get().isPlotWorld(world)) {
+                        PS.log("Invalid plot world: " + world);
                     } else {
                         final Plot plot = MainUtil.getPlot(world, id);
                         if (plot == null) {
-                            PlotSquared.log("Could not find plot " + args[0] + " in world " + world);
+                            PS.log("Could not find plot " + args[0] + " in world " + world);
                         } else {
                             Runnable runnable = new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.clear(world, plot, plot.owner == null, null);
-                                    PlotSquared.log("Plot " + plot.getId().toString() + " cleared.");
+                                    MainUtil.clear(plot, plot.owner == null, null);
+                                    PS.log("Plot " + plot.getId().toString() + " cleared.");
                                 }
                             };
                             if (Settings.CONFIRM_CLEAR && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
@@ -84,7 +84,7 @@ public class Clear extends SubCommand {
             PlotId id = PlotId.fromString(args[0]);
             if (id == null) {
                 if (args[1].equalsIgnoreCase("mine")) {
-                    Set<Plot> plots = PlotSquared.getInstance().getPlots(plr);
+                    Set<Plot> plots = PS.get().getPlots(plr);
                     if (plots.size() == 0) {
                         MainUtil.sendMessage(plr, C.NO_PLOTS);
                         return false;

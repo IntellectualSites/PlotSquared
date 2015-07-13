@@ -20,19 +20,30 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
  * plot functions
@@ -50,7 +61,7 @@ public class MainUtil {
     static PseudoRandom random = new PseudoRandom();
     
     public static boolean isPlotArea(final Location location) {
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(location.getWorld());
+        final PlotWorld plotworld = PS.get().getPlotWorld(location.getWorld());
         if (plotworld.TYPE == 2) {
             return ClusterManager.getCluster(location) != null;
         }
@@ -67,7 +78,6 @@ public class MainUtil {
         if (arg == null) {
             if (player == null) {
                 if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
-                System.out.print(1);
                 return null;
             }
             return getPlot(player.getLocation());
@@ -77,10 +87,7 @@ public class MainUtil {
         if (player != null) {
             worldname = player.getLocation().getWorld();
         }
-        System.out.print(arg);
         String[] split = arg.split(";|,");
-        System.out.print(split[0]);
-        System.out.print(split[1]);
         if (split.length == 3) {
             worldname = split[0];
             id = PlotId.fromString(split[1] + ";" + split[2]);
@@ -90,21 +97,21 @@ public class MainUtil {
         }
         else {
             if (worldname == null) {
-                if (PlotSquared.getInstance().getPlotWorlds().size() == 0) {
+                if (PS.get().getPlotWorlds().size() == 0) {
                     if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
                     return null;
                 }
-                worldname = PlotSquared.getInstance().getPlotWorlds().iterator().next();
+                worldname = PS.get().getPlotWorlds().iterator().next();
             }
-            for (Plot p : PlotSquared.getInstance().getPlots(worldname).values()) {
+            for (Plot p : PS.get().getPlots(worldname).values()) {
                 String name = p.settings.getAlias();
                 if (name.length() != 0 && name.equalsIgnoreCase(arg)) {
                     return p;
                 }
             }
-            for (String world : PlotSquared.getInstance().getPlotWorlds()) {
+            for (String world : PS.get().getPlotWorlds()) {
                 if (!world.endsWith(worldname)) {
-                    for (Plot p : PlotSquared.getInstance().getPlots(world).values()) {
+                    for (Plot p : PS.get().getPlots(world).values()) {
                         String name = p.settings.getAlias();
                         if (name.length() != 0 && name.equalsIgnoreCase(arg)) {
                             return p;
@@ -113,17 +120,14 @@ public class MainUtil {
                 }
             }
         }
-        if (worldname == null || !PlotSquared.getInstance().isPlotWorld(worldname)) {
+        if (worldname == null || !PS.get().isPlotWorld(worldname)) {
             if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
-            System.out.print("INVALID WORLD: ");
             return null;
         }
         if (id == null) {
-            System.out.print("INVALID ID: ");
             if (message) MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID); 
             return null;
         }
-        System.out.print("VALID PLOT: ");
         return getPlot(worldname, id);
     }
     
@@ -137,7 +141,7 @@ public class MainUtil {
      * @return boolean
      */
     public static boolean mergePlots(final PlotPlayer player, final String world, final ArrayList<PlotId> plotIds) {
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
         if ((EconHandler.manager != null) && plotworld.USE_ECONOMY) {
             final double cost = plotIds.size() * plotworld.MERGE_PRICE;
             if (cost > 0d) {
@@ -161,11 +165,11 @@ public class MainUtil {
         if (!result) {
             return false;
         }
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
         manager.startPlotUnlink(plotworld, ids);
         for (final PlotId id : ids) {
-            final Plot myplot = PlotSquared.getInstance().getPlots(world).get(id);
+            final Plot myplot = PS.get().getPlots(world).get(id);
             if (plot == null) {
                 continue;
             }
@@ -175,9 +179,8 @@ public class MainUtil {
             if (plot.denied != null) {
                 myplot.denied = plot.denied;
             }
-            myplot.deny_entry = plot.deny_entry;
             myplot.settings.setMerged(new boolean[] { false, false, false, false });
-            DBFunc.setMerged(world, myplot, myplot.settings.getMerged());
+            DBFunc.setMerged(myplot, myplot.settings.getMerged());
         }
         if (plotworld.TERRAIN != 3) {
             for (int x = pos1.x; x <= pos2.x; x++) {
@@ -212,7 +215,7 @@ public class MainUtil {
     }
     
     public static boolean isPlotAreaAbs(final Location location) {
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(location.getWorld());
+        final PlotWorld plotworld = PS.get().getPlotWorld(location.getWorld());
         if (plotworld.TYPE == 2) {
             return ClusterManager.getClusterAbs(location) != null;
         }
@@ -220,19 +223,19 @@ public class MainUtil {
     }
     
     public static boolean isPlotRoad(final Location location) {
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(location.getWorld());
+        final PlotWorld plotworld = PS.get().getPlotWorld(location.getWorld());
         if (plotworld.TYPE == 2) {
             PlotCluster cluster = ClusterManager.getCluster(location);
             if (cluster == null) {
                 return false;
             }
         }
-        PlotManager manager = PlotSquared.getInstance().getPlotManager(location.getWorld());
+        PlotManager manager = PS.get().getPlotManager(location.getWorld());
         return manager.getPlotId(plotworld, location.getX(), location.getY(), location.getZ()) == null;
     }
     
     public static boolean isPlotArea(final Plot plot) {
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(plot.world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.TYPE == 2) {
             return ClusterManager.getCluster(plot) != null;
         }
@@ -253,8 +256,8 @@ public class MainUtil {
     
     public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
 
-        final Plot plot1 = PlotSquared.getInstance().getPlots(world).get(pos1);
-        final Plot plot2 = PlotSquared.getInstance().getPlots(world).get(pos2);
+        final Plot plot1 = PS.get().getPlots(world).get(pos1);
+        final Plot plot2 = PS.get().getPlots(world).get(pos2);
         
         if (plot1 != null) {
             pos1 = getBottomPlot(plot1).id;
@@ -293,7 +296,7 @@ public class MainUtil {
     public static int getPlayerPlotCount(final String world, final PlotPlayer plr) {
         final UUID uuid = plr.getUUID();
         int count = 0;
-        for (final Plot plot : PlotSquared.getInstance().getPlots(world).values()) {
+        for (final Plot plot : PS.get().getPlots(world).values()) {
             if (plot.hasOwner() && plot.owner.equals(uuid) && plot.countsTowardsMax) {
                 count++;
             }
@@ -303,17 +306,17 @@ public class MainUtil {
 
     public static int getPlayerPlotCount(final PlotPlayer plr) {
         int count = 0;
-        for (final String world : PlotSquared.getInstance().getPlotWorldsString()) {
+        for (final String world : PS.get().getPlotWorldsString()) {
             count += getPlayerPlotCount(world, plr);
         }
         return count;
     }
     
     public static Location getDefaultHome(Plot plot) {
-        PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(plot.world);
+        PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.DEFAULT_HOME != null) {
             final Location bot = getPlotBottomLoc(plot.world, plot.id);
-            final PlotManager manager = PlotSquared.getInstance().getPlotManager(plot.world);
+            final PlotManager manager = PS.get().getPlotManager(plot.world);
             final int x;
             final int z;
             if (plotworld.DEFAULT_HOME.x == Integer.MAX_VALUE && plotworld.DEFAULT_HOME.z == Integer.MAX_VALUE) {
@@ -325,15 +328,15 @@ public class MainUtil {
                 x = bot.getX() + plotworld.DEFAULT_HOME.x;
                 z = bot.getZ() + plotworld.DEFAULT_HOME.z;
             }
-            final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PlotSquared.getInstance().getPlotWorld(plot.world), plot).getY());
+            final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PS.get().getPlotWorld(plot.world), plot).getY());
             return new Location(plot.world, x, y + 1, z);
         }
         final Location top = getPlotTopLoc(plot.world, plot.id);
         final Location bot = getPlotBottomLoc(plot.world, plot.id);
         final int x = ((top.getX() - bot.getX()) / 2) + bot.getX();
         final int z = bot.getZ();
-        PlotManager manager = PlotSquared.getInstance().getPlotManager(plot.world);
-        final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PlotSquared.getInstance().getPlotWorld(plot.world), plot).getY());
+        PlotManager manager = PS.get().getPlotManager(plot.world);
+        final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PS.get().getPlotWorld(plot.world), plot).getY());
         return new Location(plot.world, x, y + 1, z);
     }
 
@@ -344,8 +347,8 @@ public class MainUtil {
 
         if (result) {
             final Location location;
-            if (PlotSquared.getInstance().getPlotWorld(plot.world).HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
-                location = MainUtil.getPlotHome(bot.world, bot);
+            if (PS.get().getPlotWorld(plot.world).HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
+                location = MainUtil.getPlotHome(bot);
             }
             else {
                 location = getDefaultHome(plot);
@@ -380,21 +383,21 @@ public class MainUtil {
 
     public static int getBorder(final String worldname) {
         if (worldBorder.containsKey(worldname)) {
-            PlotSquared.getInstance().getPlotWorld(worldname);
+            PS.get().getPlotWorld(worldname);
             return worldBorder.get(worldname) + 16;
         }
         return Integer.MAX_VALUE;
     }
 
     public static void setupBorder(final String world) {
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
         if (!plotworld.WORLD_BORDER) {
             return;
         }
         if (!worldBorder.containsKey(world)) {
             worldBorder.put(world, 0);
         }
-        for (final Plot plot : PlotSquared.getInstance().getPlots(world).values()) {
+        for (final Plot plot : PS.get().getPlots(world).values()) {
             updateWorldBorder(plot);
         }
     }
@@ -484,8 +487,8 @@ public class MainUtil {
         }
         final PlotId pos1 = plotIds.get(0);
         final PlotId pos2 = plotIds.get(plotIds.size() - 1);
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
 
         boolean result = EventUtil.manager.callMerge(world, getPlot(world, pos1), plotIds);
         if (!result) {
@@ -498,7 +501,7 @@ public class MainUtil {
                 final boolean lx = x < pos2.x;
                 final boolean ly = y < pos2.y;
                 final PlotId id = new PlotId(x, y);
-                final Plot plot = PlotSquared.getInstance().getPlots(world).get(id);
+                final Plot plot = PS.get().getPlots(world).get(id);
                 Plot plot2 = null;
                 if (removeRoads) {
                     removeSign(plot);
@@ -512,7 +515,7 @@ public class MainUtil {
                         }
                     }
                     if (!plot.settings.getMerged(1)) {
-                        plot2 = PlotSquared.getInstance().getPlots(world).get(new PlotId(x + 1, y));
+                        plot2 = PS.get().getPlots(world).get(new PlotId(x + 1, y));
                         mergePlot(world, plot, plot2, removeRoads);
                         plot.settings.setMerged(1, true);
                         plot2.settings.setMerged(3, true);
@@ -520,7 +523,7 @@ public class MainUtil {
                 }
                 if (ly) {
                     if (!plot.settings.getMerged(2)) {
-                        plot2 = PlotSquared.getInstance().getPlots(world).get(new PlotId(x, y + 1));
+                        plot2 = PS.get().getPlots(world).get(new PlotId(x, y + 1));
                         mergePlot(world, plot, plot2, removeRoads);
                         plot.settings.setMerged(2, true);
                         plot2.settings.setMerged(0, true);
@@ -531,8 +534,8 @@ public class MainUtil {
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final PlotId id = new PlotId(x, y);
-                final Plot plot = PlotSquared.getInstance().getPlots(world).get(id);
-                DBFunc.setMerged(world, plot, plot.settings.getMerged());
+                final Plot plot = PS.get().getPlots(world).get(id);
+                DBFunc.setMerged(plot, plot.settings.getMerged());
             }
         }
         manager.finishPlotMerge(plotworld, plotIds);
@@ -553,7 +556,7 @@ public class MainUtil {
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
-            PlotSquared.getInstance().getPlotManager(plot.world).removeRoadSouthEast(plotworld, plot);
+            PS.get().getPlotManager(plot.world).removeRoadSouthEast(plotworld, plot);
         }
     }
     
@@ -571,7 +574,7 @@ public class MainUtil {
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
-            PlotSquared.getInstance().getPlotManager(plot.world).removeRoadEast(plotworld, plot);
+            PS.get().getPlotManager(plot.world).removeRoadEast(plotworld, plot);
         }
     }
     
@@ -589,7 +592,7 @@ public class MainUtil {
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         }
         else {
-            PlotSquared.getInstance().getPlotManager(plot.world).removeRoadSouth(plotworld, plot);
+            PS.get().getPlotManager(plot.world).removeRoadSouth(plotworld, plot);
         }
     }
 
@@ -603,7 +606,7 @@ public class MainUtil {
      * @param greaterPlot
      */
     public static void mergePlot(final String world, final Plot lesserPlot, final Plot greaterPlot, final boolean removeRoads) {
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
         if (lesserPlot.id.x.equals(greaterPlot.id.x)) {
             if (!lesserPlot.settings.getMerged(2)) {
                 lesserPlot.settings.setMerged(2, true);
@@ -625,21 +628,29 @@ public class MainUtil {
 
     public static void removeSign(final Plot p) {
         final String world = p.world;
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
         if (!plotworld.ALLOW_SIGNS) {
             return;
         }
         final Location loc = manager.getSignLoc(plotworld, p);
         BlockManager.setBlocks(world, new int[] { loc.getX() }, new int[] { loc.getY() }, new int[] { loc.getZ() }, new int[] { 0 }, new byte[] { 0 });
     }
+    
+    public static void setSign(final Plot p) {
+        if (p.owner == null) {
+            setSign(null, p);
+            return;
+        }
+        setSign(UUIDHandler.getName(p.owner), p);
+    }
 
     public static void setSign(String name, final Plot p) {
         if (name == null) {
             name = "unknown";
         }
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(p.world);
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(p.world);
+        final PlotManager manager = PS.get().getPlotManager(p.world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(p.world);
         if (plotworld.ALLOW_SIGNS) {
         final Location loc = manager.getSignLoc(plotworld, p);
             final String id = p.id.x + ";" + p.id.y;
@@ -655,7 +666,7 @@ public class MainUtil {
         return string;
     }
 
-    public static void autoMerge(final String world, final Plot plot, final UUID uuid) {
+    public static void autoMerge(final Plot plot, final UUID uuid) {
         if (plot == null) {
             return;
         }
@@ -676,32 +687,32 @@ public class MainUtil {
             final PlotId bot = getBottomPlot(plot).id;
             final PlotId top = getTopPlot(plot).id;
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
-            if (ownsPlots(world, plots, uuid, 0)) {
-                final boolean result = mergePlots(world, plots, true);
+            if (ownsPlots(plot.world, plots, uuid, 0)) {
+                final boolean result = mergePlots(plot.world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
                 }
             }
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
-            if (ownsPlots(world, plots, uuid, 1)) {
-                final boolean result = mergePlots(world, plots, true);
+            if (ownsPlots(plot.world, plots, uuid, 1)) {
+                final boolean result = mergePlots(plot.world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
                 }
             }
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
-            if (ownsPlots(world, plots, uuid, 2)) {
-                final boolean result = mergePlots(world, plots, true);
+            if (ownsPlots(plot.world, plots, uuid, 2)) {
+                final boolean result = mergePlots(plot.world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
                 }
             }
             plots = getPlotSelectionIds(new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
-            if (ownsPlots(world, plots, uuid, 3)) {
-                final boolean result = mergePlots(world, plots, true);
+            if (ownsPlots(plot.world, plots, uuid, 3)) {
+                final boolean result = mergePlots(plot.world, plots, true);
                 if (result) {
                     merge = true;
                     continue;
@@ -715,7 +726,7 @@ public class MainUtil {
         final PlotId id_min = plots.get(0);
         final PlotId id_max = plots.get(plots.size() - 1);
         for (final PlotId myid : plots) {
-            final Plot myplot = PlotSquared.getInstance().getPlots(world).get(myid);
+            final Plot myplot = PS.get().getPlots(world).get(myid);
             if ((myplot == null) || myplot.owner == null || !(myplot.owner.equals(uuid))) {
                 return false;
             }
@@ -736,8 +747,8 @@ public class MainUtil {
             return;
         }
         final String world = plot.world;
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
         final Location bot = manager.getPlotBottomLocAbs(plotworld, plot.id);
         final Location top = manager.getPlotTopLocAbs(plotworld, plot.id);
         final int border = worldBorder.get(plot.world);
@@ -757,9 +768,12 @@ public class MainUtil {
             updateWorldBorder(plot);
         }
         final Plot p = createPlotAbs(uuid, plot);
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(plot.world);
+        if (p == null) {
+            return false;
+        }
+        final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.AUTO_MERGE) {
-            autoMerge(plot.world, p, uuid);
+            autoMerge(p, uuid);
         }
         return true;
     }
@@ -769,8 +783,16 @@ public class MainUtil {
      */
     public static Plot createPlotAbs(final UUID uuid, final Plot plot) {
         final String w = plot.world;
-        final Plot p = new Plot(plot.id, uuid, new ArrayList<UUID>(), new ArrayList<UUID>(), w);
-        PlotSquared.getInstance().updatePlot(p);
+        HashMap<PlotId, Plot> plots = PS.get().getPlots(plot.world);
+        Plot p = plots.get(plot.id);
+        if (p != null) {
+            return p;
+        }
+        p = new Plot(w, plot.id, uuid);
+        if (p.owner == null) {
+            return null;
+        }
+        PS.get().updatePlot(p);
         DBFunc.createPlotAndSettings(p);
         return p;
     }
@@ -803,24 +825,24 @@ public class MainUtil {
             return false;
         }
         ChunkManager.manager.clearAllEntities(plot);
-        clear(plot.world, plot, isDelete, whenDone);
+        clear(plot, isDelete, whenDone);
         removeSign(plot);
         return true;
     }
 
-    public static void clear(final String world, final Plot plot, final boolean isDelete, final Runnable whenDone) {
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
-        final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+    public static void clear(final Plot plot, final boolean isDelete, final Runnable whenDone) {
+        final PlotManager manager = PS.get().getPlotManager(plot.world);
+        final Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final int prime = 31;
         int h = 1;
         h = (prime * h) + pos1.getX();
         h = (prime * h) + pos1.getZ();
         state = h;
         System.currentTimeMillis();
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         runners.put(plot, 1);
         if (plotworld.TERRAIN != 0 || Settings.FAST_CLEAR) {
-            final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
+            final Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
             ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
                 @Override
                 public void run() {
@@ -919,12 +941,12 @@ public class MainUtil {
         }
     }
 
-    public static void setBiome(final String world, final Plot plot, final String biome) {
-        final int bottomX = getPlotBottomLoc(world, plot.id).getX() + 1;
-        final int topX = getPlotTopLoc(world, plot.id).getX();
-        final int bottomZ = getPlotBottomLoc(world, plot.id).getZ() + 1;
-        final int topZ = getPlotTopLoc(world, plot.id).getZ();
-        BukkitUtil.setBiome(world, bottomX, bottomZ, topX, topZ, biome);
+    public static void setBiome(final Plot plot, final String biome) {
+        final int bottomX = getPlotBottomLoc(plot.world, plot.id).getX() + 1;
+        final int topX = getPlotTopLoc(plot.world, plot.id).getX();
+        final int bottomZ = getPlotBottomLoc(plot.world, plot.id).getZ() + 1;
+        final int topZ = getPlotTopLoc(plot.world, plot.id).getZ();
+        BukkitUtil.setBiome(plot.world, bottomX, bottomZ, topX, topZ, biome);
         update(plot);
     }
 
@@ -948,7 +970,7 @@ public class MainUtil {
         final Plot plot = getPlot(w, plotid);
         final BlockLoc home = plot.settings.getPosition();
         final Location bot = getPlotBottomLoc(w, plotid);
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(w);
+        final PlotManager manager = PS.get().getPlotManager(w);
         if ((home == null) || ((home.x == 0) && (home.z == 0))) {
             return getDefaultHome(plot);
         } else {
@@ -967,8 +989,8 @@ public class MainUtil {
      *
      * @see #getPlotHome(String, Plot)
      */
-    public static Location getPlotHome(final String w, final Plot plot) {
-        return getPlotHome(w, plot.id);
+    public static Location getPlotHome(final Plot plot) {
+        return getPlotHome(plot.world, plot.id);
     }
 
     /**
@@ -981,8 +1003,8 @@ public class MainUtil {
      * @return Location top
      */
     public static Location getPlotTopLocAbs(final String world, final PlotId id) {
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
         return manager.getPlotTopLocAbs(plotworld, id);
     }
 
@@ -996,8 +1018,8 @@ public class MainUtil {
      * @return Location bottom
      */
     public static Location getPlotBottomLocAbs(final String world, final PlotId id) {
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
         return manager.getPlotBottomLocAbs(plotworld, id);
     }
 
@@ -1023,12 +1045,12 @@ public class MainUtil {
      * @return Location top of mega plot
      */
     public static Location getPlotTopLoc(final String world, PlotId id) {
-        final Plot plot = PlotSquared.getInstance().getPlots(world).get(id);
+        final Plot plot = PS.get().getPlots(world).get(id);
         if (plot != null) {
             id = getTopPlot(plot).id;
         }
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
         return manager.getPlotTopLocAbs(plotworld, id);
     }
 
@@ -1042,12 +1064,12 @@ public class MainUtil {
      * @return Location bottom of mega plot
      */
     public static Location getPlotBottomLoc(final String world, PlotId id) {
-        final Plot plot = PlotSquared.getInstance().getPlots(world).get(id);
+        final Plot plot = PS.get().getPlots(world).get(id);
         if (plot != null) {
             id = getBottomPlot(plot).id;
         }
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
         return manager.getPlotBottomLocAbs(plotworld, id);
     }
 
@@ -1083,8 +1105,8 @@ public class MainUtil {
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final PlotId id = new PlotId(x, y);
-                if (PlotSquared.getInstance().getPlots(world).get(id) != null) {
-                    if (PlotSquared.getInstance().getPlots(world).get(id).owner != null) {
+                if (PS.get().getPlots(world).get(id) != null) {
+                    if (PS.get().getPlots(world).get(id).owner != null) {
                         return false;
                     }
                 }
@@ -1094,8 +1116,8 @@ public class MainUtil {
     }
     
     public static boolean swap(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
-        Plot p1 = PlotSquared.getInstance().getPlots(world).get(current);
-        Plot p2 = PlotSquared.getInstance().getPlots(world).get(newPlot);
+        Plot p1 = PS.get().getPlots(world).get(current);
+        Plot p2 = PS.get().getPlots(world).get(newPlot);
         if (p1==null || p2 == null || p1.owner == null || !p1.owner.equals(p2.owner)) {
             return false;
         }
@@ -1107,20 +1129,20 @@ public class MainUtil {
         p1.id.y = p2.id.y.intValue();
         p2.id.x = temp.x;
         p2.id.y = temp.y;
-        PlotSquared.getInstance().getPlots(world).remove(p1.id);
-        PlotSquared.getInstance().getPlots(world).remove(p2.id);
+        PS.get().getPlots(world).remove(p1.id);
+        PS.get().getPlots(world).remove(p2.id);
         p1.id.recalculateHash();
         p2.id.recalculateHash();
-        PlotSquared.getInstance().getPlots(world).put(p1.id, p1);
-        PlotSquared.getInstance().getPlots(world).put(p2.id, p2);
+        PS.get().getPlots(world).put(p1.id, p1);
+        PS.get().getPlots(world).put(p2.id, p2);
         // Swap database
         DBFunc.dbManager.swapPlots(p2, p1);
         return true;
     }
     
     public static boolean swapData(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
-        Plot p1 = PlotSquared.getInstance().getPlots(world).get(current);
-        Plot p2 = PlotSquared.getInstance().getPlots(world).get(newPlot);
+        Plot p1 = PS.get().getPlots(world).get(current);
+        Plot p2 = PS.get().getPlots(world).get(newPlot);
         if (p1 == null || p1.owner == null) {
             if (p2 != null && p2.owner != null) {
                 moveData(p2, p1, whenDone);
@@ -1141,12 +1163,12 @@ public class MainUtil {
         p1.id.y = p2.id.y.intValue();
         p2.id.x = temp.x;
         p2.id.y = temp.y;
-        PlotSquared.getInstance().getPlots(world).remove(p1.id);
-        PlotSquared.getInstance().getPlots(world).remove(p2.id);
+        PS.get().getPlots(world).remove(p1.id);
+        PS.get().getPlots(world).remove(p2.id);
         p1.id.recalculateHash();
         p2.id.recalculateHash();
-        PlotSquared.getInstance().getPlots(world).put(p1.id, p1);
-        PlotSquared.getInstance().getPlots(world).put(p2.id, p2);
+        PS.get().getPlots(world).put(p1.id, p1);
+        PS.get().getPlots(world).put(p2.id, p2);
         // Swap database
         DBFunc.dbManager.swapPlots(p2, p1);
         TaskManager.runTask(whenDone);
@@ -1160,7 +1182,7 @@ public class MainUtil {
         }
         final Plot pos1 = getBottomPlot(plot1);
         final Plot pos2 = getTopPlot(plot1);
-        final PlotId size = MainUtil.getSize(plot1.world, plot1);
+        final PlotId size = MainUtil.getSize(plot1);
         if (!MainUtil.isUnowned(plot2.world, plot2.id, new PlotId((plot2.id.x + size.x) - 1, (plot2.id.y + size.y) - 1))) {
             TaskManager.runTaskLater(whenDone, 1);
             return false;
@@ -1170,12 +1192,12 @@ public class MainUtil {
         final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
         for (final PlotId id : selection) {
             DBFunc.movePlot(getPlot(plot1.world, new PlotId(id.x, id.y)), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
-            final Plot plot = PlotSquared.getInstance().getPlots(plot1.world).get(id);
-            PlotSquared.getInstance().getPlots(plot1.world).remove(id);
+            final Plot plot = PS.get().getPlots(plot1.world).get(id);
+            PS.get().getPlots(plot1.world).remove(id);
             plot.id.x += offset_x;
             plot.id.y += offset_y;
             plot.id.recalculateHash();
-            PlotSquared.getInstance().getPlots(plot2.world).put(plot.id, plot);
+            PS.get().getPlots(plot2.world).put(plot.id, plot);
         }
         TaskManager.runTaskLater(whenDone, 1);
         return true;
@@ -1190,7 +1212,7 @@ public class MainUtil {
         }
         final Plot pos1 = getBottomPlot(plot1);
         final Plot pos2 = getTopPlot(plot1);
-        final PlotId size = MainUtil.getSize(plot1.world, plot1);
+        final PlotId size = MainUtil.getSize(plot1);
         if (!MainUtil.isUnowned(plot2.world, plot2.id, new PlotId((plot2.id.x + size.x) - 1, (plot2.id.y + size.y) - 1))) {
             return false;
         }
@@ -1200,12 +1222,12 @@ public class MainUtil {
         for (final PlotId id : selection) {
             String worldOriginal = plot1.world;
             PlotId idOriginal = new PlotId(id.x, id.y);
-            final Plot plot = PlotSquared.getInstance().getPlots(plot1.world).get(id);
-            PlotSquared.getInstance().getPlots(plot1.world).remove(id);
+            final Plot plot = PS.get().getPlots(plot1.world).get(id);
+            PS.get().getPlots(plot1.world).remove(id);
             plot.id.x += offset_x;
             plot.id.y += offset_y;
             plot.id.recalculateHash();
-            PlotSquared.getInstance().getPlots(plot2.world).put(plot.id, plot);
+            PS.get().getPlots(plot2.world).put(plot.id, plot);
             DBFunc.movePlot(getPlot(worldOriginal, idOriginal), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
         }
         ChunkManager.manager.copyRegion(bot1, top, bot2, new Runnable() {
@@ -1230,7 +1252,7 @@ public class MainUtil {
         }
         final Plot pos1 = getBottomPlot(currentPlot);
         final Plot pos2 = getTopPlot(currentPlot);
-        final PlotId size = MainUtil.getSize(world, currentPlot);
+        final PlotId size = MainUtil.getSize(currentPlot);
         if (!MainUtil.isUnowned(world, newPlot, new PlotId((newPlot.x + size.x) - 1, (newPlot.y + size.y) - 1))) {
             TaskManager.runTaskLater(whenDone, 1);
             return false;
@@ -1244,31 +1266,31 @@ public class MainUtil {
             Plot plot = createPlotAbs(currentPlot.owner, getPlot(world, new PlotId(x, y)));
             if (currentPlot.settings.flags != null && currentPlot.settings.flags.size() > 0) {
                 plot.settings.flags = currentPlot.settings.flags;
-                DBFunc.setFlags(world, plot, currentPlot.settings.flags.values());
+                DBFunc.setFlags(plot, currentPlot.settings.flags.values());
             }
             if (currentPlot.settings.isMerged()) {
                 plot.settings.setMerged(currentPlot.settings.getMerged());
-                DBFunc.setMerged(world, plot, currentPlot.settings.getMerged());
+                DBFunc.setMerged(plot, currentPlot.settings.getMerged());
             }
             if (currentPlot.members != null && currentPlot.members.size() > 0) {
                 plot.members = currentPlot.members;
                 for (UUID member : plot.members) {
-                    DBFunc.setMember(world, plot, member);
+                    DBFunc.setMember(plot, member);
                 }
             }
             if (currentPlot.trusted != null && currentPlot.trusted.size() > 0) {
                 plot.members = currentPlot.trusted;
                 for (UUID trusted : plot.trusted) {
-                    DBFunc.setTrusted(world, plot, trusted);
+                    DBFunc.setTrusted(plot, trusted);
                 }
             }
             if (currentPlot.denied != null && currentPlot.denied.size() > 0) {
                 plot.members = currentPlot.denied;
                 for (UUID denied : plot.denied) {
-                    DBFunc.setDenied(world, plot, denied);
+                    DBFunc.setDenied(plot, denied);
                 }
             }
-            PlotSquared.getInstance().getPlots(world).put(plot.id, plot);
+            PS.get().getPlots(world).put(plot.id, plot);
         }
         ChunkManager.manager.copyRegion(bot1, top, bot2, whenDone);
         return true;
@@ -1310,7 +1332,7 @@ public class MainUtil {
         final String prefixStr = colorise('&', C.PREFIX.s());
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
-                PlotSquared.log(prefixStr + msg);
+                PS.log(prefixStr + msg);
             } else {
                 sendMessageWrapped(plr, prefixStr + msg);
             }
@@ -1425,7 +1447,7 @@ public class MainUtil {
                 }
             }
             if (plr == null) {
-                PlotSquared.log(colorise('&', msg));
+                PS.log(colorise('&', msg));
             } else {
                 sendMessage(plr, msg, c.usePrefix());
             }
@@ -1435,14 +1457,14 @@ public class MainUtil {
 
     public static Plot getBottomPlot(final Plot plot) {
         if (plot.settings.getMerged(0)) {
-            final Plot p = PlotSquared.getInstance().getPlots(plot.world).get(new PlotId(plot.id.x, plot.id.y - 1));
+            final Plot p = PS.get().getPlots(plot.world).get(new PlotId(plot.id.x, plot.id.y - 1));
             if (p == null) {
                 return plot;
             }
             return getBottomPlot(p);
         }
         if (plot.settings.getMerged(3)) {
-            final Plot p = PlotSquared.getInstance().getPlots(plot.world).get(new PlotId(plot.id.x - 1, plot.id.y));
+            final Plot p = PS.get().getPlots(plot.world).get(new PlotId(plot.id.x - 1, plot.id.y));
             if (p == null) {
                 return plot;
             }
@@ -1453,14 +1475,14 @@ public class MainUtil {
 
     public static Plot getTopPlot(final Plot plot) {
         if (plot.settings.getMerged(2)) {
-            final Plot p = PlotSquared.getInstance().getPlots(plot.world).get(new PlotId(plot.id.x, plot.id.y + 1));
+            final Plot p = PS.get().getPlots(plot.world).get(new PlotId(plot.id.x, plot.id.y + 1));
             if (p == null) {
                 return plot;
             }
             return getTopPlot(p);
         }
         if (plot.settings.getMerged(1)) {
-            final Plot p = PlotSquared.getInstance().getPlots(plot.world).get(new PlotId(plot.id.x + 1, plot.id.y));
+            final Plot p = PS.get().getPlots(plot.world).get(new PlotId(plot.id.x + 1, plot.id.y));
             if (p == null) {
                 return plot;
             }
@@ -1470,7 +1492,7 @@ public class MainUtil {
         
     }
 
-    public static PlotId getSize(final String world, final Plot plot) {
+    public static PlotId getSize(final Plot plot) {
         final PlotSettings settings = plot.settings;
         if (!settings.isMerged()) {
             return new PlotId(1, 1);
@@ -1487,10 +1509,10 @@ public class MainUtil {
         if (id == null) {
             return null;
         }
-        if (PlotSquared.getInstance().getPlots(world).containsKey(id)) {
-            return PlotSquared.getInstance().getPlots(world).get(id);
+        if (PS.get().getPlots(world).containsKey(id)) {
+            return PS.get().getPlots(world).get(id);
         }
-        return new Plot(id, null, new ArrayList<UUID>(), new ArrayList<UUID>(), world);
+        return new Plot(world, id, null);
     }
 
     /**
@@ -1500,11 +1522,11 @@ public class MainUtil {
      */
     public static PlotId getPlotAbs(final Location loc) {
         final String world = loc.getWorld();
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
         if (manager == null) {
             return null;
         }
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
         return manager.getPlotIdAbs(plotworld, loc.getX(), loc.getY(), loc.getZ());
     }
 
@@ -1515,11 +1537,11 @@ public class MainUtil {
      */
     public static PlotId getPlotId(final Location loc) {
         final String world = loc.getWorld();
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
         if (manager == null) {
             return null;
         }
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
         final PlotId id = manager.getPlotId(plotworld, loc.getX(), loc.getY(), loc.getZ());
         if ((id != null) && (plotworld.TYPE == 2)) {
             if (ClusterManager.getCluster(world, id) == null) {

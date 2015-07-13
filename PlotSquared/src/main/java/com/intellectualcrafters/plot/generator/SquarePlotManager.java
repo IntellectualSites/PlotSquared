@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -122,7 +122,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             // This means you are in the intersection
             final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH, 0, z + dpw.ROAD_WIDTH);
             final PlotId id = MainUtil.getPlotAbs(loc);
-            final Plot plot = PlotSquared.getInstance().getPlots(plotworld.worldname).get(id);
+            final Plot plot = PS.get().getPlots(plotworld.worldname).get(id);
             if (plot == null) {
                 return null;
             }
@@ -135,7 +135,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             // You are on a road running West to East (yeah, I named the var poorly)
             final Location loc = new Location(plotworld.worldname, x, 0, z + dpw.ROAD_WIDTH);
             final PlotId id = MainUtil.getPlotAbs(loc);
-            final Plot plot = PlotSquared.getInstance().getPlots(plotworld.worldname).get(id);
+            final Plot plot = PS.get().getPlots(plotworld.worldname).get(id);
             if (plot == null) {
                 return null;
             }
@@ -148,7 +148,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             // This is the road separating an Eastern and Western plot
             final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH, 0, z);
             final PlotId id = MainUtil.getPlotAbs(loc);
-            final Plot plot = PlotSquared.getInstance().getPlots(plotworld.worldname).get(id);
+            final Plot plot = PS.get().getPlots(plotworld.worldname).get(id);
             if (plot == null) {
                 return null;
             }
@@ -158,7 +158,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             return null;
         }
         final PlotId id = new PlotId(dx, dz);
-        final Plot plot = PlotSquared.getInstance().getPlots(plotworld.worldname).get(id);
+        final Plot plot = PS.get().getPlots(plotworld.worldname).get(id);
         if (plot == null) {
             return id;
         }

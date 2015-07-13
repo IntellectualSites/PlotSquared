@@ -50,7 +50,7 @@ public class Copy extends SubCommand {
         if (plot1 == null) {
             return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Permissions.ADMIN))  {
+        if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Permissions.ADMIN.s))  {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }

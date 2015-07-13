@@ -1,6 +1,11 @@
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
@@ -10,11 +15,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * Created 2014-11-15 for PlotSquared
@@ -28,7 +28,7 @@ public class Database extends SubCommand {
 
     private static boolean sendMessageU(final UUID uuid, final String msg) {
         if (uuid == null) {
-            PlotSquared.log(msg);
+            PS.log(msg);
         } else {
             final PlotPlayer p = UUIDHandler.getPlayer(uuid);
             if ((p != null) && p.isOnline()) {
@@ -41,7 +41,7 @@ public class Database extends SubCommand {
     }
 
     public static void insertPlots(final SQLManager manager, final UUID requester, final Connection c) {
-        final java.util.Set<Plot> plots = PlotSquared.getInstance().getPlots();
+        final java.util.Set<Plot> plots = PS.get().getPlots();
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -92,7 +92,7 @@ public class Database extends SubCommand {
                 }
                 Connection n;
                 try {
-                    n = new MySQL(PlotSquared.getInstance(), host, port, database, username, password).openConnection();
+                    n = new MySQL(host, port, database, username, password).openConnection();
                     // Connection
                     if (n.isClosed()) {
                         return sendMessage(plr, "Failed to open connection");
@@ -128,7 +128,7 @@ public class Database extends SubCommand {
 
     private boolean sendMessage(final PlotPlayer player, final String msg) {
         if (player == null) {
-            PlotSquared.log(msg);
+            PS.log(msg);
         } else {
             MainUtil.sendMessage(player, msg);
         }

@@ -1,13 +1,9 @@
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.ArmorStand;
@@ -24,9 +20,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
     
@@ -36,7 +37,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             return;
         }
         HumanEntity entity = event.getWhoClicked();
-        if (!(entity instanceof Player) || !PlotSquared.getInstance().isPlotWorld(entity.getWorld().getName())) {
+        if (!(entity instanceof Player) || !PS.get().isPlotWorld(entity.getWorld().getName())) {
             return;
         }
         Player player = (Player) entity;
@@ -123,7 +124,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         }
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
         String world = l.getWorld();
-        if (!PlotSquared.getInstance().isPlotWorld(world)) {
+        if (!PS.get().isPlotWorld(world)) {
             return;
         }
         Plot plot = MainUtil.getPlot(l);

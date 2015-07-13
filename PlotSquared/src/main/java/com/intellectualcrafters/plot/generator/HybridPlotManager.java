@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.commands.Template;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,12 +27,26 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.Template;
+import com.intellectualcrafters.plot.object.FileBytes;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+
 public class HybridPlotManager extends ClassicPlotManager {
     
     @Override
     public void exportTemplate(final PlotWorld plotworld) throws IOException {
         final HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
-        final String psRoot = PlotSquared.getInstance().IMP.getDirectory() + File.separator;
+        final String psRoot = PS.get().IMP.getDirectory() + File.separator;
         final String dir =  "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
         final String newDir =  "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
         try {

@@ -20,7 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import java.util.List;
+
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
@@ -28,8 +30,6 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
-
-import java.util.List;
 
 public class RegenAllRoads extends SubCommand {
     public RegenAllRoads() {
@@ -58,19 +58,19 @@ public class RegenAllRoads extends SubCommand {
             }
         }
         final String name = args[0];
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(name);
+        final PlotManager manager = PS.get().getPlotManager(name);
         if ((manager == null) || !(manager instanceof HybridPlotManager)) {
             sendMessage(player, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
         final List<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
-        PlotSquared.log("&cIf no schematic is set, the following will not do anything");
-        PlotSquared.log("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        PlotSquared.log("&6Potential chunks to update: &7" + (chunks.size() * 1024));
-        PlotSquared.log("&6Estimated time: &7" + (chunks.size()) + " seconds");
+        PS.log("&cIf no schematic is set, the following will not do anything");
+        PS.log("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
+        PS.log("&6Potential chunks to update: &7" + (chunks.size() * 1024));
+        PS.log("&6Estimated time: &7" + (chunks.size()) + " seconds");
         final boolean result = HybridUtils.manager.scheduleRoadUpdate(name, height);
         if (!result) {
-            PlotSquared.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
+            PS.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;
         }
         return true;

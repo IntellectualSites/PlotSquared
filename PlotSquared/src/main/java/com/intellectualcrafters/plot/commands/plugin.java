@@ -20,46 +20,21 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+
 public class plugin extends SubCommand {
-    public static String downloads, version;
 
     public plugin() {
         super("plugin", "plots.use", "Show plugin information", "plugin", "version", CommandCategory.INFO, false);
-    }
-
-    public static void setup() {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    downloads = convertToNumericString(getInfo("https://intellectualsites.com/spigot_api.php?method=downloads&url=http://www.spigotmc.org/resources/plotsquared.1177/"), false);
-                } catch (final Exception e) {
-                    downloads = "unknown";
-                }
-            }
-        });
-        TaskManager.runTaskLaterAsync(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    version = convertToNumericString(getInfo("https://intellectualsites.com/spigot_api.php?method=version&resource=1177"), true);
-                } catch (final Exception e) {
-                    // Let's just ignore this, most likely error 500...
-                    version = "unknown";
-                }
-            }
-        }, 200);
     }
 
     private static String convertToNumericString(final String str, final boolean dividers) {
@@ -93,11 +68,10 @@ public class plugin extends SubCommand {
             public void run() {
                 final ArrayList<String> strings = new ArrayList<String>() {
                     {
-                        add(String.format("&c>> &6PlotSquared (Version: %s)", PlotSquared.getInstance().IMP.getVersion()));
-                        add(String.format("&c>> &6Made by Citymonstret and Empire92"));
-                        add(String.format("&c>> &6Download at &lhttp://www.spigotmc.org/resources/1177"));
-                        add(String.format("&c>> &cNewest Version (Spigot): %s", version));
-                        add(String.format("&c>> &cTotal Downloads (Spigot): %s", downloads));
+                        add(String.format("&c>> &6PlotSquared (Version: %s)", PS.get().IMP.getVersion()));
+                        add(String.format("&c>> &6Authors: Citymonstret and Empire92"));
+                        add(String.format("&c>> &6Wiki: \n&chttps://github.com/IntellectualCrafters/PlotSquared/wiki"));
+                        add(String.format("&c>> &6Newest Version:\n&c" + (PS.get().update == null ? PS.get().IMP.getVersion() : PS.get().update)));
                     }
                 };
                 for (final String s : strings) {

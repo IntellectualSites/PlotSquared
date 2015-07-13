@@ -20,9 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 
@@ -48,7 +52,7 @@ public class Move extends SubCommand {
         if (plot1 == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Permissions.ADMIN))  {
+        if (!plot1.isAdded(plr.getUUID()) && !plr.hasPermission(Permissions.ADMIN.s))  {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -61,8 +65,8 @@ public class Move extends SubCommand {
         }
         String world2;
         if (args.length == 2) {
-            PlotWorld other = PlotSquared.getInstance().getPlotWorld(args[1]);
-            PlotWorld current = PlotSquared.getInstance().getPlotWorld(loc.getWorld());
+            PlotWorld other = PS.get().getPlotWorld(args[1]);
+            PlotWorld current = PS.get().getPlotWorld(loc.getWorld());
             if (other == null || current == null || !other.equals(current)) {
                 MainUtil.sendMessage(plr, C.PLOTWORLD_INCOMPATIBLE);
                 return false;

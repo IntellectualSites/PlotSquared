@@ -20,11 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.PlotSquared;
-
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import com.intellectualcrafters.plot.PS;
 
 /**
  * Connects to and uses a SQLite database
@@ -41,8 +45,7 @@ public class SQLite extends Database {
      *
      * @param dbLocation Location of the Database (Must end in .db)
      */
-    public SQLite(final PlotSquared plotsquared, final String dbLocation) {
-        super(plotsquared);
+    public SQLite(final String dbLocation) {
         this.dbLocation = dbLocation;
     }
 
@@ -51,15 +54,15 @@ public class SQLite extends Database {
         if (checkConnection()) {
             return this.connection;
         }
-        if (!PlotSquared.getInstance().IMP.getDirectory().exists()) {
-            PlotSquared.getInstance().IMP.getDirectory().mkdirs();
+        if (!PS.get().IMP.getDirectory().exists()) {
+            PS.get().IMP.getDirectory().mkdirs();
         }
         final File file = new File(this.dbLocation);
         if (!(file.exists())) {
             try {
                 file.createNewFile();
             } catch (final IOException e) {
-                PlotSquared.log("&cUnable to create database!");
+                PS.log("&cUnable to create database!");
             }
         }
         Class.forName("org.sqlite.JDBC");

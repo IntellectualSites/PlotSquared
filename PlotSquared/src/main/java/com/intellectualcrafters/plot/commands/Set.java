@@ -20,22 +20,34 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Material;
+
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.listeners.APlotListener;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Citymonstret
@@ -66,10 +78,10 @@ public class Set extends SubCommand {
             }
         }
         if (args.length < 1) {
-            PlotManager manager = PlotSquared.getInstance().getPlotManager(loc.getWorld());
+            PlotManager manager = PS.get().getPlotManager(loc.getWorld());
             ArrayList<String> newValues = new ArrayList<String>();
             newValues.addAll(Arrays.asList(values));
-            newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getInstance().getPlotWorld(loc.getWorld()), plot.id)));
+            newValues.addAll(Arrays.asList(manager.getPlotComponents(PS.get().getPlotWorld(loc.getWorld()), plot.id)));
             MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
             return false;
         }
@@ -141,8 +153,7 @@ public class Set extends SubCommand {
             }
             if (args.length > 1) {
                 if (args[1].equalsIgnoreCase("none")) {
-                    plot.settings.setPosition(null);
-                    DBFunc.setPosition(loc.getWorld(), plot, "");
+                    plot.setHome(null);
                     return true;
                 }
                 return MainUtil.sendMessage(plr, C.HOME_ARGUMENT);
@@ -153,8 +164,7 @@ public class Set extends SubCommand {
             base.setY(0);
             final Location relative = plr.getLocation().subtract(base.getX(), base.getY(), base.getZ());
             final BlockLoc blockloc = new BlockLoc(relative.getX(), relative.getY(), relative.getZ(), relative.getYaw(), relative.getPitch());
-            plot.settings.setPosition(blockloc);
-            DBFunc.setPosition(loc.getWorld(), plot, blockloc.toString());
+            plot.setHome(blockloc);
             return MainUtil.sendMessage(plr, C.POSITION_SET);
         }
         if (args[0].equalsIgnoreCase("alias")) {
@@ -171,7 +181,7 @@ public class Set extends SubCommand {
                 MainUtil.sendMessage(plr, C.ALIAS_TOO_LONG);
                 return false;
             }
-            for (final Plot p : PlotSquared.getInstance().getPlots(plr.getLocation().getWorld()).values()) {
+            for (final Plot p : PS.get().getPlots(plr.getLocation().getWorld()).values()) {
                 if (p.settings.getAlias().equalsIgnoreCase(alias)) {
                     MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
@@ -181,7 +191,7 @@ public class Set extends SubCommand {
                     return false;
                 }
             }
-            DBFunc.setAlias(loc.getWorld(), plot, alias);
+            plot.setAlias(alias);
             MainUtil.sendMessage(plr, C.ALIAS_SET_TO.s().replaceAll("%alias%", alias));
             return true;
         }
@@ -211,14 +221,14 @@ public class Set extends SubCommand {
                 MainUtil.sendMessage(plr, getBiomeList(BlockManager.manager.getBiomeList()));
                 return true;
             }
-            MainUtil.setBiome(plr.getLocation().getWorld(), plot, args[1].toUpperCase());
+            plot.setBiome(args[1].toUpperCase());
             MainUtil.sendMessage(plr, C.BIOME_SET_TO.s() + args[1].toLowerCase());
             return true;
         }
         // Get components
         final String world = plr.getLocation().getWorld();
-        final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
-        final PlotManager manager = PlotSquared.getInstance().getPlotManager(world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotManager manager = PS.get().getPlotManager(world);
         final String[] components = manager.getPlotComponents(plotworld, plot.id);
         for (final String component : components) {
             if (component.equalsIgnoreCase(args[0])) {
@@ -231,10 +241,6 @@ public class Set extends SubCommand {
                         MainUtil.sendMessage(plr, C.NEED_BLOCK);
                         return true;
                     }
-//                    if (!Configuration.BLOCKLIST.validateValue(args[1])) {
-//                        MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, args[1]);
-//                        return false;
-//                    }
                     String[] split = args[1].split(",");
                     blocks = Configuration.BLOCKLIST.parseString(args[1]);
                     for (int i = 0; i < blocks.length; i++) {
@@ -308,7 +314,7 @@ public class Set extends SubCommand {
         }
         ArrayList<String> newValues = new ArrayList<String>();
         newValues.addAll(Arrays.asList(values));
-        newValues.addAll(Arrays.asList(manager.getPlotComponents(PlotSquared.getInstance().getPlotWorld(loc.getWorld()), plot.id)));
+        newValues.addAll(Arrays.asList(manager.getPlotComponents(PS.get().getPlotWorld(loc.getWorld()), plot.id)));
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
         return false;
     }

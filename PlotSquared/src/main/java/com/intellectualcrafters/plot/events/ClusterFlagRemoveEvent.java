@@ -25,7 +25,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 
 /**

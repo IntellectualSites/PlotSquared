@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
@@ -36,12 +36,12 @@ public class Reload extends SubCommand {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
-            PlotSquared.getInstance().config.load(PlotSquared.getInstance().configFile);
-            PlotSquared.getInstance().setupConfig();
-            C.setupTranslations();
-            for (final String pw : PlotSquared.getInstance().getPlotWorlds()) {
-                final PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(pw);
-                plotworld.loadDefaultConfiguration(PlotSquared.getInstance().config.getConfigurationSection("worlds." + pw));
+            PS.get().config.load(PS.get().configFile);
+            PS.get().setupConfig();
+            C.load(PS.get().translationFile);
+            for (final String pw : PS.get().getPlotWorlds()) {
+                final PlotWorld plotworld = PS.get().getPlotWorld(pw);
+                plotworld.loadDefaultConfiguration(PS.get().config.getConfigurationSection("worlds." + pw));
             }
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
         } catch (final Exception e) {

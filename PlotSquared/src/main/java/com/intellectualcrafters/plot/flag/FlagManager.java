@@ -20,13 +20,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EventUtil;
-
-import java.util.*;
 
 /**
  * Flag Manager Utility
@@ -90,15 +99,15 @@ public class FlagManager {
     }
     
     public static boolean addFlag(AbstractFlag af, boolean reserved) {
-        PlotSquared.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
-        for (PlotWorld plotworld : PlotSquared.getInstance().getPlotWorldObjects()) {
+        PS.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
+        for (PlotWorld plotworld : PS.get().getPlotWorldObjects()) {
             Flag flag = ((HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone()).get(af.getKey());
             if (flag != null) {
                 flag.setKey(af);
             }
         }
-        if (PlotSquared.getInstance().getAllPlotsRaw() != null) {
-            for (final Plot plot : PlotSquared.getInstance().getPlotsRaw()) {
+        if (PS.get().getAllPlotsRaw() != null) {
+            for (final Plot plot : PS.get().getPlotsRaw()) {
                 Flag flag = plot.settings.flags.get(af.getKey());
                 if (flag != null) {
                     flag.setKey(af);
@@ -115,7 +124,7 @@ public class FlagManager {
     public static Flag getSettingFlag(final String world, final PlotSettings settings, final String id) {
         Flag flag = settings.flags.get(id);
         if (flag == null) {
-            PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+            PlotWorld plotworld = PS.get().getPlotWorld(world);
             if (plotworld == null) {
                 return null;
             }
@@ -147,6 +156,9 @@ public class FlagManager {
     }
 
     public static boolean isPlotFlagTrue(final Plot plot, final String strFlag) {
+        if (plot.owner == null) {
+            return false;
+        }
         final Flag flag = getPlotFlag(plot, strFlag);
         if (flag == null) {
             return false;
@@ -158,6 +170,9 @@ public class FlagManager {
     }
     
     public static boolean isPlotFlagFalse(final Plot plot, final String strFlag) {
+        if (plot.owner == null) {
+            return false;
+        }
         final Flag flag = getPlotFlag(plot, strFlag);
         if (flag == null) {
             return false;
@@ -196,7 +211,7 @@ public class FlagManager {
             return false;
         }
         plot.settings.flags.put(flag.getKey(), flag);
-        DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
+        DBFunc.setFlags(plot, plot.settings.flags.values());
         return true;
     }
     
@@ -227,7 +242,7 @@ public class FlagManager {
     }
 
     public static Collection<Flag> getSettingFlags(final String world, final PlotSettings settings) {
-        PlotWorld plotworld = PlotSquared.getInstance().getPlotWorld(world);
+        PlotWorld plotworld = PS.get().getPlotWorld(world);
         HashMap<String, Flag> map;
         if (plotworld == null) {
             map = new HashMap<>();
@@ -249,7 +264,7 @@ public class FlagManager {
             plot.settings.flags.put(id, flag);
             return false;
         }
-        DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
+        DBFunc.setFlags(plot, plot.settings.flags.values());
         return true;
     }
 
@@ -280,7 +295,7 @@ public class FlagManager {
         else {
             plot.settings.flags.clear();
         }
-        DBFunc.setFlags(plot.world, plot, plot.settings.flags.values());
+        DBFunc.setFlags(plot, plot.settings.flags.values());
     }
 
     public static void setClusterFlags(final PlotCluster cluster, final Set<Flag> flags) {

@@ -1,8 +1,5 @@
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.object.PlotGenerator;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,6 +7,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class WorldEvents implements Listener {
     
@@ -31,10 +32,10 @@ public class WorldEvents implements Listener {
         final ChunkGenerator gen = world.getGenerator();
         if (gen instanceof PlotGenerator) {
             //
-            PlotSquared.getInstance().loadWorld(name, (PlotGenerator) gen);
+            PS.get().loadWorld(name, (PlotGenerator) gen);
         } else {
-            if (PlotSquared.getInstance().config.contains("worlds." + name)) {
-                PlotSquared.getInstance().loadWorld(name, null);
+            if (PS.get().config.contains("worlds." + name)) {
+                PS.get().loadWorld(name, null);
             }
         }
         lastWorld = null;

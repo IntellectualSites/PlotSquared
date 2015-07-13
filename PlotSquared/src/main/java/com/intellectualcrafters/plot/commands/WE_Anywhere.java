@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.listeners.worldedit.WEManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -34,7 +34,7 @@ public class WE_Anywhere extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (PlotSquared.getInstance().worldEdit == null) {
+        if (PS.get().worldEdit == null) {
             MainUtil.sendMessage(plr, "&cWorldEdit is not enabled on this server");
             return false;
         }

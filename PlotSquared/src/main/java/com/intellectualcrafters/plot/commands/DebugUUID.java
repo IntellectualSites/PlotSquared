@@ -20,7 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.AbstractDB;
@@ -37,15 +47,6 @@ import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-import org.bukkit.Bukkit;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 public class DebugUUID extends SubCommand {
     public DebugUUID() {
@@ -139,7 +140,7 @@ public class DebugUUID extends SubCommand {
                         final UUID uuid = UUID.fromString(s);
                         uuids.add(uuid);
                     } catch (final Exception e) {
-                        PlotSquared.log(C.PREFIX.s() + "Invalid playerdata: " + current);
+                        PS.log(C.PREFIX.s() + "Invalid playerdata: " + current);
                     }
                 }
             }
@@ -170,7 +171,7 @@ public class DebugUUID extends SubCommand {
                     uCReverse.put(uuid2, uuid);
                 }
             } catch (final Throwable e) {
-                PlotSquared.log(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+                PS.log(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
             }
         }
         for (final String name : names) {
@@ -215,7 +216,7 @@ public class DebugUUID extends SubCommand {
         
         MainUtil.sendConsoleMessage("&7 - Updating plot objects");
 
-        for (Plot plot : PlotSquared.getInstance().getPlotsRaw()) {
+        for (Plot plot : PS.get().getPlotsRaw()) {
             UUID value = uCMap.get(plot.owner);
             if (value != null) {
                 plot.owner = value;
@@ -235,13 +236,13 @@ public class DebugUUID extends SubCommand {
             database.createTables(Settings.DB.USE_MYSQL ? "mysql" : "sqlite");
             if (!result) {
                 MainUtil.sendConsoleMessage("&cConversion failed! Attempting recovery");
-                for (Plot plot : PlotSquared.getInstance().getPlots()) {
+                for (Plot plot : PS.get().getPlots()) {
                     UUID value = uCReverse.get(plot.owner);
                     if (value != null) {
                         plot.owner = value;
                     }
                 }
-                database.createPlotsAndData(new ArrayList<>(PlotSquared.getInstance().getPlots()), new Runnable() {
+                database.createPlotsAndData(new ArrayList<>(PS.get().getPlots()), new Runnable() {
                     @Override
                     public void run() {
                         MainUtil.sendMessage(null, "&6Recovery was successful!");
@@ -256,19 +257,19 @@ public class DebugUUID extends SubCommand {
         }
         
         if (newWrapper instanceof OfflineUUIDWrapper) {
-            PlotSquared.getInstance().config.set("UUID.force-lowercase", false);
-            PlotSquared.getInstance().config.set("UUID.offline", true);
+            PS.get().config.set("UUID.force-lowercase", false);
+            PS.get().config.set("UUID.offline", true);
         }
         else if (newWrapper instanceof LowerOfflineUUIDWrapper) {
-            PlotSquared.getInstance().config.set("UUID.force-lowercase", true);
-            PlotSquared.getInstance().config.set("UUID.offline", true);
+            PS.get().config.set("UUID.force-lowercase", true);
+            PS.get().config.set("UUID.offline", true);
         }
         else if (newWrapper instanceof DefaultUUIDWrapper) {
-            PlotSquared.getInstance().config.set("UUID.force-lowercase", false);
-            PlotSquared.getInstance().config.set("UUID.offline", false);
+            PS.get().config.set("UUID.force-lowercase", false);
+            PS.get().config.set("UUID.offline", false);
         }
         try {
-            PlotSquared.getInstance().config.save(PlotSquared.getInstance().configFile);
+            PS.get().config.save(PS.get().configFile);
         }
         catch (Exception e) {
             MainUtil.sendConsoleMessage("Could not save configuration. It will need to be manuall set!");
@@ -279,7 +280,7 @@ public class DebugUUID extends SubCommand {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getInstance().getPlots());
+                ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
                 database.createPlotsAndData(plots, new Runnable() {
                     @Override
                     public void run() {

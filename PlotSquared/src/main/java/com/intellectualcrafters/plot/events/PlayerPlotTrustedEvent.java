@@ -32,9 +32,9 @@ import com.intellectualcrafters.plot.object.Plot;
  * @author Citymonstret
  * @author Empire92
  */
-public class PlayerPlotTrustedEvent extends Event {
+public class PlayerPlotTrustedEvent extends PlotEvent {
+
     private static HandlerList handlers = new HandlerList();
-    private final Plot plot;
     private final Player initiator;
     private final boolean added;
     private final UUID player;
@@ -48,8 +48,8 @@ public class PlayerPlotTrustedEvent extends Event {
      * @param added     true of the player was added, false if the player was removed
      */
     public PlayerPlotTrustedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added) {
+        super(plot);
         this.initiator = initiator;
-        this.plot = plot;
         this.added = added;
         this.player = player;
     }
@@ -74,15 +74,6 @@ public class PlayerPlotTrustedEvent extends Event {
      */
     public UUID getPlayer() {
         return this.player;
-    }
-
-    /**
-     * The plot involved
-     *
-     * @return Plot
-     */
-    public Plot getPlot() {
-        return this.plot;
     }
 
     /**

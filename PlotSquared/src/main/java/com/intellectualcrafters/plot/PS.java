@@ -1,34 +1,84 @@
 package com.intellectualcrafters.plot;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.*;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.generator.*;
-import com.intellectualcrafters.plot.listeners.APlotListener;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.object.comment.CommentManager;
-import com.intellectualcrafters.plot.util.*;
-import com.intellectualcrafters.plot.util.Logger.LogLevel;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.bukkit.Bukkit;
+
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.Database;
+import com.intellectualcrafters.plot.database.MySQL;
+import com.intellectualcrafters.plot.database.SQLManager;
+import com.intellectualcrafters.plot.database.SQLite;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue;
+import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.generator.SquarePlotManager;
+import com.intellectualcrafters.plot.generator.SquarePlotWorld;
+import com.intellectualcrafters.plot.listeners.APlotListener;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.comment.CommentManager;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.intellectualcrafters.plot.util.Logger;
+import com.intellectualcrafters.plot.util.Logger.LogLevel;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlayerManager;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 /**
  * An implementation of the core,
@@ -37,14 +87,11 @@ import java.util.zip.ZipInputStream;
  * @author Sauilitired | Citymonstret
  * @author boy0001 | Empire92
  */
-public class PlotSquared {
-
-    // public static final:
-    public static final String MAIN_PERMISSION = "plots.use";
+public class PS {
 
     // protected static:
-    protected static PlotSquared instance;
-
+    protected static PS instance;
+    
     // private final:
     private final HashMap<String, PlotWorld> plotworlds = new HashMap<>();
     private final HashMap<String, PlotManager> plotmanagers = new HashMap<>();
@@ -52,17 +99,20 @@ public class PlotSquared {
     // public:
     public WorldEditPlugin worldEdit = null;
     public File configFile;
+    public File translationFile;
+    public YamlConfiguration style;
     public YamlConfiguration config;
     public YamlConfiguration storage;
     public IPlotMain IMP = null;
     public TaskManager TASK;
+    public URL update;
 
     // private:
     private File styleFile;
-    private YamlConfiguration style;
     private File storageFile;
     private File FILE = null; // This file
     private String VERSION = null;
+    private String LAST_VERSION;
     private boolean LOADING_WORLD = false;
     private LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
     private Database database;
@@ -72,18 +122,17 @@ public class PlotSquared {
      * Initialize PlotSquared with the desired Implementation class
      * @param imp_class
      */
-    protected PlotSquared(final IPlotMain imp_class) {
+    protected PS(final IPlotMain imp_class) {
+        instance = this;
         SetupUtils.generators = new HashMap<>();
         IMP = imp_class;
         try {
-            FILE = new File(PlotSquared.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            FILE = new File(PS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
         } catch (Exception e) {
             log("Could not determine file path");
         }
         VERSION = IMP.getVersion();
         EconHandler.manager = IMP.getEconomyHandler();
-        C.setupTranslations();
-        C.saveTranslations();
         if (getJavaVersion() < 1.7) {
             log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
             // Didn't know of any other link :D
@@ -99,6 +148,8 @@ public class PlotSquared {
             log(C.ENABLED.s());
         }
         setupConfigs();
+        this.translationFile = new File(IMP.getDirectory() + File.separator + "translations" + File.separator + "PlotSquared.use_THIS.yml");
+        C.load(translationFile);
         setupDefaultFlags();
         setupDatabase();
         CommentManager.registerDefaultInboxes();
@@ -139,6 +190,23 @@ public class PlotSquared {
         // Player manager
         PlayerManager.manager = IMP.initPlayerManager();
 
+        // Check for updates
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                URL url = getUpdate();
+                if (url != null) {
+                    update = url;
+                    log("&6You are running an older version of PlotSquared...");
+                    log("&8 - &3Use: &7/plot update");
+                    log("&8 - &3Or: &7" + url);
+                }
+                else if (LAST_VERSION != null && !VERSION.equals(LAST_VERSION)) {
+                    log("&aThanks for updating from: " + LAST_VERSION + " to " + VERSION);
+                }
+            }
+        });
+        
         // PlotMe
         if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
             TaskManager.runTaskLater(new Runnable() {
@@ -167,14 +235,30 @@ public class PlotSquared {
         copyFile("italian.yml", "translations");
         showDebug();
     }
-
+    
     /**
      * Get the instance of PlotSquared
      *
      * @return the instance created by IPlotMain
      */
-    public static PlotSquared getInstance() {
+    public static PS get() {
         return instance;
+    }
+    
+    /**
+     * Get the last PlotSquared version
+     * @return last version in config or null
+     */
+    public String getLastVersion() {
+        return LAST_VERSION;
+    }
+    
+    /**
+     * Get the current PlotSquared version
+     * @return current version in config or null
+     */
+    public String getVersion() {
+        return VERSION;
     }
 
     /**
@@ -184,7 +268,7 @@ public class PlotSquared {
      * @see IPlotMain#log(String)
      */
     public static void log(final String message) {
-        getInstance().IMP.log(message);
+        get().IMP.log(message);
     }
 
     /**
@@ -383,7 +467,6 @@ public class PlotSquared {
     /**
      * Sort a collection of plots by world, then by hashcode
      * @param plots
-     * @param priorityWorld
      * @see #sortPlots(Collection, String) to sort with a specific priority world
      * @see #sortPlots(Collection) to sort plots just by hashcode
      * @return ArrayList of plot
@@ -532,7 +615,11 @@ public class PlotSquared {
         if (callEvent) {
             EventUtil.manager.callDelete(world, id);
         }
-        Plot plot = plots.get(world).remove(id);
+        HashMap<PlotId, Plot> allPlots = plots.get(world);
+        if (allPlots == null) {
+            return false;
+        }
+        Plot plot = allPlots.remove(id);
         if (MainUtil.lastPlot.containsKey(world)) {
             final PlotId last = MainUtil.lastPlot.get(world);
             final int last_max = Math.max(last.x, last.y);
@@ -638,10 +725,19 @@ public class PlotSquared {
                     log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
                     return;
                 }
+                
+                log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
+                log(C.PREFIX.s() + "&3 - generator: &7" + gen_class.getClass().getName());
+                log(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
+                log(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
+                log(C.PREFIX.s() + "&3 - | terrain: &7" + plotWorld.TERRAIN);
+                log(C.PREFIX.s() + "&3 - | type: &7" + plotWorld.TYPE);
+                
                 addPlotWorld(world, plotWorld, plotManager);
                 if (plotWorld.TYPE == 2) {
                     if (ClusterManager.getClusters(world).size() > 0) {
                         for (final PlotCluster cluster : ClusterManager.getClusters(world)) {
+                            log(C.PREFIX.s() + "&3 - &7| cluster: " + cluster);
                             new AugmentedPopulator(world, gen_class, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                         }
                     }
@@ -752,6 +848,123 @@ public class PlotSquared {
         }
         return true;
     }
+    
+    public boolean canUpdate(String current, String other) {
+        String s1 = normalisedVersion(current);
+        String s2 = normalisedVersion(other);
+        int cmp = s1.compareTo(s2);
+        return cmp < 0;
+    }
+
+    public String normalisedVersion(String version) {
+        return normalisedVersion(version, ".", 4);
+    }
+
+    public String normalisedVersion(String version, String sep, int maxWidth) {
+        String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
+        StringBuilder sb = new StringBuilder();
+        for (String s : split) {
+            sb.append(String.format("%" + maxWidth + 's', s));
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Gets the default update URL, or null if the plugin is up to date
+     * @return
+     */
+    public URL getUpdate() {
+        String resource = "plotsquared.1177";
+        String url = "https://www.spigotmc.org/resources/" + resource + "/history";
+        String download = "<a href=\"resources/" + resource + "/download?version=";
+        String version = "<td class=\"version\">";
+        try {
+            URL history = new URL(url);
+            URLConnection con = history.openConnection();
+            con.addRequestProperty("User-Agent", "Mozilla/4.0");
+            InputStream stream = con.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+            String l;
+            URL link = null;
+            String cur_ver = config.getString("version");
+            String new_ver = null;
+            while ((l = in.readLine()) != null) {
+                if (l.length() > version.length() && l.startsWith(version)) {
+                    new_ver = l.substring(version.length(), l.length() - 5);
+                    break;
+                }
+                if (link == null && l.length() > download.length() && l.startsWith(download)) {
+                    String subString = l.substring(download.length());
+                    link = new URL("https://www.spigotmc.org/resources/" + resource + "/download?version=" + subString.substring(0, subString.indexOf("\"")));
+                    continue;
+                }
+            }
+            stream.close();
+            in.close();
+            if (new_ver == null || !canUpdate(cur_ver, new_ver))  {
+                PS.log("&7PlotSquared is already up to date!");
+                return null;
+            }
+            if (link == null) {
+                PS.log("&dCould not check for updates");
+                PS.log("&7 - Manually check for updates: " + url);
+                return null;
+            }
+            return link;
+        } catch (Exception e) {
+            PS.log("&dCould not check for updates");
+            PS.log("&7 - Manually check for updates: " + url);
+            return null;
+        }
+    }
+    
+    public boolean update(URL url) {
+        if (url == null) {
+            return false;
+        }
+        try {
+            File jar = PS.get().IMP.getFile();
+            File newJar = new File("plugins/update/PlotSquared.jar");
+            PS.log("&6Downloading from provided URL: &7" + url);
+            PS.log("&7 - User-Agent: " + "Mozilla/4.0");
+            URLConnection con = url.openConnection();
+            con.addRequestProperty("User-Agent", "Mozilla/4.0");
+            InputStream stream = con.getInputStream();
+            File parent = newJar.getParentFile();
+            if (!parent.exists()) {
+                parent.mkdirs();
+            }
+            PS.log("&7 - Output: " + newJar);
+            newJar.delete();
+            Files.copy(stream, newJar.toPath());
+            stream.close();
+            PS.log("&6Disabling PlotSquared");  
+            PS.get().IMP.disable();
+            System.out.println("Deleting file: " + jar);
+            jar.delete();
+            System.out.println("Copying: " + jar + "  >> " + newJar);
+            try {
+                Files.move(newJar.toPath(), jar.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                System.out.println("Failed to reload PlotSquared");
+                System.out.println(" - Restart the server manually");
+                System.out.println("============ Stacktrace ============");
+                e.printStackTrace();
+                System.out.println("====================================");
+                return false;
+            }
+            Bukkit.reload();
+            return true;
+        }
+        catch (Exception e) {
+            System.out.println("Failed to update PlotSquared");
+            System.out.println(" - Please update manually");
+            System.out.println("============ Stacktrace ============");
+            e.printStackTrace();
+            System.out.println("====================================");
+        }
+        return false;
+    }
 
 
     /**
@@ -824,7 +1037,7 @@ public class PlotSquared {
     public void setupDatabase() {
         if (Settings.DB.USE_MYSQL) {
             try {
-                database = new MySQL(this, Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
+                database = new MySQL(Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
                 connection = database.openConnection();
                 {
                     if (DBFunc.dbManager == null) {
@@ -852,7 +1065,7 @@ public class PlotSquared {
             log(C.PREFIX.s() + "MongoDB is not yet implemented");
         } else if (Settings.DB.USE_SQLITE) {
             try {
-                this.database = new SQLite(this, IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db");
+                this.database = new SQLite(IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db");
                 connection = this.database.openConnection();
                 {
                     DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
@@ -905,6 +1118,7 @@ public class PlotSquared {
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("mob-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hostile-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hostile-attack", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("animal-interact", new FlagValue.BooleanValue()));
@@ -912,11 +1126,15 @@ public class PlotSquared {
         FlagManager.addFlag(new AbstractFlag("tamed-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("tamed-attack", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("misc-interact", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("misc-place", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("misc-break", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("hanging-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hanging-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("hanging-break", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-use", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("vehicle-break", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("device-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("place", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
@@ -980,6 +1198,7 @@ public class PlotSquared {
      * Setup the default configuration (settings.yml)
      */
     public void setupConfig() {
+        LAST_VERSION = config.getString("version");
         config.set("version", VERSION);
         
         final Map<String, Object> options = new HashMap<>();
@@ -1022,6 +1241,10 @@ public class PlotSquared {
         
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
+        
+        // Web
+        options.put("web.url", Settings.WEB_URL);
+        options.put("web.server-ip", Settings.WEB_IP);
         
         // Caching
         options.put("cache.permissions", Settings.PERMISSION_CACHING);
@@ -1073,7 +1296,7 @@ public class PlotSquared {
         Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
         
         // Protection
-        Settings.REDSTONE_DISABLER = config.getBoolean("protection.tnt-listener.enabled");
+        Settings.REDSTONE_DISABLER = config.getBoolean("protection.redstone.disable-offline");
         Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
         
@@ -1106,6 +1329,10 @@ public class PlotSquared {
         
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
+        
+        // Web
+        Settings.WEB_URL = config.getString("web.url");
+        Settings.WEB_IP = config.getString("web.server-ip");
         
         // Caching
         Settings.PERMISSION_CACHING = config.getBoolean("cache.permissions");
@@ -1152,7 +1379,7 @@ public class PlotSquared {
             log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");
-        if (!config.getBoolean("chat.fancy") || !IMP.checkVersion(1, 7, 0)) {
+        if (!config.getBoolean("chat.fancy") || !IMP.checkVersion(1, 8, 0)) {
             Settings.FANCY_CHAT = false;
         }
         Settings.METRICS = config.getBoolean("metrics");
@@ -1173,6 +1400,9 @@ public class PlotSquared {
         try {
             styleFile = new File(IMP.getDirectory() + File.separator + "translations" + File.separator + "style.yml");
             if (!styleFile.exists()) {
+                if (!styleFile.getParentFile().exists()) {
+                    styleFile.getParentFile().mkdirs();
+                }
                 if (!styleFile.createNewFile()) {
                     log("Could not create the style file, please create \"translations/style.yml\" manually");
                 }
@@ -1180,6 +1410,7 @@ public class PlotSquared {
             style = YamlConfiguration.loadConfiguration(styleFile);
             setupStyle();
         } catch (final Exception err) {
+            err.printStackTrace();
             Logger.add(LogLevel.DANGER, "Failed to save style.yml");
             log("failed to save style.yml");
         }
@@ -1259,10 +1490,6 @@ public class PlotSquared {
      * Show startup debug information
      */
     public void showDebug() {
-        C.COLOR_1 = "&" + (style.getString("color.1"));
-        C.COLOR_2 = "&" + (style.getString("color.2"));
-        C.COLOR_3 = "&" + (style.getString("color.3"));
-        C.COLOR_4 = "&" + (style.getString("color.4"));
         if (Settings.DEBUG) {
             final Map<String, String> settings = new HashMap<>();
             settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
@@ -1287,12 +1514,12 @@ public class PlotSquared {
     private void setupStyle() {
         style.set("version", VERSION);
         final Map<String, Object> o = new HashMap<>();
-        o.put("color.1", C.COLOR_1.substring(1));
-        o.put("color.2", C.COLOR_2.substring(1));
-        o.put("color.3", C.COLOR_3.substring(1));
-        o.put("color.4", C.COLOR_4.substring(1));
-        for (final Entry<String, Object> node : o.entrySet()) {
-            if (!style.contains(node.getKey())) {
+        o.put("color.1", "6");
+        o.put("color.2", "7");
+        o.put("color.3", "8");
+        o.put("color.4", "3");
+        if (!style.contains("color")) {
+            for (final Entry<String, Object> node : o.entrySet()) {
                 style.set(node.getKey(), node.getValue());
             }
         }

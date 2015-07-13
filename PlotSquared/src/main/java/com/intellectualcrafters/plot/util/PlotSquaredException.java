@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 
 /**
  * Created 2014-09-29 for PlotSquared
@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.PlotSquared;
 public class PlotSquaredException extends RuntimeException {
     public PlotSquaredException(final PlotError error, final String details) {
         super("PlotError >> " + error.getHeader() + ": " + details);
-        PlotSquared.log("&cPlotError &6>> &c" + error.getHeader() + ": &6" + details);
+        PS.log("&cPlotError &6>> &c" + error.getHeader() + ": &6" + details);
     }
 
     public static enum PlotError {

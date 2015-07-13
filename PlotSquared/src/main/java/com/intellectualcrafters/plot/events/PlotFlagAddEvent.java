@@ -33,9 +33,9 @@ import com.intellectualcrafters.plot.object.Plot;
  * @author Citymonstret
  * @author Empire92
  */
-public class PlotFlagAddEvent extends Event implements Cancellable {
+public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
+
     private static HandlerList handlers = new HandlerList();
-    private final Plot plot;
     private final Flag flag;
     private boolean cancelled;
 
@@ -46,21 +46,12 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
      * @param plot Plot to which the flag was added
      */
     public PlotFlagAddEvent(final Flag flag, final Plot plot) {
-        this.plot = plot;
+        super(plot);
         this.flag = flag;
     }
 
     public static HandlerList getHandlerList() {
         return handlers;
-    }
-
-    /**
-     * Get the plot involved
-     *
-     * @return Plot
-     */
-    public Plot getPlot() {
-        return this.plot;
     }
 
     /**
@@ -78,12 +69,12 @@ public class PlotFlagAddEvent extends Event implements Cancellable {
     }
 
     @Override
-    public boolean isCancelled() {
+    public final boolean isCancelled() {
         return this.cancelled;
     }
 
     @Override
-    public void setCancelled(final boolean b) {
-        this.cancelled = b;
+    public final void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

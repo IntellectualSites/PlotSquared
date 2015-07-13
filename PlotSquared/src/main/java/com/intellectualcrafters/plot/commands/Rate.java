@@ -20,21 +20,29 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.mutable.MutableInt;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.events.PlotRateEvent;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.mutable.MutableInt;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotItemStack;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.Rating;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+import org.bukkit.Bukkit;
 
 public class Rate extends SubCommand {
     /*
@@ -49,23 +57,23 @@ public class Rate extends SubCommand {
     public boolean execute(final PlotPlayer player, final String... args) {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("next")) {
-                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.getInstance().getPlots());
+                ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
                     public int compare(Plot p1, Plot p2) {
-                        int v1 = 0;
-                        int v2 = 0;
+                        double v1 = 0;
+                        double v2 = 0;
                         if (p1.settings.ratings != null) {
-                            for (Entry<UUID, Integer> entry : p1.settings.ratings.entrySet()) {
-                                v1 -= 11 - entry.getValue();
+                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
+                                v1 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
                         if (p2.settings.ratings != null) {
-                            for (Entry<UUID, Integer> entry : p2.settings.ratings.entrySet()) {
-                                v2 -= 11 - entry.getValue();
+                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                                v2 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
-                        return v2 - v1;
+                        return v2 > v1 ? 1 : -1;
                     }
                 });
                 UUID uuid = player.getUUID();
@@ -110,9 +118,17 @@ public class Rate extends SubCommand {
                         index.increment();
                         if (index.intValue() >= Settings.RATING_CATEGORIES.size()) {
                             close();
-                            // set rating!
-                            plot.settings.ratings.put(player.getUUID(), rating.intValue());
-                            DBFunc.setRating(plot, player.getUUID(), rating.intValue());
+                            // handle ratings
+                            int rV = rating.intValue();
+                            // CALL THE EVENT
+                            PlotRateEvent rateEvent = new PlotRateEvent(player, rV, plot);
+                            Bukkit.getPluginManager().callEvent(rateEvent);
+                            // DONE CALLING THE EVENT
+                            // get new rating
+                            rV = rateEvent.getRating();
+                            // set rating
+                            plot.settings.ratings.put(player.getUUID(), rV);
+                            DBFunc.setRating(plot, player.getUUID(), rV);
                             sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
                             sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
                             return false;

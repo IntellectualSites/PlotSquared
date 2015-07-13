@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -28,7 +28,11 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.CmdConfirm;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 public class Delete extends SubCommand {
@@ -50,7 +54,7 @@ public class Delete extends SubCommand {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        final PlotWorld pWorld = PlotSquared.getInstance().getPlotWorld(plot.world);
+        final PlotWorld pWorld = PS.get().getPlotWorld(plot.world);
         if (MainUtil.runners.containsKey(plot)) {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
@@ -65,7 +69,7 @@ public class Delete extends SubCommand {
                         sendMessage(plr, C.ADDED_BALANCE, c + "");
                     }
                 }
-                PlotSquared.getInstance().removePlot(loc.getWorld(), plot.id, true);
+                PS.get().removePlot(loc.getWorld(), plot.id, true);
                 final long start = System.currentTimeMillis();
                 final boolean result = MainUtil.clearAsPlayer(plot, true, new Runnable() {
                     @Override
@@ -76,7 +80,7 @@ public class Delete extends SubCommand {
                 if (!result) {
                     MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
                 }
-                DBFunc.delete(loc.getWorld(), plot);
+                DBFunc.delete(plot);
             }
         };
         if (Settings.CONFIRM_DELETE && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {

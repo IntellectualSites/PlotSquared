@@ -1,21 +1,22 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import com.intellectualcrafters.plot.PlotSquared;
-import com.intellectualcrafters.plot.generator.AugmentedPopulator;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import org.bukkit.World;
-import org.bukkit.generator.BlockPopulator;
-import org.bukkit.generator.ChunkGenerator;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.bukkit.World;
+import org.bukkit.generator.BlockPopulator;
+import org.bukkit.generator.ChunkGenerator;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.intellectualcrafters.plot.util.SetupUtils;
+
 public class SetGenCB {
     public static void setGenerator(World world) throws Exception {
         SetupUtils.manager.updateGenerators();
-        PlotSquared.getInstance().removePlotWorldAbs(world.getName());
+        PS.get().removePlotWorldAbs(world.getName());
         ChunkGenerator gen = world.getGenerator();
         if (gen == null) {
             return;
@@ -49,6 +50,6 @@ public class SetGenCB {
                 }
             }
         }
-        PlotSquared.getInstance().loadWorld(world.getName(), null);
+        PS.get().loadWorld(world.getName(), null);
     }
 }

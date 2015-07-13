@@ -20,9 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PlotSquared;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -50,7 +49,7 @@ public class Unclaim extends SubCommand {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         assert plot != null;
-        final PlotWorld pWorld = PlotSquared.getInstance().getPlotWorld(plot.world);
+        final PlotWorld pWorld = PS.get().getPlotWorld(plot.world);
         if ((EconHandler.manager != null) && pWorld.USE_ECONOMY) {
             final double c = pWorld.SELL_PRICE;
             if (c > 0d) {
@@ -58,12 +57,9 @@ public class Unclaim extends SubCommand {
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }
         }
-        final boolean result = PlotSquared.getInstance().removePlot(loc.getWorld(), plot.id, true);
+        final boolean result = PS.get().removePlot(loc.getWorld(), plot.id, true);
         if (result) {
-            final String worldname = plr.getLocation().getWorld();
-            PlotSquared.getInstance().getPlotManager(worldname).unclaimPlot(pWorld, plot);
-            DBFunc.delete(worldname, plot);
-            // TODO set wall block
+            plot.unclaim();
         } else {
             MainUtil.sendMessage(plr, "Plot removal has been denied.");
         }
