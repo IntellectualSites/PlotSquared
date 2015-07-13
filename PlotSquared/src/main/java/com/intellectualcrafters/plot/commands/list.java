@@ -59,21 +59,61 @@ public class list extends SubCommand {
         }
         return name;
     }
-    
-    public void noArgs(PlotPlayer plr) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(C.SUBCOMMAND_SET_OPTIONS_HEADER.s());
-        if (plr != null) {
+
+    private String[] getArgumentList(PlotPlayer player) {
+        List<String> args = new ArrayList<>();
+        if (player == null) {
+            args.addAll(Arrays.asList("world", "all", "unowned", "unknown", "top", "<player", "<world>"));
             if (EconHandler.manager != null) {
-                builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "top", "<player>", "<world>", "forsale",}));
-            }
-            else {
-                builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "top", "<player>", "<world>"}));
+                args.add("forsale");
             }
         } else {
-            builder.append(getArgumentList(new String[] { "world", "all", "unowned", "unknown", "top", "<player>", "<world>"}));
+            if (EconHandler.manager != null && player.hasPermission("plots.list.forsale")) {
+                args.add("forsale");
+            }
+            if (player.hasPermission("plots.list.mine")) {
+                args.add("mine");
+            }
+            if (player.hasPermission("plots.list.shared")) {
+                args.add("shared");
+            }
+            if (player.hasPermission("plots.list.world")) {
+                args.add("world");
+            }
+            if (player.hasPermission("plots.list.top")) {
+                args.add("top");
+            }
+            if (player.hasPermission("plots.list..all")) {
+                args.add("all");
+            }
+            if (player.hasPermission("plots.list.unowned")) {
+                args.add("unowned");
+            }
+            if (player.hasPermission("plots.list.unknown")) {
+                args.add("unknown");
+            }
+            if (player.hasPermission("plots.list.player")) {
+                args.add("<player>");
+            }
+            if (player.hasPermission("plots.list.world")) {
+                args.add("<world>");
+            }
         }
-        MainUtil.sendMessage(plr, builder.toString());
+        return args.toArray(new String[args.size()]);
+    }
+    
+    public void noArgs(PlotPlayer plr) {
+        // if (plr != null) {
+        //      if (EconHandler.manager != null) {
+        //        builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "top", "<player>", "<world>", "forsale",}));
+        //    }
+        //    else {
+        //        builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "top", "<player>", "<world>"}));
+        //    }
+        // } else {
+        //    builder.append(getArgumentList(new String[] { "world", "all", "unowned", "unknown", "top", "<player>", "<world>"}));
+        // }
+        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(getArgumentList(plr)));
     }
 
     @Override
