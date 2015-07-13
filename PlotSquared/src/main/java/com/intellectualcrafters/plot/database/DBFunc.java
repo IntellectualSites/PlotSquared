@@ -258,14 +258,14 @@ public class DBFunc {
      * @param comment
      */
     public static void removeComment(final Plot plot, final PlotComment comment) {
-        if (plot.temp) {
+        if (plot != null && plot.temp) {
             return;
         }
         dbManager.removeComment(plot, comment);
     }
     
     public static void clearInbox(final Plot plot, final String inbox) {
-        if (plot.temp) {
+        if (plot != null && plot.temp) {
             return;
         }
         dbManager.clearInbox(plot, inbox);
@@ -276,7 +276,7 @@ public class DBFunc {
      * @param comment
      */
     public static void setComment(final Plot plot, final PlotComment comment) {
-        if (plot.temp) {
+        if (plot != null && plot.temp) {
             return;
         }
         dbManager.setComment(plot, comment);
@@ -286,7 +286,7 @@ public class DBFunc {
      * @param plot
      */
     public static void getComments(final Plot plot, final String inbox, RunnableVal whenDone) {
-        if (plot.temp) {
+        if (plot != null && plot.temp) {
             return;
         }
         dbManager.getComments(plot, inbox, whenDone);
