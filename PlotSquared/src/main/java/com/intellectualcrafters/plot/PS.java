@@ -467,7 +467,6 @@ public class PS {
     /**
      * Sort a collection of plots by world, then by hashcode
      * @param plots
-     * @param priorityWorld
      * @see #sortPlots(Collection, String) to sort with a specific priority world
      * @see #sortPlots(Collection) to sort plots just by hashcode
      * @return ArrayList of plot

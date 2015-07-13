@@ -33,6 +33,7 @@ public enum Permissions {
         return hasPermission(player, perm.s);
     }
 
+
     public static boolean hasPermission(final PlotPlayer player, final String perm) {
         if ((player == null) || player.isOp() || player.hasPermission(ADMIN.s)) {
             return true;

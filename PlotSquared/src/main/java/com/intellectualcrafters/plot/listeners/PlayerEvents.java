@@ -60,6 +60,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -1425,7 +1426,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         if (!Permissions.hasPermission(pp, "plots.admin.destroy.road")) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.road");
                             e.setCancelled(true);
-                            return;
                         }
                     }
                 } else {
@@ -1433,7 +1433,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         if (!Permissions.hasPermission(pp, "plots.admin.destroy.unowned")) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.unowned");
                             e.setCancelled(true);
-                            return;
                         }
                     } else if (!plot.isAdded(pp.getUUID())) {
                         if (FlagManager.isPlotFlagTrue(plot, "hanging-break")) {
@@ -1443,12 +1442,39 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                             if (MainUtil.isPlotArea(l)) {
                                 MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.other");
                                 e.setCancelled(true);
-                                return;
                             }
                         }
                     }
                 }
             }
+        } else if (r instanceof Projectile) {
+            Projectile p = (Projectile) r;
+            if (p.getShooter() instanceof Player) {
+                Player shooter = (Player) p.getShooter();
+                if (PS.get().isPlotWorld(BukkitUtil.getLocation(e.getEntity()).getWorld())) {
+                    PlotPlayer player = BukkitUtil.getPlayer(shooter);
+                    Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(e.getEntity()));
+                    if (plot != null) {
+                        if (!plot.hasOwner()) {
+                            if (!Permissions.hasPermission(player, "plots.admin.destroy.unowned")) {
+                                MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.unowned");
+                                e.setCancelled(true);
+                            }
+                        } else if (!plot.isAdded(player.getUUID())) {
+                            if (!FlagManager.isPlotFlagTrue(plot, "hanging-break")){
+                                if (!Permissions.hasPermission(player, "plots.admin.destroy.other")) {
+                                    if (MainUtil.isPlotArea(BukkitUtil.getLocation(e.getEntity()))) {
+                                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.other");
+                                        e.setCancelled(true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            e.setCancelled(true);
         }
     }
 
