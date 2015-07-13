@@ -20,17 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -46,6 +35,12 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.util.bukkit.chat.FancyMessage;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author Citymonstret
@@ -109,6 +104,7 @@ public class list extends SubCommand {
     }
     
     public void noArgs(PlotPlayer plr) {
+        // For #395
         // if (plr != null) {
         //      if (EconHandler.manager != null) {
         //        builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "top", "<player>", "<world>", "forsale",}));
