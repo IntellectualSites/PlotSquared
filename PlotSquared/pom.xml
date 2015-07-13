@@ -49,10 +49,6 @@
     </build>
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
-        </repository>
-        <repository>
             <id>empcraft-repo</id>
             <url>http://empcraft.com/maven2</url>
         </repository>
@@ -82,7 +78,7 @@
     	<dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.8.3-R0.1-SNAPSHOT</version>
+            <version>1.8-R0.1-SNAPSHOT</version>
 		</dependency>
         <dependency>
             <groupId>com.sk89q</groupId>
