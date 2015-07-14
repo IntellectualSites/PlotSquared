@@ -20,16 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
 
 public class plugin extends SubCommand {
 
@@ -67,11 +67,13 @@ public class plugin extends SubCommand {
             @Override
             public void run() {
                 final ArrayList<String> strings = new ArrayList<String>() {
+                    // $2>> $1%id$2:$1%world $2- $1%owner
                     {
-                        add(String.format("&c>> &6PlotSquared (Version: %s)", PS.get().IMP.getVersion()));
-                        add(String.format("&c>> &6Authors: Citymonstret and Empire92"));
-                        add(String.format("&c>> &6Wiki: \n&chttps://github.com/IntellectualCrafters/PlotSquared/wiki"));
-                        add(String.format("&c>> &6Newest Version:\n&c" + (PS.get().update == null ? PS.get().IMP.getVersion() : PS.get().update)));
+                        add(String.format("$2>> $1PlotSquared $2(Version$2: $1%s$2)", PS.get().IMP.getVersion()));
+                        add(String.format("$2>> $1Authors$2: $1Citymonstret $2& $1Empire92"));
+                        add(String.format("$2>> $1Wiki$2: \n$1https://github.com/IntellectualCrafters/PlotSquared/wiki"));
+                        add(String.format("$2>> $1Website$2: \n$1http://plotsquared.co"));
+                        add(String.format("$2>> $1Newest Version$2:\n$1" + (PS.get().update == null ? PS.get().IMP.getVersion() : PS.get().update)));
                     }
                 };
                 for (final String s : strings) {
