@@ -21,6 +21,9 @@
 package com.intellectualcrafters.plot.listeners;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -41,9 +44,15 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
 /**
@@ -94,83 +103,118 @@ public class PlotListener extends APlotListener {
         }
     }
 
-    public void plotEntry(final PlotPlayer pp, final Plot plot) {
+    public boolean plotEntry(final PlotPlayer pp, final Plot plot) {
+        if (plot.isDenied(pp.getUUID()) && !Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
+            return false;
+        }
+        pp.setMeta("lastplotid", plot.id);
         final Player player = ((BukkitPlayer) pp).player;
         if (plot.hasOwner()) {
-            final Flag gamemodeFlag = FlagManager.getPlotFlag(plot, "gamemode");
-            if (gamemodeFlag != null) {
-                player.setGameMode(getGameMode(gamemodeFlag.getValueString()));
-            }
-            final Flag flyFlag = FlagManager.getPlotFlag(plot, "fly");
-            if (flyFlag != null) {
-                player.setAllowFlight((boolean) flyFlag.getValue());
-            }
-            final Flag timeFlag = FlagManager.getPlotFlag(plot, "time");
-            if (timeFlag != null) {
-                try {
-                    final long time = (long) timeFlag.getValue();
-                    player.setPlayerTime(time, false);
-                } catch (final Exception e) {
-                    FlagManager.removePlotFlag(plot, "time");
-                }
-            }
-            final Flag weatherFlag = FlagManager.getPlotFlag(plot, "weather");
-            if (weatherFlag != null) {
-                setWeather(player, weatherFlag.getValueString());
-            }
-            if ((FlagManager.isBooleanFlag(plot, "titles", Settings.TITLES)) && (C.TITLE_ENTERED_PLOT.s().length() > 2)) {
-                Flag greetingFlag = FlagManager.getPlotFlag(plot, "greeting");
-                String greeting;
+            final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
+            Bukkit.getPluginManager().callEvent(callEvent);
+            
+            HashMap<String, Flag> flags = FlagManager.getPlotFlags(plot);
+            int size = flags.size();
+            boolean titles = Settings.TITLES;
+            final String greeting;
+            
+            if (size != 0) {
+                Flag titleFlag = flags.get("titles");
+                titles = (Boolean) titleFlag.getValue();
+                Flag greetingFlag = flags.get("greeting");
                 if (greetingFlag != null) {
-                    greeting = greetingFlag.getValue() + "";
+                    greeting = (String) greetingFlag.getValue();
                 }
                 else {
                     greeting = "";
                 }
-                String alias = plot.settings.getAlias();
-                if (alias.length() == 0) {
-                    alias = plot.toString();
+                
+                final Flag gamemodeFlag = flags.get("gamemode");
+                if (gamemodeFlag != null) {
+                    player.setGameMode(getGameMode(gamemodeFlag.getValueString()));
                 }
-                final String sTitleMain = C.TITLE_ENTERED_PLOT.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting).replaceAll("%s", getName(plot.owner)).replaceAll("%alias%", alias);
-                final String sTitleSub = C.TITLE_ENTERED_PLOT_SUB.s().replaceAll("%x%", plot.id.x + "").replaceAll("%z%", plot.id.y + "").replaceAll("%world%", plot.world + "").replaceAll("%greeting%", greeting).replaceAll("%s", getName(plot.owner)).replaceAll("%alias%", alias);
-                AbstractTitle.sendTitle(pp, sTitleMain, sTitleSub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
-            }
-            {
-                final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
-                Bukkit.getPluginManager().callEvent(callEvent);
-            }
-            Flag musicFlag = FlagManager.getPlotFlag(plot, "music");
-            if (musicFlag != null) {
-                final Integer id = (Integer) musicFlag.getValue();
-                if ((id >= 2256 && id <= 2267) || id == 0) {
-                    final org.bukkit.Location loc = player.getLocation();
+                final Flag flyFlag = flags.get("fly");
+                if (flyFlag != null) {
+                    player.setAllowFlight((boolean) flyFlag.getValue());
+                }
+                final Flag timeFlag = flags.get("time");
+                if (timeFlag != null) {
+                    try {
+                        final long time = (long) timeFlag.getValue();
+                        player.setPlayerTime(time, false);
+                    } catch (final Exception e) {
+                        FlagManager.removePlotFlag(plot, "time");
+                    }
+                }
+                final Flag weatherFlag = flags.get("weather");
+                if (weatherFlag != null) {
+                    setWeather(player, weatherFlag.getValueString());
+                }
+                
+                Flag musicFlag = flags.get("music");
+                if (musicFlag != null) {
+                    final Integer id = (Integer) musicFlag.getValue();
+                    if ((id >= 2256 && id <= 2267) || id == 0) {
+                        final org.bukkit.Location loc = player.getLocation();
+                        org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
+                        if (lastLoc != null) {
+                            player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
+                            if (id == 0) {
+                                pp.deleteMeta("music");
+                                return true;
+                            }
+                        }
+                        try {
+                            pp.setMeta("music", loc);
+                            player.playEffect(loc, Effect.RECORD_PLAY, Material.getMaterial(id));
+                        }
+                        catch (Exception e) {}
+                    }
+                }
+                else {
                     org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
                     if (lastLoc != null) {
+                        pp.deleteMeta("music");
                         player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
-                        if (id == 0) {
-                            pp.deleteMeta("music");
-                            return;
-                        }
                     }
-                    try {
-                        pp.setMeta("music", loc);
-                        player.playEffect(loc, Effect.RECORD_PLAY, Material.getMaterial(id));
-                    }
-                    catch (Exception e) {}
                 }
+                CommentManager.sendTitle(pp, plot);
+            }
+            else if (titles) {
+                greeting = "";
             }
             else {
-                org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
-                if (lastLoc != null) {
-                    pp.deleteMeta("music");
-                    player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
+                return true;
+            }
+            if (titles) {
+                if (C.TITLE_ENTERED_PLOT.s().length() != 0 || C.TITLE_ENTERED_PLOT_SUB.s().length() != 0) {
+                    TaskManager.runTaskLaterAsync(new Runnable() {
+                        @Override
+                        public void run() {
+                            PlotId id = (PlotId) pp.getMeta("lastplotid");
+                            if (plot.id.equals(id)) {
+                                Map<String, String> replacements = new HashMap<>();
+                                replacements.put("%x%", id.x + "");
+                                replacements.put("%z%", id.y + "");
+                                replacements.put("%world%", plot.world);
+                                replacements.put("%greeting%", greeting);
+                                replacements.put("%alias", plot.toString());
+                                replacements.put("%s", getName(plot.owner));
+                                String main = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
+                                String sub = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
+                                AbstractTitle.sendTitle(pp, main, sub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
+                            }
+                        }
+                    }, 20);
                 }
             }
-            CommentManager.sendTitle(pp, plot);
+            return true;
         }
+        return true;
     }
 
-    public void plotExit(final PlotPlayer pp, final Plot plot) {
+    public boolean plotExit(final PlotPlayer pp, final Plot plot) {
+        pp.deleteMeta("lastplotid");
         Player player = ((BukkitPlayer) pp).player;
         final PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
         Bukkit.getPluginManager().callEvent(callEvent);
@@ -191,6 +235,7 @@ public class PlotListener extends APlotListener {
             pp.deleteMeta("music");
             player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
         }
+        return true;
     }
 
     public boolean getFlagValue(final String value) {

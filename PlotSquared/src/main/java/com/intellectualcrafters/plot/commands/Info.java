@@ -200,7 +200,7 @@ public class Info extends SubCommand {
         final String members = getPlayerList(plot.members);
         final String denied = getPlayerList(plot.denied);
 
-        final String flags = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "$1, $2") : C.NONE.s()), C.replacements);
+        final String flags = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getPlotFlags(plot).values(), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot).values(), "$1, $2") : C.NONE.s()), C.replacements);
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
 
         String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());

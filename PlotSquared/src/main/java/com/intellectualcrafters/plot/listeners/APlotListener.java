@@ -7,7 +7,7 @@ public abstract class APlotListener {
     
     public static APlotListener manager;
     
-    public abstract void plotExit(final PlotPlayer player, final Plot plot);
+    public abstract boolean plotEntry(final PlotPlayer player, final Plot plot);
     
-    public abstract void plotEntry(final PlotPlayer player, final Plot plot);
+    public abstract boolean plotExit(final PlotPlayer player, final Plot plot);
 }

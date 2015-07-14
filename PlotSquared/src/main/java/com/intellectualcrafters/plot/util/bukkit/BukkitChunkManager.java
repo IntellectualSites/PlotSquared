@@ -879,7 +879,6 @@ public class BukkitChunkManager extends ChunkManager {
                     final Player player = (Player) entity;
                     final PlotPlayer pp = BukkitUtil.getPlayer(player);
                     pp.teleport(MainUtil.getDefaultHome(plot));
-                    APlotListener.manager.plotExit(pp, plot);
                 } else {
                     entity.remove();
                 }

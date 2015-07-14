@@ -237,21 +237,20 @@ public class FlagManager {
      * @param plot
      * @return set of flags
      */
-    public static Collection<Flag> getPlotFlags(final Plot plot) {
+    public static HashMap<String, Flag> getPlotFlags(final Plot plot) {
         return getSettingFlags(plot.world, plot.settings);
     }
 
-    public static Collection<Flag> getSettingFlags(final String world, final PlotSettings settings) {
+    public static HashMap<String, Flag> getSettingFlags(final String world, final PlotSettings settings) {
         PlotWorld plotworld = PS.get().getPlotWorld(world);
-        HashMap<String, Flag> map;
-        if (plotworld == null) {
-            map = new HashMap<>();
+        if (plotworld == null || plotworld.DEFAULT_FLAGS.size() == 0) {
+            return settings.flags;
         }
         else {
-            map = (HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone();
+            HashMap<String, Flag> map = (HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone();
+            map.putAll(settings.flags);
+            return map;
         }
-        map.putAll(settings.flags);
-        return map.values();
     }
 
     public static boolean removePlotFlag(final Plot plot, final String id) {
