@@ -23,6 +23,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.material.Sandstone;
 import org.bukkit.material.Step;
 import org.bukkit.material.Tree;
+import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
 
 import com.intellectualcrafters.plot.object.BukkitPlayer;
@@ -326,8 +327,7 @@ public class BukkitUtil extends BlockManager {
             Material material = Material.getMaterial(block.id);
             if (material.isBlock() && material.isSolid() && !material.hasGravity()) {
                 Class<? extends MaterialData> data = material.getData();
-                if ((data.equals(MaterialData.class) && !material.isTransparent() && material.isOccluding()) || data.equals(Tree.class) || data.equals(Sandstone.class) || data.equals(Wool.class) || data.equals(Step.class)) {
-                    System.out.print((data.equals(MaterialData.class) && !material.isTransparent() && material.isOccluding()) + " | " + data.getCanonicalName());
+                if ((data.equals(MaterialData.class) && !material.isTransparent() && material.isOccluding()) || data.equals(Tree.class) || data.equals(Sandstone.class) || data.equals(Wool.class) || data.equals(Step.class) || data.equals(WoodenStep.class)) {
                     switch (material) {
                         case NOTE_BLOCK:
                         case MOB_SPAWNER: {

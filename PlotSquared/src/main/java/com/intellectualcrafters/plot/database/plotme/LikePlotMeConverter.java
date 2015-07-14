@@ -150,7 +150,7 @@ public class LikePlotMeConverter {
             sendMessage(" - " + dbPrefix + "Plots");
             final Set<String> worlds = getPlotMeWorlds(plotConfig);
 
-            if (!Settings.CONVERT_PLOTME) {
+            if (Settings.CONVERT_PLOTME) {
                 sendMessage("Updating bukkit.yml");
                 updateWorldYml(plugin, "bukkit.yml");
                 updateWorldYml(plugin, "plugins/Multiverse-Core/worlds.yml");
