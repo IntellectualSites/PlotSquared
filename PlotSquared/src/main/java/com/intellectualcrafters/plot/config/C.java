@@ -20,18 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.util.StringMan;
+import org.bukkit.ChatColor;
+
 import java.io.File;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.bukkit.ChatColor;
-
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * Captions class.
@@ -486,6 +485,7 @@ public enum C {
      * Custom
      */
     CUSTOM_STRING("-", "-");
+    public static final HashMap<String, String> replacements = new HashMap<>();
     /**
      * Translated
      */
@@ -535,7 +535,7 @@ public enum C {
     C(final String d, String cat) {
         this(d, true, cat.toLowerCase());
     }
-    
+
     public static String format(C c, Object... args) {
         String m = c.s;
         for (int i = args.length - 1 ; i >= 0; i--) {
@@ -549,7 +549,7 @@ public enum C {
         }
         return m;
     }
-    
+
     public static void load(File file) {
         try {
             if (!file.exists()) {
@@ -598,7 +598,8 @@ public enum C {
             }
             ConfigurationSection config = PS.get().style.getConfigurationSection("color");
             Set<String> styles = config.getKeys(false);
-            HashMap<String, String> replacements = new HashMap<>();
+            // HashMap<String, String> replacements = new HashMap<>();
+            replacements.clear();
             for (String style : styles) {
                 replacements.put("$" + style, "\u00a7" + config.getString(style));
             }

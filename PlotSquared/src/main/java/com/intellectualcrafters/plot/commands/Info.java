@@ -27,6 +27,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 import org.apache.commons.lang.StringUtils;
@@ -191,7 +192,7 @@ public class Info extends SubCommand {
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
-        final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : "none";
+        final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : C.NONE.s();
         Location top = MainUtil.getPlotTopLoc(world, plot.id);
         Location bot = MainUtil.getPlotBottomLoc(world, plot.id).add(1,0,1);
         final String biome = BlockManager.manager.getBiome(bot.add((top.getX() - bot.getX()) / 2, 0, (top.getX() - bot.getX()) / 2));
@@ -199,7 +200,7 @@ public class Info extends SubCommand {
         final String members = getPlayerList(plot.members);
         final String denied = getPlayerList(plot.denied);
 
-        final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : C.NONE.s());
+        final String flags = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "$1, $2") : C.NONE.s()), C.replacements);
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
 
         String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());
