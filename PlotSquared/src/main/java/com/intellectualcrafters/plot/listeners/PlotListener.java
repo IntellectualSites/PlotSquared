@@ -120,7 +120,9 @@ public class PlotListener extends APlotListener {
             
             if (size != 0) {
                 Flag titleFlag = flags.get("titles");
-                titles = (Boolean) titleFlag.getValue();
+                    if (titleFlag != null) {
+                    titles = (Boolean) titleFlag.getValue();
+                }
                 Flag greetingFlag = flags.get("greeting");
                 if (greetingFlag != null) {
                     greeting = (String) greetingFlag.getValue();
