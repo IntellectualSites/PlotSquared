@@ -138,8 +138,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         r.close();
         stmt.close();
         try {
-            MainUtil.sendConsoleMessage(" - " + plugin + "_denied");
-            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "_denied`");
+            MainUtil.sendConsoleMessage(" - " + plugin + "core_denied");
+            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_denied`");
             r = stmt.executeQuery();
             
             while (r.next()) {
@@ -153,8 +153,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 plot.denied.add(denied);
             }
             
-            MainUtil.sendConsoleMessage(" - " + plugin + "_allowed");
-            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "_allowed`");
+            MainUtil.sendConsoleMessage(" - " + plugin + "core_allowed");
+            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_allowed`");
             r = stmt.executeQuery();
             
             while (r.next()) {
@@ -171,7 +171,9 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             stmt.close();
         
         }
-        catch (Exception e) {}
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
         
         for (Entry<Integer, Plot> entry : plots.entrySet()) {

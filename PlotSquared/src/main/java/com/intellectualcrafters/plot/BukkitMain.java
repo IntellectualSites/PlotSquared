@@ -5,23 +5,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
+import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -116,7 +112,10 @@ import com.intellectualcrafters.plot.listeners.TNTListener;
 import com.intellectualcrafters.plot.listeners.WorldEvents;
 import com.intellectualcrafters.plot.listeners.worldedit.WEListener;
 import com.intellectualcrafters.plot.listeners.worldedit.WESubscriber;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -351,8 +350,13 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         return new BukkitTaskManager();
     }
     
+    private ArrayDeque<Entity> fastTickEntities;
+    private ArrayDeque<Entity> slowTickEntities;
+    
     @Override
     public void runEntityTask() {
+//        fastTickEntities = new ArrayDeque<>();
+//        slowTickEntities = new ArrayDeque<>();
         log(C.PREFIX.s() + "KillAllEntities started.");
         TaskManager.runTaskRepeat(new Runnable() {
             long ticked = 0l;
@@ -368,21 +372,102 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                     this.error = 0l;
                 }
                 World world;
-                for (final String w : PS.get().getPlotWorlds()) {
-                    world = Bukkit.getWorld(w);
+                for (final PlotWorld pw : PS.get().getPlotWorldObjects()) {
+                    PlotManager manager = PS.get().getPlotManager(pw.worldname);
+                    world = Bukkit.getWorld(pw.worldname);
                     try {
-                        if (world.getLoadedChunks().length < 1) {
-                            continue;
-                        }
-                        for (final Chunk chunk : world.getLoadedChunks()) {
-                            final Entity[] entities = chunk.getEntities();
-                            Entity entity;
-                            for (int i = entities.length - 1; i >= 0; i--) {
-                                if (!((entity = entities[i]) instanceof Player) && (MainUtil.getPlot(BukkitUtil.getLocation(entity)) == null)) {
+                    for (Entity entity : world.getEntities()) {
+                        switch (entity.getType()) {
+                            case EGG:
+                            case ENDER_CRYSTAL:
+                            case COMPLEX_PART:
+                            case ARMOR_STAND:
+                            case FISHING_HOOK:
+                            case ENDER_SIGNAL:
+                            case EXPERIENCE_ORB:
+                            case LEASH_HITCH:
+                            case FIREWORK:
+                            case WEATHER:
+                            case LIGHTNING:
+                            case WITHER_SKULL:
+                            case UNKNOWN:
+                            case ITEM_FRAME:
+                            case PAINTING:
+                            case PLAYER: {
+                                // non moving / unremovable
+                                continue;
+                            }
+                            case THROWN_EXP_BOTTLE:
+                            case SPLASH_POTION:
+                            case SNOWBALL:
+                            case ENDER_PEARL:
+                            case ARROW: {
+                                // managed elsewhere | projectile
+                                continue;
+                            }
+                            case MINECART:
+                            case MINECART_CHEST:
+                            case MINECART_COMMAND:
+                            case MINECART_FURNACE:
+                            case MINECART_HOPPER:
+                            case MINECART_MOB_SPAWNER:
+                            case MINECART_TNT:
+                            case BOAT: {
+                                // vehicle
+                                continue;
+                            }
+                            case SMALL_FIREBALL:
+                            case FIREBALL:
+                            case DROPPED_ITEM: {
+                                // dropped item
+                                continue;
+                            }
+                            case PRIMED_TNT:
+                            case FALLING_BLOCK:  {
+                                // managed elsewhere
+                                continue;
+                            }
+                            case BAT:
+                            case BLAZE:
+                            case CAVE_SPIDER:
+                            case CHICKEN:
+                            case COW:
+                            case CREEPER:
+                            case ENDERMAN:
+                            case ENDERMITE:
+                            case ENDER_DRAGON:
+                            case GHAST:
+                            case GIANT:
+                            case GUARDIAN:
+                            case HORSE:
+                            case IRON_GOLEM:
+                            case MAGMA_CUBE:
+                            case MUSHROOM_COW:
+                            case OCELOT:
+                            case PIG:
+                            case PIG_ZOMBIE:
+                            case RABBIT:
+                            case SHEEP:
+                            case SILVERFISH:
+                            case SKELETON:
+                            case SLIME:
+                            case SNOWMAN:
+                            case SPIDER:
+                            case SQUID:
+                            case VILLAGER:
+                            case WITCH:
+                            case WITHER:
+                            case WOLF:
+                            case ZOMBIE:
+                            default: {
+                                Location loc = entity.getLocation();
+                                if (manager.getPlotIdAbs(pw, loc.getBlockX(), 0, loc.getBlockZ()) == null) {
                                     entity.remove();
                                 }
+                                break;
                             }
                         }
+                    }
                     } catch (final Throwable e) {
                         ++this.error;
                     } finally {
