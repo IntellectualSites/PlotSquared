@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.util;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -222,7 +223,7 @@ public class ExpireManager {
     }
 
     public static List<Plot> getOldPlots(final String world) {
-        final Collection<Plot> plots = PS.get().getPlots(world).values();
+        final ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots(world).values());
         final List<Plot> toRemove = new ArrayList<>();
         Iterator<Plot> iter = plots.iterator();
         while (iter.hasNext()) {
