@@ -20,26 +20,21 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
-import java.util.regex.Matcher;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.InfoInventory;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.regex.Matcher;
 
 /**
  * @author Citymonstret
@@ -48,6 +43,37 @@ import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 public class Info extends SubCommand {
     public Info() {
         super(Command.INFO, "Display plot info", "info", CommandCategory.INFO, false);
+    }
+
+    public static String getPlayerList(final Collection<UUID> uuids) {
+        ArrayList<UUID> l = new ArrayList<>(uuids);
+        if ((l == null) || (l.size() < 1)) {
+            return C.NONE.s();
+        }
+        final String c = C.PLOT_USER_LIST.s();
+        final StringBuilder list = new StringBuilder();
+        for (int x = 0; x < l.size(); x++) {
+            if ((x + 1) == l.size()) {
+                list.append(c.replace("%user%", getPlayerName(l.get(x))).replace(",", ""));
+            } else {
+                list.append(c.replace("%user%", getPlayerName(l.get(x))));
+            }
+        }
+        return list.toString();
+    }
+
+    public static String getPlayerName(final UUID uuid) {
+        if (uuid == null) {
+            return "unknown";
+        }
+        if (uuid.equals(DBFunc.everyone) || uuid.toString().equalsIgnoreCase(DBFunc.everyone.toString())) {
+            return "everyone";
+        }
+        final String name = UUIDHandler.getName(uuid);
+        if (name == null) {
+            return "unknown";
+        }
+        return name;
     }
 
     @Override
@@ -103,7 +129,7 @@ public class Info extends SubCommand {
             }
         }
         if ((args.length == 1) && args[0].equalsIgnoreCase("inv")) {
-            new InfoInventory(plot, player).build().display(); 
+            new InfoInventory(plot, player).build().display();
             return true;
         }
         final boolean hasOwner = plot.hasOwner();
@@ -172,16 +198,12 @@ public class Info extends SubCommand {
         final String trusted = getPlayerList(plot.trusted);
         final String members = getPlayerList(plot.members);
         final String denied = getPlayerList(plot.denied);
-        
-        final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : "none");
+
+        final String flags = "&6" + (StringUtils.join(FlagManager.getPlotFlags(plot), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot), "&7, &6") : C.NONE.s());
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
-        String owner = "none";
-        if (plot.owner == null) {
-            owner = "unowned";
-        }
-        else {
-            owner = getPlayerList(plot.getOwners());
-        }
+
+        String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());
+
         info = info.replaceAll("%alias%", alias);
         info = info.replaceAll("%id%", id.toString());
         info = info.replaceAll("%id2%", id2.toString());
@@ -226,36 +248,5 @@ public class Info extends SubCommand {
         }
         MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
         MainUtil.sendMessage(player, info, false);
-    }
-
-    public static String getPlayerList(final Collection<UUID> uuids) {
-        ArrayList<UUID> l = new ArrayList<>(uuids);
-        if ((l == null) || (l.size() < 1)) {
-            return C.NONE.s();
-        }
-        final String c = C.PLOT_USER_LIST.s();
-        final StringBuilder list = new StringBuilder();
-        for (int x = 0; x < l.size(); x++) {
-            if ((x + 1) == l.size()) {
-                list.append(c.replace("%user%", getPlayerName(l.get(x))).replace(",", ""));
-            } else {
-                list.append(c.replace("%user%", getPlayerName(l.get(x))));
-            }
-        }
-        return list.toString();
-    }
-
-    public static String getPlayerName(final UUID uuid) {
-        if (uuid == null) {
-            return "unknown";
-        }
-        if (uuid.equals(DBFunc.everyone) || uuid.toString().equalsIgnoreCase(DBFunc.everyone.toString())) {
-            return "everyone";
-        }
-        final String name = UUIDHandler.getName(uuid);
-        if (name == null) {
-            return "unknown";
-        }
-        return name;
     }
 }
