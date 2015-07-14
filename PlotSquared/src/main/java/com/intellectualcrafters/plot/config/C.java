@@ -125,7 +125,7 @@ public enum C {
     INVALID_INBOX("$2That is not a valid inbox.&-$1Accepted values: %s", "Comment"),
     NO_PERM_INBOX("$2You do not have permission for that inbox", "Comment"),
     NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox", "Comment"),
-    NO_PLOT_INBOX("$2You must  stand in or supply a plot argument", "Comment"),
+    NO_PLOT_INBOX("$2You must stand in or supply a plot argument", "Comment"),
     COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"),
     COMMENT_ADDED("$4A comment has been left", "Comment"),
     COMMENT_HEADER("$2====== Comments ======", "Comment"),
@@ -322,7 +322,7 @@ public enum C {
     /*
      * Debug
      */
-    DEUBG_HEADER("$1Debug Information&-", "Debug"),
+    DEBUG_HEADER("$1Debug Information&-", "Debug"),
     DEBUG_SECTION("$2>> $1&l%val%", "Debug"),
     DEBUG_LINE("$2>> $1%var%$2:$1 %val%&-", "Debug"),
     /*
@@ -401,7 +401,7 @@ public enum C {
     /*
      * PlotMe
      */
-    NOT_USING_PLOTME("$2This server uses the $1PlotSquared $2plot management system. Please use the $1/ps &2or $1/p2 $2or $1/plots $2instead", "Errors"),
+    NOT_USING_PLOTME("$2This server uses the $1PlotSquared $2plot management system. Please use the $1/ps $2or $1/p2 $2or $1/plots $2instead", "Errors"),
     /*
      * Wait
      */

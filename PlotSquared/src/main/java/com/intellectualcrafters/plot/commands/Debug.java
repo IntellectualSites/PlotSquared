@@ -45,7 +45,7 @@ public class Debug extends SubCommand {
         String header, line, section;
         {
             information = new StringBuilder();
-            header = C.DEUBG_HEADER.s();
+            header = C.DEBUG_HEADER.s();
             line = C.DEBUG_LINE.s();
             section = C.DEBUG_SECTION.s();
         }
