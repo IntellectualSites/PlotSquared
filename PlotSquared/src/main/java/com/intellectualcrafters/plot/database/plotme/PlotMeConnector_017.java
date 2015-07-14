@@ -149,16 +149,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     MainUtil.sendConsoleMessage("&6Denied (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
-                String name = r.getString("player");
-                UUID denied = UUIDHandler.getUUID(name);
-                if (denied == null) {
-                    if (name.equals("*")) {
-                        denied = DBFunc.everyone;
-                    } else {
-                        MainUtil.sendConsoleMessage("&6Denied (" + key + ") references incorrect name (`" + name + "`)");
-                        continue;
-                    }
-                }
+                UUID denied = UUID.fromString(r.getString("player"));
                 plot.denied.add(denied);
             }
             
@@ -173,16 +164,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     MainUtil.sendConsoleMessage("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
-                String name = r.getString("player");
-                UUID allowed = UUIDHandler.getUUID(name);
-                if (allowed == null) {
-                    if (name.equals("*")) {
-                        allowed = DBFunc.everyone;
-                    } else {
-                        MainUtil.sendConsoleMessage("&6Allowed (" + key + ") references incorrect name (`" + name + "`)");
-                        continue;
-                    }
-                }
+                UUID allowed = UUID.fromString(r.getString("player"));
                 plot.trusted.add(allowed);
             }
             r.close();
