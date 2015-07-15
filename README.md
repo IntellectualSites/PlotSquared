@@ -9,7 +9,7 @@ The most important thing, however, is not a whole load of features. Because, if 
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
 * [WebChat/IRC](http://webchat.esper.net/?nick=&channels=IntellectualCrafters&fg_color=000&fg_sec_color=000&bg_color=FFF)
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
-* [Website](http://plotsquared.co)
+* [Website](http://plotsquared.com)
 
 ### Developer Resources
 * [JavaDocs](http://empcraft.com/plotsquared/doc/)
