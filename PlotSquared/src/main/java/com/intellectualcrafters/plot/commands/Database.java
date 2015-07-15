@@ -103,7 +103,7 @@ public class Database extends SubCommand {
                 }
                 final SQLManager manager = new SQLManager(n, prefix);
                 try {
-                    manager.createTables(Settings.DB.USE_MYSQL ? "mysql" : "sqlite");
+                    manager.createTables("mysql");
                 } catch (final SQLException e) {
                     e.printStackTrace();
                     return sendMessage(plr, "Could not create the required tables and/or load the database") && sendMessage(plr, "Please see the stacktrace for more information");
