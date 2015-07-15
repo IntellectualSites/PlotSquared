@@ -975,7 +975,7 @@ public class MainUtil {
         } else {
             Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z);
             if (BukkitUtil.getBlock(loc).id != 0) {
-                sendConsoleMessage("ID was " + BukkitUtil.getBlock(loc).id);
+                // sendConsoleMessage("ID was " + BukkitUtil.getBlock(loc).id);
                 loc.setY(Math.max(getHeighestBlock(w, bot.getX(), bot.getZ()), bot.getY()));
             }
             return loc;
