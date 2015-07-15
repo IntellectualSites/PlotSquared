@@ -16,6 +16,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import com.intellectualcrafters.jnbt.ListTag;
 import com.intellectualcrafters.jnbt.NBTInputStream;
 import com.intellectualcrafters.jnbt.NBTOutputStream;
 import com.intellectualcrafters.jnbt.ShortTag;
+import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
@@ -373,6 +375,33 @@ public abstract class SchematicHandler {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Create a compound tag from blocks
+     *  - Untested
+     * @param blocks
+     * @param blockdata
+     * @param d
+     * @return
+     */
+    public CompoundTag createTag(byte[] blocks, byte[] blockdata, Dimension d) {
+        final HashMap<String, Tag> schematic = new HashMap<>();
+        schematic.put("Width", new ShortTag("Width", (short) d.getX()));
+        schematic.put("Length", new ShortTag("Length", (short) d.getZ()));
+        schematic.put("Height", new ShortTag("Height", (short) d.getY()));
+        schematic.put("Materials", new StringTag("Materials", "Alpha"));
+        schematic.put("WEOriginX", new IntTag("WEOriginX", 0));
+        schematic.put("WEOriginY", new IntTag("WEOriginY", 0));
+        schematic.put("WEOriginZ", new IntTag("WEOriginZ", 0));
+        schematic.put("WEOffsetX", new IntTag("WEOffsetX", 0));
+        schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
+        schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
+        schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
+        schematic.put("Data", new ByteArrayTag("Data", blockdata));
+        schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
+        schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, new ArrayList<Tag>()));
+        return new CompoundTag("Schematic", schematic);
     }
     
     /**

@@ -144,8 +144,10 @@ public class SQLManager implements AbstractDB {
             @Override
             public void run() {
                 try {
-                    connection.setAutoCommit(false);
-                    
+                    try {
+                        connection.setAutoCommit(false);
+                    }
+                    catch (SQLException e) {}
                     // Create the plots
                     createPlots(myList, new Runnable() {
                         @Override
@@ -229,7 +231,7 @@ public class SQLManager implements AbstractDB {
                             }
                         }
                     });
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     PS.log("&7[WARN] " + "Failed to set all helpers for plots");
                     try {
