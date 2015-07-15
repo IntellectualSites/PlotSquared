@@ -52,6 +52,7 @@ public enum Command {
     DEBUGROADREGEN("debugroadregen"),
     DEBUGFIXFLAGS("debugfixflags"),
     REGENALLROADS("regenallroads"),
+    ALLOWUNSAFE("debugallowunsafe"),
     DEBUGLOADTEST("debugloadtest"),
     DEBUGSAVETEST("debugsavetest"),
     UNCLAIM("unclaim"),

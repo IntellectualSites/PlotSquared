@@ -218,6 +218,9 @@ public class Set extends SubCommand {
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
         final PlotManager manager = PS.get().getPlotManager(world);
         final String[] components = manager.getPlotComponents(plotworld, plot.id);
+
+        boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(plr.getUUID());
+
         for (final String component : components) {
             if (component.equalsIgnoreCase(args[0])) {
                 if (!Permissions.hasPermission(plr, "plots.set." + component)) {
@@ -251,15 +254,17 @@ public class Set extends SubCommand {
                             }
                             return false;
                         }
-                        else if (!BlockManager.manager.isBlockSolid(block)) {
+                        else if (!allowUnsafe && !BlockManager.manager.isBlockSolid(block)) {
                             MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
                             return false;
                         }
                     }
-                    for (PlotBlock block : blocks) {
-                        if (!BlockManager.manager.isBlockSolid(block)) {
-                            MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
-                            return false;
+                    if (!allowUnsafe) {
+                        for (PlotBlock block : blocks) {
+                            if (!BlockManager.manager.isBlockSolid(block)) {
+                                MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
+                                return false;
+                            }
                         }
                     }
                 } catch (final Exception e2) {

@@ -49,6 +49,10 @@
     </build>
     <repositories>
         <repository>
+            <id>techcable-repo</id> <!-- Just leave the repositories section alone or bukkit won't work -->
+            <url>http://repo.techcable.net/content/groups/public/</url>
+        </repository>
+        <repository>
             <id>empcraft-repo</id>
             <url>http://empcraft.com/maven2</url>
         </repository>

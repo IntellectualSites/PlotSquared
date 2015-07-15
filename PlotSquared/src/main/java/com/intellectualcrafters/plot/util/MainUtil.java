@@ -134,7 +134,6 @@ public class MainUtil {
     /**
      * Merges all plots in the arraylist (with cost)
      *
-     * @param plr
      * @param world
      * @param plotIds
      *
@@ -634,7 +633,7 @@ public class MainUtil {
             return;
         }
         final Location loc = manager.getSignLoc(plotworld, p);
-        BlockManager.setBlocks(world, new int[] { loc.getX() }, new int[] { loc.getY() }, new int[] { loc.getZ() }, new int[] { 0 }, new byte[] { 0 });
+        BlockManager.setBlocks(world, new int[]{loc.getX()}, new int[]{loc.getY()}, new int[]{loc.getZ()}, new int[]{0}, new byte[]{0});
     }
     
     public static void setSign(final Plot p) {
@@ -974,20 +973,22 @@ public class MainUtil {
         if ((home == null) || ((home.x == 0) && (home.z == 0))) {
             return getDefaultHome(plot);
         } else {
-            final int y = Math.max(getHeighestBlock(w, home.x, home.z), home.y);
-            return bot.add(home.x, y, home.z);
+            Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z);
+            if (BukkitUtil.getBlock(loc).id != 0) {
+                sendConsoleMessage("ID was " + BukkitUtil.getBlock(loc).id);
+                loc.setY(Math.max(getHeighestBlock(w, bot.getX(), bot.getZ()), bot.getY()));
+            }
+            return loc;
         }
     }
 
     /**
      * Get the plot home
      *
-     * @param w    World
      * @param plot Plot Object
      *
      * @return Plot Home Location
      *
-     * @see #getPlotHome(String, Plot)
      */
     public static Location getPlotHome(final Plot plot) {
         return getPlotHome(plot.world, plot.id);

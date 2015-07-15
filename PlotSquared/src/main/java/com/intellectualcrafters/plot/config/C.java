@@ -319,6 +319,12 @@ public enum C {
      * Set Block
      */
     SET_BLOCK_ACTION_FINISHED("$1The last setblock action is now finished.", "Set Block"),
+
+    /*
+    AllowUnsafe
+     */
+    DEBUGALLOWUNSAFE_ON("$2Unsafe actions allowed", "unsafe"),
+    DEBUGALLOWUNSAFE_OFF("$2Unsafe actions disabled", "unsafe"),
     /*
      * Debug
      */
