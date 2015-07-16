@@ -2,12 +2,14 @@ package com.intellectualcrafters.plot.database.plotme;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import com.intellectualcrafters.configuration.file.FileConfiguration;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -26,6 +28,30 @@ public abstract class APlotMeConnector {
             }
         }
         return world;
+    }
+    
+    public boolean isValidConnection(Connection connection) {
+        return connection != null;
+    }
+    
+    public void copyConfig(FileConfiguration plotConfig, String world, String actualWorldName) {
+        final Integer pathwidth = plotConfig.getInt("worlds." + world + ".PathWidth"); //
+        PS.get().config.set("worlds." + actualWorldName + ".road.width", pathwidth);
+        final Integer plotsize = plotConfig.getInt("worlds." + world + ".PlotSize"); //
+        PS.get().config.set("worlds." + actualWorldName + ".plot.size", plotsize);
+        final String wallblock = plotConfig.getString("worlds." + world + ".WallBlockId"); //
+        PS.get().config.set("worlds." + actualWorldName + ".wall.block", wallblock);
+        final String floor = plotConfig.getString("worlds." + world + ".PlotFloorBlockId"); //
+        PS.get().config.set("worlds." + actualWorldName + ".plot.floor", Arrays.asList(floor));
+        final String filling = plotConfig.getString("worlds." + world + ".PlotFillingBlockId"); //
+        PS.get().config.set("worlds." + actualWorldName + ".plot.filling", Arrays.asList(filling));
+        final String road = plotConfig.getString("worlds." + world + ".RoadMainBlockId");
+        PS.get().config.set("worlds." + actualWorldName + ".road.block", road);
+        Integer height = plotConfig.getInt("worlds." + world + ".RoadHeight"); //
+        if (height == null) {
+            height = 64;
+        }
+        PS.get().config.set("worlds." + actualWorldName + ".road.height", height);
     }
     
     public Location getPlotTopLocAbs(int path, int plot, final PlotId plotid) {

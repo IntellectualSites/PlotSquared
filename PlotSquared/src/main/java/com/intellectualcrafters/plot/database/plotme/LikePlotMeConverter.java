@@ -133,7 +133,7 @@ public class LikePlotMeConverter {
             
             Connection connection = connector.getPlotMeConnection(plugin, plotConfig, dataFolder);
 
-            if (connection == null) {
+            if (!connector.isValidConnection(connection)) {
                 sendMessage("Cannot connect to PlotMe DB. Conversion process will not continue");
                 return false;
             }
@@ -158,23 +158,7 @@ public class LikePlotMeConverter {
                     sendMessage("Copying config for: " + world);
                     try {
                         String actualWorldName = getWorld(world);
-                        final Integer pathwidth = plotConfig.getInt("worlds." + world + ".PathWidth"); //
-                        PS.get().config.set("worlds." + actualWorldName + ".road.width", pathwidth);
-                        final Integer plotsize = plotConfig.getInt("worlds." + world + ".PlotSize"); //
-                        PS.get().config.set("worlds." + actualWorldName + ".plot.size", plotsize);
-                        final String wallblock = plotConfig.getString("worlds." + world + ".WallBlockId"); //
-                        PS.get().config.set("worlds." + actualWorldName + ".wall.block", wallblock);
-                        final String floor = plotConfig.getString("worlds." + world + ".PlotFloorBlockId"); //
-                        PS.get().config.set("worlds." + actualWorldName + ".plot.floor", Arrays.asList(floor));
-                        final String filling = plotConfig.getString("worlds." + world + ".PlotFillingBlockId"); //
-                        PS.get().config.set("worlds." + actualWorldName + ".plot.filling", Arrays.asList(filling));
-                        final String road = plotConfig.getString("worlds." + world + ".RoadMainBlockId");
-                        PS.get().config.set("worlds." + actualWorldName + ".road.block", road);
-                        Integer height = plotConfig.getInt("worlds." + world + ".RoadHeight"); //
-                        if (height == null) {
-                            height = 64;
-                        }
-                        PS.get().config.set("worlds." + actualWorldName + ".road.height", height);
+                        connector.copyConfig(plotConfig, world, actualWorldName);
                         PS.get().config.save(PS.get().configFile);
                     } catch (final Exception e) {
                         sendMessage("&c-- &lFailed to save configuration for world '" + world + "'\nThis will need to be done using the setup command, or manually");
