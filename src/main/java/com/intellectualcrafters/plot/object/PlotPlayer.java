@@ -40,7 +40,6 @@ public interface PlotPlayer {
      *  - Please note that this is not intended to store large values
      *  - For session only data use meta
      * @param key
-     * @param value
      */
     public void setAttribute(String key);
     
