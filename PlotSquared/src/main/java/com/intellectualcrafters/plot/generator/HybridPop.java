@@ -113,8 +113,8 @@ public class HybridPop extends PlotPopulator {
     public void populate(World world, RegionWrapper requiredRegion, PseudoRandom random, int cx, int cz) {
         PS.get().getPlotManager(world.getName());
 
-        int sx = (short) ((this.X) % this.size);
-        int sz = (short) ((this.Z) % this.size);
+        int sx = (short) ((this.X - this.plotworld.ROAD_OFFSET_X) % this.size);
+        int sz = (short) ((this.Z - this.plotworld.ROAD_OFFSET_Z) % this.size);
         if (sx < 0) {
             sx += this.size;
         }

@@ -527,7 +527,7 @@ public enum C {
     C(final String d, final boolean prefix, String cat) {
         this.d = d;
         if (this.s == null) {
-            this.s = "";
+            this.s = d;
         }
         this.prefix = prefix;
         this.cat = cat.toLowerCase();

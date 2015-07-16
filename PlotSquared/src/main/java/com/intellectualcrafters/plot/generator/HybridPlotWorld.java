@@ -62,22 +62,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      */
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
-        if (!config.contains("plot.height")) {
-            PS.log(" - &cConfiguration is null? (" + config.getCurrentPath() + ")");
-        }
-        this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
-        this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
-        this.PLOT_WIDTH = config.getInt("plot.size");
-        this.MAIN_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.filling"), ','));
-        this.TOP_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.floor"), ','));
-        this.WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block"));
-        this.ROAD_WIDTH = config.getInt("road.width");
-        this.ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
-        this.ROAD_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("road.block"));
-        this.WALL_FILLING = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.filling"));
-        this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
-        this.CLAIMED_WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block_claimed"));
-        this.SIZE = (short) (this.PLOT_WIDTH + this.ROAD_WIDTH);
+        super.loadConfiguration(config);
         if ((this.ROAD_WIDTH % 2) == 0) {
             this.PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2) - 1);
         } else {
@@ -100,7 +85,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         final Schematic schem1 = SchematicHandler.manager.getSchematic(schem1Str);
         final Schematic schem2 = SchematicHandler.manager.getSchematic(schem2Str);
         final Schematic schem3 = SchematicHandler.manager.getSchematic(schem3Str);
-        final int shift = (int) Math.floor(this.ROAD_WIDTH / 2);
+        final int shift = (int) this.ROAD_WIDTH / 2;
         int oddshift = 0;
         if ((this.ROAD_WIDTH % 2) != 0) {
             oddshift = 1;

@@ -26,14 +26,16 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
         final int px = plotid.x;
         final int pz = plotid.y;
-        final int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-        final int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
+        final int x = dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
+        final int z = dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
         return new Location(plotworld.worldname, x, 256, z);
     }
 
     @Override
     public PlotId getPlotIdAbs(final PlotWorld plotworld, int x, final int y, int z) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
+        x -= dpw.ROAD_OFFSET_X;
+        z -= dpw.ROAD_OFFSET_Z;
         int pathWidthLower;
         int end;
         if (dpw.ROAD_WIDTH == 0) {
@@ -81,6 +83,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
         if (plotworld == null) {
             return null;
         }
+        x -= dpw.ROAD_OFFSET_X;
+        z -= dpw.ROAD_OFFSET_Z;
         final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
         int pathWidthLower;
         final int end;
@@ -173,8 +177,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
         final int px = plotid.x;
         final int pz = plotid.y;
-        final int x = (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-        final int z = (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
+        final int x = dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
+        final int z = dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
         return new Location(plotworld.worldname, x, 1, z);
     }
 

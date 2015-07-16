@@ -161,11 +161,11 @@ public class LikePlotMeConverter {
                         connector.copyConfig(plotConfig, world, actualWorldName);
                         PS.get().config.save(PS.get().configFile);
                     } catch (final Exception e) {
+                        e.printStackTrace();
                         sendMessage("&c-- &lFailed to save configuration for world '" + world + "'\nThis will need to be done using the setup command, or manually");
                     }
                 }
             }
-
             HashMap<String, HashMap<PlotId, Plot>> plots = connector.getPlotMePlots(connection);
             for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
                 plotCount += entry.getValue().size();

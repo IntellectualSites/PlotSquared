@@ -171,8 +171,8 @@ public class HybridGen extends PlotGenerator {
             }
         }
 
-        int sx = (short) ((this.X) % this.size);
-        int sz = (short) ((this.Z) % this.size);
+        int sx = (short) ((this.X - this.plotworld.ROAD_OFFSET_X) % this.size);
+        int sz = (short) ((this.Z - this.plotworld.ROAD_OFFSET_Z) % this.size);
         if (sx < 0) {
             sx += this.size;
         }
@@ -182,6 +182,7 @@ public class HybridGen extends PlotGenerator {
 
         if (region != null) {
             for (short x = 0; x < 16; x++) {
+                final int absX = ((sx + x) % this.size);
                 for (short z = 0; z < 16; z++) {
                     if (biomes != null) {
                         biomes.setBiome(x, z, this.biome);
@@ -191,7 +192,6 @@ public class HybridGen extends PlotGenerator {
                             setBlock(x, y, z, this.filling);
                         }
                         setBlock(x, this.plotheight, z, this.plotfloors);
-                        final int absX = ((sx + x) % this.size);
                         final int absZ = ((sz + z) % this.size);
                         final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
@@ -207,15 +207,15 @@ public class HybridGen extends PlotGenerator {
         }
         
         for (short x = 0; x < 16; x++) {
+            final int absX = ((sx + x) % this.size);
+            final boolean gx = absX > this.pathWidthLower;
+            final boolean lx = absX < this.pathWidthUpper;
             for (short z = 0; z < 16; z++) {
                 if (biomes != null) {
                     biomes.setBiome(x, z, this.biome);
                 }
-                final int absX = ((sx + x) % this.size);
                 final int absZ = ((sz + z) % this.size);
-                final boolean gx = absX > this.pathWidthLower;
                 final boolean gz = absZ > this.pathWidthLower;
-                final boolean lx = absX < this.pathWidthUpper;
                 final boolean lz = absZ < this.pathWidthUpper;
                 // inside plot
                 if (gx && gz && lx && lz) {

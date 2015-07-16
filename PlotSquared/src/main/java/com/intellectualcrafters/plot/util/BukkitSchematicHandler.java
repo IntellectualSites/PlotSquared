@@ -104,7 +104,6 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 int i2 = i1 + (z * width);
                 for (int x = 0; x < width; x++) {
                     final int index = i2 + x;
-                    
                     Block block = worldObj.getBlockAt(sx + x, sy + y, sz + z);
                     int id = block.getTypeId();
                     switch(id) {
