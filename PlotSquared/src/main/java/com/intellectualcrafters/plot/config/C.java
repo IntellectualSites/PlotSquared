@@ -407,7 +407,7 @@ public enum C {
     /*
      * PlotMe
      */
-    NOT_USING_PLOTME("$2This server uses the $1PlotSquared $2plot management system. Please use the $1/ps $2or $1/p2 $2or $1/plots $2instead", "Errors"),
+    NOT_USING_PLOTME("$2This server uses the far superior $1PlotSquared $2plot management system. Please use the $1/ps $2or $1/p2 $2or $1/plots $2instead", "Errors"),
     /*
      * Wait
      */
