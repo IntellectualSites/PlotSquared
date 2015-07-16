@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -19,5 +20,13 @@ public class StringMan {
             }
         }
         return sb.toString();
+    }
+    
+    public static String replaceAll(String string, Object... pairs) {
+        HashMap<String, String> replacements = new HashMap<>();
+        for (int i = 0; i < pairs.length; i+=2) {
+            replacements.put(pairs[i] + "", pairs[i+1] + "");
+        }
+        return replaceFromMap(string, replacements);
     }
 }

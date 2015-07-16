@@ -33,6 +33,7 @@ import com.intellectualcrafters.plot.object.comment.CommentInbox;
 import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 
 public class Inbox extends SubCommand {
     public Inbox() {
@@ -60,7 +61,7 @@ public class Inbox extends SubCommand {
             max = comments.length;
         }
         final StringBuilder string = new StringBuilder();
-        string.append(C.PLOT_LIST_HEADER_PAGED.s().replaceAll("plot","comment").replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%word%", "all")).append("\n");
+        string.append(StringMan.replaceAll(C.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur", page + 1, "%max", totalPages + 1, "%word", "all") + "\n");
         PlotComment c;
         // This might work xD
         for (int x = (page * 12); x < max; x++) {
