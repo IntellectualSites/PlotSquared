@@ -14,7 +14,24 @@ The most important thing, however, is not a whole load of features. Because, if 
 ### Developer Resources
 * [JavaDocs](http://empcraft.com/plotsquared/doc/)
 * [Build Server](http://ci.nixium.com/job/PlotSquared/)
+* [Maven Repo](http://mvn.intellectualsites.com/content/repositories/intellectualsites/)
 
+
+# Maven
+We're now on maven!
+```xml
+<!-- Repository -->
+<repository>
+    <id>intellectualsites</id>
+    <url>http://mvn.intellectualsites.com/content/repositories/intellectualsites/</url>
+</repository>
+<!-- Dependency -->
+<dependency>
+  <groupId>com.intellectualcrafters</groupId>
+  <artifactId>PlotSquared</artifactId>
+  <version>2.12.9</version>
+</dependency>
+```
 
 # Building
 Build the project using your favourite compiler (maven is the recommended way to build), then package the jar using `mvn package`. 
