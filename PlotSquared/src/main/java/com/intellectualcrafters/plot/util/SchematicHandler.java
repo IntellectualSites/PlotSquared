@@ -512,7 +512,7 @@ public abstract class SchematicHandler {
      *
      * @author Citymonstret
      */
-    public class Dimension {
+    public static class Dimension {
         private final int x;
         private final int y;
         private final int z;
