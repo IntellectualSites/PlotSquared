@@ -207,41 +207,38 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
     
-    @EventHandler
+    @EventHandler(ignoreCancelled=true, priority=EventPriority.HIGHEST)
     public void onPhysicsEvent(BlockPhysicsEvent event) {
-        Block block = event.getBlock();
-        Location loc = BukkitUtil.getLocation(block.getLocation());
-        if (!PS.get().isPlotWorld(loc.getWorld())) {
-            return;
-        }
-        switch (block.getType()) {
-            case REDSTONE_COMPARATOR_OFF:
-            case REDSTONE_COMPARATOR_ON: {
+        switch (event.getChangedTypeId()) {
+            case 149:
+            case 150: {
+                Block block = event.getBlock();
+                Location loc = BukkitUtil.getLocation(block.getLocation());
                 Plot plot = MainUtil.getPlot(loc);
                 if (plot == null) {
                     return;
                 }
-                Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
-                if (redstone == null || (Boolean) redstone.getValue()) {
-                    return;
-                }
-                if (!MainUtil.isPlotArea(plot)) {
+                if (FlagManager.isPlotFlagTrue(plot, "redstone")) {
                     return;
                 }
                 event.setCancelled(true);
+                return;
+            }
+            case 122:
+            case 145:
+            case 12:
+            case 13: {
+                Block block = event.getBlock();
+                Location loc = BukkitUtil.getLocation(block.getLocation());
+                Plot plot = MainUtil.getPlot(loc);
+                if (plot != null && FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
+                    event.setCancelled(true);
+                    return;
+                }
                 return;
             }
             default: {
-                break;
-            }
-        }
-        if (block.getType().hasGravity()) {
-            Plot plot = MainUtil.getPlot(loc);
-            if (plot == null) {
                 return;
-            }
-            if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
-                event.setCancelled(true);
             }
         }
     }

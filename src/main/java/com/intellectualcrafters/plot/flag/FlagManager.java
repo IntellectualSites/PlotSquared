@@ -122,10 +122,13 @@ public class FlagManager {
     }
 
     public static Flag getSettingFlag(final String world, final PlotSettings settings, final String id) {
-        Flag flag = settings.flags.get(id);
-        if (flag == null) {
+        Flag flag;
+        if (settings.flags.size() == 0 || (flag = settings.flags.get(id)) == null) {
             PlotWorld plotworld = PS.get().getPlotWorld(world);
             if (plotworld == null) {
+                return null;
+            }
+            if (plotworld.DEFAULT_FLAGS.size() == 0) {
                 return null;
             }
             return ((HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone()).get(id);
@@ -160,13 +163,10 @@ public class FlagManager {
             return false;
         }
         final Flag flag = getPlotFlag(plot, strFlag);
-        if (flag == null) {
+        if (flag == null || !((Boolean) flag.getValue())) {
             return false;
         }
-        if (flag.getValue() instanceof Boolean) {
-            return (boolean) flag.getValue();
-        }
-        return false;
+        return true;
     }
     
     public static boolean isPlotFlagFalse(final Plot plot, final String strFlag) {
@@ -174,11 +174,8 @@ public class FlagManager {
             return false;
         }
         final Flag flag = getPlotFlag(plot, strFlag);
-        if (flag == null) {
+        if (flag == null || ((Boolean) flag.getValue())) {
             return false;
-        }
-        if (flag.getValue() instanceof Boolean) {
-            return !(boolean) flag.getValue();
         }
         return false;
     }
