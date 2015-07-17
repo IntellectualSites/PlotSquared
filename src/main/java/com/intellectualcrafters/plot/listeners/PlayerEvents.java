@@ -1669,7 +1669,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
         else {
             // Priorize plots for close to seamless pvp zones
-            plot = vplot == null ? dplot : ((dplot == null || victim instanceof Player) ? vplot : (victim.getTicksLived() > damager.getTicksLived() ? dplot : vplot));
+            plot = vplot == null ? dplot : ((dplot == null || !(victim instanceof Player)) ? vplot : (victim.getTicksLived() > damager.getTicksLived() ? dplot : vplot));
             stub = plot.hasOwner() ? "other" : "unowned";
         }
         
