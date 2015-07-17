@@ -13,7 +13,7 @@ The most important thing, however, is not a whole load of features. Because, if 
 
 ### Developer Resources
 * [JavaDocs](http://empcraft.com/plotsquared/doc/)
-* [Build Server](http://ci.nixium.com/job/PlotSquared/)
+* [Build Server](http://ci.intellectualsites.com/job/PlotSquared/)
 * [Maven Repo](http://mvn.intellectualsites.com/content/repositories/intellectualsites/)
 
 
