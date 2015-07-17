@@ -61,13 +61,15 @@ public class SetBlockQueue {
                     if (locked) {
                         return;
                     }
-                    if (blocks.size() == 0) {
+                    if (blocks == null || blocks.size() == 0) {
                         PS.get().TASK.cancelTask(TaskManager.tasks.get(current));
-                        for (Runnable runnable : runnables) {
-                            TaskManager.runTask(runnable);
+                        if (runnables != null) {
+                            for (Runnable runnable : runnables) {
+                                TaskManager.runTask(runnable);
+                            }
                         }
                         runnables = null;
-                        blocks = null;
+                        blocks = new HashMap<>();
                         running = false;
                         slow = false;
                         return;

@@ -221,9 +221,9 @@ public class DebugUUID extends SubCommand {
             if (value != null) {
                 plot.owner = value;
             }
-            plot.trusted = new ArrayList<>();
-            plot.members = new ArrayList<>();
-            plot.denied = new ArrayList<>();
+            plot.trusted = new HashSet<>();
+            plot.members = new HashSet<>();
+            plot.denied = new HashSet<>();
         }
         
         MainUtil.sendConsoleMessage("&7 - Deleting database");

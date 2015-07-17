@@ -19,18 +19,18 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Tameable;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
@@ -60,7 +60,6 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -73,15 +72,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
@@ -206,8 +201,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             case POWERED_RAIL: {
                 return;
             }
+            default: {
+                event.setNewCurrent(0);
+            }
         }
-        event.setNewCurrent(0);
     }
     
     @EventHandler
@@ -233,6 +230,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
                 event.setCancelled(true);
                 return;
+            }
+            default: {
+                break;
             }
         }
         if (block.getType().hasGravity()) {
@@ -358,8 +358,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
     public void PlayerMove(final PlayerMoveEvent event) {
         org.bukkit.Location from = event.getFrom();
         org.bukkit.Location to = event.getTo();
-        int x1, x2;
-        if ((x1 = (int) from.getX()) != (x2 = (int) to.getX()) ) {
+        int x2;
+        if (from.getX() != (x2 = (int) to.getX()) ) {
             String worldname = to.getWorld().getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
             if (plotworld == null) {
@@ -421,8 +421,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
             return;
         }
-        int z1, z2;
-        if ((z1 = (int) from.getZ()) != (z2 = (int) to.getZ()) ) {
+        int z2;
+        if ((int) from.getZ() != (z2 = (int) to.getZ()) ) {
             String worldname = to.getWorld().getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
             if (plotworld == null) {
@@ -980,6 +980,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         eventType = PlayerBlockEventType.TELEPORT_OBJECT;
                         break;
                     }
+                    default: {
+                        break;
+                    }
                 }
                 lb = new BukkitLazyBlock(blockId, block);
                 ItemStack hand = player.getItemInHand();
@@ -991,8 +994,6 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     lb = new BukkitLazyBlock(block);
                     break;
                 }
-                
-                
                 // TODO calls both:
                 // redstone ore
                 
@@ -1001,6 +1002,11 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     case MONSTER_EGG:
                     case MONSTER_EGGS: {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
+                        break;
+                    }
+                    
+                    case ARMOR_STAND: {
+                        eventType = PlayerBlockEventType.PLACE_MISC;
                         break;
                     }
                     
@@ -1051,14 +1057,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                         eventType = PlayerBlockEventType.PLACE_HANGING;
                         break;
                     }
-
-                    case ARMOR_STAND: {
-                        eventType = PlayerBlockEventType.PLACE_MISC;
-                        break;
-                    }
-                    
                     default: {
                         eventType = PlayerBlockEventType.INTERACT_BLOCK;
+                        break;
                     }
                 }
                 break;
@@ -1641,122 +1642,144 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
         final Location l = BukkitUtil.getLocation(e.getEntity());
+        if (!PS.get().isPlotWorld(l.getWorld())) {
+            return;
+        }
         final Entity damager = e.getDamager();
         final Entity victim = e.getEntity();
-        if ((Settings.TELEPORT_DELAY != 0) && (TaskManager.TELEPORT_QUEUE.size() > 0) && (victim instanceof Player)) {
-            final Player player = (Player) victim;
-            final String name = player.getName();
-            if (TaskManager.TELEPORT_QUEUE.contains(name)) {
-                TaskManager.TELEPORT_QUEUE.remove(name);
-            }
-        }
-        if (PS.get().isPlotWorld(l.getWorld())) {
-            Player p = null;
-            Projectile projectile = null;
-            if (damager instanceof Player) {
-                p = (Player) damager;
-            }
-            else if (damager instanceof Projectile) {
-                projectile = (Projectile) damager;
-                //Arrow, Egg, EnderPearl, Fireball, Fish, FishHook, LargeFireball, SmallFireball, Snowball, ThrownExpBottle, ThrownPotion, WitherSkull
-                if (damager instanceof Projectile) {
-                    if (damager instanceof ThrownPotion) {
-                        ThrownPotion potion = (ThrownPotion) damager;
-                        Collection<PotionEffect> effects = potion.getEffects();
-                        for (PotionEffect effect : effects) {
-                            PotionEffectType type = effect.getType();
-                            if (type == PotionEffectType.BLINDNESS || type == PotionEffectType.CONFUSION || type == PotionEffectType.HARM || type == PotionEffectType.INVISIBILITY  || type == PotionEffectType.POISON  || type == PotionEffectType.SLOW || type == PotionEffectType.SLOW_DIGGING || type == PotionEffectType.WEAKNESS || type == PotionEffectType.WITHER) {
-                                ProjectileSource shooter = ((Projectile) damager).getShooter();
-                                if (shooter == null || !(shooter instanceof Player)) {
-                                    return;
-                                }
-                                p = (Player) shooter;
-                                break;
-                            }
-                        }
-                    }
-                    else {
-                        ProjectileSource shooter = projectile.getShooter();
-                        if (shooter == null || !(shooter instanceof Player)) {
-                            return;
-                        }
-                        p = (Player) shooter;
-                    }
-                }
-                else {
-                    return;
-                }
-            }
-            if (p != null) {
-                final boolean aPlr = victim instanceof Player;
-                final PlotWorld pW = PS.get().getPlotWorld(l.getWorld());
-                if (!aPlr && pW.PVE && (!(victim instanceof ItemFrame) && !(victim.getType().getTypeId() == 30))) {
-                    return;
-                } else if (aPlr && pW.PVP) {
-                    return;
-                }
-                Plot plot = MainUtil.getPlot(l);
-                if (plot == null) {
-                    if (!MainUtil.isPlotAreaAbs(l)) {
-                        return;
-                    }
-                    final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                    if (!Permissions.hasPermission(pp, "plots.admin.pve.road")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve.road");
-                        e.setCancelled(true);
-                        return;
-                    }
-                } else {
-                    if (!plot.hasOwner()) {
-                        final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                        if (!Permissions.hasPermission(pp, "plots.admin.pve.unowned")) {
-                            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve.unowned");
-                            if (projectile != null) {
-                                projectile.remove();
-                            }
-                            e.setCancelled(true);
-                            return;
-                        }
-                        return;
-                    } else if (aPlr && FlagManager.isPlotFlagTrue(plot, "pvp")) {
-                        return;
-                    }
-                    if (!aPlr && FlagManager.isPlotFlagTrue(plot, "pve")) {
-                        return;
-                    }
-                    assert plot != null;
-                    final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                    if (!plot.isAdded(pp.getUUID())) {
-                        if ((victim instanceof Monster) && FlagManager.isPlotFlagTrue(plot, "hostile-attack")) {
-                            return;
-                        }
-                        if ((victim instanceof Animals) && FlagManager.isPlotFlagTrue(plot, "animal-attack")) {
-                            return;
-                        }
-                        if ((victim instanceof Tameable) && ((Tameable) victim).isTamed() && FlagManager.isPlotFlagTrue(plot, "tamed-attack")) {
-                            return;
-                        }
-                        if (!Permissions.hasPermission(pp, "plots.admin.pve.other")) {
-                            if (MainUtil.isPlotArea(l)) {
-                                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve.other");
-                                if (projectile != null) {
-                                    projectile.remove();
-                                }
-                                e.setCancelled(true);
-                                return;
-                            }
-                        }
-                    }
-                }
+        
+        Location dloc = BukkitUtil.getLocation(damager);
+        Location vloc = BukkitUtil.getLocation(victim);
+        
+        Plot dplot = MainUtil.getPlot(dloc);
+        Plot vplot = MainUtil.getPlot(vloc);
+        
+        Plot plot;
+        String stub;
+        if (dplot == null && vplot == null) {
+            if (!MainUtil.isPlotAreaAbs(dloc)) {
                 return;
             }
-            if ((damager instanceof Arrow) && MainUtil.isPlotArea(l) && (!(victim instanceof Creature))) {
-                e.setCancelled(true);
+            plot = null;
+            stub = "road";
+        }
+        else {
+            // Priorize plots for close to seamless pvp zones
+            plot = vplot == null ? dplot : ((dplot == null || victim instanceof Player) ? vplot : (victim.getTicksLived() > damager.getTicksLived() ? dplot : vplot));
+            stub = plot.hasOwner() ? "other" : "unowned";
+        }
+        
+        Player player;
+        if (damager instanceof Player) { // attacker is player
+            player = (Player) damager;
+        }
+        else if (damager instanceof Projectile) {
+            Projectile projectile = (Projectile) damager;
+            ProjectileSource shooter = projectile.getShooter();
+            if (shooter.getClass() == Player.class) { // shooter is player
+                player = (Player) shooter;
             }
+            else { // shooter is not player
+                player = null;
+            }
+        }
+        else { // Attacker is not player
+            player = null;
+        }
+        
+        if (player != null) {
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            if (victim instanceof Hanging) { // hanging
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "hanging-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
+                    return;
+                }
+                if (!Permissions.hasPermission(pp, "plots.admin.break." + stub)) {
+                    e.setCancelled(true);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.break." + stub);
+                    return;
+                }
+            }
+            else if (victim instanceof ArmorStand) {
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "misc-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
+                    return;
+                }
+                if (!Permissions.hasPermission(pp, "plots.admin.break." + stub)) {
+                    e.setCancelled(true);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.break." + stub);
+                    return;
+                }
+            }
+            else if (victim instanceof Monster) { // victim is monster
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "hostile-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
+                    return;
+                }
+                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
+                    e.setCancelled(true);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve." + stub);
+                    return;
+                }
+            }
+            else if (victim instanceof Tameable) { // victim is tameable
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "tamed-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
+                    return;
+                }
+                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
+                    e.setCancelled(true);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve." + stub);
+                    return;
+                }
+            }
+            else if (victim instanceof Animals) { // victim is animal
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "animal-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
+                    return;
+                }
+                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
+                    e.setCancelled(true);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve." + stub);
+                    return;
+                }
+            }
+            else if (victim instanceof Player) {
+                if (plot != null) {
+                    Flag pvp = FlagManager.getPlotFlag(plot, "pvp");
+                    if (pvp == null) {
+                        if (victim.getTicksLived() > damager.getTicksLived() ? plot.isAdded(BukkitUtil.getPlayer((Player) victim).getUUID()) : plot.isAdded(pp.getUUID())) {
+                            return;
+                        }
+                    } else {
+                        if ((Boolean) pvp.getValue()) {
+                            return;
+                        }
+                    }
+                }
+                if (!Permissions.hasPermission(pp, "plots.admin.pvp." + stub)) {
+                    e.setCancelled(true);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pvp." + stub);
+                    return;
+                }
+            }
+            else if (victim instanceof Vehicle) { // Vehicles are managed in vehicle destroy event
+                return;
+            }
+            else { // victim is something else
+                if (!Permissions.hasPermission(pp, "plots.admin.pvp." + stub)) {
+                    e.setCancelled(true);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pvp." + stub);
+                    return;
+                }
+                if (plot != null && FlagManager.isPlotFlagTrue(plot, "pvp")) {
+                    return;
+                }
+            }
+            return;
+        }
+        // player is null
+        if ((damager instanceof Arrow) && (!(victim instanceof Creature))) {
+            e.setCancelled(true);
         }
     }
 

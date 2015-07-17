@@ -56,15 +56,15 @@ public class Plot implements Cloneable {
     /**
      * List of trusted (with plot permissions)
      */
-    public ArrayList<UUID> trusted;
+    public HashSet<UUID> trusted;
     /**
      * List of members users (with plot permissions)
      */
-    public ArrayList<UUID> members;
+    public HashSet<UUID> members;
     /**
      * List of denied players
      */
-    public ArrayList<UUID> denied;
+    public HashSet<UUID> denied;
     /**
      * External settings class<br>
      *  - Please favor the methods over direct access to this class<br>
@@ -94,9 +94,9 @@ public class Plot implements Cloneable {
         this.id = id;
         this.owner = owner;
         this.settings = new PlotSettings(this);
-        this.trusted = new ArrayList<>();
-        this.members = new ArrayList<>();
-        this.denied = new ArrayList<>();
+        this.trusted = new HashSet<>();
+        this.members = new HashSet<>();
+        this.denied = new HashSet<>();
         this.temp = false;
     }
     
@@ -113,9 +113,9 @@ public class Plot implements Cloneable {
         this.id = id;
         this.owner = owner;
         this.settings = new PlotSettings(this);
-        this.trusted = new ArrayList<>();
-        this.members = new ArrayList<>();
-        this.denied = new ArrayList<>();
+        this.trusted = new HashSet<>();
+        this.members = new HashSet<>();
+        this.denied = new HashSet<>();
         this.temp = temp;
     }
     
@@ -128,7 +128,7 @@ public class Plot implements Cloneable {
      * @param denied
      * @param merged
      */
-    public Plot(final PlotId id, final UUID owner, final ArrayList<UUID> trusted, final ArrayList<UUID> members, final ArrayList<UUID> denied, final String alias, final BlockLoc position, final Collection<Flag> flags, final String world, final boolean[] merged) {
+    public Plot(final PlotId id, final UUID owner, final HashSet<UUID> trusted, final HashSet<UUID> members, final HashSet<UUID> denied, final String alias, final BlockLoc position, final Collection<Flag> flags, final String world, final boolean[] merged) {
         this.id = id;
         this.settings = new PlotSettings(this);
         this.owner = owner;

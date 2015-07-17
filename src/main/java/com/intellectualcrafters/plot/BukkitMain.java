@@ -13,6 +13,8 @@ import java.util.Stack;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.commands.*;
+
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -108,6 +110,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                     version[2] = Integer.parseInt(split[2]);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 return false;
             }
         }
