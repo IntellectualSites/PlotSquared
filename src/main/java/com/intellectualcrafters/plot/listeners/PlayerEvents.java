@@ -1747,9 +1747,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (plot != null) {
                     Flag pvp = FlagManager.getPlotFlag(plot, "pvp");
                     if (pvp == null) {
-                        if (victim.getTicksLived() > damager.getTicksLived() ? plot.isAdded(BukkitUtil.getPlayer((Player) victim).getUUID()) : plot.isAdded(pp.getUUID())) {
-                            return;
-                        }
+                        return;
                     } else {
                         if ((Boolean) pvp.getValue()) {
                             return;
