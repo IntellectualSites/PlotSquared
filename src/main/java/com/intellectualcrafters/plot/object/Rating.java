@@ -15,6 +15,7 @@ public class Rating {
     private HashMap<String, Integer> ratingMap;
     
     public Rating(int value) {
+        ratingMap = new HashMap<>();
         if (Settings.RATING_CATEGORIES != null && Settings.RATING_CATEGORIES.size() > 1) {
             for (int i = 0 ; i < Settings.RATING_CATEGORIES.size(); i++) {
                 ratingMap.put(Settings.RATING_CATEGORIES.get(i), (value % 10) - 1);

@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
@@ -42,47 +43,6 @@ public class BukkitHybridUtils extends HybridUtils {
     private static boolean UPDATE = false;
     public int task;
     private long last;
-    
-    public double getMean(int[] array) {
-        double count = 0;
-        for (int i : array) {
-            count += i;
-        }
-        return count / array.length;
-    }
-    
-    public double getMean(double[] array) {
-        double count = 0;
-        for (double i : array) {
-            count += i;
-        }
-        return count / array.length;
-    }
-    
-    public double getSD(double[] array, double av) {
-        double sd = 0;
-        for (int i=0; i<array.length;i++)
-        {
-            sd += Math.pow(Math.abs(array[i] - av), 2);
-        }
-        return Math.sqrt(sd/array.length);
-    }
-    
-    public double getSD(int[] array, double av) {
-        double sd = 0;
-        for (int i=0; i<array.length;i++)
-        {
-            sd += Math.pow(Math.abs(array[i] - av), 2);
-        }
-        return Math.sqrt(sd/array.length);
-    }
-    
-    public int mod(int x) {
-        if (x < 0) {
-            return (x % 16) + 16;
-        }
-        return x % 16;
-    }
     
     @Override
     public void analyzePlot(Plot plot, final RunnableVal<PlotAnalysis> whenDone) {
@@ -143,8 +103,8 @@ public class BukkitHybridUtils extends HybridUtils {
                     short[][] result = gen.generateExtBlockSections(world, r, chunk.getX(), chunk.getZ(), base);
                     int X = chunk.getX();
                     int Z = chunk.getZ();
-                    int xb = ((X - cbx) << 4) - bx;
-                    int zb = ((Z - cbz) << 4) - bz;
+                    int xb = ((X) << 4) - bx;
+                    int zb = ((Z) << 4) - bz;
                     for (int i = 0; i < result.length; i++) {
                         if (result[i] == null) {
                             for (int j = 0; j < 4096; j++) {
@@ -192,14 +152,13 @@ public class BukkitHybridUtils extends HybridUtils {
                             else {
                                 // check verticies
                                 // modifications_adjacent
-
                                 if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1 && y < 255) {
-                                    if (oldblocks[y - 1][x][z] == 0) faces[i]++;
-                                    if (oldblocks[y][x - 1][z] == 0) faces[i]++;
-                                    if (oldblocks[y][x][z - 1] == 0) faces[i]++;
-                                    if (oldblocks[y + 1][x][z] == 0) faces[i]++;
-                                    if (oldblocks[y][x + 1][z] == 0) faces[i]++;
-                                    if (oldblocks[y][x][z + 1] == 0) faces[i]++;
+                                    if (newblocks[y - 1][x][z] == 0) faces[i]++;
+                                    if (newblocks[y][x - 1][z] == 0) faces[i]++;
+                                    if (newblocks[y][x][z - 1] == 0) faces[i]++;
+                                    if (newblocks[y + 1][x][z] == 0) faces[i]++;
+                                    if (newblocks[y][x + 1][z] == 0) faces[i]++;
+                                    if (newblocks[y][x][z + 1] == 0) faces[i]++;
                                 }
 
                                 Material material = Material.getMaterial(now);
@@ -223,12 +182,18 @@ public class BukkitHybridUtils extends HybridUtils {
 
                 // run whenDone
                 PlotAnalysis analysis = new PlotAnalysis();
-                analysis.changes = getMean(changes);
-                analysis.faces = getMean(faces);
-                analysis.data = getMean(data);
-                analysis.air = getMean(air);
-                analysis.variety = getMean(variety);
-                analysis.complexity = getSD(changes, analysis.changes) + getSD(faces, analysis.faces) + getSD(data, analysis.data) + getSD(air, analysis.air) + getSD(variety, analysis.variety);
+                analysis.changes = MathMan.getMean(changes);
+                analysis.faces = MathMan.getMean(faces);
+                analysis.data = MathMan.getMean(data);
+                analysis.air = MathMan.getMean(air);
+                analysis.variety = MathMan.getMean(variety);
+                analysis.complexity =
+                 + (analysis.changes + MathMan.getSD(changes, analysis.changes)) * PlotAnalysis.CHANGES_MODIFIER
+                 + (analysis.faces + MathMan.getSD(changes, analysis.faces)) * PlotAnalysis.FACES_MODIFIER
+                 + (analysis.data + MathMan.getSD(changes, analysis.data)) * PlotAnalysis.DATA_MODIFIER
+                 + (analysis.air + MathMan.getSD(changes, analysis.air)) * PlotAnalysis.AIR_MODIFIER
+                 + (analysis.variety + MathMan.getSD(changes, analysis.variety)) * PlotAnalysis.VARIETY_MODIFIER
+                        ;
                 whenDone.value = analysis;
                 whenDone.run();
             }
@@ -252,22 +217,27 @@ public class BukkitHybridUtils extends HybridUtils {
                 processed_chunks.add(chunk);
                 int X = chunk.getX();
                 int Z = chunk.getZ();
-                short[][] current = new short[16][];
                 int minX;
                 int minZ;
                 int maxX;
                 int maxZ;
-                if (X == cbx) minX = mod(bx);
+                if (X == cbx) minX = MathMan.mod(bx);
                 else minX = 0;
-                if (Z == cbz) minZ = mod(bz);
+                if (Z == cbz) minZ = MathMan.mod(bz);
                 else minZ = 0;
-                if (X == ctx) maxX = mod(tx);
+                if (X == ctx) maxX = MathMan.mod(tx);
                 else maxX = 16;
-                if (Z == ctz) maxZ = mod(tz);
+                if (Z == ctz) maxZ = MathMan.mod(tz);
                 else maxZ = 16;
 
-                int xb = ((X - cbx) << 4) - bx;
-                int zb = ((Z - cbz) << 4) - bz;
+                System.out.print("VALUES ====================");
+                System.out.print(X + "," + Z + " | " + cbx + "," + cbz + " | " + bx + "," + bz);
+                System.out.print("VALUES ====================");
+                
+                int xb = ((X) << 4) - bx;
+                int zb = ((Z) << 4) - bz;
+                
+                System.out.print(xb + "," + zb + " | " + minX + "," + minZ + " | " + maxX + "," + maxZ);
 
                 for (int x = minX; x <= maxX; x++) {
                     for (int z = minZ; z <= maxZ; z++) {

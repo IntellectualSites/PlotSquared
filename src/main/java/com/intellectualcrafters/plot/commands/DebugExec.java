@@ -68,11 +68,9 @@ public class DebugExec extends SubCommand {
                         @Override
                         public void run() {
                             List<Double> result = new ArrayList<>();
-                            result.add(Math.round(value.air * 100) / 100d);
                             result.add(Math.round(value.changes * 100) / 100d);
-                            result.add(Math.round(value.complexity * 100) / 100d);
-                            result.add(Math.round(value.data * 100) / 100d);
                             result.add(Math.round(value.faces * 100) / 100d);
+                            result.add(Math.round(value.data * 100) / 100d);
                             result.add(Math.round(value.air * 100) / 100d);
                             result.add(Math.round(value.variety * 100) / 100d);
                             Flag flag = new Flag(FlagManager.getFlag("analysis"), result);

@@ -523,7 +523,7 @@ public class list extends SubCommand {
         final StringBuilder builder = new StringBuilder();
         String prefix = "";
         for (final String s : strings) {
-            builder.append(prefix + MainUtil.colorise('&', s));
+            builder.append(prefix + s);
             prefix = " | ";
         }
         return builder.toString();

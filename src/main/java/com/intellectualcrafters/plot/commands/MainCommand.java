@@ -88,7 +88,7 @@ public class MainCommand {
         final int start = page * perPage;
         for (int x = start; x < max; x++) {
             cmd = commands.get(x);
-            String s = t(C.HELP_ITEM.s());
+            String s = C.HELP_ITEM.s();
             if (cmd.alias.size() > 0) {
                 s = s.replace("%alias%", cmd.alias.get(0));
             }
@@ -99,13 +99,9 @@ public class MainCommand {
             help.add(s);
         }
         if (help.size() < 2) {
-            help.add(t(C.NO_COMMANDS.s()));
+            help.add(C.NO_COMMANDS.s());
         }
         return help;
-    }
-
-    private static String t(final String s) {
-        return MainUtil.colorise('&', s);
     }
     
     public static boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {

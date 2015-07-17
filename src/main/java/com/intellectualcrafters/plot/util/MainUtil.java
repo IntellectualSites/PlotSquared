@@ -1309,17 +1309,6 @@ public class MainUtil {
         return sendMessage(plr, msg, true);
     }
 
-    public static String colorise(final char alt, final String message) {
-        final char[] b = message.toCharArray();
-        for (int i = 0; i < (b.length - 1); i++) {
-            if ((b[i] == alt) && ("0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[(i + 1)]) > -1)) {
-                b[i] = '\u00A7';
-                b[(i + 1)] = Character.toLowerCase(b[(i + 1)]);
-            }
-        }
-        return new String(b);
-    }
-    
     public static void sendConsoleMessage(String msg) {
         sendMessage(null, msg);
     }
@@ -1329,13 +1318,11 @@ public class MainUtil {
     }
 
     public static boolean sendMessage(final PlotPlayer plr, String msg, final boolean prefix) {
-        msg = colorise('&', msg);
-        final String prefixStr = colorise('&', C.PREFIX.s());
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
-                PS.log(prefixStr + msg);
+                PS.log(C.PREFIX.s() + msg);
             } else {
-                sendMessageWrapped(plr, prefixStr + msg);
+                plr.sendMessage(C.PREFIX.s() + C.color(msg));
             }
         }
         return true;
@@ -1409,27 +1396,6 @@ public class MainUtil {
     }
 
     /**
-     * \\previous\\
-     *
-     * @param plr
-     * @param msg Was used to wrap the chat client length (Packets out--)
-     */
-    public static void sendMessageWrapped(final PlotPlayer plr, final String msg) {
-        //        if (msg.length() > 65) {
-        //            final String[] ss = wordWrap(msg, 65);
-        //            final StringBuilder b = new StringBuilder();
-        //            for (final String p : ss) {
-        //                b.append(p).append(p.equals(ss[ss.length - 1]) ? "" : "\n ");
-        //            }
-        //            msg = b.toString();
-        //        }
-        //        if (msg.endsWith("\n")) {
-        //            msg = msg.substring(0, msg.length() - 2);
-        //        }
-        plr.sendMessage(msg);
-    }
-
-    /**
      * Send a message to the player
      *
      * @param plr Player to recieve message
@@ -1441,14 +1407,10 @@ public class MainUtil {
         if (c.s().length() > 1) {
             String msg = c.s();
             if ((args != null) && (args.length > 0)) {
-                for (final String str : args) {
-                    if (msg.contains("%s")) {
-                        msg = msg.replaceFirst("%s", str);
-                    }
-                }
+                msg = C.format(c, args);
             }
             if (plr == null) {
-                PS.log(colorise('&', msg));
+                PS.log(msg);
             } else {
                 sendMessage(plr, msg, c.usePrefix());
             }

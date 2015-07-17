@@ -225,6 +225,7 @@ public class Set extends SubCommand {
             if (component.equalsIgnoreCase(args[0])) {
                 if (!Permissions.hasPermission(plr, "plots.set." + component)) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + component);
+                    return false;
                 }
                 PlotBlock[] blocks;
                 try {
@@ -313,7 +314,7 @@ public class Set extends SubCommand {
     }
 
     private String getString(final String s) {
-        return MainUtil.colorise('&', C.BLOCK_LIST_ITEM.s().replaceAll("%mat%", s));
+        return StringMan.replaceAll(C.BLOCK_LIST_ITEM.s(), "%mat%", s);
     }
 
     private String getArgumentList(final List<String> newValues) {
@@ -326,7 +327,7 @@ public class Set extends SubCommand {
 
     private String getBiomeList(final String[] biomes) {
         final StringBuilder builder = new StringBuilder();
-        builder.append(MainUtil.colorise('&', C.NEED_BIOME.s()));
+        builder.append(C.NEED_BIOME.s());
         for (final String b : biomes) {
             builder.append(getString(b));
         }

@@ -24,12 +24,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
+
+import sun.awt.SunHints.Value;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
@@ -258,6 +262,18 @@ public class Plot implements Cloneable {
      */
     public void clear(Runnable whenDone) {
         MainUtil.clear(this, false, whenDone);
+    }
+    
+    /**
+     * This will return null if the plot hasn't been analyzed
+     * @return analysis of plot
+     */
+    public PlotAnalysis getComplexity() {
+        return PlotAnalysis.getAnalysis(this);
+    }
+    
+    public void analyze(RunnableVal<PlotAnalysis> whenDone) {
+        PlotAnalysis.analyzePlot(this, whenDone);
     }
     
     /**

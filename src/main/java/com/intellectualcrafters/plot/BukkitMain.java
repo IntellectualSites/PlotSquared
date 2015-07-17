@@ -68,6 +68,7 @@ import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitChunkManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitEconHandler;
@@ -175,10 +176,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (message == null) {
             return;
         }
-        message = message.replaceAll("\u00B2", "2");
         if (THIS != null && Bukkit.getServer().getConsoleSender() != null) {
             try {
-                message = ChatColor.translateAlternateColorCodes('&', message);
+                message = C.color(message);
                 if (!Settings.CONSOLE_COLOR) {
                     message = ChatColor.stripColor(message);
                 }

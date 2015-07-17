@@ -77,7 +77,6 @@ public class WEListener implements Listener {
             return max;
         }
         catch (NumberFormatException e) {
-            e.printStackTrace();
             return 0;
         }
     }

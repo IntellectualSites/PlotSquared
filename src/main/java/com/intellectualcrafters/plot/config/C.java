@@ -24,12 +24,15 @@ import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.util.StringMan;
+
+import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -543,20 +546,34 @@ public enum C {
         this(d, true, cat.toLowerCase());
     }
 
-    public static String format(C c, Object... args) {
-        String m = c.s;
-        for (int i = args.length - 1 ; i >= 0; i--) {
-            if (args[i] == null) {
-                continue;
-            }
-            m = m.replaceAll("%s" + i, args[i].toString());
+    public static String format(String m, Object... args) {
+        if (args.length == 0) {
+            return m;
         }
+        Map<String, String> map = new HashMap<String, String>();
         if (args.length > 0) {
-            m = m.replaceAll("%s", args[0].toString());
+            for (int i = args.length - 1 ; i >= 0; i--) {
+                if (args[i] == null) {
+                    args[i] = "";
+                }
+                map.put("%s" + i, args[i].toString());
+            }
+            map.put("%s", args[0].toString());
         }
+        map.putAll(replacements);
+        m = StringMan.replaceFromMap(m, map);
         return m;
     }
 
+    public static String format(C c, Object... args) {
+        return format(c.s, args);
+    }
+
+    
+    public static String color(String string) {
+        return StringMan.replaceFromMap(string, replacements);
+    }
+    
     public static void load(File file) {
         try {
             if (!file.exists()) {
