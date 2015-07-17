@@ -1320,9 +1320,9 @@ public class MainUtil {
     public static boolean sendMessage(final PlotPlayer plr, String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
-                PS.log(C.PREFIX.s() + msg);
+                PS.log((prefix ? C.PREFIX.s() : "") + msg);
             } else {
-                plr.sendMessage(C.PREFIX.s() + C.color(msg));
+                plr.sendMessage((prefix ? C.PREFIX.s() : "") + C.color(msg));
             }
         }
         return true;
