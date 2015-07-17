@@ -63,18 +63,11 @@ public class DebugExec extends SubCommand {
             final String arg = args[0].toLowerCase();
             switch (arg) {
                 case "analyze": {
-                    final Plot plot = MainUtil.getPlot(player.getLocation());
-                    HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+                    PlotAnalysis.calcOptimalModifiers(new Runnable() {
                         @Override
                         public void run() {
-                            List<Double> result = new ArrayList<>();
-                            result.add(Math.round(value.changes * 100) / 100d);
-                            result.add(Math.round(value.faces * 100) / 100d);
-                            result.add(Math.round(value.data * 100) / 100d);
-                            result.add(Math.round(value.air * 100) / 100d);
-                            result.add(Math.round(value.variety * 100) / 100d);
-                            Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
-                            FlagManager.addPlotFlag(plot, flag);
+                            PS.log("&cTHIS FUNCTION IS A WORK IN PROGRESS");
+                            PS.log("&c - ");
                         }
                     });
                     return true;

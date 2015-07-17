@@ -104,17 +104,6 @@ public class list extends SubCommand {
     }
     
     public void noArgs(PlotPlayer plr) {
-        // For #395
-        // if (plr != null) {
-        //      if (EconHandler.manager != null) {
-        //        builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "top", "<player>", "<world>", "forsale",}));
-        //    }
-        //    else {
-        //        builder.append(getArgumentList(new String[] { "mine", "shared", "world", "all", "unowned", "unknown", "top", "<player>", "<world>"}));
-        //    }
-        // } else {
-        //    builder.append(getArgumentList(new String[] { "world", "all", "unowned", "unknown", "top", "<player>", "<world>"}));
-        // }
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(getArgumentList(plr)));
     }
 

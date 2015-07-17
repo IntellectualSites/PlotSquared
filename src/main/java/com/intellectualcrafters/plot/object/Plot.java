@@ -318,12 +318,28 @@ public class Plot implements Cloneable {
     }
     
     /**
+     * Get the average rating of the plot
+     * @return average rating as double
+     */
+    public double getAverageRating() {
+        double sum = 0;
+        Collection<Rating> ratings = getRatings().values();
+        for (Rating rating : ratings) {
+            sum += rating.getAverageRating();
+        }
+        return sum / ratings.size();
+    }
+    
+    /**
      * Get the ratings associated with a plot<br>
      *  - The rating object may contain multiple categories
      * @return Map of user who rated to the rating
      */
     public HashMap<UUID, Rating> getRatings() {
         HashMap<UUID, Rating> map = new HashMap<UUID, Rating>();
+        if (settings.ratings == null) {
+            return map;
+        }
         for (Entry<UUID, Integer> entry : settings.ratings.entrySet()) {
             map.put(entry.getKey(), new Rating(entry.getValue()));
         }

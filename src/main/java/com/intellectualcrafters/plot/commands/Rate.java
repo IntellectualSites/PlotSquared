@@ -78,7 +78,7 @@ public class Rate extends SubCommand {
                 });
                 UUID uuid = player.getUUID();
                 for (Plot p : plots) {
-                    if (p.settings.ratings == null || !p.settings.ratings.containsKey(uuid)) {
+                    if ((p.settings.ratings == null || !p.settings.ratings.containsKey(uuid)) && !p.isAdded(uuid)) {
                         MainUtil.teleportPlayer(player, player.getLocation(), p);
                         MainUtil.sendMessage(player, C.RATE_THIS);
                         return true;

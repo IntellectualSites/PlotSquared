@@ -55,6 +55,7 @@ import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotGenerator;
@@ -1230,15 +1231,24 @@ public class PS {
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
         
         // Clearing + Expiry
+        options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
+        options.put("clear.on.ban", false);
         options.put("clear.auto.enabled", false);
         options.put("clear.auto.days", 365);
-        options.put("clear.check-disk", Settings.AUTO_CLEAR_CHECK_DISK);
-        options.put("clear.on.ban", false);
-        options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
         options.put("clear.auto.clear-interval-seconds", Settings.CLEAR_INTERVAL);
-        options.put("clear.keep-if-modified", Settings.MIN_BLOCKS_CHANGED);
+        options.put("clear.auto.calibration.changes", 64);
+        options.put("clear.auto.calibration.faces", 32);
+        options.put("clear.auto.calibration.data", 1);
+        options.put("clear.auto.calibration.air", 32);
+        options.put("clear.auto.calibration.variety", 1);
+        options.put("clear.auto.calibration.changes_sd", 64);
+        options.put("clear.auto.calibration.faces_sd", 32);
+        options.put("clear.auto.calibration.data_sd", 1);
+        options.put("clear.auto.calibration.air_sd", 32);
+        options.put("clear.auto.calibration.variety_sd", 1);
+        options.put("clear.auto.threshold-percent", Settings.CLEAR_THRESHOLD);
         options.put("clear.ignore-if-modified", Settings.MIN_BLOCKS_CHANGED_IGNORED);
-        
+
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
         
@@ -1319,13 +1329,24 @@ public class PS {
         
         // Clearing + Expiry
         Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");
-        Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
-        Settings.AUTO_CLEAR_CHECK_DISK = config.getBoolean("clear.check-disk");
         Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
+        Settings.MIN_BLOCKS_CHANGED_IGNORED = config.getInt("clear.ignore-if-modified");
+        Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
+        Settings.CLEAR_THRESHOLD = config.getInt("clear.auto.threshold-percent");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.CLEAR_INTERVAL = config.getInt("clear.auto.clear-interval-seconds");
-        Settings.MIN_BLOCKS_CHANGED = config.getInt("clear.keep-if-modified");
-        Settings.MIN_BLOCKS_CHANGED_IGNORED = config.getInt("clear.ignore-if-modified");
+
+        // Clearing modifiers
+        PlotAnalysis.MODIFIERS.changes = config.getInt("clear.auto.calibration.changes");
+        PlotAnalysis.MODIFIERS.faces = config.getInt("clear.auto.calibration.faces");
+        PlotAnalysis.MODIFIERS.data = config.getInt("clear.auto.calibration.data");
+        PlotAnalysis.MODIFIERS.air = config.getInt("clear.auto.calibration.air");
+        PlotAnalysis.MODIFIERS.variety = config.getInt("clear.auto.calibration.variety");
+        PlotAnalysis.MODIFIERS.changes_sd = config.getInt("clear.auto.calibration.changes_sd");
+        PlotAnalysis.MODIFIERS.faces_sd = config.getInt("clear.auto.calibration.faces_sd");
+        PlotAnalysis.MODIFIERS.data_sd = config.getInt("clear.auto.calibration.data_sd");
+        PlotAnalysis.MODIFIERS.air_sd = config.getInt("clear.auto.calibration.air_sd");
+        PlotAnalysis.MODIFIERS.variety_sd = config.getInt("clear.auto.calibration.variety_sd");
         
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");

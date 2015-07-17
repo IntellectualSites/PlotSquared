@@ -15,12 +15,6 @@ commands:
     permission: plots.use
     permission-message: "You are lacking the permission node 'plots.use'"
 permissions:
-  plotsquared_user_attributes:
-    default: false
-  plotsquared_user_attributes.disabletitles:
-    default: false
-  plotsquared_user_attributes.*:
-    default: false
   plots.admin:
     children:
       plots.*: true

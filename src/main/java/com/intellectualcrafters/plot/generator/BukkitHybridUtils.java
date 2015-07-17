@@ -22,6 +22,8 @@ import org.bukkit.plugin.Plugin;
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -182,18 +184,35 @@ public class BukkitHybridUtils extends HybridUtils {
 
                 // run whenDone
                 PlotAnalysis analysis = new PlotAnalysis();
-                analysis.changes = MathMan.getMean(changes);
-                analysis.faces = MathMan.getMean(faces);
-                analysis.data = MathMan.getMean(data);
-                analysis.air = MathMan.getMean(air);
-                analysis.variety = MathMan.getMean(variety);
-                analysis.complexity =
-                 + (analysis.changes + MathMan.getSD(changes, analysis.changes)) * PlotAnalysis.CHANGES_MODIFIER
-                 + (analysis.faces + MathMan.getSD(changes, analysis.faces)) * PlotAnalysis.FACES_MODIFIER
-                 + (analysis.data + MathMan.getSD(changes, analysis.data)) * PlotAnalysis.DATA_MODIFIER
-                 + (analysis.air + MathMan.getSD(changes, analysis.air)) * PlotAnalysis.AIR_MODIFIER
-                 + (analysis.variety + MathMan.getSD(changes, analysis.variety)) * PlotAnalysis.VARIETY_MODIFIER
-                        ;
+                analysis.changes = (int) (MathMan.getMean(changes) * 100);
+                analysis.faces = (int) (MathMan.getMean(faces) * 100);
+                analysis.data = (int) (MathMan.getMean(data) * 100);
+                analysis.air = (int) (MathMan.getMean(air) * 100);
+                analysis.variety = (int) (MathMan.getMean(variety) * 100);
+                
+                analysis.changes_sd = (int) (MathMan.getSD(changes, analysis.changes) * 100);
+                analysis.faces_sd = (int) (MathMan.getSD(faces, analysis.faces) * 100);
+                analysis.data_sd = (int) (MathMan.getSD(data, analysis.data) * 100);
+                analysis.air_sd = (int) (MathMan.getSD(air, analysis.air) * 100);
+                analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety) * 100);
+                
+                // We'll set the flag later
+//                List<Integer> result = new ArrayList<>();
+//                result.add(analysis.changes);
+//                result.add(analysis.faces);
+//                result.add(analysis.data);
+//                result.add(analysis.air);
+//                result.add(analysis.variety);
+//                
+//                result.add(analysis.changes_sd);
+//                result.add(analysis.faces_sd);
+//                result.add(analysis.data_sd);
+//                result.add(analysis.air_sd);
+//                result.add(analysis.variety_sd);
+//                
+//                Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
+//                FlagManager.addPlotFlag(plot, flag);
+                
                 whenDone.value = analysis;
                 whenDone.run();
             }
