@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 
@@ -102,12 +103,14 @@ public class PlotAnalysis {
             @Override
             public void run() {
                 Iterator<Plot> iter = plots.iterator();
-
                 PS.log(" - $1Reducing " + plots.size() + " plots to those with sufficient data");
                 while (iter.hasNext()) {
                     Plot plot = iter.next();
                     if (plot.settings.ratings == null || plot.settings.ratings.size() == 0) {
                         iter.remove();
+                    }
+                    else {
+                        MainUtil.runners.put(plot, 1);
                     }
                 }
                 PS.log(" - | Reduced to " + plots.size() + " plots");
@@ -115,6 +118,9 @@ public class PlotAnalysis {
                 if (plots.size() < 3) {
                     PS.log("Calibration cancelled due to insufficient comparison data, please try again later");
                     running = false;
+                    for (Plot plot : plots) {
+                        MainUtil.runners.remove(plot);
+                    }
                     return;
                 }
                 
@@ -327,8 +333,11 @@ public class PlotAnalysis {
                     logln("Correlation: ");
                     logln(getCC(n, sum(square(getSD(rank_complexity, rank_ratings)))));
                     if (optimal_complexity == Integer.MAX_VALUE) {
-                        PS.log("");
+                        PS.log("Insufficient data to determine correlation! " + optimal_index + " | " + n);
                         running = false;
+                        for (Plot plot : plots) {
+                            MainUtil.runners.remove(plot);
+                        }
                         return;
                     }
                 }
@@ -337,7 +346,7 @@ public class PlotAnalysis {
                     sort(sorted);
                     optimal_complexity = sorted[optimal_index];
                     logln("Complexity: ");
-                    logln(sorted);
+                    logln(complexity);
                     logln("Ratings: ");
                     logln(rank_ratings);
                 }
@@ -364,6 +373,9 @@ public class PlotAnalysis {
                 
                 PS.log("$1Done!");
                 running = false;
+                for (Plot plot : plots) {
+                    MainUtil.runners.remove(plot);
+                }
                 whenDone.run();
             }
         });

@@ -151,6 +151,12 @@ public class ExpireManager {
                                 }
                             }
                         };
+                        if (MainUtil.runners.containsKey(plot)) {
+                            PS.log("$2[&5Expire&dManager$2] &bSkipping plot in use: " + plot);
+                            expiredPlots.get(world).remove(plot);
+                            this.run();
+                            return;
+                        }
                         if (Settings.CLEAR_THRESHOLD != -1 && plotworld.TYPE == 0) {
                             PlotAnalysis analysis = plot.getComplexity();
                             if (analysis != null) {
