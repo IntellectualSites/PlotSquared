@@ -1853,6 +1853,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 Block block = event.getBlockPlaced();
                 sendBlockChange(block.getLocation(), block.getType(), block.getData());
             }
+            int temporary;
+            if (!player.hasPermission("plots.admin.build.heightlimit") && loc.getY() >= (temporary = PS.get().getPlotWorld(world).MAX_BUILD_HEIGHT)) {
+                event.setCancelled(true);
+                MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", "" + temporary));
+                return;
+            }
             return;
         }
         else if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
