@@ -6,10 +6,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;

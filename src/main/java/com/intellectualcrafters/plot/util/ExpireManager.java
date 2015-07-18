@@ -1,9 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -17,9 +14,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.ClassicPlotManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotHandler;

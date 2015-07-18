@@ -1,9 +1,15 @@
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
-import com.intellectualcrafters.plot.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -96,10 +102,15 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.RegExUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-
-import javax.annotation.RegEx;
 
 /**
  * Player Events involving plots

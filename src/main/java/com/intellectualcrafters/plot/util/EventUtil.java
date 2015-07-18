@@ -7,7 +7,6 @@ import java.util.UUID;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue.PlotBlockListValue;
 import com.intellectualcrafters.plot.listeners.PlayerBlockEventType;
 import com.intellectualcrafters.plot.object.LazyBlock;
 import com.intellectualcrafters.plot.object.Location;

@@ -35,7 +35,6 @@ import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridUtils;

@@ -26,14 +26,15 @@ import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.events.PlotRateEvent;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
+import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.events.PlotRateEvent;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotInventory;
@@ -42,7 +43,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
-import org.bukkit.Bukkit;
 
 public class Rate extends SubCommand {
     /*

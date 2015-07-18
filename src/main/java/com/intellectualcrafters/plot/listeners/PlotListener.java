@@ -21,7 +21,6 @@
 package com.intellectualcrafters.plot.listeners;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -41,12 +40,10 @@ import com.intellectualcrafters.plot.events.PlayerEnterPlotEvent;
 import com.intellectualcrafters.plot.events.PlayerLeavePlotEvent;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.comment.CommentManager;
 import com.intellectualcrafters.plot.titles.AbstractTitle;
 import com.intellectualcrafters.plot.util.MainUtil;

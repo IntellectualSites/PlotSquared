@@ -20,20 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.util.StringMan;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.bukkit.ChatColor;
-
 import java.io.File;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.bukkit.ChatColor;
+
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * Captions class.

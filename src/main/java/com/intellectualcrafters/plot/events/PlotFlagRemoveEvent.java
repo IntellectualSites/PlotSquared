@@ -21,7 +21,6 @@
 package com.intellectualcrafters.plot.events;
 
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import com.intellectualcrafters.plot.flag.Flag;

@@ -1,10 +1,7 @@
 package com.intellectualcrafters.plot.listeners;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import java.util.Set;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,7 +10,15 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.util.Set;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 /**
  * Created 2015-07-13 for PlotSquaredGit

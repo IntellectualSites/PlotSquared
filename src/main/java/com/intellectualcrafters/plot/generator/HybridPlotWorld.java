@@ -23,12 +23,9 @@ package com.intellectualcrafters.plot.generator;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;

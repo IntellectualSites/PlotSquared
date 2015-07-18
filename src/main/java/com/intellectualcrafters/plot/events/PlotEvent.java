@@ -1,9 +1,8 @@
 package com.intellectualcrafters.plot.events;
 
-import com.intellectualcrafters.plot.object.Plot;
-import com.sk89q.worldedit.event.Cancellable;
 import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+
+import com.intellectualcrafters.plot.object.Plot;
 
 public abstract class PlotEvent extends Event {
 

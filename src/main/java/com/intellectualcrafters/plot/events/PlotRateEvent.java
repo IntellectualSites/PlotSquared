@@ -1,9 +1,9 @@
 package com.intellectualcrafters.plot.events;
 
+import org.bukkit.event.HandlerList;
+
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-
-import org.bukkit.event.HandlerList;
 
 /**
  * Created 2015-07-13 for PlotSquaredGit

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;

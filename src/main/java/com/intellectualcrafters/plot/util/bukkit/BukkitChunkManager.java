@@ -46,7 +46,6 @@ import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
