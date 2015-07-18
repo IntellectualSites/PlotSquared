@@ -8,7 +8,7 @@ locale:
     not_valid_subcommand: $2Non è un sottocomando valido
     subcommand_set_options_header: '$2Valori possibili: '
     no_commands: $2Nessun permesso per eseguire i sottocomandi.
-    name_little: $2IL nome %s è troppo corto, $1%s$2<$1%s
+    name_little: $2IL nome %s è troppo corto, $1%s0$2<$1%s1
   flag:
     not_valid_flag: $2Quella non è una flag valida
     flag_type: '$2Tipo: %s'
@@ -26,10 +26,10 @@ locale:
     setup_invalid_generator: '$2Generatore invalido. Opzioni possibili: %s'
     setup_missing_generator: $2Devi specificare un generatore($1/plot setup <world> &l<generator>&r$2)&-$1Commandi addizionali:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel
     setup_init: '$1Usa: $2/plot setup <value>'
-    setup_step: '$3[$1Passo %s$3] $1%s $2- $1Stimato: $2%s $1Default: $2%s'
-    setup_valid_arg: $2Valore $1%s $2settato a %s
+    setup_step: '$3[$1Passo %s0$3] $1%s1 $2- $1Stimato: $2%s2 $1Default: $2%s3'
+    setup_valid_arg: $2Valore $1%s0 $2settato a %s1
     setup_finished: $3Se stai usando MULTIVERSE o MULTIWORLD ili mondo è stato creato. Altrimenti devi aggiungere il mondo manualmente modificando il file bukkit.yml
-    setup_invalid_arg: '$2%s non è un valido argomento per il passaggio %s. Per cancellare
+    setup_invalid_arg: '$2%s0 non è un valido argomento per il passaggio %s1. Per cancellare
       la installazione usa: $1/plot setup cancel'
     setup_missing_world: $2Devi specificare un nome del mondo con ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel
   list:
@@ -90,7 +90,7 @@ locale:
     cannot_afford_merge: $2Non hai abbastanza soldi per unire i lotti. Costa $1%s
     econ_disabled: $2Economia non abilitata
     added_balance: $1%s $2sono stati aggiunti al tuo bilancio
-    plot_sold: $4Il tuo lotto; $1%s$4, è stato venduto a $1%s$4 per $1$%s
+    plot_sold: $4Il tuo lotto; $1%s0$4, è stato venduto a $1%s1$4 per $1$%s2
     cannot_afford_plot: $2Non hai denaro sufficiente per questo lotto. Ti costa $1%s
   help:
     help_item: $1%usage% [%alias%]&- $3- $2%desc%&-
