@@ -283,6 +283,8 @@ public enum C {
      * Player not found
      */
     INVALID_PLAYER("$2Player not found: $1%s.", "Errors"),
+    SETTINGS_PASTE_UPLOADED("$2settings.yml was uploaded to: $1%url%", "Paste"),
+    LATEST_LOG_UPLOADED("$2latest.log was uploaded to: $1%url%", "Paste"),
     /*
      *
      */

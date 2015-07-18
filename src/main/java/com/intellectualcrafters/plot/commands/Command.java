@@ -55,6 +55,7 @@ public enum Command {
     ALLOWUNSAFE("debugallowunsafe"),
     DEBUGLOADTEST("debugloadtest"),
     DEBUGSAVETEST("debugsavetest"),
+    DEBUG_PASTE("debugpaste", "dp"),
     UNCLAIM("unclaim"),
     DEBUGCLEAR("debugclear", "fastclear"),
     SWAP("swap"),
