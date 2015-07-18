@@ -202,24 +202,26 @@ public class list extends SubCommand {
                     public int compare(Plot p1, Plot p2) {
                         double v1 = 0;
                         double v2 = 0;
-                        if (p1.settings.ratings != null && p1.settings.ratings.size() > 0) {
+                        int p1s = p1.settings.ratings != null ? p1.settings.ratings.size() : 0;
+                        int p2s = p2.settings.ratings != null ? p2.settings.ratings.size() : 0;
+                        if (p1.settings.ratings != null && p1s > 0) {
                             for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
                                 double av = entry.getValue().getAverageRating();
                                 v1 += av * av;
                             }
-                            v1 /= p1.settings.ratings.size();
-                            v2 += p2.settings.ratings.size();
+                            v1 /= p1s;
+                            v1 += p1s;
                         }
-                        if (p2.settings.ratings != null && p2.settings.ratings.size() > 0) {
+                        if (p2.settings.ratings != null && p2s > 0) {
                             for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
                                 double av = entry.getValue().getAverageRating();
                                 v2 += av * av;
                             }
-                            v2 /= p2.settings.ratings.size();
-                            v2 += p2.settings.ratings.size();
+                            v2 /= p2s;
+                            v2 += p2s;
                         }
                         if (v2 == v1 && v2 != 0) {
-                            return p2.settings.ratings.size() - p1.settings.ratings.size();
+                            return p2s - p1s;
                         }
                         return (int) Math.signum(v2 - v1);
                     }

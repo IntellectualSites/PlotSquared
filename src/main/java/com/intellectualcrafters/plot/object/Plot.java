@@ -327,7 +327,7 @@ public class Plot implements Cloneable {
         for (Rating rating : ratings) {
             sum += rating.getAverageRating();
         }
-        return sum / ratings.size();
+        return (sum / ratings.size());
     }
     
     /**
