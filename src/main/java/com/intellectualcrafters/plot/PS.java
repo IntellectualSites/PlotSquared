@@ -1329,7 +1329,6 @@ public class PS {
         // Clearing + Expiry
         Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");
         Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
-        Settings.MIN_BLOCKS_CHANGED_IGNORED = config.getInt("clear.ignore-if-modified");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
         Settings.CLEAR_THRESHOLD = config.getInt("clear.auto.threshold");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");

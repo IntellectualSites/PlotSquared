@@ -58,17 +58,56 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        final List<String> allowed_params = Arrays.asList("analyze", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
+        final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             switch (arg) {
                 case "analyze": {
+                    if (player == null) {
+                        MainUtil.sendMessage(player, C.IS_CONSOLE);
+                        return false;
+                    }
+                    Plot plot = MainUtil.getPlot(player.getLocation());
+                    if (plot == null) {
+                        MainUtil.sendMessage(player, C.NOT_IN_PLOT);
+                        return false;
+                    }
+                    PlotAnalysis analysis = plot.getComplexity();
+                    if (analysis != null) {
+                        int complexity = analysis.getComplexity();
+                        MainUtil.sendMessage(player, "Complexity: " + complexity);
+                        return true;
+                    }
+                    MainUtil.sendMessage(player, "$1Starting task...");
+                    HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+                        @Override
+                        public void run() {
+                            MainUtil.sendMessage(player, "$1Done: $2use $3/plot debugexec analyze$2 for more information");
+                        }
+                    });
+                    return true;
+                }
+                case "calibrate-analysis": {
+                    if (args.length != 2) {
+                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec analyze <threshold>");
+                        MainUtil.sendMessage(player, "$1<threshold> $2= $1The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating it)");
+                        return false;
+                    }
+                    double threshold;
+                    try {
+                        threshold = Integer.parseInt(args[1]) / 100d;
+                    }
+                    catch (NumberFormatException e) {
+                        MainUtil.sendMessage(player, "$2Invalid threshold: " + args[1]);
+                        MainUtil.sendMessage(player, "$1<threshold> $2= $1The percentage of plots you want to clear as a number between 0 - 100");
+                        return false;
+                    }
                     PlotAnalysis.calcOptimalModifiers(new Runnable() {
                         @Override
                         public void run() {
-                            PS.log("&cTHIS FUNCTION IS A WORK IN PROGRESS");
+                            PS.log("$1Thank you for calibrating PlotSquared plot expiry");
                         }
-                    });
+                    }, threshold);
                     return true;
                 }
                 case "stop-expire": {

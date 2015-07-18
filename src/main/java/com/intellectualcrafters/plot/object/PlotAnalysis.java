@@ -31,7 +31,7 @@ public class PlotAnalysis {
     public int air_sd;
     public int variety_sd;
     
-    public double complexity;
+    private int complexity;
     
     public static PlotAnalysis MODIFIERS = new PlotAnalysis();
 
@@ -52,30 +52,30 @@ public class PlotAnalysis {
             analysis.air_sd = values.get(8);
             analysis.variety_sd = values.get(9);
             
-            analysis.complexity =
-            + (analysis.changes) * MODIFIERS.changes
-            + (analysis.faces) * MODIFIERS.faces
-            + (analysis.data) * MODIFIERS.data
-            + (analysis.air) * MODIFIERS.air
-            + (analysis.variety) * MODIFIERS.variety
-            + (analysis.changes_sd) * MODIFIERS.changes_sd
-            + (analysis.faces_sd) * MODIFIERS.faces_sd
-            + (analysis.data_sd) * MODIFIERS.data_sd
-            + (analysis.air_sd) * MODIFIERS.air_sd
-            + (analysis.variety_sd) * MODIFIERS.variety_sd
-            ;
+            analysis.complexity = analysis.getComplexity();
             return analysis;
         }
         return null;
     }
     
-    public static void analyzePlot(Plot plot, RunnableVal<PlotAnalysis> whenDone) {
-        PlotAnalysis analysis = getAnalysis(plot);
-        if (analysis != null) {
-            whenDone.value = analysis;
-            if (whenDone != null) whenDone.run();
-            return;
+    public int getComplexity() {
+        if (complexity != 0) {
+            return complexity;
         }
+        complexity = (this.changes) * MODIFIERS.changes
+                + (this.faces) * MODIFIERS.faces
+                + (this.data) * MODIFIERS.data
+                + (this.air) * MODIFIERS.air
+                + (this.variety) * MODIFIERS.variety
+                + (this.changes_sd) * MODIFIERS.changes_sd
+                + (this.faces_sd) * MODIFIERS.faces_sd
+                + (this.data_sd) * MODIFIERS.data_sd
+                + (this.air_sd) * MODIFIERS.air_sd
+                + (this.variety_sd) * MODIFIERS.variety_sd;
+        return complexity;
+    }
+    
+    public static void analyzePlot(Plot plot, RunnableVal<PlotAnalysis> whenDone) {
         BukkitHybridUtils.manager.analyzePlot(plot, whenDone);
     }
     
@@ -91,8 +91,8 @@ public class PlotAnalysis {
             PS.log("Calibration task already in progress!");
             return;
         }
-        if (threshold < 0 || threshold >= 1) {
-            PS.log("Invalid threshold provided!");
+        if (threshold <= 0 || threshold >= 1) {
+            PS.log("Invalid threshold provided! (Cannot be 0 or 100 as then there's no point calibrating)");
             return;
         }
         running = true;
@@ -295,13 +295,57 @@ public class PlotAnalysis {
                 PlotAnalysis.MODIFIERS.variety_sd = factor_variety_sd == 1 ? 0 : (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
                 PS.log(" - | variety_sd " + factor_variety_sd);
                 
+                int[] complexity = new int[n];
                 
-                
-                PlotAnalysis analysis = getAnalysis(plots.get(Arrays.asList(rank_ratings).indexOf(optimal_index)));
+                PS.log(" $1Calculating threshold");
+                int max = 0;
+                int min = 0;
+                for (int i = 0; i < n; i++) {
+                    Plot plot = plots.get(i);
+                    PlotAnalysis analysis = plot.getComplexity();
+                    complexity[i] = analysis.complexity;
+                    if (analysis.complexity < min) {
+                        min = analysis.complexity;
+                    }
+                    else if (analysis.complexity > max) {
+                        max = analysis.complexity;
+                    }
+                }
+                int optimal_complexity = Integer.MAX_VALUE; 
+                if (min > 0 && max < 102400) { // If low size, use my fast ranking algorithm
+                    int[] rank_complexity = rank(complexity, max + 1);
+                    for (int i = 0; i < n; i++) {
+                        if (rank_complexity[i] == optimal_index) {
+                            optimal_complexity = complexity[i];
+                            break;
+                        }
+                    }
+                    logln("Complexity: ");
+                    logln(rank_complexity);
+                    logln("Ratings: ");
+                    logln(rank_ratings);
+                    logln("Correlation: ");
+                    logln(getCC(n, sum(square(getSD(rank_complexity, rank_ratings)))));
+                    if (optimal_complexity == Integer.MAX_VALUE) {
+                        PS.log("");
+                        running = false;
+                        return;
+                    }
+                }
+                else { // Use the fast radix sort algorithm
+                    int[] sorted = complexity.clone();
+                    sort(sorted);
+                    optimal_complexity = sorted[optimal_index];
+                    logln("Complexity: ");
+                    logln(sorted);
+                    logln("Ratings: ");
+                    logln(rank_ratings);
+                }
                 
                 // Save calibration
                 PS.log(" $1Saving calibration");
                 YamlConfiguration config = PS.get().config;
+                config.set("clear.auto.threshold", optimal_complexity);
                 config.set("clear.auto.calibration.changes", PlotAnalysis.MODIFIERS.changes);
                 config.set("clear.auto.calibration.faces", PlotAnalysis.MODIFIERS.faces);
                 config.set("clear.auto.calibration.data", PlotAnalysis.MODIFIERS.data);
@@ -318,11 +362,39 @@ public class PlotAnalysis {
                     e.printStackTrace();
                 }
                 
-                PS.log(" $1Done!");
+                PS.log("$1Done!");
                 running = false;
                 whenDone.run();
             }
         });
+    }
+    
+    public static void logln(Object obj) {
+        System.out.println(log(obj));
+    }
+    
+    public static String log(Object obj) {
+        String result = "";
+        if (obj.getClass().isArray()) {
+            String prefix = "";
+            
+            for(int i=0; i<Array.getLength(obj); i++){
+                result += prefix + log(Array.get(obj, i));
+                prefix = ",";
+            }
+            return "( " + result + " )";
+        }
+        else if (obj instanceof List<?>) {
+            String prefix = "";
+            for (Object element : (List<?>) obj) {
+                result += prefix + log(element);
+                prefix = ",";
+            }
+            return "[ " + result + " ]";
+        }
+        else {
+            return obj.toString();
+        }
     }
     
     /**
@@ -390,15 +462,24 @@ public class PlotAnalysis {
     
     /**
      * An optimized algorithm for ranking a very specific set of inputs<br>
-     *  - Input is an array of int with a max size of 102400
-     *  - This allows for optimizations beyond any standard sorting function
+     *  - Input is an array of int with a max size of 102400<br>
+     *  - A reduced sample space allows for sorting (and ranking in this case) in linear time
      * @param input
      * @return
      */
     public static int[] rank(final int[] input) {
-        int[] cache = new int[102400];
+        return rank(input, 102400);
+    }
+    
+    /**
+     * An optimized algorithm for ranking a very specific set of inputs
+     * @param input
+     * @return
+     */
+    public static int[] rank(final int[] input, int size) {
+        int[] cache = new int[size];
         int max = 0;
-        if (input.length < 102400) {
+        if (input.length < size) {
             for (int value : input) {
                 if (value > max) {
                     max = value;

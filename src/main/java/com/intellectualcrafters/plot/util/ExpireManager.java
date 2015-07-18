@@ -55,7 +55,7 @@ public class ExpireManager {
                 public void run() {
                     try {
                         final List<Plot> plots = getOldPlots(world);
-                        PS.log("&7[&5Expire&dManager&7] &3Found " + plots.size() + " expired plots for " + world + "!");
+                        PS.log("$2[&5Expire&dManager$2] $4Found " + plots.size() + " expired plots for " + world + "!");
                         expiredPlots.put(world, plots);
                         updatingPlots.put(world, false);
                     }
@@ -82,18 +82,18 @@ public class ExpireManager {
                         }
                         final Boolean updating = ExpireManager.updatingPlots.get(world);
                         if (updating) {
-                            PS.log("&7[&5Expire&dManager&7] &3Waiting on fetch...");
+                            PS.log("$2[&5Expire&dManager$2] $4Waiting on fetch...");
                             return;
                         }
                         if (!expiredPlots.containsKey(world)) {
-                            PS.log("&7[&5Expire&dManager&7] &3Updating expired plots for: " + world);
+                            PS.log("$2[&5Expire&dManager$2] $4Updating expired plots for: " + world);
                             updateExpired(world);
                             return;
                         }
                         final List<Plot> plots = expiredPlots.get(world);
                         if ((plots == null) || (plots.size() == 0)) {
                             if (updateExpired(world)) {
-                                PS.log("&7[&5Expire&dManager&7] &3Re-evaluating expired plots for: " + world);
+                                PS.log("$2[&5Expire&dManager$2] $4Re-evaluating expired plots for: " + world);
                                 return;
                             }
                             continue;
@@ -101,7 +101,7 @@ public class ExpireManager {
                         final Plot plot = plots.iterator().next();
                         if (!isExpired(plot)) {
                             expiredPlots.get(world).remove(plot);
-                            PS.log("&7[&5Expire&dManager&7] &bSkipping no longer expired: " + plot);
+                            PS.log("$2[&5Expire&dManager$2] &bSkipping no longer expired: " + plot);
                             return;
                         }
                         for (final UUID helper : plot.trusted) {
@@ -118,87 +118,53 @@ public class ExpireManager {
                         }
                         final PlotManager manager = PS.get().getPlotManager(world);
                         if (manager == null) {
-                            PS.log("&7[&5Expire&dManager&7] &cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
+                            PS.log("$2[&5Expire&dManager$2] &cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
                             expiredPlots.get(world).remove(plot);
                             return;
                         }
                         final PlotWorld plotworld = PS.get().getPlotWorld(world);
-//                        RunnableVal<Integer> run = new RunnableVal<Integer>() {
-//                            @Override
-//                            public void run() {
-//                                int changed = this.value;
-//                                if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
-//                                    if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
-//                                        PS.log("&7[&5Expire&dManager&7] &bKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-//                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
-//                                        expiredPlots.get(world).remove(plot);
-//                                        return;
-//                                    }
-//                                    else if (changed >= Settings.MIN_BLOCKS_CHANGED_IGNORED && Settings.MIN_BLOCKS_CHANGED_IGNORED > 0) {
-//                                        PS.log("&7[&5Expire&dManager&7] &bIgnoring modified plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-//                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("modified-blocks"), value));
-//                                        expiredPlots.get(world).remove(plot);
-//                                        return;
-//                                    }
-//                                }
-//                                if (plot.settings.isMerged()) {
-//                                    MainUtil.unlinkPlot(plot);
-//                                }
-//                                plot.delete();
-//                                expiredPlots.get(world).remove(plot);
-//                                PS.log("&7[&5Expire&dManager&7] &cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-//                                PS.log("&3 - World: " + plot.world);
-//                                if (plot.hasOwner()) {
-//                                    PS.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
-//                                } else {
-//                                    PS.log("&3 - Owner: Unowned");
-//                                }
-//                            }
-//                        };
-                        if ((Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.CLEAR_THRESHOLD != 100) && plotworld.TYPE == 0) {
+                        RunnableVal<PlotAnalysis> run = new RunnableVal<PlotAnalysis>() {
+                            @Override
+                            public void run() {
+                                PlotAnalysis changed = this.value;
+                                if (Settings.CLEAR_THRESHOLD != -1 && plotworld.TYPE == 0 && changed != null) {
+                                    if (changed.getComplexity() > Settings.CLEAR_THRESHOLD) {
+                                        PS.log("$2[&5Expire&dManager$2] &bIgnoring modified plot: " + plot + " : " + changed.getComplexity() + " - " + changed.changes);
+                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("modified-blocks"), value));
+                                        expiredPlots.get(world).remove(plot);
+                                        return;
+                                    }
+                                }
+                                if (plot.settings.isMerged()) {
+                                    MainUtil.unlinkPlot(plot);
+                                }
+                                plot.delete();
+                                expiredPlots.get(world).remove(plot);
+                                int complexity = changed == null ? 0 : changed.getComplexity();
+                                int modified = changed == null ? 0 : changed.changes;
+                                PS.log("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " : " + complexity + " - " + modified);
+                                PS.log("$4 - World: " + plot.world);
+                                if (plot.hasOwner()) {
+                                    PS.log("$4 - Owner: " + UUIDHandler.getName(plot.owner));
+                                } else {
+                                    PS.log("$4 - Owner: Unowned");
+                                }
+                            }
+                        };
+                        if (Settings.CLEAR_THRESHOLD != -1 && plotworld.TYPE == 0) {
                             PlotAnalysis analysis = plot.getComplexity();
                             if (analysis != null) {
-                                /*
-                                 * TODO remove min blocks changed
-                                 *  - it isn't an accurate way to determine plot complexity
-                                 *  
-                                 *  compare this plots complexity with every other plot:
-                                 *   - If it is in the bottom (threshold)% then it will be cleared
-                                 *   - That doesn't make sense, that would mean it would get significantly harder as time goes on.
-                                 *   - I guess as time goes on you can become more strict?
-                                 *    
-                                 *    % of plots to clear - not sure how to do
-                                 *    % within non cleared plots - doesn't work for first plot
-                                 *    % of plots in clear queue - doesn't work if 1 plot
-                                 *    
-                                 *    could be determined during calibration
-                                 *    
-                                 *    or (faster)
-                                 *    
-                                 *     set threshold complexity during calibration
-                                 *    
-                                 *     ideal number of expired plots
-                                 *     
-                                 *     manually set complexity
-                                 */
-                            }
-                            
-                            
-                            Flag flag = FlagManager.getPlotFlagAbs(plot, "analysis");
-                            if (flag != null) {
-                                if ((Integer) flag.getValue() > Settings.MIN_BLOCKS_CHANGED_IGNORED) {
-                                    PS.log("&7[&5Expire&dManager&7] &bSkipping modified: " + plot);
+                                if (analysis.getComplexity() > Settings.CLEAR_THRESHOLD) {
+                                    PS.log("$2[&5Expire&dManager$2] &bSkipping modified: " + plot);
                                     expiredPlots.get(world).remove(plot);
                                     this.run();
                                     return;
                                 }
                             }
-                            else {
-                                HybridUtils.manager.checkModified(plot, run);
-                            }
+                            HybridUtils.manager.analyzePlot(plot, run);
                         }
                         else {
-                            run.value = -1;
+                            run.value = null;
                             run.run();
                         }
                         return;
@@ -271,42 +237,6 @@ public class ExpireManager {
                 continue;
             }
             if (isExpired(plot)) {
-                if (Settings.AUTO_CLEAR_CHECK_DISK) {
-                    final String worldname = Bukkit.getWorlds().get(0).getName();
-                    String foldername;
-                    String filename = null;
-                    if (PS.get().IMP.checkVersion(1, 7, 5)) {
-                        foldername = "playerdata";
-                        try {
-                            final OfflinePlotPlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
-                            filename = op.getUUID() + ".dat";
-                        } catch (final Throwable e) {
-                            filename = uuid.toString() + ".dat";
-                        }
-                    } else {
-                        foldername = "players";
-                        final String playername = UUIDHandler.getName(uuid);
-                        if (playername != null) {
-                            filename = playername + ".dat";
-                        }
-                    }
-                    if (filename != null) {
-                        final File playerFile = new File(worldname + File.separator + foldername + File.separator + filename);
-                        if (!playerFile.exists()) {
-                            PS.log("Could not find file: " + filename);
-                        } else {
-                            try {
-                                long last = playerFile.lastModified();
-                                long compared = System.currentTimeMillis() - last;
-                                if (compared < (86400000l * Settings.AUTO_CLEAR_DAYS)) {
-                                    continue;
-                                }
-                            } catch (final Exception e) {
-                                PS.log("Please disable disk checking in old plot auto clearing; Could not read file: " + filename);
-                            }
-                        }
-                    }
-                }
                 toRemove.add(plot);
             }
         }

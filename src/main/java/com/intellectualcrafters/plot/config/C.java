@@ -399,6 +399,7 @@ public enum C {
      * List
      */
     COMMENT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% comments", "List"),
+    CLICKABLE(" (interactive)", "List"),
     PLOT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% plots", "List"),
     PLOT_LIST_HEADER("$1List of %word% plots", "List"),
     PLOT_LIST_ITEM("$2>> $1%id$2:$1%world $2- $1%owner", "List"),
