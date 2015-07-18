@@ -879,7 +879,7 @@ public class PS {
         try {
             URL history = new URL(url);
             URLConnection con = history.openConnection();
-            con.addRequestProperty("User-Agent", "Mozilla/4.0");
+            con.addRequestProperty("User-Agent", "Mozilla/5.0");
             InputStream stream = con.getInputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(stream));
             String l;
