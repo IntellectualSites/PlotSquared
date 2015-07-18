@@ -292,7 +292,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (cmd != null) {
             return;
         }
-        if (split[0].equals("plotme") || split[0].equals("ap")) {
+        if (split[0].equals("plotme") || split[0].equals("ap") || split[0].equals("plotz")) {
             final Player player = event.getPlayer();
             if (Settings.USE_PLOTME_ALIAS) {
                 player.performCommand("plots " + StringUtils.join(Arrays.copyOfRange(split, 1, split.length), " "));
@@ -317,7 +317,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         BukkitUtil.removePlayer(player.getName());
@@ -336,7 +336,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
         }
         if (PS.get().update != null && pp.hasPermission("plots.admin")) {
-            MainUtil.sendMessage(pp, "&6An update for PlotSquared is available: &7/plot update");
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    MainUtil.sendMessage(pp, "&6An update for PlotSquared is available: &7/plot update");
+                }
+            }, 20);
         }
         final Location loc = BukkitUtil.getLocation(player.getLocation());
         final Plot plot = MainUtil.getPlot(loc);

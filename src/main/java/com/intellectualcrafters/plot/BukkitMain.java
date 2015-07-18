@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -133,18 +137,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else {
             log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
         }
-//        File file = new File(this.getDirectory() + File.separator + "disabled.yml");
-//        if (file.exists()) {
-//            file.delete();
-//            try {
-//                String[] split = new String(Files.readAllBytes(file.toPath())).split(",");
-//                for (String plugin : split) {
-//                    loadPlugin(plugin);
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
         List<World> worlds = Bukkit.getWorlds();
         if (worlds.size() > 0) {
             UUIDHandler.cacheAll(worlds.get(0).getName());
@@ -162,12 +154,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void onDisable() {
         PS.get().disable();
-        try {
-            unloadRecursively(this);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        };
         THIS = null;
     }
     
@@ -192,7 +178,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void disable() {
-        onDisable();
+        if (THIS != null) {
+            onDisable();
+        }
     }
     
     @Override
@@ -418,163 +406,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 }
             }
         }, 20);
-    }
-    
-    public boolean unloadPlugin(Plugin plugin) {
-        try {
-            plugin.getClass().getClassLoader().getResources("*");
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        PluginManager pm = Bukkit.getServer().getPluginManager();
-        Map<String, Plugin> ln;
-        List<Plugin> pl;
-        try {
-            Field lnF = pm.getClass().getDeclaredField("lookupNames");
-            lnF.setAccessible(true);
-            ln = (Map) lnF.get(pm);
-            
-            Field plF = pm.getClass().getDeclaredField("plugins");
-            plF.setAccessible(true);
-            pl = (List) plF.get(pm);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        pm.disablePlugin(plugin);
-        synchronized (pm) {
-            ln.remove(plugin.getName());
-            pl.remove(plugin);
-        }
-        JavaPluginLoader jpl = (JavaPluginLoader) plugin.getPluginLoader();
-        Field loadersF = null;
-        try {
-            loadersF = jpl.getClass().getDeclaredField("loaders");
-            loadersF.setAccessible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            Map<String, ?> loaderMap = (Map) loadersF.get(jpl);
-            loaderMap.remove(plugin.getDescription().getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        closeClassLoader(plugin);
-        System.gc();
-        System.gc();
-        return true;
-    }
-    
-    public boolean closeClassLoader(Plugin plugin) {
-        try {
-            ((URLClassLoader) plugin.getClass().getClassLoader()).close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-    
-    public boolean unloadRecursively(Plugin plugin) {
-        try {
-            Stack<String> pluginFiles = unloadRecursively(plugin.getName(), plugin, new Stack());
-            File file = new File(this.getDirectory() + File.separator + "disabled.yml");
-            file.createNewFile();
-            String prefix = "";
-            String all = "";
-            while (pluginFiles.size() > 0) {
-                String pop = pluginFiles.pop();
-                all += prefix + pop.substring(0, pop.length() - 4);
-                prefix = ",";
-            }
-            if (all.length() != 0) {
-                PrintWriter out = new PrintWriter(this.getDirectory() + File.separator + "disabled.yml");
-                out.write(all);
-                out.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-    
-    @Override
-    public void loadPlugin(String name) {
-        try {
-            PluginManager manager = Bukkit.getServer().getPluginManager();
-            Plugin plugin = manager.getPlugin(name);
-            if (plugin != null) {
-                manager.enablePlugin(plugin);
-                return;
-            }
-            plugin = manager.loadPlugin(new File("plugins" + File.separator + name + (name.endsWith(".jar") ? "" : ".jar")));
-            plugin.onLoad();
-            manager.enablePlugin(plugin);
-        } catch (Exception e) {}
-    }
-    
-    @Override
-    public File getFile() {
-        return getFile(this);
-    }
-    
-    public File getFile(JavaPlugin p) {
-        try {
-            Field f = JavaPlugin.class.getDeclaredField("file");
-            f.setAccessible(true);
-            return (File) f.get(p);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    
-    public Stack<String> unloadRecursively(String doNotLoad, Plugin plugin, Stack<String> pluginFiles) {
-        if (!plugin.getName().equals(doNotLoad)) {
-            File file = getFile((JavaPlugin) plugin);
-            pluginFiles.push(file.getName());
-        }
-        PluginManager pm = Bukkit.getPluginManager();
-        for (Plugin p : pm.getPlugins()) {
-            List<String> depend = p.getDescription().getDepend();
-            if (depend != null) {
-                for (String s : depend) {
-                    if (s.equals(plugin.getName())) {
-                        unloadRecursively(doNotLoad, p, pluginFiles);
-                    }
-                }
-            }
-            List<String> softDepend = p.getDescription().getSoftDepend();
-            if (softDepend != null) {
-                for (String s : softDepend) {
-                    if (s.equals(plugin.getName())) {
-                        unloadRecursively(doNotLoad, p, pluginFiles);
-                    }
-                }
-            }
-        }
-        if (unloadPlugin(plugin)) {
-            List<String> depend = plugin.getDescription().getDepend();
-            if (depend != null) {
-                for (String s : depend) {
-                    Plugin p = pm.getPlugin(s);
-                    if (p != null) {
-                        unloadRecursively(doNotLoad, p, pluginFiles);
-                    }
-                }
-            }
-            List<String> softDepend = plugin.getDescription().getSoftDepend();
-            if (softDepend != null) {
-                for (String s : softDepend) {
-                    Plugin p = pm.getPlugin(s);
-                    if (p != null) {
-                        unloadRecursively(doNotLoad, p, pluginFiles);
-                    }
-                }
-            }
-        }
-        return pluginFiles;
     }
     
     @Override

@@ -62,19 +62,11 @@ public class ChunkListener implements Listener {
         }
     }
     
-    @EventHandler(priority=EventPriority.LOWEST)
+    @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
-        long now = System.currentTimeMillis();
-        if (now - last < 20) {
-            if (count > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
-                event.setCancelled(true);
-            }
-            count++;
+        if (Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS) {
+            event.setCancelled(true);
         }
-        else {
-            count = 0;
-        }
-        last = now;
     }
     
     @EventHandler(priority=EventPriority.LOWEST)

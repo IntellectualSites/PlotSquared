@@ -51,10 +51,6 @@ public class Update extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr != null) {
-            MainUtil.sendMessage(plr, C.NOT_CONSOLE);
-            return false;
-        }
         URL url;
         if (args.length == 0) {
             url = PS.get().update;
@@ -77,7 +73,9 @@ public class Update extends SubCommand {
             MainUtil.sendMessage(plr, "&cTo manually specify an update URL: /plot update <url>");
             return false;
         }
-        PS.get().update(url);
+        if (PS.get().update(plr, url) && url == PS.get().update) {
+            PS.get().update = null;
+        }
         return true;
     }
 }

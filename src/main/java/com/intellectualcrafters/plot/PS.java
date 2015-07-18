@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -31,8 +30,6 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.config.C;
@@ -919,15 +916,14 @@ public class PS {
         }
     }
     
-    public boolean update(URL url) {
+    public boolean update(PlotPlayer sender, URL url) {
         if (url == null) {
             return false;
         }
         try {
-            File jar = PS.get().IMP.getFile();
             File newJar = new File("plugins/update/PlotSquared.jar");
-            PS.log("&6Downloading from provided URL: &7" + url);
-            PS.log("&7 - User-Agent: " + "Mozilla/4.0");
+            MainUtil.sendMessage(sender, "$1Downloading from provided URL: &7" + url);
+            MainUtil.sendMessage(sender, "$2 - User-Agent: " + "Mozilla/4.0");
             URLConnection con = url.openConnection();
             con.addRequestProperty("User-Agent", "Mozilla/4.0");
             InputStream stream = con.getInputStream();
@@ -935,31 +931,16 @@ public class PS {
             if (!parent.exists()) {
                 parent.mkdirs();
             }
-            PS.log("&7 - Output: " + newJar);
+            MainUtil.sendMessage(sender, "$2 - Output: " + newJar);
             newJar.delete();
             Files.copy(stream, newJar.toPath());
             stream.close();
-            PS.log("&6Disabling PlotSquared");  
-            PS.get().IMP.disable();
-            System.out.println("Deleting file: " + jar);
-            jar.delete();
-            System.out.println("Copying: " + jar + "  >> " + newJar);
-            try {
-                Files.move(newJar.toPath(), jar.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                System.out.println("Failed to reload PlotSquared");
-                System.out.println(" - Restart the server manually");
-                System.out.println("============ Stacktrace ============");
-                e.printStackTrace();
-                System.out.println("====================================");
-                return false;
-            }
-            Bukkit.reload();
+            MainUtil.sendMessage(sender, "$1The update will take effect when the server is restarted next");  
             return true;
         }
         catch (Exception e) {
-            System.out.println("Failed to update PlotSquared");
-            System.out.println(" - Please update manually");
+            MainUtil.sendMessage(sender, "Failed to update PlotSquared");
+            MainUtil.sendMessage(sender, " - Please update manually");
             System.out.println("============ Stacktrace ============");
             e.printStackTrace();
             System.out.println("====================================");
@@ -1114,7 +1095,6 @@ public class PS {
         for (final String flag : intFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
-        FlagManager.addFlag(new AbstractFlag("modified-blocks", new FlagValue.IntegerValue()), true);
         FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.IntegerListValue()), true);
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
@@ -1277,6 +1257,7 @@ public class PS {
         options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
         options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
         options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
+        options.put("chunk-processor.disable-physics", Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS);
         
         // Comments
         options.put("comments.notifications.enabled", Settings.COMMENT_NOTIFICATIONS);
@@ -1378,7 +1359,8 @@ public class PS {
         // Chunk processor
         Settings.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled");
         Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES = config.getInt("chunk-processor.max-blockstates");
-        Settings.CHUNK_PROCESSOR_MAX_ENTITIES= config.getInt("chunk-processor.max-entities");
+        Settings.CHUNK_PROCESSOR_MAX_ENTITIES = config.getInt("chunk-processor.max-entities");
+        Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS = config.getBoolean("chunk-processor.disable-physics");
         
         // Comments
         Settings.COMMENT_NOTIFICATIONS = config.getBoolean("comments.notifications.enabled");

@@ -24,8 +24,6 @@ public interface IPlotMain {
 
     public File getDirectory();
     
-    public File getFile();
-
     public void disable();
 
     public String getVersion();
@@ -81,6 +79,4 @@ public interface IPlotMain {
     public PlayerManager initPlayerManager();
 
     public boolean checkVersion(int major, int minor, int minor2);
-    
-    public void loadPlugin(String plugin);
 }
