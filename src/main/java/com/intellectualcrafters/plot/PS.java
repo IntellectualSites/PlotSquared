@@ -1229,7 +1229,26 @@ public class PS {
         options.put("clear.auto.calibration.data_sd", 1);
         options.put("clear.auto.calibration.air_sd", 32);
         options.put("clear.auto.calibration.variety_sd", 1);
-        options.put("clear.auto.threshold", Settings.CLEAR_THRESHOLD);
+        
+        int keep = config.getInt("keep-if-modified");
+        int ignore = config.getInt("ignore-if-modified");
+        if (keep > 0 || ignore > 0) {
+            options.put("clear.auto.threshold", 1);
+            log("&cIMPORTANT MESSAGE ABOUT THIS UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            log("&cSorry for all the exclamation marks, but this could be important.");
+            log("&cPlot clearing has changed to a new system that requires calibration.");
+            log("&cThis is how it will work: ");
+            log("&c - Players will rate plots");
+            log("&c - When enough plots are rated, you can run /plot debugexec calibrate-analysis");
+            log("&c - You can decide the (rough) percentage of expired plots to clear");
+            log("&c - To just clear all expired plot, ignore this and set: &7threshold: -1");
+            log("&cMore information:&7 https://github.com/IntellectualSites/PlotSquared/wiki/Plot-analysis:");
+        }
+        else {
+            options.put("clear.auto.threshold", Settings.CLEAR_THRESHOLD);
+        }
+        config.set("keep-if-modified", null);
+        config.set("ignore-if-modified", null);
 
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
