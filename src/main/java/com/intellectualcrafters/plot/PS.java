@@ -1115,7 +1115,7 @@ public class PS {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
         FlagManager.addFlag(new AbstractFlag("modified-blocks", new FlagValue.IntegerValue()), true);
-        FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.DoubleListValue()), true);
+        FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.IntegerListValue()), true);
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
@@ -1236,9 +1236,9 @@ public class PS {
         options.put("clear.auto.enabled", false);
         options.put("clear.auto.days", 365);
         options.put("clear.auto.clear-interval-seconds", Settings.CLEAR_INTERVAL);
-        options.put("clear.auto.calibration.changes", 64);
-        options.put("clear.auto.calibration.faces", 32);
-        options.put("clear.auto.calibration.data", 1);
+        options.put("clear.auto.calibration.changes", 1);
+        options.put("clear.auto.calibration.faces", 2);
+        options.put("clear.auto.calibration.data", 32);
         options.put("clear.auto.calibration.air", 32);
         options.put("clear.auto.calibration.variety", 1);
         options.put("clear.auto.calibration.changes_sd", 64);
@@ -1246,8 +1246,7 @@ public class PS {
         options.put("clear.auto.calibration.data_sd", 1);
         options.put("clear.auto.calibration.air_sd", 32);
         options.put("clear.auto.calibration.variety_sd", 1);
-        options.put("clear.auto.threshold-percent", Settings.CLEAR_THRESHOLD);
-        options.put("clear.ignore-if-modified", Settings.MIN_BLOCKS_CHANGED_IGNORED);
+        options.put("clear.auto.threshold", Settings.CLEAR_THRESHOLD);
 
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
@@ -1332,7 +1331,7 @@ public class PS {
         Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
         Settings.MIN_BLOCKS_CHANGED_IGNORED = config.getInt("clear.ignore-if-modified");
         Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
-        Settings.CLEAR_THRESHOLD = config.getInt("clear.auto.threshold-percent");
+        Settings.CLEAR_THRESHOLD = config.getInt("clear.auto.threshold");
         Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
         Settings.CLEAR_INTERVAL = config.getInt("clear.auto.clear-interval-seconds");
 

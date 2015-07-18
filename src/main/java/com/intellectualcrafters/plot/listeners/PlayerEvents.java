@@ -218,10 +218,9 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 if (plot == null) {
                     return;
                 }
-                if (FlagManager.isPlotFlagTrue(plot, "redstone")) {
-                    return;
+                if (FlagManager.isPlotFlagFalse(plot, "redstone")) {
+                    event.setCancelled(true);
                 }
-                event.setCancelled(true);
                 return;
             }
             case 122:

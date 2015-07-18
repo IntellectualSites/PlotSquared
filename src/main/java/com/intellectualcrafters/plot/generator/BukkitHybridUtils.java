@@ -47,7 +47,7 @@ public class BukkitHybridUtils extends HybridUtils {
     private long last;
     
     @Override
-    public void analyzePlot(Plot plot, final RunnableVal<PlotAnalysis> whenDone) {
+    public void analyzePlot(final Plot plot, final RunnableVal<PlotAnalysis> whenDone) {
         // TODO Auto-generated method stub
         // int diff, int variety, int verticies, int rotation, int height_sd
 
@@ -100,7 +100,6 @@ public class BukkitHybridUtils extends HybridUtils {
         final Runnable run = new Runnable() {
             @Override
             public void run() {
-                int t = 0;
                 for (Chunk chunk : processed_chunks) {
                     short[][] result = gen.generateExtBlockSections(world, r, chunk.getX(), chunk.getZ(), base);
                     int X = chunk.getX();
@@ -145,7 +144,6 @@ public class BukkitHybridUtils extends HybridUtils {
                             short old = oldblocks[y][x][z];
                             short now = newblocks[y][x][z];
                             if (old != now) {
-                                t++;
                                 changes[i]++;
                             }
                             if (now == 0) {
@@ -190,28 +188,27 @@ public class BukkitHybridUtils extends HybridUtils {
                 analysis.air = (int) (MathMan.getMean(air) * 100);
                 analysis.variety = (int) (MathMan.getMean(variety) * 100);
                 
-                analysis.changes_sd = (int) (MathMan.getSD(changes, analysis.changes) * 100);
-                analysis.faces_sd = (int) (MathMan.getSD(faces, analysis.faces) * 100);
-                analysis.data_sd = (int) (MathMan.getSD(data, analysis.data) * 100);
-                analysis.air_sd = (int) (MathMan.getSD(air, analysis.air) * 100);
-                analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety) * 100);
+                analysis.changes_sd = (int) (MathMan.getSD(changes, analysis.changes));
+                analysis.faces_sd = (int) (MathMan.getSD(faces, analysis.faces));
+                analysis.data_sd = (int) (MathMan.getSD(data, analysis.data));
+                analysis.air_sd = (int) (MathMan.getSD(air, analysis.air));
+                analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety));
                 
-                // We'll set the flag later
-//                List<Integer> result = new ArrayList<>();
-//                result.add(analysis.changes);
-//                result.add(analysis.faces);
-//                result.add(analysis.data);
-//                result.add(analysis.air);
-//                result.add(analysis.variety);
-//                
-//                result.add(analysis.changes_sd);
-//                result.add(analysis.faces_sd);
-//                result.add(analysis.data_sd);
-//                result.add(analysis.air_sd);
-//                result.add(analysis.variety_sd);
-//                
-//                Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
-//                FlagManager.addPlotFlag(plot, flag);
+                List<Integer> result = new ArrayList<>();
+                result.add(analysis.changes);
+                result.add(analysis.faces);
+                result.add(analysis.data);
+                result.add(analysis.air);
+                result.add(analysis.variety);
+                
+                result.add(analysis.changes_sd);
+                result.add(analysis.faces_sd);
+                result.add(analysis.data_sd);
+                result.add(analysis.air_sd);
+                result.add(analysis.variety_sd);
+                
+                Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
+                FlagManager.addPlotFlag(plot, flag);
                 
                 whenDone.value = analysis;
                 whenDone.run();
@@ -248,15 +245,9 @@ public class BukkitHybridUtils extends HybridUtils {
                 else maxX = 16;
                 if (Z == ctz) maxZ = MathMan.mod(tz);
                 else maxZ = 16;
-
-                System.out.print("VALUES ====================");
-                System.out.print(X + "," + Z + " | " + cbx + "," + cbz + " | " + bx + "," + bz);
-                System.out.print("VALUES ====================");
                 
                 int xb = ((X) << 4) - bx;
                 int zb = ((Z) << 4) - bz;
-                
-                System.out.print(xb + "," + zb + " | " + minX + "," + minZ + " | " + maxX + "," + maxZ);
 
                 for (int x = minX; x <= maxX; x++) {
                     for (int z = minZ; z <= maxZ; z++) {

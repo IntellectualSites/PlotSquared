@@ -21,6 +21,7 @@ import com.intellectualcrafters.plot.generator.ClassicPlotManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -122,40 +123,68 @@ public class ExpireManager {
                             return;
                         }
                         final PlotWorld plotworld = PS.get().getPlotWorld(world);
-                        RunnableVal run = new RunnableVal<Integer>() {
-                            @Override
-                            public void run() {
-                                int changed = this.value;
-                                if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
-                                    if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
-                                        PS.log("&7[&5Expire&dManager&7] &bKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
-                                        expiredPlots.get(world).remove(plot);
-                                        return;
-                                    }
-                                    else if (changed >= Settings.MIN_BLOCKS_CHANGED_IGNORED && Settings.MIN_BLOCKS_CHANGED_IGNORED > 0) {
-                                        PS.log("&7[&5Expire&dManager&7] &bIgnoring modified plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("modified-blocks"), value));
-                                        expiredPlots.get(world).remove(plot);
-                                        return;
-                                    }
-                                }
-                                if (plot.settings.isMerged()) {
-                                    MainUtil.unlinkPlot(plot);
-                                }
-                                plot.delete();
-                                expiredPlots.get(world).remove(plot);
-                                PS.log("&7[&5Expire&dManager&7] &cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
-                                PS.log("&3 - World: " + plot.world);
-                                if (plot.hasOwner()) {
-                                    PS.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
-                                } else {
-                                    PS.log("&3 - Owner: Unowned");
-                                }
+//                        RunnableVal<Integer> run = new RunnableVal<Integer>() {
+//                            @Override
+//                            public void run() {
+//                                int changed = this.value;
+//                                if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
+//                                    if (changed >= Settings.MIN_BLOCKS_CHANGED && Settings.MIN_BLOCKS_CHANGED > 0) {
+//                                        PS.log("&7[&5Expire&dManager&7] &bKeep flag added to: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+//                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("keep"), true));
+//                                        expiredPlots.get(world).remove(plot);
+//                                        return;
+//                                    }
+//                                    else if (changed >= Settings.MIN_BLOCKS_CHANGED_IGNORED && Settings.MIN_BLOCKS_CHANGED_IGNORED > 0) {
+//                                        PS.log("&7[&5Expire&dManager&7] &bIgnoring modified plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+//                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("modified-blocks"), value));
+//                                        expiredPlots.get(world).remove(plot);
+//                                        return;
+//                                    }
+//                                }
+//                                if (plot.settings.isMerged()) {
+//                                    MainUtil.unlinkPlot(plot);
+//                                }
+//                                plot.delete();
+//                                expiredPlots.get(world).remove(plot);
+//                                PS.log("&7[&5Expire&dManager&7] &cDeleted expired plot: " + plot.id + (changed != -1 ? " (changed " + value + ")" : ""));
+//                                PS.log("&3 - World: " + plot.world);
+//                                if (plot.hasOwner()) {
+//                                    PS.log("&3 - Owner: " + UUIDHandler.getName(plot.owner));
+//                                } else {
+//                                    PS.log("&3 - Owner: Unowned");
+//                                }
+//                            }
+//                        };
+                        if ((Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.CLEAR_THRESHOLD != 100) && plotworld.TYPE == 0) {
+                            PlotAnalysis analysis = plot.getComplexity();
+                            if (analysis != null) {
+                                /*
+                                 * TODO remove min blocks changed
+                                 *  - it isn't an accurate way to determine plot complexity
+                                 *  
+                                 *  compare this plots complexity with every other plot:
+                                 *   - If it is in the bottom (threshold)% then it will be cleared
+                                 *   - That doesn't make sense, that would mean it would get significantly harder as time goes on.
+                                 *   - I guess as time goes on you can become more strict?
+                                 *    
+                                 *    % of plots to clear - not sure how to do
+                                 *    % within non cleared plots - doesn't work for first plot
+                                 *    % of plots in clear queue - doesn't work if 1 plot
+                                 *    
+                                 *    could be determined during calibration
+                                 *    
+                                 *    or (faster)
+                                 *    
+                                 *     set threshold complexity during calibration
+                                 *    
+                                 *     ideal number of expired plots
+                                 *     
+                                 *     manually set complexity
+                                 */
                             }
-                        };
-                        if (Settings.MIN_BLOCKS_CHANGED_IGNORED > 0 || Settings.MIN_BLOCKS_CHANGED > 0 && manager instanceof ClassicPlotManager) {
-                            Flag flag = FlagManager.getPlotFlagAbs(plot, "modified-blocks");
+                            
+                            
+                            Flag flag = FlagManager.getPlotFlagAbs(plot, "analysis");
                             if (flag != null) {
                                 if ((Integer) flag.getValue() > Settings.MIN_BLOCKS_CHANGED_IGNORED) {
                                     PS.log("&7[&5Expire&dManager&7] &bSkipping modified: " + plot);

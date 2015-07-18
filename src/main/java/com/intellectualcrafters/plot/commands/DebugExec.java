@@ -58,7 +58,7 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean execute(final PlotPlayer player, final String... args) {
-        final List<String> allowed_params = Arrays.asList("analyze", "reset-modified", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
+        final List<String> allowed_params = Arrays.asList("analyze", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             switch (arg) {
@@ -67,7 +67,6 @@ public class DebugExec extends SubCommand {
                         @Override
                         public void run() {
                             PS.log("&cTHIS FUNCTION IS A WORK IN PROGRESS");
-                            PS.log("&c - ");
                         }
                     });
                     return true;
