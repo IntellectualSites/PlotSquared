@@ -227,6 +227,10 @@ public enum C {
      * BarAPI
      */
     BOSSBAR_CLEARING("$2Clearing plot: $1%id%", "Bar API"),
+
+    DESC_SET("$2Plot description set", "Desc"),
+    MISSING_DESC("$2You need to specify a description", "Desc"),
+
     /*
      * Alias
      */

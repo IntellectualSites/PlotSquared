@@ -20,11 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -237,16 +233,28 @@ public class FlagManager {
         return getSettingFlags(plot.world, plot.settings);
     }
 
+    public static HashMap<String, Flag> getPlotFlags(final String world, final PlotSettings settings, final boolean ignorePluginflags) {
+        HashMap<String, Flag> flags = new HashMap<>();
+
+        PlotWorld plotWorld = PS.get().getPlotWorld(world);
+        if (plotWorld != null && plotWorld.DEFAULT_FLAGS.size() != 0) {
+            flags.putAll(plotWorld.DEFAULT_FLAGS);
+        }
+
+        if (ignorePluginflags) {
+            for (final Map.Entry<String, Flag> flag : settings.flags.entrySet()) {
+                if (isReserved(flag.getValue().getAbstractFlag().getKey())) continue;
+                flags.put(flag.getKey(), flag.getValue());
+            }
+        } else {
+            flags.putAll(settings.flags);
+        }
+
+        return flags;
+    }
+
     public static HashMap<String, Flag> getSettingFlags(final String world, final PlotSettings settings) {
-        PlotWorld plotworld = PS.get().getPlotWorld(world);
-        if (plotworld == null || plotworld.DEFAULT_FLAGS.size() == 0) {
-            return settings.flags;
-        }
-        else {
-            HashMap<String, Flag> map = (HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone();
-            map.putAll(settings.flags);
-            return map;
-        }
+        return getPlotFlags(world, settings, false);
     }
 
     public static boolean removePlotFlag(final Plot plot, final String id) {

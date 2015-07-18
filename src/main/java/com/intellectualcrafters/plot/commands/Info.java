@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
+import com.intellectualcrafters.plot.flag.Flag;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;
@@ -199,13 +200,16 @@ public class Info extends SubCommand {
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
         final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : C.NONE.s();
         Location top = MainUtil.getPlotTopLoc(world, plot.id);
-        Location bot = MainUtil.getPlotBottomLoc(world, plot.id).add(1,0,1);
+        Location bot = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final String biome = BlockManager.manager.getBiome(bot.add((top.getX() - bot.getX()) / 2, 0, (top.getX() - bot.getX()) / 2));
         final String trusted = getPlayerList(plot.trusted);
         final String members = getPlayerList(plot.members);
         final String denied = getPlayerList(plot.denied);
 
-        final String flags = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getPlotFlags(plot).values(), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot).values(), "$1, $2") : C.NONE.s()), C.replacements);
+        Flag descriptionFlag = FlagManager.getPlotFlag(plot, "description");
+        final String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
+
+        final String flags = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.settings, true).values(), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.settings, true).values(), "$1, $2") : C.NONE.s()), C.replacements);
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
 
         String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());
@@ -214,6 +218,7 @@ public class Info extends SubCommand {
         info = info.replaceAll("%id%", id.toString());
         info = info.replaceAll("%id2%", id2.toString());
         info = info.replaceAll("%num%", num + "");
+        info = info.replaceAll("%desc%", description);
         info = info.replaceAll("%biome%", biome);
         info = info.replaceAll("%owner%", owner);
         info = info.replaceAll("%members%", members);

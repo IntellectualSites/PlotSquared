@@ -168,6 +168,30 @@ public class Set extends SubCommand {
             plot.setHome(blockloc);
             return MainUtil.sendMessage(plr, C.POSITION_SET);
         }
+        if (args[0].equalsIgnoreCase("desc")) {
+            if (!Permissions.hasPermission(plr, "plots.set.desc")) {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.desc");
+                return false;
+            }
+            if (args.length < 2) {
+                MainUtil.sendMessage(plr, C.MISSING_DESC);
+                return false;
+            }
+            final StringBuilder desc = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+                desc.append(args[i]).append(" ");
+            }
+            String descValue = desc.substring(0, desc.length() - 1);
+
+            Flag flag = new Flag(FlagManager.getFlag("description"), descValue);
+            final boolean result = FlagManager.addPlotFlag(plot, flag);
+            if (!result) {
+                MainUtil.sendMessage(plr, C.FLAG_NOT_ADDED);
+                return false;
+            }
+            MainUtil.sendMessage(plr, C.DESC_SET);
+            return true;
+        }
         if (args[0].equalsIgnoreCase("alias")) {
             if (!Permissions.hasPermission(plr, "plots.set.alias")) {
                 MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.alias");
