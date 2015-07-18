@@ -350,19 +350,28 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         plotEntry(pp, plot);
     }
     
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    /**
+     * Get the int location from double
+     * @param value
+     * @return
+     */
+    public int getInt(double value) {
+        return (int) (value < 0 ? value - 1 : value);
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void PlayerMove(final PlayerMoveEvent event) {
         org.bukkit.Location from = event.getFrom();
         org.bukkit.Location to = event.getTo();
         int x2;
-        if (from.getX() != (x2 = (int) to.getX()) ) {
+        if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
             String worldname = to.getWorld().getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
             if (plotworld == null) {
                 return;
             }
             PlotManager plotManager = PS.get().getPlotManager(worldname);
-            PlotId id = plotManager.getPlotId(plotworld, x2, 0, (int) to.getZ());
+            PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
             Player player = event.getPlayer();
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             PlotId lastId = (PlotId) pp.getMeta("lastplotid");
@@ -418,7 +427,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         int z2;
-        if ((int) from.getZ() != (z2 = (int) to.getZ()) ) {
+        if (getInt(from.getZ()) != (z2 = getInt(to.getZ())) ) {
             String worldname = to.getWorld().getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
             if (plotworld == null) {
@@ -447,7 +456,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
             }
             else if (id.equals(lastId)) {
-                    return;
+                return;
             }
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
@@ -515,7 +524,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         event.setFormat(format);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void BlockDestroy(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
@@ -598,7 +607,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldChanged(final PlayerChangedWorldEvent event) {
         final PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
         if (PS.get().worldEdit != null) {
@@ -613,7 +622,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         ((BukkitPlayer) player).noPerm = new HashSet<>();
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPeskyMobsChangeTheWorldLikeWTFEvent(final EntityChangeBlockEvent event) {
         final String world = event.getBlock().getWorld().getName();
         if (!PS.get().isPlotWorld(world)) {
@@ -663,7 +672,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityBlockForm(final EntityBlockFormEvent e) {
         final String world = e.getBlock().getWorld().getName();
         if (!PS.get().isPlotWorld(world)) {
@@ -676,7 +685,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBS(final BlockSpreadEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
@@ -687,7 +696,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBF(final BlockFormEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
@@ -698,7 +707,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBD(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
         if (player == null) {
@@ -756,7 +765,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFade(final BlockFadeEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
@@ -767,7 +776,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChange(final BlockFromToEvent e) {
         final Block b = e.getToBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
@@ -784,7 +793,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onGrow(final BlockGrowEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
@@ -795,7 +804,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
         final Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
@@ -837,7 +846,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
     
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
         final Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
@@ -876,7 +885,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onStructureGrow(final StructureGrowEvent e) {
         if (!PS.get().isPlotWorld(e.getWorld().getName())) {
             return;
@@ -1183,7 +1192,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         return false;
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockIgnite(final BlockIgniteEvent e) {
         final Player player = e.getPlayer();
         final Block b = e.getBlock();
@@ -1298,7 +1307,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
         final BlockFace bf = e.getBlockFace();
         final Block b = e.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ()).getBlock();
@@ -1386,7 +1395,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         BukkitUtil.removePlayer(pp.getName());
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketFill(final PlayerBucketFillEvent e) {
         final Block b = e.getBlockClicked();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
@@ -1430,7 +1439,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVehicleCreate(final VehicleCreateEvent event) {
         Vehicle entity = event.getVehicle();
         Location loc = BukkitUtil.getLocation(entity);
@@ -1440,7 +1449,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHangingPlace(final HangingPlaceEvent e) {
         final Block b = e.getBlock();
         final Location loc = BukkitUtil.getLocation(b.getLocation());
@@ -1479,7 +1488,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHangingBreakByEntity(final HangingBreakByEntityEvent e) {
         final Entity r = e.getRemover();
         if (r instanceof Player) {
@@ -1545,7 +1554,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEntity(final PlayerInteractEntityEvent e) {
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
         if (PS.get().isPlotWorld(l.getWorld())) {
@@ -1594,7 +1603,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVehicleDestroy(final VehicleDestroyEvent e) {
         final Location l = BukkitUtil.getLocation(e.getVehicle());
         if (PS.get().isPlotWorld(l.getWorld())) {
@@ -1639,7 +1648,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
         final Location l = BukkitUtil.getLocation(e.getEntity());
         if (!PS.get().isPlotWorld(l.getWorld())) {
@@ -1777,7 +1786,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerEggThrow(final PlayerEggThrowEvent e) {
         final Location l = BukkitUtil.getLocation(e.getEgg().getLocation());
         if (PS.get().isPlotWorld(l.getWorld())) {
@@ -1813,7 +1822,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled=true)
     public void BlockCreate(final BlockPlaceEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();

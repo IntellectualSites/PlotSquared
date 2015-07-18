@@ -474,8 +474,8 @@ public class list extends SubCommand {
                 .then("->")
                 .color(ChatColor.GOLD)
                 .command("/plot list " + args[0] + " " + (page + 2))
-                .color(ChatColor.GRAY)
                 .then(C.CLICKABLE.s())
+                .color(ChatColor.GRAY)
                 .send(((BukkitPlayer) player).player);
                 return;
             }
@@ -489,8 +489,8 @@ public class list extends SubCommand {
                 .then("->")
                 .color(ChatColor.GOLD)
                 .command("/plot list " + args[0] + " " + (page + 2))
-                .color(ChatColor.GRAY)
                 .then(C.CLICKABLE.s())
+                .color(ChatColor.GRAY)
                 .send(((BukkitPlayer) player).player);
                 return;
             }
@@ -504,8 +504,8 @@ public class list extends SubCommand {
                 .color(ChatColor.DARK_GRAY)
                 .then("->")
                 .color(ChatColor.DARK_GRAY)
-                .color(ChatColor.GRAY)
                 .then(C.CLICKABLE.s())
+                .color(ChatColor.GRAY)
                 .send(((BukkitPlayer) player).player);
                 return;
             }
