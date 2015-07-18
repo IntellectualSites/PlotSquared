@@ -124,3 +124,5 @@ permissions:
       plots.kick: true
   plots.worldedit.bypass:
     default: false
+  plots.gamemode.bypass:
+    default: op

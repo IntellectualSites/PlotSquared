@@ -60,6 +60,7 @@ public abstract class PlotWorld {
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
     public final static boolean WORLD_BORDER_DEFAULT = false;
     public final static int MAX_PLOT_MEMBERS_DEFAULT = 128;
+    public final static int MAX_BUILD_HEIGHT_DEFAULT = 256;
     // are plot clusters enabled
     // require claim in cluster
     // TODO make this configurable
@@ -94,6 +95,7 @@ public abstract class PlotWorld {
     public int TERRAIN = 0;
     public boolean HOME_ALLOW_NONMEMBER;
     public PlotLoc DEFAULT_HOME;
+    public int MAX_BUILD_HEIGHT;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
@@ -149,6 +151,7 @@ public abstract class PlotWorld {
         this.SELL_PRICE = config.getDouble("economy.prices.sell");
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
         this.WORLD_BORDER = config.getBoolean("world.border");
+        this.MAX_BUILD_HEIGHT = config.getInt("world.max_height");
         
         this.HOME_ALLOW_NONMEMBER = config.getBoolean("home.allow-nonmembers");
         String homeDefault = config.getString("home.default");
@@ -229,7 +232,8 @@ public abstract class PlotWorld {
         options.put("limits.max-members", PlotWorld.MAX_PLOT_MEMBERS_DEFAULT);
         options.put("home.default", "side");
         options.put("home.allow-nonmembers", false);
-        
+        options.put("world.max_height", PlotWorld.MAX_BUILD_HEIGHT_DEFAULT);
+
         if (Settings.ENABLE_CLUSTERS && (this.TYPE != 0)) {
             options.put("generator.terrain", this.TERRAIN);
             options.put("generator.type", this.TYPE);

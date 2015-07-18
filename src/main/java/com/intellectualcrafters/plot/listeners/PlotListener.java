@@ -133,7 +133,15 @@ public class PlotListener extends APlotListener {
                 
                 final Flag gamemodeFlag = flags.get("gamemode");
                 if (gamemodeFlag != null) {
-                    player.setGameMode(getGameMode(gamemodeFlag.getValueString()));
+                    if (!player.hasPermission("plots.gamemode.bypass")) {
+                        player.setGameMode(getGameMode(gamemodeFlag.getValueString()));
+                    } else {
+                        MainUtil.sendMessage(
+                                pp,
+                                C.GAMEMODE_WAS_BYPASSED.s().replace("{plot}", plot.getId().toString()).replace("{gamemode}", gamemodeFlag.getValueString()),
+                                true
+                        );
+                    }
                 }
                 final Flag flyFlag = flags.get("fly");
                 if (flyFlag != null) {

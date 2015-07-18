@@ -1,13 +1,9 @@
 package com.intellectualcrafters.plot.listeners;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.regex.Pattern;
 
+import com.intellectualcrafters.plot.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -76,6 +72,7 @@ import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.help.HelpTopic;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
@@ -99,14 +96,10 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
+import javax.annotation.RegEx;
 
 /**
  * Player Events involving plots
@@ -289,17 +282,87 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         final String message = event.getMessage().toLowerCase().replaceAll("/", "");
         String[] split = message.split(" ");
         PluginCommand cmd = Bukkit.getServer().getPluginCommand(split[0]);
-        if (cmd != null) {
+        if (cmd == null) {
+            if (split[0].equals("plotme") || split[0].equals("ap")) {
+                final Player player = event.getPlayer();
+                if (Settings.USE_PLOTME_ALIAS) {
+                    player.performCommand("plots " + StringUtils.join(Arrays.copyOfRange(split, 1, split.length), " "));
+                } else {
+                    MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
+                }
+                event.setCancelled(true);
+            }
+        }
+
+        Player player = event.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+
+        if (!PS.get().isPlotWorld(BukkitUtil.getWorld(player))) {
             return;
         }
-        if (split[0].equals("plotme") || split[0].equals("ap") || split[0].equals("plotz")) {
-            final Player player = event.getPlayer();
-            if (Settings.USE_PLOTME_ALIAS) {
-                player.performCommand("plots " + StringUtils.join(Arrays.copyOfRange(split, 1, split.length), " "));
-            } else {
-                MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
+
+        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        if (plot == null) {
+            return;
+        }
+
+        Flag flag;
+        if (!player.hasPermission("plots.admin.interact.blockedcommands") && (flag = FlagManager.getPlotFlag(plot, "blocked-cmds")) != null) {
+            List<String> v = (List<String>) flag.getValue();
+
+            String msg  = event.getMessage().toLowerCase().replaceFirst("/", "");
+
+            String[] parts = msg.split(" ");
+            String c = parts[0];
+            if (parts[0].contains(":")) {
+                c = parts[0].split(":")[1];
+                msg = msg.replace(parts[0].split(":")[0] + ":", "");
             }
-            event.setCancelled(true);
+
+            String l = c;
+
+            List<String> aliases = new ArrayList<>();
+
+            for (HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
+                if (c.equals(cmdLabel.getName())) {
+                    break;
+                }
+                PluginCommand p;
+                String label = cmdLabel.getName().replaceFirst("/", "");
+                if (aliases.contains(label)) {
+                    continue;
+                }
+                if ((p = Bukkit.getPluginCommand(label)) != null) {
+                    for (String a : p.getAliases()) {
+                        if (aliases.contains(a))
+                            continue;
+                        aliases.add(a);
+                        a = a.replaceFirst("/", "");
+                        if (!a.equals(label) && a.equals(c)) {
+                            c = label;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!l.equals(c)) {
+                msg = msg.replace(l, c);
+            }
+
+            for (String s : v) {
+                Pattern pattern;
+                if (!RegExUtil.compiledPatterns.containsKey(s)) {
+                    RegExUtil.compiledPatterns.put(s, ((pattern = Pattern.compile(s))));
+                } else {
+                    pattern = RegExUtil.compiledPatterns.get(s);
+                }
+                if (pattern.matcher(msg).matches()) {
+                    MainUtil.sendMessage(pp, C.COMMAND_BLOCKED);
+                    event.setCancelled(true);
+                    return;
+                }
+            }
         }
     }
 
@@ -1857,6 +1920,12 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
                 Block block = event.getBlockPlaced();
                 sendBlockChange(block.getLocation(), block.getType(), block.getData());
+            }
+            int temporary;
+            if (!player.hasPermission("plots.admin.build.heightlimit") && loc.getY() >= (temporary = PS.get().getPlotWorld(world).MAX_BUILD_HEIGHT)) {
+                event.setCancelled(true);
+                MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", "" + temporary));
+                return;
             }
             return;
         }
