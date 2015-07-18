@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.flag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -398,7 +399,48 @@ public abstract class FlagValue<T> {
             }
         }
     }
-    
+
+    @SuppressWarnings("ALL")
+    public static class StringListValue extends FlagValue<List<String>> implements ListValue {
+
+        @Override
+        public String toString(final Object t) {
+            return StringUtils.join((List<String>) t, ",");
+        }
+
+        @Override
+        public List<String> getValue(final Object t) {
+            return (List<String>) t;
+        }
+
+        @Override
+        public List<String> parse(final String t) {
+            return Arrays.asList(t.split(","));
+        }
+
+        @Override
+        public String getDescription() {
+            return "Flag value must be a string list";
+        }
+
+        @Override
+        public void add(final Object t, final String value) {
+            try {
+                ((List<String>) t).addAll(parse(value));
+            } catch (final Exception ignored) {}
+        }
+
+        @Override
+        public void remove(final Object t, final String value) {
+            try {
+                for (final String item : parse(value)) {
+                    ((List<String>) t).remove(item);
+                }
+            } catch (final Exception e) {
+            }
+        }
+    }
+
     public static class DoubleListValue extends FlagValue<List<Double>> implements ListValue {
         @SuppressWarnings("unchecked")
         @Override

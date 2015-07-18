@@ -105,7 +105,7 @@ public enum C {
     WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted.", "WorldEdit Masks"),
     WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted.", "WorldEdit Masks"),
 
-    GAMEMODE_WAS_BYPASSED("$1You bypassed the gamemode ($2{gamemode}) $1set for this plot", "Gamemode"),
+    GAMEMODE_WAS_BYPASSED("$1You bypassed the gamemode ($2{gamemode}$1) $1set for this plot", "Gamemode"),
     HEIGHT_LIMIT("$1This plot world has a height limit of $2{limit}", "Height Limit"),
     /*
      * Records
@@ -162,6 +162,8 @@ public enum C {
      */
     TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"),
     TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
+
+    COMMAND_BLOCKED("$2That command is not allowed in this plot", "Blocked Command"),
     /*
      * Ratings
      */

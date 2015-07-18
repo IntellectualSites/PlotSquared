@@ -1139,6 +1139,7 @@ public class PS {
         FlagManager.addFlag(new AbstractFlag("place", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
+        FlagManager.addFlag(new AbstractFlag("blocked-cmds", new FlagValue.StringListValue()));
         FlagManager.addFlag(new AbstractFlag("gamemode") {
 
             public String parseValueRaw(final String value) {
