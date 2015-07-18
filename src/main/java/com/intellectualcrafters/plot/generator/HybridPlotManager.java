@@ -171,131 +171,70 @@ public class HybridPlotManager extends ClassicPlotManager {
         final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
         final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.id);
+        
+        setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
+        int p1x = pos1.getX();
+        int p1z = pos1.getZ();
+        int p2x = pos2.getX();
+        int p2z = pos2.getZ();
+        int bcx = p1x >> 4;
+        int bcz = p1z >> 4;
+        int tcx = p2x >> 4;
+        int tcz = p2z >> 4;
+        
+        boolean canRegen = plotworld.TYPE == 0 && plotworld.TERRAIN == 0;
+        
         final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
-        final PlotBlock wall;
-        if (isDelete) {
-            wall = dpw.WALL_BLOCK;
-        } else {
-            wall = dpw.CLAIMED_WALL_BLOCK;
-        }
-        final PlotBlock wall_filling = dpw.WALL_FILLING;
-        setWallFilling(dpw, plot.id, new PlotBlock[] { wall_filling });
-        final int maxy = BukkitUtil.getMaxHeight(world);
-        final short bedrock = (short) (dpw.PLOT_BEDROCK ? 7 : 0);
-        final int startX = (pos1.getX() / 16) * 16;
-        final int startZ = (pos1.getZ() / 16) * 16;
-        final int chunkX = 16 + pos2.getX();
-        final int chunkZ = 16 + pos2.getZ();
-        final Location l1 = MainUtil.getPlotBottomLoc(world, plot.id);
-        final Location l2 = MainUtil.getPlotTopLoc(world, plot.id);
-        final int plotMinX = l1.getX() + 1;
-        final int plotMinZ = l1.getZ() + 1;
-        final int plotMaxX = l2.getX();
-        final int plotMaxZ = l2.getZ();
-        Location mn = null;
-        Location mx = null;
-        if (plotworld.TYPE == 0 && plotworld.TERRAIN == 0) {
-            for (int i = startX; i < chunkX; i += 16) {
-                for (int j = startZ; j < chunkZ; j += 16) {
-                    final Plot plot1 = MainUtil.getPlot(new Location(world, i, 0, j));
-                    if ((plot1 != null) && (!plot1.getId().equals(plot.getId()))) {
-                        break;
-                    }
-                    final Plot plot2 = MainUtil.getPlot(new Location(world, i + 15, 0, j));
-                    if ((plot2 != null) && (!plot2.getId().equals(plot.getId()))) {
-                        break;
-                    }
-                    final Plot plot3 = MainUtil.getPlot(new Location(world, i + 15, 0, j + 15));
-                    if ((plot3 != null) && (!plot3.getId().equals(plot.getId()))) {
-                        break;
-                    }
-                    final Plot plot4 = MainUtil.getPlot(new Location(world, i, 0, j + 15));
-                    if ((plot4 != null) && (!plot4.getId().equals(plot.getId()))) {
-                        break;
-                    }
-                    final Plot plot5 = MainUtil.getPlot(new Location(world, i + 15, 0, j + 15));
-                    if ((plot5 != null) && (!plot5.getId().equals(plot.getId()))) {
-                        break;
-                    }
-                    if (mn == null) {
-                        mn = new Location(world, Math.max(i - 1, plotMinX), 0, Math.max(j - 1, plotMinZ));
-                        mx = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
-                    } else if ((mx.getZ() < (j + 15)) || (mx.getX() < (i + 15))) {
-                        mx = new Location(world, Math.min(i + 16, plotMaxX), 0, Math.min(j + 16, plotMaxZ));
-                    }
-                    final int I = i;
-                    final int J = j;
-                    BukkitUtil.regenerateChunk(world, I / 16, J / 16);
-                    if (!MainUtil.canSendChunk) {
-                        BukkitUtil.refreshChunk(world, I / 16, J / 16);
+        final PlotBlock[] bedrock = (dpw.PLOT_BEDROCK ? new PlotBlock[] { new PlotBlock((short) 7, (byte) 0) } : filling);
+        PlotBlock air = new PlotBlock((short) 0, (byte) 0);
+        
+        for (int x = bcx; x <= tcx; x++) {
+            for (int z = bcz; z <= tcz; z++) {
+                int xxb = x << 4;
+                int zzb = z << 4;
+                int xxt = xxb + 15;
+                int zzt = zzb + 15;
+                if (canRegen) {
+                    if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
+                        BukkitUtil.regenerateChunk(world, x, z);
+                        if (!MainUtil.canSendChunk) {
+//                            BukkitUtil.refreshChunk(world, x, z);
+                        }
+                        continue;
                     }
                 }
+                if (x == bcx) {
+                    xxb = p1x; 
+                }
+                if (x == tcx) {
+                    xxt = p2x;
+                }
+                if (z == bcz) {
+                    zzb = p1z;
+                }
+                if (z == tcz) {
+                    zzt = p2z;
+                }
+                BukkitUtil.setBiome(plot.world, xxb, zzb, xxt, zzt, dpw.PLOT_BIOME);
+                Location bot = new Location(world, xxb, 0, zzb);
+                Location top = new Location(world, xxt + 1, 1, zzt + 1);
+                MainUtil.setCuboidAsync(world, bot, top, bedrock);
+                bot.setY(1);
+                top.setY(dpw.PLOT_HEIGHT);
+                MainUtil.setCuboidAsync(world, bot, top, filling);
+                bot.setY(dpw.PLOT_HEIGHT);
+                top.setY(dpw.PLOT_HEIGHT + 1);
+                MainUtil.setCuboidAsync(world, bot, top, plotfloor);
+                bot.setY(dpw.PLOT_HEIGHT + 1);
+                top.setY(256);
+                MainUtil.setSimpleCuboidAsync(world, bot, top, air);
             }
         }
+        pastePlotSchematic(dpw, pos1, pos2);
+        final PlotBlock wall = isDelete ? dpw.WALL_BLOCK : dpw.CLAIMED_WALL_BLOCK;
         setWall(dpw, plot.id, new PlotBlock[] { wall });
-        final Location max = mx;
-        final Location min = mn;
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                if (min == null) {
-                    MainUtil.setSimpleCuboidAsync(world, new Location(world, pos1.getX(), 0, pos1.getZ()), new Location(world, pos2.getX() + 1, 1, pos2.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
-                    MainUtil.setSimpleCuboidAsync(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT + 1, pos1.getZ()), new Location(world, pos2.getX() + 1, maxy + 1, pos2.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                    MainUtil.setCuboidAsync(world, new Location(world, pos1.getX(), 1, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT, pos2.getZ() + 1), filling);
-                    MainUtil.setCuboidAsync(world, new Location(world, pos1.getX(), dpw.PLOT_HEIGHT, pos1.getZ()), new Location(world, pos2.getX() + 1, dpw.PLOT_HEIGHT + 1, pos2.getZ() + 1), plotfloor);
-                    pastePlotSchematic(dpw, l1, l2);
-                    SetBlockQueue.addNotify(whenDone);
-                    return;
-                }
-                if (min.getX() < plotMinX) {
-                    min.setX(plotMinX);
-                }
-                if (min.getZ() < plotMinZ) {
-                    min.setZ(plotMinZ);
-                }
-                if (max.getX() > plotMaxX) {
-                    max.setX(plotMaxX);
-                }
-                if (max.getZ() > plotMaxZ) {
-                    max.setZ(plotMaxZ);
-                }
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, plotMinX, 0, plotMinZ), new Location(world, min.getX() + 1, 1, min.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, plotMinZ), new Location(world, min.getX() + 1, maxy + 1, min.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                MainUtil.setCuboidAsync(world, new Location(world, plotMinX, 1, plotMinZ), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT + 1, min.getZ() + 1), filling);
-                MainUtil.setCuboidAsync(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT, plotMinZ), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT + 1, min.getZ() + 1), plotfloor);
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, min.getX(), 0, plotMinZ), new Location(world, max.getX() + 1, 1, min.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, min.getX(), dpw.PLOT_HEIGHT + 1, plotMinZ), new Location(world, max.getX() + 1, maxy + 1, min.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                MainUtil.setCuboidAsync(world, new Location(world, min.getX(), 1, plotMinZ), new Location(world, max.getX() + 1, dpw.PLOT_HEIGHT, min.getZ() + 1), filling);
-                MainUtil.setCuboidAsync(world, new Location(world, min.getX(), dpw.PLOT_HEIGHT, plotMinZ), new Location(world, max.getX() + 1, dpw.PLOT_HEIGHT + 1, min.getZ() + 1), plotfloor);
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, max.getX(), 0, plotMinZ), new Location(world, plotMaxX + 1, 1, min.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT + 1, plotMinZ), new Location(world, plotMaxX + 1, maxy + 1, min.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                MainUtil.setCuboidAsync(world, new Location(world, max.getX(), 1, plotMinZ), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, min.getZ() + 1), filling);
-                MainUtil.setCuboidAsync(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT, plotMinZ), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, min.getZ() + 1), plotfloor);
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, plotMinX, 0, min.getZ()), new Location(world, min.getX() + 1, 1, max.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, min.getZ()), new Location(world, min.getX() + 1, maxy + 1, max.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                MainUtil.setCuboidAsync(world, new Location(world, plotMinX, 1, min.getZ()), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT, max.getZ() + 1), filling);
-                MainUtil.setCuboidAsync(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT, min.getZ()), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT + 1, max.getZ() + 1), plotfloor);
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, plotMinX, 0, max.getZ()), new Location(world, min.getX() + 1, 1, plotMaxZ + 1), new PlotBlock(bedrock, (byte) 0));
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT + 1, max.getZ()), new Location(world, min.getX() + 1, maxy + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
-                MainUtil.setCuboidAsync(world, new Location(world, plotMinX, 1, max.getZ()), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
-                MainUtil.setCuboidAsync(world, new Location(world, plotMinX, dpw.PLOT_HEIGHT, max.getZ()), new Location(world, min.getX() + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, min.getX(), 0, max.getZ()), new Location(world, max.getX() + 1, 1, plotMaxZ + 1), new PlotBlock(bedrock, (byte) 0));
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, min.getX(), dpw.PLOT_HEIGHT + 1, max.getZ()), new Location(world, max.getX() + 1, maxy + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
-                MainUtil.setCuboidAsync(world, new Location(world, min.getX(), 1, max.getZ()), new Location(world, max.getX() + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
-                MainUtil.setCuboidAsync(world, new Location(world, min.getX(), dpw.PLOT_HEIGHT, max.getZ()), new Location(world, max.getX() + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, max.getX(), 0, min.getZ()), new Location(world, plotMaxX + 1, 1, max.getZ() + 1), new PlotBlock(bedrock, (byte) 0));
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT + 1, min.getZ()), new Location(world, plotMaxX + 1, maxy + 1, max.getZ() + 1), new PlotBlock((short) 0, (byte) 0));
-                MainUtil.setCuboidAsync(world, new Location(world, max.getX(), 1, min.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, max.getZ() + 1), filling);
-                MainUtil.setCuboidAsync(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT, min.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, max.getZ() + 1), plotfloor);
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, max.getX(), 0, max.getZ()), new Location(world, plotMaxX + 1, 1, plotMaxZ + 1), new PlotBlock(bedrock, (byte) 0));
-                MainUtil.setSimpleCuboidAsync(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT + 1, max.getZ()), new Location(world, plotMaxX + 1, maxy + 1, plotMaxZ + 1), new PlotBlock((short) 0, (byte) 0));
-                MainUtil.setCuboidAsync(world, new Location(world, max.getX(), 1, max.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT, plotMaxZ + 1), filling);
-                MainUtil.setCuboidAsync(world, new Location(world, max.getX(), dpw.PLOT_HEIGHT, max.getZ()), new Location(world, plotMaxX + 1, dpw.PLOT_HEIGHT + 1, plotMaxZ + 1), plotfloor);
-                pastePlotSchematic(dpw, l1, l2);
-                SetBlockQueue.addNotify(whenDone);
-            }
-        });
+        SetBlockQueue.addNotify(whenDone);
         return true;
     }
     

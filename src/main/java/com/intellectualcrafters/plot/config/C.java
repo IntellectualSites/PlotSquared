@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -179,7 +180,7 @@ public enum C {
     CANNOT_AFFORD_PLOT("$2You cannot afford to buy this plot. It costs $1%s", "Economy"),
     NOT_FOR_SALE("$2This plot is not for sale", "Economy"),
     CANNOT_BUY_OWN("$2You cannot buy your own plot", "Economy"),
-    PLOT_SOLD("$4Your plot; $1%s$4, has been sold to $1%s$4 for $1$%s", "Economy"),
+    PLOT_SOLD("$4Your plot; $1%s0$4, has been sold to $1%s1$4 for $1$%s2", "Economy"),
     CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s", "Economy"),
     ADDED_BALANCE("$1%s $2has been added to your balance", "Economy"),
     REMOVED_BALANCE("$1%s $2has been taken from your balance", "Economy"),
@@ -187,9 +188,9 @@ public enum C {
      * Setup Stuff
      */
     SETUP_INIT("$1Usage: $2/plot setup <value>", "Setup"),
-    SETUP_STEP("$3[$1Step %s$3] $1%s $2- $1Expecting: $2%s $1Default: $2%s", "Setup"),
-    SETUP_INVALID_ARG("$2%s is not a valid argument for step %s. To cancel setup use: $1/plot setup cancel", "Setup"),
-    SETUP_VALID_ARG("$2Value $1%s $2set to %s", "Setup"),
+    SETUP_STEP("$3[$1Step %s0$3] $1%s1 $2- $1Expecting: $2%s2 $1Default: $2%s3", "Setup"),
+    SETUP_INVALID_ARG("$2%s0 is not a valid argument for step %s1. To cancel setup use: $1/plot setup cancel", "Setup"),
+    SETUP_VALID_ARG("$2Value $1%s0 $2set to %s1", "Setup"),
     SETUP_FINISHED("$3If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml", "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a registered plotworld", "Setup"),
     SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
@@ -274,7 +275,7 @@ public enum C {
      */
     NOT_VALID_SUBCOMMAND("$2That is not a valid subcommand", "Commands"),
     DID_YOU_MEAN("$2Did you mean: $1%s", "Commands"),
-    NAME_LITTLE("$2%s name is too short, $1%s$2<$1%s", "Commands"),
+    NAME_LITTLE("$2%s0 name is too short, $1%s1$2<$1%s3", "Commands"),
     NO_COMMANDS("$2I'm sorry, but you're not permitted to use any subcommands.", "Commands"),
     SUBCOMMAND_SET_OPTIONS_HEADER("$2Possible Values: ", "Commands"),
     COMMAND_SYNTAX("$1Usage: $2%s", "Commands"),
@@ -559,7 +560,7 @@ public enum C {
         if (args.length == 0) {
             return m;
         }
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<String, String>();
         if (args.length > 0) {
             for (int i = args.length - 1 ; i >= 0; i--) {
                 if (args[i] == null) {

@@ -1,7 +1,7 @@
 package com.intellectualcrafters.plot.object;
 
 public class PseudoRandom {
-    public long state = 1;
+    public long state = System.nanoTime();
     
     public long nextLong() {
         final long a = state;

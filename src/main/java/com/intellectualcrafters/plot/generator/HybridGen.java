@@ -78,6 +78,7 @@ public class HybridGen extends PlotGenerator {
     short pathWidthUpper;
     boolean doState = false;
     int maxY = 0;
+    short[][] cached;
 
     /**
      * Initialize variables, and create plotworld object used in calculations
@@ -125,6 +126,26 @@ public class HybridGen extends PlotGenerator {
         if (this.maxY == 0) {
             this.maxY = 256;
         }
+        
+        // create cached chunk (for optimized chunk generation)
+        if (!this.plotworld.PLOT_SCHEMATIC) {
+            this.cached = new short[(plotheight + 16) / 16][];
+            for (int i = 0; i < cached.length; i++) {
+                cached[i] = new short[4096];
+            }
+            PseudoRandom random = new PseudoRandom();
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    cached[CACHE_I[plotheight][x][z]][CACHE_J[plotheight][x][z]] = plotfloors[random.random(plotfloors.length)];
+                    if (this.plotworld.PLOT_BEDROCK) {
+                        cached[CACHE_I[0][x][z]][CACHE_J[0][x][z]] = 7;
+                    }
+                    for (int y = 1; y < plotheight; y++) {
+                        cached[CACHE_I[y][x][z]][CACHE_J[y][x][z]] = filling[random.random(filling.length)];
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -163,14 +184,6 @@ public class HybridGen extends PlotGenerator {
      * generator
      */
     public void generateChunk(final World world, RegionWrapper region, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes) {
-        if (this.plotworld.PLOT_BEDROCK) {
-            for (short x = 0; x < 16; x++) {
-                for (short z = 0; z < 16; z++) {
-                    setBlock(x, 0, z, (short) 7);
-                }
-            }
-        }
-
         int sx = (short) ((this.X - this.plotworld.ROAD_OFFSET_X) % this.size);
         int sz = (short) ((this.Z - this.plotworld.ROAD_OFFSET_Z) % this.size);
         if (sx < 0) {
@@ -179,14 +192,33 @@ public class HybridGen extends PlotGenerator {
         if (sz < 0) {
             sz += this.size;
         }
+        
+        if (biomes != null) {
+            for (short x = 0; x < 16; x++) {
+                for (short z = 0; z < 16; z++) {
+                    biomes.setBiome(x, z, this.biome);
+                }
+            }
+        }
 
+        if (cached != null) {
+            if (sx > pathWidthLower && sz > pathWidthLower && sx + 15 < pathWidthUpper&& sz + 15 < pathWidthUpper) {
+                setResult(cached);
+                return;
+            }
+        }
+        
+        if (this.plotworld.PLOT_BEDROCK) {
+            for (short x = 0; x < 16; x++) {
+                for (short z = 0; z < 16; z++) {
+                    setBlock(x, 0, z, (short) 7);
+                }
+            }
+        }
         if (region != null) {
             for (short x = 0; x < 16; x++) {
                 final int absX = ((sx + x) % this.size);
                 for (short z = 0; z < 16; z++) {
-                    if (biomes != null) {
-                        biomes.setBiome(x, z, this.biome);
-                    }
                     if (contains(region, x, z)) {
                         for (short y = 1; y < this.plotheight; y++) {
                             setBlock(x, y, z, this.filling);
@@ -211,9 +243,6 @@ public class HybridGen extends PlotGenerator {
             final boolean gx = absX > this.pathWidthLower;
             final boolean lx = absX < this.pathWidthUpper;
             for (short z = 0; z < 16; z++) {
-                if (biomes != null) {
-                    biomes.setBiome(x, z, this.biome);
-                }
                 final int absZ = ((sz + z) % this.size);
                 final boolean gz = absZ > this.pathWidthLower;
                 final boolean lz = absZ < this.pathWidthUpper;

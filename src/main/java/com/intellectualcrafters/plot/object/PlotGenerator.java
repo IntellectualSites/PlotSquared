@@ -100,6 +100,14 @@ public abstract class PlotGenerator extends ChunkGenerator {
         return new ArrayList<BlockPopulator>();
     }
     
+    /**
+     * Set the result;
+     * @param result
+     */
+    public void setResult(short[][] result) {
+        this.result = result;
+    }
+    
     @Override
     public short[][] generateExtBlockSections(World world, Random r, int cx, int cz, BiomeGrid biomes) {
         try {
