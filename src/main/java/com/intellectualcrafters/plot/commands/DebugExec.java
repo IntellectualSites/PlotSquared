@@ -74,6 +74,7 @@ public class DebugExec extends SubCommand {
                     PlotAnalysis analysis = plot.getComplexity();
                     if (analysis != null) {
                         int complexity = analysis.getComplexity();
+                        MainUtil.sendMessage(player, "Changes: " + analysis.changes);
                         MainUtil.sendMessage(player, "Complexity: " + complexity);
                         return true;
                     }

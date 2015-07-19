@@ -80,30 +80,30 @@ public class BukkitHybridUtils extends HybridUtils {
         final int ctz = tz >> 4;
         final Random r = new Random();
         AugmentedPopulator.initCache();
-
         final int width = tx - bx + 1;
         final int length = tz - bz + 1;
 
+        System.gc();
+        System.gc();
         final short[][][] oldblocks = new short[256][width][length];
         final short[][][] newblocks = new short[256][width][length];
 
-        final List<Chunk> chunks = new ArrayList<>();
-        final List<Chunk> processed_chunks = new ArrayList<>();
+        final List<ChunkLoc> chunks = new ArrayList<>();
+        final List<ChunkLoc> processed_chunks = new ArrayList<>();
 
         for (int X = cbx; X <= ctx; X++) {
             for (int Z = cbz; Z <= ctz; Z++) {
-                Chunk chunk = world.getChunkAt(X, Z);
-                chunks.add(chunk);
+//                Chunk chunk = world.getChunkAt(X, Z);
+                chunks.add(new ChunkLoc(X, Z));
             }
         }
-
         final Runnable run = new Runnable() {
             @Override
             public void run() {
-                for (Chunk chunk : processed_chunks) {
-                    short[][] result = gen.generateExtBlockSections(world, r, chunk.getX(), chunk.getZ(), base);
-                    int X = chunk.getX();
-                    int Z = chunk.getZ();
+                for (ChunkLoc chunk : processed_chunks) {
+                    short[][] result = gen.generateExtBlockSections(world, r, chunk.x, chunk.z, base);
+                    int X = chunk.x;
+                    int Z = chunk.z;
                     int xb = ((X) << 4) - bx;
                     int zb = ((Z) << 4) - bz;
                     for (int i = 0; i < result.length; i++) {
@@ -128,7 +128,6 @@ public class BukkitHybridUtils extends HybridUtils {
                         }
                     }
                 }
-
                 int size = width * length;
                 int[] changes = new int[size];
                 int[] faces = new int[size];
@@ -176,7 +175,6 @@ public class BukkitHybridUtils extends HybridUtils {
                         i++;
                     }
                 }
-
                 // analyze plot
                 // put in analysis obj
 
@@ -206,18 +204,16 @@ public class BukkitHybridUtils extends HybridUtils {
                 result.add(analysis.data_sd);
                 result.add(analysis.air_sd);
                 result.add(analysis.variety_sd);
-                
                 Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
                 FlagManager.addPlotFlag(plot, flag);
-                
+                System.gc();
+                System.gc();
                 whenDone.value = analysis;
                 whenDone.run();
             }
         };
-
         System.gc();
         AugmentedPopulator.initCache();
-
         TaskManager.index.increment();
         final Integer currentIndex = TaskManager.index.toInteger();
         final Integer task = TaskManager.runTaskRepeat(new Runnable() {
@@ -229,10 +225,11 @@ public class BukkitHybridUtils extends HybridUtils {
                     TaskManager.runTaskAsync(run);
                     return;
                 }
-                Chunk chunk = chunks.remove(0);
+                ChunkLoc chunk = chunks.remove(0);
+                world.loadChunk(chunk.x, chunk.z);
                 processed_chunks.add(chunk);
-                int X = chunk.getX();
-                int Z = chunk.getZ();
+                int X = chunk.x;
+                int Z = chunk.z;
                 int minX;
                 int minZ;
                 int maxX;
@@ -246,19 +243,24 @@ public class BukkitHybridUtils extends HybridUtils {
                 if (Z == ctz) maxZ = MathMan.mod(tz);
                 else maxZ = 16;
                 
-                int xb = ((X) << 4) - bx;
-                int zb = ((Z) << 4) - bz;
-
+                int cbx = X << 4;
+                int cbz = Z << 4;
+                
+                int xb = (cbx) - bx;
+                int zb = (cbz) - bz;
                 for (int x = minX; x <= maxX; x++) {
+                    int xx = cbx + cbz;
                     for (int z = minZ; z <= maxZ; z++) {
+                        int zz = cbz + z;
                         for (int y = 0; y < 256; y++) {
-                            Block block = chunk.getBlock(x, y, z);
-                            int xx = xb + x;
-                            int zz = zb + z;
-                            newblocks[y][xx][zz] = (short) block.getTypeId();
+                            Block block = world.getBlockAt(xx, y, zz);
+                            int xr = xb + x;
+                            int zr = zb + z;
+                            newblocks[y][xr][zr] = (short) block.getTypeId();
                         }
                     }
                 }
+                world.unloadChunkRequest(chunk.x, chunk.z, true);
             }
         }, 1);
         TaskManager.tasks.put(currentIndex, task);

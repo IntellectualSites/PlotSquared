@@ -210,7 +210,10 @@ public class UUIDHandler {
                         String name = (String) bukkit.get("lastKnownName");
                         long last = (long) bukkit.get("lastPlayed");
                         if (Settings.OFFLINE_MODE) {
-                            if (!Settings.UUID_LOWERCASE || !name.toLowerCase().equals(name)) {
+                            if (Settings.UUID_LOWERCASE && !name.toLowerCase().equals(name)) {
+                                uuid = uuidWrapper.getUUID(name);
+                            }
+                            else {
                                 long most = (long) compound.get("UUIDMost");
                                 long least = (long) compound.get("UUIDLeast");
                                 uuid = new UUID(most, least);

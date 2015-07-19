@@ -1222,16 +1222,16 @@ public class PS {
         options.put("clear.auto.calibration.changes", 1);
         options.put("clear.auto.calibration.faces", 2);
         options.put("clear.auto.calibration.data", 32);
-        options.put("clear.auto.calibration.air", 32);
+        options.put("clear.auto.calibration.air", 0);
         options.put("clear.auto.calibration.variety", 1);
         options.put("clear.auto.calibration.changes_sd", 64);
         options.put("clear.auto.calibration.faces_sd", 32);
         options.put("clear.auto.calibration.data_sd", 1);
-        options.put("clear.auto.calibration.air_sd", 32);
+        options.put("clear.auto.calibration.air_sd", 0);
         options.put("clear.auto.calibration.variety_sd", 1);
         
-        int keep = config.getInt("keep-if-modified");
-        int ignore = config.getInt("ignore-if-modified");
+        int keep = config.getInt("clear.keep-if-modified");
+        int ignore = config.getInt("clear.ignore-if-modified");
         if (keep > 0 || ignore > 0) {
             options.put("clear.auto.threshold", 1);
             log("&cIMPORTANT MESSAGE ABOUT THIS UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -1247,8 +1247,8 @@ public class PS {
         else {
             options.put("clear.auto.threshold", Settings.CLEAR_THRESHOLD);
         }
-        config.set("keep-if-modified", null);
-        config.set("ignore-if-modified", null);
+        config.set("clear.keep-if-modified", null);
+        config.set("clear.ignore-if-modified", null);
 
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);

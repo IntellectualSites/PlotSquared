@@ -38,6 +38,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.object.schematic.StateWrapper;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
@@ -57,15 +58,11 @@ public abstract class SchematicHandler {
     	}
     	exportAll = true;
     	final ArrayList<Plot> plots = new ArrayList<Plot>(collection);
-    	TaskManager.index.increment();
-    	final Integer currentIndex = TaskManager.index.toInteger();
-        final int task = TaskManager.runTaskRepeat(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
             	if (plots.size() == 0) {
             	    exportAll = false;
-            		Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
-                    TaskManager.tasks.remove(currentIndex);
                     TaskManager.runTask(ifSuccess);
                     return;
             	}
@@ -94,27 +91,38 @@ public abstract class SchematicHandler {
                     new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
                 }
                 else {
-                    final CompoundTag sch = SchematicHandler.manager.getCompoundTag(plot.world, plot.id);
-                    if (sch == null) {
-                        MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
-                    } else {
-                        TaskManager.runTaskAsync(new Runnable() {
-                            @Override
-                            public void run() {
-                                MainUtil.sendMessage(null, "&6ID: " + plot.id);
-                                final boolean result = SchematicHandler.manager.save(sch, directory + File.separator + name + ".schematic");
-                                if (!result) {
-                                    MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
-                                } else {
-                                    MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
-                                }
+                    final Runnable THIS = this;
+                    SchematicHandler.manager.getCompoundTag(plot.world, plot.id, new RunnableVal<CompoundTag>() {
+                        @Override
+                        public void run() {
+                            if (value == null) {
+                                MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
                             }
-                        });
-                    }
+                            else {
+                                TaskManager.runTaskAsync(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        MainUtil.sendMessage(null, "&6ID: " + plot.id);
+                                        final boolean result = SchematicHandler.manager.save(value, directory + File.separator + name + ".schematic");
+                                        if (!result) {
+                                            MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
+                                        } else {
+                                            MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
+                                        }
+                                        TaskManager.runTask(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                THIS.run();
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
             }
-        }, 20);
-        TaskManager.tasks.put(currentIndex, task);
+        });
     	return true;
     }
     
@@ -409,16 +417,16 @@ public abstract class SchematicHandler {
      *
      * @return tag
      */
-    public CompoundTag getCompoundTag(final String world, final PlotId id) {
+    public void getCompoundTag(final String world, final PlotId id, RunnableVal<CompoundTag> whenDone) {
         if (!PS.get().getPlots(world).containsKey(id)) {
-            return null;
+            whenDone.run();
         }
         final Location pos1 = MainUtil.getPlotBottomLoc(world, id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(world, id);
-        return getCompoundTag(world, pos1, pos2);
+        getCompoundTag(world, pos1, pos2, whenDone);
     }
     
-    public abstract CompoundTag getCompoundTag(final String world, final Location pos1, final Location pos2);
+    public abstract void getCompoundTag(final String world, final Location pos1, final Location pos2, RunnableVal<CompoundTag> whenDone);
     
     public boolean pastePart(final String world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
         int length = 0;

@@ -177,7 +177,7 @@ public class Settings {
      */
     public static boolean TWIN_MODE_UUID = false;
     public static boolean OFFLINE_MODE = false;
-    public static boolean UUID_LOWERCASE = false;
+    public static boolean UUID_LOWERCASE = true;
     /**
      * Command confirmation
      */

@@ -53,11 +53,14 @@ public class StringWrapper {
         if (getClass() != obj.getClass()) {
             return false;
         }
+        if (obj.hashCode() != hashCode()) {
+            return false;
+        }
         final StringWrapper other = (StringWrapper) obj;
         if ((other.value == null) || (this.value == null)) {
             return false;
         }
-        return other.value.toLowerCase().equals(this.value.toLowerCase());
+        return other.value.equalsIgnoreCase(this.value.toLowerCase());
     }
 
     /**
@@ -70,6 +73,8 @@ public class StringWrapper {
         return this.value;
     }
 
+    private int hash;
+    
     /**
      * Get the hash value
      *
@@ -80,6 +85,9 @@ public class StringWrapper {
         if (this.value == null) {
             return 0;
         }
-        return this.value.toLowerCase().hashCode();
+        if (this.hash == 0) {
+            this.hash = this.value.toLowerCase().hashCode();
+        }
+        return hash;
     }
 }

@@ -23,12 +23,14 @@ package com.intellectualcrafters.plot.generator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.Template;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.FileBytes;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -173,68 +175,85 @@ public class HybridPlotManager extends ClassicPlotManager {
         final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.id);
         
         setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
-        int p1x = pos1.getX();
-        int p1z = pos1.getZ();
-        int p2x = pos2.getX();
-        int p2z = pos2.getZ();
-        int bcx = p1x >> 4;
-        int bcz = p1z >> 4;
-        int tcx = p2x >> 4;
-        int tcz = p2z >> 4;
+        final int p1x = pos1.getX();
+        final int p1z = pos1.getZ();
+        final int p2x = pos2.getX();
+        final int p2z = pos2.getZ();
+        final int bcx = p1x >> 4;
+        final int bcz = p1z >> 4;
+        final int tcx = p2x >> 4;
+        final int tcz = p2z >> 4;
         
-        boolean canRegen = plotworld.TYPE == 0 && plotworld.TERRAIN == 0;
+        final boolean canRegen = plotworld.TYPE == 0 && plotworld.TERRAIN == 0;
         
         final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
         final PlotBlock[] bedrock = (dpw.PLOT_BEDROCK ? new PlotBlock[] { new PlotBlock((short) 7, (byte) 0) } : filling);
-        PlotBlock air = new PlotBlock((short) 0, (byte) 0);
+        final PlotBlock air = new PlotBlock((short) 0, (byte) 0);
+        
+        final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
         
         for (int x = bcx; x <= tcx; x++) {
             for (int z = bcz; z <= tcz; z++) {
-                int xxb = x << 4;
-                int zzb = z << 4;
-                int xxt = xxb + 15;
-                int zzt = zzb + 15;
-                if (canRegen) {
-                    if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
-                        BukkitUtil.regenerateChunk(world, x, z);
-                        if (!MainUtil.canSendChunk) {
-//                            BukkitUtil.refreshChunk(world, x, z);
-                        }
-                        continue;
-                    }
-                }
-                if (x == bcx) {
-                    xxb = p1x; 
-                }
-                if (x == tcx) {
-                    xxt = p2x;
-                }
-                if (z == bcz) {
-                    zzb = p1z;
-                }
-                if (z == tcz) {
-                    zzt = p2z;
-                }
-                BukkitUtil.setBiome(plot.world, xxb, zzb, xxt, zzt, dpw.PLOT_BIOME);
-                Location bot = new Location(world, xxb, 0, zzb);
-                Location top = new Location(world, xxt + 1, 1, zzt + 1);
-                MainUtil.setCuboidAsync(world, bot, top, bedrock);
-                bot.setY(1);
-                top.setY(dpw.PLOT_HEIGHT);
-                MainUtil.setCuboidAsync(world, bot, top, filling);
-                bot.setY(dpw.PLOT_HEIGHT);
-                top.setY(dpw.PLOT_HEIGHT + 1);
-                MainUtil.setCuboidAsync(world, bot, top, plotfloor);
-                bot.setY(dpw.PLOT_HEIGHT + 1);
-                top.setY(256);
-                MainUtil.setSimpleCuboidAsync(world, bot, top, air);
+                chunks.add(new ChunkLoc(x, z));
             }
         }
-        pastePlotSchematic(dpw, pos1, pos2);
-        final PlotBlock wall = isDelete ? dpw.WALL_BLOCK : dpw.CLAIMED_WALL_BLOCK;
-        setWall(dpw, plot.id, new PlotBlock[] { wall });
-        SetBlockQueue.addNotify(whenDone);
+        
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                while (chunks.size() > 0 && System.currentTimeMillis() - start < 20) {
+                    ChunkLoc chunk = chunks.remove(0);
+                    int x = chunk.x;
+                    int z = chunk.z;
+                    int xxb = x << 4;
+                    int zzb = z << 4;
+                    int xxt = xxb + 15;
+                    int zzt = zzb + 15;
+                    if (canRegen) {
+                        if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
+                            BukkitUtil.regenerateChunk(world, x, z);
+                            continue;
+                        }
+                    }
+                    if (x == bcx) {
+                        xxb = p1x; 
+                    }
+                    if (x == tcx) {
+                        xxt = p2x;
+                    }
+                    if (z == bcz) {
+                        zzb = p1z;
+                    }
+                    if (z == tcz) {
+                        zzt = p2z;
+                    }
+                    BukkitUtil.setBiome(plot.world, xxb, zzb, xxt, zzt, dpw.PLOT_BIOME);
+                    Location bot = new Location(world, xxb, 0, zzb);
+                    Location top = new Location(world, xxt + 1, 1, zzt + 1);
+                    MainUtil.setCuboidAsync(world, bot, top, bedrock);
+                    bot.setY(1);
+                    top.setY(dpw.PLOT_HEIGHT);
+                    MainUtil.setCuboidAsync(world, bot, top, filling);
+                    bot.setY(dpw.PLOT_HEIGHT);
+                    top.setY(dpw.PLOT_HEIGHT + 1);
+                    MainUtil.setCuboidAsync(world, bot, top, plotfloor);
+                    bot.setY(dpw.PLOT_HEIGHT + 1);
+                    top.setY(256);
+                    MainUtil.setSimpleCuboidAsync(world, bot, top, air);
+                }
+                if (chunks.size() != 0) {
+                    TaskManager.runTaskLater(this, 1);
+                }
+                else {
+                    pastePlotSchematic(dpw, pos1, pos2);
+                    final PlotBlock wall = isDelete ? dpw.WALL_BLOCK : dpw.CLAIMED_WALL_BLOCK;
+                    setWall(dpw, plot.id, new PlotBlock[] { wall });
+                    SetBlockQueue.addNotify(whenDone);
+                }
+            }
+        });
         return true;
     }
     

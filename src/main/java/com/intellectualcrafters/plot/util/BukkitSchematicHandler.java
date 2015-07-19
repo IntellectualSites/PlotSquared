@@ -41,6 +41,7 @@ import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.StateWrapper;
 
 /**
@@ -52,8 +53,14 @@ import com.intellectualcrafters.plot.object.schematic.StateWrapper;
 public class BukkitSchematicHandler extends SchematicHandler {
 
     @Override
-    public CompoundTag getCompoundTag(final String world, final Location pos1, final Location pos2) {
-        // loading chunks
+    public void getCompoundTag(final String world, final Location pos1, final Location pos2, RunnableVal<CompoundTag> whenDone) {
+        
+        // create schematic one chunk at a time
+        // load chunk sync
+        // get blocks async
+        // add to schematic async
+        // save final async
+        
         int i = 0;
         int j = 0;
         try {
@@ -62,13 +69,15 @@ public class BukkitSchematicHandler extends SchematicHandler {
                     boolean result = ChunkManager.manager.loadChunk(world, new ChunkLoc(i, j));
                     if (!result) {
                         PS.log("&cIllegal selection. Cannot save non-existent chunk at " + (i / 16) + ", " + (j / 16));
-                        return null;
+                        whenDone.run();
+                        return;
                     }
                 }
             }
         } catch (final Exception e) {
             PS.log("&cIllegal selection. Cannot save corrupt chunk at " + (i / 16) + ", " + (j / 16));
-            return null;
+            whenDone.run();
+            return;
         }
         final int width = (pos2.getX() - pos1.getX()) + 1;
         final int height = (pos2.getY() - pos1.getY()) + 1;
@@ -93,18 +102,20 @@ public class BukkitSchematicHandler extends SchematicHandler {
         pos2.getZ();
         final int sy = pos1.getY();
         pos2.getY();
-        
         List<Tag> tileEntities = new ArrayList<Tag>();
         
         World worldObj = Bukkit.getWorld(world);
 
+        
         for (int y = 0; y < height; y++) {
             int i1 = (y * width * length);
+            int syy = sy + y;
             for (int z = 0; z < length; z++) {
                 int i2 = i1 + (z * width);
+                int szz = sz + z;
                 for (int x = 0; x < width; x++) {
                     final int index = i2 + x;
-                    Block block = worldObj.getBlockAt(sx + x, sy + y, sz + z);
+                    Block block = worldObj.getBlockAt(sx + x, syy, szz);
                     int id = block.getTypeId();
                     switch(id) {
                         case 0:
@@ -249,6 +260,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
             }
         }
         
+        
         schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
         schematic.put("Data", new ByteArrayTag("Data", blockData));
         schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
@@ -257,7 +269,10 @@ public class BukkitSchematicHandler extends SchematicHandler {
         if (addBlocks != null) {
             schematic.put("AddBlocks", new ByteArrayTag("AddBlocks", addBlocks));
         }
-        return new CompoundTag("Schematic", schematic);
+        
+        
+        whenDone.value = new CompoundTag("Schematic", schematic);
+        whenDone.run();
     }
 
     

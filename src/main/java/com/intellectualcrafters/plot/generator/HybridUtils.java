@@ -50,13 +50,21 @@ public abstract class HybridUtils {
         final int ty = get_ey(world, bx, tx, bz, tz, by);
         final Location pos3 = new Location(world, bx, by, bz);
         final Location pos4 = new Location(world, tx, ty, tz);
-        final CompoundTag sideroad = SchematicHandler.manager.getCompoundTag(world, pos1, pos2);
-        final CompoundTag intersection = SchematicHandler.manager.getCompoundTag(world, pos3, pos4);
         final String dir = PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
-        SchematicHandler.manager.save(sideroad, dir + "sideroad.schematic");
-        SchematicHandler.manager.save(intersection, dir + "intersection.schematic");
-        plotworld.ROAD_SCHEMATIC_ENABLED = true;
-        plotworld.setupSchematics();
+        SchematicHandler.manager.getCompoundTag(world, pos1, pos2, new RunnableVal<CompoundTag>() {
+            @Override
+            public void run() {
+                SchematicHandler.manager.save(value, dir + "sideroad.schematic");
+                SchematicHandler.manager.getCompoundTag(world, pos3, pos4, new RunnableVal<CompoundTag>() {
+                    @Override
+                    public void run() {
+                        SchematicHandler.manager.save(value, dir + "intersection.schematic");
+                        plotworld.ROAD_SCHEMATIC_ENABLED = true;
+                        plotworld.setupSchematics();
+                    }
+                });
+            }
+        });
         return true;
     }
 

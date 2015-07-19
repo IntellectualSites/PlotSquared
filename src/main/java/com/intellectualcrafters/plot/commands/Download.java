@@ -8,6 +8,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -37,17 +38,22 @@ public class Download extends SubCommand {
         }
         MainUtil.runners.put(plot, 1);
         MainUtil.sendMessage(plr, C.GENERATING_LINK);
-        final CompoundTag tag = SchematicHandler.manager.getCompoundTag(plot.world, plot.id);
-        TaskManager.runTaskAsync(new Runnable() {
+        SchematicHandler.manager.getCompoundTag(plot.world, plot.id, new RunnableVal<CompoundTag>() {
             @Override
             public void run() {
-                URL url = SchematicHandler.manager.upload(tag);
-                if (url == null) {
-                    MainUtil.sendMessage(plr, C.GENERATING_LINK_FAILED);
-                    return;
-                }
-                MainUtil.sendMessage(plr, url.toString());
-                MainUtil.runners.remove(plot);
+                TaskManager.runTaskAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        URL url = SchematicHandler.manager.upload(value);
+                        if (url == null) {
+                            MainUtil.sendMessage(plr, C.GENERATING_LINK_FAILED);
+                            MainUtil.runners.remove(plot);
+                            return;
+                        }
+                        MainUtil.sendMessage(plr, url.toString());
+                        MainUtil.runners.remove(plot);
+                    }
+                });
             }
         });
         return true;
