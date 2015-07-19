@@ -105,7 +105,7 @@ public enum C {
     WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted.", "WorldEdit Masks"),
     WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted.", "WorldEdit Masks"),
 
-    GAMEMODE_WAS_BYPASSED("$1You bypassed the gamemode ($2{gamemode}$1) $1set for this plot", "Gamemode"),
+    GAMEMODE_WAS_BYPASSED("$1You bypassed the gamemode ($2{gamemode}$1) $1set for $2{plot}", "Gamemode"),
     HEIGHT_LIMIT("$1This plot world has a height limit of $2{limit}", "Height Limit"),
     /*
      * Records

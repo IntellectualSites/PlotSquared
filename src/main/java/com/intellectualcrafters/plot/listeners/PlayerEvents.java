@@ -453,15 +453,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
             Player player = event.getPlayer();
             PlotPlayer pp = BukkitUtil.getPlayer(player);
-            PlotId lastId = (PlotId) pp.getMeta("lastplotid");
+            Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
-                if (lastId == null) {
+                if (lastPlot == null) {
                     return;
                 }
-                Plot plot = MainUtil.getPlot(worldname, lastId);
-                if (!plotExit(pp, plot)) {
+                if (!plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.exit.denied");
-                    if (plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
+                    if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
                     else {
@@ -471,7 +470,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
             }
-            else if (id.equals(lastId)) {
+            else if (lastPlot != null && id.equals(lastPlot.id)) {
                     return;
             }
             else {
@@ -516,15 +515,14 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
             Player player = event.getPlayer();
             PlotPlayer pp = BukkitUtil.getPlayer(player);
-            PlotId lastId = (PlotId) pp.getMeta("lastplotid");
+            Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
-                if (lastId == null) {
+                if (lastPlot == null) {
                     return;
                 }
-                Plot plot = MainUtil.getPlot(worldname, lastId);
-                if (!plotExit(pp, plot)) {
+                if (!plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.exit.denied");
-                    if (plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
+                    if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
                     else {
@@ -534,7 +532,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
             }
-            else if (id.equals(lastId)) {
+            else if (lastPlot != null && id.equals(lastPlot.id)) {
                 return;
             }
             else {

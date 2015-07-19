@@ -104,7 +104,11 @@ public class PlotListener extends APlotListener {
         if (plot.isDenied(pp.getUUID()) && !Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
             return false;
         }
-        pp.setMeta("lastplotid", plot.id);
+        Plot last = (Plot) pp.getMeta("lastplot");
+        if (last != null && !last.id.equals(plot.id)) {
+            plotExit(pp, last);
+        }
+        pp.setMeta("lastplot", plot);
         final Player player = ((BukkitPlayer) pp).player;
         if (plot.hasOwner()) {
             final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
@@ -130,14 +134,13 @@ public class PlotListener extends APlotListener {
                 
                 final Flag gamemodeFlag = flags.get("gamemode");
                 if (gamemodeFlag != null) {
-                    if (!player.hasPermission("plots.gamemode.bypass")) {
-                        player.setGameMode(getGameMode(gamemodeFlag.getValueString()));
-                    } else {
-                        MainUtil.sendMessage(
-                                pp,
-                                C.GAMEMODE_WAS_BYPASSED.s().replace("{plot}", plot.getId().toString()).replace("{gamemode}", gamemodeFlag.getValueString()),
-                                true
-                        );
+                    if (player.getGameMode() != getGameMode(gamemodeFlag.getValueString())) {
+                        if (!player.hasPermission("plots.gamemode.bypass")) {
+                            player.setGameMode(getGameMode(gamemodeFlag.getValueString()));
+                        }
+                        else {
+                            MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.id, "{gamemode}", gamemodeFlag.getValue()));
+                        }
                     }
                 }
                 final Flag flyFlag = flags.get("fly");
@@ -221,7 +224,7 @@ public class PlotListener extends APlotListener {
     }
 
     public boolean plotExit(final PlotPlayer pp, final Plot plot) {
-        pp.deleteMeta("lastplotid");
+        pp.deleteMeta("lastplot");
         Player player = ((BukkitPlayer) pp).player;
         final PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
         Bukkit.getPluginManager().callEvent(callEvent);
@@ -229,7 +232,14 @@ public class PlotListener extends APlotListener {
             player.setAllowFlight(Bukkit.getAllowFlight());
         }
         if (FlagManager.getPlotFlag(plot, "gamemode") != null) {
-            player.setGameMode(Bukkit.getDefaultGameMode());
+            if (player.getGameMode() != Bukkit.getDefaultGameMode()) {
+                if (!player.hasPermission("plots.gamemode.bypass")) {
+                    player.setGameMode(Bukkit.getDefaultGameMode());
+                }
+                else {
+                    MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.world, "{gamemode}", Bukkit.getDefaultGameMode().name().toLowerCase()));
+                }
+            }
         }
         if (FlagManager.getPlotFlag(plot, "time") != null) {
             player.resetPlayerTime();
