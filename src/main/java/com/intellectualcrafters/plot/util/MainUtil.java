@@ -314,7 +314,7 @@ public class MainUtil {
     public static Location getDefaultHome(Plot plot) {
         PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.DEFAULT_HOME != null) {
-            final Location bot = getPlotBottomLoc(plot.world, plot.id);
+            final Location bot = getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
             final PlotManager manager = PS.get().getPlotManager(plot.world);
             final int x;
             final int z;
@@ -331,7 +331,7 @@ public class MainUtil {
             return new Location(plot.world, x, y + 1, z);
         }
         final Location top = getPlotTopLoc(plot.world, plot.id);
-        final Location bot = getPlotBottomLoc(plot.world, plot.id);
+        final Location bot = getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final int x = ((top.getX() - bot.getX()) / 2) + bot.getX();
         final int z = bot.getZ();
         PlotManager manager = PS.get().getPlotManager(plot.world);

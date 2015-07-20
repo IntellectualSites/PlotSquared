@@ -197,7 +197,10 @@ public class BukkitUtil extends BlockManager {
     }
     
     public static Location getLocationFull(final Entity entity) {
-        final org.bukkit.Location loc = entity.getLocation();
+        return getLocation(entity.getLocation());
+    }
+    
+    public static Location getLocationFull(final org.bukkit.Location loc) {
         final String world = loc.getWorld().getName();
         return new Location(world, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getYaw(), loc.getPitch());
     }
@@ -258,7 +261,7 @@ public class BukkitUtil extends BlockManager {
     @Override
     public Location getSpawn(final String world) {
         final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
-        return new Location(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ());
+        return new Location(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), temp.getYaw(), temp.getPitch());
     }
     
     @Override

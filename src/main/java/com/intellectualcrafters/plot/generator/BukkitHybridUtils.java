@@ -234,13 +234,13 @@ public class BukkitHybridUtils extends HybridUtils {
                 int minZ;
                 int maxX;
                 int maxZ;
-                if (X == cbx) minX = MathMan.mod(bx);
+                if (X == cbx) minX = bx & 0x0f;
                 else minX = 0;
-                if (Z == cbz) minZ = MathMan.mod(bz);
+                if (Z == cbz) minZ = bz & 0x0f;
                 else minZ = 0;
-                if (X == ctx) maxX = MathMan.mod(tx);
+                if (X == ctx) maxX = tx & 0x0f;
                 else maxX = 16;
-                if (Z == ctz) maxZ = MathMan.mod(tz);
+                if (Z == ctz) maxZ = tz & 0x0f;
                 else maxZ = 16;
                 
                 int cbx = X << 4;

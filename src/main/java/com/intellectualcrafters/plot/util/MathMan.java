@@ -52,11 +52,4 @@ public class MathMan {
     public static boolean isPowerOfTwo(int x) {
         return (x & (x - 1)) == 0;
     }
-    
-    public static int mod(int x) {
-        if (x < 0) {
-            return (x % 16) + 16;
-        }
-        return x % 16;
-    }
 }

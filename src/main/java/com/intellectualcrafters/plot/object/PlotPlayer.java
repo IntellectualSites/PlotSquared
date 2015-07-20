@@ -22,7 +22,7 @@ public interface PlotPlayer {
     public void sendMessage(final String message);
 
     public void teleport(final Location loc);
-
+    
     public boolean isOp();
 
     public boolean isOnline();

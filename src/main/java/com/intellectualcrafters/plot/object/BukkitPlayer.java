@@ -81,8 +81,7 @@ public class BukkitPlayer implements PlotPlayer {
     
     @Override
     public void teleport(final Location loc) {
-        this.player.teleport(new org.bukkit.Location(BukkitUtil.getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ()));
-
+        this.player.teleport(new org.bukkit.Location(BukkitUtil.getWorld(loc.getWorld()), loc.getX() + 0.5, loc.getY(), loc.getZ() + 0.5, loc.getYaw(), loc.getPitch()));
     }
     
     @Override
