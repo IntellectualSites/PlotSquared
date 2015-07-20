@@ -11,14 +11,7 @@ public class HastebinUtility {
     public static final String BIN_URL = "http://hastebin.com/documents", USER_AGENT = "Mozilla/5.0";
     public static final Pattern PATTERN = Pattern.compile("\\{\"key\":\"([\\S\\s]*)\"\\}");
 
-    public static String upload(final File file) throws IOException {
-        StringBuilder content = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            content.append(line).append("\n");
-        }
-        reader.close();
+    public static String upload(final String string) throws IOException {
         URL url = new URL(BIN_URL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -27,7 +20,7 @@ public class HastebinUtility {
         connection.setDoOutput(true);
 
         DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-        outputStream.writeUTF(content.toString());
+        outputStream.write(string.getBytes());
         outputStream.flush();
         outputStream.close();
 
@@ -45,8 +38,19 @@ public class HastebinUtility {
         if (matcher.matches()) {
             return "http://hastebin.com/" + matcher.group(1);
         } else {
-            throw new RuntimeException("Coldn't read response!");
+            throw new RuntimeException("Couldn't read response!");
         }
+    }
+
+    public static String upload(final File file) throws IOException {
+        StringBuilder content = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            content.append(line).append("\n");
+        }
+        reader.close();
+        return upload(content.toString());
     }
 
 }
