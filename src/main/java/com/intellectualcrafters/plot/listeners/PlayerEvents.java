@@ -869,7 +869,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             }
             else {
                 Plot plot = MainUtil.getPlot(loc);
-                if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
+                if (plot != null && FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
                     e.setCancelled(true);
                 }
             }
