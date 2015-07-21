@@ -1,16 +1,20 @@
 package com.intellectualcrafters.plot.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -87,7 +91,13 @@ public abstract class SchematicHandler {
                 else {
                 	directory = outputDir.getPath();
                 }
-                if (PS.get().worldEdit != null) {
+                Location top = plot.getTop();
+                Location bot = plot.getBottom();
+                int area = (1 + top.getX() - bot.getX()) * (1 + top.getZ() - bot.getZ());
+                if (area > 4096) {
+                    PS.log("The plot is > 64 x 64 - Fast lossy schematic saving will be used");
+                }
+                if (area <= 4096 && PS.get().worldEdit != null) {
                     new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
                 }
                 else {
@@ -343,6 +353,24 @@ public abstract class SchematicHandler {
                 nos.close();
                 output.close();
             }
+//            try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
+//                final char[] buffer = new char[256];
+//                StringBuilder result = new StringBuilder();
+//                while (true) {
+//                    int r = response.read(buffer);
+//                    if (r < 0) {
+//                        break;
+//                    }
+//                    result.append(buffer, 0, r);
+//                }
+//                System.out.print(result.toString() + " | " + result.length());
+//                if (!result.equals("The file plot.schematic has been uploaded.")) {
+//                    return null;
+//                }
+//            }
+//            catch (Exception e) {
+//                
+//            }
             int responseCode = ((HttpURLConnection) con).getResponseCode();
             if (responseCode != 200) {
                 return null;
