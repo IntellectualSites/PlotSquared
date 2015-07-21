@@ -27,8 +27,8 @@ public class WEManager {
         HashSet<RegionWrapper> regions = new HashSet<>();
         UUID uuid = player.getUUID();
         for (Plot plot : PS.get().getPlots(player.getLocation().getWorld()).values()) {
-            if (!plot.settings.getMerged(0) && !plot.settings.getMerged(3)) {
-                if (Settings.WE_ALLOW_HELPER ? plot.isAdded(uuid) : (plot.isOwner(uuid) || plot.trusted.contains(uuid))) {
+            if (!plot.getMerged(0) && !plot.getMerged(3)) {
+                if (Settings.WE_ALLOW_HELPER ? plot.isAdded(uuid) : (plot.isOwner(uuid) || plot.getTrusted().contains(uuid))) {
                     Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
                     Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
                     regions.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ()));

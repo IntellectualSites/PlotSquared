@@ -101,13 +101,13 @@ public abstract class HybridUtils {
             if (result) {
                 if (id1 != null) {
                     final Plot p1 = MainUtil.getPlot(world, id1);
-                    if ((p1 != null) && p1.hasOwner() && p1.settings.isMerged()) {
+                    if ((p1 != null) && p1.hasOwner() && p1.getSettings().isMerged()) {
                         toCheck = true;
                     }
                 }
                 if ((id2 != null) && !toCheck) {
                     final Plot p2 = MainUtil.getPlot(world, id2);
-                    if ((p2 != null) && p2.hasOwner() && p2.settings.isMerged()) {
+                    if ((p2 != null) && p2.hasOwner() && p2.getSettings().isMerged()) {
                         toCheck = true;
                     }
                 }

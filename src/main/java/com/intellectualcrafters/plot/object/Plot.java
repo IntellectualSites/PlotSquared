@@ -92,10 +92,6 @@ public class Plot implements Cloneable {
         this.world = world;
         this.id = id;
         this.owner = owner;
-        this.settings = new PlotSettings(this);
-        this.trusted = new HashSet<>();
-        this.members = new HashSet<>();
-        this.denied = new HashSet<>();
         this.temp = false;
     }
     
@@ -111,10 +107,6 @@ public class Plot implements Cloneable {
         this.world = world;
         this.id = id;
         this.owner = owner;
-        this.settings = new PlotSettings(this);
-        this.trusted = new HashSet<>();
-        this.members = new HashSet<>();
-        this.denied = new HashSet<>();
         this.temp = temp;
     }
     
@@ -186,7 +178,7 @@ public class Plot implements Cloneable {
      * @return boolean false if the player is allowed to enter
      */
     public boolean isDenied(final UUID uuid) {
-        return (this.denied != null) && ((this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid)) || (!this.isAdded(uuid) && this.denied.contains(uuid)));
+        return (this.getDenied() != null) && ((this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid)) || (!this.isAdded(uuid) && this.denied.contains(uuid)));
     }
 
     /**
@@ -194,6 +186,69 @@ public class Plot implements Cloneable {
      */
     public PlotId getId() {
         return this.id;
+    }
+    
+    /**
+     * Get or create plot settings
+     * @return PlotSettings
+     */
+    public PlotSettings getSettings() {
+        if (settings == null) {
+            settings = new PlotSettings(this);
+        }
+        return settings;
+    }
+    
+    public boolean isMerged() {
+        if (settings == null) {
+            return false;
+        }
+        return settings.getMerged(0) || settings.getMerged(2) || settings.getMerged(1) || settings.getMerged(3);
+    }
+    
+    /**
+     * Get if the plot is merged in a direction
+     * @param direction
+     * @return
+     */
+    public boolean getMerged(int direction) {
+        if (settings == null) {
+            return false;
+        }
+        return settings.getMerged(direction);
+    }
+    
+    /**
+     * Get the denied users
+     * @return
+     */
+    public HashSet<UUID> getDenied() {
+        if (this.denied == null) {
+            this.denied = new HashSet<>();
+        }
+        return this.denied;
+    }
+    
+    /**
+     * Get the trusted users
+     * @return
+     */
+    public HashSet<UUID> getTrusted() {
+        if (this.trusted == null) {
+            this.trusted = new HashSet<>();
+        }
+        return this.trusted;
+    }
+    
+    /**
+     * Get the members
+     * @return
+     */
+    public HashSet<UUID> getMembers() {
+        if (this.members == null) {
+            this.members = new HashSet<>();
+        }
+        return this.members;
     }
 
     /**
@@ -216,7 +271,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public void addDenied(final UUID uuid) {
-        if (this.denied.add(uuid)) DBFunc.setDenied(this, uuid);
+        if (this.getDenied().add(uuid)) DBFunc.setDenied(this, uuid);
     }
 
     /**
@@ -225,7 +280,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public void addTrusted(final UUID uuid) {
-        if (this.trusted.add(uuid)) DBFunc.setTrusted(this, uuid);
+        if (this.getTrusted().add(uuid)) DBFunc.setTrusted(this, uuid);
     }
 
     /**
@@ -234,7 +289,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public void addMember(final UUID uuid) {
-        if (this.members.add(uuid)) DBFunc.setMember(this, uuid);
+        if (this.getMembers().add(uuid)) DBFunc.setMember(this, uuid);
     }
     
     /**
@@ -332,10 +387,10 @@ public class Plot implements Cloneable {
      */
     public HashMap<UUID, Rating> getRatings() {
         HashMap<UUID, Rating> map = new HashMap<UUID, Rating>();
-        if (settings.ratings == null) {
+        if (getSettings().ratings == null) {
             return map;
         }
-        for (Entry<UUID, Integer> entry : settings.ratings.entrySet()) {
+        for (Entry<UUID, Integer> entry : getSettings().ratings.entrySet()) {
             map.put(entry.getKey(), new Rating(entry.getValue()));
         }
         return map;
@@ -346,16 +401,16 @@ public class Plot implements Cloneable {
      * @param loc
      */
     public void setHome(BlockLoc loc) {
-        BlockLoc pos = this.settings.getPosition();
+        BlockLoc pos = this.getSettings().getPosition();
         if ((pos == null && loc == null) || (pos != null && pos.equals(loc))) {
             return;
         }
-        this.settings.setPosition(loc);
-        if (this.settings.getPosition() == null) {
+        this.getSettings().setPosition(loc);
+        if (this.getSettings().getPosition() == null) {
             DBFunc.setPosition(this, "");
         }
         else {
-            DBFunc.setPosition(this, this.settings.getPosition().toString());
+            DBFunc.setPosition(this, this.getSettings().getPosition().toString());
         }
     }
     
@@ -364,14 +419,14 @@ public class Plot implements Cloneable {
      * @param alias
      */
     public void setAlias(String alias) {
-        String name = this.settings.getAlias();
+        String name = this.getSettings().getAlias();
         if (alias == null) {
             alias = "";
         }
         if (name.equals(alias)) {
             return;
         }
-        this.settings.setAlias(alias);
+        this.getSettings().setAlias(alias);
         DBFunc.setAlias(this, alias);
     }
     
@@ -499,7 +554,7 @@ public class Plot implements Cloneable {
      */
     @Override
     public String toString() {
-        if (this.settings.getAlias().length() > 1) {
+        if (this.settings != null && this.settings.getAlias().length() > 1) {
             return this.settings.getAlias();
         }
         return this.world + ";" + this.getId().x + ";" + this.getId().y;
@@ -511,7 +566,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public boolean removeDenied(final UUID uuid) {
-        if (this.denied.remove(uuid)) {
+        if (this.getDenied().remove(uuid)) {
             DBFunc.removeDenied(this, uuid);
             return true;
         }
@@ -524,7 +579,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public boolean removeTrusted(final UUID uuid) {
-        if (this.trusted.remove(uuid)) {
+        if (this.getTrusted().remove(uuid)) {
             DBFunc.removeTrusted(this, uuid);
             return true;
         }
@@ -537,7 +592,7 @@ public class Plot implements Cloneable {
      * @param uuid
      */
     public boolean removeMember(final UUID uuid) {
-        if (this.members.remove(uuid)) {
+        if (this.getMembers().remove(uuid)) {
             DBFunc.removeMember(this, uuid);
             return true;
         }

@@ -176,7 +176,7 @@ public class Auto extends SubCommand {
             for (int i = 0; i <= max; i++) {
                 final PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
                 final Plot current = MainUtil.getPlot(worldname, currentId);
-                if (MainUtil.canClaim(plr, current) && (current.settings.isMerged() == false) && cluster.equals(ClusterManager.getCluster(current))) {
+                if (MainUtil.canClaim(plr, current) && (current.getSettings().isMerged() == false) && cluster.equals(ClusterManager.getCluster(current))) {
                     Claim.claimPlot(plr, current, true, true);
                     return true;
                 }

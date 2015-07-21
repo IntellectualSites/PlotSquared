@@ -207,7 +207,7 @@ public class Set extends SubCommand {
                 return false;
             }
             for (final Plot p : PS.get().getPlots(plr.getLocation().getWorld()).values()) {
-                if (p.settings.getAlias().equalsIgnoreCase(alias)) {
+                if (p.getSettings().getAlias().equalsIgnoreCase(alias)) {
                     MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
                 }

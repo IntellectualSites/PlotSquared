@@ -41,7 +41,7 @@ public class InboxOwner extends CommentInbox {
         if (plot == null || plot.owner == null) {
             return false;
         }
-        ArrayList<PlotComment> comments = plot.settings.getComments(toString());
+        ArrayList<PlotComment> comments = plot.getSettings().getComments(toString());
         if (comments != null) {
             whenDone.value = comments;
             TaskManager.runTask(whenDone);
@@ -53,7 +53,7 @@ public class InboxOwner extends CommentInbox {
                 whenDone.value = value;
                 if (value != null) {
                     for (PlotComment comment : (ArrayList<PlotComment>) value) {
-                        plot.settings.addComment(comment);
+                        plot.getSettings().addComment(comment);
                     }
                 }
                 TaskManager.runTask(whenDone);
@@ -67,7 +67,7 @@ public class InboxOwner extends CommentInbox {
         if (plot == null || plot.owner == null) {
             return false;
         }
-        plot.settings.addComment(comment);
+        plot.getSettings().addComment(comment);
         DBFunc.setComment(plot, comment);
         return true;
     }

@@ -47,7 +47,7 @@ public class Claim extends SubCommand {
     }
 
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
-        if (plot.hasOwner() || plot.settings.isMerged()) {
+        if (plot.hasOwner() || plot.getSettings().isMerged()) {
             return false;
         }
         final boolean result = EventUtil.manager.callClaim(player, plot, false);

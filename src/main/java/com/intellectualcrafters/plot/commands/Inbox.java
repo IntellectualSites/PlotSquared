@@ -156,7 +156,7 @@ public class Inbox extends SubCommand {
                             }
                             PlotComment comment = comments.get(index - 1);
                             inbox.removeComment(plot, comment);
-                            plot.settings.removeComment(comment);
+                            plot.getSettings().removeComment(comment);
                             MainUtil.sendMessage(player, C.COMMENT_REMOVED, comment.comment);
                         }
                     })) {
@@ -170,9 +170,9 @@ public class Inbox extends SubCommand {
                         sendMessage(player, C.NO_PERM_INBOX_MODIFY);
                     }
                     inbox.clearInbox(plot);
-                    ArrayList<PlotComment> comments = plot.settings.getComments(inbox.toString());
+                    ArrayList<PlotComment> comments = plot.getSettings().getComments(inbox.toString());
                     if (comments != null) {
-                        plot.settings.removeComments(comments);
+                        plot.getSettings().removeComments(comments);
                     }
                     MainUtil.sendMessage(player, C.COMMENT_REMOVED, "*");
                     return true;

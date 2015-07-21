@@ -72,7 +72,7 @@ public class Trust extends SubCommand {
             return false;
         }
         
-        if (plot.trusted.contains(uuid)) {
+        if (plot.getTrusted().contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
         }
@@ -80,11 +80,11 @@ public class Trust extends SubCommand {
             plot.addTrusted(uuid);
         }
         else {
-            if (plot.members.size() + plot.trusted.size() >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
+            if (plot.getMembers().size() + plot.getTrusted().size() >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
                 MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
                 return false;
             }
-            if (plot.denied.contains(uuid)) {
+            if (plot.getDenied().contains(uuid)) {
                 plot.removeDenied(uuid);
             }
             plot.addTrusted(uuid);

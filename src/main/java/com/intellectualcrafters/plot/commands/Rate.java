@@ -63,12 +63,12 @@ public class Rate extends SubCommand {
                     public int compare(Plot p1, Plot p2) {
                         double v1 = 0;
                         double v2 = 0;
-                        if (p1.settings.ratings != null) {
+                        if (p1.getSettings().ratings != null) {
                             for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
                                 v1 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
-                        if (p2.settings.ratings != null) {
+                        if (p2.getSettings().ratings != null) {
                             for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
                                 v2 -= 11 - entry.getValue().getAverageRating();
                             }
@@ -78,7 +78,7 @@ public class Rate extends SubCommand {
                 });
                 UUID uuid = player.getUUID();
                 for (Plot p : plots) {
-                    if ((p.settings.ratings == null || !p.settings.ratings.containsKey(uuid)) && !p.isAdded(uuid)) {
+                    if ((p.getSettings().ratings == null || !p.getSettings().ratings.containsKey(uuid)) && !p.isAdded(uuid)) {
                         MainUtil.teleportPlayer(player, player.getLocation(), p);
                         MainUtil.sendMessage(player, C.RATE_THIS);
                         return true;
@@ -105,7 +105,7 @@ public class Rate extends SubCommand {
             final Runnable run = new Runnable() {
                 @Override
                 public void run() {
-                if (plot.settings.ratings.containsKey(player.getUUID())) {
+                if (plot.getSettings().ratings.containsKey(player.getUUID())) {
                     sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
                     return;
                 }
@@ -127,7 +127,7 @@ public class Rate extends SubCommand {
                             // get new rating
                             rV = rateEvent.getRating();
                             // set rating
-                            plot.settings.ratings.put(player.getUUID(), rV);
+                            plot.getSettings().ratings.put(player.getUUID(), rV);
                             DBFunc.setRating(plot, player.getUUID(), rV);
                             sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
                             sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
@@ -149,11 +149,11 @@ public class Rate extends SubCommand {
                 inventory.openInventory();
                 }
             };
-            if (plot.settings.ratings == null) {
+            if (plot.getSettings().ratings == null) {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        plot.settings.ratings = DBFunc.getRatings(plot);
+                        plot.getSettings().ratings = DBFunc.getRatings(plot);
                         run.run();
                     }
                 });
@@ -187,20 +187,20 @@ public class Rate extends SubCommand {
         final Runnable run = new Runnable() {
             @Override
             public void run() {
-                if (plot.settings.ratings.containsKey(uuid)) {
+                if (plot.getSettings().ratings.containsKey(uuid)) {
                     sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
                     return;
                 }
-                plot.settings.ratings.put(uuid, rating);
+                plot.getSettings().ratings.put(uuid, rating);
                 DBFunc.setRating(plot, uuid, rating);
                 sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
             }
         };
-        if (plot.settings.ratings == null) {
+        if (plot.getSettings().ratings == null) {
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
-                    plot.settings.ratings = DBFunc.getRatings(plot);
+                    plot.getSettings().ratings = DBFunc.getRatings(plot);
                     run.run();
                 }
             });

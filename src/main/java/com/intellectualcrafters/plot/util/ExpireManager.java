@@ -99,13 +99,13 @@ public class ExpireManager {
                             PS.log("$2[&5Expire&dManager$2] &bSkipping no longer expired: " + plot);
                             return;
                         }
-                        for (final UUID helper : plot.trusted) {
+                        for (final UUID helper : plot.getTrusted()) {
                             final PlotPlayer player = UUIDHandler.getPlayer(helper);
                             if (player != null) {
                                 MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
                             }
                         }
-                        for (final UUID helper : plot.members) {
+                        for (final UUID helper : plot.getMembers()) {
                             final PlotPlayer player = UUIDHandler.getPlayer(helper);
                             if (player != null) {
                                 MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
@@ -130,7 +130,7 @@ public class ExpireManager {
                                         return;
                                     }
                                 }
-                                if (plot.settings.isMerged()) {
+                                if (plot.isMerged()) {
                                     MainUtil.unlinkPlot(plot);
                                 }
                                 plot.delete();

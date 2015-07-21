@@ -96,17 +96,11 @@ public class UUIDHandler {
     public static HashSet<UUID> getAllUUIDS() {
         HashSet<UUID> uuids = new HashSet<UUID>();
         for (Plot plot : PS.get().getPlotsRaw()) {
-            for (UUID uuid : plot.trusted) {
-                uuids.add(uuid);
-            }
-            for (UUID uuid : plot.members) {
-                uuids.add(uuid);
-            }
-            for (UUID uuid : plot.denied) {
-                uuids.add(uuid);
-            }
             if (plot.owner != null) {
                 uuids.add(plot.owner);
+                uuids.addAll(plot.getTrusted());
+                uuids.addAll(plot.getMembers());
+                uuids.addAll(plot.getDenied());
             }
         }
         return uuids;

@@ -75,7 +75,7 @@ public class Deny extends SubCommand {
             return false;
         }
         
-        if (plot.denied.contains(uuid)) {
+        if (plot.getDenied().contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
         }

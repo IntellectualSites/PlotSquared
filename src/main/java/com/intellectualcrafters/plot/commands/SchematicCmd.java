@@ -123,10 +123,9 @@ public class SchematicCmd extends SubCommand {
                             if (!(schematic.getSchematicDimension().getY() == BukkitUtil.getMaxHeight(loc.getWorld()))) {
                                  l1 = bot.add(0, sy - 1, 0);
                             }
-                             else {
+                            else {
                                  l1 = bot;
-                             }
-                            
+                            }
                             final int blen = b.length - 1;
                             SchematicCmd.this.task = TaskManager.runTaskRepeat(new Runnable() {
                                 @Override

@@ -160,7 +160,7 @@ public class MainUtil {
             if (world != null && plot.world.equals(world)) {
                 count++;
             }
-            if (alias != null && alias.equals(plot.settings.getAlias())) {
+            if (alias != null && alias.equals(plot.getSettings().getAlias())) {
                 count+=2;
             }
             if (count != 0) {
@@ -207,7 +207,7 @@ public class MainUtil {
                 worldname = PS.get().getPlotWorlds().iterator().next();
             }
             for (Plot p : PS.get().getPlots(worldname).values()) {
-                String name = p.settings.getAlias();
+                String name = p.getSettings().getAlias();
                 if (name.length() != 0 && name.equalsIgnoreCase(arg)) {
                     return p;
                 }
@@ -215,7 +215,7 @@ public class MainUtil {
             for (String world : PS.get().getPlotWorlds()) {
                 if (!world.endsWith(worldname)) {
                     for (Plot p : PS.get().getPlots(world).values()) {
-                        String name = p.settings.getAlias();
+                        String name = p.getSettings().getAlias();
                         if (name.length() != 0 && name.equalsIgnoreCase(arg)) {
                             return p;
                         }  
@@ -281,8 +281,8 @@ public class MainUtil {
             if (plot.denied != null) {
                 myplot.denied = plot.denied;
             }
-            myplot.settings.setMerged(new boolean[] { false, false, false, false });
-            DBFunc.setMerged(myplot, myplot.settings.getMerged());
+            myplot.getSettings().setMerged(new boolean[] { false, false, false, false });
+            DBFunc.setMerged(myplot, myplot.getSettings().getMerged());
         }
         if (plotworld.TERRAIN != 3) {
             for (int x = pos1.x; x <= pos2.x; x++) {
@@ -610,25 +610,25 @@ public class MainUtil {
                 }
                 if (lx) {
                     if (ly) {
-                        if (!plot.settings.getMerged(1) || !plot.settings.getMerged(2)) {
+                        if (!plot.getSettings().getMerged(1) || !plot.getSettings().getMerged(2)) {
                             if (removeRoads) { 
                                 MainUtil.removeRoadSouthEast(plotworld, plot);
                             }
                         }
                     }
-                    if (!plot.settings.getMerged(1)) {
+                    if (!plot.getSettings().getMerged(1)) {
                         plot2 = PS.get().getPlots(world).get(new PlotId(x + 1, y));
                         mergePlot(world, plot, plot2, removeRoads);
-                        plot.settings.setMerged(1, true);
-                        plot2.settings.setMerged(3, true);
+                        plot.getSettings().setMerged(1, true);
+                        plot2.getSettings().setMerged(3, true);
                     }
                 }
                 if (ly) {
-                    if (!plot.settings.getMerged(2)) {
+                    if (!plot.getSettings().getMerged(2)) {
                         plot2 = PS.get().getPlots(world).get(new PlotId(x, y + 1));
                         mergePlot(world, plot, plot2, removeRoads);
-                        plot.settings.setMerged(2, true);
-                        plot2.settings.setMerged(0, true);
+                        plot.getSettings().setMerged(2, true);
+                        plot2.getSettings().setMerged(0, true);
                     }
                 }
             }
@@ -637,7 +637,7 @@ public class MainUtil {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final PlotId id = new PlotId(x, y);
                 final Plot plot = PS.get().getPlots(world).get(id);
-                DBFunc.setMerged(plot, plot.settings.getMerged());
+                DBFunc.setMerged(plot, plot.getSettings().getMerged());
             }
         }
         manager.finishPlotMerge(plotworld, plotIds);
@@ -710,17 +710,17 @@ public class MainUtil {
     public static void mergePlot(final String world, final Plot lesserPlot, final Plot greaterPlot, final boolean removeRoads) {
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
         if (lesserPlot.id.x.equals(greaterPlot.id.x)) {
-            if (!lesserPlot.settings.getMerged(2)) {
-                lesserPlot.settings.setMerged(2, true);
-                greaterPlot.settings.setMerged(0, true);
+            if (!lesserPlot.getSettings().getMerged(2)) {
+                lesserPlot.getSettings().setMerged(2, true);
+                greaterPlot.getSettings().setMerged(0, true);
                 if (removeRoads) {
                     MainUtil.removeRoadSouth(plotworld, lesserPlot);
                 }
             }
         } else {
-            if (!lesserPlot.settings.getMerged(1)) {
-                lesserPlot.settings.setMerged(1, true);
-                greaterPlot.settings.setMerged(3, true);
+            if (!lesserPlot.getSettings().getMerged(1)) {
+                lesserPlot.getSettings().setMerged(1, true);
+                greaterPlot.getSettings().setMerged(3, true);
                 if (removeRoads) {
                     MainUtil.removeRoadEast(plotworld, lesserPlot);
                 }
@@ -1070,7 +1070,7 @@ public class MainUtil {
      */
     public static Location getPlotHome(final String w, final PlotId plotid) {
         final Plot plot = getPlot(w, plotid);
-        final BlockLoc home = plot.settings.getPosition();
+        final BlockLoc home = plot.getSettings().getPosition();
         final Location bot = getPlotBottomLoc(w, plotid);
         final PlotManager manager = PS.get().getPlotManager(w);
         if ((home == null) || ((home.x == 0) && (home.z == 0))) {
@@ -1368,13 +1368,13 @@ public class MainUtil {
             int x = id.x + offset_x;
             int y = id.y + offset_y;
             Plot plot = createPlotAbs(currentPlot.owner, getPlot(world, new PlotId(x, y)));
-            if (currentPlot.settings.flags != null && currentPlot.settings.flags.size() > 0) {
-                plot.settings.flags = currentPlot.settings.flags;
-                DBFunc.setFlags(plot, currentPlot.settings.flags.values());
+            if (currentPlot.getSettings().flags != null && currentPlot.getSettings().flags.size() > 0) {
+                plot.getSettings().flags = currentPlot.getSettings().flags;
+                DBFunc.setFlags(plot, currentPlot.getSettings().flags.values());
             }
-            if (currentPlot.settings.isMerged()) {
-                plot.settings.setMerged(currentPlot.settings.getMerged());
-                DBFunc.setMerged(plot, currentPlot.settings.getMerged());
+            if (currentPlot.isMerged()) {
+                plot.getSettings().setMerged(currentPlot.getSettings().getMerged());
+                DBFunc.setMerged(plot, currentPlot.getSettings().getMerged());
             }
             if (currentPlot.members != null && currentPlot.members.size() > 0) {
                 plot.members = currentPlot.members;
@@ -1383,13 +1383,13 @@ public class MainUtil {
                 }
             }
             if (currentPlot.trusted != null && currentPlot.trusted.size() > 0) {
-                plot.members = currentPlot.trusted;
+                plot.trusted = currentPlot.trusted;
                 for (UUID trusted : plot.trusted) {
                     DBFunc.setTrusted(plot, trusted);
                 }
             }
             if (currentPlot.denied != null && currentPlot.denied.size() > 0) {
-                plot.members = currentPlot.denied;
+                plot.denied = currentPlot.denied;
                 for (UUID denied : plot.denied) {
                     DBFunc.setDenied(plot, denied);
                 }
@@ -1522,14 +1522,14 @@ public class MainUtil {
     }
 
     public static Plot getBottomPlot(final Plot plot) {
-        if (plot.settings.getMerged(0)) {
+        if (plot.getSettings().getMerged(0)) {
             final Plot p = PS.get().getPlots(plot.world).get(new PlotId(plot.id.x, plot.id.y - 1));
             if (p == null) {
                 return plot;
             }
             return getBottomPlot(p);
         }
-        if (plot.settings.getMerged(3)) {
+        if (plot.getSettings().getMerged(3)) {
             final Plot p = PS.get().getPlots(plot.world).get(new PlotId(plot.id.x - 1, plot.id.y));
             if (p == null) {
                 return plot;
@@ -1540,14 +1540,14 @@ public class MainUtil {
     }
 
     public static Plot getTopPlot(final Plot plot) {
-        if (plot.settings.getMerged(2)) {
+        if (plot.getSettings().getMerged(2)) {
             final Plot p = PS.get().getPlots(plot.world).get(new PlotId(plot.id.x, plot.id.y + 1));
             if (p == null) {
                 return plot;
             }
             return getTopPlot(p);
         }
-        if (plot.settings.getMerged(1)) {
+        if (plot.getSettings().getMerged(1)) {
             final Plot p = PS.get().getPlots(plot.world).get(new PlotId(plot.id.x + 1, plot.id.y));
             if (p == null) {
                 return plot;
@@ -1559,8 +1559,7 @@ public class MainUtil {
     }
 
     public static PlotId getSize(final Plot plot) {
-        final PlotSettings settings = plot.settings;
-        if (!settings.isMerged()) {
+        if (!plot.isMerged()) {
             return new PlotId(1, 1);
         }
         final Plot top = getTopPlot(plot);
@@ -1637,8 +1636,8 @@ public class MainUtil {
 
     public static double getAverageRating(Plot plot) {
         HashMap<UUID, Integer> rating;
-        if (plot.settings.ratings != null) {
-            rating = plot.settings.ratings;
+        if (plot.getSettings().ratings != null) {
+            rating = plot.getSettings().ratings;
         }
         else {
             rating = DBFunc.getRatings(plot);
@@ -1667,8 +1666,8 @@ public class MainUtil {
     
     public static double[] getAverageRatings(Plot plot) {
         HashMap<UUID, Integer> rating;
-        if (plot.settings.ratings != null) {
-            rating = plot.settings.ratings;
+        if (plot.getSettings().ratings != null) {
+            rating = plot.getSettings().ratings;
         }
         else {
             rating = DBFunc.getRatings(plot);

@@ -171,7 +171,7 @@ public class list extends SubCommand {
                 }
                 plots = new ArrayList<Plot>();
                 for (Plot plot : PS.get().getPlots()) {
-                    if (plot.trusted.contains(plr.getUUID()) || plot.members.contains(plr.getUUID())) {
+                    if (plot.getTrusted().contains(plr.getUUID()) || plot.getMembers().contains(plr.getUUID())) {
                         plots.add(plot);
                     }
                 }
@@ -208,9 +208,9 @@ public class list extends SubCommand {
                     public int compare(Plot p1, Plot p2) {
                         double v1 = 0;
                         double v2 = 0;
-                        int p1s = p1.settings.ratings != null ? p1.settings.ratings.size() : 0;
-                        int p2s = p2.settings.ratings != null ? p2.settings.ratings.size() : 0;
-                        if (p1.settings.ratings != null && p1s > 0) {
+                        int p1s = p1.getSettings().ratings != null ? p1.getSettings().ratings.size() : 0;
+                        int p2s = p2.getSettings().ratings != null ? p2.getSettings().ratings.size() : 0;
+                        if (p1.getSettings().ratings != null && p1s > 0) {
                             for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
                                 double av = entry.getValue().getAverageRating();
                                 v1 += av * av;
@@ -218,7 +218,7 @@ public class list extends SubCommand {
                             v1 /= p1s;
                             v1 += p1s;
                         }
-                        if (p2.settings.ratings != null && p2s > 0) {
+                        if (p2.getSettings().ratings != null && p2s > 0) {
                             for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
                                 double av = entry.getValue().getAverageRating();
                                 v2 += av * av;
@@ -353,7 +353,7 @@ public class list extends SubCommand {
 
         int i = page * pageSize;
         for (Plot plot : subList) {
-            if (plot.settings.isMerged()) {
+            if (plot.getSettings().isMerged()) {
                 if (!MainUtil.getBottomPlot(plot).equals(plot)) {
                     continue;
                 }
@@ -380,16 +380,16 @@ public class list extends SubCommand {
                         new FancyMessage(
                         ChatColor.stripColor(
                         ChatColor.translateAlternateColorCodes('&', 
-                        C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", Info.getPlayerList(plot.trusted)))))
+                        C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", Info.getPlayerList(plot.getTrusted())))))
                         .color(ChatColor.GOLD);
                 
                 FancyMessage members =
                         new FancyMessage(
                         ChatColor.stripColor(
                         ChatColor.translateAlternateColorCodes('&', 
-                        C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", Info.getPlayerList(plot.members)))))
+                        C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", Info.getPlayerList(plot.getMembers())))))
                         .color(ChatColor.GOLD);
-                String strFlags = StringUtils.join(plot.settings.flags.values(), ",");
+                String strFlags = StringUtils.join(plot.getSettings().flags.values(), ",");
                 if (strFlags.length() == 0) {
                     strFlags = C.NONE.s();
                 }

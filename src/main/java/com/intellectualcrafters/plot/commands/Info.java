@@ -144,8 +144,8 @@ public class Info extends SubCommand {
         boolean trustedEveryone;
         // Wildcard player {added}
         {
-            containsEveryone = (plot.trusted != null) && plot.trusted.contains(DBFunc.everyone);
-            trustedEveryone = (plot.members != null) && plot.members.contains(DBFunc.everyone);
+            containsEveryone = (plot.getTrusted() != null) && plot.getTrusted().contains(DBFunc.everyone);
+            trustedEveryone = (plot.getMembers() != null) && plot.getMembers().contains(DBFunc.everyone);
         }
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
@@ -198,18 +198,18 @@ public class Info extends SubCommand {
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int num = MainUtil.getPlotSelectionIds(id, id2).size();
-        final String alias = plot.settings.getAlias().length() > 0 ? plot.settings.getAlias() : C.NONE.s();
+        final String alias = plot.getSettings().getAlias().length() > 0 ? plot.getSettings().getAlias() : C.NONE.s();
         Location top = MainUtil.getPlotTopLoc(world, plot.id);
         Location bot = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final String biome = BlockManager.manager.getBiome(bot.add((top.getX() - bot.getX()) / 2, 0, (top.getX() - bot.getX()) / 2));
-        final String trusted = getPlayerList(plot.trusted);
-        final String members = getPlayerList(plot.members);
-        final String denied = getPlayerList(plot.denied);
+        final String trusted = getPlayerList(plot.getTrusted());
+        final String members = getPlayerList(plot.getMembers());
+        final String denied = getPlayerList(plot.getDenied());
 
         Flag descriptionFlag = FlagManager.getPlotFlag(plot, "description");
         final String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
 
-        final String flags = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.settings, true).values(), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.settings, true).values(), "$1, $2") : C.NONE.s()), C.replacements);
+        final String flags = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "$1, $2") : C.NONE.s()), C.replacements);
         final boolean build = (player == null) || plot.isAdded(player.getUUID());
 
         String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());

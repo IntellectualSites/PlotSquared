@@ -58,7 +58,7 @@ public class Untrust extends SubCommand {
         int count = 0;
         if (args[0].equals("unknown")) {
             ArrayList<UUID> toRemove = new ArrayList<>();
-            for (UUID uuid : plot.trusted) {
+            for (UUID uuid : plot.getTrusted()) {
                 if (UUIDHandler.getName(uuid) == null) {
                     toRemove.add(uuid);
                 }
@@ -69,7 +69,7 @@ public class Untrust extends SubCommand {
             }
         }
         else if (args[0].equals("*")){
-            for (UUID uuid : new ArrayList<>(plot.trusted)) {
+            for (UUID uuid : new ArrayList<>(plot.getTrusted())) {
                 plot.removeTrusted(uuid);
                 count++;
             }

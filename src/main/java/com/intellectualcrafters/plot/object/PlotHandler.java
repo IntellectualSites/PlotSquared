@@ -14,7 +14,7 @@ public class PlotHandler {
         if (plot.owner == null) {
             return new HashSet<UUID>();
         }
-        if (plot.settings.isMerged()) {
+        if (plot.isMerged()) {
             HashSet<UUID> owners = new HashSet<UUID>();
             Plot top = MainUtil.getTopPlot(plot);
             ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
@@ -33,7 +33,7 @@ public class PlotHandler {
         if (plot.owner == null) {
             return false;
         }
-        if (plot.settings.isMerged()) {
+        if (plot.isMerged()) {
             Plot top = MainUtil.getTopPlot(plot);
             ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
             for (PlotId id : ids) {
@@ -50,7 +50,7 @@ public class PlotHandler {
         if (plot.owner == null) {
             return false;
         }
-        if (plot.settings.isMerged()) {
+        if (plot.isMerged()) {
             Plot top = MainUtil.getTopPlot(plot);
             ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
             for (PlotId id : ids) {
@@ -82,13 +82,13 @@ public class PlotHandler {
         if (isOwner(plot, uuid)) {
             return true;
         }
-        if (plot.denied.contains(uuid)) {
+        if (plot.getDenied().contains(uuid)) {
             return false;
         }
-        if (plot.trusted.contains(uuid) || plot.trusted.contains(DBFunc.everyone)) {
+        if (plot.getTrusted().contains(uuid) || plot.getTrusted().contains(DBFunc.everyone)) {
             return true;
         }
-        if (plot.members.contains(uuid) || plot.members.contains(DBFunc.everyone)) {
+        if (plot.getMembers().contains(uuid) || plot.getMembers().contains(DBFunc.everyone)) {
             if (PlotHandler.isOnline(plot)) {
                 return true;
             }

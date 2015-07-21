@@ -160,13 +160,13 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) {
+        if (plot == null || !plot.hasOwner()) {
             return;
         }
         if (Settings.REDSTONE_DISABLER) {
             if (UUIDHandler.getPlayer(plot.owner) == null) {
                 boolean disable = true;
-                for (UUID trusted : plot.trusted) {
+                for (UUID trusted : plot.getTrusted()) {
                     if (UUIDHandler.getPlayer(trusted) != null) {
                         disable = false;
                         break;

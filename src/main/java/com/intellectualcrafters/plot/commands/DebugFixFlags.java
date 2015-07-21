@@ -56,7 +56,7 @@ public class DebugFixFlags extends SubCommand {
         }
         MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
         for (final Plot plot : PS.get().getPlots(world).values()) {
-            final HashMap<String, Flag> flags = plot.settings.flags;
+            final HashMap<String, Flag> flags = plot.getSettings().flags;
             Iterator<Entry<String, Flag>> i = flags.entrySet().iterator();
             boolean changed = false;
             while (i.hasNext()) {
@@ -66,7 +66,7 @@ public class DebugFixFlags extends SubCommand {
                 }
             }
             if (changed) {
-                DBFunc.setFlags(plot, plot.settings.flags.values());
+                DBFunc.setFlags(plot, plot.getSettings().flags.values());
             }
         }
         MainUtil.sendMessage(plr, "&aDone!");

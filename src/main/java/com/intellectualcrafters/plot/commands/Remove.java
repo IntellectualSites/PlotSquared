@@ -60,9 +60,9 @@ public class Remove extends SubCommand {
         if (args[0].equals("unknown")) {
             ArrayList<UUID> toRemove = new ArrayList<>();
             HashSet<UUID> all = new HashSet<>();
-            all.addAll(plot.members);
-            all.addAll(plot.trusted);
-            all.addAll(plot.denied);
+            all.addAll(plot.getMembers());
+            all.addAll(plot.getTrusted());
+            all.addAll(plot.getDenied());
             for (UUID uuid : all) {
                 if (UUIDHandler.getName(uuid) == null) {
                     toRemove.add(uuid);
@@ -78,9 +78,9 @@ public class Remove extends SubCommand {
         else if (args[0].equals("*")){
             ArrayList<UUID> toRemove = new ArrayList<>();
             HashSet<UUID> all = new HashSet<>();
-            all.addAll(plot.members);
-            all.addAll(plot.trusted);
-            all.addAll(plot.denied);
+            all.addAll(plot.getMembers());
+            all.addAll(plot.getTrusted());
+            all.addAll(plot.getDenied());
             for (UUID uuid : all) {
                 toRemove.add(uuid);
                 count++;
@@ -94,17 +94,17 @@ public class Remove extends SubCommand {
         else {
             UUID uuid = UUIDHandler.getUUID(args[0]);
             if (uuid != null) {
-                if (plot.trusted.contains(uuid)) {
+                if (plot.getTrusted().contains(uuid)) {
                     if (plot.removeTrusted(uuid)) {
                         count++;
                     }
                 }
-                else if (plot.members.contains(uuid)) {
+                else if (plot.getMembers().contains(uuid)) {
                     if (plot.removeMember(uuid)) {
                         count++;
                     }
                 }
-                else if (plot.denied.contains(uuid)) {
+                else if (plot.getDenied().contains(uuid)) {
                     if (plot.removeDenied(uuid)) {
                         count++;
                     }

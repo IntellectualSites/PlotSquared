@@ -131,7 +131,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.world);
             if (mergeMap != null) {
                 if (mergeMap.containsKey(plot.id)) {
-                    plot.settings.setMerged(mergeMap.get(plot.id));
+                    plot.getSettings().setMerged(mergeMap.get(plot.id));
                 }
             }
         }
@@ -150,7 +150,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     continue;
                 }
                 UUID denied = UUID.fromString(r.getString("player"));
-                plot.denied.add(denied);
+                plot.getDenied().add(denied);
             }
             
             MainUtil.sendConsoleMessage(" - " + plugin + "core_allowed");
@@ -165,7 +165,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     continue;
                 }
                 UUID allowed = UUID.fromString(r.getString("player"));
-                plot.trusted.add(allowed);
+                plot.getTrusted().add(allowed);
             }
             r.close();
             stmt.close();

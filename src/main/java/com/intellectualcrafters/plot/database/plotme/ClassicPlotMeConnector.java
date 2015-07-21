@@ -131,7 +131,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 HashMap<PlotId, Plot> newplots = plots.get(world);
                 Plot plot = newplots.get(entry2.getKey());
                 if (plot != null) {
-                    plot.settings.setMerged(entry2.getValue());
+                    plot.getSettings().setMerged(entry2.getValue());
                 }
             }
         }
@@ -159,7 +159,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     }
                 }
                 if (plots.get(world).containsKey(id)) {
-                    plots.get(world).get(id).denied.add(denied);
+                    plots.get(world).get(id).getDenied().add(denied);
                 }
             }
             
@@ -180,7 +180,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     }
                 }
                 if (plots.get(world).containsKey(id)) {
-                    plots.get(world).get(id).trusted.add(helper);
+                    plots.get(world).get(id).getTrusted().add(helper);
                 }
             }
             

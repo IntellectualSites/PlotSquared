@@ -38,7 +38,7 @@ public class Home extends SubCommand {
 
     private Plot isAlias(final String a) {
         for (final Plot p : PS.get().getPlots()) {
-            if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
+            if ((p.getSettings().getAlias().length() > 0) && p.getSettings().getAlias().equalsIgnoreCase(a)) {
                 return p;
             }
         }

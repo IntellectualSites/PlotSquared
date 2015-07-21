@@ -94,7 +94,7 @@ public class TP extends SubCommand {
             return null;
         }
         for (final Plot p : PS.get().getPlots(world).values()) {
-            if ((p.settings.getAlias().length() > 0) && p.settings.getAlias().equalsIgnoreCase(a)) {
+            if ((p.getSettings().getAlias().length() > 0) && p.getSettings().getAlias().equalsIgnoreCase(a)) {
                 return p;
             }
         }

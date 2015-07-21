@@ -130,7 +130,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             if (plot == null) {
                 return null;
             }
-            if ((plot.settings.getMerged(0) && plot.settings.getMerged(3))) {
+            if ((plot.getMerged(0) && plot.getMerged(3))) {
                 return MainUtil.getBottomPlot(plot).id;
             }
             return null;
@@ -143,7 +143,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             if (plot == null) {
                 return null;
             }
-            if (plot.settings.getMerged(0)) {
+            if (plot.getMerged(0)) {
                 return MainUtil.getBottomPlot(plot).id;
             }
             return null;
@@ -156,7 +156,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             if (plot == null) {
                 return null;
             }
-            if (plot.settings.getMerged(3)) {
+            if (plot.getMerged(3)) {
                 return MainUtil.getBottomPlot(plot).id;
             }
             return null;

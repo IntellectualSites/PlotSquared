@@ -173,19 +173,19 @@ public class SQLManager implements AbstractDB {
                                 PlotId plotId = new PlotId(x, y);
                                 Plot plot = plotMap.get(plotId);
                                 if (plot != null) {
-                                    settings.add(new SettingsPair(id, plot.settings));
-                                    if (plot.denied != null) {
-                                        for (UUID uuid : plot.denied) {
+                                    settings.add(new SettingsPair(id, plot.getSettings()));
+                                    if (plot.getDenied() != null) {
+                                        for (UUID uuid : plot.getDenied()) {
                                             denied.add(new UUIDPair(id, uuid));
                                         }
                                     }
-                                    if (plot.members != null) {
-                                        for (UUID uuid : plot.members) {
+                                    if (plot.getMembers() != null) {
+                                        for (UUID uuid : plot.getMembers()) {
                                             trusted.add(new UUIDPair(id, uuid));
                                         }
                                     }
-                                    if (plot.trusted != null) {
-                                        for (UUID uuid : plot.trusted) {
+                                    if (plot.getTrusted() != null) {
+                                        for (UUID uuid : plot.getTrusted()) {
                                             helpers.add(new UUIDPair(id, uuid));
                                         }
                                     }
@@ -950,10 +950,10 @@ public class SQLManager implements AbstractDB {
                     }
                     final Plot plot = plots.get(id);
                     if (plot != null) {
-                        if (plot.settings.ratings == null) {
-                            plot.settings.ratings = new HashMap<UUID, Integer>();
+                        if (plot.getSettings().ratings == null) {
+                            plot.getSettings().ratings = new HashMap<UUID, Integer>();
                         }
-                        plot.settings.ratings.put(user, r.getInt("rating"));
+                        plot.getSettings().ratings.put(user, r.getInt("rating"));
                     } else {
                         PS.log("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
                     }
@@ -974,7 +974,7 @@ public class SQLManager implements AbstractDB {
                 }
                 final Plot plot = plots.get(id);
                 if (plot != null) {
-                    plot.trusted.add(user);
+                    plot.getTrusted().add(user);
                 } else {
                     PS.log("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
                 }
@@ -994,7 +994,7 @@ public class SQLManager implements AbstractDB {
                 }
                 final Plot plot = plots.get(id);
                 if (plot != null) {
-                    plot.members.add(user);
+                    plot.getMembers().add(user);
                 } else {
                     PS.log("&cPLOT " + id + " in plot_trusted does not exist. Please create the plot or remove this entry.");
                 }
@@ -1014,7 +1014,7 @@ public class SQLManager implements AbstractDB {
                 }
                 final Plot plot = plots.get(id);
                 if (plot != null) {
-                    plot.denied.add(user);
+                    plot.getDenied().add(user);
                 } else {
                     PS.log("&cPLOT " + id + " in plot_denied does not exist. Please create the plot or remove this entry.");
                 }
@@ -1040,7 +1040,7 @@ public class SQLManager implements AbstractDB {
                     }
                     final String alias = r.getString("alias");
                     if (alias != null) {
-                        plot.settings.setAlias(alias);
+                        plot.getSettings().setAlias(alias);
                     }
                     final String pos = r.getString("position");
                     switch (pos.toLowerCase()) {
@@ -1051,7 +1051,7 @@ public class SQLManager implements AbstractDB {
                             break;
                         default:
                             try {
-                                plot.settings.setPosition(BlockLoc.fromString(pos));
+                                plot.getSettings().setPosition(BlockLoc.fromString(pos));
                             } catch (final Exception e) {
                             }
                     }
@@ -1061,9 +1061,9 @@ public class SQLManager implements AbstractDB {
                         for (int i = 0; i < 4; i++) {
                             merged[3 - i] = ((m) & (1 << i)) != 0;
                         }
-                        plot.settings.setMerged(merged);
+                        plot.getSettings().setMerged(merged);
                     } else {
-                        plot.settings.setMerged(new boolean[]{false, false, false, false});
+                        plot.getSettings().setMerged(new boolean[]{false, false, false, false});
                     }
                     String[] flags_string;
                     final String myflags = r.getString("flags");
@@ -1104,7 +1104,7 @@ public class SQLManager implements AbstractDB {
                         PS.log("&c" + myflags);
                         setFlags(id, flags.values());
                     }
-                    plot.settings.flags = flags;
+                    plot.getSettings().flags = flags;
                 } else {
                     PS.log("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
                 }
@@ -1132,7 +1132,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void setMerged(final Plot plot, final boolean[] merged) {
-        plot.settings.setMerged(merged);
+        plot.getSettings().setMerged(merged);
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {

@@ -104,7 +104,7 @@ public class FlagManager {
         }
         if (PS.get().getAllPlotsRaw() != null) {
             for (final Plot plot : PS.get().getPlotsRaw()) {
-                Flag flag = plot.settings.flags.get(af.getKey());
+                Flag flag = plot.getSettings().flags.get(af.getKey());
                 if (flag != null) {
                     flag.setKey(af);
                 }
@@ -151,7 +151,10 @@ public class FlagManager {
      * @return Flag
      */
     public static Flag getPlotFlag(final Plot plot, final String flag) {
-        return getSettingFlag(plot.world, plot.settings, flag);
+        if (!plot.hasOwner()) {
+            return null;
+        }
+        return getSettingFlag(plot.world, plot.getSettings(), flag);
     }
 
     public static boolean isPlotFlagTrue(final Plot plot, final String strFlag) {
@@ -183,7 +186,7 @@ public class FlagManager {
      * @return Flag
      */
     public static Flag getPlotFlagAbs(final Plot plot, final String flag) {
-        return getSettingFlagAbs(plot.settings, flag);
+        return getSettingFlagAbs(plot.getSettings(), flag);
     }
 
     public static Flag getSettingFlagAbs(final PlotSettings settings, final String flag) {
@@ -203,9 +206,9 @@ public class FlagManager {
         if (!result) {
             return false;
         }
-        plot.settings.flags.put(flag.getKey(), flag);
+        plot.getSettings().flags.put(flag.getKey(), flag);
         MainUtil.reEnterPlot(plot);
-        DBFunc.setFlags(plot, plot.settings.flags.values());
+        DBFunc.setFlags(plot, plot.getSettings().flags.values());
         return true;
     }
     
@@ -214,7 +217,7 @@ public class FlagManager {
         if (!result) {
             return false;
         }
-        plot.settings.flags.put(flag.getKey(), flag);
+        plot.getSettings().flags.put(flag.getKey(), flag);
         return true;
     }
 
@@ -232,7 +235,10 @@ public class FlagManager {
      * @return set of flags
      */
     public static HashMap<String, Flag> getPlotFlags(final Plot plot) {
-        return getSettingFlags(plot.world, plot.settings);
+        if (!plot.hasOwner()) {
+            return null;
+        }
+        return getSettingFlags(plot.world, plot.getSettings());
     }
 
     public static HashMap<String, Flag> getPlotFlags(final String world, final PlotSettings settings, final boolean ignorePluginflags) {
@@ -260,17 +266,17 @@ public class FlagManager {
     }
 
     public static boolean removePlotFlag(final Plot plot, final String id) {
-        Flag flag = plot.settings.flags.remove(id);
+        Flag flag = plot.getSettings().flags.remove(id);
         if (flag == null) {
             return false;
         }
         final boolean result = EventUtil.manager.callFlagRemove(flag, plot);
         if (!result) {
-            plot.settings.flags.put(id, flag);
+            plot.getSettings().flags.put(id, flag);
             return false;
         }
         MainUtil.reEnterPlot(plot);
-        DBFunc.setFlags(plot, plot.settings.flags.values());
+        DBFunc.setFlags(plot, plot.getSettings().flags.values());
         return true;
     }
 
@@ -290,19 +296,19 @@ public class FlagManager {
 
     public static void setPlotFlags(final Plot plot, final Set<Flag> flags) {
         if (flags != null && flags.size() != 0) {
-            plot.settings.flags.clear();
+            plot.getSettings().flags.clear();
             for (Flag flag : flags) {
-                plot.settings.flags.put(flag.getKey(), flag);
+                plot.getSettings().flags.put(flag.getKey(), flag);
             }
         }
-        else if (plot.settings.flags.size() == 0) {
+        else if (plot.getSettings().flags.size() == 0) {
             return;
         }
         else {
-            plot.settings.flags.clear();
+            plot.getSettings().flags.clear();
         }
         MainUtil.reEnterPlot(plot);
-        DBFunc.setFlags(plot, plot.settings.flags.values());
+        DBFunc.setFlags(plot, plot.getSettings().flags.values());
     }
 
     public static void setClusterFlags(final PlotCluster cluster, final Set<Flag> flags) {
