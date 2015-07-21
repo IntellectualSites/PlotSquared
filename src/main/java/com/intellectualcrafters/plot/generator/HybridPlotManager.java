@@ -91,12 +91,12 @@ public class HybridPlotManager extends ClassicPlotManager {
     public void createSchemAbs(HybridPlotWorld hpw, Location pos1, Location pos2, int height, boolean clear) {
         final int size = hpw.SIZE;
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+            short absX = (short) ((x - hpw.ROAD_OFFSET_X) % size);
+            if (absX < 0) {
+                absX += size;
+            }
             for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                short absX = (short) (x % size);
-                short absZ = (short) (z % size);
-                if (absX < 0) {
-                    absX += size;
-                }
+                short absZ = (short) ((z - hpw.ROAD_OFFSET_Z) % size);
                 if (absZ < 0) {
                     absZ += size;
                 }
@@ -171,8 +171,12 @@ public class HybridPlotManager extends ClassicPlotManager {
     public boolean clearPlot(final PlotWorld plotworld, final Plot plot, final boolean isDelete, final Runnable whenDone) {
         final String world = plotworld.worldname;
         final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
+        
         final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.id);
+        
+        System.out.print(pos1);
+        System.out.print(pos2);
         
         setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
         final int p1x = pos1.getX();
@@ -261,7 +265,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!plotworld.PLOT_SCHEMATIC) {
             return;
         }
-        createSchemAbs(plotworld, l1.add(1,0,1), l2, plotworld.PLOT_HEIGHT, false);
+        createSchemAbs(plotworld, l1, l2, plotworld.PLOT_HEIGHT, false);
     }
     
 }

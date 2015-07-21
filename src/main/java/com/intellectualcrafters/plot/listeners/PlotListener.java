@@ -202,7 +202,7 @@ public class PlotListener extends APlotListener {
                         @Override
                         public void run() {
                             Plot lastPlot = (Plot) pp.getMeta("lastplot");
-                            if (plot.id.equals(lastPlot.id)) {
+                            if (lastPlot != null && plot.id.equals(lastPlot.id)) {
                                 Map<String, String> replacements = new HashMap<>();
                                 replacements.put("%x%", lastPlot.id.x + "");
                                 replacements.put("%z%", lastPlot.id.y + "");
