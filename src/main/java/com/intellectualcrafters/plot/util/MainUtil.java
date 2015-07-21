@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -30,6 +31,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -66,6 +68,28 @@ public class MainUtil {
             return ClusterManager.getCluster(location) != null;
         }
         return true;
+    }
+    
+    public static List<PlotPlayer> getPlayersInPlot(Plot plot) {
+        ArrayList<PlotPlayer> players = new ArrayList<>();
+        for (PlotPlayer pp : UUIDHandler.players.values()) {
+            if (plot.equals(MainUtil.getPlot(pp.getLocation()))) {
+                players.add(pp);
+            }
+        }
+        return players;
+    }
+    
+    public static void reEnterPlot(final Plot plot) {
+        TaskManager.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                for (PlotPlayer pp : getPlayersInPlot(plot)) {
+                    PlotListener.manager.plotExit(pp, plot);
+                    PlotListener.manager.plotEntry(pp, plot);
+                }
+            }
+        }, 1);
     }
     
     public static Location getPlotCenter(Plot plot) {

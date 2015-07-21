@@ -84,9 +84,6 @@ public class Deny extends SubCommand {
         plot.addDenied(uuid);
         EventUtil.manager.callDenied(plr, plot, uuid, true);
         MainUtil.sendMessage(plr, C.DENIED_ADDED);
-        // if (!uuid.equals(DBFunc.everyone)) {
-        //    PS.get().IMP.handleKick(uuid, C.YOU_GOT_DENIED);
-        //}
         if (!uuid.equals(DBFunc.everyone)) {
             handleKick(uuid, plot);
         }

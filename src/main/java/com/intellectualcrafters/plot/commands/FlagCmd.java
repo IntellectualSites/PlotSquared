@@ -130,7 +130,6 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(player, C.FLAG_ADDED);
-                APlotListener.manager.plotEntry(player, plot);
                 return true;
             }
             case "remove": {
@@ -168,7 +167,6 @@ public class FlagCmd extends SubCommand {
                     }
                 }
                 MainUtil.sendMessage(player, C.FLAG_REMOVED);
-                APlotListener.manager.plotEntry(player, plot);
                 return true;
             }
             case "add": {
@@ -208,7 +206,6 @@ public class FlagCmd extends SubCommand {
                 }
                 DBFunc.setFlags(plot, plot.settings.flags.values());
                 MainUtil.sendMessage(player, C.FLAG_ADDED);
-                APlotListener.manager.plotEntry(player, plot);
                 return true;
             }
             case "list": {

@@ -60,13 +60,6 @@ PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox") {
         else {
             FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), id));
         }
-        TaskManager.runTaskLater(new Runnable() {
-            @Override
-            public void run() {
-                 PlotListener.manager.plotEntry(player, plot);                        
-            }
-        }, 1);
-        close();
         return false;
     }
 };

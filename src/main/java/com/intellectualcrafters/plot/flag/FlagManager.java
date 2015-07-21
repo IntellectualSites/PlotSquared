@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * Flag Manager Utility
@@ -203,6 +204,7 @@ public class FlagManager {
             return false;
         }
         plot.settings.flags.put(flag.getKey(), flag);
+        MainUtil.reEnterPlot(plot);
         DBFunc.setFlags(plot, plot.settings.flags.values());
         return true;
     }
@@ -267,6 +269,7 @@ public class FlagManager {
             plot.settings.flags.put(id, flag);
             return false;
         }
+        MainUtil.reEnterPlot(plot);
         DBFunc.setFlags(plot, plot.settings.flags.values());
         return true;
     }
@@ -298,6 +301,7 @@ public class FlagManager {
         else {
             plot.settings.flags.clear();
         }
+        MainUtil.reEnterPlot(plot);
         DBFunc.setFlags(plot, plot.settings.flags.values());
     }
 
