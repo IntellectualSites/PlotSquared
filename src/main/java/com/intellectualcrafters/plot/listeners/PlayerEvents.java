@@ -293,7 +293,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
 
     @EventHandler
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {
-        final String message = event.getMessage().toLowerCase().replaceAll("/", "");
+        final String message = event.getMessage().toLowerCase().replaceAll("/", "").trim();
+        if (message.length() == 0) {
+            return;
+        }
         String[] split = message.split(" ");
         PluginCommand cmd = Bukkit.getServer().getPluginCommand(split[0]);
         if (cmd == null) {
