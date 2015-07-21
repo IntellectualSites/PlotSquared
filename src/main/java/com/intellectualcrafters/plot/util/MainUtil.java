@@ -161,7 +161,7 @@ public class MainUtil {
                 count++;
             }
             if (alias != null && alias.equals(plot.settings.getAlias())) {
-                count++;
+                count+=2;
             }
             if (count != 0) {
                 plotList.get(count - 1).add(plot);
