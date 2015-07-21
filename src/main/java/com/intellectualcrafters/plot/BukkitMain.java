@@ -375,7 +375,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                             case ZOMBIE:
                             default: {
                                 Location loc = entity.getLocation();
-                                if (manager.getPlotIdAbs(pw, loc.getBlockX(), 0, loc.getBlockZ()) == null) {
+                                if (MainUtil.isPlotRoad(BukkitUtil.getLocation(loc))) {
                                     entity.remove();
                                 }
                                 break;

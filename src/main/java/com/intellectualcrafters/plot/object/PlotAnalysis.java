@@ -167,7 +167,13 @@ public class PlotAnalysis {
                         public void run() {
                             analyzePlot(queuePlot, new RunnableVal<PlotAnalysis>() {
                                 public void run() {
+                                    try {
+                                        wait(10000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                     synchronized (lock) {
+                                        MainUtil.runners.remove(queuePlot);
                                         lock.notify();
                                     }
                                 }
