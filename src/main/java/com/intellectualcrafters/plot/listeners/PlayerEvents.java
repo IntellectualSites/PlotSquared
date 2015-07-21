@@ -24,11 +24,14 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -1762,7 +1765,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         else if (damager instanceof Projectile) {
             Projectile projectile = (Projectile) damager;
             ProjectileSource shooter = projectile.getShooter();
-            if (shooter.getClass() == Player.class) { // shooter is player
+            if (shooter instanceof Player) { // shooter is player
                 player = (Player) shooter;
             }
             else { // shooter is not player
@@ -1772,11 +1775,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         else { // Attacker is not player
             player = null;
         }
-        
         if (player != null) {
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             if (victim instanceof Hanging) { // hanging
-                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "hanging-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
+                if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "hanging-break") || plot.isAdded(pp.getUUID())))) {
                     return;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.break." + stub)) {
@@ -1786,7 +1788,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
             }
             else if (victim instanceof ArmorStand) {
-                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "misc-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
+                if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "misc-break") || plot.isAdded(pp.getUUID())))) {
                     return;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.break." + stub)) {
@@ -1795,8 +1797,8 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
             }
-            else if (victim instanceof Monster) { // victim is monster
-                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "hostile-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
+            else if (victim instanceof Monster || victim instanceof EnderDragon) { // victim is monster
+                if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "hostile-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
                     return;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
@@ -1806,17 +1808,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 }
             }
             else if (victim instanceof Tameable) { // victim is tameable
-                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "tamed-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
-                    return;
-                }
-                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
-                    e.setCancelled(true);
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve." + stub);
-                    return;
-                }
-            }
-            else if (victim instanceof Animals) { // victim is animal
-                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "animal-break") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
+                if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "tamed-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
                     return;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
@@ -1842,16 +1834,26 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                     return;
                 }
             }
+            else if (victim instanceof Creature) { // victim is animal
+                if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "animal-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
+                    return;
+                }
+                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
+                    e.setCancelled(true);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve." + stub);
+                    return;
+                }
+            }
             else if (victim instanceof Vehicle) { // Vehicles are managed in vehicle destroy event
                 return;
             }
             else { // victim is something else
-                if (!Permissions.hasPermission(pp, "plots.admin.pvp." + stub)) {
-                    e.setCancelled(true);
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pvp." + stub);
+                if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
                     return;
                 }
-                if (plot != null && FlagManager.isPlotFlagTrue(plot, "pvp")) {
+                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
+                    e.setCancelled(true);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.pve." + stub);
                     return;
                 }
             }
