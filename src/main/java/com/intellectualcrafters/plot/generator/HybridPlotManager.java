@@ -175,9 +175,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.id);
         
-        System.out.print(pos1);
-        System.out.print(pos2);
-        
         setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
         final int p1x = pos1.getX();
         final int p1z = pos1.getZ();

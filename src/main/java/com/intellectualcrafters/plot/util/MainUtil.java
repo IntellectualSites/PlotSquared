@@ -98,6 +98,85 @@ public class MainUtil {
         return new Location(plot.world, bot.getX() + (top.getX() - bot.getX()) / 2, 0, bot.getZ() + (top.getZ() - bot.getZ()) / 2);
     }
     
+    public List<Plot> getPlotsBySearch(String search) {
+        String[] split = search.split(" ");
+        int size = split.length * 2;
+
+        List<UUID> uuids = new ArrayList<>();
+        PlotId id = null;
+        String world = null;
+        String alias = null;
+        
+        for (String term : split) {
+            try {
+                UUID uuid = UUIDHandler.getUUID(term);
+                if (uuid == null) {
+                    uuid = UUID.fromString(term);
+                }
+                if (uuid != null) {
+                    uuids.add(uuid);
+                    continue;
+                }
+            }
+            catch (Exception e) {
+                id = PlotId.fromString(term);
+                if (id != null) {
+                    continue;
+                }
+                for (String pw : PS.get().getPlotWorlds()) {
+                    if (pw.equalsIgnoreCase(term)) {
+                        world = pw;
+                        break;
+                    }
+                }
+                if (world == null) {
+                    alias = term;
+                }
+            }
+        }
+        
+        ArrayList<ArrayList<Plot>> plotList = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            plotList.add(new ArrayList<Plot>());
+        }
+        
+        for (Plot plot : PS.get().getPlots()) {
+            int count = 0;
+            if (uuids.size() > 0) {
+                for (UUID uuid : uuids) {
+                    if (plot.isOwner(uuid)) {
+                        count += 2;
+                    }
+                    else if (plot.isAdded(uuid)) {
+                        count++;
+                    }
+                }
+            }
+            if (id != null) {
+                if (plot.id.equals(id)) {
+                    count++;
+                }
+            }
+            if (world != null && plot.world.equals(world)) {
+                count++;
+            }
+            if (alias != null && alias.equals(plot.settings.getAlias())) {
+                count++;
+            }
+            if (count != 0) {
+                plotList.get(count - 1).add(plot);
+            }
+        }
+        
+        List<Plot> plots = new ArrayList<Plot>();
+        for (int i = plotList.size() - 1; i >= 0; i--) {
+            if (plotList.get(i).size() > 0) {
+                plots.addAll(plotList.get(i));
+            }
+        }
+        return plots;
+    }
+    
     public static Plot getPlotFromString(PlotPlayer player, String arg, boolean message) {
         if (arg == null) {
             if (player == null) {
