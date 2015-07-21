@@ -17,6 +17,13 @@ public class MathMan {
         return count / array.length;
     }
     
+    public static int getPositiveId(int i) {
+        if (i < 0) {
+            return -i*2 - 1;
+        }
+        return i * 2;
+    }
+    
     public static double getSD(double[] array, double av) {
         double sd = 0;
         for (int i=0; i<array.length;i++)

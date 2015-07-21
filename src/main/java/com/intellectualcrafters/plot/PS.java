@@ -55,6 +55,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotFilter;
 import com.intellectualcrafters.plot.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -70,6 +71,8 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.Logger;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
@@ -356,6 +359,33 @@ public class PS {
     public HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }
+    
+    /**
+     * A more generic way to filter plots - make your own method if you need complex filters
+     * @param filters
+     * @return
+     */
+    public Set<Plot> getPlots(PlotFilter... filters) {
+        HashSet<Plot> set = new HashSet<>();
+        for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            for (PlotFilter filter : filters) {
+                if (!filter.allowsWorld(entry.getKey())) {
+                    continue;
+                }
+            }
+            for (Plot plot : entry.getValue().values()) {
+                for (PlotFilter filter : filters) {
+                    if (!filter.allowsPlot(plot)) {
+                        continue;
+                    }
+                }
+                set.add(plot);
+            }
+        }
+        return set;
+    }
+    
+    
 
 
     /**
@@ -398,67 +428,142 @@ public class PS {
 
 
     /**
-     * Sort a collection of plots by the hashcode
+     * Sort a collection of plots by the hashcode (assumes that all plots are in the same world)
      * @param plots
      * @return ArrayList of plot
      */
+    @Deprecated
     public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
-        ArrayList<Plot> newPlots = new ArrayList<>();
-        newPlots.addAll(plots);
-        Collections.sort(newPlots, new Comparator<Plot>() {
-
-            public int compare(Plot p1, Plot p2) {
-                int h1 = p1.hashCode();
-                int h2 = p2.hashCode();
-                if (h1 < 0) {
-                    h1 = -h1*2 - 1;
-                }
-                else {
-                    h1*=2;
-                }
-                if (h2 < 0) {
-                    h2 = -h2*2 - 1;
-                }
-                else {
-                    h2*=2;
-                }
-                return h1-h2;
-            }
-        });
-        return newPlots;
+        return sortPlotsByWorld(plots);
     }
 
-
+    /**
+     * Sort plots by hashcode
+     * @param plots
+     * @return
+     */
+    public ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
+        int hardmax = 256000;
+        int max = 0;
+        int overflowSize = 0;
+        for (Plot plot : plots) {
+            int hash = MathMan.getPositiveId(plot.hashCode());
+            if (hash > max) {
+                if (hash >= hardmax) {
+                    overflowSize++;
+                }
+                else {
+                    max = hash;
+                }
+            }
+        }
+        hardmax = Math.min(hardmax, max);
+        Plot[] cache = new Plot[hardmax + 1];
+        List<Plot> overflow = new ArrayList<Plot>(overflowSize);
+        for (Plot plot : plots) {
+            int hash = MathMan.getPositiveId(plot.hashCode());
+            if (hash < hardmax) {
+                cache[hash] = plot;
+            }
+            else {
+                overflow.add(plot);
+            }
+        }
+        Plot[] overflowArray = overflow.toArray(new Plot[overflow.size()]);
+        sortPlotsByHash(overflowArray);
+        ArrayList<Plot> result = new ArrayList<Plot>(cache.length + overflowArray.length);
+        for (Plot plot : cache) {
+            if (plot != null) {
+                result.add(plot);
+            }
+        }
+        for (Plot plot : overflowArray) {
+            result.add(plot);
+        }
+        return result;
+    }
+    
+    public static void sortPlotsByHash(Plot[] input) {
+        final int SIZE = 100;
+        List<Plot>[] bucket = new ArrayList[SIZE];
+        for (int i = 0; i < bucket.length; i++) {
+            bucket[i] = new ArrayList<Plot>();
+        }
+        boolean maxLength = false;
+        int tmp = -1, placement = 1;
+        while (!maxLength) {
+            maxLength = true;
+            for (Plot i : input) {
+                tmp = MathMan.getPositiveId(i.hashCode()) / placement;
+                bucket[tmp % SIZE].add(i);
+                if (maxLength && tmp > 0) {
+                    maxLength = false;
+                }
+            }
+            int a = 0;
+            for (int b = 0; b < SIZE; b++) {
+                for (Plot i : bucket[b]) {
+                    input[a++] = i;
+                }
+                bucket[b].clear();
+            }
+            placement *= SIZE;
+        }
+    }
+    
     /**
      * Sort a collection of plots by world (with a priority world), then by hashcode
      * @param plots
-     * @param priorityWorld
+     * @param priorityWorld - Use "world" or "gibberish" if you don't care
      * @see #sortPlotsByWorld(Collection) to sort plots by world, then by hashcode
      * @see #sortPlots(Collection) to sort plots just by hashcode
      * @return ArrayList of plot
      */
     public ArrayList<Plot> sortPlots(Collection<Plot> plots, final String priorityWorld) {
-        ArrayList<Plot> newPlots = new ArrayList<>();
-        HashMap<PlotId, Plot> worldPlots = this.plots.get(priorityWorld);
-        if (worldPlots != null) {
-            for (Plot plot : sortPlots(worldPlots.values())) {
-                if (plots.contains(plot)) {
-                    newPlots.add(plot);
+        // group by world
+        // sort each
+        HashMap<String, Collection<Plot>> map = new HashMap<>();
+        ArrayList<String> worlds = new ArrayList<String>(getPlotWorlds());
+        int totalSize = 0;
+        for (Entry<String, HashMap<PlotId, Plot>> entry : this.plots.entrySet()) {
+            totalSize += entry.getValue().size();
+        }
+        if (plots.size() == totalSize) {
+            for (Entry<String, HashMap<PlotId, Plot>> entry : this.plots.entrySet()) {
+                map.put(entry.getKey(), entry.getValue().values());
+            }
+        }
+        else {
+            for (String world : worlds) {
+                map.put(world, new ArrayList<Plot>(plots.size() / worlds.size()));
+            }
+            Collection<Plot> lastList = null;
+            String lastWorld = "";
+            for (Plot plot : plots) {
+                if (StringMan.isEqual(lastWorld, plot.world)) {
+                    lastList.add(plot);
+                }
+                else {
+                    lastWorld = plot.world;
+                    lastList = map.get(lastWorld);
+                    lastList.add(plot);
                 }
             }
         }
-        ArrayList<String> worlds = new ArrayList<>(this.plots.keySet());
-        Collections.sort(worlds);
+        Collections.sort(worlds, new Comparator<String>() {
+            @Override
+            public int compare(String a, String b) {
+                if (StringMan.isEqual(a, priorityWorld)) {
+                    return -1;
+                }
+                return a.hashCode() - b.hashCode();
+            }
+        });
+        ArrayList<Plot> toReturn = new ArrayList<Plot>(plots.size());
         for (String world : worlds) {
-            if (!world.equals(priorityWorld)) {
-                for (Plot plot : this.plots.get(world).values()) {
-                    if (plots.contains(plot)) {
-                        newPlots.add(plot);
-                    }
-                }
-            }
+            toReturn.addAll(sortPlotsByHash(map.get(world)));
         }
-        return newPlots;
+        return toReturn;
     }
 
 
@@ -472,10 +577,11 @@ public class PS {
     public ArrayList<Plot> sortPlotsByWorld(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         ArrayList<String> worlds = new ArrayList<>(this.plots.keySet());
+        HashSet<Plot> set = new HashSet<>(plots);
         Collections.sort(worlds);
         for (String world : worlds) {
             for (Plot plot : this.plots.get(world).values()) {
-                if (plots.contains(plot)) {
+                if (set.contains(plot)) {
                     newPlots.add(plot);
                 }
             }
@@ -941,9 +1047,9 @@ public class PS {
         catch (Exception e) {
             MainUtil.sendMessage(sender, "Failed to update PlotSquared");
             MainUtil.sendMessage(sender, " - Please update manually");
-            System.out.println("============ Stacktrace ============");
+            log("============ Stacktrace ============");
             e.printStackTrace();
-            System.out.println("====================================");
+            log("====================================");
         }
         return false;
     }

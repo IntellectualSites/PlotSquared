@@ -317,19 +317,5 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 });
             }
         });
-        
-        // end async
-        
-        
-        
-        
-        
-        // create schematic one chunk at a time
-        // load chunk sync
-        // get blocks async
-        // add to schematic async
-        // save final async
     }
-
-    
 }

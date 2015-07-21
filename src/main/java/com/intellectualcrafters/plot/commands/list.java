@@ -307,7 +307,7 @@ public class list extends SubCommand {
         }
         
         if (plots == null) {
-            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison(args[0], new String[] { "mine", "shared", "world", "all" }).getBestMatch());
+            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison<String>(args[0], new String[] { "mine", "shared", "world", "all" }).getBestMatch());
             return false;
         }
         

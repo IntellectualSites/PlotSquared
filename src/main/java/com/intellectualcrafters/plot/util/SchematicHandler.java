@@ -363,7 +363,6 @@ public abstract class SchematicHandler {
 //                    }
 //                    result.append(buffer, 0, r);
 //                }
-//                System.out.print(result.toString() + " | " + result.length());
 //                if (!result.equals("The file plot.schematic has been uploaded.")) {
 //                    return null;
 //                }

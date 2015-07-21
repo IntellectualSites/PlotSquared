@@ -40,4 +40,9 @@ public class StringMan {
         }
         return sb.toString();
     }
+    
+    public static boolean isEqual(String a, String b ) {
+        return (a == b || (a.length() == b.length() && a.hashCode() == b.hashCode() && a.equals(b)));
+    }
+    
 }
