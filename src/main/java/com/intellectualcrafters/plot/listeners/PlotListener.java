@@ -110,10 +110,9 @@ public class PlotListener extends APlotListener {
         }
         pp.setMeta("lastplot", plot);
         final Player player = ((BukkitPlayer) pp).player;
+        final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
+        Bukkit.getPluginManager().callEvent(callEvent);
         if (plot.hasOwner()) {
-            final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
-            Bukkit.getPluginManager().callEvent(callEvent);
-            
             HashMap<String, Flag> flags = FlagManager.getPlotFlags(plot);
             int size = flags.size();
             boolean titles = Settings.TITLES;
@@ -229,29 +228,31 @@ public class PlotListener extends APlotListener {
         Player player = ((BukkitPlayer) pp).player;
         final PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
         Bukkit.getPluginManager().callEvent(callEvent);
-        if (FlagManager.getPlotFlag(plot, "fly") != null) {
-            player.setAllowFlight(Bukkit.getAllowFlight());
-        }
-        if (FlagManager.getPlotFlag(plot, "gamemode") != null) {
-            if (player.getGameMode() != Bukkit.getDefaultGameMode()) {
-                if (!player.hasPermission("plots.gamemode.bypass")) {
-                    player.setGameMode(Bukkit.getDefaultGameMode());
-                }
-                else {
-                    MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.world, "{gamemode}", Bukkit.getDefaultGameMode().name().toLowerCase()));
+        if (plot.hasOwner()) {
+            if (FlagManager.getPlotFlag(plot, "fly") != null) {
+                player.setAllowFlight(Bukkit.getAllowFlight());
+            }
+            if (FlagManager.getPlotFlag(plot, "gamemode") != null) {
+                if (player.getGameMode() != Bukkit.getDefaultGameMode()) {
+                    if (!player.hasPermission("plots.gamemode.bypass")) {
+                        player.setGameMode(Bukkit.getDefaultGameMode());
+                    }
+                    else {
+                        MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.world, "{gamemode}", Bukkit.getDefaultGameMode().name().toLowerCase()));
+                    }
                 }
             }
-        }
-        if (FlagManager.getPlotFlag(plot, "time") != null) {
-            player.resetPlayerTime();
-        }
-        if (FlagManager.getPlotFlag(plot, "weather") != null) {
-            player.resetPlayerWeather();
-        }
-        org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
-        if (lastLoc != null) {
-            pp.deleteMeta("music");
-            player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
+            if (FlagManager.getPlotFlag(plot, "time") != null) {
+                player.resetPlayerTime();
+            }
+            if (FlagManager.getPlotFlag(plot, "weather") != null) {
+                player.resetPlayerWeather();
+            }
+            org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
+            if (lastLoc != null) {
+                pp.deleteMeta("music");
+                player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
+            }
         }
         return true;
     }
