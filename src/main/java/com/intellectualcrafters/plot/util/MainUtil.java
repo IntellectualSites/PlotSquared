@@ -98,7 +98,7 @@ public class MainUtil {
         return new Location(plot.world, bot.getX() + (top.getX() - bot.getX()) / 2, 0, bot.getZ() + (top.getZ() - bot.getZ()) / 2);
     }
     
-    public List<Plot> getPlotsBySearch(String search) {
+    public static List<Plot> getPlotsBySearch(String search) {
         String[] split = search.split(" ");
         int size = split.length * 2;
 
