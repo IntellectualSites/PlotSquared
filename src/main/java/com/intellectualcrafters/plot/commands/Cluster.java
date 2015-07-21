@@ -98,8 +98,8 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // check pos1 / pos2
-                final PlotId pos1 = MainUtil.parseId(args[2]);
-                final PlotId pos2 = MainUtil.parseId(args[3]);
+                PlotId pos1 = MainUtil.parseId(args[2]);
+                PlotId pos2 = MainUtil.parseId(args[3]);
                 if ((pos1 == null) || (pos2 == null)) {
                     MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
@@ -115,9 +115,13 @@ public class Cluster extends SubCommand {
                 //check if overlap
                 final PlotClusterId id = new PlotClusterId(pos1, pos2);
                 final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(plr.getLocation().getWorld(), id);
-                if ((intersects.size() > 0) || (pos2.x < pos1.x) || (pos2.y < pos1.y)) {
+                if ((intersects.size() > 0)) {
                     MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, intersects.size() + "");
                     return false;
+                }
+                if ((pos2.x < pos1.x) || (pos2.y < pos1.y) ) {
+                    pos1 = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
+                    pos2 = new PlotId(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
                 }
                 // create cluster
                 final String world = plr.getLocation().getWorld();
