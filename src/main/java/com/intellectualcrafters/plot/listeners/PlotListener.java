@@ -171,14 +171,15 @@ public class PlotListener extends APlotListener {
                             player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
                             if (id == 0) {
                                 pp.deleteMeta("music");
-                                return true;
                             }
                         }
-                        try {
-                            pp.setMeta("music", loc);
-                            player.playEffect(loc, Effect.RECORD_PLAY, Material.getMaterial(id));
+                        if (id != 0) {
+                            try {
+                                pp.setMeta("music", loc);
+                                player.playEffect(loc, Effect.RECORD_PLAY, Material.getMaterial(id));
+                            }
+                            catch (Exception e) {}
                         }
-                        catch (Exception e) {}
                     }
                 }
                 else {
@@ -196,16 +197,16 @@ public class PlotListener extends APlotListener {
             else {
                 return true;
             }
-            if (titles) {
+            if (titles) { 
                 if (C.TITLE_ENTERED_PLOT.s().length() != 0 || C.TITLE_ENTERED_PLOT_SUB.s().length() != 0) {
                     TaskManager.runTaskLaterAsync(new Runnable() {
                         @Override
                         public void run() {
-                            PlotId id = (PlotId) pp.getMeta("lastplotid");
-                            if (plot.id.equals(id)) {
+                            Plot lastPlot = (Plot) pp.getMeta("lastplot");
+                            if (plot.id.equals(lastPlot.id)) {
                                 Map<String, String> replacements = new HashMap<>();
-                                replacements.put("%x%", id.x + "");
-                                replacements.put("%z%", id.y + "");
+                                replacements.put("%x%", lastPlot.id.x + "");
+                                replacements.put("%z%", lastPlot.id.y + "");
                                 replacements.put("%world%", plot.world);
                                 replacements.put("%greeting%", greeting);
                                 replacements.put("%alias", plot.toString());
