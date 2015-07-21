@@ -74,6 +74,8 @@ import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -90,6 +92,7 @@ import org.bukkit.util.Vector;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.listeners.worldedit.WEManager;
@@ -394,6 +397,18 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
             if ((x > border) || (z > border)) {
                 chunk.unload(false, true);
             }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onConnect(final PlayerLoginEvent event) {
+        Player player = event.getPlayer();
+        String name = player.getName();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        if (name.equals("PlotSquared") || pp.getUUID().equals(DBFunc.everyone)) {
+            event.disallow(Result.KICK_WHITELIST, "This account is reserved");
+            BukkitUtil.removePlayer(pp.getName());
+            return;
         }
     }
 
