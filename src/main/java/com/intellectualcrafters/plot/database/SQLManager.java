@@ -868,6 +868,14 @@ public class SQLManager implements AbstractDB {
                     }
                 }
             }
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate("DELETE FROM `" + this.prefix + "plot_denied` WHERE `plot_plot_id` NOT IN (SELECT `id` FROM `" + this.prefix + "plot`)");
+                statement.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            
             rs.close();
             try (Statement statement = connection.createStatement();) {
                 for (String table : new String[]{"plot_denied", "plot_helpers", "plot_trusted"} ) {
@@ -882,6 +890,7 @@ public class SQLManager implements AbstractDB {
                         PS.log("RESTORING: " + table);
                     }
                 }
+                statement.close();
             }
             catch (Exception e2) {
                 e2.printStackTrace();
