@@ -28,11 +28,13 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -91,15 +93,10 @@ public class Deny extends SubCommand {
     }
 
     private void handleKick(final UUID uuid, final Plot plot) {
-        Player p = Bukkit.getPlayer(uuid);
-        if (p != null && p.isOnline()) {
-            if (PS.get().isPlotWorld(p.getWorld().getName())) {
-                Plot pl = MainUtil.getPlot(BukkitUtil.getLocation(p));
-                if (pl != null && pl.equals(plot)) {
-                    p.teleport(p.getWorld().getSpawnLocation());
-                    MainUtil.sendMessage(BukkitUtil.getPlayer(p), C.YOU_GOT_DENIED);
-                }
-            }
+        PlotPlayer pp = UUIDHandler.getPlayer(uuid);
+        if (pp != null && plot.equals(MainUtil.getPlot(pp.getLocation()))) {
+            pp.teleport(BlockManager.manager.getSpawn(pp.getLocation().getWorld()));
+            MainUtil.sendMessage(pp, C.YOU_GOT_DENIED);
         }
     }
 }

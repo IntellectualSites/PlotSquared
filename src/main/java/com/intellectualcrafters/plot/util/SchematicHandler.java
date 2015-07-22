@@ -447,8 +447,9 @@ public abstract class SchematicHandler {
     public void getCompoundTag(final String world, final PlotId id, RunnableVal<CompoundTag> whenDone) {
         if (!PS.get().getPlots(world).containsKey(id)) {
             whenDone.run();
+            return;
         }
-        final Location pos1 = MainUtil.getPlotBottomLoc(world, id).add(1, 0, 1);
+        final Location pos1 = MainUtil.getPlotBottomLoc(world, id).add(1, -1, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(world, id);
         getCompoundTag(world, pos1, pos2, whenDone);
     }
