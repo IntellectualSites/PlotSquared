@@ -1,12 +1,21 @@
 package com.intellectualcrafters.plot.util.bukkit;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
+import com.intellectualcrafters.plot.BukkitMain;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.entity.EntityWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
+import com.intellectualcrafters.plot.util.TaskManager;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -44,22 +53,12 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.BukkitMain;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.entity.EntityWrapper;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
-import com.intellectualcrafters.plot.util.TaskManager;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class BukkitChunkManager extends ChunkManager {
     @Override
@@ -127,7 +126,7 @@ public class BukkitChunkManager extends ChunkManager {
             }
         });
     }
-    
+
     @Override
     public void deleteRegionFiles(final String world, final List<ChunkLoc> chunks) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -877,7 +876,10 @@ public class BukkitChunkManager extends ChunkManager {
                 if (entity instanceof Player) {
                     final Player player = (Player) entity;
                     final PlotPlayer pp = BukkitUtil.getPlayer(player);
-                    pp.teleport(MainUtil.getDefaultHome(plot));
+                    final Location plotHome = MainUtil.getDefaultHome(plot);
+                    if (pp.getLocation().getY() <= plotHome.getY()) {
+                        pp.teleport(plotHome);
+                    }
                 } else {
                     entity.remove();
                 }
