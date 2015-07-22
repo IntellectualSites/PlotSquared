@@ -89,7 +89,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         if (schem3 != null) {
             this.PLOT_SCHEMATIC = true;
-            final DataCollection[] blocks3 = schem3.getBlockCollection();
+            byte[] ids = schem3.getIds();
+            byte[] datas = schem3.getDatas();
             final Dimension d3 = schem3.getSchematicDimension();
             final short w3 = (short) d3.getX();
             final short l3 = (short) d3.getZ();
@@ -106,8 +107,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
                         final int index = (y * w3 * l3) + (z * w3) + x;
-                        final short id = blocks3[index].getBlock();
-                        final byte data = blocks3[index].getData();
+                        final short id = ids[index];
+                        final byte data = ids[index];
                         if (id != 0) {
                             addOverlayBlock((short) (x + shift + oddshift + center_shift_x), (y), (short) (z + shift + oddshift + center_shift_z), id, data, false);
                         }
@@ -139,8 +140,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         this.ROAD_SCHEMATIC_ENABLED = true;
         // Do not populate road if using schematic population
         this.ROAD_BLOCK = new PlotBlock(this.ROAD_BLOCK.id, (byte) 0);
-        final DataCollection[] blocks1 = schem1.getBlockCollection();
-        final DataCollection[] blocks2 = schem2.getBlockCollection();
+        
+        byte[] ids1 = schem1.getIds();
+        byte[] datas1 = schem1.getDatas();
+        
+        byte[] ids2 = schem2.getIds();
+        byte[] datas2 = schem2.getDatas();
+        
         final Dimension d1 = schem1.getSchematicDimension();
         final short w1 = (short) d1.getX();
         final short l1 = (short) d1.getZ();
@@ -154,8 +160,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             for (short z = 0; z < l1; z++) {
                 for (short y = 0; y < h1; y++) {
                     final int index = (y * w1 * l1) + (z * w1) + x;
-                    final short id = blocks1[index].getBlock();
-                    final byte data = blocks1[index].getData();
+                    final short id = ids1[index];
+                    final byte data = datas1[index];
                     if (id != 0) {
                         addOverlayBlock((short) (x - (shift)), (y), (short) (z + shift + oddshift), id, data, false);
                         addOverlayBlock((short) (z + shift + oddshift), (y), (short) (x - shift), id, data, true);
@@ -167,8 +173,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
                     final int index = (y * w2 * l2) + (z * w2) + x;
-                    final short id = blocks2[index].getBlock();
-                    final byte data = blocks2[index].getData();
+                    final short id = ids2[index];
+                    final byte data = datas2[index];
                     if (id != 0) {
                         addOverlayBlock((short) (x - shift), (y), (short) (z - shift), id, data, false);
                     }

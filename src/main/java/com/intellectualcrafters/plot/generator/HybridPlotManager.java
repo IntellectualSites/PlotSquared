@@ -83,7 +83,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location bot = getPlotBottomLocAbs(hpw, id2);
         Location top = getPlotTopLocAbs(hpw, id);
         Location pos1 = new Location(plot.world, top.getX() + 1, 0, bot.getZ());
-        Location pos2 = new Location(plot.world, bot.getX(), 256, top.getZ() + 1);
+        Location pos2 = new Location(plot.world, bot.getX(), 255, top.getZ() + 1);
         createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
         return true;
     }
@@ -139,7 +139,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location bot = getPlotBottomLocAbs(hpw, id2);
         Location top = getPlotTopLocAbs(hpw, id);
         Location pos1 = new Location(plot.world, bot.getX(), 0, top.getZ() + 1);
-        Location pos2 = new Location(plot.world, top.getX() + 1, 256, bot.getZ());
+        Location pos2 = new Location(plot.world, top.getX() + 1, 255, bot.getZ());
         createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
         return true;
     }

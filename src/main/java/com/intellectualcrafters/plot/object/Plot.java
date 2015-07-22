@@ -39,7 +39,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
  * @author Empire92
  */
 @SuppressWarnings("javadoc")
-public class Plot implements Cloneable {
+public class Plot {
     /**
      * plot ID
      */
@@ -249,20 +249,6 @@ public class Plot implements Cloneable {
             this.members = new HashSet<>();
         }
         return this.members;
-    }
-
-    /**
-     * Get a clone of the plot
-     *
-     * @return Plot
-     */
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        final Plot p = (Plot) super.clone();
-        if (!p.equals(this) || (p != this)) {
-            return new Plot(this.id, this.owner, this.trusted, this.members, this.denied, this.settings.getAlias(), this.settings.getPosition(), this.settings.flags.values(), this.world, this.settings.getMerged());
-        }
-        return p;
     }
 
     /**

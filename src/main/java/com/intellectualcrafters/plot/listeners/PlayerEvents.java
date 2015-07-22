@@ -1950,10 +1950,10 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 Block block = event.getBlockPlaced();
                 sendBlockChange(block.getLocation(), block.getType(), block.getData());
             }
-            int temporary;
-            if (!player.hasPermission("plots.admin.build.heightlimit") && loc.getY() >= (temporary = PS.get().getPlotWorld(world).MAX_BUILD_HEIGHT)) {
+            PlotWorld pw = PS.get().getPlotWorld(loc.getWorld());
+            if (loc.getY() >= pw.MAX_BUILD_HEIGHT && !Permissions.hasPermission(pp, "plots.admin.build.heightlimit")) {
                 event.setCancelled(true);
-                MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", "" + temporary));
+                MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", "" + pw.MAX_BUILD_HEIGHT));
                 return;
             }
             return;

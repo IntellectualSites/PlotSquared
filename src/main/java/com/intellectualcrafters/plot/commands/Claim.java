@@ -27,6 +27,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -72,7 +73,17 @@ public class Claim extends SubCommand {
                         sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                     }
                 }
-                SchematicHandler.manager.paste(sch, plot2, 0, 0);
+                SchematicHandler.manager.paste(sch, plot2, 0, 0, new RunnableVal<Boolean>() {
+                    @Override
+                    public void run() {
+                        if (value) {
+                            MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
+                        }
+                        else {
+                            MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
+                        }
+                    }
+                });
             }
             PS.get().getPlotManager(world).claimPlot(plotworld, plot);
         }

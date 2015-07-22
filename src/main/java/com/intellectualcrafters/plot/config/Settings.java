@@ -162,7 +162,7 @@ public class Settings {
      * Days until a plot gets cleared
      */
     public static int AUTO_CLEAR_DAYS = 360;
-    public static int CLEAR_THRESHOLD = -1;
+    public static int CLEAR_THRESHOLD = 1;
     public static int CLEAR_INTERVAL = 120;
     /**
      * API Location
