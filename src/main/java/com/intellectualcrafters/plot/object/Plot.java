@@ -52,30 +52,37 @@ public class Plot {
      * plot owner
      */
     public UUID owner;
+    
     /**
      * List of trusted (with plot permissions)
+     * Direct access is Deprecated: use getTrusted()
      */
+    @Deprecated
     public HashSet<UUID> trusted;
     /**
      * List of members users (with plot permissions)
+     * Direct access is Deprecated: use getMembers()
      */
+    @Deprecated
     public HashSet<UUID> members;
     /**
      * List of denied players
+     * Direct access is Deprecated: use getDenied()
      */
+    @Deprecated
     public HashSet<UUID> denied;
     /**
      * External settings class<br>
      *  - Please favor the methods over direct access to this class<br>
      *  - The methods are more likely to be left unchanged from version changes<br>
+     *  Direct access is Deprecated: use getSettings()
      */
+    @Deprecated
     public PlotSettings settings;
     /**
      * Has the plot changed since the last save cycle?
      */
-    public boolean hasChanged = false;
     public boolean countsTowardsMax = true;
-    
     /**
      * If this plot is temporary i.e. not stored in the DB
      */

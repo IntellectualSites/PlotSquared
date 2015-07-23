@@ -11,6 +11,8 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -142,11 +145,9 @@ public abstract class SchematicHandler {
      * @return boolean true if succeeded
      */
     public void paste(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset, final RunnableVal<Boolean> whenDone) {
-        System.out.print(1);
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                System.out.print(2);
                 if (whenDone != null) whenDone.value = false;
                 if (schematic == null) {
                     PS.log("Schematic == null :|");
@@ -154,147 +155,209 @@ public abstract class SchematicHandler {
                     return;
                 }
                 try {
-                    System.out.print(3);
                     final Dimension demensions = schematic.getSchematicDimension();
                     final int WIDTH = demensions.getX();
                     final int LENGTH = demensions.getZ();
                     final int HEIGHT = demensions.getY();
                     
-                    byte[] ids = schematic.ids;
-                    byte[] datas = schematic.datas;
+                    // Validate dimensions
+                    Location bottom = plot.getBottom();
+                    Location top = plot.getTop();
+                    if (top.getX() - bottom.getX() < WIDTH || top.getZ() - bottom.getZ() < LENGTH || HEIGHT > 256) {
+                        System.out.print((top.getX() - bottom.getX() + 1) + "," + (top.getZ() - bottom.getZ() + 1));
+                        System.out.print(WIDTH + "," + HEIGHT + "," + LENGTH);
+                        PS.log("Schematic is too large");
+                        TaskManager.runTask(whenDone);
+                        return;
+                    }
                     
-                    int y_offset;
+                    final byte[] ids = schematic.ids;
+                    final byte[] datas = schematic.datas;
+                    
+                    final int y_offset;
                     if (HEIGHT >= 256) {
-                        y_offset = -1;
+                        y_offset = 0;
                     }
                     else {
-                        y_offset = BukkitUtil.getMaxHeight(plot.world) - 1;
+                        y_offset = BukkitUtil.getMaxHeight(plot.world);
                     }
                     
-                    Location bottom = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1 + x_offset, y_offset, 1 + z_offset);
+                    Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1 + x_offset, y_offset - 1, 1 + z_offset);
+                    Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                     
-                    int X = bottom.getX();
-                    int Y = bottom.getY();
-                    int Z = bottom.getZ();
+                    final int p1x = pos1.getX();
+                    final int p1z = pos1.getZ();
+                    final int p2x = pos2.getX();
+                    final int p2z = pos2.getZ();
+                    final int bcx = p1x >> 4;
+                    final int bcz = p1z >> 4;
+                    final int tcx = p2x >> 4;
+                    final int tcz = p2z >> 4;
                     
-                    int id;
+                    final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
                     
-                    System.out.print(4);
-                    
-                    System.out.print("HEIGHT: " + HEIGHT);
-                    
-                    for (int y = 0; y < Math.max(256, HEIGHT); y++) {
-                        int i1 = y * WIDTH * LENGTH;
-                        for (int z = 0; z < LENGTH; z++) {
-                            int i2 = z * WIDTH + i1;
-                            for (int x = 0; x < WIDTH; x++) {
-                                int i = i2 + x;
-                                id = ids[i];
-                                switch(id) {
-                                    case 0:
-                                    case 2:
-                                    case 4:
-                                    case 13:
-                                    case 14:
-                                    case 15:
-                                    case 20:
-                                    case 21:
-                                    case 22:
-                                    case 24:
-                                    case 30:
-                                    case 32:
-                                    case 37:
-                                    case 39:
-                                    case 40:
-                                    case 41:
-                                    case 42:
-                                    case 45:
-                                    case 46:
-                                    case 47:
-                                    case 48:
-                                    case 49:
-                                    case 50:
-                                    case 51:
-                                    case 55:
-                                    case 56:
-                                    case 57:
-                                    case 58:
-                                    case 60:
-                                    case 7:
-                                    case 8:
-                                    case 9:
-                                    case 10:
-                                    case 11:
-                                    case 73:
-                                    case 74:
-                                    case 75:
-                                    case 76:
-                                    case 78:
-                                    case 79:
-                                    case 80:
-                                    case 81:
-                                    case 82:
-                                    case 83:
-                                    case 85:
-                                    case 87:
-                                    case 88:
-                                    case 101:
-                                    case 102:
-                                    case 103:
-                                    case 110:
-                                    case 112:
-                                    case 113:
-                                    case 121:
-                                    case 122:
-                                    case 129:
-                                    case 133:
-                                    case 165:
-                                    case 166:
-                                    case 169:
-                                    case 170:
-                                    case 172:
-                                    case 173:
-                                    case 174:
-                                    case 181:
-                                    case 182:
-                                    case 188:
-                                    case 189:
-                                    case 190:
-                                    case 191:
-                                    case 192: {
-                                        SetBlockQueue.setBlock(plot.world, X + x, Y + y, Z + z, id);
-                                        break;
-                                    }
-                                    default: {
-                                        SetBlockQueue.setBlock(plot.world, X + x, Y + y, Z + z, new PlotBlock((short) id, (byte) datas[i]));
-                                        break;
-                                    }
-                                }
-                                // set block
-                            }
+                    for (int x = bcx; x <= tcx; x++) {
+                        for (int z = bcz; z <= tcz; z++) {
+                            chunks.add(new ChunkLoc(x, z));
                         }
                     }
                     
-                    System.out.print(5);
+                    System.out.print("chunks: " + chunks.size());
                     
-                    
-                    SetBlockQueue.addNotify(new Runnable() {
+                    TaskManager.runTaskAsync(new Runnable() {
                         @Override
                         public void run() {
-                            
-                            System.out.print(6);
-                            
-                            pasteStates(schematic, plot, x_offset, z_offset);
-                            
-                            System.out.print(7);
-                            
-                            if (whenDone != null) {
-                                whenDone.value = true;
-                                whenDone.run();
+                            int count = 0;
+                            System.out.print("RUNNING: " + chunks.size());
+                            while (chunks.size() > 0 && count < 256) {
+                                count++;
+                                ChunkLoc chunk = chunks.remove(0);
+                                int x = chunk.x;
+                                int z = chunk.z;
+                                int xxb = x << 4;
+                                int zzb = z << 4;
+                                int xxt = xxb + 15;
+                                int zzt = zzb + 15;
+                                if (x == bcx) {
+                                    xxb = p1x; 
+                                }
+                                if (x == tcx) {
+                                    xxt = p2x;
+                                }
+                                if (z == bcz) {
+                                    zzb = p1z;
+                                }
+                                if (z == tcz) {
+                                    zzt = p2z;
+                                }
+                                // Paste schematic here
+                                int id;
+                                
+                                for (int ry = 0; ry < Math.max(256, HEIGHT); ry++) {
+                                    int i1 = ry * WIDTH * LENGTH;
+                                    for (int rz = zzb - p1z; rz <= zzt - p1z; rz++) {
+                                        int i2 = rz * WIDTH + i1;
+                                        for (int rx = xxb - p1x; rx <= xxt - p1x; rx++) {
+                                            int i = i2 + rx;
+                                            
+                                            int xx = p1x + rx;
+                                            int zz = p1z + rz;
+                                            int yy = y_offset + ry;
+                                            
+                                            id = ids[i];
+                                            
+                                            switch(id) {
+                                                case 0:
+                                                case 2:
+                                                case 4:
+                                                case 13:
+                                                case 14:
+                                                case 15:
+                                                case 20:
+                                                case 21:
+                                                case 22:
+                                                case 24:
+                                                case 30:
+                                                case 32:
+                                                case 37:
+                                                case 39:
+                                                case 40:
+                                                case 41:
+                                                case 42:
+                                                case 45:
+                                                case 46:
+                                                case 47:
+                                                case 48:
+                                                case 49:
+                                                case 50:
+                                                case 51:
+                                                case 55:
+                                                case 56:
+                                                case 57:
+                                                case 58:
+                                                case 60:
+                                                case 7:
+                                                case 8:
+                                                case 9:
+                                                case 10:
+                                                case 11:
+                                                case 73:
+                                                case 74:
+                                                case 75:
+                                                case 76:
+                                                case 78:
+                                                case 79:
+                                                case 80:
+                                                case 81:
+                                                case 82:
+                                                case 83:
+                                                case 85:
+                                                case 87:
+                                                case 88:
+                                                case 101:
+                                                case 102:
+                                                case 103:
+                                                case 110:
+                                                case 112:
+                                                case 113:
+                                                case 121:
+                                                case 122:
+                                                case 129:
+                                                case 133:
+                                                case 165:
+                                                case 166:
+                                                case 169:
+                                                case 170:
+                                                case 172:
+                                                case 173:
+                                                case 174:
+                                                case 181:
+                                                case 182:
+                                                case 188:
+                                                case 189:
+                                                case 190:
+                                                case 191:
+                                                case 192: {
+                                                    SetBlockQueue.setBlock(plot.world, xx, yy, zz, id);
+                                                    break;
+                                                }
+                                                default: {
+                                                    SetBlockQueue.setBlock(plot.world, xx, yy, zz, new PlotBlock((short) id, (byte) datas[i]));
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (chunks.size() != 0) {
+                                final Runnable task = this;
+                                // Run when the queue is free
+                                SetBlockQueue.addNotify(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        System.gc();
+                                        TaskManager.runTaskLaterAsync(task, 80);
+                                    }
+                                });
+                            }
+                            else {
+                                System.gc();
+                                // Finished
+                                SetBlockQueue.addNotify(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        pasteStates(schematic, plot, x_offset, z_offset);
+                                        if (whenDone != null) {
+                                            whenDone.value = true;
+                                            whenDone.run();
+                                        }
+                                    }
+                                });
+                                return;
                             }
                         }
                     });
-                    return;
                 } catch (final Exception e) {
                     e.printStackTrace();
                     TaskManager.runTask(whenDone);
@@ -334,7 +397,7 @@ public abstract class SchematicHandler {
         return true;
     }
 
-    public Schematic getSchematic(final CompoundTag tag, final File file) {
+    public Schematic getSchematic(final CompoundTag tag) {
         final Map<String, Tag> tagMap = tag.getValue();
         // Slow
 //        byte[] addId = new byte[0];
@@ -369,7 +432,7 @@ public abstract class SchematicHandler {
 //        Schematic schem = new Schematic(collection, dimension, file);
         
         Dimension dimensions = new Dimension(width, height, length);
-        Schematic schem = new Schematic(block, data, dimensions , file);
+        Schematic schem = new Schematic(block, data, dimensions);
         
         // Slow
         try {
@@ -422,25 +485,58 @@ public abstract class SchematicHandler {
             return null;
         }
         try {
-            final InputStream iStream = new FileInputStream(file);
-            final NBTInputStream stream = new NBTInputStream(new GZIPInputStream(iStream));
-            final CompoundTag tag = (CompoundTag) stream.readTag();
-            stream.close();
-            return getSchematic(tag, file);
+            return getSchematic(new FileInputStream(file));
         } catch (final Exception e) {
-            PS.log(file.toString() + " is not in GZIP format");
-            return null;
+            e.printStackTrace();
         }
+        return null;
     }
     
-    public URL upload(final CompoundTag tag) {
+    public Schematic getSchematic(URL url) {
+        try {
+            ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+            InputStream is = Channels.newInputStream(rbc);
+            return getSchematic(is);
+//            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public Schematic getSchematic(InputStream is) {
+        if (is == null) {
+            System.out.print("SCHEM IS NULL!!!!");
+            return null;
+        }
+        try {
+            final NBTInputStream stream = new NBTInputStream(new GZIPInputStream(is));
+            final CompoundTag tag = (CompoundTag) stream.readTag(1073741824);
+            is.close();
+            stream.close();
+            return getSchematic(tag);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            PS.log(is.toString() + " | " + is.getClass().getCanonicalName() + " is not in GZIP format : " + e.getMessage());
+        }
+        return null;
+    }
+    
+    public URL upload(final CompoundTag tag, UUID uuid) {
         if (tag == null) {
             PS.log("&cCannot save empty tag");
             return null;
         }
         try {
-            UUID uuid = UUID.randomUUID();
-            String website = Settings.WEB_URL + "upload.php?" + uuid;
+            String website;
+            if (uuid == null) {
+                uuid = UUID.randomUUID();
+                website = Settings.WEB_URL + "upload.php?" + uuid;
+            }
+            else {
+                website = Settings.WEB_URL + "save.php?" + uuid;
+            }
             String charset = "UTF-8";
             String param = "value";
             String boundary = Long.toHexString(System.currentTimeMillis());
@@ -632,38 +728,39 @@ public abstract class SchematicHandler {
         private DataCollection[] collection;
         
         private final Dimension schematicDimension;
-        private final File file;
         private HashSet<PlotItem> items;
 
         /**
-         * This is deprecated as having a wrapper for each block is really slow.<br>
-         *  - There's also a performance hit by having the cast the DataCollection short / byte
+         * This is deprecated as having a wrapper for each block is slow.<br>
+         *  - There's also a performance hit by having to cast the DataCollection short / byte
          *  - 
          * @param blockCollection
          * @param schematicDimension
          * @param file
          */
-//        @Deprecated
-//        public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension, final File file) {
-//            ids = new byte[blockCollection.length];
-//            datas = new byte[blockCollection.length];
-//            for (int i = 0; i < blockCollection.length; i++) {
-//                DataCollection block = blockCollection[i];
-//                ids[i] = (byte) block.block;
-//                datas[i] = block.data;
-//            }
-//            this.collection = blockCollection;
-//            this.schematicDimension = schematicDimension;
-//            this.file = file;
-//        }
+        @Deprecated
+        public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension) {
+            ids = new byte[blockCollection.length];
+            datas = new byte[blockCollection.length];
+            for (int i = 0; i < blockCollection.length; i++) {
+                DataCollection block = blockCollection[i];
+                ids[i] = (byte) block.block;
+                datas[i] = block.data;
+            }
+            this.collection = blockCollection;
+            this.schematicDimension = schematicDimension;
+        }
         
-        public Schematic(final byte[] i, final byte[] b, final Dimension d, final File f) {
+        public Schematic(final byte[] i, final byte[] b, final Dimension d) {
             ids = i;
             datas = b;
             schematicDimension = d;
-            file = f;
         }
         
+        /**
+         * Add an item to the schematic
+         * @param item
+         */
         public  void addItem(PlotItem item) {
             if (this.items == null) {
                 this.items = new HashSet<>();
@@ -671,36 +768,52 @@ public abstract class SchematicHandler {
             items.add(item);
         }
         
+        /**
+         * Get any items associated with this schematic
+         * @return
+         */
         public HashSet<PlotItem> getItems() {
             return this.items;
         }
 
-        public File getFile() {
-            return this.file;
-        }
-
+        /**
+         * Get the schematic dimensions
+         * @return
+         */
         public Dimension getSchematicDimension() {
             return this.schematicDimension;
         }
         
+        /**
+         * Get the block id array
+         * @return
+         */
         public byte[] getIds() {
             return ids;
         }
         
+        /**
+         * Get the block data array
+         * @return
+         */
         public byte[] getDatas() {
             return datas;
         }
 
-//        @Deprecated
-//        public DataCollection[] getBlockCollection() {
-//            if (this.collection == null) {
-//                collection = new DataCollection[ids.length];
-//                for (int i = 0; i < ids.length; i++) {
-//                    collection[i] = new DataCollection(ids[i], datas[i]);
-//                }
-//            }
-//            return this.collection;
-//        }
+        /**
+         * @deprecated as it is slow to wrap each block
+         * @return DataCollection of schematic blocks
+         */
+        @Deprecated
+        public DataCollection[] getBlockCollection() {
+            if (this.collection == null) {
+                collection = new DataCollection[ids.length];
+                for (int i = 0; i < ids.length; i++) {
+                    collection[i] = new DataCollection(ids[i], datas[i]);
+                }
+            }
+            return this.collection;
+        }
     }
 
     /**
@@ -734,9 +847,10 @@ public abstract class SchematicHandler {
 
     /**
      * Schematic Data Collection
-     *
+     * @deprecated as it is slow to wrap each block
      * @author Citymonstret
      */
+    @Deprecated
     public class DataCollection {
         private final short block;
         private final byte data;

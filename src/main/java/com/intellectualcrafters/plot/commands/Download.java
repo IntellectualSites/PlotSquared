@@ -44,7 +44,7 @@ public class Download extends SubCommand {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        URL url = SchematicHandler.manager.upload(value);
+                        URL url = SchematicHandler.manager.upload(value, null);
                         if (url == null) {
                             MainUtil.sendMessage(plr, C.GENERATING_LINK_FAILED);
                             MainUtil.runners.remove(plot);

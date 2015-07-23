@@ -20,12 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -84,13 +88,30 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(plr, "&cTask is already running.");
                     return false;
                 }
-                final String file2 = args[1];
+                final String location = args[1];
                 this.running = true;
                 this.counter = 0;
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        final Schematic schematic = SchematicHandler.manager.getSchematic(file2);
+                        Schematic schematic;
+                        if (location.startsWith("url:")) {
+                            try {
+                                UUID uuid = UUID.fromString(location.substring(4));
+                                URL base = new URL(Settings.WEB_URL);
+                                URL url = new URL(base, "uploads/" + uuid + ".schematic");
+                                schematic = SchematicHandler.manager.getSchematic(url);
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                                sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent url: " + location);
+                                SchematicCmd.this.running = false;
+                                return;
+                            }
+                        }
+                        else {
+                            schematic = SchematicHandler.manager.getSchematic(location);
+                        }
                         if (schematic == null) {
                             SchematicCmd.this.running = false;
                             sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");

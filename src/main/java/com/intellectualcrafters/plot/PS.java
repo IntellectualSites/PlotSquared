@@ -293,7 +293,6 @@ public class PS {
         if (!plots.containsKey(world)) {
             plots.put(world, new HashMap<PlotId, Plot>());
         }
-        plot.hasChanged = true;
         plots.get(world).put(plot.id, plot);
     }
 

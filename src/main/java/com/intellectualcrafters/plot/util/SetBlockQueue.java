@@ -68,6 +68,7 @@ public class SetBlockQueue {
                                 TaskManager.runTask(runnable);
                             }
                         }
+                        lastBlock = null;
                         runnables = null;
                         blocks = new HashMap<>();
                         running = false;
