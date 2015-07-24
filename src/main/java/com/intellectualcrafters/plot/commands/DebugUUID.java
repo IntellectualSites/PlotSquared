@@ -64,7 +64,7 @@ public class DebugUUID extends SubCommand {
             return false;
         }
         
-        UUIDWrapper currentUUIDWrapper = UUIDHandler.uuidWrapper;
+        UUIDWrapper currentUUIDWrapper = UUIDHandler.getUUIDWrapper();
         UUIDWrapper newWrapper = null;
         
         switch (args[0].toLowerCase()) {
@@ -109,7 +109,7 @@ public class DebugUUID extends SubCommand {
         }
         MainUtil.sendConsoleMessage("&6Beginning UUID mode conversion");
         MainUtil.sendConsoleMessage("&7 - Disconnecting players");
-        for (PlotPlayer user : UUIDHandler.players.values()) {
+        for (PlotPlayer user : UUIDHandler.getPlayers().values()) {
             PlayerManager.manager.kickPlayer(user, "PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
         }
         
@@ -212,7 +212,7 @@ public class DebugUUID extends SubCommand {
         }
         
         MainUtil.sendConsoleMessage("&7 - Replacing wrapper");
-        UUIDHandler.uuidWrapper = newWrapper;
+        UUIDHandler.setUUIDWrapper(newWrapper);
         
         MainUtil.sendConsoleMessage("&7 - Updating plot objects");
 

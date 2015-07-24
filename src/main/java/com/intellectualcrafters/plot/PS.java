@@ -79,6 +79,8 @@ import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.uuid.FileUUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 /**
@@ -173,7 +175,7 @@ public class PS {
             IMP.registerChunkProcessor();
         }
         // create UUIDWrapper
-        UUIDHandler.uuidWrapper = IMP.initUUIDHandler();
+        UUIDHandler.setUUIDWrapper(IMP.initUUIDHandler());
         // create event util class
         EventUtil.manager = IMP.initEventUtil();
         // create Hybrid utility class
@@ -1113,6 +1115,7 @@ public class PS {
     public void disable() {
         try {
             database.closeConnection();
+            UUIDHandler.handleShutdown();
         } catch (NullPointerException | SQLException e) {
             log("&cCould not close database connection!");
         }
@@ -1310,6 +1313,7 @@ public class PS {
         options.put("plotme-convert.cache-uuids", Settings.CACHE_PLOTME);
         
         // UUID
+        options.put("uuid.use_sqluuidhandler", Settings.USE_SQLUUIDHANDLER);
         options.put("UUID.offline", Settings.OFFLINE_MODE);
         options.put("UUID.force-lowercase", Settings.UUID_LOWERCASE);
         options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
@@ -1426,6 +1430,7 @@ public class PS {
         Settings.CACHE_PLOTME = config.getBoolean("plotme-convert.cache-uuids");
         
         // UUID
+        Settings.USE_SQLUUIDHANDLER = config.getBoolean("uuid.use_sqluuidhandler");
         Settings.OFFLINE_MODE = config.getBoolean("UUID.offline");
         Settings.UUID_LOWERCASE = Settings.OFFLINE_MODE && config.getBoolean("UUID.force-lowercase");
         Settings.UUID_FROM_DISK = config.getBoolean("uuid.read-from-disk");
@@ -1511,6 +1516,8 @@ public class PS {
             Settings.FANCY_CHAT = false;
         }
         Settings.METRICS = config.getBoolean("metrics");
+
+        UUIDHandler.implementation = Settings.USE_SQLUUIDHANDLER ? new SQLUUIDHandler() : new FileUUIDHandler();
     }
 
 

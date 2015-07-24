@@ -72,7 +72,7 @@ public class MainUtil {
     
     public static List<PlotPlayer> getPlayersInPlot(Plot plot) {
         ArrayList<PlotPlayer> players = new ArrayList<>();
-        for (PlotPlayer pp : UUIDHandler.players.values()) {
+        for (PlotPlayer pp : UUIDHandler.getPlayers().values()) {
             if (plot.equals(MainUtil.getPlot(pp.getLocation()))) {
                 players.add(pp);
             }

@@ -35,6 +35,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
+import com.intellectualcrafters.plot.util.bukkit.uuid.SQLUUIDHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -69,7 +70,11 @@ public class Deny extends SubCommand {
             uuid = UUIDHandler.getUUID(args[0]);
         }
         if (uuid == null) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            if (UUIDHandler.implementation instanceof SQLUUIDHandler) {
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER_WAIT, args[0]);
+            } else {
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            }
             return false;
         }
         if (plot.isOwner(uuid)) {

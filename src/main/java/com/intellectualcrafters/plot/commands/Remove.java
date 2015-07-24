@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.intellectualcrafters.plot.util.bukkit.uuid.SQLUUIDHandler;
 
 public class Remove extends SubCommand {
     public Remove() {
@@ -112,7 +113,11 @@ public class Remove extends SubCommand {
             }
         }
         if (count == 0) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            if (UUIDHandler.implementation instanceof SQLUUIDHandler) {
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER_WAIT, args[0]);
+            } else {
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            }
             return false;
         }
         else {

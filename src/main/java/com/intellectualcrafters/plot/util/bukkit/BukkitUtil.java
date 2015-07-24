@@ -47,7 +47,7 @@ public class BukkitUtil extends BlockManager {
     public static void removePlayer(final String plr) {
         lastPlayer = null;
         lastPlotPlayer = null;
-        UUIDHandler.players.remove(plr);
+        UUIDHandler.getPlayers().remove(plr);
     }
 
     @Override
@@ -69,12 +69,12 @@ public class BukkitUtil extends BlockManager {
             return lastPlotPlayer;
         }
         String name = player.getName();
-        PlotPlayer pp = UUIDHandler.players.get(name);
+        PlotPlayer pp = UUIDHandler.getPlayers().get(name);
         if (pp != null) {
             return pp;
         }
         lastPlotPlayer = new BukkitPlayer(player);
-        UUIDHandler.players.put(name, lastPlotPlayer);
+        UUIDHandler.getPlayers().put(name, lastPlotPlayer);
         lastPlayer = player;
         return lastPlotPlayer;
     }

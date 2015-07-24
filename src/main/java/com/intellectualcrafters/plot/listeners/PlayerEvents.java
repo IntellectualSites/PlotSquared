@@ -136,7 +136,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
                 int x = bloc.getBlockX();
                 int z = bloc.getBlockZ();
                 int distance = Bukkit.getViewDistance() * 16;
-                for (PlotPlayer player : UUIDHandler.players.values()) {
+                for (PlotPlayer player : UUIDHandler.getPlayers().values()) {
                     Location loc = player.getLocation();
                     if (loc.getWorld().equals(world)) {
                         if (16 * (Math.abs(loc.getX() - x) / 16) > distance) {

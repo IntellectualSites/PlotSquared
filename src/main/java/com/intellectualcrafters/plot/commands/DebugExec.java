@@ -216,7 +216,7 @@ public class DebugExec extends SubCommand {
                     if (uuid == null) {
                         return MainUtil.sendMessage(player, "player not found: " + args[1]);
                     }
-                    final OfflinePlotPlayer op = UUIDHandler.uuidWrapper.getOfflinePlayer(uuid);
+                    final OfflinePlotPlayer op = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
                     if ((op == null) || (op.getLastPlayed() == 0)) {
                         return MainUtil.sendMessage(player, "player hasn't connected before: " + args[1]);
                     }

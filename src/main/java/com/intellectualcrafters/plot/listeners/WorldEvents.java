@@ -43,6 +43,6 @@ public class WorldEvents implements Listener {
     
     @EventHandler
     public void worldLoad(final WorldLoadEvent event) {
-        UUIDHandler.cacheAll(event.getWorld().getName());
+        UUIDHandler.cacheWorld(event.getWorld().getName());
     }
 }

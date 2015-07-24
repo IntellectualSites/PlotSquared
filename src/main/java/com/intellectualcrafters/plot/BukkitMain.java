@@ -122,7 +122,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         List<World> worlds = Bukkit.getWorlds();
         if (worlds.size() > 0) {
-            UUIDHandler.cacheAll(worlds.get(0).getName());
+            UUIDHandler.startCaching();
             for (World world : worlds) {
                 try {
                     SetGenCB.setGenerator(world);
@@ -531,19 +531,19 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         final boolean checkVersion = checkVersion(1, 7, 6);
         if (Settings.OFFLINE_MODE) {
             if (Settings.UUID_LOWERCASE) {
-                UUIDHandler.uuidWrapper = new LowerOfflineUUIDWrapper();
+                UUIDHandler.setUUIDWrapper(new LowerOfflineUUIDWrapper());
             } else {
-                UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+                UUIDHandler.setUUIDWrapper(new OfflineUUIDWrapper());
             }
             Settings.OFFLINE_MODE = true;
         } else if (checkVersion) {
-            UUIDHandler.uuidWrapper = new DefaultUUIDWrapper();
+            UUIDHandler.setUUIDWrapper(new DefaultUUIDWrapper());
             Settings.OFFLINE_MODE = false;
         } else {
             if (Settings.UUID_LOWERCASE) {
-                UUIDHandler.uuidWrapper = new LowerOfflineUUIDWrapper();
+                UUIDHandler.setUUIDWrapper(new LowerOfflineUUIDWrapper());
             } else {
-                UUIDHandler.uuidWrapper = new OfflineUUIDWrapper();
+                UUIDHandler.setUUIDWrapper(new OfflineUUIDWrapper());
             }
             Settings.OFFLINE_MODE = true;
         }
@@ -553,9 +553,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             FlagManager.removeFlag(FlagManager.getFlag("titles"));
         } else {
             AbstractTitle.TITLE_CLASS = new DefaultTitle();
-            if (UUIDHandler.uuidWrapper instanceof DefaultUUIDWrapper) {
+            if (UUIDHandler.getUUIDWrapper() instanceof DefaultUUIDWrapper) {
                 Settings.TWIN_MODE_UUID = true;
-            } else if (UUIDHandler.uuidWrapper instanceof OfflineUUIDWrapper && !Bukkit.getOnlineMode()) {
+            } else if (UUIDHandler.getUUIDWrapper() instanceof OfflineUUIDWrapper && !Bukkit.getOnlineMode()) {
                 Settings.TWIN_MODE_UUID = true;
             }
         }
@@ -564,7 +564,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else {
             log(C.PREFIX.s() + " &6PlotSquared is using online UUIDs");
         }
-        return UUIDHandler.uuidWrapper;
+        return UUIDHandler.getUUIDWrapper();
     }
     
     @Override

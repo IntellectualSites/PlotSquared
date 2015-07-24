@@ -199,7 +199,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      * @see com.intellectualcrafters.plot.uuid.UUIDWrapper
      */
     public UUIDWrapper getUUIDWrapper() {
-        return UUIDHandler.uuidWrapper;
+        return UUIDHandler.getUUIDWrapper();
     }
 
     /**

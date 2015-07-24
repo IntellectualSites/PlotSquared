@@ -99,7 +99,7 @@ public class Buy extends SubCommand {
             }
             EconHandler.manager.withdrawMoney(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
-            EconHandler.manager.depositMoney(UUIDHandler.uuidWrapper.getOfflinePlayer(plot.owner), initPrice);
+            EconHandler.manager.depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), initPrice);
             final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
             if (owner != null) {
                 sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");

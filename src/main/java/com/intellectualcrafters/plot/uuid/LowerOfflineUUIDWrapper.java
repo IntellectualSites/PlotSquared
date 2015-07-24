@@ -18,7 +18,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
-public class LowerOfflineUUIDWrapper extends UUIDWrapper {
+public class LowerOfflineUUIDWrapper extends OfflineUUIDWrapper {
     private Method getOnline = null;
     private final Object[] arg = new Object[0];
 
