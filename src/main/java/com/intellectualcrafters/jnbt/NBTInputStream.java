@@ -62,7 +62,6 @@ public final class NBTInputStream implements Closeable {
      * @throws IOException if an I/O error occurs.
      */
     private Tag readTag(final int depth, int maxDepth) throws IOException {
-        System.out.print("READING TAG!!!");
         if ((count++) > maxDepth) throw new IOException("Exceeds max depth: " + count);
         final int type = this.is.readByte() & 0xFF;
         String name;
@@ -91,7 +90,6 @@ public final class NBTInputStream implements Closeable {
     private Tag readTagPayload(final int type, final String name, final int depth, int maxDepth) throws IOException {
         if ((count++) > maxDepth) throw new IOException("Exceeds max depth: " + count);
         count++;
-        System.out.print(count + " | " + type);
         switch (type) {
             case NBTConstants.TYPE_END:
                 if (depth == 0) {

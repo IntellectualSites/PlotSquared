@@ -76,8 +76,6 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 final int height = (pos2.getY() - pos1.getY()) + 1;
                 final int length = (pos2.getZ() - pos1.getZ()) + 1;
                 
-                System.out.print(width + "," + height + "," + length);
-                
                 // Main Schematic tag
                 final HashMap<String, Tag> schematic = new HashMap<>();
                 
@@ -117,7 +115,6 @@ public class BukkitSchematicHandler extends SchematicHandler {
                             
                             Chunk bc = worldObj.getChunkAt(chunk.x, chunk.z);
                             if (!bc.load(false)) {
-                                System.out.print("FAILED TO LOAD CHUNK: " + chunk.x + "," + chunk.z);
                                 continue;
                             }
                             

@@ -171,8 +171,6 @@ public abstract class SchematicHandler {
                     Location bottom = plot.getBottom();
                     Location top = plot.getTop();
                     if (top.getX() - bottom.getX() < WIDTH || top.getZ() - bottom.getZ() < LENGTH || HEIGHT > 256) {
-                        System.out.print((top.getX() - bottom.getX() + 1) + "," + (top.getZ() - bottom.getZ() + 1));
-                        System.out.print(WIDTH + "," + HEIGHT + "," + LENGTH);
                         PS.log("Schematic is too large");
                         TaskManager.runTask(whenDone);
                         return;
@@ -209,13 +207,10 @@ public abstract class SchematicHandler {
                         }
                     }
                     
-                    System.out.print("chunks: " + chunks.size());
-                    
                     TaskManager.runTaskAsync(new Runnable() {
                         @Override
                         public void run() {
                             int count = 0;
-                            System.out.print("RUNNING: " + chunks.size());
                             while (chunks.size() > 0 && count < 256) {
                                 count++;
                                 ChunkLoc chunk = chunks.remove(0);
@@ -512,7 +507,6 @@ public abstract class SchematicHandler {
     
     public Schematic getSchematic(InputStream is) {
         if (is == null) {
-            System.out.print("SCHEM IS NULL!!!!");
             return null;
         }
         try {
@@ -542,12 +536,10 @@ public abstract class SchematicHandler {
                 rawJSON.append(line);
             }
             reader.close();
-            System.out.print(rawJSON);
             JSONArray array = new JSONArray(rawJSON.toString());
             List<String> schematics = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 String schematic = array.getString(i);
-                System.out.print(schematic);
                 schematics.add(schematic);
             }
             return Lists.reverse(schematics);
@@ -604,21 +596,21 @@ public abstract class SchematicHandler {
                 nos.close();
                 output.close();
             }
-            try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
-                final char[] buffer = new char[256];
-                StringBuilder result = new StringBuilder();
-                while (true) {
-                    int r = response.read(buffer);
-                    if (r < 0) {
-                        break;
-                    }
-                    result.append(buffer, 0, r);
-                }
-                System.out.print(result);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
+//                final char[] buffer = new char[256];
+//                StringBuilder result = new StringBuilder();
+//                while (true) {
+//                    int r = response.read(buffer);
+//                    if (r < 0) {
+//                        break;
+//                    }
+//                    result.append(buffer, 0, r);
+//                }
+//                System.out.print(result);
+//            }
+//            catch (Exception e) {
+//                e.printStackTrace();
+//            }
             int responseCode = ((HttpURLConnection) con).getResponseCode();
             if (responseCode != 200) {
                 return null;
