@@ -77,6 +77,8 @@ public interface IPlotMain {
     public void registerWorldEvents();
 
     public PlayerManager initPlayerManager();
+    
+    public String getServerName();
 
     public boolean checkVersion(int major, int minor, int minor2);
 }

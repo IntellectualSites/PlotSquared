@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.commands.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -183,6 +184,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerCommands() {
         new MainCommand();
+        MainCommand.subCommands.add(new Save());
+        MainCommand.subCommands.add(new Load());
         MainCommand.subCommands.add(new Download());
         MainCommand.subCommands.add(new Disable());
         MainCommand.subCommands.add(new Update());
@@ -610,5 +613,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public InventoryUtil initInventoryUtil() {
         return new BukkitInventoryUtil();
+    }
+
+    @Override
+    public String getServerName() {
+        return Bukkit.getServerName();
     }
 }

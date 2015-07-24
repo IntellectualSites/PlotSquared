@@ -58,6 +58,11 @@ public enum C {
      */
     GENERATING_LINK("$1Processing plot...", "Web"),
     GENERATING_LINK_FAILED("$2Failed to generate download link!", "Web"),
+    SAVE_FAILED("$2Failed to save", "Web"),
+    LOAD_NULL("$2Please use $4/plot load $2to get a list of schematics", "Web"),
+    LOAD_FAILED("$2Failed to load schematic", "Web"),
+    LOAD_LIST("$2To load a schematic, use $1/plot load #", "Web"),
+    SAVE_SUCCESS("$1Successfully saved!", "Web"),
     /*
      * Compass
      */

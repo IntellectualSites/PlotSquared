@@ -43,6 +43,8 @@ public enum Command {
     UNDENY("undeny", "ud"),
     TOGGLE("toggle", "attribute"),
     DOWNLOAD("download", "dl"),
+    SAVE("save", "backup"),
+    LOAD("load", "restore"),
     MOVE("move"),
     FLAG("flag", "f"),
     TARGET("target"),

@@ -81,7 +81,14 @@ public class SchematicCmd extends SubCommand {
                 final Location loc = plr.getLocation();
                 final Plot plot = MainUtil.getPlot(loc);
                 if (plot == null) {
-                    sendMessage(plr, C.NOT_IN_PLOT);
+                    return !sendMessage(plr, C.NOT_IN_PLOT);
+                }
+                if (!plot.hasOwner()) {
+                    MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+                    return false;
+                }
+                if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.schematic.paste")) {
+                    MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
                     return false;
                 }
                 if (this.running) {
@@ -218,8 +225,12 @@ public class SchematicCmd extends SubCommand {
                     if (plot == null) {
                         return !sendMessage(plr, C.NOT_IN_PLOT);
                     }
-                    if (!plot.isAdded(plr.getUUID())) {
-                        sendMessage(plr, C.NO_PLOT_PERMS);
+                    if (!plot.hasOwner()) {
+                        MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+                        return false;
+                    }
+                    if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.schematic.save")) {
+                        MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
                         return false;
                     }
                     p2 = plot;

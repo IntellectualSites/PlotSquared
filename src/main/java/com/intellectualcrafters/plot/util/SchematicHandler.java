@@ -1,18 +1,22 @@
 package com.intellectualcrafters.plot.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +28,7 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.google.common.collect.Lists;
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.IntTag;
@@ -33,6 +38,8 @@ import com.intellectualcrafters.jnbt.NBTOutputStream;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.json.JSONArray;
+import com.intellectualcrafters.json.JSONObject;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -497,7 +504,6 @@ public abstract class SchematicHandler {
             ReadableByteChannel rbc = Channels.newChannel(url.openStream());
             InputStream is = Channels.newInputStream(rbc);
             return getSchematic(is);
-//            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -523,7 +529,36 @@ public abstract class SchematicHandler {
         return null;
     }
     
-    public URL upload(final CompoundTag tag, UUID uuid) {
+    public List<String> getSaves(UUID uuid) {
+        try {
+            String website = Settings.WEB_URL + "list.php?" + uuid.toString();
+            URL url = new URL(website);
+            URLConnection connection = new URL(url.toString()).openConnection();
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            StringBuilder rawJSON = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                rawJSON.append(line);
+            }
+            reader.close();
+            System.out.print(rawJSON);
+            JSONArray array = new JSONArray(rawJSON.toString());
+            List<String> schematics = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                String schematic = array.getString(i);
+                System.out.print(schematic);
+                schematics.add(schematic);
+            }
+            return Lists.reverse(schematics);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public URL upload(final CompoundTag tag, UUID uuid, String file) {
         if (tag == null) {
             PS.log("&cCannot save empty tag");
             return null;
@@ -533,6 +568,7 @@ public abstract class SchematicHandler {
             if (uuid == null) {
                 uuid = UUID.randomUUID();
                 website = Settings.WEB_URL + "upload.php?" + uuid;
+                file = "plot";
             }
             else {
                 website = Settings.WEB_URL + "save.php?" + uuid;
@@ -553,8 +589,8 @@ public abstract class SchematicHandler {
                 writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
                 writer.append(CRLF).append(param).append(CRLF).flush();
                 writer.append("--" + boundary).append(CRLF);
-                writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + "plot.schematic" + "\"").append(CRLF);
-                writer.append("Content-Type: " + URLConnection.guessContentTypeFromName("plot.schematic")).append(CRLF);
+                writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + file + ".schematic" + "\"").append(CRLF);
+                writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(file + ".schematic")).append(CRLF);
                 writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                 writer.append(CRLF).flush();
                 GZIPOutputStream gzip = new GZIPOutputStream(output);
@@ -568,23 +604,21 @@ public abstract class SchematicHandler {
                 nos.close();
                 output.close();
             }
-//            try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
-//                final char[] buffer = new char[256];
-//                StringBuilder result = new StringBuilder();
-//                while (true) {
-//                    int r = response.read(buffer);
-//                    if (r < 0) {
-//                        break;
-//                    }
-//                    result.append(buffer, 0, r);
-//                }
-//                if (!result.equals("The file plot.schematic has been uploaded.")) {
-//                    return null;
-//                }
-//            }
-//            catch (Exception e) {
-//                
-//            }
+            try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
+                final char[] buffer = new char[256];
+                StringBuilder result = new StringBuilder();
+                while (true) {
+                    int r = response.read(buffer);
+                    if (r < 0) {
+                        break;
+                    }
+                    result.append(buffer, 0, r);
+                }
+                System.out.print(result);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
             int responseCode = ((HttpURLConnection) con).getResponseCode();
             if (responseCode != 200) {
                 return null;

@@ -40,7 +40,6 @@ public class BukkitEconHandler extends EconHandler {
         if (economyProvider != null) {
             econ = economyProvider.getProvider();
         }
-
         return (econ != null);
     }
 
