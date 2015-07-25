@@ -32,6 +32,9 @@ import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -39,6 +42,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
@@ -61,6 +65,24 @@ public class DebugExec extends SubCommand {
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             switch (arg) {
+                case "biome": {
+                    if (player == null) {
+                        MainUtil.sendMessage(player, C.IS_CONSOLE);
+                        return false;
+                    }
+                    Location loc = player.getLocation();
+                    World world = Bukkit.getWorld(loc.getWorld());
+                    int bx = (loc.getX() >> 4) << 4;
+                    int bz = (loc.getZ() >> 4) << 4;
+                    for (int x = bx; x < bx + 16; x++) {
+                        for (int z = bz; z < bz + 16; z++) {
+                            world.setBiome(x, z, Biome.DESERT);
+                        }
+                    }
+                    MainUtil.update(loc.getWorld(), new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4));
+                    System.out.print("SET BIOME TO FOREST: " + bx + "," + bz);
+                    return true;
+                }
                 case "analyze": {
                     if (player == null) {
                         MainUtil.sendMessage(player, C.IS_CONSOLE);

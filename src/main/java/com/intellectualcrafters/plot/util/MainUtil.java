@@ -44,6 +44,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
 
@@ -957,7 +958,6 @@ public class MainUtil {
         final Runnable run = new Runnable() {
             @Override
             public void run() {
-//                MainUtil.setBiome(world, plot, "FOREST");
                 runners.remove(plot);
                 TaskManager.runTask(whenDone);
             }
@@ -1043,15 +1043,25 @@ public class MainUtil {
         }
     }
 
-    public static void setBiome(final Plot plot, final String biome) {
-        final int bottomX = getPlotBottomLoc(plot.world, plot.id).getX() + 1;
-        final int topX = getPlotTopLoc(plot.world, plot.id).getX();
-        final int bottomZ = getPlotBottomLoc(plot.world, plot.id).getZ() + 1;
-        final int topZ = getPlotTopLoc(plot.world, plot.id).getZ();
-        BukkitUtil.setBiome(plot.world, bottomX, bottomZ, topX, topZ, biome);
-        update(plot);
+    public static void setBiome(final Plot plot, final String biome, final Runnable whenDone) {
+        Location pos1 = plot.getBottom().add(1, 0, 1);
+        Location pos2 = plot.getTop();
+        ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
+            @Override
+            public void run() {
+                BukkitUtil.loadChunkAt(plot.world, value[0], value[1], false);
+                BukkitUtil.setBiome(plot.world, value[2], value[3], value[4], value[4], biome);
+                BukkitUtil.unloadChunkAt(plot.world, value[0], value[1], true, true);
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                update(plot);
+                TaskManager.runTask(whenDone);
+            }
+        }, 5);
     }
-
+    
     public static int getHeighestBlock(final String world, final int x, final int z) {
         final int result = BukkitUtil.getHeighestBlock(world, x, z);
         if (result == 0) {

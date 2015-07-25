@@ -89,7 +89,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         if (schem3 != null) {
             this.PLOT_SCHEMATIC = true;
-            byte[] ids = schem3.getIds();
+            short[] ids = schem3.getIds();
             byte[] datas = schem3.getDatas();
             final Dimension d3 = schem3.getSchematicDimension();
             final short w3 = (short) d3.getX();
@@ -108,7 +108,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     for (short y = 0; y < h3; y++) {
                         final int index = (y * w3 * l3) + (z * w3) + x;
                         final short id = ids[index];
-                        final byte data = ids[index];
+                        final byte data = datas[index];
                         if (id != 0) {
                             addOverlayBlock((short) (x + shift + oddshift + center_shift_x), (y), (short) (z + shift + oddshift + center_shift_z), id, data, false);
                         }
@@ -141,10 +141,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         // Do not populate road if using schematic population
         this.ROAD_BLOCK = new PlotBlock(this.ROAD_BLOCK.id, (byte) 0);
         
-        byte[] ids1 = schem1.getIds();
+        short[] ids1 = schem1.getIds();
         byte[] datas1 = schem1.getDatas();
         
-        byte[] ids2 = schem2.getIds();
+        short[] ids2 = schem2.getIds();
         byte[] datas2 = schem2.getDatas();
         
         final Dimension d1 = schem1.getSchematicDimension();

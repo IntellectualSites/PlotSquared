@@ -166,7 +166,6 @@ public abstract class SchematicHandler {
                     final int WIDTH = demensions.getX();
                     final int LENGTH = demensions.getZ();
                     final int HEIGHT = demensions.getY();
-                    
                     // Validate dimensions
                     Location bottom = plot.getBottom();
                     Location top = plot.getTop();
@@ -175,21 +174,20 @@ public abstract class SchematicHandler {
                         TaskManager.runTask(whenDone);
                         return;
                     }
-                    
-                    final byte[] ids = schematic.ids;
+                    // block id and data arrays
+                    final short[] ids = schematic.ids;
                     final byte[] datas = schematic.datas;
-                    
+                    // Calculate the optimal height to paste the schematic at
                     final int y_offset;
                     if (HEIGHT >= 256) {
                         y_offset = 0;
                     }
                     else {
-                        y_offset = BukkitUtil.getMaxHeight(plot.world);
+                        y_offset = BukkitUtil.getHeighestBlock(plot.world, bottom.getX() + 1, bottom.getZ() + 1);
                     }
-                    
                     Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1 + x_offset, y_offset - 1, 1 + z_offset);
                     Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
-                    
+                    // TODO switch to ChunkManager.chunkTask(pos1, pos2, task, whenDone, allocate);        
                     final int p1x = pos1.getX();
                     final int p1z = pos1.getZ();
                     final int p2x = pos2.getX();
@@ -198,15 +196,12 @@ public abstract class SchematicHandler {
                     final int bcz = p1z >> 4;
                     final int tcx = p2x >> 4;
                     final int tcz = p2z >> 4;
-                    
                     final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
-                    
                     for (int x = bcx; x <= tcx; x++) {
                         for (int z = bcz; z <= tcz; z++) {
                             chunks.add(new ChunkLoc(x, z));
                         }
                     }
-                    
                     TaskManager.runTaskAsync(new Runnable() {
                         @Override
                         public void run() {
@@ -235,7 +230,12 @@ public abstract class SchematicHandler {
                                 // Paste schematic here
                                 int id;
                                 
-                                for (int ry = 0; ry < Math.max(256, HEIGHT); ry++) {
+                                for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
+                                    int yy = y_offset + ry;
+                                    if (yy > 255) {
+                                        System.out.print("TOO HIGH: " + ry);
+                                        continue;
+                                    }
                                     int i1 = ry * WIDTH * LENGTH;
                                     for (int rz = zzb - p1z; rz <= zzt - p1z; rz++) {
                                         int i2 = rz * WIDTH + i1;
@@ -244,7 +244,6 @@ public abstract class SchematicHandler {
                                             
                                             int xx = p1x + rx;
                                             int zz = p1z + rz;
-                                            int yy = y_offset + ry;
                                             
                                             id = ids[i];
                                             
@@ -324,6 +323,7 @@ public abstract class SchematicHandler {
                                                     break;
                                                 }
                                                 default: {
+                                                    System.out.print(id +","+datas[i]);
                                                     SetBlockQueue.setBlock(plot.world, xx, yy, zz, new PlotBlock((short) id, (byte) datas[i]));
                                                     break;
                                                 }
@@ -411,8 +411,19 @@ public abstract class SchematicHandler {
         final short width = ShortTag.class.cast(tagMap.get("Width")).getValue();
         final short length = ShortTag.class.cast(tagMap.get("Length")).getValue();
         final short height = ShortTag.class.cast(tagMap.get("Height")).getValue();
-        final byte[] block = ByteArrayTag.class.cast(tagMap.get("Blocks")).getValue();
+        final byte[] block_sml = ByteArrayTag.class.cast(tagMap.get("Blocks")).getValue();
         final byte[] data = ByteArrayTag.class.cast(tagMap.get("Data")).getValue();
+        
+        final short[] block = new short[block_sml.length];
+        for (int i = 0; i < block.length; i++) {
+            short id = block_sml[i];
+            if (id < 0) {
+                id = (short) (id & 0xFF);
+            }
+            block[i] = id;
+        }
+        
+        
         
         // Slow + has code for exceptions (addId) inside the loop rather than outside
 //        for (int index = 0; index < b.length; index++) {
@@ -432,6 +443,8 @@ public abstract class SchematicHandler {
 //            collection[x] = new DataCollection(blocks[x], d[x]);
 //        }
 //        Schematic schem = new Schematic(collection, dimension, file);
+        
+        System.out.print(width + "," + height +"," + length);
         
         Dimension dimensions = new Dimension(width, height, length);
         Schematic schem = new Schematic(block, data, dimensions);
@@ -747,7 +760,7 @@ public abstract class SchematicHandler {
      */
     public class Schematic {
         // Lossy but fast
-        private final byte[] ids;
+        private final short[] ids;
         private final byte[] datas;
         
         @Deprecated
@@ -766,7 +779,7 @@ public abstract class SchematicHandler {
          */
         @Deprecated
         public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension) {
-            ids = new byte[blockCollection.length];
+            ids = new short[blockCollection.length];
             datas = new byte[blockCollection.length];
             for (int i = 0; i < blockCollection.length; i++) {
                 DataCollection block = blockCollection[i];
@@ -777,7 +790,7 @@ public abstract class SchematicHandler {
             this.schematicDimension = schematicDimension;
         }
         
-        public Schematic(final byte[] i, final byte[] b, final Dimension d) {
+        public Schematic(final short[] i, final byte[] b, final Dimension d) {
             ids = i;
             datas = b;
             schematicDimension = d;
@@ -814,7 +827,7 @@ public abstract class SchematicHandler {
          * Get the block id array
          * @return
          */
-        public byte[] getIds() {
+        public short[] getIds() {
             return ids;
         }
         

@@ -467,8 +467,8 @@ public class Plot {
     /**
      * Set the plot biome
      */
-    public void setBiome(String biome) {
-        MainUtil.setBiome(this, biome);
+    public void setBiome(String biome, Runnable whenDone) {
+        MainUtil.setBiome(this, biome, whenDone);
     }
     
     /**

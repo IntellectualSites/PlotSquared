@@ -112,6 +112,16 @@ public class BukkitUtil extends BlockManager {
         return getWorld(world).getHighestBlockYAt(x, z);
     }
 
+    public static void unloadChunkAt(String worldname, int X, int Z, boolean save, boolean safe) {
+        final World world = getWorld(worldname);
+        world.unloadChunk(X, Z, save, safe);
+    }
+    
+    public static void loadChunkAt(final String worldname, int X, int Z, boolean force) {
+        final World world = getWorld(worldname);
+        world.loadChunk(X, Z, force);
+    }
+    
     public static Chunk getChunkAt(final String worldname, final int x, final int z) {
         final World world = getWorld(worldname);
         return world.getChunkAt(x, z);
@@ -156,13 +166,10 @@ public class BukkitUtil extends BlockManager {
         final World world = getWorld(worldname);
         for (int x = pos1_x; x <= pos2_x; x++) {
             for (int z = pos1_z; z <= pos2_z; z++) {
-                final Block blk = world.getBlockAt(x, 0, z);
-                final Biome c = blk.getBiome();
-                if (c.equals(b)) {
-                    x += 15;
+                if (world.getBiome(x, z) == b) {
                     continue;
                 }
-                blk.setBiome(b);
+                world.setBiome(x, z, b);
             }
         }
     }

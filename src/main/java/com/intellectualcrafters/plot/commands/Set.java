@@ -246,8 +246,18 @@ public class Set extends SubCommand {
                 MainUtil.sendMessage(plr, getBiomeList(BlockManager.manager.getBiomeList()));
                 return true;
             }
-            plot.setBiome(args[1].toUpperCase());
-            MainUtil.sendMessage(plr, C.BIOME_SET_TO.s() + args[1].toLowerCase());
+            if (MainUtil.runners.containsKey(plot)) {
+                MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+                return false;
+            }
+            MainUtil.runners.put(plot, 1);
+            plot.setBiome(args[1].toUpperCase(), new Runnable() {
+                @Override
+                public void run() {
+                    MainUtil.runners.remove(plot);
+                    MainUtil.sendMessage(plr, C.BIOME_SET_TO.s() + args[1].toLowerCase());
+                }
+            });
             return true;
         }
         // Get components

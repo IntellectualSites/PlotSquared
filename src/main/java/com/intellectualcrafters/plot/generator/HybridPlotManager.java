@@ -38,6 +38,8 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -174,87 +176,56 @@ public class HybridPlotManager extends ClassicPlotManager {
         
         final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.id);
-        
-        setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
-        final int p1x = pos1.getX();
-        final int p1z = pos1.getZ();
-        final int p2x = pos2.getX();
-        final int p2z = pos2.getZ();
-        final int bcx = p1x >> 4;
-        final int bcz = p1z >> 4;
-        final int tcx = p2x >> 4;
-        final int tcz = p2z >> 4;
-        
+        // If augmented
         final boolean canRegen = plotworld.TYPE == 0 && plotworld.TERRAIN == 0;
-        
+        // The component blocks
         final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
         final PlotBlock[] bedrock = (dpw.PLOT_BEDROCK ? new PlotBlock[] { new PlotBlock((short) 7, (byte) 0) } : filling);
         final PlotBlock air = new PlotBlock((short) 0, (byte) 0);
         
-        final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+        setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
         
-        for (int x = bcx; x <= tcx; x++) {
-            for (int z = bcz; z <= tcz; z++) {
-                chunks.add(new ChunkLoc(x, z));
-            }
-        }
-        
-        TaskManager.runTask(new Runnable() {
+        ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
             public void run() {
-                long start = System.currentTimeMillis();
-                while (chunks.size() > 0 && System.currentTimeMillis() - start < 20) {
-                    ChunkLoc chunk = chunks.remove(0);
-                    int x = chunk.x;
-                    int z = chunk.z;
-                    int xxb = x << 4;
-                    int zzb = z << 4;
-                    int xxt = xxb + 15;
-                    int zzt = zzb + 15;
-                    if (canRegen) {
-                        if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
-                            BukkitUtil.regenerateChunk(world, x, z);
-                            continue;
-                        }
-                    }
-                    if (x == bcx) {
-                        xxb = p1x; 
-                    }
-                    if (x == tcx) {
-                        xxt = p2x;
-                    }
-                    if (z == bcz) {
-                        zzb = p1z;
-                    }
-                    if (z == tcz) {
-                        zzt = p2z;
-                    }
-                    BukkitUtil.setBiome(plot.world, xxb, zzb, xxt, zzt, dpw.PLOT_BIOME);
-                    Location bot = new Location(world, xxb, 0, zzb);
-                    Location top = new Location(world, xxt + 1, 1, zzt + 1);
-                    MainUtil.setCuboidAsync(world, bot, top, bedrock);
-                    bot.setY(1);
-                    top.setY(dpw.PLOT_HEIGHT);
-                    MainUtil.setCuboidAsync(world, bot, top, filling);
-                    bot.setY(dpw.PLOT_HEIGHT);
-                    top.setY(dpw.PLOT_HEIGHT + 1);
-                    MainUtil.setCuboidAsync(world, bot, top, plotfloor);
-                    bot.setY(dpw.PLOT_HEIGHT + 1);
-                    top.setY(256);
-                    MainUtil.setSimpleCuboidAsync(world, bot, top, air);
+                // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
+                if (canRegen && value[6] == 0) {
+                    BukkitUtil.regenerateChunk(world, value[0], value[1]);
+                    return;
                 }
-                if (chunks.size() != 0) {
-                    TaskManager.runTaskLater(this, 1);
-                }
-                else {
-                    pastePlotSchematic(dpw, pos1, pos2);
-                    final PlotBlock wall = isDelete ? dpw.WALL_BLOCK : dpw.CLAIMED_WALL_BLOCK;
-                    setWall(dpw, plot.id, new PlotBlock[] { wall });
-                    SetBlockQueue.addNotify(whenDone);
-                }
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Otherwise we need to set each component, as we don't want to regenerate the road or other plots that share the same chunk //
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Set the biome
+                BukkitUtil.setBiome(plot.world, value[2], value[3], value[4], value[5], dpw.PLOT_BIOME);
+                // These two locations are for each component (e.g. bedrock, main block, floor, air)
+                Location bot = new Location(world, value[2], 0, value[3]);
+                Location top = new Location(world, value[4] + 1, 1, value[5] + 1);
+                MainUtil.setCuboidAsync(world, bot, top, bedrock);
+                // Each component has a different layer
+                bot.setY(1);
+                top.setY(dpw.PLOT_HEIGHT);
+                MainUtil.setCuboidAsync(world, bot, top, filling);
+                bot.setY(dpw.PLOT_HEIGHT);
+                top.setY(dpw.PLOT_HEIGHT + 1);
+                MainUtil.setCuboidAsync(world, bot, top, plotfloor);
+                bot.setY(dpw.PLOT_HEIGHT + 1);
+                top.setY(256);
+                MainUtil.setSimpleCuboidAsync(world, bot, top, air);
+                // And finally set the schematic, the y value is unimportant for this function
+                pastePlotSchematic(dpw, bot, top);
             }
-        });
+        }, new Runnable() {
+            @Override
+            public void run() {
+                // When we are done with the inside of the plot, we can reset the wall / border
+                final PlotBlock wall = isDelete ? dpw.WALL_BLOCK : dpw.CLAIMED_WALL_BLOCK;
+                setWall(dpw, plot.id, new PlotBlock[] { wall });
+                // And notify whatever called this when plot clearing is done
+                SetBlockQueue.addNotify(whenDone);
+            }
+        }, 5);
         return true;
     }
     
