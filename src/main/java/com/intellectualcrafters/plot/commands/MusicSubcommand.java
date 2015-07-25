@@ -50,19 +50,22 @@ public class MusicSubcommand extends SubCommand {
             sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }
-PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox") {
-    public boolean onClick(int index) {
-        PlotItemStack item = getItem(index);
-        int id = item.id == 7 ? 0 : item.id;
-        if (id == 0) {
-            FlagManager.removePlotFlag(plot, "music");
-        }
-        else {
-            FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), id));
-        }
-        return false;
-    }
-};
+        PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox") {
+            public boolean onClick(int index) {
+                PlotItemStack item = getItem(index);
+                if (item == null) {
+                    return true;
+                }
+                int id = item.id == 7 ? 0 : item.id;
+                if (id == 0) {
+                    FlagManager.removePlotFlag(plot, "music");
+                }
+                else {
+                    FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), id));
+                }
+                return false;
+            }
+        };
         int index = 0;
         for (int i = 2256; i < 2268; i++) {
             String name = "&r&6" + BlockManager.manager.getClosestMatchingName(new PlotBlock((short) i, (byte) 0));

@@ -1372,36 +1372,132 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (event.getTo() == null || event.getFrom() == null) {
             return;
         }
-        final Location f = BukkitUtil.getLocation(event.getFrom());
-        final Location t = BukkitUtil.getLocation(event.getTo());
-        final Location q = new Location(t.getWorld(), t.getX(), 64, t.getZ());
-        final Player player = event.getPlayer();
-        if (PS.get().isPlotWorld(q.getWorld())) {
-            final Plot plot = MainUtil.getPlot(q);
-            if (plot != null) {
-                final PlotPlayer pp = BukkitUtil.getPlayer(player);
-                if (plot.isDenied(pp.getUUID())) {
-                    if (Permissions.hasPermission(pp, "plots.admin.enter.denied")) {
-                        return;
-                    }
-                    MainUtil.sendMessage(pp, C.YOU_BE_DENIED);
-                    event.setCancelled(true);
-                    return;
-                } else {
-                    if (MainUtil.enteredPlot(f, t)) {
-                        plotEntry(pp, plot);
-                    }
-                }
-            } else {
-                if (MainUtil.leftPlot(f, t)) {
-                    final Plot plot2 = MainUtil.getPlot(f);
-                    plotExit(BukkitUtil.getPlayer(player), plot2);
-                }
-            }
-            if ((q.getX() >= 29999999) || (q.getX() <= -29999999) || (q.getZ() >= 29999999) || (q.getZ() <= -29999999)) {
-                event.setCancelled(true);
+        final org.bukkit.Location from = event.getFrom();
+        final org.bukkit.Location to = event.getTo();
+        
+        int x2;
+        if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
+            String worldname = to.getWorld().getName();
+            PlotWorld plotworld = PS.get().getPlotWorld(worldname);
+            if (plotworld == null) {
                 return;
             }
+            PlotManager plotManager = PS.get().getPlotManager(worldname);
+            PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
+            Player player = event.getPlayer();
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            Plot lastPlot = (Plot) pp.getMeta("lastplot");
+            if (id == null) {
+                if (lastPlot == null) {
+                    return;
+                }
+                if (!plotExit(pp, lastPlot)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.exit.denied");
+                    if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
+                        player.teleport(from);
+                    }
+                    else {
+                        player.teleport(player.getWorld().getSpawnLocation());
+                    }
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            else if (lastPlot != null && id.equals(lastPlot.id)) {
+                    return;
+            }
+            else {
+                Plot plot = MainUtil.getPlot(worldname, id);
+                if (!plotEntry(pp, plot)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.entry.denied");
+                    if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
+                        player.teleport(from);
+                    }
+                    else {
+                        player.teleport(player.getWorld().getSpawnLocation());
+                    }
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            Integer border = MainUtil.worldBorder.get(worldname);
+            if (border != null) {
+                if (x2 > border) {
+                    to.setX(border - 4);
+                    player.teleport(event.getTo());
+                    MainUtil.sendMessage(pp, C.BORDER);
+                    return;
+                }
+                else if (x2 < -border) {
+                    to.setX(-border + 4);
+                    player.teleport(event.getTo());
+                    MainUtil.sendMessage(pp, C.BORDER);
+                    return;
+                }
+            }
+            return;
+        }
+        int z2;
+        if (getInt(from.getZ()) != (z2 = getInt(to.getZ())) ) {
+            String worldname = to.getWorld().getName();
+            PlotWorld plotworld = PS.get().getPlotWorld(worldname);
+            if (plotworld == null) {
+                return;
+            }
+            PlotManager plotManager = PS.get().getPlotManager(worldname);
+            PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
+            Player player = event.getPlayer();
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            Plot lastPlot = (Plot) pp.getMeta("lastplot");
+            if (id == null) {
+                if (lastPlot == null) {
+                    return;
+                }
+                if (!plotExit(pp, lastPlot)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.exit.denied");
+                    if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
+                        player.teleport(from);
+                    }
+                    else {
+                        player.teleport(player.getWorld().getSpawnLocation());
+                    }
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            else if (lastPlot != null && id.equals(lastPlot.id)) {
+                return;
+            }
+            else {
+                Plot plot = MainUtil.getPlot(worldname, id);
+                if (!plotEntry(pp, plot)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.entry.denied");
+                    if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
+                        player.teleport(from);
+                    }
+                    else {
+                        player.teleport(player.getWorld().getSpawnLocation());
+                    }
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            Integer border = MainUtil.worldBorder.get(worldname);
+            if (border != null) {
+                if (z2 > border) {
+                    to.setZ(border - 4);
+                    player.teleport(event.getTo());
+                    MainUtil.sendMessage(pp, C.BORDER);
+                    return;
+                }
+                else if (z2 < -border) {
+                    to.setZ(-border + 4);
+                    player.teleport(event.getTo());
+                    MainUtil.sendMessage(pp, C.BORDER);
+                    return;
+                }
+            }
+            return;
         }
     }
 
@@ -1460,6 +1556,7 @@ public class PlayerEvents extends com.intellectualcrafters.plot.listeners.PlotLi
         if (inv != null && event.getRawSlot() == event.getSlot()) {
             if (!inv.onClick(event.getSlot())) {
                 event.setCancelled(true);
+                inv.close();
             }
         }
     }

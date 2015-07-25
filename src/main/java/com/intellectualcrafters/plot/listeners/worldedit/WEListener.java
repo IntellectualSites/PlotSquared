@@ -120,14 +120,14 @@ public class WEListener implements Listener {
                 }
                 return true;
             }
-        }
-        if (!WEManager.regionContains(region, mask)) {
-            MainUtil.sendMessage(pp, C.REQUIRE_SELECTION_IN_MASK, "pos1 + pos2");
-            e.setCancelled(true);
-            if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
-                MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
+            if (!WEManager.regionContains(region, mask)) {
+                MainUtil.sendMessage(pp, C.REQUIRE_SELECTION_IN_MASK, "pos1 + pos2");
+                e.setCancelled(true);
+                if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+                    MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
+                }
+                return true;
             }
-            return true;
         }
         long volume = Math.abs((pos1.getBlockX() - pos2.getBlockX()) * (pos1.getBlockY() - pos2.getBlockY()) * (pos1.getBlockZ() - pos2.getBlockZ())) * modifier;
         return checkVolume(pp, volume, max, e);
