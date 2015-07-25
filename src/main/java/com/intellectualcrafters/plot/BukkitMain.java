@@ -184,6 +184,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerCommands() {
         new MainCommand();
+        MainCommand.subCommands.add(new Buy());
         MainCommand.subCommands.add(new Save());
         MainCommand.subCommands.add(new Load());
         MainCommand.subCommands.add(new Download());
