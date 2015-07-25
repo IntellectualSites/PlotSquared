@@ -127,14 +127,22 @@ public class Trim extends SubCommand {
                         PS.get().TASK.cancelTask(Trim.TASK_ID);
                         return;
                     }
-                    final Plot plot = plots.get(0);
+                    final Plot plot = plots.remove(0);
                     plots.remove(0);
                     final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id);
                     final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
-                    for (int x = pos1.getX(); x <= pos2.getX(); x += 512 ) {
-                        for (int z = pos1.getZ(); z <= pos2.getZ(); z += 512 ) {
-                            ChunkLoc chunk = ChunkManager.getChunkChunk(new Location(world, x, 0, z));
-                            chunks.remove(chunk);
+                    
+                    int ccx1 = (pos1.getX() >> 9);
+                    int ccz1 = (pos1.getZ() >> 9);
+                    int ccx2 = (pos2.getX() >> 9);
+                    int ccz2 = (pos2.getZ() >> 9);
+                    
+                    System.out.print(pos1);
+                    
+                    for(int x = ccx1; x <= ccx2; x++) {
+                        for(int z = ccz1; z <= ccz2; z++) {
+                            chunks.remove(new ChunkLoc(x, z));
+                            System.out.print(x + "," + z);
                         }
                     }
                 }
