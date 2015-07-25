@@ -120,6 +120,21 @@ public class AugmentedPopulator extends BlockPopulator {
 
     @Override
     public void populate(final World world, final Random rand, final Chunk chunk) {
+        final int cx = chunk.getX();
+        final int cz = chunk.getZ();
+        final int bx = cx << 4;
+        final int bz = cz << 4;
+        final int tx = bx + 15;
+        final int tz = bz + 15;
+        final boolean inX1 = ((bx >= this.bx) && (bx <= this.tx));
+        final boolean inX2 = ((tx >= this.bx) && (tx <= this.tx));
+        final boolean inZ1 = ((bz >= this.bz) && (bz <= this.tz));
+        final boolean inZ2 = ((tz >= this.bz) && (tz <= this.tz));
+        final boolean inX = inX1 || inX2;
+        final boolean inZ = inZ1 || inZ2;
+        if (!inX || !inZ) {
+            return;
+        }
         if (this.plotworld.TERRAIN == 3) {
             int X = chunk.getX() << 4;
             int Z = chunk.getZ() << 4;
@@ -170,44 +185,29 @@ public class AugmentedPopulator extends BlockPopulator {
             }
             return;
         }
-        final int X = chunk.getX();
-        final int Z = chunk.getZ();
-        final int x = X << 4;
-        final int z = Z << 4;
-        final int x2 = x + 15;
-        final int z2 = z + 15;
-        final boolean inX1 = ((x >= this.bx) && (x <= this.tx));
-        final boolean inX2 = ((x2 >= this.bx) && (x2 <= this.tx));
-        final boolean inZ1 = ((z >= this.bz) && (z <= this.tz));
-        final boolean inZ2 = ((z2 >= this.bz) && (z2 <= this.tz));
-        final boolean inX = inX1 || inX2;
-        final boolean inZ = inZ1 || inZ2;
-        if (!inX || !inZ) {
-            return;
-        }
         final boolean check;
         check = !inX1 || !inX2 || !inZ1 || !inZ2;
         if (this.plotworld.TERRAIN > 1) {
-            final PlotId plot1 = this.manager.getPlotIdAbs(this.plotworld, x, 0, z);
-            final PlotId plot2 = this.manager.getPlotIdAbs(this.plotworld, x2, 0, z2);
+            final PlotId plot1 = this.manager.getPlotIdAbs(this.plotworld, bx, 0, bz);
+            final PlotId plot2 = this.manager.getPlotIdAbs(this.plotworld, tx, 0, tz);
             if ((plot1 != null) && (plot2 != null) && plot1.equals(plot2)) {
                 return;
             }
         }
         if (this.o) {
-            populateBlocks(world, rand, X, Z, x, z, check);
+            populateBlocks(world, rand, cx, cz, bx, bz, check);
         } else {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
-                    populateBiome(world, x, z);
+                    populateBiome(world, bx, bz);
                 }
             }, 20 + rand.nextInt(10));
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
                     chunk.load(true);
-                    populateBlocks(world, rand, X, Z, x, z, check);
+                    populateBlocks(world, rand, cx, cz, bx, bz, check);
                 }
             }, 40 + rand.nextInt(40));
         }

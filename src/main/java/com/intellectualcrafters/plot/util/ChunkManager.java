@@ -47,6 +47,15 @@ public abstract class ChunkManager {
 
     public abstract boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone);
 
+    /**
+     * Assumptions:<br>
+     *  - pos1 and pos2 are in the same plot<br>
+     * It can be harmful to the world if parameters outside this scope are provided
+     * @param pos1
+     * @param pos2
+     * @param whenDone
+     * @return
+     */
     public abstract boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone);
 
     public abstract void clearAllEntities(final Plot plot);

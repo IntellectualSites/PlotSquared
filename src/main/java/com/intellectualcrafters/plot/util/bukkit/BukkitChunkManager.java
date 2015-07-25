@@ -2,6 +2,8 @@ package com.intellectualcrafters.plot.util.bukkit;
 
 import com.intellectualcrafters.plot.BukkitMain;
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -10,12 +12,16 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.entity.EntityWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
+
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -49,6 +55,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -59,6 +66,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 public class BukkitChunkManager extends ChunkManager {
     @Override
@@ -296,99 +304,179 @@ public class BukkitChunkManager extends ChunkManager {
         TaskManager.tasks.put(currentIndex, loadTask);
         return true;
     }
+    
+    public void saveRegion(World world, int x1, int x2, int z1, int z2) {
+        if (z1 > z2) {
+            int tmp = z1;
+            z1 = z2;
+            z2 = tmp;
+        }
+        if (x1 > x2) {
+            int tmp = x1;
+            x1 = x2;
+            x2 = tmp;
+        }
+        for (int x = x1; x <= x2; x++) {
+            for (int z = z1; z <= z2; z++) {
+                saveBlocks(world, 255, x, z);
+            }
+        }
+    }
 
     @Override
     public boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
-        TaskManager.index.increment();
-        final Plugin plugin = BukkitMain.THIS;
-        final World world = Bukkit.getWorld(pos1.getWorld());
-        final Chunk c1 = world.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
-        final Chunk c2 = world.getChunkAt(pos2.getX() >> 4, pos2.getZ() >> 4);
-        final int sx = pos1.getX();
-        final int sz = pos1.getZ();
-        final int ex = pos2.getX();
-        final int ez = pos2.getZ();
-        final int c1x = c1.getX();
-        final int c1z = c1.getZ();
-        final int c2x = c2.getX();
-        final int c2z = c2.getZ();
-        final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-        for (int x = c1x; x <= c2x; x++) {
-            for (int z = c1z; z <= c2z; z++) {
-                final Chunk chunk = world.getChunkAt(x, z);
-                chunk.load(false);
-                chunks.add(chunk);
+        final String world = pos1.getWorld();
+        PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final int p1x = pos1.getX();
+        final int p1z = pos1.getZ();
+        final int p2x = pos2.getX();
+        final int p2z = pos2.getZ();
+        final int bcx = p1x >> 4;
+        final int bcz = p1z >> 4;
+        final int tcx = p2x >> 4;
+        final int tcz = p2z >> 4;
+        
+        final boolean canRegen = (plotworld.TYPE != 0 && plotworld.TERRAIN == 0);
+        
+        final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+        
+        for (int x = bcx; x <= tcx; x++) {
+            for (int z = bcz; z <= tcz; z++) {
+                chunks.add(new ChunkLoc(x, z));
             }
         }
-        final int maxY = world.getMaxHeight();
-        final Integer currentIndex = TaskManager.index.toInteger();
-        final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                final long start = System.currentTimeMillis();
-                while ((System.currentTimeMillis() - start) < 20) {
-                    if (chunks.size() == 0) {
-                        TaskManager.runTaskLater(whenDone, 1);
-                        Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
-                        TaskManager.tasks.remove(currentIndex);
-                        return;
-                    }
-                    CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-                    final Chunk chunk = chunks.get(0);
-                    chunks.remove(0);
-                    final int x = chunk.getX();
-                    final int z = chunk.getZ();
-                    boolean loaded = true;
-                    if (!chunk.isLoaded()) {
-                        final boolean result = chunk.load(false);
-                        if (!result) {
-                            loaded = false;
-                        }
-                        if (!chunk.isLoaded()) {
-                            loaded = false;
-                        }
-                    }
-                    if (loaded) {
-                        initMaps();
-                        final int absX = x << 4;
-                        final int absZ = z << 4;
-                        boolean save = false;
-                        if ((x == c1x) || (z == c1z)) {
-                            save = true;
-                            for (int X = 0; X < 16; X++) {
-                                for (int Z = 0; Z < 16; Z++) {
-                                    if ((((X + absX) < sx) || ((Z + absZ) < sz)) || (((X + absX) > ex) || ((Z + absZ) > ez))) {
-                                        saveBlocks(world, maxY, X + absX, Z + absZ);
-                                    }
-                                }
-                            }
-                        } else if ((x == c2x) || (z == c2z)) {
-                            for (int X = 0; X < 16; X++) {
-                                save = true;
-                                for (int Z = 0; Z < 16; Z++) {
-                                    if ((((X + absX) > ex) || ((Z + absZ) > ez)) || (((X + absX) < sx) || ((Z + absZ) < sz))) {
-                                        saveBlocks(world, maxY, X + absX, Z + absZ);
-                                    }
-                                }
-                            }
-                        }
-                        if (save) {
-                            saveEntitiesOut(chunk, CURRENT_PLOT_CLEAR);
-                        }
-                        ChunkLoc loc = new ChunkLoc(chunk.getX(), chunk.getZ());
-                        regenerateChunk(world.getName(), loc);
-                        if (save) {
-                            restoreBlocks(world, 0, 0);
-                            restoreEntities(world, 0, 0);
-                        }
-                        MainUtil.update(world.getName(), loc);
-                        BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
-                    }
-                    CURRENT_PLOT_CLEAR = null;
+
+        AugmentedPopulator augpop = null;
+        final World worldObj = Bukkit.getWorld(world);
+        List<BlockPopulator> populators = worldObj.getPopulators();
+        for (BlockPopulator populator : populators) {
+            if (populator instanceof AugmentedPopulator) {
+                AugmentedPopulator current = ((AugmentedPopulator) populator);
+                if (current.cluster == null) {
+                    augpop = current;
+                    break;
+                }
+                else if (ClusterManager.contains(current.cluster, pos1)) {
+                    augpop = current;
+                    break;
                 }
             }
-        }, 1, 1);
-        TaskManager.tasks.put(currentIndex, task);
+        }
+        final AugmentedPopulator ap = augpop;
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                while (chunks.size() > 0 && System.currentTimeMillis() - start < 50) {
+                    ChunkLoc chunk = chunks.remove(0);
+                    int x = chunk.x;
+                    int z = chunk.z;
+                    int xxb = x << 4;
+                    int zzb = z << 4;
+                    int xxt = xxb + 15;
+                    int zzt = zzb + 15;
+                    CURRENT_PLOT_CLEAR = null;
+                    Chunk chunkObj = worldObj.getChunkAt(x, z);
+                    if (!chunkObj.load(false)) {
+                        System.out.print("FAILED TO LOAD CHUNK!!!: " + x + "," + z);
+                        continue;
+                    }
+                    CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
+                    if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
+                        if (canRegen && ap != null) {
+                            ap.populate(worldObj, null, chunkObj);
+                        }
+                        else {
+                            regenerateChunk(world, chunk);
+                        }
+                        continue;
+                    }
+                    boolean checkX1 = false;
+                    boolean checkX2 = false;
+                    boolean checkZ1 = false;
+                    boolean checkZ2 = false;
+                    
+                    int xxb2;
+                    int zzb2;
+                    int xxt2;
+                    int zzt2;
+                    
+                    if (x == bcx) {
+                        xxb2 = p1x - 1;
+                        checkX1 = true;
+                    }
+                    else {
+                        xxb2 = xxb; 
+                    }
+                    if (x == tcx) {
+                        xxt2 = p2x + 1;
+                        checkX2 = true;
+                    }
+                    else {
+                        xxt2 = xxt;
+                    }
+                    if (z == bcz) {
+                        zzb2 = p1z - 1;
+                        checkZ1 = true;
+                    }
+                    else {
+                        zzb2 = zzb;
+                    }
+                    if (z == tcz) {
+                        zzt2 = p2z + 1;
+                        checkZ2 = true;
+                    }
+                    else {
+                        zzt2 = zzt;
+                    }
+                    initMaps();
+                    if (checkX1) {
+                        saveRegion(worldObj, xxb , xxb2, zzb2, zzt2); //
+                    }
+                    if (checkX2) {
+                        saveRegion(worldObj, xxt2 , xxt, zzb2, zzt2); //
+                    }
+                    if (checkZ1) {
+                        saveRegion(worldObj, xxb2 , xxt2, zzb, zzb2); //
+                    }
+                    if (checkZ2) {
+                        saveRegion(worldObj, xxb2 , xxt2, zzt2, zzt); // 
+                    }
+                    if (checkX1 && checkZ1) {
+                        saveRegion(worldObj, xxb , xxb2, zzb, zzb2); // 
+                    }
+                    if (checkX2 && checkZ1) {
+                        System.out.print("CX2 && CZ1");
+                        System.out.print(xxt2 +',' + xxt + " | " + zzb + "," + zzb2);
+                        saveRegion(worldObj, xxt2 , xxt, zzb, zzb2); // ?
+                    }
+                    if (checkX1 && checkZ2) {
+                        System.out.print("CX1 && CZ2");
+                        System.out.print(xxb +',' + xxb2 + " | " + zzt2 + "," + zzt);
+                        saveRegion(worldObj, xxb , xxb2, zzt2, zzt); // ?
+                    }
+                    if (checkX2 && checkZ2) {
+                        saveRegion(worldObj, xxt2 , xxt, zzt2, zzt); // 
+                    }
+                    saveEntitiesOut(chunkObj, CURRENT_PLOT_CLEAR);
+                    if (canRegen && ap != null) {
+                        ap.populate(worldObj, null, chunkObj);
+                    }
+                    else {
+                        regenerateChunk(world, chunk);
+                    }
+                    restoreBlocks(worldObj, 0, 0);
+                    restoreEntities(worldObj, 0, 0);
+                }
+                CURRENT_PLOT_CLEAR = null;
+                if (chunks.size() != 0) {
+                    TaskManager.runTaskLater(this, 1);
+                }
+                else {
+                    TaskManager.runTaskLater(whenDone, 1);
+                }
+            }
+        });
         return true;
     }
 
