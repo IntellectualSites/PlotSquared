@@ -378,7 +378,6 @@ public class BukkitChunkManager extends ChunkManager {
                     CURRENT_PLOT_CLEAR = null;
                     Chunk chunkObj = worldObj.getChunkAt(x, z);
                     if (!chunkObj.load(false)) {
-                        System.out.print("FAILED TO LOAD CHUNK!!!: " + x + "," + z);
                         continue;
                     }
                     CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
@@ -446,13 +445,9 @@ public class BukkitChunkManager extends ChunkManager {
                         saveRegion(worldObj, xxb , xxb2, zzb, zzb2); // 
                     }
                     if (checkX2 && checkZ1) {
-                        System.out.print("CX2 && CZ1");
-                        System.out.print(xxt2 +',' + xxt + " | " + zzb + "," + zzb2);
                         saveRegion(worldObj, xxt2 , xxt, zzb, zzb2); // ?
                     }
                     if (checkX1 && checkZ2) {
-                        System.out.print("CX1 && CZ2");
-                        System.out.print(xxb +',' + xxb2 + " | " + zzt2 + "," + zzt);
                         saveRegion(worldObj, xxb , xxb2, zzt2, zzt); // ?
                     }
                     if (checkX2 && checkZ2) {

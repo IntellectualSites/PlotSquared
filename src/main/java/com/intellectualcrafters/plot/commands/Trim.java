@@ -137,12 +137,9 @@ public class Trim extends SubCommand {
                     int ccx2 = (pos2.getX() >> 9);
                     int ccz2 = (pos2.getZ() >> 9);
                     
-                    System.out.print(pos1);
-                    
                     for(int x = ccx1; x <= ccx2; x++) {
                         for(int z = ccz1; z <= ccz2; z++) {
                             chunks.remove(new ChunkLoc(x, z));
-                            System.out.print(x + "," + z);
                         }
                     }
                 }
