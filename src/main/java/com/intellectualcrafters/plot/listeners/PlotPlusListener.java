@@ -22,8 +22,10 @@ package com.intellectualcrafters.plot.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -69,27 +71,37 @@ public class PlotPlusListener extends PlotListener implements Listener {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                for (final Map.Entry<String, Interval> entry : feedRunnable.entrySet()) {
+                for (Iterator<Entry<String, Interval>> iter = healRunnable.entrySet().iterator(); iter.hasNext();){
+                    Entry<String, Interval> entry = iter.next();
                     final Interval value = entry.getValue();
                     ++value.count;
                     if (value.count == value.interval) {
                         value.count = 0;
                         final Player player = Bukkit.getPlayer(entry.getKey());
-                        final int level = player.getFoodLevel();
-                        if (level != value.max) {
-                            player.setFoodLevel(Math.min(level + value.amount, value.max));
+                        if (player == null) {
+                            iter.remove();
+                            continue;
                         }
-                    }
-                }
-                for (final Map.Entry<String, Interval> entry : healRunnable.entrySet()) {
-                    final Interval value = entry.getValue();
-                    ++value.count;
-                    if (value.count == value.interval) {
-                        value.count = 0;
-                        final Player player = Bukkit.getPlayer(entry.getKey());
                         final double level = player.getHealth();
                         if (level != value.max) {
                             player.setHealth(Math.min(level + value.amount, value.max));
+                        }
+                    }
+                }
+                for (Iterator<Entry<String, Interval>> iter = feedRunnable.entrySet().iterator(); iter.hasNext();){
+                    Entry<String, Interval> entry = iter.next();
+                    final Interval value = entry.getValue();
+                    ++value.count;
+                    if (value.count == value.interval) {
+                        value.count = 0;
+                        final Player player = Bukkit.getPlayer(entry.getKey());
+                        if (player == null) {
+                            iter.remove();
+                            continue;
+                        }
+                        final int level = player.getFoodLevel();
+                        if (level != value.max) {
+                            player.setFoodLevel(Math.min(level + value.amount, value.max));
                         }
                     }
                 }
@@ -214,8 +226,9 @@ public class PlotPlusListener extends PlotListener implements Listener {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
         }
         final PlotPlayer pl = BukkitUtil.getPlayer(leaver);
-        feedRunnable.remove(leaver.getName());
-        healRunnable.remove(leaver.getName());
+        String name = leaver.getName();
+        feedRunnable.remove(name);
+        healRunnable.remove(name);
         if (FlagManager.isBooleanFlag(plot, "notify-leave", false)) {
             if (Permissions.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
                 return;
