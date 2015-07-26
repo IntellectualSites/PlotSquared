@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.callers.CommandCaller;
 
 public class DebugAllowUnsafe extends SubCommand {
 
@@ -17,11 +18,8 @@ public class DebugAllowUnsafe extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr == null) {
-            MainUtil.sendMessage(plr, C.IS_CONSOLE);
-            return false;
-        }
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         if (unsafeAllowed.contains(plr.getUUID())) {
             unsafeAllowed.remove(plr.getUUID());
             sendMessage(plr, C.DEBUGALLOWUNSAFE_OFF);

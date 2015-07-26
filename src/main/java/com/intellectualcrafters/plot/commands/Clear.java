@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.Set;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -33,15 +34,22 @@ import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
+import com.plotsquared.bukkit.util.UUIDHandler;
 
+@CommandDeclaration(
+        command = "clear",
+        description = "Clear a plot",
+        permission = "plots.clear",
+        category = CommandCategory.ACTIONS,
+        usage = "/plot clear [id]"
+)
 public class Clear extends SubCommand {
-    public Clear() {
-        super(Command.CLEAR, "Clear a plot", "clear", CommandCategory.ACTIONS, false);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
         if (plr == null) {
             // Is console
             if (args.length < 2) {
@@ -66,12 +74,7 @@ public class Clear extends SubCommand {
                                     PS.log("Plot " + plot.getId().toString() + " cleared.");
                                 }
                             };
-                            if (Settings.CONFIRM_CLEAR && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
-                                CmdConfirm.addPending(plr, "/plot clear " + id, runnable);
-                            }
-                            else {
-                                TaskManager.runTask(runnable);
-                            }
+                            TaskManager.runTask(runnable);
                         }
                     }
                 }

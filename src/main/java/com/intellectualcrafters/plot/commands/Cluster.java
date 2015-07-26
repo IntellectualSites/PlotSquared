@@ -27,6 +27,8 @@ import java.util.UUID;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.object.BlockLoc;
@@ -34,22 +36,27 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotClusterId;
-import com.plotsquared.bukkit.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.UUIDHandler;
 
+@CommandDeclaration(
+        command = "cluser",
+        aliases = {"clusters"},
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class,
+        permission = "plots.cluster",
+        description = "Manage a plot cluster"
+)
 public class Cluster extends SubCommand {
-    public Cluster() {
-        super(Command.CLUSTER, "Manage a plot cluster", "cluster", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
         if (args.length == 0) {
             // return arguments

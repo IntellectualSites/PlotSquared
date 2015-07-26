@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -39,19 +40,29 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+// TODO Add sub-subcommands
+
+@CommandDeclaration(
+        command = "schematic",
+        permission = "plots.schematic",
+        description = "Schematic command",
+        aliases = {"sch"},
+        category = CommandCategory.ACTIONS,
+        usage = "/plot schematic <arg...>"
+)
 public class SchematicCmd extends SubCommand {
+
     private int counter = 0;
     private boolean running = false;
     private int task;
 
-    public SchematicCmd() {
-        super("schematic", "plots.schematic", "Schematic Command", "schematic {arg}", "sch", CommandCategory.ACTIONS, false);
-        // TODO command to fetch schematic from worldedit directory
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
         if (args.length < 1) {
             sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
             return true;

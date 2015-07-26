@@ -27,24 +27,30 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
-/**
- * Created 2014-08-01 for PlotSquared
- *
- * @author Empire92
- */
+@CommandDeclaration(
+        command = "copy",
+        permission = "plots.copy",
+        aliases = {"copypaste"},
+        category = CommandCategory.ACTIONS,
+        description = "Copy a plot",
+        usage = "/plot copy <X;Z>",
+        requiredType = PlotPlayer.class
+)
 public class Copy extends SubCommand {
+
     public Copy() {
-        super("copy", "plots.copy", "Copy a plot", "copypaste", "", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.PlotID
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length < 1) {
-            MainUtil.sendMessage(plr, C.NEED_PLOT_ID);
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
-            return false;
-        }
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot1 = MainUtil.getPlot(loc);
         if (plot1 == null) {

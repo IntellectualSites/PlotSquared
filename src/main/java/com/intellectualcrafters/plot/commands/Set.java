@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PS;
@@ -47,21 +50,25 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
-/**
- * @author Citymonstret
- */
+
+// TODO Make sub-subcommands
+@CommandDeclaration(
+        command = "set",
+        description = "Set a plot value",
+        aliases = {"s"},
+        usage = "/plot set <arg> <value(s)...>",
+        permission = "plots.set",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class Set extends SubCommand {
     public final static String[] values = new String[] { "biome", "alias", "home", "flag" };
     public final static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "fl" };
 
-    public Set() {
-        super(Command.SET, "Set a plot value", "set {arg} {value...}", CommandCategory.ACTIONS, true);
-    }
-
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

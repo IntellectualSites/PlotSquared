@@ -22,22 +22,30 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.Map.Entry;
 
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.plotsquared.bukkit.generator.HybridGen;
-import com.plotsquared.bukkit.object.PlotGenerator;
+
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.bukkit.util.SetupUtils;
 
+@CommandDeclaration(
+        command = "setup",
+        permission = "plots.admin.command.setup",
+        description = "Plotworld setup command",
+        usage = "/plot setup",
+        aliases = {"create"},
+        category = CommandCategory.ACTIONS
+)
 public class DebugSetup extends SubCommand {
-    public DebugSetup() {
-        super("setup", "plots.admin.command.setup", "Plotworld setup command", "setup", "create", CommandCategory.ACTIONS, false);
-    }
-    
+
     public void displayGenerators(PlotPlayer plr) {
         StringBuffer message = new StringBuffer();
         message.append("&6What generator do you want?");
@@ -59,7 +67,8 @@ public class DebugSetup extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
         // going through setup
         String name;
         if (plr == null) {

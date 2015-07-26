@@ -35,7 +35,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.UUIDHandler;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 @CommandDeclaration(
         command = "delete",

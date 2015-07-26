@@ -34,16 +34,24 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
+import com.plotsquared.bukkit.util.UUIDHandler;
 
-
+@CommandDeclaration(
+        command = "buy",
+        aliases = {"b"},
+        description = "Buy the plot you are standing on",
+        usage = "/plot buy",
+        permission = "plots.buy",
+        category = CommandCategory.CLAIMING,
+        requiredType = PlotPlayer.class
+)
 public class Buy extends SubCommand {
-    public Buy() {
-        super(Command.BUY, "Buy the plot you are standing on", "b", CommandCategory.CLAIMING, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         if (EconHandler.manager == null) {
             return sendMessage(plr, C.ECON_DISABLED);
         }

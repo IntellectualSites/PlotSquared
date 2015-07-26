@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.callers.CommandCaller;
 
 public class DebugRoadRegen extends SubCommand {
     public DebugRoadRegen() {
@@ -35,7 +36,8 @@ public class DebugRoadRegen extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
         final Location loc = player.getLocation();
         final String world = loc.getWorld();
         if (!(PS.get().getPlotWorld(world) instanceof HybridPlotWorld)) {

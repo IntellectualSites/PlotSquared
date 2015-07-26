@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;
@@ -38,13 +40,19 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 
+@CommandDeclaration(
+        command = "flag",
+        aliases = {"f"},
+        description = "Manage plot flags",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class,
+        permission = "plots.flag"
+)
 public class FlagCmd extends SubCommand {
-    public FlagCmd() {
-        super(Command.FLAG, "Manage plot flags", "f", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
         /*
          *  plot flag set fly true
          *  plot flag remove fly
