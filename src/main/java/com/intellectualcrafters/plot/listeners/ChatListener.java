@@ -55,7 +55,7 @@ public class ChatListener implements Listener {
                 recipients.add(p);
             }
         }
-        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", sender).replaceAll("%msg%", message);
+        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", sender).replaceAll("%msg%", message.replaceAll("([%]{1})", "%%"));
         format = ChatColor.translateAlternateColorCodes('&', format);
         event.setFormat(format);
     }
