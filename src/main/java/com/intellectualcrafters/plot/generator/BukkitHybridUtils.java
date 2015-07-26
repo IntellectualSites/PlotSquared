@@ -5,9 +5,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
-import org.apache.commons.lang.mutable.MutableInt;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -215,8 +216,8 @@ public class BukkitHybridUtils extends HybridUtils {
         };
         System.gc();
         AugmentedPopulator.initCache();
-        TaskManager.index.increment();
-        final Integer currentIndex = TaskManager.index.toInteger();
+        TaskManager.index.incrementAndGet();
+        final Integer currentIndex = TaskManager.index.get();
         final Integer task = TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
@@ -268,7 +269,7 @@ public class BukkitHybridUtils extends HybridUtils {
     }
 
     public void checkModified(final Plot plot, final RunnableVal<Integer> whenDone) {
-        TaskManager.index.increment();
+        TaskManager.index.incrementAndGet();
         final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
         int bx = bot.getX() >> 4;
@@ -291,9 +292,9 @@ public class BukkitHybridUtils extends HybridUtils {
 
         final ClassicPlotWorld cpw = (ClassicPlotWorld) plotworld;
 
-        final MutableInt count = new MutableInt(0);
+        final AtomicInteger count = new AtomicInteger(0);
 
-        final Integer currentIndex = TaskManager.index.toInteger();
+        final Integer currentIndex = TaskManager.index.get();
         final Integer task = TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
@@ -312,9 +313,9 @@ public class BukkitHybridUtils extends HybridUtils {
                 int ex = Math.min((chunk.getX() << 4) + 15, top.getX());
                 int ez = Math.min((chunk.getZ() << 4) + 15, top.getZ());
                 // count changes
-                count.add(checkModified(plot.world, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez, cpw.MAIN_BLOCK));
-                count.add(checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK));
-                count.add(checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez, new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) }));
+                count.addAndGet(checkModified(plot.world, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez, cpw.MAIN_BLOCK));
+                count.addAndGet(checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK));
+                count.addAndGet(checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez, new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) }));
             }
         }, 1);
         TaskManager.tasks.put(currentIndex, task);
@@ -414,11 +415,11 @@ public class BukkitHybridUtils extends HybridUtils {
         BukkitHybridUtils.world = world;
         chunks = new ArrayList<ChunkLoc>();
         final Plugin plugin = BukkitMain.THIS;
-        final MutableInt count = new MutableInt(0);
+        final AtomicInteger count = new AtomicInteger(0);
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                count.increment();
+                count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
                     PS.log("PROGRESS: " + ((100 * (2048 - chunks.size())) / 2048) + "%");
                 }

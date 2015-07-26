@@ -24,10 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.plot.config.Configuration.SettingValue;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * Configuration Node
@@ -91,7 +90,7 @@ public class ConfigurationNode {
 
     public Object getDefaultValue() {
         if (this.default_value instanceof Object[]) {
-            return StringUtils.join((Object[]) this.default_value, ",");
+            return StringMan.join((Object[]) this.default_value, ",");
         }
         return this.default_value;
     }

@@ -53,7 +53,7 @@ public class SetBlockQueue {
             runnables = new HashSet<>();
         }
         if (!running) {
-            TaskManager.index.increment();
+            TaskManager.index.incrementAndGet();
             final int current = TaskManager.index.intValue();
             int task = TaskManager.runTaskRepeat(new Runnable() {
                 @Override

@@ -3,7 +3,7 @@ package com.intellectualcrafters.plot.database;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.apache.commons.lang.StringUtils;
+import com.intellectualcrafters.plot.util.StringMan;
 
 public abstract class StmtMod<T> {
 	public abstract String getCreateMySQL(int size);
@@ -11,15 +11,15 @@ public abstract class StmtMod<T> {
 	public String getCreateMySQL(int size, String query, int params) {
 		final StringBuilder statement = new StringBuilder(query);
         for (int i = 0; i < size - 1; i++) {
-            statement.append("(" + StringUtils.repeat(",(?)", params).substring(1) + "),");
+            statement.append("(" + StringMan.repeat(",(?)", params).substring(1) + "),");
         }
-        statement.append("(" + StringUtils.repeat(",(?)", params).substring(1) + ")");
+        statement.append("(" + StringMan.repeat(",(?)", params).substring(1) + ")");
         return statement.toString();
 	}
 	
 	public String getCreateSQLite(int size, String query, int params) {
 		StringBuilder statement = new StringBuilder(query);
-		String modParams = StringUtils.repeat(",?", params).substring(1);
+		String modParams = StringMan.repeat(",?", params).substring(1);
 		for (int i = 0; i < (size - 1); i++) {
             statement.append("UNION SELECT " + modParams + " ");
         }

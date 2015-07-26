@@ -43,9 +43,7 @@ import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.PlotGenerator2;
@@ -70,10 +68,8 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.Logger;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
 import com.plotsquared.bukkit.util.SetupUtils;
@@ -1549,7 +1545,6 @@ public class PS {
             setupStyle();
         } catch (final Exception err) {
             err.printStackTrace();
-            Logger.add(LogLevel.DANGER, "Failed to save style.yml");
             log("failed to save style.yml");
         }
         try {
@@ -1562,7 +1557,6 @@ public class PS {
             config = YamlConfiguration.loadConfiguration(configFile);
             setupConfig();
         } catch (final Exception err_trans) {
-            Logger.add(LogLevel.DANGER, "Failed to save settings.yml");
             log("Failed to save settings.yml");
         }
         try {
@@ -1575,7 +1569,6 @@ public class PS {
             storage = YamlConfiguration.loadConfiguration(storageFile);
             setupStorage();
         } catch (final Exception err_trans) {
-            Logger.add(LogLevel.DANGER, "Failed to save storage.yml");
             log("Failed to save storage.yml");
         }
         try {
@@ -1583,7 +1576,7 @@ public class PS {
             config.save(configFile);
             storage.save(storageFile);
         } catch (final IOException e) {
-            Logger.add(LogLevel.DANGER, "Configuration file saving failed");
+            log("Configuration file saving failed");
             e.printStackTrace();
         }
     }

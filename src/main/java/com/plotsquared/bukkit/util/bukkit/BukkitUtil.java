@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -35,6 +34,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringComparison;
 
 public class BukkitUtil extends BlockManager {
@@ -380,7 +380,7 @@ public class BukkitUtil extends BlockManager {
             else {
                 data = 0;
             }
-            if (StringUtils.isNumeric(split[0])) {
+            if (MathMan.isInteger(split[0])) {
                 id = Short.parseShort(split[0]);
                 match = 0;
             }

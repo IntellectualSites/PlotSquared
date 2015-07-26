@@ -20,7 +20,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 
-import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.DyeColor;
@@ -64,6 +63,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BukkitChunkManager extends ChunkManager {
     @Override
@@ -193,7 +193,7 @@ public class BukkitChunkManager extends ChunkManager {
      */
     @Override
     public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
-        TaskManager.index.increment();
+        TaskManager.index.incrementAndGet();
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
 
@@ -224,7 +224,7 @@ public class BukkitChunkManager extends ChunkManager {
             }
         }
         final Plugin plugin = BukkitMain.THIS;
-        final Integer currentIndex = TaskManager.index.toInteger();
+        final Integer currentIndex = TaskManager.index.get();
         final int loadTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
@@ -236,7 +236,7 @@ public class BukkitChunkManager extends ChunkManager {
                         TaskManager.runTask(new Runnable() {
                             @Override
                             public void run() {
-                                TaskManager.index.increment();
+                                TaskManager.index.incrementAndGet();
                                 // Copy entities
                                 initMaps();
                                 for (int x = c1x; x <= c2x; x++) {
@@ -247,8 +247,8 @@ public class BukkitChunkManager extends ChunkManager {
                                     }
                                 }
                                 // Copy blocks
-                                final MutableInt mx = new MutableInt(sx);
-                                final Integer currentIndex = TaskManager.index.toInteger();
+                                final AtomicInteger mx = new AtomicInteger(sx);
+                                final Integer currentIndex = TaskManager.index.get();
                                 final int maxY = oldWorld.getMaxHeight();
                                 final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                                     @Override
@@ -265,7 +265,7 @@ public class BukkitChunkManager extends ChunkManager {
                                                     BukkitSetBlockManager.setBlockManager.set(newWorld, xv + relX, y, z + relZ, id, data);
                                                 }
                                             }
-                                            mx.increment();
+                                            mx.incrementAndGet();
                                             if (xv == ex) { // done!
                                                 for (int x = c1x; x <= c2x; x++) {
                                                     for (int z = c1z; z <= c2z; z++) {

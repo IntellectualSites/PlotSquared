@@ -6,8 +6,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.commons.lang.mutable.MutableInt;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
@@ -139,12 +138,12 @@ public class PlotAnalysis {
                 
                 final int[] ratings = new int[plots.size()];
                 
-                final MutableInt mi = new MutableInt(0);
+                final AtomicInteger mi = new AtomicInteger(0);
                 
                 Thread ratingAnalysis = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        for (;mi.intValue() < plots.size(); mi.increment()) {
+                        for (;mi.intValue() < plots.size(); mi.incrementAndGet()) {
                             int i = mi.intValue();
                             Plot plot = plots.get(i);
                             ratings[i] = (int) ((plot.getAverageRating() + plot.getSettings().ratings.size()) * 100);

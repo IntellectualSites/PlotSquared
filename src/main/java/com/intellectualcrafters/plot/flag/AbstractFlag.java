@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import org.apache.commons.lang.StringUtils;
+import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * Created 2014-09-23 for PlotSquared
@@ -42,7 +42,7 @@ public class AbstractFlag {
      * @param key
      */
     public AbstractFlag(final String key, final FlagValue<?> value) {
-        if (!StringUtils.isAlpha(key.replaceAll("_", "").replaceAll("-", ""))) {
+        if (!StringMan.isAlpha(key.replaceAll("_", "").replaceAll("-", ""))) {
             throw new IllegalArgumentException("Flag must be alphabetic characters");
         }
         if (key.length() > 16) {

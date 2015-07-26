@@ -93,8 +93,8 @@ public class ChunkListener implements Listener {
     }
 
     public void cleanChunk(final Chunk chunk) {
-        TaskManager.index.increment();
-        final Integer currentIndex = TaskManager.index.toInteger();
+        TaskManager.index.incrementAndGet();
+        final Integer currentIndex = TaskManager.index.get();
         final Integer task = TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.UUID;
 
-import org.bukkit.generator.ChunkGenerator;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -14,12 +13,14 @@ import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.entity.player.PlayerChatEvent;
 import org.spongepowered.api.event.state.PreInitializationEvent;
 import org.spongepowered.api.event.state.ServerAboutToStartEvent;
+import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
 import org.spongepowered.api.world.World;
 
 import com.google.inject.Inject;
+import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -42,7 +43,7 @@ import com.plotsquared.bukkit.util.UUIDHandler;
  * Created by robin on 01/11/2014
  */
 
-//@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.0.0")
+@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.0.0")
 public class SpongeMain implements IPlotMain, PluginContainer {
     public static SpongeMain THIS;
     
@@ -84,8 +85,16 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     ///////////////////// ON ENABLE /////////////////////  
     @Subscribe
     public void onInit(PreInitializationEvent event) {
+        log("PRE INIT");
+    }
+    
+    @Subscribe
+    public void onServerAboutToStart(ServerAboutToStartEvent event) {
+        log("INIT");
         THIS = this;
         PS.instance = new PS(this);
+        
+        // Setup metrics
         if (Settings.METRICS) {
             try {
                 final SpongeMetrics metrics = new SpongeMetrics(game, this);
@@ -97,31 +106,35 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         } else {
             log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
         }
+        
+        // Set the generators for each world...
         server = game.getServer();
         Collection<World> worlds = server.getWorlds();
         if (worlds.size() > 0) {
+            log("INJECTING WORLDS!!!!!!!");
             UUIDHandler.startCaching();
             for (World world : server.getWorlds()) {
+                log("INJECTING WORLD: " + world.getName());
                 world.setWorldGenerator(new SpongePlotGenerator(world.getName()));
             }
         }
-    }
-    
-    @Subscribe
-    public void onServerAboutToStart(ServerAboutToStartEvent event) {
-        this.modify = new WorldModify(this);
-        Game game = event.getGame();
-        game.getRegistry().registerWorldGeneratorModifier(modify);
-        game.getRegistry().getWorldBuilder()
-        .name("test")
-        .enabled(true)
-        .loadsOnStartup(true)
-        .keepsSpawnLoaded(true)
-        .dimensionType(DimensionTypes.OVERWORLD)
-        .generator(GeneratorTypes.DEBUG)
-        .gameMode(GameModes.CREATIVE)
-        .generatorModifiers(modify)
-        .build();
+        
+        ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds");
+        for (String world : worldSection.getKeys(false)) {
+            this.modify = new WorldModify(this);
+            Game game = event.getGame();
+            game.getRegistry().registerWorldGeneratorModifier(modify);
+            game.getRegistry().getWorldBuilder()
+            .name(world)
+            .enabled(true)
+            .loadsOnStartup(true)
+            .keepsSpawnLoaded(true)
+            .dimensionType(DimensionTypes.OVERWORLD)
+            .generator(GeneratorTypes.DEBUG)
+            .gameMode(GameModes.CREATIVE)
+            .generatorModifiers(modify)
+            .build();
+        }
     }
     
     public Logger getLogger() {
@@ -288,7 +301,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     }
 
     @Override
-    public ChunkGenerator getGenerator(String world, String name) {
+    public SpongeGeneratorWrapper getGenerator(String world, String name) {
         // TODO Auto-generated method stub
         return null;
     }

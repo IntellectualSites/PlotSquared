@@ -5,9 +5,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * Created 2014-11-17 for PlotSquared
@@ -298,7 +297,7 @@ public abstract class FlagValue<T> {
         @SuppressWarnings("unchecked")
         @Override
         public String toString(final Object t) {
-            return StringUtils.join((HashSet<PlotBlock>) t, ",");
+            return StringMan.join((HashSet<PlotBlock>) t, ",");
         }
 
         @SuppressWarnings("unchecked")
@@ -357,7 +356,7 @@ public abstract class FlagValue<T> {
         @SuppressWarnings("unchecked")
         @Override
         public String toString(final Object t) {
-            return StringUtils.join((List<Integer>) t, ",");
+            return StringMan.join((List<Integer>) t, ",");
         }
 
         @SuppressWarnings("unchecked")
@@ -405,7 +404,7 @@ public abstract class FlagValue<T> {
 
         @Override
         public String toString(final Object t) {
-            return StringUtils.join((List<String>) t, ",");
+            return StringMan.join((List<String>) t, ",");
         }
 
         @Override
@@ -445,7 +444,7 @@ public abstract class FlagValue<T> {
         @SuppressWarnings("unchecked")
         @Override
         public String toString(final Object t) {
-            return StringUtils.join((List<Double>) t, ",");
+            return StringMan.join((List<Double>) t, ",");
         }
 
         @SuppressWarnings("unchecked")

@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import org.apache.commons.lang.StringUtils;
+import com.intellectualcrafters.plot.util.StringMan;
 
 public class Flag {
     private AbstractFlag key;
@@ -36,7 +36,7 @@ public class Flag {
      * @throws IllegalArgumentException if you provide inadequate inputs
      */
     public Flag(final AbstractFlag key, final String value) {
-        if (!StringUtils.isAsciiPrintable(value)) {
+        if (!StringMan.isAsciiPrintable(value)) {
             throw new IllegalArgumentException("Flag must be ascii");
         }
         if (value.length() > 128) {

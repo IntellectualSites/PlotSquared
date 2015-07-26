@@ -23,8 +23,6 @@ package com.intellectualcrafters.plot.util;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * String comparison library
  *
@@ -76,7 +74,7 @@ public class StringComparison<T> {
      * @return match
      */
     public static int compare(final String s1, final String s2) {
-        int distance = StringUtils.getLevenshteinDistance(s1, s2);
+        int distance = StringMan.getLevenshteinDistance(s1, s2);
         if (s2.contains(s1)) {
             distance -= (Math.min(s1.length(), s2.length()));
         }

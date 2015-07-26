@@ -2,15 +2,14 @@ package com.intellectualcrafters.plot.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
-
-import org.apache.commons.lang.mutable.MutableInt;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.intellectualcrafters.plot.PS;
 
 public abstract class TaskManager {
     public static HashSet<String> TELEPORT_QUEUE = new HashSet<>();
     
-    public static MutableInt index = new MutableInt(0);
+    public static AtomicInteger index = new AtomicInteger(0);
     public static HashMap<Integer, Integer> tasks = new HashMap<>();
 
     public static int runTaskRepeat(final Runnable r, final int interval) {

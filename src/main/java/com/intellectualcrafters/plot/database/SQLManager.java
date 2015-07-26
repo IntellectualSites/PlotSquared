@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.block.Biome;
 
 import com.intellectualcrafters.plot.PS;
@@ -53,6 +52,7 @@ import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
@@ -1100,7 +1100,7 @@ public class SQLManager implements AbstractDB {
                             }
                         } else {
                             element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
-                            if (StringUtils.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
+                            if (StringMan.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
                                 Flag flag = new Flag(FlagManager.getFlag(element, true), "");
                                 flags.put(flag.getKey(), flag);
                             } else {
@@ -1247,7 +1247,7 @@ public class SQLManager implements AbstractDB {
     }
 
     public void setFlags(final int id, final Collection<Flag> newflags) {
-        final String flag_string = StringUtils.join(newflags, ",");
+        final String flag_string = StringMan.join(newflags, ",");
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {

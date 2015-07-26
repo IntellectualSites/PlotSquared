@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -112,6 +111,7 @@ import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.RegExUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
@@ -304,7 +304,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             if (split[0].equals("plotme") || split[0].equals("ap")) {
                 final Player player = event.getPlayer();
                 if (Settings.USE_PLOTME_ALIAS) {
-                    player.performCommand("plots " + StringUtils.join(Arrays.copyOfRange(split, 1, split.length), " "));
+                    player.performCommand("plots " + StringMan.join(Arrays.copyOfRange(split, 1, split.length), " "));
                 } else {
                     MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
                 }

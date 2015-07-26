@@ -1,11 +1,10 @@
 package com.intellectualcrafters.plot.generator;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.util.StringMan;
 
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public static int ROAD_HEIGHT_DEFAULT = 64;
@@ -50,8 +49,8 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         super.loadConfiguration(config);
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
-        this.MAIN_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.filling"), ','));
-        this.TOP_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringUtils.join(config.getStringList("plot.floor"), ','));
+        this.MAIN_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringMan.join(config.getStringList("plot.filling"), ','));
+        this.TOP_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringMan.join(config.getStringList("plot.floor"), ','));
         this.WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block"));
         this.ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
         this.ROAD_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("road.block"));

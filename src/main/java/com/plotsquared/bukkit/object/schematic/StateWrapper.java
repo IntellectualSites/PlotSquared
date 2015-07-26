@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.object.schematic.ItemType;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import org.apache.commons.lang.StringUtils;
+
 import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.InventoryHolder;
@@ -19,7 +19,9 @@ import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.ListTag;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
+import com.intellectualcrafters.plot.util.StringMan;
 
 public class StateWrapper {
     
@@ -48,7 +50,7 @@ public class StateWrapper {
             CompoundTag itemComp = (CompoundTag) itemTag;
             short id = itemComp.getShort("id");
             String idStr = itemComp.getString("id");
-            if (!StringUtils.isNumeric(idStr) && idStr != null) {
+            if (idStr != null && !MathMan.isInteger(idStr)) {
                 idStr = idStr.split(":")[1].toLowerCase();
                 id = (short) ItemType.getId(idStr);
             }
