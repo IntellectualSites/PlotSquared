@@ -26,7 +26,13 @@ public class DebugPaste extends SubCommand {
             public void run() {
                 try {
                     String settingsYML = HastebinUtility.upload(PS.get().configFile);
-                    String latestLOG = HastebinUtility.upload(new File(BukkitMain.THIS.getDirectory(), "../../logs/latest.log"));
+                    String latestLOG;
+                    try {
+                        latestLOG = HastebinUtility.upload(new File(BukkitMain.THIS.getDirectory(), "../../logs/latest.log"));
+                    } catch(final Exception e) {
+                        plr.sendMessage("&clatest.log is too big to be pasted, will ignore");
+                        latestLOG = "too big :(";
+                    }
                     StringBuilder b = new StringBuilder();
                     b.append("# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your problem\n\n# We will start with some informational files\n");
                     b.append("links.settings_yml: '").append(settingsYML).append("'\n");
