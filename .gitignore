@@ -1,10 +1,20 @@
-PlotSquared/.project
-# Created by https://www.gitignore.io
 
-### Intellij ###
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
+### Maven template
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
 
-/*.iml
+
+### JetBrains template
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion
+
+*.iml
 
 ## Directory-based project format:
 .idea/
@@ -36,7 +46,7 @@ PlotSquared/.project
 ## Plugin-specific files:
 
 # IntelliJ
-out/
+/out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -46,11 +56,22 @@ atlassian-ide-plugin.xml
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
 
 
-### Eclipse ###
-.classpath
-.project
+### NetBeans template
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+.nb-gradle/
+
+
+### Eclipse template
 *.pydevproject
 .metadata
 .gradle
@@ -63,7 +84,9 @@ tmp/
 local.properties
 .settings/
 .loadpath
-\doc
+
+# Eclipse Core
+.project
 
 # External tool builders
 .externalToolBuilders/
@@ -74,17 +97,23 @@ local.properties
 # CDT-specific
 .cproject
 
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
+# Java annotation processor (APT)
+.factorypath
+
 # PDT-specific
 .buildpath
 
-# sbteclipse plugin 
+# sbteclipse plugin
 .target
 
 # TeXlipse plugin
 .texlipse
 
 
-### Java ###
+### Java template
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -97,8 +126,5 @@ local.properties
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-/target
-/plotsquared/target
-*.MF
-PlotSquared/schematic.zip
-*.bat
+
+
