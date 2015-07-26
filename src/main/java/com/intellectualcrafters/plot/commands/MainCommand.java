@@ -83,7 +83,7 @@ public class MainCommand {
         final List<String> help = new ArrayList<>();
         help.add(C.HELP_HEADER.s());
         // HELP_CATEGORY("&cCategory: &6%category%&c, Page: %current%&c/&6%max%&c, Displaying: &6%dis%&c/&6%total%"),
-        help.add(C.HELP_CATEGORY.s().replace("%category%", category == null ? "All" : category.toString()).replace("%current%", "" + (page + 1)).replace("%max%", "" + (totalPages)).replace("%dis%", "" + (commands.size() % perPage)).replace("%total%", "" + commands.size()));
+        help.add(C.HELP_CATEGORY.s().replace("%category%", category == null ? "All" : category.toString()).replace("%current%", "" + (page + 1)).replace("%max%", "" + (totalPages)).replace("%dis%", "" + perPage).replace("%total%", "" + commands.size()));
         SubCommand cmd;
         final int start = page * perPage;
         for (int x = start; x < max; x++) {
