@@ -28,12 +28,18 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "debugroadregen",
+        usage = "/plot debugroadregen",
+        requiredType = PlotPlayer.class,
+        description = "Regenerate all roads based on the road schematic",
+        category = CommandCategory.DEBUG,
+        permission = "plots.debugroadregen"
+)
 public class DebugRoadRegen extends SubCommand {
-    public DebugRoadRegen() {
-        super(Command.DEBUGROADREGEN, "Regenerate all road schematic in your current chunk", "debugroadregen", CommandCategory.DEBUG, true);
-    }
 
     @Override
     public boolean onCommand(final CommandCaller caller, final String ... args) {

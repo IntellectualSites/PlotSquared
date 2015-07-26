@@ -30,6 +30,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 
@@ -48,15 +52,19 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
+@CommandDeclaration(
+        command = "debugexec",
+        permission = "plots.admin",
+        description = "Mutli-purpose debug command",
+        aliases = {"exec"},
+        category = CommandCategory.DEBUG
+)
 public class DebugExec extends SubCommand {
-    public DebugExec() {
-        super("debugexec", "plots.admin", "Multi-purpose debug command", "debugexec", "exec", CommandCategory.DEBUG, false);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        final PlotPlayer player = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
         final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();

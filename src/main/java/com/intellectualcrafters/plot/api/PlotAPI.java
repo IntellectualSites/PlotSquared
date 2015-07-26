@@ -609,11 +609,14 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @param c SubCommand, that we want to register
      *
-     * @see com.intellectualcrafters.plot.commands.MainCommand#subCommands
      * @see com.intellectualcrafters.plot.commands.SubCommand
      */
     public void registerCommand(final SubCommand c) {
-        MainCommand.subCommands.add(c);
+        if (c.getCommand() != null) {
+            MainCommand.instance.addCommand(c);
+        } else {
+            MainCommand.instance.createCommand(c);
+        }
     }
 
     /**

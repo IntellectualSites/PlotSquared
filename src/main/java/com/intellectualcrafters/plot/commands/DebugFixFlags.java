@@ -33,22 +33,29 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "debugfixflags",
+        usage = "/plot debugfixflags <world>",
+        permission = "plots.debugfixflags",
+        description = "Attempt to fix all flags for a world",
+        requiredType = PS.class,
+        category = CommandCategory.DEBUG
+)
 public class DebugFixFlags extends SubCommand {
+
     public DebugFixFlags() {
-        super(Command.DEBUGFIXFLAGS, "Attempt to fix all flags for a world", "debugclear", CommandCategory.DEBUG, false);
+        requiredArguments = new Argument[] {
+                Argument.String
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr != null) {
-            MainUtil.sendMessage(plr, C.NOT_CONSOLE);
-            return false;
-        }
-        if (args.length != 1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot debugfixflags <world>");
-            return false;
-        }
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        final PlotPlayer plr = null;
         final String world = args[0];
         if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(world)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);

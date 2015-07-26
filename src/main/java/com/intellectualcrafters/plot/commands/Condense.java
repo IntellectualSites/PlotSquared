@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PS;
@@ -36,23 +38,24 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
+@CommandDeclaration(
+        command = "condense",
+        permission = "plots.admin",
+        description = "Condense a plotworld",
+        category = CommandCategory.DEBUG,
+        requiredType = PS.class
+)
 public class Condense extends SubCommand {
-    public static boolean TASK = false;
 
-    public Condense() {
-        super("condense", "plots.admin", "Condense a plotworld", "condense", "", CommandCategory.DEBUG, false);
-    }
+    public static boolean TASK = false;
 
     public static void sendMessage(final String message) {
         PS.log("&3PlotSquared -> Plot condense&8: &7" + message);
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr != null) {
-            MainUtil.sendMessage(plr, (C.NOT_CONSOLE));
-            return false;
-        }
+    public boolean onCommand(final CommandCaller caller, String ... args) {
+        final PlotPlayer plr = null;
         if ((args.length != 2) && (args.length != 3)) {
             MainUtil.sendMessage(plr, "/plot condense <world> <start|stop|info> [radius]");
             return false;

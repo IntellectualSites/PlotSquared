@@ -11,7 +11,7 @@ import java.util.List;
 public class CommandManager {
 
     protected final List<Command> commands;
-    private final Character initialCharacter;
+    protected final Character initialCharacter;
 
     public CommandManager() {
         this('/', new ArrayList<Command>());
@@ -44,7 +44,7 @@ public class CommandManager {
         return this.commands;
     }
 
-    final public int handle(CommandCaller caller, String input) {
+    public int handle(CommandCaller caller, String input) {
         if (initialCharacter != null && !StringUtil.startsWith(initialCharacter, input)) {
             return CommandHandlingOutput.NOT_COMMAND;
         }

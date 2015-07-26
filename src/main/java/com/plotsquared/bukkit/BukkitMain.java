@@ -5,14 +5,13 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.*;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.plotsquared.bukkit.commands.BukkitCommand;
 import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
 import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
-import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.plotsquared.bukkit.listeners.*;
@@ -153,74 +152,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void registerCommands() {
-        new MainCommand();
-        MainCommand.subCommands.add(new Buy());
-        MainCommand.subCommands.add(new Save());
-        MainCommand.subCommands.add(new Load());
-        MainCommand.subCommands.add(new Download());
-        MainCommand.subCommands.add(new Disable());
-        MainCommand.subCommands.add(new Update());
-        MainCommand.subCommands.add(new Template());
-        MainCommand.subCommands.add(new Setup());
-        MainCommand.subCommands.add(new DebugUUID());
-        MainCommand.subCommands.add(new DebugFill());
-        MainCommand.subCommands.add(new DebugSaveTest());
-        MainCommand.subCommands.add(new DebugLoadTest());
-        MainCommand.subCommands.add(new CreateRoadSchematic());
-        MainCommand.subCommands.add(new DebugAllowUnsafe());
-        MainCommand.subCommands.add(new RegenAllRoads());
-        MainCommand.subCommands.add(new DebugClear());
-        MainCommand.subCommands.add(new Claim());
-        MainCommand.subCommands.add(new Auto());
-        MainCommand.subCommands.add(new Home());
-        MainCommand.subCommands.add(new Visit());
-        MainCommand.subCommands.add(new TP());
-        MainCommand.subCommands.add(new Set());
-        MainCommand.subCommands.add(new Toggle());
-        MainCommand.subCommands.add(new Clear());
-        MainCommand.subCommands.add(new Delete());
-        MainCommand.subCommands.add(new SetOwner());
-        if (Settings.ENABLE_CLUSTERS) {
-            MainCommand.subCommands.add(new Cluster());
-        }
-        MainCommand.subCommands.add(new Trust());
-        MainCommand.subCommands.add(new Add());
-        MainCommand.subCommands.add(new Deny());
-        MainCommand.subCommands.add(new Untrust());
-        MainCommand.subCommands.add(new Remove());
-        MainCommand.subCommands.add(new Undeny());
-        MainCommand.subCommands.add(new Info());
-        MainCommand.subCommands.add(new list());
-        MainCommand.subCommands.add(new Help());
-        MainCommand.subCommands.add(new Debug());
-        MainCommand.subCommands.add(new SchematicCmd());
-        MainCommand.subCommands.add(new plugin());
-        MainCommand.subCommands.add(new Inventory());
-        MainCommand.subCommands.add(new Purge());
-        MainCommand.subCommands.add(new Reload());
-        MainCommand.subCommands.add(new Merge());
-        MainCommand.subCommands.add(new DebugPaste());
-        MainCommand.subCommands.add(new Unlink());
-        MainCommand.subCommands.add(new Kick());
-        MainCommand.subCommands.add(new Rate());
-        MainCommand.subCommands.add(new DebugClaimTest());
-        MainCommand.subCommands.add(new Inbox());
-        MainCommand.subCommands.add(new Comment());
-        MainCommand.subCommands.add(new Database());
-        MainCommand.subCommands.add(new Unclaim());
-        MainCommand.subCommands.add(new Swap());
-        MainCommand.subCommands.add(new MusicSubcommand());
-        MainCommand.subCommands.add(new DebugRoadRegen());
-        MainCommand.subCommands.add(new Trim());
-        MainCommand.subCommands.add(new DebugExec());
-        MainCommand.subCommands.add(new FlagCmd());
-        MainCommand.subCommands.add(new Target());
-        MainCommand.subCommands.add(new DebugFixFlags());
-        MainCommand.subCommands.add(new Move());
-        MainCommand.subCommands.add(new Condense());
-        MainCommand.subCommands.add(new Confirm());
-        MainCommand.subCommands.add(new Copy());
-        MainCommand.subCommands.add(new Chat());
         final BukkitCommand bcmd = new BukkitCommand();
         final PluginCommand plotCommand = getCommand("plots");
         plotCommand.setExecutor(bcmd);
@@ -417,7 +348,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             } else {
                 getServer().getPluginManager().registerEvents(new WEListener(), this);
                 WorldEdit.getInstance().getEventBus().register(new WESubscriber());
-                MainCommand.subCommands.add(new WE_Anywhere());
+                MainCommand.instance.createCommand(new WE_Anywhere());
             }
         }
     }

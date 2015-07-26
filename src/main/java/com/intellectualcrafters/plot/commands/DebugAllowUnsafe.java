@@ -5,17 +5,23 @@ import java.util.List;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "debugallowunsafe",
+        description = "Allow unsafe actions until toggled off",
+        usage = "/plot debugallowunsafe",
+        category = CommandCategory.DEBUG,
+        requiredType = PlotPlayer.class,
+        permission = "plots.debugallowunsafe"
+)
 public class DebugAllowUnsafe extends SubCommand {
 
     public static final List<UUID> unsafeAllowed = new ArrayList<>();
-
-    public DebugAllowUnsafe() {
-        super(Command.ALLOWUNSAFE, "Allow unsafe actions until toggled off", "allowunsafe", CommandCategory.DEBUG, true);
-    }
 
     @Override
     public boolean onCommand(final CommandCaller caller, final String ... args) {

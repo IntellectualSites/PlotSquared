@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.BukkitMain;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -13,14 +15,18 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 
+@CommandDeclaration(
+        command = "debugpaste",
+        aliases = {"dp"},
+        usage = "/plot debugpaste",
+        description = "Upload settings.yml & latest.log to hastebin",
+        permission = "plots.debugpaste",
+        category = CommandCategory.DEBUG
+)
 public class DebugPaste extends SubCommand {
 
-    public DebugPaste() {
-        super(Command.DEBUG_PASTE, "Upload settings.yml & latest.log to hastebin", "", CommandCategory.DEBUG, false);
-    }
-
     @Override
-    public boolean execute(final PlotPlayer plr, String... args) {
+    public boolean onCommand(final CommandCaller caller, String[] args) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -30,7 +36,7 @@ public class DebugPaste extends SubCommand {
                     try {
                         latestLOG = HastebinUtility.upload(new File(BukkitMain.THIS.getDirectory(), "../../logs/latest.log"));
                     } catch(final Exception e) {
-                        plr.sendMessage("&clatest.log is too big to be pasted, will ignore");
+                        caller.message("&clatest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }
                     StringBuilder b = new StringBuilder();
@@ -59,7 +65,7 @@ public class DebugPaste extends SubCommand {
                     b.append("\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
 
                     String link = HastebinUtility.upload(b.toString());
-                    MainUtil.sendMessage(plr, C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
+                    caller.message(C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

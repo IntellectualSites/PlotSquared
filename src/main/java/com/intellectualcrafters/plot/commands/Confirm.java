@@ -20,23 +20,27 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.CmdInstance;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
-/**
- * @author Citymonstret
- */
+@CommandDeclaration(
+		command = "confirm",
+		permission = "plots.use",
+		description = "Confirm an action",
+		category = CommandCategory.ACTIONS
+)
 public class Confirm extends SubCommand {
-    public Confirm() {
-        super("confirm", "plots.use", "Confirm an action", "confirm", "confirm", CommandCategory.ACTIONS, false);
-    }
 
-    @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+	@Override
+	public boolean onCommand(final CommandCaller caller, final String ... args) {
+		final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
     	CmdInstance command = CmdConfirm.getPending(plr);
     	if (command == null) {
     		MainUtil.sendMessage(plr, C.FAILED_CONFIRM);

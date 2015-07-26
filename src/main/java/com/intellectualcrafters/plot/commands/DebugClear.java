@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.Location;
@@ -30,15 +31,21 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
+import com.plotsquared.bukkit.util.UUIDHandler;
 
+@CommandDeclaration(
+        command = "debugclear",
+        aliases = {"fastclear"},
+        description = "Clear a plot using a fast experiment algorithm",
+        category = CommandCategory.DEBUG
+)
 public class DebugClear extends SubCommand {
-    public DebugClear() {
-        super(Command.DEBUGCLEAR, "Clear a plot using a fast experimental algorithm", "debugclear", CommandCategory.DEBUG, false);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
         if (plr == null) {
             // Is console
             if (args.length < 2) {
@@ -85,10 +92,9 @@ public class DebugClear extends SubCommand {
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.debugclear")) {
+        if ((!plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.debugclear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
-        assert plot != null;
         final Location pos1 = MainUtil.getPlotBottomLoc(loc.getWorld(), plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(loc.getWorld(), plot.id);
         if (MainUtil.runners.containsKey(plot)) {

@@ -22,6 +22,8 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.Arrays;
 
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;
@@ -34,13 +36,19 @@ import com.plotsquared.bukkit.object.comment.CommentManager;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 
+@CommandDeclaration(
+        command = "comment",
+        aliases = {"msg"},
+        description = "Comment on a plot",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class,
+        permission = "plot.comment"
+)
 public class Comment extends SubCommand {
-    public Comment() {
-        super(Command.COMMENT, "Comment on a plot", "comment", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
         if (args.length < 2) {
             sendMessage(player, C.COMMENT_SYNTAX, StringUtils.join(CommentManager.inboxes.keySet(),"|"));
             return false;

@@ -27,6 +27,7 @@ import java.util.UUID;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;

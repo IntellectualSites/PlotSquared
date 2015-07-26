@@ -26,29 +26,29 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
-/**
- * @author Citymonstret
- */
+@CommandDeclaration(
+        command = "debugloadtest",
+        permission = "plots.debugloadtest",
+        description = "This debug command will force the reload of all plots in the DB",
+        usage = "/plot debugloadtest",
+        category = CommandCategory.DEBUG,
+        requiredType = PS.class
+)
 public class DebugLoadTest extends SubCommand {
-    public DebugLoadTest() {
-        super(Command.DEBUGLOADTEST, "This debug command will force the reload of all plots in the DB", "debugloadtest", CommandCategory.DEBUG, false);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr == null) {
-            try {
-                final Field fPlots = PS.class.getDeclaredField("plots");
-                fPlots.setAccessible(true);
-                fPlots.set(null, DBFunc.getPlots());
-            } catch (final Exception e) {
-                PS.log("&3===FAILED&3===");
-                e.printStackTrace();
-                PS.log("&3===END OF STACKTRACE===");
-            }
-        } else {
-            MainUtil.sendMessage(plr, "&6This command can only be executed by console as it has been deemed unsafe if abused..");
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        try {
+            final Field fPlots = PS.class.getDeclaredField("plots");
+            fPlots.setAccessible(true);
+            fPlots.set(null, DBFunc.getPlots());
+        } catch (final Exception e) {
+            PS.log("&3===FAILED&3===");
+            e.printStackTrace();
+            PS.log("&3===END OF STACKTRACE===");
         }
         return true;
     }

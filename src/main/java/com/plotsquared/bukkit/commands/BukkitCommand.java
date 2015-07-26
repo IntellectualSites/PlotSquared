@@ -1,10 +1,12 @@
-package com.intellectualcrafters.plot.commands;
+package com.plotsquared.bukkit.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import org.bukkit.command.Command;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualsites.commands.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -22,7 +24,7 @@ import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 public class BukkitCommand implements CommandExecutor, TabCompleter {
     
     @Override
-    public boolean onCommand(final CommandSender commandSender, final Command command, final String commandLabel, final String[] args) {
+    public boolean onCommand(final CommandSender commandSender, final org.bukkit.command.Command command, final String commandLabel, final String[] args) {
         if (commandSender instanceof Player) {
             return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), commandLabel, args);
         }
@@ -30,14 +32,14 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(final CommandSender commandSender, final Command command, final String s, final String[] strings) {
+    public List<String> onTabComplete(final CommandSender commandSender, final org.bukkit.command.Command command, final String s, final String[] strings) {
         if (!(commandSender instanceof Player)) {
             return null;
         }
         final PlotPlayer player = BukkitUtil.getPlayer((Player) commandSender);
         if (strings.length < 1) {
             if ((strings.length == 0) || "plots".startsWith(s)) {
-                return Arrays.asList("plots");
+                return Collections.singletonList("plots");
             }
         }
         if (strings.length > 1) {
@@ -47,20 +49,20 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
             return null;
         }
         final List<String> tabOptions = new ArrayList<>();
-        final String[] commands = new String[MainCommand.subCommands.size()];
-        for (int x = 0; x < MainCommand.subCommands.size(); x++) {
-            commands[x] = MainCommand.subCommands.get(x).cmd;
+        final String[] commands = new String[MainCommand.instance.getCommands().size()];
+        for (int x = 0; x < MainCommand.instance.getCommands().size(); x++) {
+            commands[x] = MainCommand.instance.getCommands().get(x).getCommand();
         }
         String best = new StringComparison(strings[0], commands).getBestMatch();
         tabOptions.add(best);
         final String arg = strings[0].toLowerCase();
-        for (final SubCommand cmd : MainCommand.subCommands) {
-            if (!cmd.cmd.equalsIgnoreCase(best)) {
-                if (cmd.permission.hasPermission(player)) {
-                    if (cmd.cmd.startsWith(arg)) {
-                        tabOptions.add(cmd.cmd);
-                    } else if (cmd.alias.size() > 0 && cmd.alias.get(0).startsWith(arg)) {
-                        tabOptions.add(cmd.alias.get(0));
+        for (final Command cmd : MainCommand.instance.getCommands()) {
+            if (!cmd.getCommand().equalsIgnoreCase(best)) {
+                if (player.hasPermission(cmd.getPermission())) {
+                    if (cmd.getCommand().startsWith(arg)) {
+                        tabOptions.add(cmd.getCommand());
+                    } else if (cmd.getAliases().length > 0 && cmd.getAliases()[0].startsWith(arg)) {
+                        tabOptions.add(cmd.getAliases()[0]);
                     }
                 }
             }

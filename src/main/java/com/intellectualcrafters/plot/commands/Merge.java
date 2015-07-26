@@ -27,6 +27,7 @@ import java.util.UUID;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.callers.CommandCaller;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PS;
@@ -41,7 +42,6 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 @CommandDeclaration(
         command = "merge",

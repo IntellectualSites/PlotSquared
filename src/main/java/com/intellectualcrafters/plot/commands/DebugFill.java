@@ -29,12 +29,19 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "fill",
+        permission = "plots.fill",
+        description = "Fill or surround a plot in bedrock",
+        usage = "/plot fill",
+        aliases = {"debugfill"},
+        category = CommandCategory.DEBUG,
+        requiredType = PlotPlayer.class
+)
 public class DebugFill extends SubCommand {
-    public DebugFill() {
-        super("fill", "plots.fill", "Fill or surround a plot in bedrock", "fill", "debugfill", CommandCategory.DEBUG, true);
-    }
 
     @Override
     public boolean onCommand(final CommandCaller caller, final String ... args) {
@@ -48,7 +55,7 @@ public class DebugFill extends SubCommand {
         if (plot == null) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if ((plot == null) || !plot.hasOwner()) {
+        if (!plot.hasOwner()) {
             MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }

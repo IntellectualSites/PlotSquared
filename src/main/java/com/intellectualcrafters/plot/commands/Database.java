@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;
@@ -13,17 +14,19 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
+import com.plotsquared.bukkit.util.UUIDHandler;
 
-/**
- * Created 2014-11-15 for PlotSquared
- *
- * @author Citymonstret
- */
+@CommandDeclaration(
+        command = "database",
+        aliases = {"convert"},
+        category = CommandCategory.DEBUG,
+        permission = "plots.database",
+        description = "Convert/Backup Storage",
+        usage = "/plots database <type> [details...]"
+)
 public class Database extends SubCommand {
-    public Database() {
-        super(Command.DATABASE, "Convert/Backup Storage", "database [type] [...details]", CommandCategory.DEBUG, false);
-    }
 
     private static boolean sendMessageU(final UUID uuid, final String msg) {
         if (uuid == null) {
@@ -70,7 +73,8 @@ public class Database extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
         if (args.length < 1) {
             return sendMessage(plr, "/plot database [sqlite/mysql]");
         }

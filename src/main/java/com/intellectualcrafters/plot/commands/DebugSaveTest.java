@@ -27,30 +27,30 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
-/**
- * @author Citymonstret
- */
+@CommandDeclaration(
+        command = "debugsavetest",
+        permission = "plots.debugsavetest",
+        category = CommandCategory.DEBUG,
+        requiredType = PS.class,
+        usage = "/plot debugsavetest",
+        description = "This command will force the recreation of all plots in the DB"
+)
 public class DebugSaveTest extends SubCommand {
-    public DebugSaveTest() {
-        super(Command.DEBUGSAVETEST, "This debug command will force the recreation of all plots in the DB", "debugsavetest", CommandCategory.DEBUG, false);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr == null) {
-            final ArrayList<Plot> plots = new ArrayList<Plot>();
-            plots.addAll(PS.get().getPlots());
-            MainUtil.sendMessage(null, "&6Starting `DEBUGSAVETEST`");
-            DBFunc.createPlotsAndData(plots, new Runnable() {
-                @Override
-                public void run() {
-                    MainUtil.sendMessage(null, "&6Database sync finished!");
-                }
-            });
-        } else {
-            MainUtil.sendMessage(plr, "This debug command can only be executed by console as it has been deemed unsafe if abused");
-        }
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        final ArrayList<Plot> plots = new ArrayList<Plot>();
+        plots.addAll(PS.get().getPlots());
+        MainUtil.sendMessage(null, "&6Starting `DEBUGSAVETEST`");
+        DBFunc.createPlotsAndData(plots, new Runnable() {
+            @Override
+            public void run() {
+                MainUtil.sendMessage(null, "&6Database sync finished!");
+            }
+        });
         return true;
     }
 }

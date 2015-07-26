@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.callers.CommandCaller;
 import org.bukkit.generator.ChunkGenerator;

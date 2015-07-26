@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
@@ -35,7 +36,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
 import com.plotsquared.bukkit.generator.HybridGen;
-import com.plotsquared.bukkit.object.PlotGenerator;
+
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
