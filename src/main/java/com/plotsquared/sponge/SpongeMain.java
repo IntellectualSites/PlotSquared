@@ -29,6 +29,7 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
@@ -154,6 +155,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public void log(String message) {
+        message = ConsoleColors.fromString(message);
         logger.info(message);
     }
 
