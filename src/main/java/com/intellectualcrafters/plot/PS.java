@@ -46,7 +46,7 @@ import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.generator.PlotGenerator2;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.plotsquared.bukkit.listeners.APlotListener;
@@ -749,7 +749,7 @@ public class PS {
      * @param world The world to load
      * @param generator The generator for that world, or null if no generator
      */
-    public void loadWorld(final String world, PlotGenerator2 generator) {
+    public void loadWorld(final String world, PlotGenerator generator) {
         PlotWorld plotWorld = getPlotWorld(world);
         if (plotWorld != null) {
             if (generator != null) {
@@ -758,7 +758,7 @@ public class PS {
             return;
         }
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
-        final PlotGenerator2 plotGenerator;
+        final PlotGenerator plotGenerator;
         final PlotManager plotManager;
         final String path = "worlds." + world;
         if (!LOADING_WORLD && (generator.isFull())) {

@@ -4,11 +4,11 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 
-public abstract class PlotGenerator2<T> {
+public abstract class PlotGenerator<T> {
     public final String world;
     public T generator;
 
-    public PlotGenerator2(String world, T generator) {
+    public PlotGenerator(String world, T generator) {
         this.world = world;
         this.generator = generator;
     }

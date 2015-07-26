@@ -2,12 +2,12 @@ package com.plotsquared.sponge;
 
 import org.spongepowered.api.world.gen.WorldGenerator;
 
-import com.intellectualcrafters.plot.generator.PlotGenerator2;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 
-public class SpongeGeneratorWrapper extends PlotGenerator2<WorldGenerator>{
+public class SpongeGeneratorWrapper extends PlotGenerator<WorldGenerator>{
 
     public SpongeGeneratorWrapper(String world, WorldGenerator generator) {
         super(world, generator);

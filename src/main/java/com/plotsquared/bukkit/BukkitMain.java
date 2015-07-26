@@ -10,7 +10,7 @@ import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
-import com.intellectualcrafters.plot.generator.PlotGenerator2;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.generator.HybridGen;

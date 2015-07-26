@@ -7,7 +7,7 @@ import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.generator.PlotGenerator2;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.plotsquared.bukkit.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
@@ -71,7 +71,7 @@ public interface IPlotMain {
     
     public void unregister(PlotPlayer player);
 
-    public PlotGenerator2<?> getGenerator(String world, String name);
+    public PlotGenerator<?> getGenerator(String world, String name);
 
     public APlotListener initPlotListener();
 
