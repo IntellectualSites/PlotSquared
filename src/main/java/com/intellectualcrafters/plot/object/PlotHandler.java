@@ -93,6 +93,16 @@ public class PlotHandler {
                 return true;
             }
         }
-        return PlotHandler.isOwner(plot, uuid);
+        if (plot.isMerged()) {
+            Plot top = MainUtil.getTopPlot(plot);
+            ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
+            for (PlotId id : ids) {
+                UUID owner = MainUtil.getPlot(plot.world, id).owner;
+                if (owner != null && owner.equals(uuid)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
