@@ -99,6 +99,7 @@ public enum C {
      * Unclaim
      */
     UNCLAIM_SUCCESS("$4You successfully unclaimed the plot.", "Unclaim"),
+    UNCLAIM_FAILED("$2Could not unclaim the plot", "Unclaim"),
     /*
      * WorldEdit masks
      */

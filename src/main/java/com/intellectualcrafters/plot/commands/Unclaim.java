@@ -57,13 +57,12 @@ public class Unclaim extends SubCommand {
                 sendMessage(plr, C.ADDED_BALANCE, c + "");
             }
         }
-        final boolean result = PS.get().removePlot(loc.getWorld(), plot.id, true);
-        if (result) {
-            plot.unclaim();
-        } else {
-            MainUtil.sendMessage(plr, "Plot removal has been denied.");
+        if (plot.unclaim()) {
+            MainUtil.sendMessage(plr, C.UNCLAIM_SUCCESS);
         }
-        MainUtil.sendMessage(plr, C.UNCLAIM_SUCCESS);
+        else {
+            MainUtil.sendMessage(plr, C.UNCLAIM_FAILED);
+        }
         return true;
     }
 }

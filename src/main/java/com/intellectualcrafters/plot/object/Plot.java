@@ -336,10 +336,12 @@ public class Plot {
         });
     }
     
-    public void unclaim() {
+    public boolean unclaim() {
         if (PS.get().removePlot(world, id, true)) {
             DBFunc.delete(Plot.this);
+            return true;
         }
+        return false;
     }
     
     /**

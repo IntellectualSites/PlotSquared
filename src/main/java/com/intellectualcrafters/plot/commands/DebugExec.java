@@ -65,24 +65,6 @@ public class DebugExec extends SubCommand {
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             switch (arg) {
-                case "biome": {
-                    if (player == null) {
-                        MainUtil.sendMessage(player, C.IS_CONSOLE);
-                        return false;
-                    }
-                    Location loc = player.getLocation();
-                    World world = Bukkit.getWorld(loc.getWorld());
-                    int bx = (loc.getX() >> 4) << 4;
-                    int bz = (loc.getZ() >> 4) << 4;
-                    for (int x = bx; x < bx + 16; x++) {
-                        for (int z = bz; z < bz + 16; z++) {
-                            world.setBiome(x, z, Biome.DESERT);
-                        }
-                    }
-                    MainUtil.update(loc.getWorld(), new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4));
-                    System.out.print("SET BIOME TO FOREST: " + bx + "," + bz);
-                    return true;
-                }
                 case "analyze": {
                     if (player == null) {
                         MainUtil.sendMessage(player, C.IS_CONSOLE);

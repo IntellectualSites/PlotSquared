@@ -69,18 +69,21 @@ public class Delete extends SubCommand {
                         sendMessage(plr, C.ADDED_BALANCE, c + "");
                     }
                 }
-                PS.get().removePlot(loc.getWorld(), plot.id, true);
-                final long start = System.currentTimeMillis();
-                final boolean result = MainUtil.clearAsPlayer(plot, true, new Runnable() {
-                    @Override
-                    public void run() {
-                        MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                if (plot.unclaim()) {
+                    final long start = System.currentTimeMillis();
+                    final boolean result = MainUtil.clearAsPlayer(plot, true, new Runnable() {
+                        @Override
+                        public void run() {
+                            MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                        }
+                    });
+                    if (!result) {
+                        MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
                     }
-                });
-                if (!result) {
-                    MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
                 }
-                DBFunc.delete(plot);
+                else {
+                    MainUtil.sendMessage(plr, C.UNCLAIM_FAILED);
+                }
             }
         };
         if (Settings.CONFIRM_DELETE && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {

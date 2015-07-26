@@ -233,7 +233,6 @@ public abstract class SchematicHandler {
                                 for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
                                     int yy = y_offset + ry;
                                     if (yy > 255) {
-                                        System.out.print("TOO HIGH: " + ry);
                                         continue;
                                     }
                                     int i1 = ry * WIDTH * LENGTH;
@@ -323,7 +322,6 @@ public abstract class SchematicHandler {
                                                     break;
                                                 }
                                                 default: {
-                                                    System.out.print(id +","+datas[i]);
                                                     SetBlockQueue.setBlock(plot.world, xx, yy, zz, new PlotBlock((short) id, (byte) datas[i]));
                                                     break;
                                                 }
@@ -443,8 +441,6 @@ public abstract class SchematicHandler {
 //            collection[x] = new DataCollection(blocks[x], d[x]);
 //        }
 //        Schematic schem = new Schematic(collection, dimension, file);
-        
-        System.out.print(width + "," + height +"," + length);
         
         Dimension dimensions = new Dimension(width, height, length);
         Schematic schem = new Schematic(block, data, dimensions);
