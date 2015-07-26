@@ -25,18 +25,26 @@ import java.net.URL;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.PlotPlayer;
+
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "update",
+        permission = "plots.admin",
+        description = "Update PlotSquared",
+        usage = "/plot update",
+        requiredType = PS.class,
+        aliases = {"updateplugin"},
+        category = CommandCategory.DEBUG
+)
 public class Update extends SubCommand {
-    public static String downloads, version;
 
-    public Update() {
-        super("update", "plots.admin", "Update PlotSquared", "update", "updateplugin", CommandCategory.DEBUG, false);
-    }
+    public static String version;
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(CommandCaller caller, String[] args) {
         URL url;
         if (args.length == 0) {
             url = PS.get().update;
@@ -45,23 +53,24 @@ public class Update extends SubCommand {
             try {
                 url = new URL(args[0]);
             } catch (MalformedURLException e) {
-                MainUtil.sendMessage(plr, "&cInvalid url: " + args[0]);
-                MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot update [url]");
+                MainUtil.sendConsoleMessage("&cInvalid url: " + args[0]);
+                MainUtil.sendConsoleMessage(C.COMMAND_SYNTAX, "/plot update [url]");
                 return false;
             }
         }
         else {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot update");
+            caller.message(C.COMMAND_SYNTAX, getUsage());
             return false;
         }
         if (url == null) {
-            MainUtil.sendMessage(plr, "&cNo update found!");
-            MainUtil.sendMessage(plr, "&cTo manually specify an update URL: /plot update <url>");
+            caller.message("&cNo update found!");
+            caller.message("&cTo manually specify an update URL: /plot update <url>");
             return false;
         }
-        if (PS.get().update(plr, url) && url == PS.get().update) {
+        if (PS.get().update(null, url) && url == PS.get().update) {
             PS.get().update = null;
         }
         return true;
     }
+
 }

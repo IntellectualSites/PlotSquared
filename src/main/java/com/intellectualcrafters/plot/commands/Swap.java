@@ -33,19 +33,21 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
-/**
- * Created 2014-08-01 for PlotSquared
- *
- * @author Empire92
- */
+@CommandDeclaration(
+        command = "swap",
+        description = "Swap two plots",
+        aliases = {"switch"},
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class Swap extends SubCommand {
-    public Swap() {
-        super(Command.SWAP, "Swap two plots", "switch", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         MainUtil.sendMessage(plr, "&cThis command has not been optimized for large selections yet. Please bug me if this becomes an issue.");
         if (args.length < 1) {
             MainUtil.sendMessage(plr, C.NEED_PLOT_ID);
@@ -57,7 +59,7 @@ public class Swap extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
+        if ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.swap")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }

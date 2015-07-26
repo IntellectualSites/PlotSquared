@@ -29,25 +29,29 @@ import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
-/**
- * Created 2014-08-01 for PlotSquared
- *
- * @author Citymonstret
- */
+@CommandDeclaration(
+        command = "unlink",
+        aliases = {"u"},
+        description = "Unlink a mega-plot",
+        usage = "/plot unlink",
+        requiredType = PlotPlayer.class,
+        category = CommandCategory.ACTIONS
+)
 public class Unlink extends SubCommand {
-    public Unlink() {
-        super(Command.UNLINK, "Unlink a mega-plot", "unlink", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
+        if ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {

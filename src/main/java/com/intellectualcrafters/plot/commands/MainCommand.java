@@ -28,31 +28,24 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualsites.commands.CommandManager;
 
 /**
  * PlotSquared command class
  *
  * @author Citymonstret
  */
-public class MainCommand {
-    /**
-     * Main Permission Node
-     */
-    private final static SubCommand[] _subCommands = new SubCommand[] {  };
-    public final static ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>() {
-        {
-            addAll(Arrays.asList(_subCommands));
-        }
-    };
-    
+public class MainCommand extends CommandManager {
+
     public static boolean no_permission(final PlotPlayer player, final String permission) {
         MainUtil.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
     
-    public static List<SubCommand> getCommands(final SubCommand.CommandCategory category, final PlotPlayer player) {
+    public static List<SubCommand> getCommands(final CommandCategory category, final PlotPlayer player) {
         final List<SubCommand> cmds = new ArrayList<>();
-        for (final SubCommand c : subCommands) {
+        for (final Command c : commands) {
+            if (!c.requiredType )
             if (!c.isPlayer || (player != null)) {
                 if ((c.category.equals(category)) && c.permission.hasPermission(player)) {
                     cmds.add(c);
@@ -62,7 +55,7 @@ public class MainCommand {
         return cmds;
     }
     
-    public static List<String> helpMenu(final PlotPlayer player, final SubCommand.CommandCategory category, int page) {
+    public static List<String> helpMenu(final PlotPlayer player, final CommandCategory category, int page) {
         List<SubCommand> commands;
         if (category != null) {
             commands = getCommands(category, player);
@@ -109,15 +102,15 @@ public class MainCommand {
             if (args.length < 2) {
                 final StringBuilder builder = new StringBuilder();
                 builder.append(C.HELP_INFO.s());
-                for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
+                for (final CommandCategory category : CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
                 builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all").replaceAll("%category_desc%", "Display all commands"));
                 return MainUtil.sendMessage(player, builder.toString());
             }
             final String cat = args[1];
-            SubCommand.CommandCategory cato = null;
-            for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
+            CommandCategory cato = null;
+            for (final CommandCategory category : CommandCategory.values()) {
                 if (cat.equalsIgnoreCase(category.toString())) {
                     cato = category;
                     break;
@@ -126,7 +119,7 @@ public class MainCommand {
             if ((cato == null) && !cat.equalsIgnoreCase("all")) {
                 final StringBuilder builder = new StringBuilder();
                 builder.append(C.HELP_INFO.s());
-                for (final SubCommand.CommandCategory category : SubCommand.CommandCategory.values()) {
+                for (final CommandCategory category : CommandCategory.values()) {
                     builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
                 }
                 return MainUtil.sendMessage(player, builder.toString(), false);

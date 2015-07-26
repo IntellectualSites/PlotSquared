@@ -29,25 +29,39 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
+//     UNTRUST("untrust", "ut"),
+
+@CommandDeclaration(
+        command = "untrust",
+        aliases = {"ut"},
+        permission = "plot.untrust",
+        description = "Remove a trusted user from a plot",
+        usage = "/plot untrust <player>",
+        requiredType = PlotPlayer.class,
+        category = CommandCategory.ACTIONS
+)
 public class Untrust extends SubCommand {
+
     public Untrust() {
-        super(Command.UNTRUST, "Remove a trusted user from a plot", "untrust <player>", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.PlayerName
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length != 1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot untrust <player>");
-            return true;
-        }
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if ((plot == null) || !plot.hasOwner()) {
+        if (!plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
@@ -56,31 +70,33 @@ public class Untrust extends SubCommand {
             return true;
         }
         int count = 0;
-        if (args[0].equals("unknown")) {
-            ArrayList<UUID> toRemove = new ArrayList<>();
-            for (UUID uuid : plot.getTrusted()) {
-                if (UUIDHandler.getName(uuid) == null) {
-                    toRemove.add(uuid);
+        switch (args[0]) {
+            case "unknown":
+                ArrayList<UUID> toRemove = new ArrayList<>();
+                for (UUID uuid : plot.getTrusted()) {
+                    if (UUIDHandler.getName(uuid) == null) {
+                        toRemove.add(uuid);
+                    }
                 }
-            }
-            for (UUID uuid : toRemove) {
-                plot.removeTrusted(uuid);
-                count++;
-            }
-        }
-        else if (args[0].equals("*")){
-            for (UUID uuid : new ArrayList<>(plot.getTrusted())) {
-                plot.removeTrusted(uuid);
-                count++;
-            }
-        }
-        else {
-            UUID uuid = UUIDHandler.getUUID(args[0]);
-            if (uuid != null) {
-                if (plot.removeTrusted(uuid)) {
-                    count++;   
+                for (UUID uuid : toRemove) {
+                    plot.removeTrusted(uuid);
+                    count++;
                 }
-            }
+                break;
+            case "*":
+                for (UUID uuid : new ArrayList<>(plot.getTrusted())) {
+                    plot.removeTrusted(uuid);
+                    count++;
+                }
+                break;
+            default:
+                UUID uuid = UUIDHandler.getUUID(args[0]);
+                if (uuid != null) {
+                    if (plot.removeTrusted(uuid)) {
+                        count++;
+                    }
+                }
+                break;
         }
         if (count == 0) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);

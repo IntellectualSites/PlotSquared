@@ -23,6 +23,8 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;
@@ -35,10 +37,15 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 
+@CommandDeclaration(
+        command = "inbox",
+        description = "Review the comments for a plot",
+        usage = "/plot inbox [inbox] [delete <index>|clear|page]",
+        permission = "plots.inbox",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class Inbox extends SubCommand {
-    public Inbox() {
-        super(Command.INBOX, "Review the comments for a plot", "inbox [inbox] [delete <index>|clear|page]", CommandCategory.ACTIONS, true);
-    }
     
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.size() == 0) {
@@ -79,7 +86,9 @@ public class Inbox extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+
         final Plot plot = MainUtil.getPlot(player.getLocation());
         if (args.length == 0) {
             sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");

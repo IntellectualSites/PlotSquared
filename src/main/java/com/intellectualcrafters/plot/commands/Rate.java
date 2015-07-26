@@ -26,6 +26,8 @@ import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
@@ -44,17 +46,21 @@ import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 
+@CommandDeclaration(
+        command = "rate",
+        permission = "plots.rate",
+        description = "Rate the plot",
+        usage = "/plot rate [#|next]",
+        aliases = {"rt"},
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class Rate extends SubCommand {
-    /*
-     * String cmd, String permission, String description, String usage, String
-     * alias, CommandCategory category
-     */
-    public Rate() {
-        super("rate", "plots.rate", "Rate the plot", "rate [#|next]", "rt", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("next")) {
                 ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());

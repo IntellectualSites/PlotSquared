@@ -27,17 +27,23 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "plugin",
+        permission = "plots.use",
+        description = "Show plugin information",
+        aliases = {"version}"},
+        category = CommandCategory.INFO
+)
 public class plugin extends SubCommand {
-
-    public plugin() {
-        super("plugin", "plots.use", "Show plugin information", "plugin", "version", CommandCategory.INFO, false);
-    }
 
     private static String convertToNumericString(final String str, final boolean dividers) {
         final StringBuilder builder = new StringBuilder();
@@ -64,7 +70,7 @@ public class plugin extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -79,7 +85,7 @@ public class plugin extends SubCommand {
                     }
                 };
                 for (final String s : strings) {
-                    MainUtil.sendMessage(plr, StringMan.replaceFromMap(s, C.replacements), false);
+                    MainUtil.sendMessage(caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null, StringMan.replaceFromMap(s, C.replacements), false);
                 }
             }
         });

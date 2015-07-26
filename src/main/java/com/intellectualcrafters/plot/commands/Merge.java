@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PS;
@@ -40,15 +43,23 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
-/**
- * @author Citymonstret
- */
+@CommandDeclaration(
+        command = "merge",
+        aliases = {"m"},
+        description = "Merge the plot you are standing on, with another plot",
+        permission = "plots.merge",
+        usage = "/plot merge [direction]",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class Merge extends SubCommand {
     public final static String[] values = new String[] { "north", "east", "south", "west" };
     public final static String[] aliases = new String[] { "n", "e", "s", "w" };
 
     public Merge() {
-        super(Command.MERGE, "Merge the plot you are standing on with another plot.", "merge", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.String
+        };
     }
 
     public static String direction(float yaw) {
@@ -74,7 +85,8 @@ public class Merge extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocationFull();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

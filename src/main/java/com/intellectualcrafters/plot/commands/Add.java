@@ -31,26 +31,38 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 
+@CommandDeclaration(
+        command = "add",
+        aliases = {"a"},
+        description = "Allow a user to build while you are online",
+        usage = "/plot add <player>",
+        category = CommandCategory.ACTIONS,
+        permission = "plots.add",
+        requiredType = PlotPlayer.class
+)
 public class Add extends SubCommand {
+
     public Add() {
-        super(Command.ADD, "Allow a user to build while you are online", "add <player>", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.PlayerName
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length != 1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot add <player>");
-            return true;
-        }
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if ((plot == null) || !plot.hasOwner()) {
+        if (!plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }

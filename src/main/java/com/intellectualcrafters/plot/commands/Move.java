@@ -29,24 +29,29 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
-/**
- * Created 2014-08-01 for PlotSquared
- *
- * @author Empire92
- */
+@CommandDeclaration(
+        command = "move",
+        description = "Move a plot",
+        aliases = {"debugmove"},
+        permission = "plots.move",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class Move extends SubCommand {
+
     public Move() {
-        super(Command.MOVE, "Move a plot", "debugmove", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.PlotID
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length < 1) {
-            MainUtil.sendMessage(plr, C.NEED_PLOT_ID);
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
-            return false;
-        }
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot1 = MainUtil.getPlot(loc);
         if (plot1 == null) {

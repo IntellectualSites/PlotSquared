@@ -41,13 +41,19 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 
+@CommandDeclaration(
+        command = "template",
+        permission = "plots.admin",
+        description = "Create or use a world template",
+        usage = "/plot template [import|export] <world> <template>",
+        category = CommandCategory.DEBUG
+)
 public class Template extends SubCommand {
-    public Template() {
-        super("template", "plots.admin", "Create or use a world template", "template", "", CommandCategory.DEBUG, false);
-    }
 
     public static boolean extractAllFiles(String world, String template) {
         byte[] buffer = new byte[2048];
@@ -111,22 +117,26 @@ public class Template extends SubCommand {
         zos.closeEntry();
         zos.close();
     }
-    
+
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
         if (args.length != 2 && args.length != 3) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
-                    return false;
+                    caller.message(C.COMMAND_SYNTAX, "/plot template export <world>");
+                    return true;
                 }
                 else if (args[0].equalsIgnoreCase("import")) {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
-                    return false;
+                    caller.message(C.COMMAND_SYNTAX, "/plot template import <world> <template>");
+                    return true;
                 }
             }
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world> [template]");
-            return false;
+            caller.message(C.COMMAND_SYNTAX, "/plot template <import|explort> <world> [template]");
+            return true;
+        }
+        PlotPlayer plr = null;
+        if (caller.getSuperCaller() instanceof PlotPlayer) {
+            plr = (PlotPlayer) caller.getSuperCaller();
         }
         final String world = args[1];
         switch (args[0].toLowerCase()) {
@@ -190,6 +200,7 @@ public class Template extends SubCommand {
                     return false;
                 }
                 final PlotManager manager = PS.get().getPlotManager(world);
+                final PlotPlayer finalPlr = plr;
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -198,10 +209,10 @@ public class Template extends SubCommand {
                         }
                         catch (Exception e) {
                             e.printStackTrace();
-                            MainUtil.sendMessage(plr, "Failed: " + e.getMessage());
+                            MainUtil.sendMessage(finalPlr, "Failed: " + e.getMessage());
                             return;
                         }
-                        MainUtil.sendMessage(plr, "Done!");
+                        MainUtil.sendMessage(finalPlr, "Done!");
                     }
                 });
                 return true;

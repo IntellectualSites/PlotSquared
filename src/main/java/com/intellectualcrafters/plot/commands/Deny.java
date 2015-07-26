@@ -31,21 +31,32 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 
+@CommandDeclaration(
+        command = "deny",
+        aliases = {"d"},
+        description = "Deny a user from a plot",
+        usage = "/plot deny <player>",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class Deny extends SubCommand {
+
     public Deny() {
-        super(Command.DENY, "Deny a user from a plot", "deny <player>", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.PlayerName
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length != 1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot deny <player>");
-            return true;
-        }
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

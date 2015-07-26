@@ -30,37 +30,43 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "regenallroads",
+        description = "Regenerate all roads in the map using the set road schematic",
+        aliases = {"rgar"},
+        category = CommandCategory.DEBUG,
+        requiredType = PS.class,
+        permission = "plots.regenallroads"
+)
 public class RegenAllRoads extends SubCommand {
+
     public RegenAllRoads() {
-        super(Command.REGENALLROADS, "Regenerate all roads in the map using the set road schematic", "rgar", CommandCategory.DEBUG, false);
+        requiredArguments = new Argument[] {
+                Argument.String
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
-        if (player != null) {
-            sendMessage(player, C.NOT_CONSOLE);
-            return false;
-        }
-        if (args.length < 1) {
-            sendMessage(player, C.NEED_PLOT_WORLD);
-            return false;
-        }
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
         int height = 0;
         if (args.length == 2) {
             try {
                 height = Integer.parseInt(args[1]);
             }
             catch (NumberFormatException e) {
-                sendMessage(player, C.NOT_VALID_NUMBER, "(0, 256)");
-                sendMessage(player, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
+                caller.message(C.NOT_VALID_NUMBER, "(0, 256)");
+                caller.message(C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
                 return false;
             }
         }
         final String name = args[0];
         final PlotManager manager = PS.get().getPlotManager(name);
         if ((manager == null) || !(manager instanceof HybridPlotManager)) {
-            sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+            caller.message(C.NOT_VALID_PLOT_WORLD);
             return false;
         }
         final List<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);

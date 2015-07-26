@@ -30,16 +30,32 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 
+@CommandDeclaration(
+        command = "remove",
+        aliases = {"r"},
+        description = "Remove a player from a plot",
+        usage = "/plot remove <player>",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class,
+        permission = "plots.remove"
+)
 public class Remove extends SubCommand {
+
     public Remove() {
-        super(Command.REMOVE, "Remove a player from a plot", "remove <player>", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.PlayerName
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         if (args.length != 1) {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot remove <player>");
             return true;
@@ -58,59 +74,61 @@ public class Remove extends SubCommand {
             return true;
         }
         int count = 0;
-        if (args[0].equals("unknown")) {
-            ArrayList<UUID> toRemove = new ArrayList<>();
-            HashSet<UUID> all = new HashSet<>();
-            all.addAll(plot.getMembers());
-            all.addAll(plot.getTrusted());
-            all.addAll(plot.getDenied());
-            for (UUID uuid : all) {
-                if (UUIDHandler.getName(uuid) == null) {
+        switch (args[0]) {
+            case "unknown": {
+                ArrayList<UUID> toRemove = new ArrayList<>();
+                HashSet<UUID> all = new HashSet<>();
+                all.addAll(plot.getMembers());
+                all.addAll(plot.getTrusted());
+                all.addAll(plot.getDenied());
+                for (UUID uuid : all) {
+                    if (UUIDHandler.getName(uuid) == null) {
+                        toRemove.add(uuid);
+                        count++;
+                    }
+                }
+                for (UUID uuid : toRemove) {
+                    plot.removeDenied(uuid);
+                    plot.removeTrusted(uuid);
+                    plot.removeMember(uuid);
+                }
+                break;
+            }
+            case "*": {
+                ArrayList<UUID> toRemove = new ArrayList<>();
+                HashSet<UUID> all = new HashSet<>();
+                all.addAll(plot.getMembers());
+                all.addAll(plot.getTrusted());
+                all.addAll(plot.getDenied());
+                for (UUID uuid : all) {
                     toRemove.add(uuid);
                     count++;
                 }
+                for (UUID uuid : toRemove) {
+                    plot.removeDenied(uuid);
+                    plot.removeTrusted(uuid);
+                    plot.removeMember(uuid);
+                }
+                break;
             }
-            for (UUID uuid : toRemove) {
-                plot.removeDenied(uuid);
-                plot.removeTrusted(uuid);
-                plot.removeMember(uuid);
-            }
-        }
-        else if (args[0].equals("*")){
-            ArrayList<UUID> toRemove = new ArrayList<>();
-            HashSet<UUID> all = new HashSet<>();
-            all.addAll(plot.getMembers());
-            all.addAll(plot.getTrusted());
-            all.addAll(plot.getDenied());
-            for (UUID uuid : all) {
-                toRemove.add(uuid);
-                count++;
-            }
-            for (UUID uuid : toRemove) {
-                plot.removeDenied(uuid);
-                plot.removeTrusted(uuid);
-                plot.removeMember(uuid);
-            }
-        }
-        else {
-            UUID uuid = UUIDHandler.getUUID(args[0]);
-            if (uuid != null) {
-                if (plot.getTrusted().contains(uuid)) {
-                    if (plot.removeTrusted(uuid)) {
-                        count++;
+            default:
+                UUID uuid = UUIDHandler.getUUID(args[0]);
+                if (uuid != null) {
+                    if (plot.getTrusted().contains(uuid)) {
+                        if (plot.removeTrusted(uuid)) {
+                            count++;
+                        }
+                    } else if (plot.getMembers().contains(uuid)) {
+                        if (plot.removeMember(uuid)) {
+                            count++;
+                        }
+                    } else if (plot.getDenied().contains(uuid)) {
+                        if (plot.removeDenied(uuid)) {
+                            count++;
+                        }
                     }
                 }
-                else if (plot.getMembers().contains(uuid)) {
-                    if (plot.removeMember(uuid)) {
-                        count++;
-                    }
-                }
-                else if (plot.getDenied().contains(uuid)) {
-                    if (plot.removeDenied(uuid)) {
-                        count++;
-                    }
-                }
-            }
+                break;
         }
         if (count == 0) {
             if (UUIDHandler.implementation instanceof SQLUUIDHandler) {

@@ -27,14 +27,18 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
-/**
- * @author Citymonstret
- */
+@CommandDeclaration(
+        command = "home",
+        aliases = {"h"},
+        description = "Go to your plot",
+        usage = "/plot home [id|alias]",
+        category = CommandCategory.TELEPORT,
+        requiredType = PlotPlayer.class
+)
 public class Home extends SubCommand {
-    public Home() {
-        super(Command.HOME, "Go to your plot", "home {id|alias}", CommandCategory.TELEPORT, true);
-    }
 
     private Plot isAlias(final String a) {
         for (final Plot p : PS.get().getPlots()) {
@@ -46,7 +50,8 @@ public class Home extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, String... args) {
+    public boolean onCommand(final CommandCaller caller, String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final ArrayList<Plot> plots = PS.get().sortPlotsByWorld(PS.get().getPlots(plr));
         if (plots.size() == 1) {
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));

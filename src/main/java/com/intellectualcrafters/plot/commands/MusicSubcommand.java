@@ -31,14 +31,22 @@ import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "music",
+        permission = "plots.music",
+        description = "Player music in a plot",
+        usage = "/plot music",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class MusicSubcommand extends SubCommand {
-    public MusicSubcommand() {
-        super("music", "plots.music", "Play music in plot", "music", "mus", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
         final Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

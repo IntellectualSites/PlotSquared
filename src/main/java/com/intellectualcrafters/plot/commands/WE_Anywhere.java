@@ -22,32 +22,42 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.listeners.worldedit.WEManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 
+@CommandDeclaration(
+        command = "weanywhere",
+        permission = "plots.worldedit.bypass",
+        description = "Force bypass of WorldEdit",
+        aliases = {"wea"},
+        usage = "/plot weanywhere",
+        requiredType = PlotPlayer.class,
+        category = CommandCategory.DEBUG
+)
 public class WE_Anywhere extends SubCommand {
-    public WE_Anywhere() {
-        super("weanywhere", "plots.worldedit.bypass", "Force bypass of WorldEdit", "weanywhere", "wea", CommandCategory.DEBUG, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(CommandCaller caller, String[] arguments) {
         if (PS.get().worldEdit == null) {
-            MainUtil.sendMessage(plr, "&cWorldEdit is not enabled on this server");
-            return false;
+            caller.message("&cWorldEdit is not enabled on this server");
+            return true;
         }
-        if (Permissions.hasPermission(plr, "plots.worldedit.bypass")) {
-            if (WEManager.bypass.contains(plr.getName())) {
-                WEManager.bypass.remove(plr.getName());
-                MainUtil.sendMessage(plr, C.WORLDEDIT_RESTRICTED);
+        PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+        if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
+            if (WEManager.bypass.contains(player.getName())) {
+                WEManager.bypass.remove(player.getName());
+                MainUtil.sendMessage(player, C.WORLDEDIT_RESTRICTED);
             }
             else {
-                WEManager.bypass.add(plr.getName());
-                MainUtil.sendMessage(plr, C.WORLDEDIT_UNMASKED);
+                WEManager.bypass.add(player.getName());
+                MainUtil.sendMessage(player, C.WORLDEDIT_UNMASKED);
             }
         }
         return true;
     }
+
 }

@@ -30,11 +30,26 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
+@CommandDeclaration(
+        command = "visit",
+        permission = "plots.visit",
+        description = "Visit someones plot",
+        usage = "/plot visit <player|aliases|world|id> [#]",
+        aliases = {"v}"},
+        requiredType = PlotPlayer.class,
+        category = CommandCategory.TELEPORT
+)
 public class Visit extends SubCommand {
+
     public Visit() {
-        super("visit", "plots.visit", "Visit someones plot", "visit {player} [#]", "v", CommandCategory.TELEPORT, true);
+        requiredArguments = new Argument[] {
+                Argument.String
+        };
     }
 
     public List<Plot> getPlots(final UUID uuid) {
@@ -48,10 +63,8 @@ public class Visit extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length < 1) {
-            return sendMessage(plr, C.COMMAND_SYNTAX, "/plot visit <player|alias|world|id> [#]");
-        }
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         ArrayList<Plot> plots = new ArrayList<>();
         UUID user = UUIDHandler.getUUID(args[0]);
         if (user != null ) {
@@ -88,7 +101,7 @@ public class Visit extends SubCommand {
                 return false;
             }
         }
-        
+
         Plot plot = plots.get(index);
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(plr, "plots.visit.unowned")) {
@@ -116,38 +129,6 @@ public class Visit extends SubCommand {
         }
         MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(index));
         return true;
-        
-//        
-//        // from alias
-//        
-//        
-//        id = PlotId.fromString(args[0]);
-//        
-//        
-//        
-//        final String username = args[0];
-//        final UUID uuid = UUIDHandler.getUUID(username);
-//        List<Plot> plots = null;
-//        if (uuid != null) {
-//            plots = PlotSquared.sortPlotsByWorld(getPlots(uuid));
-//        }
-//        if ((uuid == null) || plots.isEmpty()) {
-//            return sendMessage(plr, C.FOUND_NO_PLOTS);
-//        }
-//        if (args.length < 2) {
-//            MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
-//            return true;
-//        }
-//        int i;
-//        try {
-//            i = Integer.parseInt(args[1]);
-//        } catch (final Exception e) {
-//            return sendMessage(plr, C.NOT_VALID_NUMBER);
-//        }
-//        if ((i < 1) || (i > plots.size())) {
-//            return sendMessage(plr, C.NOT_VALID_NUMBER);
-//        }
-//        MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(i - 1));
-//        return true;
     }
+
 }

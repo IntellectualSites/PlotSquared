@@ -29,6 +29,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 
@@ -48,13 +51,14 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.chat.FancyMessage;
 
-/**
- * @author Citymonstret
- */
+@CommandDeclaration(
+        command = "list",
+        aliases = {"l"},
+        description = "List plots",
+        permission = "plots.list",
+        category = CommandCategory.INFO
+)
 public class list extends SubCommand {
-    public list() {
-        super(Command.LIST, "List all plots", "list {mine|shared|all|world|forsale}", CommandCategory.INFO, false);
-    }
 
     private static String getName(final UUID id) {
         if (id == null) {
@@ -114,7 +118,9 @@ public class list extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
+
         if (args.length < 1) {
             noArgs(plr);
             return false;

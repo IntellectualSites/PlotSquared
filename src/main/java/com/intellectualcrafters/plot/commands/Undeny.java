@@ -29,26 +29,37 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 
+@CommandDeclaration(
+        command = "undeny",
+        aliases = {"ud"},
+        description = "Remove a denied user from a plot",
+        usage = "/plot undeny <player>",
+        requiredType = PlotPlayer.class,
+        category = CommandCategory.ACTIONS
+)
 public class Undeny extends SubCommand {
+
     public Undeny() {
-        super(Command.UNDENY, "Remove a denied user from a plot", "undeny <player>", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.PlayerName
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length != 1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot undeny <player>");
-            return true;
-        }
+    public boolean onCommand(final CommandCaller caller, final String ... args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if ((plot == null) || !plot.hasOwner()) {
+        if (!plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
@@ -57,31 +68,33 @@ public class Undeny extends SubCommand {
             return true;
         }
         int count = 0;
-        if (args[0].equals("unknown")) {
-            ArrayList<UUID> toRemove = new ArrayList<>();
-            for (UUID uuid : plot.getDenied()) {
-                if (UUIDHandler.getName(uuid) == null) {
-                    toRemove.add(uuid);
+        switch (args[0]) {
+            case "unknown":
+                ArrayList<UUID> toRemove = new ArrayList<>();
+                for (UUID uuid : plot.getDenied()) {
+                    if (UUIDHandler.getName(uuid) == null) {
+                        toRemove.add(uuid);
+                    }
                 }
-            }
-            for (UUID uuid : toRemove) {
-                plot.removeDenied(uuid);
-                count++;
-            }
-        }
-        else if (args[0].equals("*")){
-            for (UUID uuid : new ArrayList<>(plot.getDenied())) {
-                plot.removeDenied(uuid);
-                count++;
-            }
-        }
-        else {
-            UUID uuid = UUIDHandler.getUUID(args[0]);
-            if (uuid != null) {
-                if (plot.removeDenied(uuid)) {
-                    count++;   
+                for (UUID uuid : toRemove) {
+                    plot.removeDenied(uuid);
+                    count++;
                 }
-            }
+                break;
+            case "*":
+                for (UUID uuid : new ArrayList<>(plot.getDenied())) {
+                    plot.removeDenied(uuid);
+                    count++;
+                }
+                break;
+            default:
+                UUID uuid = UUIDHandler.getUUID(args[0]);
+                if (uuid != null) {
+                    if (plot.removeDenied(uuid)) {
+                        count++;
+                    }
+                }
+                break;
         }
         if (count == 0) {
             if (UUIDHandler.implementation instanceof SQLUUIDHandler) {
@@ -96,4 +109,5 @@ public class Undeny extends SubCommand {
         }
         return true;
     }
+
 }

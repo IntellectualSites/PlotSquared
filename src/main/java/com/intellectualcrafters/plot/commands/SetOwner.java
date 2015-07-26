@@ -33,24 +33,35 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
+@CommandDeclaration(
+        command = "setowner",
+        permission = "plots.set.owner",
+        description = "Set the plot owner",
+        usage = "/plot setowner <player>",
+        aliases = {"so"},
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class SetOwner extends SubCommand {
+
     public SetOwner() {
-        super("setowner", "plots.set.owner", "Set the plot owner", "setowner <player>", "so", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.PlayerName
+        };
     }
 
-    /*
-     * private UUID getUUID(String string) { OfflinePlayer player =
-     * Bukkit.getOfflinePlayer(string); return ((player != null) &&
-     * player.hasPlayedBefore()) ? UUIDHandler.getUUID(player) : null; }
-     */
     private UUID getUUID(final String string) {
         return UUIDHandler.getUUID(string);
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller;
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if ((plot == null) || (plot.owner == null)) {

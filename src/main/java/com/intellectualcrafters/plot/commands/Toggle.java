@@ -23,21 +23,32 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+//     TOGGLE("toggle", "attribute"),
+
+@CommandDeclaration(
+        command = "toggle",
+        aliases = {"attribute"},
+        permission = "plots.toggle",
+        description = "Toggle per user settings",
+        usage = "/plot toggle <setting>",
+        requiredType = PlotPlayer.class,
+        category = CommandCategory.ACTIONS
+)
 public class Toggle extends SubCommand {
-    public Toggle() {
-        super(Command.TOGGLE, "Toggle per user settings", "toggle <setting>", CommandCategory.ACTIONS, true);
-    }
-    
-    public void noArgs(PlotPlayer player) {
-        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot toggle <setting>");
-        MainUtil.sendMessage(player, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + "titles");
+
+    public void noArgs(CommandCaller caller) {
+        caller.message(C.COMMAND_SYNTAX, "/plot toggle <setting>");
+        caller.message(C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + "titles");
     }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
         if (args.length == 0) {
-            noArgs(player);
+            noArgs(caller);
             return false;
         }
         switch (args[0].toLowerCase()) {

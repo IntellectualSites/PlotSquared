@@ -7,15 +7,20 @@
  */
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "help",
+        description = "Get this help menu",
+        permission = "",
+        aliases = {"he"},
+        category = CommandCategory.INFO
+)
 public class Help extends SubCommand {
-    public Help() {
-        super("help", "", "Get this help menu", "help", "he", SubCommand.CommandCategory.INFO, false);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        return false;
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        return true;
     }
 }

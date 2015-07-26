@@ -27,16 +27,23 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
-@SuppressWarnings({ "unused", "deprecation", "javadoc" })
+@CommandDeclaration(
+        command = "kick",
+        aliases = {"k"},
+        description = "Kick a player from your plot",
+        permission = "plots.kick",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class Kick extends SubCommand {
-    public Kick() {
-        super(Command.KICK, "Kick a player from your plot", "kick", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

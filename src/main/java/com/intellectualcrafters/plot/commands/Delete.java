@@ -32,15 +32,24 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
+@CommandDeclaration(
+        command = "delete",
+        permission = "plots.delete",
+        description = "Delete a plot",
+        usage = "/plot delete",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class
+)
 public class Delete extends SubCommand {
-    public Delete() {
-        super(Command.DELETE, "Delete a plot", "delete", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
@@ -49,10 +58,9 @@ public class Delete extends SubCommand {
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUIDWrapper().getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
+        if (((!plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUIDWrapper().getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
-        assert plot != null;
         final PlotWorld pWorld = PS.get().getPlotWorld(plot.world);
         if (MainUtil.runners.containsKey(plot)) {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
@@ -61,7 +69,7 @@ public class Delete extends SubCommand {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if ((EconHandler.manager != null) && pWorld.USE_ECONOMY && (plot != null) && plot.hasOwner() && plot.isOwner(UUIDHandler.getUUID(plr))) {
+                if ((EconHandler.manager != null) && pWorld.USE_ECONOMY && plot.hasOwner() && plot.isOwner(UUIDHandler.getUUID(plr))) {
                     final double c = pWorld.SELL_PRICE;
                     if (c > 0d) {
                         EconHandler.manager.depositMoney(plr, c);

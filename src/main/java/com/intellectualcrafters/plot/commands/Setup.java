@@ -25,6 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.generator.ChunkGenerator;
 
@@ -39,11 +42,16 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.bukkit.util.SetupUtils;
 
+@CommandDeclaration(
+        command = "setup",
+        permission = "plots.admin.command.setup",
+        description = "Setup wizard for plot worlds",
+        usage = "/plot setup",
+        aliases = {"create"},
+        category = CommandCategory.ACTIONS
+)
 public class Setup extends SubCommand {
-    public Setup() {
-        super("setup", "plots.admin.command.setup", "Plotworld setup command", "setup", "create", CommandCategory.ACTIONS, false);
-    }
-    
+
     public void displayGenerators(PlotPlayer plr) {
         StringBuffer message = new StringBuffer();
         message.append("&6What generator do you want?");
@@ -65,7 +73,9 @@ public class Setup extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        PlotPlayer plr = (caller instanceof PlotPlayerCaller) ? (PlotPlayer) caller.getSuperCaller() : null;
+
         // going through setup
         String name;
         if (plr == null) {
@@ -208,7 +218,7 @@ public class Setup extends SubCommand {
                     step.setValue(args[0]);
                     object.setup_index++;
                     if (object.setup_index == object.step.length) {
-                        execute(plr, args);
+                        onCommand(caller, args);
                         return false;
                     }
                     step = object.step[object.setup_index];

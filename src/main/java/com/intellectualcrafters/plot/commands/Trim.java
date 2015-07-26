@@ -39,15 +39,22 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "trim",
+        permission = "plots.admin",
+        description = "Delete unmodified portions of your plotworld",
+        usage = "/plot trim",
+        requiredType = PS.class,
+        category = CommandCategory.DEBUG
+)
 public class Trim extends SubCommand {
+
     public static boolean TASK = false;
     public static ArrayList<Plot> expired = null;
     private static int TASK_ID = 0;
-
-    public Trim() {
-        super("trim", "plots.admin", "Delete unmodified portions of your plotworld", "trim", "", CommandCategory.DEBUG, false);
-    }
 
     public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
         if (Trim.TASK) {
@@ -167,11 +174,8 @@ public class Trim extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr != null) {
-            MainUtil.sendMessage(plr, (C.NOT_CONSOLE));
-            return false;
-        }
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        PlotPlayer plr = null;
         if (args.length == 1) {
             final String arg = args[0].toLowerCase();
             final PlotId id = getId(arg);

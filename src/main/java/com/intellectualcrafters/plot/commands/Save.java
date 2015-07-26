@@ -16,14 +16,22 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "save",
+        aliases = {"backup"},
+        description = "Save your plot",
+        category = CommandCategory.ACTIONS,
+        requiredType = PlotPlayer.class,
+        permission = "plots.save"
+)
 public class Save extends SubCommand {
-    public Save() {
-        super(Command.SAVE, "Save your plot", "backup", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         if (!Settings.METRICS) {
             MainUtil.sendMessage(plr, "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
             return false;

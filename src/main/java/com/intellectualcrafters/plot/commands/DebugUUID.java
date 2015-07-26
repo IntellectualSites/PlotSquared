@@ -28,6 +28,9 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PS;
@@ -48,22 +51,26 @@ import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
+@CommandDeclaration(
+        command = "uuidconvert",
+        permission = "plots.admin",
+        description = "Debug UUID conversion",
+        usage = "/plot uuidconvert <lower|offline|online>",
+        requiredType = PS.class,
+        category = CommandCategory.DEBUG
+)
 public class DebugUUID extends SubCommand {
+
     public DebugUUID() {
-        super("uuidconvert", "plots.admin", "Debug uuid conversion", "debuguuid", "debuguuid", CommandCategory.DEBUG, false);
+        requiredArguments = new Argument[] {
+                Argument.String
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer player, final String... args) {
-        if (player != null) {
-            MainUtil.sendMessage(player, C.NOT_CONSOLE);
-            return false;
-        }
-        if (args.length == 0) {
-            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert <lower|offline|online>");
-            return false;
-        }
-        
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        PlotPlayer player = null;
+
         UUIDWrapper currentUUIDWrapper = UUIDHandler.getUUIDWrapper();
         UUIDWrapper newWrapper = null;
         

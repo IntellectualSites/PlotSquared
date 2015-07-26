@@ -25,7 +25,10 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
+import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;
@@ -43,14 +46,14 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
-/**
- * @author Citymonstret
- */
-@SuppressWarnings({ "javadoc" })
+@CommandDeclaration(
+        command = "info",
+        aliases = {"i"},
+        description = "Display plot info",
+        usage = "/plot info <id>",
+        category = CommandCategory.INFO
+)
 public class Info extends SubCommand {
-    public Info() {
-        super(Command.INFO, "Display plot info", "info", CommandCategory.INFO, false);
-    }
 
     public static String getPlayerList(final Collection<UUID> uuids) {
         ArrayList<UUID> l = new ArrayList<>(uuids);
@@ -84,7 +87,9 @@ public class Info extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer player, String... args) {
+    public boolean onCommand(final CommandCaller caller, String[] args) {
+        final PlotPlayer player = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
+
         String arg = null;
         Plot plot;
         if (args.length > 0) arg = args[0] + "";

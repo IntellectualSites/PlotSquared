@@ -33,11 +33,19 @@ import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "auto",
+        permission = "plots.auto",
+        category = CommandCategory.CLAIMING,
+        requiredType = PlotPlayer.class,
+        description = "Claim the nearest plot",
+        aliases = {"a"},
+        usage = "/plot auto"
+)
 public class Auto extends SubCommand {
-    public Auto() {
-        super("auto", "plots.auto", "Claim the nearest plot", "auto", "a", CommandCategory.CLAIMING, true);
-    }
 
     public static PlotId getNextPlot(final PlotId id, final int step) {
         final int absX = Math.abs(id.x);
@@ -68,9 +76,9 @@ public class Auto extends SubCommand {
         }
     }
 
-    // TODO auto claim a mega plot with schematic
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(CommandCaller caller, String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         String world;
         int size_x = 1;
         int size_z = 1;

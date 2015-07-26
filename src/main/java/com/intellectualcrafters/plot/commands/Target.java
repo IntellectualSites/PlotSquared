@@ -26,31 +26,42 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "target",
+        usage = "/plot target <X;Z>",
+        description = "Target a plot with your compass",
+        permission = "plots.target",
+        requiredType = PlotPlayer.class,
+        category = CommandCategory.ACTIONS
+)
 public class Target extends SubCommand {
+
     public Target() {
-        super(Command.TARGET, "Target a plot with your compass", "target <X;Z>", CommandCategory.ACTIONS, true);
+        requiredArguments = new Argument[] {
+                Argument.PlotID
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location ploc = plr.getLocation();
         if (!PS.get().isPlotWorld(ploc.getWorld())) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
-        if (args.length == 1) {
-            final PlotId id = MainUtil.parseId(args[0]);
-            if (id == null) {
-                MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-                return false;
-            }
-            final Location loc = MainUtil.getPlotHome(ploc.getWorld(), id);
-            plr.setCompassTarget(loc);
-            MainUtil.sendMessage(plr, C.COMPASS_TARGET);
-            return true;
+        final PlotId id = MainUtil.parseId(args[0]);
+        if (id == null) {
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            return false;
         }
-        MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot target <X;Z>");
-        return false;
+        final Location loc = MainUtil.getPlotHome(ploc.getWorld(), id);
+        plr.setCompassTarget(loc);
+        MainUtil.sendMessage(plr, C.COMPASS_TARGET);
+        return true;
     }
 }

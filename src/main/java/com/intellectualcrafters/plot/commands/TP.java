@@ -20,6 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualsites.commands.Argument;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PS;
@@ -32,20 +35,25 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
-/**
- * @author Citymonstret
- */
+@CommandDeclaration(
+        command = "tp",
+        description = "Teleport to a plot",
+        permission = "plots.tp",
+        usage = "/plot tp <alias|id>",
+        requiredType = PlotPlayer.class,
+        category = CommandCategory.TELEPORT
+)
 public class TP extends SubCommand {
+
     public TP() {
-        super(Command.TP, "Teleport to a plot", "tp {alias|id}", CommandCategory.TELEPORT, true);
+        requiredArguments = new Argument[] {
+                Argument.String
+        };
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (args.length < 1) {
-            MainUtil.sendMessage(plr, C.NEED_PLOT_ID);
-            return false;
-        }
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final String id = args[0];
         PlotId plotid;
         final Location loc = plr.getLocation();

@@ -32,13 +32,18 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
-@SuppressWarnings({ "javadoc" })
+@CommandDeclaration(
+        command = "purge",
+        permission = "plots.admin",
+        description = "Purge all plots for a world",
+        category = CommandCategory.ACTIONS,
+        requiredType = PS.class
+)
 public class Purge extends SubCommand {
-    public Purge() {
-        super("purge", "plots.admin", "Purge all plots for a world", "purge", "", CommandCategory.DEBUG, false);
-    }
     
     public PlotId getId(final String id) {
         try {
@@ -50,49 +55,45 @@ public class Purge extends SubCommand {
     }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
-        if (plr != null) {
-            MainUtil.sendMessage(plr, (C.NOT_CONSOLE));
-            return false;
-        }
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
         if (args.length == 1) {
             final String arg = args[0].toLowerCase();
             final PlotId id = getId(arg);
             if (id != null) {
-                MainUtil.sendMessage(plr, "/plot purge x;z &l<world>");
+                caller.message("/plot purxe x;z &l<world>");
                 return false;
             }
             final UUID uuid = UUIDHandler.getUUID(args[0]);
             if (uuid != null) {
-                MainUtil.sendMessage(plr, "/plot purge " + args[0] + " &l<world>");
+                caller.message("/plot purge " + args[0] + " &l<world>");
                 return false;
             }
             if (arg.equals("player")) {
-                MainUtil.sendMessage(plr, "/plot purge &l<player> <world>");
+                caller.message("/plot purge &l<player> <world>");
                 return false;
             }
             if (arg.equals("unowned")) {
-                MainUtil.sendMessage(plr, "/plot purge unowned &l<world>");
+                caller.message("/plot purge unowned &l<world>");
                 return false;
             }
             if (arg.equals("unknown")) {
-                MainUtil.sendMessage(plr, "/plot purge unknown &l<world>");
+                caller.message("/plot purge unknown &l<world>");
                 return false;
             }
             if (arg.equals("all")) {
-                MainUtil.sendMessage(plr, "/plot purge all &l<world>");
+                caller.message("/plot purge all &l<world>");
                 return false;
             }
-            MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
+            caller.message(C.PURGE_SYNTAX);
             return false;
         }
         if (args.length != 2) {
-            MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
+            caller.message(C.PURGE_SYNTAX);
             return false;
         }
         final String worldname = args[1];
         if (!PS.get().getAllPlotsRaw().containsKey(worldname)) {
-            MainUtil.sendMessage(plr, "INVALID WORLD");
+            caller.message("INVALID WORLD");
             return false;
         }
         final String arg = args[0].toLowerCase();
@@ -159,7 +160,7 @@ public class Purge extends SubCommand {
             DBFunc.purge(worldname, ids);
             return finishPurge(length);
         }
-        MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
+        caller.message(C.PURGE_SYNTAX);
         return false;
     }
 

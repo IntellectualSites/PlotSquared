@@ -36,9 +36,7 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
-/**
- * @author Citymonstret
- */
+
 public class Buy extends SubCommand {
     public Buy() {
         super(Command.BUY, "Buy the plot you are standing on", "b", CommandCategory.CLAIMING, true);

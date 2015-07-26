@@ -29,14 +29,21 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.intellectualsites.commands.callers.CommandCaller;
 
+@CommandDeclaration(
+        command = "unclaim",
+        usage = "/plot unclaim",
+        requiredType = PlotPlayer.class,
+        description = "Unclaim a plot",
+        category = CommandCategory.ACTIONS
+)
 public class Unclaim extends SubCommand {
-    public Unclaim() {
-        super(Command.UNCLAIM, "Unclaim a plot", "unclaim", CommandCategory.ACTIONS, true);
-    }
 
     @Override
-    public boolean execute(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final CommandCaller caller, final String[] args) {
+        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
@@ -45,10 +52,9 @@ public class Unclaim extends SubCommand {
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if ((((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.unclaim")) {
+        if (((!plot.hasOwner() || !plot.isOwner(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.unclaim")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
-        assert plot != null;
         final PlotWorld pWorld = PS.get().getPlotWorld(plot.world);
         if ((EconHandler.manager != null) && pWorld.USE_ECONOMY) {
             final double c = pWorld.SELL_PRICE;
