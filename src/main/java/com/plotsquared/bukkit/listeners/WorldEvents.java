@@ -9,7 +9,8 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PS;
-import com.plotsquared.bukkit.object.PlotGenerator;
+import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.util.UUIDHandler;
 
 public class WorldEvents implements Listener {
@@ -30,12 +31,15 @@ public class WorldEvents implements Listener {
         final World world = event.getWorld();
         String name = getName(world);
         final ChunkGenerator gen = world.getGenerator();
-        if (gen instanceof PlotGenerator) {
-            //
-            PS.get().loadWorld(name, (PlotGenerator) gen);
-        } else {
+        if (gen instanceof BukkitPlotGenerator) {
+            PS.get().loadWorld(name, new BukkitGeneratorWrapper(name, (BukkitPlotGenerator) gen));
+        }
+        else {
             if (PS.get().config.contains("worlds." + name)) {
-                PS.get().loadWorld(name, null);
+                PS.get().loadWorld(name, new BukkitGeneratorWrapper(name, null));
+            }
+            else if (gen != null) {
+                System.out.print("NOT INSTANCE OF BukkitGeneratorWrapper: " + gen.getClass().getName());
             }
         }
         lastWorld = null;

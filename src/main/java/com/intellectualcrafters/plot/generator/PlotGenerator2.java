@@ -4,11 +4,13 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 
-public abstract class PlotGenerator2 {
+public abstract class PlotGenerator2<T> {
     public final String world;
+    public T generator;
 
-    public PlotGenerator2(String world) {
+    public PlotGenerator2(String world, T generator) {
         this.world = world;
+        this.generator = generator;
     }
     
     public abstract void initialize(PlotWorld plotworld);
@@ -22,7 +24,7 @@ public abstract class PlotGenerator2 {
      * @param cluster Will be the cluster, or null
      * @param plotworld
      */
-    public abstract void augment(String generator, PlotCluster cluster, PlotWorld plotworld);
+    public abstract void augment(PlotCluster cluster, PlotWorld plotworld);
     
     
     /**

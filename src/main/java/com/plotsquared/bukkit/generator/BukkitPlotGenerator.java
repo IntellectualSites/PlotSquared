@@ -75,7 +75,8 @@ public abstract class BukkitPlotGenerator extends ChunkGenerator {
     public List<BlockPopulator> getDefaultPopulators(World world) {
         try {
             if (!loaded) {
-                PS.get().loadWorld(WorldEvents.getName(world), this);
+                String name = WorldEvents.getName(world);
+                PS.get().loadWorld(name, new BukkitGeneratorWrapper(name, this));
                 PlotWorld plotworld = PS.get().getPlotWorld(WorldEvents.getName(world));
                 if (!plotworld.MOB_SPAWNING) {
                     if (!plotworld.SPAWN_EGGS) {
@@ -115,7 +116,8 @@ public abstract class BukkitPlotGenerator extends ChunkGenerator {
     public short[][] generateExtBlockSections(World world, Random r, int cx, int cz, BiomeGrid biomes) {
         try {
             if (!loaded) {
-                PS.get().loadWorld(WorldEvents.getName(world), this);
+                String name = WorldEvents.getName(world);
+                PS.get().loadWorld(name, new BukkitGeneratorWrapper(name, this));
                 loaded = true;
             }
             final int prime = 13;

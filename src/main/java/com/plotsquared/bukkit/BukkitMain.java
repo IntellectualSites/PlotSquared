@@ -10,6 +10,9 @@ import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
+import com.intellectualcrafters.plot.generator.PlotGenerator2;
+import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.plotsquared.bukkit.listeners.*;
@@ -472,13 +475,15 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public ChunkGenerator getGenerator(final String world, final String name) {
+    public BukkitGeneratorWrapper getGenerator(final String world, final String name) {
         final Plugin gen_plugin = Bukkit.getPluginManager().getPlugin(name);
+        ChunkGenerator gen;
         if ((gen_plugin != null) && gen_plugin.isEnabled()) {
-            return gen_plugin.getDefaultWorldGenerator(world, "");
+            gen = gen_plugin.getDefaultWorldGenerator(world, "");
         } else {
-            return new HybridGen(world);
+            gen = new HybridGen(world);
         }
+        return new BukkitGeneratorWrapper(world, gen);
     }
     
     @Override

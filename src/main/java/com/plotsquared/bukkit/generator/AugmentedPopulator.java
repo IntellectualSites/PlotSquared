@@ -15,7 +15,6 @@ import com.intellectualcrafters.plot.PS;
 import com.plotsquared.bukkit.object.BlockWrapper;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotCluster;
-import com.plotsquared.bukkit.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -32,7 +31,7 @@ public class AugmentedPopulator extends BlockPopulator {
     public static short[][] z_loc;
     public final PlotWorld plotworld;
     public final PlotManager manager;
-    public final PlotGenerator generator;
+    public final BukkitPlotGenerator generator;
     public final PlotCluster cluster;
     public final Random r = new Random();
     public final boolean p;
@@ -43,7 +42,7 @@ public class AugmentedPopulator extends BlockPopulator {
     private final int tx;
     private final int tz;
 
-    public AugmentedPopulator(final String world, final PlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
+    public AugmentedPopulator(final String world, final BukkitPlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
         initCache();
         this.cluster = cluster;
         this.generator = generator;

@@ -844,12 +844,12 @@ public class PS {
                     if (ClusterManager.getClusters(world).size() > 0) {
                         for (final PlotCluster cluster : ClusterManager.getClusters(world)) {
                             log(C.PREFIX.s() + "&3 - &7| cluster: " + cluster);
-                            generator.augment(generator.getName(), cluster, plotWorld);
+                            generator.augment(cluster, plotWorld);
 //                            new AugmentedPopulator(world, generator, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                         }
                     }
                 } else if (plotWorld.TYPE == 1) {
-                    generator.augment(generator.getName(), null, plotWorld);
+                    generator.augment(null, plotWorld);
 //                    new AugmentedPopulator(world, gen_class, null, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                 }
                 generator.initialize(plotWorld);

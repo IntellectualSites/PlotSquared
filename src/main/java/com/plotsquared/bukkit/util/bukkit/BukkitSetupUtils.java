@@ -12,7 +12,7 @@ import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.plotsquared.bukkit.object.PlotGenerator;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.plotsquared.bukkit.util.SetupUtils;
@@ -57,7 +57,7 @@ public class BukkitSetupUtils extends SetupUtils {
                 PS.get().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
             }
             ChunkGenerator gen = generators.get(object.setupGenerator);
-            if (gen instanceof PlotGenerator) {
+            if (gen instanceof BukkitPlotGenerator) {
                 object.setupGenerator = null;
             }
         }
@@ -103,7 +103,7 @@ public class BukkitSetupUtils extends SetupUtils {
             return null;
         }
         ChunkGenerator generator = world.getGenerator();
-        if (!(generator instanceof PlotGenerator)) {
+        if (!(generator instanceof BukkitPlotGenerator)) {
             return null;
         }
         for (Entry<String, ChunkGenerator> entry : generators.entrySet()) {
