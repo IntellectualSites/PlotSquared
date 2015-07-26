@@ -1,7 +1,11 @@
 # PlotSquared
-For the end user, PlotSquared is packed with a tonne of cool features. It allows you to merge plots, and build together with your friends. You can alos change a lot of plot specific settings, such as weather and time, or even toggle gamemodes and pvp allowance.
+For the end user, PlotSquared is packed with a tonne of cool features.
+It allows you to merge plots, and build together with your friends. 
+You can also change a lot of plot specific settings in the form of
+flags. Such as: weather, time, gamemodes, pvp status. 
 
-The most important thing, however, is not a whole load of features. Because, if the server is unable to run the plugin with efficiency, then the features won't matter. That's why we have focused heavily on making PlotSquared as fast and lightweight as possible. PlotSquared runs well even with hundreds of thousands of plots. Plot clearing is near instant, and you can keep your world clean with lots of use functions, such as: plot purging, condensation, automatic expirty, world trimming, dynamic world-borders, chunk-processor and more...
+Whilst we provide a whole load of unique features, the biggest focus
+is to provide a lag-free and smooth experience.
 
 ## Links
 
@@ -12,7 +16,7 @@ The most important thing, however, is not a whole load of features. Because, if 
 * [Website](http://plotsquared.com)
 
 ### Developer Resources
-* [JavaDocs](http://empcraft.com/plotsquared/doc/)
+* *Outdated* [JavaDocs](http://empcraft.com/plotsquared/doc/)
 * [Build Server](http://ci.intellectualsites.com/job/PlotSquared/)
 * [Maven Repo](http://mvn.intellectualsites.com/content/repositories/intellectualsites/)
 
@@ -43,3 +47,9 @@ Feel free to contribute, if you feel like you can improve the plugin in any way.
 * [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/)
 * [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/)
 * [PlotRankup](http://www.spigotmc.org/resources/plotrankup.1571/)
+* [PlotZSux](https://www.spigotmc.org/resources/plotzsux.9563/)
+* [IslandPlots](https://www.spigotmc.org/resources/islandplots.9421/)
+* [BiomeGenerator](https://www.spigotmc.org/resources/biomegenerator.1663/)
+* [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
+* [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
+* [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
