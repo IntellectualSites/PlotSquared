@@ -3,12 +3,12 @@ package com.plotsquared.bukkit.generator;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.generator.PlotGenerator2;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 
-public class BukkitGeneratorWrapper extends PlotGenerator2<ChunkGenerator> {
+public class BukkitGeneratorWrapper extends PlotGenerator<ChunkGenerator> {
 
     public final boolean full;
     
@@ -42,7 +42,7 @@ public class BukkitGeneratorWrapper extends PlotGenerator2<ChunkGenerator> {
         if (gen_string == null) {
             generator = new HybridGen(world);
         } else {
-            PlotGenerator2<ChunkGenerator> gen_wrapper = (PlotGenerator2<ChunkGenerator>) PS.get().IMP.getGenerator(world, gen_string);
+            PlotGenerator<ChunkGenerator> gen_wrapper = (PlotGenerator<ChunkGenerator>) PS.get().IMP.getGenerator(world, gen_string);
             if (gen_wrapper != null) {
                 generator = gen_wrapper.generator;
             }
