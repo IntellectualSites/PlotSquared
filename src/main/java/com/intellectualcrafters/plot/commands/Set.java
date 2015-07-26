@@ -260,6 +260,10 @@ public class Set extends SubCommand {
             });
             return true;
         }
+        if (args[0].equalsIgnoreCase("limit")) {
+            // /plot set limit Empire92 +1
+            return true;
+        }
         // Get components
         final String world = plr.getLocation().getWorld();
         final PlotWorld plotworld = PS.get().getPlotWorld(world);

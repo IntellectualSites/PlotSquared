@@ -1,9 +1,5 @@
 package com.intellectualcrafters.configuration;
 
-import static org.bukkit.util.NumberConversions.toDouble;
-import static org.bukkit.util.NumberConversions.toInt;
-import static org.bukkit.util.NumberConversions.toLong;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -21,6 +17,63 @@ public class MemorySection implements ConfigurationSection {
     private final String path;
     private final String fullPath;
 
+    public static double toDouble(Object obj, double def) {
+        if (obj instanceof Number) {
+            return ((Number) obj).doubleValue();
+        }
+        if (obj instanceof String) {
+            try {
+                return Double.parseDouble((String) obj);
+            }
+            catch (Exception e) {}
+        }
+        else if (obj instanceof List) {
+            List<?> val = ((List<?>) obj);
+            if (val.size() > 0) {
+                return toDouble(val.get(0), def);
+            }
+        }
+        return def;
+    }
+    
+    public static int toInt(Object obj, int def) {
+        if (obj instanceof Number) {
+            return ((Number) obj).intValue();
+        }
+        if (obj instanceof String) {
+            try {
+                return Integer.parseInt((String) obj);
+            }
+            catch (Exception e) {}
+        }
+        else if (obj instanceof List) {
+            List<?> val = ((List<?>) obj);
+            if (val.size() > 0) {
+                return toInt(val.get(0), def);
+            }
+        }
+        return def;
+    }
+    
+    public static long toLong(Object obj, long def) {
+        if (obj instanceof Number) {
+            return ((Number) obj).longValue();
+        }
+        if (obj instanceof String) {
+            try {
+                return Long.parseLong((String) obj);
+            }
+            catch (Exception e) {}
+        }
+        else if (obj instanceof List) {
+            List<?> val = ((List<?>) obj);
+            if (val.size() > 0) {
+                return toLong(val.get(0), def);
+            }
+        }
+        return def;
+    }
+    
     /**
      * Creates an empty MemorySection for use as a root {@link Configuration}
      * section.
@@ -289,12 +342,12 @@ public class MemorySection implements ConfigurationSection {
 
     public int getInt(String path) {
         Object def = getDefault(path);
-        return getInt(path, (def instanceof Number) ? toInt(def) : 0);
+        return getInt(path, toInt(def, 0));
     }
 
     public int getInt(String path, int def) {
         Object val = get(path, def);
-        return (val instanceof Number) ? toInt(val) : def;
+        return toInt(val, def);
     }
 
     public boolean isInt(String path) {
@@ -319,12 +372,12 @@ public class MemorySection implements ConfigurationSection {
 
     public double getDouble(String path) {
         Object def = getDefault(path);
-        return getDouble(path, (def instanceof Number) ? toDouble(def) : 0);
+        return getDouble(path, toDouble(def, 0));
     }
 
     public double getDouble(String path, double def) {
         Object val = get(path, def);
-        return (val instanceof Number) ? toDouble(val) : def;
+        return toDouble(val, def);
     }
 
     public boolean isDouble(String path) {
@@ -334,12 +387,12 @@ public class MemorySection implements ConfigurationSection {
 
     public long getLong(String path) {
         Object def = getDefault(path);
-        return getLong(path, (def instanceof Number) ? toLong(def) : 0);
+        return getLong(path, toLong(def, 0));
     }
 
     public long getLong(String path, long def) {
         Object val = get(path, def);
-        return (val instanceof Number) ? toLong(val) : def;
+        return toLong(val, def);
     }
 
     public boolean isLong(String path) {
