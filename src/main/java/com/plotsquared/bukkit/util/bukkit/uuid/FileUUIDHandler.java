@@ -13,9 +13,10 @@ import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.NbtFactory;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+
 import org.bukkit.Bukkit;
 
 import java.io.File;

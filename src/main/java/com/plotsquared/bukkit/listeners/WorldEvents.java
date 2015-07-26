@@ -10,7 +10,7 @@ import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PS;
 import com.plotsquared.bukkit.object.PlotGenerator;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.UUIDHandler;
 
 public class WorldEvents implements Listener {
     

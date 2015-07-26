@@ -48,6 +48,7 @@ import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
 import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.generator.PlotGenerator2;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.plotsquared.bukkit.listeners.APlotListener;
@@ -56,7 +57,6 @@ import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotFilter;
-import com.plotsquared.bukkit.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -77,8 +77,8 @@ import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
 import com.plotsquared.bukkit.util.SetupUtils;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -114,7 +114,7 @@ public class PS {
     private File styleFile;
     private File storageFile;
     private File FILE = null; // This file
-    private String VERSION = null;
+    private int[] VERSION = null;
     private String LAST_VERSION;
     private boolean LOADING_WORLD = false;
     private LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
@@ -264,7 +264,7 @@ public class PS {
      * Get the current PlotSquared version
      * @return current version in config or null
      */
-    public String getVersion() {
+    public int[] getVersion() {
         return VERSION;
     }
 
@@ -753,19 +753,19 @@ public class PS {
      * @param world The world to load
      * @param generator The generator for that world, or null if no generator
      */
-    public void loadWorld(final String world, PlotGenerator generator) {
+    public void loadWorld(final String world, PlotGenerator2 generator) {
         PlotWorld plotWorld = getPlotWorld(world);
         if (plotWorld != null) {
             if (generator != null) {
-                generator.init(plotWorld);
+                generator.initialize(plotWorld);
             }
             return;
         }
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
-        final PlotGenerator plotGenerator;
+        final PlotGenerator2 plotGenerator;
         final PlotManager plotManager;
         final String path = "worlds." + world;
-        if (!LOADING_WORLD && (generator != null)) {
+        if (!LOADING_WORLD && (generator.isFull())) {
             plotGenerator = generator;
             plotWorld = plotGenerator.getNewPlotWorld(world);
             plotManager = plotGenerator.getPlotManager();
@@ -787,7 +787,7 @@ public class PS {
             }
             // Now add it
             addPlotWorld(world, plotWorld, plotManager);
-            generator.init(plotWorld);
+            generator.initialize(plotWorld);
             MainUtil.setupBorder(world);
         } else {
             if (!worlds.contains(world)) {
@@ -797,11 +797,12 @@ public class PS {
                 LOADING_WORLD = true;
                 try {
                     final String gen_string = config.getString("worlds." + world + "." + "generator.plugin");
-                    if (gen_string == null) {
-                        generator = new HybridGen(world);
-                    } else {
-                        generator = (PlotGenerator) IMP.getGenerator(world, gen_string);
-                    }
+                    generator.setGenerator(gen_string);
+//                    if (gen_string == null) {
+//                        generator = new HybridGen(world);
+//                    } else {
+//                        generator = (PlotGenerator) IMP.getGenerator(world, gen_string);
+//                    }
                     loadWorld(world, generator);
                 } catch (final Exception e) {
                     log("&d=== Oh no! Please set the generator for the " + world + " ===");
@@ -812,14 +813,12 @@ public class PS {
                     LOADING_WORLD = false;
                 }
             } else {
-                final PlotGenerator gen_class = generator;
-                plotWorld = gen_class.getNewPlotWorld(world);
-                plotManager = gen_class.getPlotManager();
-
+                plotWorld = generator.getNewPlotWorld(world);
+                plotManager = generator.getPlotManager();
                 if (!config.contains(path)) {
                     config.createSection(path);
                 }
-                plotWorld.TYPE = generator instanceof PlotGenerator ? 0 : 2;
+                plotWorld.TYPE = generator.isFull() ? 0 : 2;
                 plotWorld.TERRAIN = 0;
                 plotWorld.saveConfiguration(config.getConfigurationSection(path));
                 plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
@@ -829,14 +828,12 @@ public class PS {
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
-
                 if (((plotWorld.TYPE == 2) && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
                     log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
                     return;
                 }
-                
                 log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
-                log(C.PREFIX.s() + "&3 - generator: &7" + gen_class.getClass().getName());
+                log(C.PREFIX.s() + "&3 - generator: &7" + generator.getName());
                 log(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
                 log(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
                 log(C.PREFIX.s() + "&3 - | terrain: &7" + plotWorld.TERRAIN);
@@ -847,13 +844,15 @@ public class PS {
                     if (ClusterManager.getClusters(world).size() > 0) {
                         for (final PlotCluster cluster : ClusterManager.getClusters(world)) {
                             log(C.PREFIX.s() + "&3 - &7| cluster: " + cluster);
-                            new AugmentedPopulator(world, gen_class, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
+                            generator.augment(generator.getName(), cluster, plotWorld);
+//                            new AugmentedPopulator(world, generator, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                         }
                     }
                 } else if (plotWorld.TYPE == 1) {
-                    new AugmentedPopulator(world, gen_class, null, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
+                    generator.augment(generator.getName(), null, plotWorld);
+//                    new AugmentedPopulator(world, gen_class, null, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                 }
-                gen_class.init(plotWorld);
+                generator.initialize(plotWorld);
             }
         }
     }
@@ -1516,7 +1515,7 @@ public class PS {
             log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");
-        if (!config.getBoolean("chat.fancy") || !IMP.checkVersion(1, 8, 0)) {
+        if (!config.getBoolean("chat.fancy") || !checkVersion(IMP.getServerVersion(), 1, 8, 0)) {
             Settings.FANCY_CHAT = false;
         }
         Settings.METRICS = config.getBoolean("metrics");

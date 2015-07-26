@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,8 +16,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 /**
  * Created 2014-11-18 for PlotSquared

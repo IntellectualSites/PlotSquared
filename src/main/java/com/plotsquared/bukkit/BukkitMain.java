@@ -25,6 +25,7 @@ import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.SetupUtils;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.*;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -48,7 +49,7 @@ import java.util.UUID;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
-    public static BukkitMain THIS = null;
+    public static BukkitMain THIS;
     
     private int[] version;
 

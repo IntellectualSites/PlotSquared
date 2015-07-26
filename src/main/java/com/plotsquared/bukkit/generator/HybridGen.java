@@ -32,7 +32,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
-import com.plotsquared.bukkit.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.plotsquared.bukkit.object.PlotPopulator;
@@ -48,7 +47,7 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
  * @author Citymonstret
  * @author Empire92
  */
-public class HybridGen extends PlotGenerator {
+public class HybridGen extends BukkitPlotGenerator {
     
     public HybridGen(String world) {
         super(world);

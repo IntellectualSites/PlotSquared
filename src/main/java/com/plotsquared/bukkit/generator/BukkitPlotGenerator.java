@@ -18,7 +18,7 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-package com.plotsquared.bukkit.object;
+package com.plotsquared.bukkit.generator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import com.intellectualcrafters.plot.object.*;
+
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
@@ -34,9 +35,10 @@ import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PS;
 import com.plotsquared.bukkit.listeners.WorldEvents;
+import com.plotsquared.bukkit.object.PlotPopulator;
 import com.intellectualcrafters.plot.util.ChunkManager;
 
-public abstract class PlotGenerator extends ChunkGenerator {
+public abstract class BukkitPlotGenerator extends ChunkGenerator {
 
     public static short[][][] CACHE_I = null;
     public static short[][][] CACHE_J = null;
@@ -46,7 +48,7 @@ public abstract class PlotGenerator extends ChunkGenerator {
     private short[][] result;
     private PseudoRandom random = new PseudoRandom();
     
-    public PlotGenerator(String world) {
+    public BukkitPlotGenerator(String world) {
         WorldEvents.lastWorld = world;
         initCache();
     }
@@ -150,9 +152,9 @@ public abstract class PlotGenerator extends ChunkGenerator {
                         int xx = loc.x - X;
                         int zz = loc.z - Z;
                         if (xx >= 0 && xx < 16) {
-                        	if (zz >= 0 && zz < 16) {
-                        		setBlock(xx, entry2.getKey(), zz, entry2.getValue());
-                        	}
+                            if (zz >= 0 && zz < 16) {
+                                setBlock(xx, entry2.getKey(), zz, entry2.getValue());
+                            }
                         }
                     }
                 }

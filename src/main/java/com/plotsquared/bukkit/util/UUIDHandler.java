@@ -1,4 +1,4 @@
-package com.plotsquared.bukkit.util.bukkit;
+package com.plotsquared.bukkit.util;
 
 import java.util.HashSet;
 import java.util.Map;

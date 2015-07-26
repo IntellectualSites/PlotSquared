@@ -22,7 +22,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.UUIDHandler;
 
 public class ExpireManager {
     public static ConcurrentHashMap<String, List<Plot>> expiredPlots = new ConcurrentHashMap<>();

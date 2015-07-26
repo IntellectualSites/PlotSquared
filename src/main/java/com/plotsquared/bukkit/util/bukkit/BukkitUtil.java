@@ -27,6 +27,7 @@ import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
 
 import com.plotsquared.bukkit.object.BukkitPlayer;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;

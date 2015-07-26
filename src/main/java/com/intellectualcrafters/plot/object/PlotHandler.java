@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.UUIDHandler;
 
 public class PlotHandler {
     public static HashSet<UUID> getOwners(Plot plot) {

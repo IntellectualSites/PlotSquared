@@ -30,7 +30,7 @@ public class SendChunk {
     private static final RefClass classChunkCoordIntPair = getRefClass("{nms}.ChunkCoordIntPair");
     private static final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
     private static final RefClass classChunk = getRefClass("{nms}.Chunk");
-    private static boolean v1_7_10 = PS.get().IMP.checkVersion(1, 7, 10) && !PS.get().IMP.checkVersion(1, 8, 0);
+    private static boolean v1_7_10 = PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 7, 10) && !PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 8, 0);
     // Ref Method
     private static RefMethod methodGetHandle;
     // Ref Field

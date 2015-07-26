@@ -113,8 +113,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.RegExUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 /**
  * Player Events involving plots

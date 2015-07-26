@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
@@ -13,8 +14,8 @@ import org.bukkit.permissions.PermissionDefault;
 
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.util.EconHandler;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 public class BukkitPlayer implements PlotPlayer {
     

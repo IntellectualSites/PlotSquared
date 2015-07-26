@@ -8,16 +8,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.collect.Maps;
 import com.intellectualcrafters.json.JSONObject;
 import com.plotsquared.bukkit.BukkitMain;
 import com.intellectualcrafters.plot.database.SQLite;
-
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
+
 import org.bukkit.Bukkit;
 
 import com.google.common.collect.BiMap;
@@ -30,7 +29,6 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.ExpireManager;
@@ -46,9 +44,7 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-
 import org.bukkit.event.player.PlayerLoginEvent;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SQLUUIDHandler implements Listener, UUIDHandlerImplementation {

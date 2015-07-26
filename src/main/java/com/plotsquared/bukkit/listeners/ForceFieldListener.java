@@ -35,9 +35,9 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitPlayerFunctions;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 /**
  * @author Citymonstret
