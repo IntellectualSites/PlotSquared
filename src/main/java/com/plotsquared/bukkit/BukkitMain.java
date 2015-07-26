@@ -15,7 +15,6 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.plotsquared.bukkit.listeners.*;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
 import com.plotsquared.bukkit.listeners.worldedit.WESubscriber;
-import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.plotsquared.bukkit.titles.AbstractTitle;
@@ -29,6 +28,7 @@ import com.plotsquared.bukkit.util.SetupUtils;
 import com.plotsquared.bukkit.util.bukkit.*;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -42,7 +42,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -52,9 +51,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public static BukkitMain THIS = null;
     
     private int[] version;
-    
+
     @Override
-    public boolean checkVersion(final int major, final int minor, final int minor2) {
+    public int[] getServerVersion() {
         if (version == null) {
             try {
                 version = new int[3];
@@ -66,10 +65,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                return false;
+                return null;
             }
         }
-        return (version[0] > major) || ((version[0] == major) && (version[1] > minor)) || ((version[0] == major) && (version[1] == minor) && (version[2] >= minor2));
+        return version;
     }
     
     @Override
@@ -134,8 +133,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public String getVersion() {
-        return this.getDescription().getVersion();
+    public int[] getPluginVersion() {
+        String[] split = this.getDescription().getVersion().split("\\.");
+        return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]) };
     }
     
     @Override
@@ -234,13 +234,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         return new BukkitTaskManager();
     }
     
-    private ArrayDeque<Entity> fastTickEntities;
-    private ArrayDeque<Entity> slowTickEntities;
-    
     @Override
     public void runEntityTask() {
-//        fastTickEntities = new ArrayDeque<>();
-//        slowTickEntities = new ArrayDeque<>();
         log(C.PREFIX.s() + "KillAllEntities started.");
         TaskManager.runTaskRepeat(new Runnable() {
             long ticked = 0l;
@@ -257,7 +252,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 }
                 World world;
                 for (final PlotWorld pw : PS.get().getPlotWorldObjects()) {
-                    PlotManager manager = PS.get().getPlotManager(pw.worldname);
                     world = Bukkit.getWorld(pw.worldname);
                     try {
                     for (Entity entity : world.getEntities()) {
@@ -383,10 +377,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerPlayerEvents() {
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
-        if (checkVersion(1, 8, 0)) {
+        if (PS.get().checkVersion(this.getServerVersion(), 1, 8, 0)) {
             getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
         }
-        if (checkVersion(1, 8, 3)) {
+        if (PS.get().checkVersion(this.getServerVersion(), 1, 8, 3)) {
             getServer().getPluginManager().registerEvents(new PlayerEvents_1_8_3(), this);
         }
     }
@@ -438,7 +432,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public BlockManager initBlockManager() {
-        if (checkVersion(1, 8, 0)) {
+        if (PS.get().checkVersion(this.getServerVersion(), 1, 8, 0)) {
             try {
                 BukkitSetBlockManager.setBlockManager = new SetBlockFast_1_8();
             } catch (final Throwable e) {
@@ -498,7 +492,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public UUIDWrapper initUUIDHandler() {
-        final boolean checkVersion = checkVersion(1, 7, 6);
+        final boolean checkVersion = PS.get().checkVersion(this.getServerVersion(), 1, 7, 6);
         if (Settings.OFFLINE_MODE) {
             if (Settings.UUID_LOWERCASE) {
                 UUIDHandler.setUUIDWrapper(new LowerOfflineUUIDWrapper());

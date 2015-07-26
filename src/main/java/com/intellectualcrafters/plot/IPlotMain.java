@@ -26,7 +26,9 @@ public interface IPlotMain {
     
     public void disable();
 
-    public String getVersion();
+    public int[] getPluginVersion();
+    
+    public int[] getServerVersion();
 
     public void handleKick(UUID uuid, C c);
 
@@ -79,6 +81,4 @@ public interface IPlotMain {
     public PlayerManager initPlayerManager();
     
     public String getServerName();
-
-    public boolean checkVersion(int major, int minor, int minor2);
 }

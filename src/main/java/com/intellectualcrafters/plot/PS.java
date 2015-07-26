@@ -134,7 +134,7 @@ public class PS {
         } catch (Exception e) {
             log("Could not determine file path");
         }
-        VERSION = IMP.getVersion();
+        VERSION = IMP.getPluginVersion();
         EconHandler.manager = IMP.getEconomyHandler();
         if (getJavaVersion() < 1.7) {
             log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
@@ -237,6 +237,10 @@ public class PS {
         copyFile("s_chinese.yml", "translations");
         copyFile("italian.yml", "translations");
         showDebug();
+    }
+    
+    public boolean checkVersion(int[] version, int major, int minor, int minor2) {
+        return (version[0] > major) || ((version[0] == major) && (version[1] > minor)) || ((version[0] == major) && (version[1] == minor) && (version[2] >= minor2));
     }
     
     /**
