@@ -22,7 +22,6 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -32,12 +31,9 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
-import com.intellectualcrafters.plot.util.bukkit.uuid.SQLUUIDHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 
 public class Deny extends SubCommand {
     public Deny() {

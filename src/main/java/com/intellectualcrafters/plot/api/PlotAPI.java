@@ -48,9 +48,9 @@ import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 /**
@@ -185,7 +185,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      *
      * @return BukkitSetBlockManager
      *
-     * @see com.intellectualcrafters.plot.util.bukkit.BukkitSetBlockManager
+     * @see com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager
      */
     public BukkitSetBlockManager getBukkitBlockManager() {
         return BukkitSetBlockManager.setBlockManager;

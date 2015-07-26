@@ -41,7 +41,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetupUtils;
+import com.plotsquared.bukkit.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class Template extends SubCommand {

@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.object.entity;
 
+import com.plotsquared.bukkit.object.entity.EntityWrapper;
+
 public class EntityBaseStats {
     public EntityWrapper passenger;
     public float fall;

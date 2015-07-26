@@ -43,26 +43,26 @@ import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.generator.HybridGen;
+import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
-import com.intellectualcrafters.plot.listeners.APlotListener;
+import com.plotsquared.bukkit.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotFilter;
-import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.plotsquared.bukkit.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.comment.CommentManager;
+import com.plotsquared.bukkit.object.comment.CommentManager;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
@@ -76,11 +76,11 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.Logger.LogLevel;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
-import com.intellectualcrafters.plot.util.SetupUtils;
+import com.plotsquared.bukkit.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
-import com.intellectualcrafters.plot.util.bukkit.uuid.FileUUIDHandler;
-import com.intellectualcrafters.plot.util.bukkit.uuid.SQLUUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.uuid.FileUUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 /**
@@ -93,7 +93,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 public class PS {
 
     // protected static:
-    protected static PS instance;
+    public static PS instance;
     
     // private final:
     private final HashMap<String, PlotWorld> plotworlds = new HashMap<>();
@@ -125,7 +125,7 @@ public class PS {
      * Initialize PlotSquared with the desired Implementation class
      * @param imp_class
      */
-    protected PS(final IPlotMain imp_class) {
+    public PS(final IPlotMain imp_class) {
         instance = this;
         SetupUtils.generators = new HashMap<>();
         IMP = imp_class;

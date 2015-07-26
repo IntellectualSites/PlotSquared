@@ -13,7 +13,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 /**
  * Created 2014-11-15 for PlotSquared

@@ -8,7 +8,7 @@ import org.bukkit.block.Biome;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotPopulator;
+import com.plotsquared.bukkit.object.PlotPopulator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;

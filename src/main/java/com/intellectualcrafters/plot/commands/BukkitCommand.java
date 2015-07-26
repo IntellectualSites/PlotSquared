@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 /**
  * Created 2015-02-20 for PlotSquared

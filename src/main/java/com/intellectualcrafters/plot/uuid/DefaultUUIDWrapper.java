@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
-import com.intellectualcrafters.plot.object.BukkitPlayer;
+import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 

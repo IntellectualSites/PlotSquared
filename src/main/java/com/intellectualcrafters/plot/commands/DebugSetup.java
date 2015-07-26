@@ -26,12 +26,12 @@ import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.object.PlotGenerator;
+import com.plotsquared.bukkit.generator.HybridGen;
+import com.plotsquared.bukkit.object.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetupUtils;
+import com.plotsquared.bukkit.util.SetupUtils;
 
 public class DebugSetup extends SubCommand {
     public DebugSetup() {

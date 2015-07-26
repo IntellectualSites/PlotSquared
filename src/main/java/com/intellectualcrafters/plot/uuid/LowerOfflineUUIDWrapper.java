@@ -12,11 +12,11 @@ import org.bukkit.entity.Player;
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.BukkitOfflinePlayer;
+import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 public class LowerOfflineUUIDWrapper extends OfflineUUIDWrapper {
     private Method getOnline = null;

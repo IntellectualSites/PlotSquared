@@ -12,7 +12,7 @@ import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -23,8 +23,8 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
-import com.intellectualcrafters.plot.util.bukkit.UUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import com.plotsquared.bukkit.util.bukkit.UUIDHandler;
 
 public class ClusterManager {
     public static HashMap<String, HashSet<PlotCluster>> clusters;

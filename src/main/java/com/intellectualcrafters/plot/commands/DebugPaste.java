@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.BukkitMain;
+import com.plotsquared.bukkit.BukkitMain;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;

@@ -7,7 +7,7 @@ import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.listeners.APlotListener;
+import com.plotsquared.bukkit.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -15,7 +15,7 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
-import com.intellectualcrafters.plot.util.SetupUtils;
+import com.plotsquared.bukkit.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 

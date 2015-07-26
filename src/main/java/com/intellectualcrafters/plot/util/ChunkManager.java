@@ -13,7 +13,6 @@ import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
-import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public abstract class ChunkManager {
     

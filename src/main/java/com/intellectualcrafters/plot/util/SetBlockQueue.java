@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.generator.AugmentedPopulator;
+import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
 

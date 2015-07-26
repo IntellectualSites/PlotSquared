@@ -29,7 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.BukkitPlayer;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public class Inventory extends SubCommand {
