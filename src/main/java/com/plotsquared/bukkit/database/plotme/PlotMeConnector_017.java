@@ -94,7 +94,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     setMerged(merges, world, id, 0);
                 }
             }
-            UUID owner = UUIDHandler.getUUID(name);
+            UUID owner = UUIDHandler.getUUID(name, null);
             if (owner == null) {
                 if (name.equals("*")) {
                     owner = DBFunc.everyone;

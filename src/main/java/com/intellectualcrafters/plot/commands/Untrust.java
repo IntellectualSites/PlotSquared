@@ -90,7 +90,7 @@ public class Untrust extends SubCommand {
                 }
                 break;
             default:
-                UUID uuid = UUIDHandler.getUUID(args[0]);
+                UUID uuid = UUIDHandler.getUUID(args[0], null);
                 if (uuid != null) {
                     if (plot.removeTrusted(uuid)) {
                         count++;

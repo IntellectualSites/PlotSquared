@@ -121,7 +121,7 @@ public class DebugClaimTest extends SubCommand {
                         }
                     }
                     if (uuid == null) {
-                        uuid = UUIDHandler.getUUID(line);
+                        uuid = UUIDHandler.getUUID(line, null);
                     }
                     if (uuid != null) {
                         MainUtil.sendMessage(null, " - &aFound plot: " + plot.id + " : " + line);

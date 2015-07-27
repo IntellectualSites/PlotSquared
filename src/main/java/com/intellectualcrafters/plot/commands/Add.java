@@ -74,7 +74,7 @@ public class Add extends SubCommand {
         if (args[0].equalsIgnoreCase("*")) {
             uuid = DBFunc.everyone;
         } else {
-            uuid = UUIDHandler.getUUID(args[0]);
+            uuid = UUIDHandler.getUUID(args[0], null);
         }
         if (uuid == null) {
             if (UUIDHandler.implementation instanceof SQLUUIDHandler) {

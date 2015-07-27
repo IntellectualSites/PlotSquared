@@ -88,7 +88,7 @@ public class Undeny extends SubCommand {
                 }
                 break;
             default:
-                UUID uuid = UUIDHandler.getUUID(args[0]);
+                UUID uuid = UUIDHandler.getUUID(args[0], null);
                 if (uuid != null) {
                     if (plot.removeDenied(uuid)) {
                         count++;

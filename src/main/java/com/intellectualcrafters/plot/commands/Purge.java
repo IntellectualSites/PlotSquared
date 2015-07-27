@@ -63,7 +63,7 @@ public class Purge extends SubCommand {
                 caller.message("/plot purxe x;z &l<world>");
                 return false;
             }
-            final UUID uuid = UUIDHandler.getUUID(args[0]);
+            final UUID uuid = UUIDHandler.getUUID(args[0], null);
             if (uuid != null) {
                 caller.message("/plot purge " + args[0] + " &l<world>");
                 return false;
@@ -149,7 +149,7 @@ public class Purge extends SubCommand {
             DBFunc.purge(worldname, ids);
             return finishPurge(length);
         }
-        final UUID uuid = UUIDHandler.getUUID(args[0]);
+        final UUID uuid = UUIDHandler.getUUID(args[0], null);
         if (uuid != null) {
             final Set<Plot> plots = PS.get().getPlots(worldname, uuid);
             final Set<PlotId> ids = new HashSet<>();

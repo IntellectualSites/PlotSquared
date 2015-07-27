@@ -301,7 +301,7 @@ public class list extends SubCommand {
                     plots = new ArrayList<>(PS.get().getPlots(args[0]).values());
                     break;
                 }
-                UUID uuid = UUIDHandler.getUUID(args[0]);
+                UUID uuid = UUIDHandler.getUUID(args[0], null);
                 if (uuid != null) {
                     if (!Permissions.hasPermission(plr, "plots.list.player")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.player");

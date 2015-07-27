@@ -221,7 +221,7 @@ public class DebugExec extends SubCommand {
                     if (args.length != 2) {
                         return MainUtil.sendMessage(player, "Use /plot debugexec seen <player>");
                     }
-                    final UUID uuid = UUIDHandler.getUUID(args[1]);
+                    final UUID uuid = UUIDHandler.getUUID(args[1], null);
                     if (uuid == null) {
                         return MainUtil.sendMessage(player, "player not found: " + args[1]);
                     }

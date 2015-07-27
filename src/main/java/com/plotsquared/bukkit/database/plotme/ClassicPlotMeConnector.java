@@ -92,7 +92,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     setMerged(merges, world, id, 0);
                 }
             }
-            UUID owner = UUIDHandler.getUUID(name);
+            UUID owner = UUIDHandler.getUUID(name, null);
             if (owner == null) {
                 if (name.equals("*")) {
                     owner = DBFunc.everyone;
@@ -149,7 +149,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                 final String name = r.getString("player");
                 final String world = LikePlotMeConverter.getWorld(r.getString("world"));
-                UUID denied = UUIDHandler.getUUID(name);
+                UUID denied = UUIDHandler.getUUID(name, null);
                 if (denied == null) {
                     if (name.equals("*")) {
                         denied = DBFunc.everyone;
@@ -170,7 +170,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                 final String name = r.getString("player");
                 final String world = LikePlotMeConverter.getWorld(r.getString("world"));
-                UUID helper = UUIDHandler.getUUID(name);
+                UUID helper = UUIDHandler.getUUID(name, null);
                 if (helper == null) {
                     if (name.equals("*")) {
                         helper = DBFunc.everyone;

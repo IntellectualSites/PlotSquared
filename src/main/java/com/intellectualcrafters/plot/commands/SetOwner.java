@@ -56,7 +56,7 @@ public class SetOwner extends SubCommand {
     }
 
     private UUID getUUID(final String string) {
-        return UUIDHandler.getUUID(string);
+        return UUIDHandler.getUUID(string, null);
     }
 
     @Override

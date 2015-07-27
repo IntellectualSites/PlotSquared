@@ -36,6 +36,7 @@ import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.listeners.APlotListener;
 import com.plotsquared.bukkit.util.SetupUtils;
@@ -279,7 +280,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     }
 
     @Override
-    public UUIDWrapper initUUIDHandler() {
+    public UUIDHandlerImplementation initUUIDHandler() {
         // TODO Auto-generated method stub
         return null;
     }
