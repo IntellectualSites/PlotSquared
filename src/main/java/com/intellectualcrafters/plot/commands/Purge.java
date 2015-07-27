@@ -31,9 +31,9 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.CommandCaller;
-import com.plotsquared.bukkit.util.UUIDHandler;
 
 
 @CommandDeclaration(

@@ -14,7 +14,7 @@ import org.bukkit.permissions.PermissionDefault;
 
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.util.EconHandler;
-import com.plotsquared.bukkit.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 public class BukkitPlayer implements PlotPlayer {

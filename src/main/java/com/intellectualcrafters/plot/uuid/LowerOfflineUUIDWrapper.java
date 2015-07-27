@@ -16,7 +16,7 @@ import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.plotsquared.bukkit.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class LowerOfflineUUIDWrapper extends OfflineUUIDWrapper {
     private Method getOnline = null;

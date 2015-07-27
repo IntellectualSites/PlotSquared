@@ -48,7 +48,7 @@ import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.plotsquared.bukkit.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;

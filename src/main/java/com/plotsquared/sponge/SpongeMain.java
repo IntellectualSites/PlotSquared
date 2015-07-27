@@ -35,10 +35,10 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.listeners.APlotListener;
 import com.plotsquared.bukkit.util.SetupUtils;
-import com.plotsquared.bukkit.util.UUIDHandler;
 
 /**
  * Created by robin on 01/11/2014

@@ -34,9 +34,9 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.CommandCaller;
-import com.plotsquared.bukkit.util.UUIDHandler;
 
 @CommandDeclaration(
         command = "buy",

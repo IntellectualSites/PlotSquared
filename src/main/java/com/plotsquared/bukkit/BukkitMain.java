@@ -27,8 +27,9 @@ import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.SetupUtils;
-import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.*;
+import com.plotsquared.bukkit.util.bukkit.uuid.FileUUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
@@ -428,23 +429,24 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public UUIDWrapper initUUIDHandler() {
+    public UUIDHandlerImplementation initUUIDHandler() {
         final boolean checkVersion = PS.get().checkVersion(this.getServerVersion(), 1, 7, 6);
+        UUIDWrapper wrapper;
         if (Settings.OFFLINE_MODE) {
             if (Settings.UUID_LOWERCASE) {
-                UUIDHandler.setUUIDWrapper(new LowerOfflineUUIDWrapper());
+                wrapper = (new LowerOfflineUUIDWrapper());
             } else {
-                UUIDHandler.setUUIDWrapper(new OfflineUUIDWrapper());
+                wrapper = (new OfflineUUIDWrapper());
             }
             Settings.OFFLINE_MODE = true;
         } else if (checkVersion) {
-            UUIDHandler.setUUIDWrapper(new DefaultUUIDWrapper());
+            wrapper = (new DefaultUUIDWrapper());
             Settings.OFFLINE_MODE = false;
         } else {
             if (Settings.UUID_LOWERCASE) {
-                UUIDHandler.setUUIDWrapper(new LowerOfflineUUIDWrapper());
+                wrapper = (new LowerOfflineUUIDWrapper());
             } else {
-                UUIDHandler.setUUIDWrapper(new OfflineUUIDWrapper());
+                wrapper = (new OfflineUUIDWrapper());
             }
             Settings.OFFLINE_MODE = true;
         }
@@ -465,7 +467,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else {
             log(C.PREFIX.s() + " &6PlotSquared is using online UUIDs");
         }
-        return UUIDHandler.getUUIDWrapper();
+        return Settings.USE_SQLUUIDHANDLER ? new SQLUUIDHandler(wrapper) : new FileUUIDHandler(wrapper);
     }
     
     @Override

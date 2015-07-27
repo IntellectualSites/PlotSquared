@@ -45,7 +45,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 /**
@@ -110,7 +109,7 @@ public class MainUtil {
         
         for (String term : split) {
             try {
-                UUID uuid = UUIDHandler.getUUID(term);
+                UUID uuid = UUIDHandler.getUUID(term, null);
                 if (uuid == null) {
                     uuid = UUID.fromString(term);
                 }

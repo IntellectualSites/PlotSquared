@@ -34,9 +34,9 @@ import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.CommandCaller;
-import com.plotsquared.bukkit.util.UUIDHandler;
 
 @CommandDeclaration(
         command = "clear",

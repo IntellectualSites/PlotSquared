@@ -39,9 +39,9 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.CommandCaller;
-import com.plotsquared.bukkit.util.UUIDHandler;
 
 @CommandDeclaration(
         command = "debugclaimtest",

@@ -72,8 +72,8 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.SetupUtils;
-import com.plotsquared.bukkit.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.bukkit.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
@@ -171,7 +171,7 @@ public class PS {
             IMP.registerChunkProcessor();
         }
         // create UUIDWrapper
-        UUIDHandler.setUUIDWrapper(IMP.initUUIDHandler());
+        UUIDHandler.implementation = IMP.initUUIDHandler();
         // create event util class
         EventUtil.manager = IMP.initEventUtil();
         // create Hybrid utility class
@@ -598,7 +598,7 @@ public class PS {
      * @return Set of Plot
      */
     public Set<Plot> getPlots(final String world, final String player) {
-        final UUID uuid = UUIDHandler.getUUID(player);
+        final UUID uuid = UUIDHandler.getUUID(player, null);
         return getPlots(world, uuid);
     }
 
@@ -1515,8 +1515,6 @@ public class PS {
             Settings.FANCY_CHAT = false;
         }
         Settings.METRICS = config.getBoolean("metrics");
-
-        UUIDHandler.implementation = Settings.USE_SQLUUIDHANDLER ? new SQLUUIDHandler() : new FileUUIDHandler();
     }
 
 

@@ -33,7 +33,7 @@ import java.util.UUID;
 import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.CommandCaller;
-import com.plotsquared.bukkit.util.UUIDHandler;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 
@@ -52,6 +52,7 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 @CommandDeclaration(
         command = "debugexec",

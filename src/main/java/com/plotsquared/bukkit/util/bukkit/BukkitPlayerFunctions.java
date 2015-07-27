@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.plotsquared.bukkit.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
  * Functions involving players, plots and locations.

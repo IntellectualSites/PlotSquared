@@ -1,6 +1,16 @@
 package com.plotsquared.bukkit.util.bukkit.uuid;
 
-import com.google.common.collect.BiMap;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -8,99 +18,42 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.NbtFactory;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
-import com.plotsquared.bukkit.util.UUIDHandler;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
-import org.bukkit.Bukkit;
+public class FileUUIDHandler extends UUIDHandlerImplementation {
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
-
-public class FileUUIDHandler implements UUIDHandlerImplementation {
-
-    private final BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
-    public boolean CACHED = false;
-    public UUIDWrapper uuidWrapper = null;
-    public HashMap<String, PlotPlayer> players = new HashMap<>();
-
-    @Override
-    public void add(final StringWrapper name, final UUID uuid) {
-        if ((uuid == null) || (name == null)) {
-            return;
-        }
-        BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
-        if (inverse.containsKey(uuid)) {
-            if (uuidMap.containsKey(name)) {
-                return;
-            }
-            inverse.remove(uuid);
-        }
-        uuidMap.put(name, uuid);
+    public FileUUIDHandler(UUIDWrapper wrapper) {
+        super(wrapper);
     }
-
+    
     @Override
-    public void handleShutdown() {}
-
-    @Override
-    public BiMap<StringWrapper, UUID> getUUIDMap() {
-        return uuidMap;
-    }
-
-    @Override
-    public boolean uuidExists(final UUID uuid) {
-        return uuidMap.containsValue(uuid);
-    }
-
-    @Override
-    public boolean nameExists(final StringWrapper name) {
-        return uuidMap.containsKey(name);
-    }
-
-    @Override
-    public void startCaching() {
-        if (Bukkit.getWorlds().size() > 1) {
-            cacheWorld(Bukkit.getWorlds().get(0).getName());
-        }
-    }
-
-    @Override
-    public void setUUIDWrapper(UUIDWrapper wrapper) {
-        this.uuidWrapper = wrapper;
-    }
-
-    @Override
-    public UUIDWrapper getUUIDWrapper() {
-        return uuidWrapper;
-    }
-
-    @Override
-    public Map<String, PlotPlayer> getPlayers() {
-        return players;
-    }
-
-    @Override
-    public void cacheWorld(final String world) {
-        if (CACHED) {
-            return;
+    public boolean startCaching() {
+        if (!super.startCaching()) {
+            return false;
         }
         final File container = Bukkit.getWorldContainer();
+        List<World> worlds = Bukkit.getWorlds();
+        final String world;
+        if (worlds.size() == 0) {
+            world = "world";
+        }
+        else {
+            world = worlds.get(0).getName();
+        }
         CACHED = true;
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 PS.log(C.PREFIX.s() + "&6Starting player data caching for: " + world);
-                final HashMap<StringWrapper, UUID> toAdd = new HashMap<>();
+                final HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
                 toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                 if (Settings.TWIN_MODE_UUID) {
                     HashSet<UUID> all = UUIDHandler.getAllUUIDS();
@@ -134,7 +87,7 @@ public class FileUUIDHandler implements UUIDHandlerImplementation {
                             }
                         }
                     }
-                    cache(toAdd);
+                    add(toAdd);
                     return;
                 }
                 final HashSet<String> worlds = new HashSet<>();
@@ -208,7 +161,7 @@ public class FileUUIDHandler implements UUIDHandlerImplementation {
                     toAdd.put(nameWrap, uuid);
                 }
 
-                if (uuidMap.size() == 0) {
+                if (getUUIDMap().size() == 0) {
                     for (OfflinePlotPlayer op : uuidWrapper.getOfflinePlayers()) {
                         if (op.getLastPlayed() != 0) {
                             String name = op.getName();
@@ -218,89 +171,20 @@ public class FileUUIDHandler implements UUIDHandlerImplementation {
                         }
                     }
                 }
-                cache(toAdd);
+                add(toAdd);
             }
         });
+        return true;
     }
 
     @Override
-    public void cache(final Map<StringWrapper, UUID> toAdd) {
-        TaskManager.runTask(new Runnable() {
+    public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                for (Map.Entry<StringWrapper, UUID> entry : toAdd.entrySet()) {
-                    add(entry.getKey(), entry.getValue());
-                }
-                PS.log(C.PREFIX.s() + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
+                ifFetch.value = uuidWrapper.getUUID(name);
+                TaskManager.runTask(ifFetch);
             }
         });
-    }
-
-    @Override
-    public UUID getUUID(final PlotPlayer player) {
-        return uuidWrapper.getUUID(player);
-    }
-
-    @Override
-    public UUID getUUID(final BukkitOfflinePlayer player) {
-        return uuidWrapper.getUUID(player);
-    }
-
-    @Override
-    public String getName(final UUID uuid) {
-        if (uuid == null) {
-            return null;
-        }
-        // check online
-        final PlotPlayer player = getPlayer(uuid);
-        if (player != null) {
-            return player.getName();
-        }
-        // check cache
-        final StringWrapper name = uuidMap.inverse().get(uuid);
-        if (name != null) {
-            return name.value;
-        }
-        return null;
-    }
-
-    @Override
-    public PlotPlayer getPlayer(final UUID uuid) {
-        for (final PlotPlayer player : players.values()) {
-            if (player.getUUID().equals(uuid)) {
-                return player;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public PlotPlayer getPlayer(final String name) {
-        return players.get(name);
-    }
-
-    @Override
-    public UUID getUUID(final String name) {
-        if ((name == null) || (name.length() == 0)) {
-            return null;
-        }
-        // check online
-        final PlotPlayer player = getPlayer(name);
-        if (player != null) {
-            return player.getUUID();
-        }
-        // check cache
-        final StringWrapper wrap = new StringWrapper(name);
-        UUID uuid = uuidMap.get(wrap);
-        if (uuid != null) {
-            return uuid;
-        }
-        // Read from disk OR convert directly to offline UUID
-        if (Settings.UUID_FROM_DISK || (uuidWrapper instanceof OfflineUUIDWrapper)) {
-            uuid = uuidWrapper.getUUID(name);
-            add(new StringWrapper(name), uuid);
-            return uuid;
-        }
-        return null;
     }
 }

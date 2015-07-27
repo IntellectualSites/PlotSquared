@@ -9,9 +9,9 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.bukkit.util.UUIDHandler;
 
 public class WorldEvents implements Listener {
     
@@ -47,6 +47,6 @@ public class WorldEvents implements Listener {
     
     @EventHandler
     public void worldLoad(final WorldLoadEvent event) {
-        UUIDHandler.cacheWorld(event.getWorld().getName());
+        UUIDHandler.startCaching();
     }
 }

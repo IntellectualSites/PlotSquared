@@ -1,16 +1,15 @@
-package com.plotsquared.bukkit.util;
+package com.intellectualcrafters.plot.util;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-import com.plotsquared.bukkit.util.bukkit.uuid.UUIDHandlerImplementation;
-
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
-import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
@@ -84,15 +83,15 @@ public class UUIDHandler {
         implementation.startCaching();
     }
 
-    public static void cache(final Map<StringWrapper, UUID> toAdd) {
-        implementation.cache(toAdd);
+    public static void cache(final BiMap<StringWrapper, UUID> toAdd) {
+        implementation.add(toAdd);
     }
 
     public static UUID getUUID(final PlotPlayer player) {
         return implementation.getUUID(player);
     }
 
-    public static UUID getUUID(final BukkitOfflinePlayer player) {
+    public static UUID getUUID(final OfflinePlotPlayer player) {
         return implementation.getUUID(player);
     }
 
@@ -108,16 +107,12 @@ public class UUIDHandler {
         return implementation.getPlayer(name);
     }
     
-    public static UUID getUUID(final String name) {
-        return implementation.getUUID(name);
+    public static UUID getUUID(final String name, RunnableVal<UUID> ifFetch) {
+        return implementation.getUUID(name, ifFetch);
     }
 
     public static Map<String, PlotPlayer> getPlayers() {
         return implementation.getPlayers();
-    }
-
-    public static void cacheWorld(String world) {
-        implementation.cacheWorld(world);
     }
 
     public static void handleShutdown() {

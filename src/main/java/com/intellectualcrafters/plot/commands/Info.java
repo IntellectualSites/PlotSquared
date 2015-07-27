@@ -29,7 +29,7 @@ import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.CommandCaller;
-import com.plotsquared.bukkit.util.UUIDHandler;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;
@@ -45,6 +45,7 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 @CommandDeclaration(
         command = "info",

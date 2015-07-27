@@ -47,7 +47,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.plotsquared.bukkit.object.schematic.StateWrapper;
-import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.WorldEditSchematic;
 import com.plotsquared.bukkit.util.bukkit.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;

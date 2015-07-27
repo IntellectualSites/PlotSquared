@@ -26,7 +26,7 @@ import java.util.List;
 
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.CommandCaller;
-import com.plotsquared.bukkit.util.UUIDHandler;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PS;
@@ -50,6 +50,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 
 // TODO Make sub-subcommands

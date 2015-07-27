@@ -47,8 +47,8 @@ import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.SetupUtils;
-import com.plotsquared.bukkit.util.UUIDHandler;
 
 @CommandDeclaration(
         command = "cluser",

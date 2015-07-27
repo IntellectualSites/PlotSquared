@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.PlayerManager;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.plotsquared.bukkit.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
@@ -63,7 +64,7 @@ public interface IPlotMain {
 
     public HybridUtils initHybridUtils();
 
-    public UUIDWrapper initUUIDHandler();
+    public UUIDHandlerImplementation initUUIDHandler();
     
     public InventoryUtil initInventoryUtil();
 

@@ -31,11 +31,10 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.CommandCaller;
-
-import com.plotsquared.bukkit.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 
 @CommandDeclaration(

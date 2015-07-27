@@ -26,7 +26,6 @@ import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
 
 import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.util.UUIDHandler;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -36,6 +35,7 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();
