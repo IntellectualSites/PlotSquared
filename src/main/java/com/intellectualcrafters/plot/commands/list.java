@@ -436,7 +436,7 @@ public class list extends SubCommand {
                 MainUtil.sendMessage(player, message);
             }
         }
-        if (player != null && Settings.FANCY_CHAT) {
+        if (!ConsolePlayer.isConsole(player) && Settings.FANCY_CHAT) {
             if (page < totalPages && page > 0) {
                 // back | next 
                 new FancyMessage("")
