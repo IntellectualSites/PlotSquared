@@ -45,7 +45,7 @@ import java.util.List;
         usage = "/plot set <arg> <value(s)...>",
         permission = "plots.set",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Set extends SubCommand {
     public final static String[] values = new String[] { "biome", "alias", "home", "flag" };

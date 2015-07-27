@@ -40,7 +40,7 @@ import java.util.UUID;
         description = "Visit someones plot",
         usage = "/plot visit <player|aliases|world|id> [#]",
         aliases = {"v}"},
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         category = CommandCategory.TELEPORT
 )
 public class Visit extends SubCommand {

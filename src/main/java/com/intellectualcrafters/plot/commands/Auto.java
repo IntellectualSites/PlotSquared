@@ -34,7 +34,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         command = "auto",
         permission = "plots.auto",
         category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         description = "Claim the nearest plot",
         aliases = {"a"},
         usage = "/plot auto"

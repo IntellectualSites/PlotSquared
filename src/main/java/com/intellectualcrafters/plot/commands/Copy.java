@@ -37,7 +37,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         category = CommandCategory.ACTIONS,
         description = "Copy a plot",
         usage = "/plot copy <X;Z>",
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Copy extends SubCommand {
 

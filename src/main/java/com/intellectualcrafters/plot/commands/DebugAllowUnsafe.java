@@ -13,7 +13,7 @@ import java.util.UUID;
         description = "Allow unsafe actions until toggled off",
         usage = "/plot debugallowunsafe",
         category = CommandCategory.DEBUG,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         permission = "plots.debugallowunsafe"
 )
 public class DebugAllowUnsafe extends SubCommand {

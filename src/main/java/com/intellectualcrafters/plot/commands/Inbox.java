@@ -41,7 +41,7 @@ import java.util.List;
         usage = "/plot inbox [inbox] [delete <index>|clear|page]",
         permission = "plots.inbox",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Inbox extends SubCommand {
     

@@ -34,7 +34,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Player music in a plot",
         usage = "/plot music",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class MusicSubcommand extends SubCommand {
 

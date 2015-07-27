@@ -40,7 +40,7 @@ import java.util.UUID;
         command = "cluster",
         aliases = {"clusters"},
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         permission = "plots.cluster",
         description = "Manage a plot cluster"
 )

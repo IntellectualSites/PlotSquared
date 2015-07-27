@@ -22,7 +22,7 @@ import java.util.List;
         command = "load",
         aliases = {"restore"},
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         description = "Load your plot",
         permission = "plots.load",
         usage = "/plot restore"

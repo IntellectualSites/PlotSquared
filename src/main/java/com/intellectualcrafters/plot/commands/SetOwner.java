@@ -44,7 +44,7 @@ import java.util.UUID;
         usage = "/plot setowner <player>",
         aliases = {"so"},
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class SetOwner extends SubCommand {
 

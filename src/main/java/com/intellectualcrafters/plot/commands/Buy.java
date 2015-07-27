@@ -39,7 +39,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         usage = "/plot buy",
         permission = "plots.buy",
         category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Buy extends SubCommand {
 

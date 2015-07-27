@@ -34,7 +34,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         aliases = {"debugmove"},
         permission = "plots.move",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Move extends SubCommand {
 

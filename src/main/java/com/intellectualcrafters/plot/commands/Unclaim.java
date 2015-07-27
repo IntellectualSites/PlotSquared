@@ -34,7 +34,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
         command = "unclaim",
         usage = "/plot unclaim",
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         description = "Unclaim a plot",
         category = CommandCategory.ACTIONS
 )

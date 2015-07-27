@@ -33,7 +33,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
         command = "debugroadregen",
         usage = "/plot debugroadregen",
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         description = "Regenerate all roads based on the road schematic",
         category = CommandCategory.DEBUG,
         permission = "plots.debugroadregen"

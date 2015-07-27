@@ -35,7 +35,7 @@ import java.util.ArrayList;
         description = "Swap two plots",
         aliases = {"switch"},
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Swap extends SubCommand {
 

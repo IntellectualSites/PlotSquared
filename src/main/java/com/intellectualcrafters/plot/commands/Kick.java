@@ -36,7 +36,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Kick a player from your plot",
         permission = "plots.kick",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Kick extends SubCommand {
 

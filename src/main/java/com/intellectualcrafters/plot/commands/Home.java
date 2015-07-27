@@ -35,7 +35,7 @@ import java.util.ArrayList;
         description = "Go to your plot",
         usage = "/plot home [id|alias]",
         category = CommandCategory.TELEPORT,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Home extends SubCommand {
 

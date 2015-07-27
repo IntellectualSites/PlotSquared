@@ -36,7 +36,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Delete a plot",
         usage = "/plot delete",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Delete extends SubCommand {
 

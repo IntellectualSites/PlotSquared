@@ -12,7 +12,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         usage = "/plot chat [on|off]",
         permission = "plots.chat",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Chat extends SubCommand {
 

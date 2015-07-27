@@ -36,7 +36,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         aliases = {"u"},
         description = "Unlink a mega-plot",
         usage = "/plot unlink",
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         category = CommandCategory.ACTIONS
 )
 public class Unlink extends SubCommand {

@@ -33,7 +33,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         permission = "plots.toggle",
         description = "Toggle per user settings",
         usage = "/plot toggle <setting>",
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         category = CommandCategory.ACTIONS
 )
 public class Toggle extends SubCommand {

@@ -19,7 +19,7 @@ import java.net.URL;
         command = "download",
         aliases = {"dl"},
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         description = "Download your plot",
         permission = "plots.download"
 )

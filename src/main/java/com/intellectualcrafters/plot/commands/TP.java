@@ -38,7 +38,7 @@ import org.apache.commons.lang.StringUtils;
         description = "Teleport to a plot",
         permission = "plots.tp",
         usage = "/plot tp <alias|id>",
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         category = CommandCategory.TELEPORT
 )
 public class TP extends SubCommand {

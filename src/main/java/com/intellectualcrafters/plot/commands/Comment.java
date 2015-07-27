@@ -39,7 +39,7 @@ import java.util.Arrays;
         aliases = {"msg"},
         description = "Comment on a plot",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         permission = "plot.comment"
 )
 public class Comment extends SubCommand {

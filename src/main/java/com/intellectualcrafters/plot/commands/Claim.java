@@ -33,7 +33,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         aliases = {"c"},
         description = "Claim the current plot you're standing on",
         category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         permission = "plots.claim",
         usage = "/plot claim"
 )

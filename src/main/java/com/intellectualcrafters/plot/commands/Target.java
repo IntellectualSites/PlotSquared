@@ -34,7 +34,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         usage = "/plot target <X;Z>",
         description = "Target a plot with your compass",
         permission = "plots.target",
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         category = CommandCategory.ACTIONS
 )
 public class Target extends SubCommand {

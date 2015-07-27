@@ -38,7 +38,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         usage = "/plot fill",
         aliases = {"debugfill"},
         category = CommandCategory.DEBUG,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class DebugFill extends SubCommand {
 

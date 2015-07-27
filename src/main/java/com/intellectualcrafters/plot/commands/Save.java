@@ -23,7 +23,7 @@ import java.util.UUID;
         aliases = {"backup"},
         description = "Save your plot",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         permission = "plots.save"
 )
 public class Save extends SubCommand {

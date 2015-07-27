@@ -39,7 +39,7 @@ import java.util.UUID;
         aliases = {"ud"},
         description = "Remove a denied user from a plot",
         usage = "/plot undeny <player>",
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         category = CommandCategory.ACTIONS
 )
 public class Undeny extends SubCommand {

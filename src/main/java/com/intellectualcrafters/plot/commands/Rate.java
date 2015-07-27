@@ -46,7 +46,7 @@ import java.util.UUID;
         usage = "/plot rate [#|next]",
         aliases = {"rt"},
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Rate extends SubCommand {
 

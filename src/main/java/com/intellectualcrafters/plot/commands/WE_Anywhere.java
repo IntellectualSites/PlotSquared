@@ -34,7 +34,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Force bypass of WorldEdit",
         aliases = {"wea"},
         usage = "/plot weanywhere",
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         category = CommandCategory.DEBUG
 )
 public class WE_Anywhere extends SubCommand {

@@ -43,7 +43,7 @@ import java.util.HashMap;
         aliases = {"f"},
         description = "Manage plot flags",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         permission = "plots.flag"
 )
 public class FlagCmd extends SubCommand {

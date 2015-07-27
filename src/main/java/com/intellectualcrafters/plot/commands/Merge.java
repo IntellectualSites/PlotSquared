@@ -39,7 +39,7 @@ import java.util.UUID;
         permission = "plots.merge",
         usage = "/plot merge [direction]",
         category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.PLAYER
+        requiredType = RequiredType.NONE
 )
 public class Merge extends SubCommand {
     public final static String[] values = new String[] { "north", "east", "south", "west" };
