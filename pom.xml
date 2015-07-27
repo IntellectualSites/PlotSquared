@@ -58,9 +58,9 @@
 		            		<phase>package</phase>
 		            		<configuration>
 			              		<classifier>sponge</classifier>
-			              		<includes>
-		                		<include>**/com/plotsquared/bukkit/*</include>
-		              			</includes>
+				            	<excludes>
+								<exclude>**/com/plotsquared/bukkit/*</exclude>
+		              			</excludes>
             				</configuration>
         				</execution>
        				</executions>
