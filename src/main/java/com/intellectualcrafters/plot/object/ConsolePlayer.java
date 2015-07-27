@@ -48,6 +48,7 @@ public class ConsolePlayer implements PlotPlayer {
 
     @Override
     public Location getLocation() {
+        System.out.print(loc);
         return loc;
     }
 

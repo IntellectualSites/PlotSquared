@@ -29,6 +29,8 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
@@ -192,7 +194,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 .render();
     }
     
-    public static boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
+    public static boolean onCommand(final PlotPlayer player, final String cmd, String... args) {
         int help_index = -1;
         String category = null;
         if (args.length == 0) {
@@ -232,6 +234,34 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             }
             catch (NumberFormatException e) {}
         }
+        else if (ConsolePlayer.isConsole(player) && args.length >= 2) {
+            System.out.print(1);
+            String[] split = args[0].split(";");
+            String world;
+            PlotId id;
+            if (split.length == 2) {
+                world = player.getLocation().getWorld();
+                id = PlotId.fromString(split[0] + ";" + split[1]);
+            }
+            else if (split.length == 3) {
+                world = split[0];
+                id = PlotId.fromString(split[1] + ";" + split[2]); 
+            }
+            else {
+                id = null;
+                world = null;
+            }
+            if (id != null && PS.get().isPlotWorld(world)) {
+                System.out.print(2 + " | " + id + " | " + world);
+                Plot plot = MainUtil.getPlot(world, id);
+                if (plot != null) {
+                    System.out.print(3 + " | " + plot);
+                    player.teleport(MainUtil.getPlotCenter(plot));
+                    args = Arrays.copyOfRange(args, 1, args.length);
+                }
+            }
+            
+        }
         if (help_index != -1) {
             displayHelp(player, category, help_index, cmd);
             return true;
@@ -268,7 +298,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             {
                 ArrayList<Command<PlotPlayer>> cmds = getCommands();
                 cmd = new StringComparison<Command<PlotPlayer>>(label, cmds).getMatchObject();
-                MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage());
+                MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage().replaceAll("{label}", label));
             }
             return CommandHandlingOutput.NOT_FOUND;
         }
