@@ -506,7 +506,9 @@ public enum C {
      * Help
      */
     HELP_HEADER("$3====== $1Plot\u00B2 Help $3======", "Help"),
-    HELP_CATEGORY("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2,$1 Displaying: $2%dis%$3/$2%total%", "Help"),
+    HELP_PAGE_HEADER("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2", "Help"),
+    HELP_FOOTER("$3====== $1Plot\u00B2 Help $3======", "Help"),
+
     HELP_INFO("$3====== $1Choose a Category $3======", false, "Help"),
     HELP_INFO_ITEM("$1/plots help %category% $3- $2%category_desc%", "Help"),
     HELP_ITEM("$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
