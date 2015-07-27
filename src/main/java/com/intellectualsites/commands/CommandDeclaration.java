@@ -1,6 +1,7 @@
 package com.intellectualsites.commands;
 
 import com.intellectualcrafters.plot.commands.CommandCategory;
+import com.intellectualcrafters.plot.commands.RequiredType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -21,7 +22,7 @@ public @interface CommandDeclaration {
 
     String description() default "";
 
-    Class requiredType() default Object.class;
+    RequiredType requiredType() default RequiredType.NONE;
 
     CommandCategory category();
 }

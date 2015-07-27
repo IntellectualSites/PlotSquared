@@ -30,21 +30,21 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "unlink",
         aliases = {"u"},
         description = "Unlink a mega-plot",
         usage = "/plot unlink",
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         category = CommandCategory.ACTIONS
 )
 public class Unlink extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        
 
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);

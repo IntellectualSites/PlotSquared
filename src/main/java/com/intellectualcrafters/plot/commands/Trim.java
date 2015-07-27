@@ -40,14 +40,14 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "trim",
         permission = "plots.admin",
         description = "Delete unmodified portions of your plotworld",
         usage = "/plot trim",
-        requiredType = PS.class,
+        requiredType = RequiredType.CONSOLE,
         category = CommandCategory.DEBUG
 )
 public class Trim extends SubCommand {
@@ -174,8 +174,7 @@ public class Trim extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        PlotPlayer plr = null;
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         if (args.length == 1) {
             final String arg = args[0].toLowerCase();
             final PlotId id = getId(arg);

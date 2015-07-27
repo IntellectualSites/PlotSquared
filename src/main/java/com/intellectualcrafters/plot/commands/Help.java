@@ -8,7 +8,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "help",
@@ -20,7 +20,7 @@ import com.intellectualsites.commands.CommandCaller;
 public class Help extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         return true;
     }
 }

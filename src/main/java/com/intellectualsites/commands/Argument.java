@@ -1,7 +1,9 @@
 package com.intellectualsites.commands;
 
+import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotId;
-import org.bukkit.entity.Player;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 public abstract class Argument<T> {
 
@@ -28,7 +30,7 @@ public abstract class Argument<T> {
         return this.example;
     }
 
-    public static final Argument<Integer> Integer = new Argument<java.lang.Integer>("int", 16) {
+    public static final Argument<Integer> Integer = new Argument<Integer>("int", 16) {
         @Override
         public Integer parse(String in) {
             Integer value = null;
@@ -39,7 +41,7 @@ public abstract class Argument<T> {
         }
     };
 
-    public static final Argument<Boolean> Boolean = new Argument<java.lang.Boolean>("boolean", true) {
+    public static final Argument<Boolean> Boolean = new Argument<Boolean>("boolean", true) {
         @Override
         public Boolean parse(String in) {
             Boolean value = null;
@@ -52,33 +54,31 @@ public abstract class Argument<T> {
         }
     };
 
-    public static final Argument<String> String = new Argument<java.lang.String>("String", "Example") {
+    public static final Argument<String> String = new Argument<String>("String", "Example") {
         @Override
         public String parse(String in) {
             return in;
         }
     };
 
-    public static Argument<String> PlayerName = new Argument<java.lang.String>("PlayerName", "Dinnerbone") {
+    public static Argument<String> PlayerName = new Argument<String>("PlayerName", "Dinnerbone") {
         @Override
         public String parse(String in) {
             return in.length() < 16 ? in : null;
         }
     };
 
-    public static Argument<PlotId> PlotID = new Argument<com.intellectualcrafters.plot.object.PlotId>("PlotID", new PlotId(3, -32)) {
+    public static Argument<PlotId> PlotID = new Argument<PlotId>("PlotID", new PlotId(-6, 3)) {
         @Override
         public PlotId parse(String in) {
-            PlotId plotID;
-            try {
-                String[] parts = in.split(";");
-                int i1 = java.lang.Integer.parseInt(parts[0]);
-                int i2 = java.lang.Integer.parseInt(parts[1]);
-                plotID = new PlotId(i1, i2);
-            } catch(final Exception e) {
-                return null;
-            }
-            return plotID;
+            return PlotId.fromString(in);
+        }
+    };
+    
+    public static Argument<Plot> Plot = new Argument<Plot>("Plot", new Plot("plotworld", new PlotId(3, -6), null)) {
+        @Override
+        public Plot parse(String in) {
+            return MainUtil.getPlotFromString(ConsolePlayer.getConsole(), in, false);
         }
     };
 }

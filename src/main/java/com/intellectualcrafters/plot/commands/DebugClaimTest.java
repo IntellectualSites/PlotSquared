@@ -41,13 +41,13 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "debugclaimtest",
         description = "If you accidentally delete your database, this command will attempt to restore all plots based on the data from plot sighs. Execution time may vary",
         category = CommandCategory.DEBUG,
-        requiredType = PS.class,
+        requiredType = RequiredType.CONSOLE,
         permission = "plots.debugclaimtest"
 )
 public class DebugClaimTest extends SubCommand {
@@ -70,7 +70,7 @@ public class DebugClaimTest extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         if (args.length < 3) {
             return !MainUtil.sendMessage(null, "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
         }

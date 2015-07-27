@@ -30,20 +30,20 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "unclaim",
         usage = "/plot unclaim",
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         description = "Unclaim a plot",
         category = CommandCategory.ACTIONS
 )
 public class Unclaim extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "setowner",
@@ -45,7 +45,7 @@ import com.intellectualsites.commands.CommandCaller;
         usage = "/plot setowner <player>",
         aliases = {"so"},
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class SetOwner extends SubCommand {
 
@@ -60,8 +60,7 @@ public class SetOwner extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer plr = (PlotPlayer) caller;
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if ((plot == null) || (plot.owner == null)) {

@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.Arrays;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;
@@ -41,14 +41,13 @@ import com.intellectualcrafters.plot.util.MainUtil;
         aliases = {"msg"},
         description = "Comment on a plot",
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         permission = "plot.comment"
 )
 public class Comment extends SubCommand {
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
-        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length < 2) {
             sendMessage(player, C.COMMENT_SYNTAX, StringUtils.join(CommentManager.inboxes.keySet(),"|"));
             return false;

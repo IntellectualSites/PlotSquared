@@ -34,13 +34,13 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 
 @CommandDeclaration(
         command = "trust",
         aliases = {"t"},
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         usage = "/plot trust <player>",
         description = "Allow a player to build in a plot",
         category = CommandCategory.ACTIONS
@@ -54,8 +54,8 @@ public class Trust extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

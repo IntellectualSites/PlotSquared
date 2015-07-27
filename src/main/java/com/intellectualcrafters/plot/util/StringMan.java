@@ -152,21 +152,47 @@ public class StringMan {
     
     public static String join(Object[] array, String delimiter) {
         StringBuilder result = new StringBuilder();
+        System.out.print(array.getClass().getName());
         for (int i = 0, j = array.length; i < j; i++) {
             if (i > 0) {
                 result.append(delimiter);
             }
+            System.out.print(array[i].getClass().getName());
             result.append(array[i]);
         }
         return result.toString();
     }
     
     public static String join(int[] array, String delimiter) {
-        return join(Arrays.asList(array), delimiter);
+        Integer[] wrapped = new Integer[array.length];
+        for (int i = 0; i < array.length; i++) wrapped[i] = array[i];
+        return join(wrapped, delimiter);
     }
     
-    public static boolean isEqual(String a, String b ) {
+    public static boolean isEqualToAny(String a, String... args) {
+        for (String arg : args) {
+            if (StringMan.isEqual(a, arg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean isEqualIgnoreCaseToAny(String a, String... args) {
+        for (String arg : args) {
+            if (StringMan.isEqualIgnoreCase(a, arg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean isEqual(String a, String b) {
         return (a == b || (a.length() == b.length() && a.hashCode() == b.hashCode() && a.equals(b)));
+    }
+    
+    public static boolean isEqualIgnoreCase(String a, String b) {
+        return (a == b || (a.length() == b.length() && a.equalsIgnoreCase(b)));
     }
 
     public static String repeat(String s, int n) {

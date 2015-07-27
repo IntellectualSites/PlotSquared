@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.listeners.worldedit.WEManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -35,18 +35,17 @@ import com.intellectualcrafters.plot.util.Permissions;
         description = "Force bypass of WorldEdit",
         aliases = {"wea"},
         usage = "/plot weanywhere",
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         category = CommandCategory.DEBUG
 )
 public class WE_Anywhere extends SubCommand {
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] arguments) {
+    public boolean onCommand(PlotPlayer player, String[] arguments) {
         if (PS.get().worldEdit == null) {
-            caller.message("&cWorldEdit is not enabled on this server");
+            MainUtil.sendMessage(player, "&cWorldEdit is not enabled on this server");
             return true;
         }
-        PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
         if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
             if (WEManager.bypass.contains(player.getName())) {
                 WEManager.bypass.remove(player.getName());

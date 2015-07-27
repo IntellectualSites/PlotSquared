@@ -27,7 +27,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "debugloadtest",
@@ -35,12 +35,12 @@ import com.intellectualsites.commands.CommandCaller;
         description = "This debug command will force the reload of all plots in the DB",
         usage = "/plot debugloadtest",
         category = CommandCategory.DEBUG,
-        requiredType = PS.class
+        requiredType = RequiredType.CONSOLE
 )
 public class DebugLoadTest extends SubCommand {
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         try {
             final Field fPlots = PS.class.getDeclaredField("plots");
             fPlots.setAccessible(true);

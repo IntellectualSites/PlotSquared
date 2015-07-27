@@ -22,7 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -41,7 +41,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         description = "Teleport to a plot",
         permission = "plots.tp",
         usage = "/plot tp <alias|id>",
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         category = CommandCategory.TELEPORT
 )
 public class TP extends SubCommand {
@@ -53,8 +53,7 @@ public class TP extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final String id = args[0];
         PlotId plotid;
         final Location loc = plr.getLocation();

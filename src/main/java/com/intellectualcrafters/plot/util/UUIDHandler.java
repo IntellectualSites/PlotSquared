@@ -79,8 +79,8 @@ public class UUIDHandler {
         implementation.setUUIDWrapper(wrapper);
     }
 
-    public static void startCaching() {
-        implementation.startCaching();
+    public static void startCaching(Runnable whenDone) {
+        implementation.startCaching(whenDone);
     }
 
     public static void cache(final BiMap<StringWrapper, UUID> toAdd) {

@@ -29,12 +29,12 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "debugroadregen",
         usage = "/plot debugroadregen",
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         description = "Regenerate all roads based on the road schematic",
         category = CommandCategory.DEBUG,
         permission = "plots.debugroadregen"
@@ -42,8 +42,7 @@ import com.intellectualsites.commands.CommandCaller;
 public class DebugRoadRegen extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer player, final String ... args) {
         final Location loc = player.getLocation();
         final String world = loc.getWorld();
         if (!(PS.get().getPlotWorld(world) instanceof HybridPlotWorld)) {

@@ -7,10 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.intellectualcrafters.plot.commands.CommandCategory;
+import com.intellectualcrafters.plot.commands.RequiredType;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public abstract class Command extends CommandManager {
 
-    private Class requiredType = Object.class;
+    private RequiredType requiredType = RequiredType.NONE;
     private String command, usage = "", description = "", permission = "";
     private Set<String> aliases = new HashSet<>();
     private CommandCategory category;
@@ -59,7 +62,7 @@ public abstract class Command extends CommandManager {
         this.aliases = new HashSet<>(Arrays.asList(aliases));
     }
 
-    public Command(String command, String usage, String description, String permission, String[] aliases, Class requiredType) {
+    public Command(String command, String usage, String description, String permission, String[] aliases, RequiredType requiredType) {
         super(null, new ArrayList<Command>());
         this.command = command;
         this.usage = usage;
@@ -69,7 +72,7 @@ public abstract class Command extends CommandManager {
         this.requiredType = requiredType;
     }
 
-    final public Class getRequiredType() {
+    final public RequiredType getRequiredType() {
         return this.requiredType;
     }
 
@@ -93,23 +96,19 @@ public abstract class Command extends CommandManager {
     final public String toString() {
         return this.command;
     }
-    @Override
-    final public int hashCode() {
-        return this.command.hashCode();
-    }
 
-    public abstract boolean onCommand(CommandCaller caller, String[] arguments);
+    public abstract boolean onCommand(PlotPlayer plr, String[] arguments);
 
-    final public int handle(CommandCaller caller, String[] args) {
+    final public int handle(PlotPlayer plr, String[] args) {
         if (args.length == 0) {
-            return super.handle(caller, "");
+            return super.handle(plr, "");
         }
         StringBuilder builder = new StringBuilder();
         for (String s : args) {
             builder.append(s).append(" ");
         }
         String s = builder.substring(0, builder.length() - 1);
-        return super.handle(caller, s);
+        return super.handle(plr, s);
     }
 
     final public String getCommand() {
@@ -138,5 +137,33 @@ public abstract class Command extends CommandManager {
 
     final public CommandCategory getCategory() {
         return this.category;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Command other = (Command) obj;
+        if (this.hashCode() != other.hashCode()) {
+            return false;
+        }
+        return this.command.equals(other.command);
+    }
+    
+    private int hash;
+    
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = getCommand().hashCode();
+        }
+        return hash;
     }
 }

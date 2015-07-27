@@ -606,6 +606,9 @@ public class Plot {
             return false;
         }
         final Plot other = (Plot) obj;
+        if (this.hashCode() != other.hashCode()) {
+            return false;
+        }
         return ((this.id.x.equals(other.id.x)) && (this.id.y.equals(other.id.y)) && (this.world.equals(other.world)));
     }
 

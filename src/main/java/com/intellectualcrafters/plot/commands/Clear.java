@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.Set;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "clear",
@@ -48,39 +48,7 @@ import com.intellectualsites.commands.CommandCaller;
 public class Clear extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
-        if (plr == null) {
-            // Is console
-            if (args.length < 2) {
-                PS.log("You need to specify two arguments: ID (0;0) & World (world)");
-            } else {
-                final PlotId id = PlotId.fromString(args[0]);
-                final String world = args[1];
-                if (id == null) {
-                    PS.log("Invalid Plot ID: " + args[0]);
-                } else {
-                    if (!PS.get().isPlotWorld(world)) {
-                        PS.log("Invalid plot world: " + world);
-                    } else {
-                        final Plot plot = MainUtil.getPlot(world, id);
-                        if (plot == null) {
-                            PS.log("Could not find plot " + args[0] + " in world " + world);
-                        } else {
-                            Runnable runnable = new Runnable() {
-                                @Override
-                                public void run() {
-                                    MainUtil.clear(plot, plot.owner == null, null);
-                                    PS.log("Plot " + plot.getId().toString() + " cleared.");
-                                }
-                            };
-                            TaskManager.runTask(runnable);
-                        }
-                    }
-                }
-            }
-            return true;
-        }
+    public boolean onCommand(final PlotPlayer plr, final String ... args) {
         final Location loc = plr.getLocation();
         final Plot plot;
         if (args.length == 2) {

@@ -23,9 +23,9 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotWorld;
-
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 @CommandDeclaration(
         command = "reload",
@@ -37,7 +37,7 @@ import com.intellectualsites.commands.CommandCaller;
 public class Reload extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
@@ -48,9 +48,9 @@ public class Reload extends SubCommand {
                 final PlotWorld plotworld = PS.get().getPlotWorld(pw);
                 plotworld.loadDefaultConfiguration(PS.get().config.getConfigurationSection("worlds." + pw));
             }
-            caller.message(C.RELOADED_CONFIGS);
+            MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
         } catch (final Exception e) {
-            caller.message(C.RELOAD_FAILED);
+            MainUtil.sendMessage(plr, C.RELOAD_FAILED);
         }
         return true;
     }

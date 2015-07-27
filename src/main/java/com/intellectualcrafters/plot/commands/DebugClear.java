@@ -21,7 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.Location;
@@ -33,7 +33,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "debugclear",
@@ -44,46 +44,7 @@ import com.intellectualsites.commands.CommandCaller;
 public class DebugClear extends SubCommand {
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
-        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
-        if (plr == null) {
-            // Is console
-            if (args.length < 2) {
-                PS.log("You need to specify two arguments: ID (0;0) & World (world)");
-            } else {
-                final PlotId id = PlotId.fromString(args[0]);
-                final String world = args[1];
-                if (id == null) {
-                    PS.log("Invalid Plot ID: " + args[0]);
-                } else {
-                    if (!PS.get().isPlotWorld(world) || !(PS.get().getPlotWorld(world) instanceof SquarePlotWorld)) {
-                        PS.log("Invalid plot world: " + world);
-                    } else {
-                        final Plot plot = MainUtil.getPlot(world, id);
-                        if (plot == null) {
-                            PS.log("Could not find plot " + args[0] + " in world " + world);
-                        } else {
-                            final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-                            final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
-                            if (MainUtil.runners.containsKey(plot)) {
-                                MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
-                                return false;
-                            }
-                            MainUtil.runners.put(plot, 1);
-                            ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
-                                @Override
-                                public void run() {
-                                    MainUtil.runners.remove(plot);
-                                    PS.log("Plot " + plot.getId().toString() + " cleared.");
-                                    PS.log("&aDone!");
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-            return true;
-        }
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if ((plot == null) || !(PS.get().getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
@@ -109,8 +70,6 @@ public class DebugClear extends SubCommand {
                 MainUtil.sendMessage(plr, "&aDone!");
             }
         });
-        // sign
-        // wall
         return true;
     }
 }

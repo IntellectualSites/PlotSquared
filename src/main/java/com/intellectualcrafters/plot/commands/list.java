@@ -29,9 +29,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -119,9 +119,7 @@ public class list extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
-
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         if (args.length < 1) {
             noArgs(plr);
             return false;

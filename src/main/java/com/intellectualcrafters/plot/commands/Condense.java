@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.PS;
@@ -43,7 +43,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
         permission = "plots.admin",
         description = "Condense a plotworld",
         category = CommandCategory.DEBUG,
-        requiredType = PS.class
+        requiredType = RequiredType.CONSOLE
 )
 public class Condense extends SubCommand {
 
@@ -54,8 +54,7 @@ public class Condense extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, String ... args) {
-        final PlotPlayer plr = null;
+    public boolean onCommand(final PlotPlayer plr, String ... args) {
         if ((args.length != 2) && (args.length != 3)) {
             MainUtil.sendMessage(plr, "/plot condense <world> <start|stop|info> [radius]");
             return false;

@@ -114,7 +114,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         Collection<World> worlds = server.getWorlds();
         if (worlds.size() > 0) {
             log("INJECTING WORLDS!!!!!!!");
-            UUIDHandler.startCaching();
+            UUIDHandler.startCaching(null);
             for (World world : server.getWorlds()) {
                 log("INJECTING WORLD: " + world.getName());
                 world.setWorldGenerator(new SpongePlotGenerator(world.getName()));

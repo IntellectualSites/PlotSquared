@@ -33,7 +33,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "visit",
@@ -41,7 +41,7 @@ import com.intellectualsites.commands.CommandCaller;
         description = "Visit someones plot",
         usage = "/plot visit <player|aliases|world|id> [#]",
         aliases = {"v}"},
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         category = CommandCategory.TELEPORT
 )
 public class Visit extends SubCommand {
@@ -63,8 +63,7 @@ public class Visit extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
-        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         ArrayList<Plot> plots = new ArrayList<>();
         UUID user = UUIDHandler.getUUID(args[0], null);
         if (user != null ) {

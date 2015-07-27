@@ -28,14 +28,14 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "target",
         usage = "/plot target <X;Z>",
         description = "Target a plot with your compass",
         permission = "plots.target",
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         category = CommandCategory.ACTIONS
 )
 public class Target extends SubCommand {
@@ -47,8 +47,7 @@ public class Target extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location ploc = plr.getLocation();
         if (!PS.get().isPlotWorld(ploc.getWorld())) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);

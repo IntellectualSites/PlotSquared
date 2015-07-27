@@ -9,14 +9,14 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "debugallowunsafe",
         description = "Allow unsafe actions until toggled off",
         usage = "/plot debugallowunsafe",
         category = CommandCategory.DEBUG,
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         permission = "plots.debugallowunsafe"
 )
 public class DebugAllowUnsafe extends SubCommand {
@@ -24,8 +24,8 @@ public class DebugAllowUnsafe extends SubCommand {
     public static final List<UUID> unsafeAllowed = new ArrayList<>();
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String ... args) {
+        
         if (unsafeAllowed.contains(plr.getUUID())) {
             unsafeAllowed.remove(plr.getUUID());
             sendMessage(plr, C.DEBUGALLOWUNSAFE_OFF);

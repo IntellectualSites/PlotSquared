@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -61,15 +61,15 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
         usage = "/plot set <arg> <value(s)...>",
         permission = "plots.set",
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class Set extends SubCommand {
     public final static String[] values = new String[] { "biome", "alias", "home", "flag" };
     public final static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "fl" };
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String ... args) {
+        
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

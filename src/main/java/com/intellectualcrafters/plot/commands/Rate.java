@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
@@ -53,14 +53,12 @@ import com.intellectualcrafters.plot.util.TaskManager;
         usage = "/plot rate [#|next]",
         aliases = {"rt"},
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class Rate extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
-
+    public boolean onCommand(final PlotPlayer player, final String[] args) {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("next")) {
                 ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());

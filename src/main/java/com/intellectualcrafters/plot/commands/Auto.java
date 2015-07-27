@@ -34,13 +34,13 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "auto",
         permission = "plots.auto",
         category = CommandCategory.CLAIMING,
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         description = "Claim the nearest plot",
         aliases = {"a"},
         usage = "/plot auto"
@@ -77,8 +77,8 @@ public class Auto extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(PlotPlayer plr, String[] args) {
+        
         String world;
         int size_x = 1;
         int size_z = 1;

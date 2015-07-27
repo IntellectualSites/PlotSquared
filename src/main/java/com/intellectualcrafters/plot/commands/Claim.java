@@ -35,14 +35,14 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "claim",
         aliases = {"c"},
         description = "Claim the current plot you're standing on",
         category = CommandCategory.CLAIMING,
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         permission = "plots.claim",
         usage = "/plot claim"
 )
@@ -96,8 +96,8 @@ public class Claim extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String ... args) {
+        
         String schematic = "";
         if (args.length >= 1) {
             schematic = args[0];

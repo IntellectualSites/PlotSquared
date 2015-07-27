@@ -29,12 +29,6 @@ import org.bukkit.generator.ChunkGenerator;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
-import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
-import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -48,21 +42,25 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualsites.commands.CommandDeclaration;
+import com.plotsquared.bukkit.generator.AugmentedPopulator;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
+import com.plotsquared.bukkit.generator.HybridGen;
 import com.plotsquared.bukkit.util.SetupUtils;
 
 @CommandDeclaration(
         command = "cluser",
         aliases = {"clusters"},
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         permission = "plots.cluster",
         description = "Manage a plot cluster"
 )
 public class Cluster extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String ... args) {
+        
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
         if (args.length == 0) {
             // return arguments

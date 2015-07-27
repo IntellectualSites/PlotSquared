@@ -33,7 +33,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 
 @CommandDeclaration(
@@ -42,7 +41,7 @@ import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
         description = "Remove a player from a plot",
         usage = "/plot remove <player>",
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         permission = "plots.remove"
 )
 public class Remove extends SubCommand {
@@ -54,8 +53,7 @@ public class Remove extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         if (args.length != 1) {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot remove <player>");
             return true;

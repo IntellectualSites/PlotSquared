@@ -31,7 +31,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "move",
@@ -39,7 +39,7 @@ import com.intellectualsites.commands.CommandCaller;
         aliases = {"debugmove"},
         permission = "plots.move",
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class Move extends SubCommand {
 
@@ -50,8 +50,8 @@ public class Move extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        
         final Location loc = plr.getLocation();
         final Plot plot1 = MainUtil.getPlot(loc);
         if (plot1 == null) {

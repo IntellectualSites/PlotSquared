@@ -25,10 +25,10 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -88,9 +88,7 @@ public class Info extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, String[] args) {
-        final PlotPlayer player = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
-
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         String arg = null;
         Plot plot;
         if (args.length > 0) arg = args[0] + "";

@@ -29,7 +29,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "copy",
@@ -38,7 +38,7 @@ import com.intellectualsites.commands.CommandCaller;
         category = CommandCategory.ACTIONS,
         description = "Copy a plot",
         usage = "/plot copy <X;Z>",
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class Copy extends SubCommand {
 
@@ -49,8 +49,7 @@ public class Copy extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String ... args) {
         final Location loc = plr.getLocation();
         final Plot plot1 = MainUtil.getPlot(loc);
         if (plot1 == null) {

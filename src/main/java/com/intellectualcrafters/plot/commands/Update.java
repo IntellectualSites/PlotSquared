@@ -28,14 +28,14 @@ import com.intellectualcrafters.plot.config.C;
 
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "update",
         permission = "plots.admin",
         description = "Update PlotSquared",
         usage = "/plot update",
-        requiredType = PS.class,
+        requiredType = RequiredType.CONSOLE,
         aliases = {"updateplugin"},
         category = CommandCategory.DEBUG
 )
@@ -44,7 +44,7 @@ public class Update extends SubCommand {
     public static String version;
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         URL url;
         if (args.length == 0) {
             url = PS.get().update;
@@ -59,12 +59,12 @@ public class Update extends SubCommand {
             }
         }
         else {
-            caller.message(C.COMMAND_SYNTAX, getUsage());
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, getUsage());
             return false;
         }
         if (url == null) {
-            caller.message("&cNo update found!");
-            caller.message("&cTo manually specify an update URL: /plot update <url>");
+            MainUtil.sendMessage(plr, "&cNo update found!");
+            MainUtil.sendMessage(plr, "&cTo manually specify an update URL: /plot update <url>");
             return false;
         }
         if (PS.get().update(null, url) && url == PS.get().update) {

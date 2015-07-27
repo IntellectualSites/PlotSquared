@@ -27,14 +27,14 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "plugin",
@@ -70,7 +70,7 @@ public class plugin extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -85,7 +85,7 @@ public class plugin extends SubCommand {
                     }
                 };
                 for (final String s : strings) {
-                    MainUtil.sendMessage(caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null, StringMan.replaceFromMap(s, C.replacements), false);
+                    plr.sendMessage(s);
                 }
             }
         });

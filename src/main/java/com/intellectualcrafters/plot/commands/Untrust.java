@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 //     UNTRUST("untrust", "ut"),
 
@@ -42,7 +42,7 @@ import com.intellectualsites.commands.CommandCaller;
         permission = "plot.untrust",
         description = "Remove a trusted user from a plot",
         usage = "/plot untrust <player>",
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         category = CommandCategory.ACTIONS
 )
 public class Untrust extends SubCommand {
@@ -54,8 +54,7 @@ public class Untrust extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

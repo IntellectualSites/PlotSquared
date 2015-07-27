@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "music",
@@ -40,13 +40,13 @@ import com.intellectualsites.commands.CommandCaller;
         description = "Player music in a plot",
         usage = "/plot music",
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class MusicSubcommand extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer player, final String[] args) {
+        
         final Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

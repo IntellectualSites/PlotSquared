@@ -30,16 +30,17 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "regenallroads",
         description = "Regenerate all roads in the map using the set road schematic",
         aliases = {"rgar"},
         category = CommandCategory.DEBUG,
-        requiredType = PS.class,
+        requiredType = RequiredType.CONSOLE,
         permission = "plots.regenallroads"
 )
 public class RegenAllRoads extends SubCommand {
@@ -51,22 +52,22 @@ public class RegenAllRoads extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         int height = 0;
         if (args.length == 2) {
             try {
                 height = Integer.parseInt(args[1]);
             }
             catch (NumberFormatException e) {
-                caller.message(C.NOT_VALID_NUMBER, "(0, 256)");
-                caller.message(C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
+                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(0, 256)");
+                MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
                 return false;
             }
         }
         final String name = args[0];
         final PlotManager manager = PS.get().getPlotManager(name);
         if ((manager == null) || !(manager instanceof HybridPlotManager)) {
-            caller.message(C.NOT_VALID_PLOT_WORLD);
+            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
         final List<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);

@@ -30,7 +30,7 @@ import java.util.UUID;
 
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 import org.bukkit.Bukkit;
 
@@ -57,7 +57,7 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
         permission = "plots.admin",
         description = "Debug UUID conversion",
         usage = "/plot uuidconvert <lower|offline|online>",
-        requiredType = PS.class,
+        requiredType = RequiredType.CONSOLE,
         category = CommandCategory.DEBUG
 )
 public class DebugUUID extends SubCommand {
@@ -69,7 +69,7 @@ public class DebugUUID extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         PlotPlayer player = null;
 
         UUIDWrapper currentUUIDWrapper = UUIDHandler.getUUIDWrapper();

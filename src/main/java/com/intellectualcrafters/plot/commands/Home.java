@@ -28,7 +28,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "home",
@@ -36,7 +36,7 @@ import com.intellectualsites.commands.CommandCaller;
         description = "Go to your plot",
         usage = "/plot home [id|alias]",
         category = CommandCategory.TELEPORT,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class Home extends SubCommand {
 
@@ -50,8 +50,8 @@ public class Home extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, String[] args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
+        
         final ArrayList<Plot> plots = PS.get().sortPlotsByWorld(PS.get().getPlots(plr));
         if (plots.size() == 1) {
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));

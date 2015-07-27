@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.CmdInstance;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -28,7 +28,7 @@ import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
 		command = "confirm",
@@ -39,8 +39,7 @@ import com.intellectualsites.commands.CommandCaller;
 public class Confirm extends SubCommand {
 
 	@Override
-	public boolean onCommand(final CommandCaller caller, final String ... args) {
-		final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
+	public boolean onCommand(final PlotPlayer plr, final String ... args) {
     	CmdInstance command = CmdConfirm.getPending(plr);
     	if (command == null) {
     		MainUtil.sendMessage(plr, C.FAILED_CONFIRM);

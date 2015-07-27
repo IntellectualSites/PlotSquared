@@ -42,7 +42,7 @@ import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 
@@ -119,24 +119,20 @@ public class Template extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         if (args.length != 2 && args.length != 3) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
-                    caller.message(C.COMMAND_SYNTAX, "/plot template export <world>");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
                     return true;
                 }
                 else if (args[0].equalsIgnoreCase("import")) {
-                    caller.message(C.COMMAND_SYNTAX, "/plot template import <world> <template>");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
                     return true;
                 }
             }
-            caller.message(C.COMMAND_SYNTAX, "/plot template <import|explort> <world> [template]");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|explort> <world> [template]");
             return true;
-        }
-        PlotPlayer plr = null;
-        if (caller.getSuperCaller() instanceof PlotPlayer) {
-            plr = (PlotPlayer) caller.getSuperCaller();
         }
         final String world = args[1];
         switch (args[0].toLowerCase()) {

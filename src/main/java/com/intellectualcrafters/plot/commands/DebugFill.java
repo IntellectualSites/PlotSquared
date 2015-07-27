@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "fill",
@@ -39,13 +39,12 @@ import com.intellectualsites.commands.CommandCaller;
         usage = "/plot fill",
         aliases = {"debugfill"},
         category = CommandCategory.DEBUG,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class DebugFill extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer player, final String ... args) {
         if (args.length != 1 || (!args[0].equalsIgnoreCase("outline") && !args[0].equalsIgnoreCase("all"))) {
             MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot fill <outline|all>");
             return true;

@@ -29,13 +29,13 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "createroadschematic",
         aliases = {"crs"},
         category = CommandCategory.DEBUG,
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         permission = "plots.createroadschematic",
         description = "Add a road schematic to your world using the roads around your current plot",
         usage = "/plot createroadschematic"
@@ -43,8 +43,7 @@ import com.intellectualsites.commands.CommandCaller;
 public class CreateRoadSchematic extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer player, final String ... args) {
         final Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

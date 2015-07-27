@@ -1,7 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.BukkitMain;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -26,7 +26,7 @@ import java.io.IOException;
 public class DebugPaste extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, String[] args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -36,7 +36,7 @@ public class DebugPaste extends SubCommand {
                     try {
                         latestLOG = HastebinUtility.upload(new File(BukkitMain.THIS.getDirectory(), "../../logs/latest.log"));
                     } catch(final Exception e) {
-                        caller.message("&clatest.log is too big to be pasted, will ignore");
+                        plr.sendMessage("&clatest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }
                     StringBuilder b = new StringBuilder();
@@ -65,7 +65,7 @@ public class DebugPaste extends SubCommand {
                     b.append("\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
 
                     String link = HastebinUtility.upload(b.toString());
-                    caller.message(C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
+                    plr.sendMessage(C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -25,9 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.generator.ChunkGenerator;
@@ -74,9 +74,7 @@ public class Setup extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        PlotPlayer plr = (caller instanceof PlotPlayerCaller) ? (PlotPlayer) caller.getSuperCaller() : null;
-
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         // going through setup
         String name;
         if (plr == null) {
@@ -219,7 +217,7 @@ public class Setup extends SubCommand {
                     step.setValue(args[0]);
                     object.setup_index++;
                     if (object.setup_index == object.step.length) {
-                        onCommand(caller, args);
+                        onCommand(plr, args);
                         return false;
                     }
                     step = object.step[object.setup_index];

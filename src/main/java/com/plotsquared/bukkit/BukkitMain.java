@@ -92,7 +92,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         List<World> worlds = Bukkit.getWorlds();
         if (worlds.size() > 0) {
-            UUIDHandler.startCaching();
+            UUIDHandler.startCaching(null);
             for (World world : worlds) {
                 try {
                     SetGenCB.setGenerator(world);
@@ -456,9 +456,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             FlagManager.removeFlag(FlagManager.getFlag("titles"));
         } else {
             AbstractTitle.TITLE_CLASS = new DefaultTitle();
-            if (UUIDHandler.getUUIDWrapper() instanceof DefaultUUIDWrapper) {
+            if (wrapper instanceof DefaultUUIDWrapper) {
                 Settings.TWIN_MODE_UUID = true;
-            } else if (UUIDHandler.getUUIDWrapper() instanceof OfflineUUIDWrapper && !Bukkit.getOnlineMode()) {
+            } else if (wrapper instanceof OfflineUUIDWrapper && !Bukkit.getOnlineMode()) {
                 Settings.TWIN_MODE_UUID = true;
             }
         }

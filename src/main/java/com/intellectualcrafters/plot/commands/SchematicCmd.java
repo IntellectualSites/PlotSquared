@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -41,7 +41,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 // TODO Add sub-subcommands
 
@@ -61,8 +61,7 @@ public class SchematicCmd extends SubCommand {
 
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
+    public boolean onCommand(final PlotPlayer plr, final String ... args) {
         if (args.length < 1) {
             sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
             return true;
@@ -72,10 +71,6 @@ public class SchematicCmd extends SubCommand {
         final Schematic schematic;
         switch (arg) {
             case "paste": {
-                if (plr == null) {
-                    PS.log(C.IS_CONSOLE.s());
-                    return false;
-                }
                 if (!Permissions.hasPermission(plr, "plots.schematic.paste")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.paste");
                     return false;

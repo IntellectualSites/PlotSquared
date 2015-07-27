@@ -28,20 +28,20 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "debugsavetest",
         permission = "plots.debugsavetest",
         category = CommandCategory.DEBUG,
-        requiredType = PS.class,
+        requiredType = RequiredType.CONSOLE,
         usage = "/plot debugsavetest",
         description = "This command will force the recreation of all plots in the DB"
 )
 public class DebugSaveTest extends SubCommand {
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         final ArrayList<Plot> plots = new ArrayList<Plot>();
         plots.addAll(PS.get().getPlots());
         MainUtil.sendMessage(null, "&6Starting `DEBUGSAVETEST`");

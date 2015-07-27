@@ -40,7 +40,7 @@ public abstract class UUIDHandlerImplementation {
      * Start UUID caching (this should be an async task)
      * Recommended to override this is you want to cache offline players
      */
-    public boolean startCaching() {
+    public boolean startCaching(Runnable whenDone) {
         if (CACHED) {
             return false;
         }
@@ -55,6 +55,11 @@ public abstract class UUIDHandlerImplementation {
         this.uuidWrapper = wrapper;
     }
     
+    public void rename(UUID uuid, StringWrapper name) {
+        uuidMap.inverse().remove(uuid);
+        uuidMap.put(name, uuid);
+    }
+    
     public void add(final BiMap<StringWrapper, UUID> toAdd) {
         if (uuidMap.size() == 0) {
             uuidMap = toAdd;
@@ -63,7 +68,20 @@ public abstract class UUIDHandlerImplementation {
             @Override
             public void run() {
                 for (Map.Entry<StringWrapper, UUID> entry : toAdd.entrySet()) {
-                    add(entry.getKey(), entry.getValue());
+                    UUID uuid = entry.getValue();
+                    StringWrapper name = entry.getKey();
+                    if ((uuid == null) || (name == null)) {
+                        continue;
+                    }
+                    BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
+                    if (inverse.containsKey(uuid)) {
+                        if (uuidMap.containsKey(name)) {
+                            continue;
+                        }
+                        rename(uuid, name);
+                        continue;
+                    }
+                    uuidMap.put(name, uuid);
                 }
                 PS.log(C.PREFIX.s() + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
             }
@@ -79,7 +97,8 @@ public abstract class UUIDHandlerImplementation {
             if (uuidMap.containsKey(name)) {
                 return false;
             }
-            inverse.remove(uuid);
+            rename(uuid, name);
+            return false;
         }
         uuidMap.put(name, uuid);
         return true;

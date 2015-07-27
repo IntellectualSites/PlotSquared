@@ -24,7 +24,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 //     TOGGLE("toggle", "attribute"),
 
@@ -34,21 +34,20 @@ import com.intellectualsites.commands.CommandCaller;
         permission = "plots.toggle",
         description = "Toggle per user settings",
         usage = "/plot toggle <setting>",
-        requiredType = PlotPlayer.class,
+        requiredType = RequiredType.PLAYER,
         category = CommandCategory.ACTIONS
 )
 public class Toggle extends SubCommand {
 
-    public void noArgs(CommandCaller caller) {
-        caller.message(C.COMMAND_SYNTAX, "/plot toggle <setting>");
-        caller.message(C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + "titles");
+    public void noArgs(PlotPlayer plr) {
+        MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot toggle <setting>");
+        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + "titles");
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer player, final String[] args) {
         if (args.length == 0) {
-            noArgs(caller);
+            noArgs(player);
             return false;
         }
         switch (args[0].toLowerCase()) {

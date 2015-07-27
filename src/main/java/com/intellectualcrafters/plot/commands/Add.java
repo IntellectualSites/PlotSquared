@@ -34,7 +34,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 
 @CommandDeclaration(
@@ -44,7 +44,7 @@ import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
         usage = "/plot add <player>",
         category = CommandCategory.ACTIONS,
         permission = "plots.add",
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class Add extends SubCommand {
 
@@ -55,8 +55,7 @@ public class Add extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

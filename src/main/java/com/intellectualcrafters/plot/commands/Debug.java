@@ -21,13 +21,13 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.Lag;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "debug",
@@ -39,8 +39,7 @@ import com.intellectualsites.commands.CommandCaller;
 public class Debug extends SubCommand {
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
-        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             final StringBuilder msg = new StringBuilder();
             for (final C c : C.values()) {

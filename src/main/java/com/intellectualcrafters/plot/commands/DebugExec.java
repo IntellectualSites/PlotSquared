@@ -30,9 +30,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -64,17 +64,12 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 public class DebugExec extends SubCommand {
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
-        final PlotPlayer player = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             switch (arg) {
                 case "analyze": {
-                    if (player == null) {
-                        MainUtil.sendMessage(player, C.IS_CONSOLE);
-                        return false;
-                    }
                     Plot plot = MainUtil.getPlot(player.getLocation());
                     if (plot == null) {
                         MainUtil.sendMessage(player, C.NOT_IN_PLOT);

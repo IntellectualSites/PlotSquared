@@ -34,20 +34,20 @@ import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "swap",
         description = "Swap two plots",
         aliases = {"switch"},
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class Swap extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        
         MainUtil.sendMessage(plr, "&cThis command has not been optimized for large selections yet. Please bug me if this becomes an issue.");
         if (args.length < 1) {
             MainUtil.sendMessage(plr, C.NEED_PLOT_ID);

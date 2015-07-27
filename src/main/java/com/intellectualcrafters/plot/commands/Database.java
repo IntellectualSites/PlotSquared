@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
+
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.object.Plot;
@@ -16,7 +16,7 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "database",
@@ -24,7 +24,9 @@ import com.intellectualsites.commands.CommandCaller;
         category = CommandCategory.DEBUG,
         permission = "plots.database",
         description = "Convert/Backup Storage",
+        requiredType = RequiredType.CONSOLE,
         usage = "/plots database <type> [details...]"
+        
 )
 public class Database extends SubCommand {
 
@@ -73,8 +75,7 @@ public class Database extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
-        final PlotPlayer plr = caller instanceof PlotPlayerCaller ? (PlotPlayer) caller.getSuperCaller() : null;
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         if (args.length < 1) {
             return sendMessage(plr, "/plot database [sqlite/mysql]");
         }

@@ -31,7 +31,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.listeners.PlotListener;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -1421,15 +1421,6 @@ public class MainUtil {
         return sendMessage(plr, msg, true);
     }
 
-    public static boolean sendCallerMessage(final CommandCaller plr, final String msg) {
-        if (plr.getSuperCaller() instanceof PlotPlayer) {
-            sendMessage((PlotPlayer) plr.getSuperCaller(), msg);
-        } else {
-            sendConsoleMessage(msg);
-        }
-        return true;
-    }
-
     public static void sendConsoleMessage(String msg) {
         sendMessage(null, msg);
     }
@@ -1514,15 +1505,6 @@ public class MainUtil {
             }
         }
         return lines.toArray(new String[lines.size()]);
-    }
-
-    public static boolean sendCallerMessage(final CommandCaller caller, final C c, final String... args) {
-        if (caller.getSuperCaller() instanceof PlotPlayer) {
-            sendMessage((PlotPlayer) caller.getSuperCaller(), c, args);
-        } else {
-            sendConsoleMessage(c, args);
-        }
-        return true;
     }
 
     /**

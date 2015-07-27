@@ -33,6 +33,8 @@ import org.bukkit.ChatColor;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 
 /**
@@ -688,5 +690,14 @@ public enum C {
 
     public String getCat() {
         return cat;
+    }
+    
+    public void send(PlotPlayer plr, String... args) { 
+        if (plr == null) {
+            MainUtil.sendConsoleMessage(this, args);
+        }
+        else {
+            MainUtil.sendMessage(plr, this, args);
+        }
     }
 }

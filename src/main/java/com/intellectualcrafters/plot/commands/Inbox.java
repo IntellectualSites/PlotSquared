@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;
@@ -43,7 +43,7 @@ import com.intellectualcrafters.plot.util.StringMan;
         usage = "/plot inbox [inbox] [delete <index>|clear|page]",
         permission = "plots.inbox",
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class Inbox extends SubCommand {
     
@@ -86,8 +86,8 @@ public class Inbox extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String[] args) {
-        final PlotPlayer player = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer player, final String[] args) {
+        
 
         final Plot plot = MainUtil.getPlot(player.getLocation());
         if (args.length == 0) {

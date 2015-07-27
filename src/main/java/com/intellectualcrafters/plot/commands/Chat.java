@@ -5,7 +5,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "chat",
@@ -13,13 +13,13 @@ import com.intellectualsites.commands.CommandCaller;
         usage = "/plot chat [on|off]",
         permission = "plots.chat",
         category = CommandCategory.ACTIONS,
-        requiredType = PlotPlayer.class
+        requiredType = RequiredType.PLAYER
 )
 public class Chat extends SubCommand {
 
     @Override
-    public boolean onCommand(final CommandCaller caller, final String ... args) {
-        final PlotPlayer plr = (PlotPlayer) caller.getSuperCaller();
+    public boolean onCommand(final PlotPlayer plr, final String ... args) {
+        
         final String world = plr.getLocation().getWorld();
         if (!PS.get().isPlotWorld(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);

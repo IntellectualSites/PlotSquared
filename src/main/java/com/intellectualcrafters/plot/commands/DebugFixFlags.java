@@ -35,14 +35,14 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.CommandCaller;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 
 @CommandDeclaration(
         command = "debugfixflags",
         usage = "/plot debugfixflags <world>",
         permission = "plots.debugfixflags",
         description = "Attempt to fix all flags for a world",
-        requiredType = PS.class,
+        requiredType = RequiredType.CONSOLE,
         category = CommandCategory.DEBUG
 )
 public class DebugFixFlags extends SubCommand {
@@ -54,8 +54,7 @@ public class DebugFixFlags extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(CommandCaller caller, String[] args) {
-        final PlotPlayer plr = null;
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         final String world = args[0];
         if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(world)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);

@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
@@ -31,7 +32,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (commandSender instanceof Player) {
             return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), commandLabel, args);
         }
-        return MainCommand.onCommand(null, commandLabel, args);
+        return MainCommand.onCommand(ConsolePlayer.getConsole(), commandLabel, args);
     }
 
     @Override

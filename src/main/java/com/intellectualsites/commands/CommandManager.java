@@ -7,7 +7,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.intellectualsites.commands.util.StringUtil;
+import com.intellectualcrafters.plot.commands.RequiredType;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 @SuppressWarnings("unused")
 public class CommandManager {
@@ -68,8 +72,8 @@ public class CommandManager {
         return result;
     }
 
-    public int handle(CommandCaller caller, String input) {
-        if (initialCharacter != null && !StringUtil.startsWith(initialCharacter, input)) {
+    public int handle(PlotPlayer plr, String input) {
+        if (initialCharacter != null && !input.startsWith(initialCharacter + "")) {
             return CommandHandlingOutput.NOT_COMMAND;
         }
         input = initialCharacter == null ? input : input.substring(1);
@@ -87,10 +91,10 @@ public class CommandManager {
         if (cmd == null) {
             return CommandHandlingOutput.NOT_FOUND;
         }
-        if (!cmd.getRequiredType().isInstance(caller.getSuperCaller())) {
+        if (!cmd.getRequiredType().allows(plr)) {
             return CommandHandlingOutput.CALLER_OF_WRONG_TYPE;
         }
-        if (!caller.hasPermission(cmd.getPermission())) {
+        if (!plr.hasPermission(cmd.getPermission())) {
             return CommandHandlingOutput.NOT_PERMITTED;
         }
         Argument[] requiredArguments = cmd.getRequiredArguments();
@@ -108,16 +112,16 @@ public class CommandManager {
             }
             if (!success) {
                 String usage = cmd.getUsage();
-                caller.sendRequiredArgumentsList(this, cmd, requiredArguments);
+                C.COMMAND_SYNTAX.send(plr, cmd.getUsage());
                 return CommandHandlingOutput.WRONG_USAGE;
             }
         }
         try {
-            boolean a = cmd.onCommand(caller, args);
+            boolean a = cmd.onCommand(plr, args);
             if (!a) {
                 String usage = cmd.getUsage();
                 if (usage != null && !usage.isEmpty()) {
-                    caller.message(usage);
+                    MainUtil.sendMessage(plr, usage);
                 }
                 return CommandHandlingOutput.WRONG_USAGE;
             }

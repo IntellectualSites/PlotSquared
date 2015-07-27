@@ -35,10 +35,14 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
     }
     
     @Override
-    public boolean startCaching() {
-        if (!super.startCaching()) {
+    public boolean startCaching(Runnable whenDone) {
+        if (!super.startCaching(whenDone)) {
             return false;
         }
+        return cache(whenDone);
+    }
+    
+    public boolean cache(final Runnable whenDone) {
         final File container = Bukkit.getWorldContainer();
         List<World> worlds = Bukkit.getWorlds();
         final String world;
@@ -48,7 +52,6 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         else {
             world = worlds.get(0).getName();
         }
-        CACHED = true;
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -88,6 +91,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         }
                     }
                     add(toAdd);
+                    if (whenDone != null) whenDone.run();
                     return;
                 }
                 final HashSet<String> worlds = new HashSet<>();
@@ -172,6 +176,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     }
                 }
                 add(toAdd);
+                if (whenDone != null) whenDone.run();
             }
         });
         return true;

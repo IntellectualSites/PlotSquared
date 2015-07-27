@@ -47,6 +47,6 @@ public class WorldEvents implements Listener {
     
     @EventHandler
     public void worldLoad(final WorldLoadEvent event) {
-        UUIDHandler.startCaching();
+        UUIDHandler.startCaching(null);
     }
 }
