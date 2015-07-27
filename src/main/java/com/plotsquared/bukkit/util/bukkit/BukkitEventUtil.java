@@ -16,7 +16,10 @@ import java.util.UUID;
 public class BukkitEventUtil extends EventUtil {
 
     public Player getPlayer(PlotPlayer player) {
-        return ((BukkitPlayer) player).player;
+        if (player instanceof BukkitPlayer) {
+            return ((BukkitPlayer) player).player;
+        }
+        return null;
     }
     
     public boolean callEvent(Event event) {
