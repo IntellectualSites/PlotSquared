@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 import com.plotsquared.bukkit.util.UUIDHandler;
 import org.apache.commons.lang.StringUtils;
 

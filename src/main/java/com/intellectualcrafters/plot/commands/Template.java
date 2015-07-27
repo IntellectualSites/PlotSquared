@@ -42,7 +42,7 @@ import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 import com.plotsquared.bukkit.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 

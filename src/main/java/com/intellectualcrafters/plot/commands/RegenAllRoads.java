@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 
 @CommandDeclaration(
         command = "regenallroads",

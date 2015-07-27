@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.Arrays;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellectualcrafters.plot.config.C;

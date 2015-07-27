@@ -1,16 +1,18 @@
 package com.intellectualsites.commands;
 
-import com.intellectualcrafters.plot.commands.CommandCategory;
-import com.intellectualsites.commands.callers.CommandCaller;
-
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.intellectualcrafters.plot.commands.CommandCategory;
 
 public abstract class Command extends CommandManager {
 
     private Class requiredType = Object.class;
     private String command, usage = "", description = "", permission = "";
-    private String[] aliases = new String[0];
+    private Set<String> aliases = new HashSet<>();
     private CommandCategory category;
     protected Argument[] requiredArguments;
 
@@ -47,14 +49,14 @@ public abstract class Command extends CommandManager {
     public Command(String command, String[] aliases, String usage) {
         super(null, new ArrayList<Command>());
         this.command = command;
-        this.aliases = aliases;
+        this.aliases = new HashSet<>(Arrays.asList(aliases));
         this.usage = usage;
     }
 
     public Command(String command, String[] aliases) {
         super(null, new ArrayList<Command>());
         this.command = command;
-        this.aliases = aliases;
+        this.aliases = new HashSet<>(Arrays.asList(aliases));
     }
 
     public Command(String command, String usage, String description, String permission, String[] aliases, Class requiredType) {
@@ -63,7 +65,7 @@ public abstract class Command extends CommandManager {
         this.usage = usage;
         this.description = description;
         this.permission = permission;
-        this.aliases = aliases;
+        this.aliases = new HashSet<>(Arrays.asList(aliases));
         this.requiredType = requiredType;
     }
 
@@ -82,7 +84,7 @@ public abstract class Command extends CommandManager {
         this.description = declaration.description();
         this.usage = declaration.usage();
         this.permission = declaration.permission();
-        this.aliases = declaration.aliases();
+        this.aliases = new HashSet<>(Arrays.asList(declaration.aliases()));
         this.requiredType = declaration.requiredType();
         this.category = declaration.category();
     }
@@ -126,7 +128,7 @@ public abstract class Command extends CommandManager {
         return this.description;
     }
 
-    final public String[] getAliases() {
+    final public Set<String> getAliases() {
         return this.aliases;
     }
 

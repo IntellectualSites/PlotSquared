@@ -26,6 +26,32 @@ public class StringMan {
         return sb.toString();
     }
     
+    public static String replaceFirst(char c, String s) {
+        if (s == null) {
+            return "";
+        }
+        if (s.isEmpty()) {
+            return s;
+        }
+        char[] chars = s.toCharArray();
+        char[] newChars = new char[chars.length];
+        int used = 0;
+        boolean found = false;
+        for (char cc : chars) {
+            if (!found && c == cc) {
+                found = true;
+            } else {
+                newChars[used++] = cc;
+            }
+        }
+        if (found) {
+            chars = new char[newChars.length - 1];
+            System.arraycopy(newChars, 0, chars, 0, chars.length);
+            return String.valueOf(chars);
+        }
+        return s;
+    }
+    
     public static String replaceAll(String string, Object... pairs) {
         StringBuilder sb = new StringBuilder(string);
         for (int i = 0; i < pairs.length; i+=2) {

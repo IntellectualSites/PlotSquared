@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 import com.plotsquared.bukkit.util.UUIDHandler;
 import org.apache.commons.lang.StringUtils;
 

@@ -22,7 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 import com.plotsquared.bukkit.util.UUIDHandler;
 import org.apache.commons.lang.StringUtils;
 

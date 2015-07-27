@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 import com.intellectualcrafters.plot.commands.callers.PlotPlayerCaller;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.generator.ChunkGenerator;
 

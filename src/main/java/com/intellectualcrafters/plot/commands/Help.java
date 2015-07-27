@@ -8,7 +8,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 
 @CommandDeclaration(
         command = "help",

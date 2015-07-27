@@ -5,8 +5,8 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.Command;
+import com.intellectualsites.commands.CommandCaller;
 import com.intellectualsites.commands.CommandManager;
-import com.intellectualsites.commands.callers.CommandCaller;
 
 public class PlotPlayerCaller implements CommandCaller<PlotPlayer> {
 

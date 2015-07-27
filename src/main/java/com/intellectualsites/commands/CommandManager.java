@@ -1,16 +1,16 @@
 package com.intellectualsites.commands;
 
-import com.intellectualsites.commands.callers.CommandCaller;
-import com.intellectualsites.commands.util.StringUtil;
-
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.intellectualsites.commands.util.StringUtil;
 
 @SuppressWarnings("unused")
 public class CommandManager {
 
-    protected final List<Command> commands;
+    protected final ConcurrentHashMap<String, Command> commands;
     protected final Character initialCharacter;
 
     public CommandManager() {
@@ -18,12 +18,18 @@ public class CommandManager {
     }
 
     public CommandManager(Character initialCharacter, List<Command> commands) {
-        this.commands = Collections.synchronizedList(commands);
+        this.commands = new ConcurrentHashMap<>();
+        for (Command command : commands) {
+            addCommand(command);
+        }
         this.initialCharacter = initialCharacter;
     }
 
     final public void addCommand(final Command command) {
-        this.commands.add(command);
+        this.commands.put(command.getCommand().toLowerCase(), command);
+        for (String alias : command.getAliases()) {
+            this.commands.put(alias.toLowerCase(), command);
+        }
     }
 
     final public boolean createCommand(final Command command) {
@@ -34,24 +40,24 @@ public class CommandManager {
             return false;
         }
         if (command.getCommand() != null) {
-            commands.add(command);
+            addCommand(command);
             return true;
         }
         return false;
     }
 
-    final public List<Command> getCommands() {
-        return this.commands;
+    final public Collection<Command> getCommands() {
+        return this.commands.values();
     }
 
     public int handle(CommandCaller caller, String input) {
         if (initialCharacter != null && !StringUtil.startsWith(initialCharacter, input)) {
             return CommandHandlingOutput.NOT_COMMAND;
         }
-        input = initialCharacter == null ? input : StringUtil.replaceFirst(initialCharacter, input);
+        input = initialCharacter == null ? input : input.substring(1);
         String[] parts = input.split(" ");
         String[] args;
-        String command = parts[0];
+        String command = parts[0].toLowerCase();
         if (parts.length == 1) {
             args = new String[0];
         } else {
@@ -59,12 +65,7 @@ public class CommandManager {
             System.arraycopy(parts, 1, args, 0, args.length);
         }
         Command cmd = null;
-        for (Command c1 : this.commands) {
-            if (c1.getCommand().equalsIgnoreCase(command) || StringUtil.inArray(command, c1.getAliases(), false)) {
-                cmd = c1;
-                break;
-            }
-        }
+        cmd = commands.get(command);
         if (cmd == null) {
             return CommandHandlingOutput.NOT_FOUND;
         }

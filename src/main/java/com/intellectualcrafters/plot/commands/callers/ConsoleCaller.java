@@ -6,7 +6,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.Command;
 import com.intellectualsites.commands.CommandManager;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 
 public class ConsoleCaller implements CommandCaller<PS> {
     @Override

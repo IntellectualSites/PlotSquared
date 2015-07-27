@@ -37,7 +37,7 @@ import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.Command;
 import com.intellectualsites.commands.CommandHandlingOutput;
 import com.intellectualsites.commands.CommandManager;
-import com.intellectualsites.commands.callers.CommandCaller;
+import com.intellectualsites.commands.CommandCaller;
 import com.intellectualsites.commands.util.StringUtil;
 
 /**
@@ -247,7 +247,7 @@ public class MainCommand extends CommandManager {
     public int handle(CommandCaller caller, String input) {
         String[] parts = input.split(" ");
         String[] args;
-        String command = parts[0];
+        String command = parts[0].toLowerCase();
         if (parts.length == 1) {
             args = new String[0];
         } else {
@@ -256,7 +256,7 @@ public class MainCommand extends CommandManager {
         }
         Command cmd = null;
         for (Command c1 : this.commands) {
-            if (c1.getCommand().equalsIgnoreCase(command) || StringUtil.inArray(command, c1.getAliases(), false)) {
+            if (c1.getCommand().equalsIgnoreCase(command) || c1.getAliases().contains(command)) {
                 cmd = c1;
                 break;
             }
@@ -268,7 +268,7 @@ public class MainCommand extends CommandManager {
                 for (int i = 0; i < commands.length; i++) {
                     commands[i] = this.commands.get(i).getCommand();
                 }
-                final String bestMatch = new StringComparison(args[0], commands).getBestMatch();
+                final String bestMatch = new StringComparison<String>(args[0], commands).getBestMatch();
                 caller.message(C.DID_YOU_MEAN, "/plot " + bestMatch);
             }
             return CommandHandlingOutput.NOT_FOUND;

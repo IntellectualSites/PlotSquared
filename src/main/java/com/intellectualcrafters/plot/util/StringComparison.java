@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -44,6 +45,10 @@ public class StringComparison<T> {
      */
     public StringComparison(String input, final T[] objects) {
         init(input, objects);
+    }
+    
+    public StringComparison(String input, final Collection<T> objects) {
+        init(input, (T[]) objects.toArray());
     }
     
     /**
