@@ -46,9 +46,6 @@ public class BukkitGeneratorWrapper extends PlotGenerator<ChunkGenerator> {
             if (gen_wrapper != null) {
                 generator = gen_wrapper.generator;
             }
-            else {
-                System.out.print("INVALID GENERATOR: " + gen_string);
-            }
         }
     }
 

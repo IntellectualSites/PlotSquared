@@ -10,14 +10,9 @@ public class HelpObject {
     private final Command _command;
     private final String _rendered;
 
-    public HelpObject(final Command command) {
+    public HelpObject(final Command command, String label) {
         this._command = command;
-        String rendered = C.HELP_ITEM.s();
-        this._rendered = rendered
-                .replace("%usage%", _command.getUsage())
-                .replace("%alias%", _command.getAliases().size() > 0 ? StringMan.join(_command.getAliases(), "|") : "")
-                .replace("%desc%", _command.getDescription())
-                .replace("%arguments%", buildArgumentList(_command.getRequiredArguments()));  // TODO Make configurable
+        this._rendered = StringMan.replaceAll(C.HELP_ITEM.s(), "%usage%", _command.getUsage(), "[%alias%]", _command.getAliases().size() > 0 ? "(" + StringMan.join(_command.getAliases(), "|") + ")" : "","%desc%", _command.getDescription(),"%arguments%", buildArgumentList(_command.getRequiredArguments()), "{label}", label);
     }
 
     @Override
@@ -26,8 +21,11 @@ public class HelpObject {
     }
 
     private String buildArgumentList(Argument[] arguments) {
+        if (arguments == null) {
+            return "";
+        }
         StringBuilder builder = new StringBuilder();
-        for (final Argument argument : arguments) {
+        for (final Argument<?> argument : arguments) {
             builder.append("[").append(argument.getName()).append(" (").append(argument.getExample()).append(")],");
         }
         return arguments.length > 0 ? builder.substring(0, builder.length() - 1) : "";

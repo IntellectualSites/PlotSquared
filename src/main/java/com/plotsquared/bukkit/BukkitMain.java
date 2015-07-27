@@ -408,6 +408,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public BukkitGeneratorWrapper getGenerator(final String world, final String name) {
+        if (name == null) {
+            return new BukkitGeneratorWrapper(world, null);
+        }
         final Plugin gen_plugin = Bukkit.getPluginManager().getPlugin(name);
         ChunkGenerator gen;
         if ((gen_plugin != null) && gen_plugin.isEnabled()) {

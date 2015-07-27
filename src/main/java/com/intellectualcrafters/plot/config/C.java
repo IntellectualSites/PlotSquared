@@ -143,7 +143,7 @@ public enum C {
     NO_PLOT_INBOX("$2You must stand in or supply a plot argument", "Comment"),
     COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"),
     COMMENT_ADDED("$4A comment has been left", "Comment"),
-    COMMENT_HEADER("$2====== Comments ======", "Comment"),
+    COMMENT_HEADER("$2&m---------&r $1Comments $2&m---------&r", "Comment"),
     INBOX_EMPTY("$2No comments","Comment"),
     /*
      * Console
@@ -388,7 +388,7 @@ public enum C {
     NONE("None", "Info"),
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
-    PLOT_INFO_HEADER("$3====== $1INFO $3======", false, "Info"),
+    PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO("$1ID: $2%id%$1&-" + "$1Alias: $2%alias%$1&-" + "$1Owner: $2%owner%$1&-" + "$1Biome: $2%biome%$1&-" + "$1Can Build: $2%build%$1&-" + "$1Rating: $2%rating%&-" + "$1Trusted: $2%trusted%$1&-" + "$1Members: $2%members%$1&-" + "$1Denied: $2%denied%$1&-" + "$1Flags: $2%flags%", "Info"),
     PLOT_INFO_TRUSTED("$1Trusted:$2 %trusted%", "Info"),
     PLOT_INFO_MEMBERS("$1Members:$2 %members%", "Info"),
@@ -505,11 +505,10 @@ public enum C {
     /*
      * Help
      */
-    HELP_HEADER("$3====== $1Plot\u00B2 Help $3======", "Help"),
+    HELP_HEADER("$3&m---------&r $1Plot\u00B2 Help $3&m---------", "Help"),
     HELP_PAGE_HEADER("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2", "Help"),
-    HELP_FOOTER("$3====== $1Plot\u00B2 Help $3======", "Help"),
+    HELP_FOOTER("$3&m---------&r $1Plot\u00B2 Help $3&m---------", "Help"),
 
-    HELP_INFO("$3====== $1Choose a Category $3======", false, "Help"),
     HELP_INFO_ITEM("$1/plots help %category% $3- $2%category_desc%", "Help"),
     HELP_ITEM("$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
     /*

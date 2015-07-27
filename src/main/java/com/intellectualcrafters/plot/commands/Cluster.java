@@ -44,6 +44,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
+import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.generator.HybridGen;
 import com.plotsquared.bukkit.util.SetupUtils;
@@ -154,7 +155,7 @@ public class Cluster extends SubCommand {
                 PlotWorld plotworld = PS.get().getPlotWorld(world);
                 if (plotworld == null) {
                     PS.get().config.createSection("worlds." + world);
-                    PS.get().loadWorld(world, null);
+                    PS.get().loadWorld(world, PS.get().IMP.getGenerator(world, null));
                 }
                 else {
                     final String gen_string = PS.get().config.getString("worlds." + world + "." + "generator.plugin");
@@ -302,8 +303,9 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
+                long start = System.currentTimeMillis();
                 ClusterManager.regenCluster(cluster);
-                MainUtil.sendMessage(plr, C.CLUSTER_REGENERATED);
+                MainUtil.sendMessage(plr, C.CLUSTER_REGENERATED, (System.currentTimeMillis() - start) + "");
                 return true;
             }
             case "add":

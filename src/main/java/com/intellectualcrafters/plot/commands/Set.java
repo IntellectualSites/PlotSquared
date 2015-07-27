@@ -361,7 +361,7 @@ public class Set extends SubCommand {
                         a.append(" ").append(args[x]);
                     }
                 }
-                MainCommand.onCommand(plr, world, ("flag set " + args[0] + a.toString()).split(" "));
+                MainCommand.onCommand(plr, "flag", ("set " + args[0] + a.toString()).split(" "));
                 return true;
             }
         }

@@ -5,25 +5,27 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class HelpPage {
 
-    private final Set<HelpObject> _helpObjecs;
+    private final List<HelpObject> _helpObjecs;
     private final String _header;
 
     public HelpPage(CommandCategory category, int currentPage, int maxPages) {
-        _helpObjecs = new HashSet<>();
+        _helpObjecs = new ArrayList<>();
         _header = C.HELP_PAGE_HEADER.s()
                 .replace("%category%", category == null ? "ALL" : category.toString())
-                .replace("%current%", currentPage + "")
-                .replace("%max%", maxPages + "");
+                .replace("%current%", (currentPage + 1) + "")
+                .replace("%max%", (maxPages + 1) + "");
     }
 
     public void render(final PlotPlayer player) {
-        if (_helpObjecs.size() < 2) {
-            MainUtil.sendMessage(player, C.NO_COMMANDS.s(), false);
+        if (_helpObjecs.size() < 1) {
+            MainUtil.sendMessage(player, C.NOT_VALID_NUMBER, "(0)");
         } else {
             MainUtil.sendMessage(player, C.HELP_HEADER.s(), false);
             MainUtil.sendMessage(player, _header, false);

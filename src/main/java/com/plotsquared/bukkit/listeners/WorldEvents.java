@@ -38,9 +38,6 @@ public class WorldEvents implements Listener {
             if (PS.get().config.contains("worlds." + name)) {
                 PS.get().loadWorld(name, new BukkitGeneratorWrapper(name, null));
             }
-            else if (gen != null) {
-                System.out.print("NOT INSTANCE OF BukkitGeneratorWrapper: " + gen.getClass().getName());
-            }
         }
         lastWorld = null;
     }

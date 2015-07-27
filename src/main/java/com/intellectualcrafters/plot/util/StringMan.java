@@ -152,12 +152,10 @@ public class StringMan {
     
     public static String join(Object[] array, String delimiter) {
         StringBuilder result = new StringBuilder();
-        System.out.print(array.getClass().getName());
         for (int i = 0, j = array.length; i < j; i++) {
             if (i > 0) {
                 result.append(delimiter);
             }
-            System.out.print(array[i].getClass().getName());
             result.append(array[i]);
         }
         return result.toString();

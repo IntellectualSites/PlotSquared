@@ -158,6 +158,9 @@ public class ClusterManager {
     public static PlotCluster getCluster(final Location loc) {
         final String world = loc.getWorld();
         PlotManager manager = PS.get().getPlotManager(world);
+        if (manager == null) {
+            return null;
+        }
         PlotId id = manager.getPlotIdAbs(PS.get().getPlotWorld(world), loc.getX(), loc.getY(), loc.getZ());
         if (id != null) {
             return getCluster(world, id);

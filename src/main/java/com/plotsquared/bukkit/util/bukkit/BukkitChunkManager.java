@@ -63,6 +63,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BukkitChunkManager extends ChunkManager {
@@ -359,6 +360,7 @@ public class BukkitChunkManager extends ChunkManager {
                 }
             }
         }
+        final Random r = new Random(System.currentTimeMillis());
         final AugmentedPopulator ap = augpop;
         TaskManager.runTask(new Runnable() {
             @Override
@@ -380,7 +382,7 @@ public class BukkitChunkManager extends ChunkManager {
                     CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
                     if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
                         if (canRegen && ap != null) {
-                            ap.populate(worldObj, null, chunkObj);
+                            ap.populate(worldObj, r, chunkObj);
                         }
                         else {
                             regenerateChunk(world, chunk);
@@ -452,7 +454,7 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                     saveEntitiesOut(chunkObj, CURRENT_PLOT_CLEAR);
                     if (canRegen && ap != null) {
-                        ap.populate(worldObj, null, chunkObj);
+                        ap.populate(worldObj, r, chunkObj);
                     }
                     else {
                         regenerateChunk(world, chunk);

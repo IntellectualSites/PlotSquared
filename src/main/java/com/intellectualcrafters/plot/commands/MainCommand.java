@@ -153,47 +153,43 @@ public class MainCommand extends CommandManager<PlotPlayer> {
 //        return help;
 //    }
 //
-    public static void displayHelp(PlotPlayer player, String cat, int page) {
-        if (cat != null && StringMan.isEqualIgnoreCase(cat, "all")) {
-            cat = null;
+    public static void displayHelp(PlotPlayer player, String cat, int page, String label) {
+        CommandCategory catEnum = null;
+        if (cat != null) {
+            if (StringMan.isEqualIgnoreCase(cat, "all")) {
+                catEnum = null;
+            }
+            else {
+                for (CommandCategory c : CommandCategory.values()) {
+                    if (StringMan.isEqualIgnoreCaseToAny(cat, c.name(), c.toString())) {
+                        catEnum = c;
+                        cat = c.name();
+                        break;
+                    }
+                }
+                if (catEnum == null) {
+                    cat = null;
+                }
+            }
         }
         if (cat == null && page == 0) {
             final StringBuilder builder = new StringBuilder();
-            builder.append(C.HELP_INFO.s());
-            for (final CommandCategory category : CommandCategory.values()) {
-                builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
+            builder.append(C.HELP_HEADER.s());
+            for (final CommandCategory c : CommandCategory.values()) {
+                builder.append("\n" + StringMan.replaceAll(C.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(), "%category_desc%", c.toString()));
             }
             builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all").replaceAll("%category_desc%", "Display all commands"));
-            MainUtil.sendMessage(player, builder.toString());
-            return;
-        }
-        CommandCategory cato = null;
-        for (final CommandCategory category : CommandCategory.values()) {
-            if (cat.equalsIgnoreCase(category.toString())) {
-                cato = category;
-                break;
-            }
-        }
-        if ((cato == null) && !cat.equalsIgnoreCase("all")) {
-            final StringBuilder builder = new StringBuilder();
-            builder.append(C.HELP_INFO.s());
-            for (final CommandCategory category : CommandCategory.values()) {
-                builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", category.toString().toLowerCase()).replaceAll("%category_desc%", category.toString()));
-            }
+            builder.append("\n" + C.HELP_FOOTER.s());
             MainUtil.sendMessage(player, builder.toString(), false);
             return;
         }
+        page--;
         new HelpMenu(player)
-                .setCategory(cato)
+                .setCategory(catEnum)
                 .getCommands()
                 .generateMaxPages()
-                .generatePage(page)
+                .generatePage(page, label)
                 .render();
-        // final StringBuilder help = new StringBuilder();
-        // for (final String string : helpMenu(player, cato, page)) {
-        //    help.append(string).append("\n");
-        // }
-        // MainUtil.sendMessage(player, help.toString());
     }
     
     public static boolean onCommand(final PlotPlayer player, final String cmd, final String... args) {
@@ -207,44 +203,37 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             switch (args.length) {
                 case 3: {
                     category = args[1];
+                    if (MathMan.isInteger(args[2])) {
+                        try {
+                            help_index = Integer.parseInt(args[2]);
+                        }
+                        catch (NumberFormatException e) {}
+                    }
+                    break;
                 }
                 case 2: {
-                    if (MathMan.isInteger(args[args.length - 1])) {
+                    if (MathMan.isInteger(args[1])) {
                         category = null;
                         try {
-                            help_index = Integer.parseInt(args[1]) - 1;
+                            help_index = Integer.parseInt(args[1]);
                         }
                         catch (NumberFormatException e) {}
                     }
                     if (category == null) {
                         category = args[1];
                     }
-                }
-                case 1: {
                     break;
                 }
             }
-            if (args.length == 3) {
-                if (MathMan.isInteger(args[args.length - 1])) {
-                    category = null;
-                    try {
-                        help_index = Integer.parseInt(args[1]) - 1;
-                    }
-                    catch (NumberFormatException e) {}
-                }
-                else {
-                    category = args[1];
-                }
-            }
         }
-        else if (MathMan.isInteger(args[args.length - 1])) {
+        else if (args.length == 1 && MathMan.isInteger(args[args.length - 1])) {
             try {
-                help_index = Integer.parseInt(args[args.length - 1]) - 1;
+                help_index = Integer.parseInt(args[args.length - 1]);
             }
             catch (NumberFormatException e) {}
         }
         if (help_index != -1) {
-            displayHelp(player, category, help_index);
+            displayHelp(player, category, help_index, cmd);
             return true;
         }
         StringBuilder builder = new StringBuilder(cmd).append(" ");

@@ -50,6 +50,6 @@ public class SetGenCB {
                 }
             }
         }
-        PS.get().loadWorld(world.getName(), null);
+        PS.get().loadWorld(world.getName(), PS.get().IMP.getGenerator(world.getName(), null));
     }
 }

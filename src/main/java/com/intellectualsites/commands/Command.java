@@ -114,6 +114,9 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
     }
 
     final public String getUsage() {
+        if (this.usage.length() == 0) {
+            return "/{label} " + command; 
+        }
         return this.usage;
     }
 

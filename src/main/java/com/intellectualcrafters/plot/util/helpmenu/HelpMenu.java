@@ -33,18 +33,18 @@ public class HelpMenu {
     }
 
     public HelpMenu generateMaxPages() {
-        this._maxPage = Math.min(_commands.size() / PER_PAGE, 1);
+        this._maxPage = Math.max(_commands.size() - 1 / PER_PAGE, 1);
         return this;
     }
 
-    public HelpMenu generatePage(int currentPage) {
+    public HelpMenu generatePage(int currentPage, String label) {
         if (currentPage > _maxPage) {
             currentPage = _maxPage;
         }
         _page = new HelpPage(_commandCategory, currentPage, _maxPage);
-        int max = Math.min((currentPage * PER_PAGE) + PER_PAGE, _commands.size());
+        int max = Math.min((currentPage * PER_PAGE) + (PER_PAGE - 1), _commands.size());
         for (int i = currentPage * PER_PAGE; i < max; i++) {
-            _page.addHelpItem(new HelpObject(_commands.get(i)));
+            _page.addHelpItem(new HelpObject(_commands.get(i), label));
         }
         return this;
     }

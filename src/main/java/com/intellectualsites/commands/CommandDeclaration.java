@@ -14,7 +14,7 @@ public @interface CommandDeclaration {
 
     String command();
 
-    String[] aliases() default "";
+    String[] aliases() default {};
 
     String permission() default "";
 
