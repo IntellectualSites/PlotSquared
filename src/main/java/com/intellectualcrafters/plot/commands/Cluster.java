@@ -49,7 +49,7 @@ import com.plotsquared.bukkit.generator.HybridGen;
 import com.plotsquared.bukkit.util.SetupUtils;
 
 @CommandDeclaration(
-        command = "cluser",
+        command = "cluster",
         aliases = {"clusters"},
         category = CommandCategory.ACTIONS,
         requiredType = RequiredType.PLAYER,

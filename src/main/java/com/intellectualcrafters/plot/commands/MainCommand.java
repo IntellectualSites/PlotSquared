@@ -46,11 +46,18 @@ import com.intellectualsites.commands.CommandManager;
  */
 public class MainCommand extends CommandManager<PlotPlayer> {
 
-    public static MainCommand instance = new MainCommand();
+    private static MainCommand instance;
+    
+    public static MainCommand getInstance() {
+        if (instance == null) {
+            instance = new MainCommand();
+        }
+        return instance;
+    }
 
     private MainCommand() {
         super(null, new ArrayList<Command<PlotPlayer>>());
-        List<SubCommand> toAdd = Arrays.asList(
+        List<SubCommand> toAdd = new ArrayList<>(Arrays.asList(
                 new Buy(), new Save(), new Load(),
                 new Template(), new Download(),
                 new Update(), new Template(),
@@ -74,7 +81,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 new Trust(), new DebugExec(), new FlagCmd(),
                 new Target(), new DebugFixFlags(), new Move(),
                 new Condense(), new Condense(), new Copy(),
-                new Chat());
+                new Chat()));
         if (Settings.ENABLE_CLUSTERS) {
             toAdd.add(new Cluster());
         }
@@ -91,7 +98,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
     }
     
     public static ArrayList<Command<PlotPlayer>> getCommands(final CommandCategory category, final PlotPlayer player) {
-        ArrayList<Command<PlotPlayer>> cmds = instance.getCommands();
+        ArrayList<Command<PlotPlayer>> cmds = getInstance().getCommands();
         for (Iterator<Command<PlotPlayer>> iter = cmds.iterator(); iter.hasNext();){
             Command<PlotPlayer> cmd = iter.next();
             if ((category != null && (cmd.getCategory().equals(category))) || !player.hasPermission(cmd.getPermission())) {
@@ -235,7 +242,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 builder.append(" ");
             }
         }
-        instance.handle(player, builder.toString());
+        getInstance().handle(player, builder.toString());
         return true;
     }
 

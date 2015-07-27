@@ -613,9 +613,9 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
      */
     public void registerCommand(final SubCommand c) {
         if (c.getCommand() != null) {
-            MainCommand.instance.addCommand(c);
+            MainCommand.getInstance().addCommand(c);
         } else {
-            MainCommand.instance.createCommand(c);
+            MainCommand.getInstance().createCommand(c);
         }
     }
 

@@ -53,11 +53,11 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
             return null;
         }
         final Set<String> tabOptions = new HashSet<>();
-        ArrayList<Command<PlotPlayer>> commands = MainCommand.instance.getCommands();
+        ArrayList<Command<PlotPlayer>> commands = MainCommand.getInstance().getCommands();
         String best = new StringComparison(strings[0], commands).getBestMatch();
         tabOptions.add(best);
         final String arg = strings[0].toLowerCase();
-        for (final Command<PlotPlayer> cmd : MainCommand.instance.getCommands()) {
+        for (final Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands()) {
             String label = cmd.getCommand();
             if (!label.equalsIgnoreCase(best)) {
                 if (label.startsWith(arg)) {

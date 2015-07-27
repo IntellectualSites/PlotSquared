@@ -349,7 +349,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             } else {
                 getServer().getPluginManager().registerEvents(new WEListener(), this);
                 WorldEdit.getInstance().getEventBus().register(new WESubscriber());
-                MainCommand.instance.createCommand(new WE_Anywhere());
+                MainCommand.getInstance().createCommand(new WE_Anywhere());
             }
         }
     }
