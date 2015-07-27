@@ -235,7 +235,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             catch (NumberFormatException e) {}
         }
         else if (ConsolePlayer.isConsole(player) && args.length >= 2) {
-            System.out.print(1);
             String[] split = args[0].split(";");
             String world;
             PlotId id;
@@ -252,10 +251,8 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 world = null;
             }
             if (id != null && PS.get().isPlotWorld(world)) {
-                System.out.print(2 + " | " + id + " | " + world);
                 Plot plot = MainUtil.getPlot(world, id);
                 if (plot != null) {
-                    System.out.print(3 + " | " + plot);
                     player.teleport(MainUtil.getPlotCenter(plot));
                     args = Arrays.copyOfRange(args, 1, args.length);
                 }
@@ -298,7 +295,12 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             {
                 ArrayList<Command<PlotPlayer>> cmds = getCommands();
                 cmd = new StringComparison<Command<PlotPlayer>>(label, cmds).getMatchObject();
-                MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage().replaceAll("{label}", label));
+                if (cmd == null) {
+                    MainUtil.sendMessage(plr, C.DID_YOU_MEAN, "/plot help");
+                }
+                else {
+                    MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage().replaceAll("{label}", label));
+                }
             }
             return CommandHandlingOutput.NOT_FOUND;
         }
