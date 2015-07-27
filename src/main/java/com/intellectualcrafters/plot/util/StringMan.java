@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -158,6 +159,10 @@ public class StringMan {
             result.append(array[i]);
         }
         return result.toString();
+    }
+    
+    public static String join(int[] array, String delimiter) {
+        return join(Arrays.asList(array), delimiter);
     }
     
     public static boolean isEqual(String a, String b ) {

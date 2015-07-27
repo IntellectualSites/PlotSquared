@@ -201,7 +201,7 @@ public class PS {
                     log("&8 - &3Or: &7" + url);
                 }
                 else if (LAST_VERSION != null && !VERSION.equals(LAST_VERSION)) {
-                    log("&aThanks for updating from: " + LAST_VERSION + " to " + VERSION);
+                    log("&aThanks for updating from: " + LAST_VERSION + " to " + StringMan.join(VERSION, "."));
                 }
             }
         });
