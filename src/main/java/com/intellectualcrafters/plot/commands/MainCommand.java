@@ -37,6 +37,7 @@ import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandHandlingOutput;
 import com.plotsquared.general.commands.CommandManager;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -209,7 +210,9 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                         try {
                             help_index = Integer.parseInt(args[2]);
                         }
-                        catch (NumberFormatException e) {}
+                        catch (NumberFormatException e) {
+                            help_index = 1;
+                        }
                     }
                     break;
                 }
@@ -218,10 +221,11 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                         category = null;
                         try {
                             help_index = Integer.parseInt(args[1]);
+                        } catch(NumberFormatException e) {
+                            help_index = 1;
                         }
-                        catch (NumberFormatException e) {}
-                    }
-                    if (category == null) {
+                    } else {
+                        help_index = 1;
                         category = args[1];
                     }
                     break;
@@ -294,12 +298,12 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             MainUtil.sendMessage(plr, C.NOT_VALID_SUBCOMMAND);
             {
                 ArrayList<Command<PlotPlayer>> cmds = getCommands();
-                cmd = new StringComparison<Command<PlotPlayer>>(label, cmds).getMatchObject();
+                cmd = new StringComparison<>(label, cmds).getMatchObject();
                 if (cmd == null) {
                     MainUtil.sendMessage(plr, C.DID_YOU_MEAN, "/plot help");
                 }
                 else {
-                    MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage().replaceAll("{label}", label));
+                    MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage().replaceAll("\\{label\\}", label));
                 }
             }
             return CommandHandlingOutput.NOT_FOUND;
