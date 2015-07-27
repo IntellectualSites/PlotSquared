@@ -43,7 +43,11 @@ public class BukkitEconHandler extends EconHandler {
 
     @Override
     public double getMoney(PlotPlayer player) {
-        return econ.getBalance(player.getName());
+        double bal = super.getMoney(player);
+        if (bal == Double.NaN) {
+            return econ.getBalance(player.getName());
+        }
+        return bal;
     }
 
     @Override
