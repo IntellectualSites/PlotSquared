@@ -27,9 +27,9 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -142,10 +142,6 @@ public class SchematicCmd extends SubCommand {
                 break;
             }
             case "test": {
-                if (plr == null) {
-                    PS.log(C.IS_CONSOLE.s());
-                    return false;
-                }
                 if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
                     return false;
@@ -178,7 +174,7 @@ public class SchematicCmd extends SubCommand {
             }
             case "saveall":
             case "exportall": {
-                if (plr != null) {
+                if (!ConsolePlayer.isConsole(plr)) {
                     MainUtil.sendMessage(plr, C.NOT_CONSOLE);
                     return false;
                 }
@@ -220,43 +216,21 @@ public class SchematicCmd extends SubCommand {
                 }
                 final String world;
                 final Plot p2;
-                if (plr != null) {
-                    final Location loc = plr.getLocation();
-                    final Plot plot = MainUtil.getPlot(loc);
-                    if (plot == null) {
-                        return !sendMessage(plr, C.NOT_IN_PLOT);
-                    }
-                    if (!plot.hasOwner()) {
-                        MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
-                        return false;
-                    }
-                    if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.schematic.save")) {
-                        MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
-                        return false;
-                    }
-                    p2 = plot;
-                    world = loc.getWorld();
-                } else {
-                    if (args.length == 3) {
-                        try {
-                            world = args[1];
-                            final String[] split = args[2].split(";");
-                            final PlotId i = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                            if ((PS.get().getPlots(world) == null) || (PS.get().getPlots(world).get(i) == null)) {
-                                MainUtil.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
-                                return false;
-                            }
-                            p2 = PS.get().getPlots(world).get(i);
-                        } catch (final Exception e) {
-                            MainUtil.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
-                            return false;
-                        }
-                    } else {
-                        MainUtil.sendMessage(null, "&cInvalid world or id. Use &7/plots sch save <world> <id>");
-                        return false;
-                    }
+                final Location loc = plr.getLocation();
+                final Plot plot = MainUtil.getPlot(loc);
+                if (plot == null) {
+                    return !sendMessage(plr, C.NOT_IN_PLOT);
                 }
-                
+                if (!plot.hasOwner()) {
+                    MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+                    return false;
+                }
+                if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.schematic.save")) {
+                    MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+                    return false;
+                }
+                p2 = plot;
+                world = loc.getWorld();
                 Collection<Plot> plots = new ArrayList<Plot>();
                 plots.add(p2);
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {

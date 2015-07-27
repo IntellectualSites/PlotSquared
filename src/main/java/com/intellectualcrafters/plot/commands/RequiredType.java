@@ -1,23 +1,18 @@
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualsites.commands.CommandCaller;
 
 public enum RequiredType {
     CONSOLE,
     PLAYER,
     NONE;
     
-    public boolean allows(PlotPlayer player) {
+    public boolean allows(CommandCaller player) {
         switch (this) {
             case NONE:
                 return true;
-            case PLAYER:
-                return !ConsolePlayer.isConsole(player);
-            case CONSOLE:
-                return ConsolePlayer.isConsole(player);
             default:
-                return false;
+                return this == player.getSuperCaller();
         }
     }
 }

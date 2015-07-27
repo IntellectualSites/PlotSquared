@@ -2,12 +2,14 @@ package com.intellectualcrafters.plot.object;
 
 import java.util.UUID;
 
+import com.intellectualsites.commands.CommandCaller;
+
 /**
  * Created 2015-02-20 for PlotSquared
  *
  * @author Citymonstret
  */
-public interface PlotPlayer {
+public interface PlotPlayer extends CommandCaller {
     
     public long getPreviousLogin();
     

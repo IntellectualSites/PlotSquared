@@ -5,7 +5,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.RequiredType;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 public class ConsolePlayer implements PlotPlayer {
@@ -67,6 +70,11 @@ public class ConsolePlayer implements PlotPlayer {
     public void sendMessage(String message) {
         PS.log(message);
     }
+    
+    @Override
+    public void sendMessage(C c, String... args) {
+        MainUtil.sendMessage(this, c, args);
+    }
 
     @Override
     public void teleport(Location loc) {
@@ -121,6 +129,11 @@ public class ConsolePlayer implements PlotPlayer {
     @Override
     public void deleteMeta(String key) {
         this.meta.remove(key);
+    }
+
+    @Override
+    public RequiredType getSuperCaller() {
+        return RequiredType.CONSOLE;
     }
     
 }

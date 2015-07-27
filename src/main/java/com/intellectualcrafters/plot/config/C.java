@@ -36,6 +36,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualsites.commands.CommandCaller;
 
 /**
  * Captions class.
@@ -692,12 +693,12 @@ public enum C {
         return cat;
     }
     
-    public void send(PlotPlayer plr, String... args) { 
+    public void send(CommandCaller plr, String... args) { 
         if (plr == null) {
             MainUtil.sendConsoleMessage(this, args);
         }
         else {
-            MainUtil.sendMessage(plr, this, args);
+            plr.sendMessage(this, args);
         }
     }
 }

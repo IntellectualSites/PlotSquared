@@ -105,10 +105,10 @@ public class Info extends SubCommand {
                 case "members":
                 case "owner":
                 case "rating":
-                    plot = MainUtil.getPlotFromString(player, null, player == null);
+                    plot = MainUtil.getPlotFromString(player, null, false);
                     break;
                 default:
-                    plot = MainUtil.getPlotFromString(player, arg, player == null);
+                    plot = MainUtil.getPlotFromString(player, arg, false);
                     if (args.length == 2) {
                         arg = args[1];
                     }
@@ -119,15 +119,12 @@ public class Info extends SubCommand {
             }
         }
         else {
-            plot = MainUtil.getPlotFromString(player, null, player == null);
+            plot = MainUtil.getPlotFromString(player, null, false);
         }
         if (plot == null && arg != null) {
-            plot = MainUtil.getPlotFromString(player, null, player == null);
+            plot = MainUtil.getPlotFromString(player, null, false);
         }
         if (plot == null) {
-            if (player == null) {
-                return false;
-            }
             MainUtil.sendMessage(player, C.NOT_IN_PLOT);
             return false;
         }
@@ -214,7 +211,7 @@ public class Info extends SubCommand {
         final String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
 
         final String flags = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "$1, $2") : C.NONE.s()), C.replacements);
-        final boolean build = (player == null) || plot.isAdded(player.getUUID());
+        final boolean build = plot.isAdded(player.getUUID());
 
         String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());
 

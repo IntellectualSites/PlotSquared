@@ -8,16 +8,14 @@ import java.util.Set;
 
 import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.commands.RequiredType;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 
-public abstract class Command extends CommandManager {
+public abstract class Command<E extends CommandCaller> extends CommandManager {
 
     private RequiredType requiredType = RequiredType.NONE;
     private String command, usage = "", description = "", permission = "";
     private Set<String> aliases = new HashSet<>();
     private CommandCategory category;
-    protected Argument[] requiredArguments;
+    protected Argument<?>[] requiredArguments;
 
     public Command() {
         super(null, new ArrayList<Command>());
@@ -97,9 +95,9 @@ public abstract class Command extends CommandManager {
         return this.command;
     }
 
-    public abstract boolean onCommand(PlotPlayer plr, String[] arguments);
+    public abstract boolean onCommand(E plr, String[] arguments);
 
-    final public int handle(PlotPlayer plr, String[] args) {
+    final public int handle(E plr, String[] args) {
         if (args.length == 0) {
             return super.handle(plr, "");
         }
@@ -131,7 +129,7 @@ public abstract class Command extends CommandManager {
         return this.aliases;
     }
 
-    final public Argument[] getRequiredArguments() {
+    final public Argument<?>[] getRequiredArguments() {
         return this.requiredArguments;
     }
 
@@ -150,7 +148,7 @@ public abstract class Command extends CommandManager {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Command other = (Command) obj;
+        final Command<?> other = (Command<?>) obj;
         if (this.hashCode() != other.hashCode()) {
             return false;
         }

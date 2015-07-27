@@ -113,9 +113,7 @@ public class Database extends SubCommand {
                     return sendMessage(plr, "Could not create the required tables and/or load the database") && sendMessage(plr, "Please see the stacktrace for more information");
                 }
                 UUID requester = null;
-                if (plr != null) {
-                    requester = UUIDHandler.getUUID(plr);
-                }
+                requester = UUIDHandler.getUUID(plr);
                 insertPlots(manager, requester, n);
                 break;
             case "sqlite":

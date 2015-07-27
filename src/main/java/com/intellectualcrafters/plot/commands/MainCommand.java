@@ -24,13 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
@@ -40,19 +38,18 @@ import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.Command;
 import com.intellectualsites.commands.CommandHandlingOutput;
 import com.intellectualsites.commands.CommandManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 
 /**
  * PlotSquared command class
  *
  * @author Citymonstret
  */
-public class MainCommand extends CommandManager {
+public class MainCommand extends CommandManager<PlotPlayer> {
 
     public static MainCommand instance = new MainCommand();
 
     private MainCommand() {
-        super(null, new ArrayList<Command>());
+        super(null, new ArrayList<Command<PlotPlayer>>());
         List<SubCommand> toAdd = Arrays.asList(
                 new Buy(), new Save(), new Load(),
                 new Template(), new Download(),
@@ -93,10 +90,10 @@ public class MainCommand extends CommandManager {
         return false;
     }
     
-    public static ArrayList<Command> getCommands(final CommandCategory category, final PlotPlayer player) {
-        ArrayList<Command> cmds = instance.getCommands();
-        for (Iterator<Command> iter = cmds.iterator(); iter.hasNext();){
-            Command cmd = iter.next();
+    public static ArrayList<Command<PlotPlayer>> getCommands(final CommandCategory category, final PlotPlayer player) {
+        ArrayList<Command<PlotPlayer>> cmds = instance.getCommands();
+        for (Iterator<Command<PlotPlayer>> iter = cmds.iterator(); iter.hasNext();){
+            Command<PlotPlayer> cmd = iter.next();
             if ((category != null && (cmd.getCategory().equals(category))) || !player.hasPermission(cmd.getPermission())) {
                 iter.remove();
             }
@@ -105,7 +102,7 @@ public class MainCommand extends CommandManager {
     }
     
     public static List<String> helpMenu(final PlotPlayer player, final CommandCategory category, int page) {
-        List<Command> commands;
+        List<Command<PlotPlayer>> commands;
         commands = getCommands(category, player);
         // final int totalPages = ((int) Math.ceil(12 * (commands.size()) /
         // 100));
@@ -122,7 +119,7 @@ public class MainCommand extends CommandManager {
         help.add(C.HELP_HEADER.s());
         // HELP_CATEGORY("&cCategory: &6%category%&c, Page: %current%&c/&6%max%&c, Displaying: &6%dis%&c/&6%total%"),
         help.add(C.HELP_CATEGORY.s().replace("%category%", category == null ? "All" : category.toString()).replace("%current%", "" + (page + 1)).replace("%max%", "" + (totalPages)).replace("%dis%", "" + perPage).replace("%total%", "" + commands.size()));
-        Command cmd;
+        Command<PlotPlayer> cmd;
         final int start = page * perPage;
         for (int x = start; x < max; x++) {
             cmd = commands.get(x);
@@ -230,7 +227,6 @@ public class MainCommand extends CommandManager {
             displayHelp(player, category, help_index);
             return true;
         }
-        PlotPlayer caller;
         StringBuilder builder = new StringBuilder(cmd).append(" ");
         Iterator<String> iterator = Arrays.asList(args).iterator();
         while (iterator.hasNext()) {
@@ -240,31 +236,6 @@ public class MainCommand extends CommandManager {
             }
         }
         instance.handle(player, builder.toString());
-        // for (final SubCommand command : subCommands) {
-        //    if (command.cmd.equalsIgnoreCase(args[0]) || command.alias.contains(args[0].toLowerCase())) {
-        //        final String[] arguments = new String[args.length - 1];
-        //        System.arraycopy(args, 1, arguments, 0, args.length - 1);
-        //        if (command.permission.hasPermissipon(player)) {
-        //            if ((player != null) || !command.isPlayer) {
-        //                return command.execute(player, arguments);
-        //            } else {
-        //                return !MainUtil.sendMessage(null, C.IS_CONSOLE);
-        //            }
-        //        } else {
-        //            return no_permission(player, command.permission.permission.toLowerCase());
-        //        }
-        //    }
-        // }
-        // MainUtil.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
-        // final String[] commands = new String[subCommands.size()];
-        // for (int x = 0; x < subCommands.size(); x++) {
-        //    commands[x] = subCommands.get(x).cmd;
-        // }
-        // /* Let's try to get a proper usage string */
-        // final String command = new StringComparison(args[0], commands).getBestMatch();
-        // return MainUtil.sendMessage(player, C.DID_YOU_MEAN, "/plot " + command);
-        // PlayerFunctions.sendMessage(player, C.DID_YOU_MEAN, new
-        // StringComparsion(args[0], commands).getBestMatch());
         return true;
     }
 
@@ -272,30 +243,27 @@ public class MainCommand extends CommandManager {
     public int handle(PlotPlayer plr, String input) {
         String[] parts = input.split(" ");
         String[] args;
-        String command = parts[0].toLowerCase();
+        String label;
         if (parts.length == 1) {
+            label = null;
             args = new String[0];
         } else {
-            args = new String[parts.length - 1];
-            System.arraycopy(parts, 1, args, 0, args.length);
+            label = parts[1];
+            args = new String[parts.length - 2];
+            System.arraycopy(parts, 2, args, 0, args.length);
         }
-        Command cmd = null;
-        System.out.print(command);
-        System.out.print(StringMan.join(commands.entrySet(), ", "));
-        cmd = this.commands.get(command);
+        Command<PlotPlayer> cmd = null;
+        cmd = this.commands.get(label);
         if (cmd == null) {
             MainUtil.sendMessage(plr, C.NOT_VALID_SUBCOMMAND);
             {
-                final String[] commands = new String[this.commands.size()];
-                for (int i = 0; i < commands.length; i++) {
-                    commands[i] = this.commands.get(i).getCommand();
-                }
-                final String bestMatch = new StringComparison<String>(args[0], commands).getBestMatch();
-                MainUtil.sendMessage(plr, C.DID_YOU_MEAN, "/plot " + bestMatch);
+                ArrayList<Command<PlotPlayer>> cmds = getCommands();
+                cmd = new StringComparison<Command<PlotPlayer>>(args[0], cmds).getMatchObject();
+                MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage());
             }
             return CommandHandlingOutput.NOT_FOUND;
         }
-        if (cmd.getRequiredType().allows(plr)) {
+        if (!cmd.getRequiredType().allows(plr)) {
             if (ConsolePlayer.isConsole(plr)) {
                 MainUtil.sendMessage(plr, C.IS_CONSOLE);
             } else {
@@ -307,7 +275,7 @@ public class MainCommand extends CommandManager {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, cmd.getPermission());
             return CommandHandlingOutput.NOT_PERMITTED;
         }
-        Argument[] requiredArguments = cmd.getRequiredArguments();
+        Argument<?>[] requiredArguments = cmd.getRequiredArguments();
         if (requiredArguments != null && requiredArguments.length > 0) {
             boolean success = true;
             if (args.length < requiredArguments.length) {

@@ -180,9 +180,7 @@ public class Template extends SubCommand {
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);
                 MainUtil.sendMessage(plr, "Done!");
-                if (plr != null) {
-                    plr.teleport(BlockManager.manager.getSpawn(world));
-                }
+                plr.teleport(BlockManager.manager.getSpawn(world));
                 return true;
             }
             case "export": {

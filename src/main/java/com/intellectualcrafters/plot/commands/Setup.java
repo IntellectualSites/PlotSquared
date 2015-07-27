@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 
+
+import com.intellectualsites.commands.CommandCaller;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 
@@ -76,13 +78,7 @@ public class Setup extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         // going through setup
-        String name;
-        if (plr == null) {
-            name = "*";
-        }
-        else {
-            name = plr.getName();
-        }
+        String name = plr.getName();
         if (!SetupUtils.setupMap.containsKey(name)) {
             final SetupObject object = new SetupObject();
             SetupUtils.setupMap.put(name, object);
@@ -247,9 +243,7 @@ public class Setup extends SubCommand {
                     world = object.setupManager.setupWorld(object);
                 }
                 try {
-                    if (plr != null) {
-                        plr.teleport(BlockManager.manager.getSpawn(world));
-                    }
+                    plr.teleport(BlockManager.manager.getSpawn(world));
                 } catch (final Exception e) {
                     plr.sendMessage("&cAn error occured. See console for more information");
                     e.printStackTrace();
@@ -260,5 +254,4 @@ public class Setup extends SubCommand {
         }
         return false;
     }
-    
 }

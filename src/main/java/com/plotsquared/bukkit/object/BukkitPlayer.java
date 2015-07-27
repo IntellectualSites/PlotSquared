@@ -12,8 +12,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
+import com.intellectualcrafters.plot.commands.RequiredType;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
@@ -80,6 +83,11 @@ public class BukkitPlayer implements PlotPlayer {
     @Override
     public void sendMessage(final String message) {
         this.player.sendMessage(message);
+    }
+    
+    @Override
+    public void sendMessage(C c, String... args) {
+        MainUtil.sendMessage(this, c, args);
     }
     
     @Override
@@ -190,5 +198,10 @@ public class BukkitPlayer implements PlotPlayer {
     @Override
     public void saveData() {
         player.saveData();
+    }
+
+    @Override
+    public RequiredType getSuperCaller() {
+        return RequiredType.PLAYER;
     }
 }

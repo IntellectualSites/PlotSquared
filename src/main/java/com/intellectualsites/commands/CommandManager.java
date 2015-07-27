@@ -5,40 +5,41 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 
 @SuppressWarnings("unused")
-public class CommandManager {
+public class CommandManager<T extends CommandCaller> {
 
-    protected final ConcurrentHashMap<String, Command> commands;
+    protected final ConcurrentHashMap<String, Command<T>> commands;
     protected final Character initialCharacter;
 
     public CommandManager() {
-        this('/', new ArrayList<Command>());
+        this('/', new ArrayList<Command<T>>());
     }
 
-    public CommandManager(Character initialCharacter, List<Command> commands) {
+    public CommandManager(Character initialCharacter, List<Command<T>> commands) {
         this.commands = new ConcurrentHashMap<>();
-        for (Command command : commands) {
+        for (Command<T> command : commands) {
             addCommand(command);
         }
         this.initialCharacter = initialCharacter;
     }
 
-    final public void addCommand(final Command command) {
+    final public void addCommand(final Command<T> command) {
         this.commands.put(command.getCommand().toLowerCase(), command);
         for (String alias : command.getAliases()) {
             this.commands.put(alias.toLowerCase(), command);
         }
     }
 
-    final public boolean createCommand(final Command command) {
+    final public boolean createCommand(final Command<T> command) {
         try {
             command.create();
         } catch(final Exception e) {
@@ -52,11 +53,11 @@ public class CommandManager {
         return false;
     }
 
-    final public ArrayList<Command> getCommands() {
-        ArrayList<Command> result = new ArrayList<>(this.commands.values());
-        Collections.sort(result, new Comparator<Command>() {
+    final public ArrayList<Command<T>> getCommands() {
+        ArrayList<Command<T>> result = new ArrayList<>(this.commands.values());
+        Collections.sort(result, new Comparator<Command<T>>() {
             @Override
-            public int compare(Command a, Command b) {
+            public int compare(Command<T> a, Command<T> b) {
                 if (a == b) {
                     return 0;
                 }
@@ -71,8 +72,16 @@ public class CommandManager {
         });
         return result;
     }
+    
+    final public ArrayList<String> getCommandLabels(ArrayList<Command<T>> cmds) {
+        ArrayList<String> labels = new ArrayList<>(cmds.size());
+        for (Command<T> cmd : cmds) {
+            labels.add(cmd.getCommand());
+        }
+        return labels;
+    }
 
-    public int handle(PlotPlayer plr, String input) {
+    public int handle(T plr, String input) {
         if (initialCharacter != null && !input.startsWith(initialCharacter + "")) {
             return CommandHandlingOutput.NOT_COMMAND;
         }
@@ -86,7 +95,7 @@ public class CommandManager {
             args = new String[parts.length - 1];
             System.arraycopy(parts, 1, args, 0, args.length);
         }
-        Command cmd = null;
+        Command<T> cmd = null;
         cmd = commands.get(command);
         if (cmd == null) {
             return CommandHandlingOutput.NOT_FOUND;
@@ -97,7 +106,7 @@ public class CommandManager {
         if (!plr.hasPermission(cmd.getPermission())) {
             return CommandHandlingOutput.NOT_PERMITTED;
         }
-        Argument[] requiredArguments = cmd.getRequiredArguments();
+        Argument<?>[] requiredArguments = cmd.getRequiredArguments();
         if (requiredArguments != null && requiredArguments.length > 0) {
             boolean success = true;
             if (args.length < requiredArguments.length) {
@@ -121,7 +130,7 @@ public class CommandManager {
             if (!a) {
                 String usage = cmd.getUsage();
                 if (usage != null && !usage.isEmpty()) {
-                    MainUtil.sendMessage(plr, usage);
+                    plr.sendMessage(usage);
                 }
                 return CommandHandlingOutput.WRONG_USAGE;
             }

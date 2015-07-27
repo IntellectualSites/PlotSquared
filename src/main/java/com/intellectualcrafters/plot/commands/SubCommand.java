@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
  * @author Citymonstret
  */
 @SuppressWarnings({ "deprecation", "unused" })
-public abstract class SubCommand extends com.intellectualsites.commands.Command {
+public abstract class SubCommand extends com.intellectualsites.commands.Command<PlotPlayer> {
 
     /**
      * The category
@@ -46,9 +46,8 @@ public abstract class SubCommand extends com.intellectualsites.commands.Command 
      *
      * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, C, String...)
      */
-    public boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
-        MainUtil.sendMessage(plr, c, args);
+    public boolean sendMessage(PlotPlayer plr, final C c, final String... args) {
+        c.send(plr, args);
         return true;
     }
-
 }
