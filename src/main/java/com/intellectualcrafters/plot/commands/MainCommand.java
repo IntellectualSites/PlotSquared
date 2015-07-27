@@ -258,7 +258,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             MainUtil.sendMessage(plr, C.NOT_VALID_SUBCOMMAND);
             {
                 ArrayList<Command<PlotPlayer>> cmds = getCommands();
-                cmd = new StringComparison<Command<PlotPlayer>>(args[0], cmds).getMatchObject();
+                cmd = new StringComparison<Command<PlotPlayer>>(label, cmds).getMatchObject();
                 MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage());
             }
             return CommandHandlingOutput.NOT_FOUND;
