@@ -1,4 +1,4 @@
-package com.intellectualcrafters.plot.uuid;
+package com.plotsquared.bukkit.uuid;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -17,11 +18,11 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.UUID;
 
-public class LowerOfflineUUIDWrapper extends OfflineUUIDWrapper {
+public class OfflineUUIDWrapper extends UUIDWrapper {
     private Method getOnline = null;
     private final Object[] arg = new Object[0];
 
-    public LowerOfflineUUIDWrapper() {
+    public OfflineUUIDWrapper() {
         try {
             this.getOnline = Server.class.getMethod("getOnlinePlayers", new Class[0]);
         } catch (final NoSuchMethodException e) {
@@ -33,16 +34,16 @@ public class LowerOfflineUUIDWrapper extends OfflineUUIDWrapper {
 
     @Override
     public UUID getUUID(final PlotPlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName().toLowerCase()).getBytes(Charsets.UTF_8));
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
     @Override
     public UUID getUUID(final OfflinePlotPlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName().toLowerCase()).getBytes(Charsets.UTF_8));
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
     public UUID getUUID(final OfflinePlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName().toLowerCase() ).getBytes(Charsets.UTF_8));
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
     @Override
@@ -90,7 +91,7 @@ public class LowerOfflineUUIDWrapper extends OfflineUUIDWrapper {
 
     @Override
     public UUID getUUID(final String name) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
     }
     
     @Override

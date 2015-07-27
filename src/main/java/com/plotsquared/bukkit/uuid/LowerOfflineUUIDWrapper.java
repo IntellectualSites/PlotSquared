@@ -1,4 +1,4 @@
-package com.intellectualcrafters.plot.uuid;
+package com.plotsquared.bukkit.uuid;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
@@ -17,11 +17,11 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.UUID;
 
-public class OfflineUUIDWrapper extends UUIDWrapper {
+public class LowerOfflineUUIDWrapper extends OfflineUUIDWrapper {
     private Method getOnline = null;
     private final Object[] arg = new Object[0];
 
-    public OfflineUUIDWrapper() {
+    public LowerOfflineUUIDWrapper() {
         try {
             this.getOnline = Server.class.getMethod("getOnlinePlayers", new Class[0]);
         } catch (final NoSuchMethodException e) {
@@ -33,16 +33,16 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
 
     @Override
     public UUID getUUID(final PlotPlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName().toLowerCase()).getBytes(Charsets.UTF_8));
     }
 
     @Override
     public UUID getUUID(final OfflinePlotPlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName().toLowerCase()).getBytes(Charsets.UTF_8));
     }
 
     public UUID getUUID(final OfflinePlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName().toLowerCase() ).getBytes(Charsets.UTF_8));
     }
 
     @Override
@@ -90,7 +90,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
 
     @Override
     public UUID getUUID(final String name) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
     }
     
     @Override

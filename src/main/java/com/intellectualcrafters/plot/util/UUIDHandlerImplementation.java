@@ -9,8 +9,8 @@ import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
+import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
+import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 import java.util.HashMap;
