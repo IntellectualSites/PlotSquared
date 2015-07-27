@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
+import org.bukkit.generator.ChunkGenerator;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -31,6 +33,7 @@ import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualsites.commands.CommandCaller;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -43,6 +46,8 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.plotsquared.bukkit.util.SetupUtils;
 import com.plotsquared.bukkit.util.UUIDHandler;
 
 @CommandDeclaration(
@@ -155,11 +160,18 @@ public class Cluster extends SubCommand {
                 }
                 else {
                     final String gen_string = PS.get().config.getString("worlds." + world + "." + "generator.plugin");
-                    PlotGenerator generator;
+                    BukkitPlotGenerator generator;
                     if (gen_string == null) {
                         generator = new HybridGen(world);
                     } else {
-                        generator = (PlotGenerator) PS.get().IMP.getGenerator(world, gen_string);
+                        ChunkGenerator chunkgen = (ChunkGenerator) PS.get().IMP.getGenerator(world, gen_string).generator;
+                        if (chunkgen instanceof BukkitPlotGenerator) {
+                            generator = (BukkitPlotGenerator) chunkgen;
+                        }
+                        else {
+                            MainUtil.sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringMan.join(SetupUtils.generators.keySet(), ","));
+                            return false;
+                        }
                     }
                     new AugmentedPopulator(world, generator, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
                 }

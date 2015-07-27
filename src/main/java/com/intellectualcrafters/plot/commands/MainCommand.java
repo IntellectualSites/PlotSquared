@@ -33,6 +33,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualsites.commands.Argument;
 import com.intellectualsites.commands.Command;
 import com.intellectualsites.commands.CommandHandlingOutput;
@@ -93,9 +94,9 @@ public class MainCommand extends CommandManager {
     
     public static List<Command> getCommands(final CommandCategory category, final PlotPlayer player) {
         final List<Command> cmds = new ArrayList<>();
-        for (final Command c : instance.commands) {
-            if (!c.getRequiredType().equals(PlotPlayer.class)) {
-                if ((c.getCategory().equals(category)) && player.hasPermission(c.getPermission())) {
+        for (final Command c : instance.commands.values()) {
+            if (c.getRequiredType().isInstance(PlotPlayer.class)) {
+                if ((category == null || (c.getCategory().equals(category))) && player.hasPermission(c.getPermission())) {
                     cmds.add(c);
                 }
             }
@@ -105,11 +106,7 @@ public class MainCommand extends CommandManager {
     
     public static List<String> helpMenu(final PlotPlayer player, final CommandCategory category, int page) {
         List<Command> commands;
-        if (category != null) {
-            commands = getCommands(category, player);
-        } else {
-            commands = instance.commands;
-        }
+        commands = getCommands(category, player);
         // final int totalPages = ((int) Math.ceil(12 * (commands.size()) /
         // 100));
         final int perPage = 5;
@@ -130,8 +127,8 @@ public class MainCommand extends CommandManager {
         for (int x = start; x < max; x++) {
             cmd = commands.get(x);
             String s = C.HELP_ITEM.s();
-            if (cmd.getAliases().length > 0) {
-                s = s.replace("%alias%", cmd.getAliases()[0]);
+            if (cmd.getAliases().size() > 0) {
+                s = s.replace("%alias%", StringMan.join(cmd.getAliases(), "|"));
             }
             else {
                 s = s.replace("%alias%", "");
@@ -255,12 +252,7 @@ public class MainCommand extends CommandManager {
             System.arraycopy(parts, 1, args, 0, args.length);
         }
         Command cmd = null;
-        for (Command c1 : this.commands) {
-            if (c1.getCommand().equalsIgnoreCase(command) || c1.getAliases().contains(command)) {
-                cmd = c1;
-                break;
-            }
-        }
+        cmd = this.commands.get(command);
         if (cmd == null) {
             caller.message(C.NOT_VALID_SUBCOMMAND);
             {

@@ -3,10 +3,13 @@ package com.plotsquared.bukkit.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualsites.commands.Command;
+
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -48,27 +51,30 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (!command.getLabel().equalsIgnoreCase("plots")) {
             return null;
         }
-        final List<String> tabOptions = new ArrayList<>();
-        final String[] commands = new String[MainCommand.instance.getCommands().size()];
-        for (int x = 0; x < MainCommand.instance.getCommands().size(); x++) {
-            commands[x] = MainCommand.instance.getCommands().get(x).getCommand();
-        }
+        final Set<String> tabOptions = new HashSet<>();
+        ArrayList<Command> commands = MainCommand.instance.getCommands();
         String best = new StringComparison(strings[0], commands).getBestMatch();
         tabOptions.add(best);
         final String arg = strings[0].toLowerCase();
         for (final Command cmd : MainCommand.instance.getCommands()) {
-            if (!cmd.getCommand().equalsIgnoreCase(best)) {
-                if (player.hasPermission(cmd.getPermission())) {
-                    if (cmd.getCommand().startsWith(arg)) {
+            String label = cmd.getCommand();
+            if (!label.equalsIgnoreCase(best)) {
+                if (label.startsWith(arg)) {
+                    if (player.hasPermission(cmd.getPermission())) {
                         tabOptions.add(cmd.getCommand());
-                    } else if (cmd.getAliases().length > 0 && cmd.getAliases()[0].startsWith(arg)) {
-                        tabOptions.add(cmd.getAliases()[0]);
+                    } else if (cmd.getAliases().size() > 0) {
+                        for (String alias : cmd.getAliases()) {
+                            if (alias.startsWith(arg)) {
+                                tabOptions.add(label);
+                                break;
+                            }
+                        }
                     }
                 }
             }
         }
         if (tabOptions.size() > 0) {
-            return tabOptions;
+            return new ArrayList<>(tabOptions);
         }
         return null;
     }

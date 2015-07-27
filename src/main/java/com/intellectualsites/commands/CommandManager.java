@@ -2,6 +2,8 @@ package com.intellectualsites.commands;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,8 +48,24 @@ public class CommandManager {
         return false;
     }
 
-    final public Collection<Command> getCommands() {
-        return this.commands.values();
+    final public ArrayList<Command> getCommands() {
+        ArrayList<Command> result = new ArrayList<>(this.commands.values());
+        Collections.sort(result, new Comparator<Command>() {
+            @Override
+            public int compare(Command a, Command b) {
+                if (a == b) {
+                    return 0;
+                }
+                if (a == null) {
+                    return -1;
+                }
+                if (b == null) {
+                    return 1;
+                }
+                return a.getCommand().compareTo(b.getCommand());
+            }
+        });
+        return result;
     }
 
     public int handle(CommandCaller caller, String input) {
