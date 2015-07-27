@@ -20,18 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.util.bukkit;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
-import java.util.Collection;
-import java.util.HashMap;
-
-import org.bukkit.Chunk;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
+import org.bukkit.Chunk;
+
+import java.util.Collection;
+import java.util.HashMap;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 /**
  * SetBlockFast class<br> Used to do fast world editing

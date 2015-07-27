@@ -20,11 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
+import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  * Called when a plot is cleared

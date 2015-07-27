@@ -1,9 +1,9 @@
 package com.plotsquared.bukkit.object.entity;
 
-import java.util.Collection;
-
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+
+import java.util.Collection;
 
 public class LivingEntityStats {
     public boolean loot;

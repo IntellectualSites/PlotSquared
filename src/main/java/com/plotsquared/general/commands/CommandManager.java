@@ -1,18 +1,12 @@
-package com.intellectualsites.commands;
+package com.plotsquared.general.commands;
+
+import com.intellectualcrafters.plot.config.C;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.RequiredType;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
 
 @SuppressWarnings("unused")
 public class CommandManager<T extends CommandCaller> {

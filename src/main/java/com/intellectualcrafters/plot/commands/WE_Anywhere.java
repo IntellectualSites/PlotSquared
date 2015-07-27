@@ -22,12 +22,11 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.plotsquared.bukkit.listeners.worldedit.WEManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.plotsquared.bukkit.listeners.worldedit.WEManager;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "weanywhere",

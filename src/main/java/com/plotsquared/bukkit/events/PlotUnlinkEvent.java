@@ -20,14 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.World;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.intellectualcrafters.plot.object.PlotId;
+import java.util.ArrayList;
 
 /**
  * @author Empire92

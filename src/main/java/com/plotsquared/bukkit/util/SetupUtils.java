@@ -1,12 +1,11 @@
 package com.plotsquared.bukkit.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.bukkit.generator.ChunkGenerator;
-
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
+import org.bukkit.generator.ChunkGenerator;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class SetupUtils {
 

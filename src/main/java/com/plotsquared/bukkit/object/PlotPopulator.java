@@ -1,18 +1,17 @@
 package com.plotsquared.bukkit.object;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Random;
-
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Random;
 
 public abstract class PlotPopulator extends BlockPopulator {
     

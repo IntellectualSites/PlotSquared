@@ -1,9 +1,9 @@
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.database.DBFunc;
+
 import java.util.HashSet;
 import java.util.UUID;
-
-import com.intellectualcrafters.plot.database.DBFunc;
 
 public class PlotCluster {
     public final String world;

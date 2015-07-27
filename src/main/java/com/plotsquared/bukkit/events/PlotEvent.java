@@ -1,8 +1,7 @@
 package com.plotsquared.bukkit.events;
 
-import org.bukkit.event.Event;
-
 import com.intellectualcrafters.plot.object.Plot;
+import org.bukkit.event.Event;
 
 public abstract class PlotEvent extends Event {
 

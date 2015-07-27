@@ -20,20 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import com.intellectualsites.commands.Argument;
-import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -51,6 +37,17 @@ import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.plotsquared.general.commands.Argument;
+import com.plotsquared.general.commands.CommandDeclaration;
+import org.bukkit.Bukkit;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 @CommandDeclaration(
         command = "uuidconvert",

@@ -1,5 +1,7 @@
 package com.intellectualcrafters.configuration.serialization;
 
+import com.intellectualcrafters.configuration.Configuration;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,8 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.intellectualcrafters.configuration.Configuration;
 
 /**
  * Utility class for storing and retrieving classes for {@link Configuration}.
@@ -220,7 +220,6 @@ public class ConfigurationSerialization {
      */
     public static void unregisterClass(Class<? extends ConfigurationSerializable> clazz) {
         while (aliases.values().remove(clazz)) {
-            ;
         }
     }
 

@@ -1,11 +1,10 @@
 package com.plotsquared.bukkit.titles;
 
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
-import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.bukkit.object.BukkitPlayer;
+import org.bukkit.ChatColor;
 
 public class HackTitle extends AbstractTitle {
     @Override

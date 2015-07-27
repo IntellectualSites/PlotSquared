@@ -1,18 +1,11 @@
 package com.plotsquared.sponge;
 
-import java.util.List;
-
-import org.bukkit.World;
 import org.spongepowered.api.world.gen.BiomeGenerator;
 import org.spongepowered.api.world.gen.GeneratorPopulator;
 import org.spongepowered.api.world.gen.Populator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.plotsquared.bukkit.object.PlotPopulator;
+import java.util.List;
 
 public class SpongePlotGenerator implements WorldGenerator {
 

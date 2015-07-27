@@ -22,7 +22,6 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * SubCommand class
@@ -30,7 +29,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
  * @author Citymonstret
  */
 @SuppressWarnings({ "deprecation", "unused" })
-public abstract class SubCommand extends com.intellectualsites.commands.Command<PlotPlayer> {
+public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer> {
 
     /**
      * The category

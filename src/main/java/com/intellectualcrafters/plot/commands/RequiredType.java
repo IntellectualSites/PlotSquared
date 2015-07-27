@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualsites.commands.CommandCaller;
+import com.plotsquared.general.commands.CommandCaller;
 
 public enum RequiredType {
     CONSOLE,

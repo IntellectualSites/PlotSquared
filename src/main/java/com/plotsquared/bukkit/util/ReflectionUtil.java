@@ -1,11 +1,11 @@
 package com.plotsquared.bukkit.util;
 
+import org.bukkit.Bukkit;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import org.bukkit.Bukkit;
 
 /**
  * Reflection Utilities for minecraft

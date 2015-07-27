@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.listeners.worldedit;
 
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -14,6 +12,8 @@ import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
+
+import java.util.HashSet;
 
 public class WESubscriber {
     @Subscribe(priority=Priority.VERY_EARLY)

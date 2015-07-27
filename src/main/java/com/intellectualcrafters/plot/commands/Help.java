@@ -7,8 +7,8 @@
  */
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "help",

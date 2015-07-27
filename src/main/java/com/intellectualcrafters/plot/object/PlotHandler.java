@@ -1,13 +1,13 @@
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
-
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class PlotHandler {
     public static HashSet<UUID> getOwners(Plot plot) {

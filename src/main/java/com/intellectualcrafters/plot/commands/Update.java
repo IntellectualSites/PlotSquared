@@ -20,15 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualsites.commands.CommandDeclaration;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @CommandDeclaration(
         command = "update",

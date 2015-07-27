@@ -2,8 +2,8 @@ package com.intellectualcrafters.plot.util.helpmenu;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualsites.commands.Argument;
-import com.intellectualsites.commands.Command;
+import com.plotsquared.general.commands.Argument;
+import com.plotsquared.general.commands.Command;
 
 public class HelpObject {
 

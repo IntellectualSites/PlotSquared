@@ -1,12 +1,12 @@
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.util.StringMan;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * Created 2014-11-17 for PlotSquared
@@ -288,9 +288,9 @@ public abstract class FlagValue<T> {
     }
 
     public interface ListValue {
-        public void add(Object t, String value);
+        void add(Object t, String value);
 
-        public void remove(Object t, String value);
+        void remove(Object t, String value);
     }
 
     public static class PlotBlockListValue extends FlagValue<HashSet<PlotBlock>> implements ListValue {

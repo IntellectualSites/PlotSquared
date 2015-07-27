@@ -1,4 +1,4 @@
-package com.intellectualsites.commands;
+package com.plotsquared.general.commands;
 
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;

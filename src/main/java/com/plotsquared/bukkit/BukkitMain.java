@@ -2,37 +2,37 @@ package com.plotsquared.bukkit;
 
 import com.intellectualcrafters.plot.IPlotMain;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.*;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.plotsquared.bukkit.commands.BukkitCommand;
-import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
-import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
-import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
-import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
-import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.plotsquared.bukkit.listeners.*;
-import com.plotsquared.bukkit.listeners.worldedit.WEListener;
-import com.plotsquared.bukkit.listeners.worldedit.WESubscriber;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.plotsquared.bukkit.titles.AbstractTitle;
-import com.plotsquared.bukkit.titles.DefaultTitle;
 import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.uuid.DefaultUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.LowerOfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.plotsquared.bukkit.commands.BukkitCommand;
+import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
+import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
+import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
+import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
+import com.plotsquared.bukkit.generator.HybridGen;
+import com.plotsquared.bukkit.listeners.*;
+import com.plotsquared.bukkit.listeners.worldedit.WEListener;
+import com.plotsquared.bukkit.listeners.worldedit.WESubscriber;
+import com.plotsquared.bukkit.titles.AbstractTitle;
+import com.plotsquared.bukkit.titles.DefaultTitle;
 import com.plotsquared.bukkit.util.SetupUtils;
 import com.plotsquared.bukkit.util.bukkit.*;
 import com.plotsquared.bukkit.util.bukkit.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -124,7 +124,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 Bukkit.getServer().getConsoleSender().sendMessage(message);
                 return;
             }
-            catch (Throwable e) {};
+            catch (Throwable e) {}
         }
         System.out.println(ConsoleColors.fromString(message));
     }

@@ -20,15 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
 
 @CommandDeclaration(
         command = "home",

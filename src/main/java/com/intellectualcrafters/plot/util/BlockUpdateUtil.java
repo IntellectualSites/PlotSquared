@@ -1,8 +1,8 @@
 package com.intellectualcrafters.plot.util;
 
-import java.util.Collection;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
+
+import java.util.Collection;
 
 public abstract class BlockUpdateUtil {
     public static BlockUpdateUtil setBlockManager = null;

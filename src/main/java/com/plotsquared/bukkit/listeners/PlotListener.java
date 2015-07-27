@@ -20,36 +20,26 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.listeners;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.*;
+import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
+import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
+import com.plotsquared.bukkit.object.BukkitPlayer;
+import com.plotsquared.bukkit.object.comment.CommentManager;
+import com.plotsquared.bukkit.titles.AbstractTitle;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.WeatherType;
-import org.bukkit.entity.Player;
-
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
-import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.plotsquared.bukkit.object.comment.CommentManager;
-import com.plotsquared.bukkit.titles.AbstractTitle;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 
 /**
  * @author Citymonstret

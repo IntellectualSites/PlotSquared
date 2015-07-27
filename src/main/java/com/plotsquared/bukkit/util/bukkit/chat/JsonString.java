@@ -1,11 +1,11 @@
 package com.plotsquared.bukkit.util.bukkit.chat;
 
+import com.google.gson.stream.JsonWriter;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.stream.JsonWriter;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
 
 /**
  * Represents a JSON string value.

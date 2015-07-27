@@ -1,5 +1,8 @@
 package com.plotsquared.bukkit.listeners;
 
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.plotsquared.bukkit.object.InfoInventory;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -7,10 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
-
-import com.plotsquared.bukkit.object.InfoInventory;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 /**
  * Created 2014-11-18 for PlotSquared

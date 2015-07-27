@@ -1,4 +1,4 @@
-package com.intellectualsites.commands;
+package com.plotsquared.general.commands;
 
 import java.lang.reflect.Field;
 

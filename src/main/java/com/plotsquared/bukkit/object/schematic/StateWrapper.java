@@ -1,27 +1,20 @@
 package com.plotsquared.bukkit.object.schematic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.intellectualcrafters.jnbt.*;
 import com.intellectualcrafters.plot.object.schematic.ItemType;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import com.intellectualcrafters.jnbt.ByteTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.Tag;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
-import com.intellectualcrafters.plot.util.StringMan;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class StateWrapper {
     

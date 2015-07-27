@@ -20,22 +20,20 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import org.apache.commons.lang.StringUtils;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.CommentInbox;
-import com.plotsquared.bukkit.object.comment.CommentManager;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.plotsquared.bukkit.object.comment.CommentManager;
+import com.plotsquared.general.commands.CommandDeclaration;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @CommandDeclaration(
         command = "inbox",
@@ -193,7 +191,7 @@ public class Inbox extends SubCommand {
                     catch (NumberFormatException e) {
                         sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
                         return false;
-                    };
+                    }
                 }
             }
         }

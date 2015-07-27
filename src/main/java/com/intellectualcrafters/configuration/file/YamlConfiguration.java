@@ -1,5 +1,14 @@
 package com.intellectualcrafters.configuration.file;
 
+import com.intellectualcrafters.configuration.Configuration;
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.InvalidConfigurationException;
+import com.intellectualcrafters.plot.PS;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.representer.Representer;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,16 +16,6 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
-
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
-import org.yaml.snakeyaml.representer.Representer;
-
-import com.intellectualcrafters.configuration.Configuration;
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.InvalidConfigurationException;
-import com.intellectualcrafters.plot.PS;
 
 /**
  * An implementation of {@link Configuration} which saves all files in Yaml.

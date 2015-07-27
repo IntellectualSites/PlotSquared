@@ -1,8 +1,7 @@
 package com.plotsquared.bukkit.titles;
 
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import org.bukkit.ChatColor;
 
 public abstract class AbstractTitle {
     public static AbstractTitle TITLE_CLASS;

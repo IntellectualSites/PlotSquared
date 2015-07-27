@@ -20,12 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import com.intellectualcrafters.plot.object.Plot;
+import java.util.UUID;
 
 /**
  * @author Empire92

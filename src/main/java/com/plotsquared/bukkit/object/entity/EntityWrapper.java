@@ -1,41 +1,23 @@
 package com.plotsquared.bukkit.object.entity;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.entity.AgeableStats;
 import com.intellectualcrafters.plot.object.entity.ArmorStandStats;
 import com.intellectualcrafters.plot.object.entity.EntityBaseStats;
 import com.intellectualcrafters.plot.object.entity.HorseStats;
-import org.bukkit.Art;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Rotation;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.Horse;
+import org.bukkit.entity.*;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Rabbit.Type;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-
-import com.intellectualcrafters.plot.PS;
 
 public class EntityWrapper {
     public short id;

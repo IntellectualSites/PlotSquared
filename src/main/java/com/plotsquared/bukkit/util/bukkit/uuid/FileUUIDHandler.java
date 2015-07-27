@@ -1,16 +1,5 @@
 package com.plotsquared.bukkit.util.bukkit.uuid;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -21,12 +10,18 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.NbtFactory;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 public class FileUUIDHandler extends UUIDHandlerImplementation {
 

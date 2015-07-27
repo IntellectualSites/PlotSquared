@@ -1,22 +1,21 @@
 package com.intellectualcrafters.plot.uuid;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.UUID;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.BiMap;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.BiMap;
-import com.intellectualcrafters.plot.PS;
-import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.UUID;
 
 public class LowerOfflineUUIDWrapper extends OfflineUUIDWrapper {
     private Method getOnline = null;

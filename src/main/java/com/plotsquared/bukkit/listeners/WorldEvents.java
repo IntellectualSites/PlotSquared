@@ -1,5 +1,9 @@
 package com.plotsquared.bukkit.listeners;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -7,11 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
-
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
-import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 
 public class WorldEvents implements Listener {
     

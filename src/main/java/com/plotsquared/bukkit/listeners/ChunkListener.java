@@ -1,5 +1,8 @@
 package com.plotsquared.bukkit.listeners;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.util.TaskManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -16,10 +19,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.util.TaskManager;
 
 public class ChunkListener implements Listener {
 

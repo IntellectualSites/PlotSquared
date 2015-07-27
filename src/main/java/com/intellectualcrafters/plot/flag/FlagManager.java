@@ -20,18 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import java.util.*;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
+
+import java.util.*;
 
 /**
  * Flag Manager Utility
@@ -162,10 +158,7 @@ public class FlagManager {
             return false;
         }
         final Flag flag = getPlotFlag(plot, strFlag);
-        if (flag == null || !((Boolean) flag.getValue())) {
-            return false;
-        }
-        return true;
+        return !(flag == null || !((Boolean) flag.getValue()));
     }
     
     public static boolean isPlotFlagFalse(final Plot plot, final String strFlag) {

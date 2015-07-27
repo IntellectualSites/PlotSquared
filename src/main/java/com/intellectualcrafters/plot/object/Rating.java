@@ -1,11 +1,11 @@
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.config.Settings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
-import com.intellectualcrafters.plot.config.Settings;
 
 public class Rating {
     

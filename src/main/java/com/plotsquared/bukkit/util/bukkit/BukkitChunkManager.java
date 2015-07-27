@@ -1,69 +1,28 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import com.plotsquared.bukkit.BukkitMain;
 import com.intellectualcrafters.plot.PS;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.plotsquared.bukkit.object.entity.EntityWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.SkullType;
-import org.bukkit.World;
-import org.bukkit.block.Banner;
-import org.bukkit.block.Beacon;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Chest;
-import org.bukkit.block.CommandBlock;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Dropper;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Hopper;
-import org.bukkit.block.Jukebox;
-import org.bukkit.block.NoteBlock;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
+import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.generator.AugmentedPopulator;
+import com.plotsquared.bukkit.object.entity.EntityWrapper;
+import org.bukkit.*;
+import org.bukkit.block.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.*;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BukkitChunkManager extends ChunkManager {
@@ -285,7 +244,7 @@ public class BukkitChunkManager extends ChunkManager {
                                                 return;
                                             }
                                         }
-                                    };
+                                    }
                                 }, 1, 1);
                                 TaskManager.tasks.put(currentIndex, task);
                             }

@@ -1,8 +1,8 @@
-package com.intellectualsites.commands;
+package com.plotsquared.general.commands;
 
 import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
 
 public abstract class Argument<T> {

@@ -1,18 +1,17 @@
 package com.plotsquared.bukkit.database.plotme;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public abstract class APlotMeConnector {
     public abstract Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder);

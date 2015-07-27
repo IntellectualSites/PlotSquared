@@ -1,8 +1,10 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotItemStack;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.InventoryType;
@@ -12,11 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.intellectualcrafters.plot.object.PlotInventory;
-import com.intellectualcrafters.plot.object.PlotItemStack;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.InventoryUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BukkitInventoryUtil extends InventoryUtil {
 

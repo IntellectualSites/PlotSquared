@@ -1,29 +1,22 @@
 package com.plotsquared.bukkit.generator;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Random;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.bukkit.object.BlockWrapper;
+import com.plotsquared.bukkit.util.bukkit.BukkitChunkManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.PS;
-import com.plotsquared.bukkit.object.BlockWrapper;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitChunkManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Random;
 
 public class AugmentedPopulator extends BlockPopulator {
     public static short[][] x_loc;

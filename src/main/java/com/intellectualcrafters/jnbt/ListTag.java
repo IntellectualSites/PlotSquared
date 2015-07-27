@@ -1,10 +1,10 @@
 package com.intellectualcrafters.jnbt;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 
 /**

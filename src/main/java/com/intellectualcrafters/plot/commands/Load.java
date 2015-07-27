@@ -1,9 +1,5 @@
 package com.intellectualcrafters.plot.commands;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -16,8 +12,11 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
 @CommandDeclaration(
         command = "load",

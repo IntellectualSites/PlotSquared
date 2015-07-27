@@ -20,13 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.intellectualcrafters.plot.config.Configuration.SettingValue;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.StringMan;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Configuration Node

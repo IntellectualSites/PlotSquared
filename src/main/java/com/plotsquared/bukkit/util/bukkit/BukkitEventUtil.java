@@ -1,35 +1,17 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.plotsquared.bukkit.events.*;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
-import com.plotsquared.bukkit.events.ClusterFlagRemoveEvent;
-import com.plotsquared.bukkit.events.PlayerClaimPlotEvent;
-import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
-import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
-import com.plotsquared.bukkit.events.PlayerPlotDeniedEvent;
-import com.plotsquared.bukkit.events.PlayerPlotHelperEvent;
-import com.plotsquared.bukkit.events.PlayerPlotTrustedEvent;
-import com.plotsquared.bukkit.events.PlayerTeleportToPlotEvent;
-import com.plotsquared.bukkit.events.PlotClearEvent;
-import com.plotsquared.bukkit.events.PlotDeleteEvent;
-import com.plotsquared.bukkit.events.PlotFlagAddEvent;
-import com.plotsquared.bukkit.events.PlotFlagRemoveEvent;
-import com.plotsquared.bukkit.events.PlotMergeEvent;
-import com.plotsquared.bukkit.events.PlotUnlinkEvent;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.EventUtil;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class BukkitEventUtil extends EventUtil {
 

@@ -1,9 +1,8 @@
 package com.plotsquared.bukkit.titles;
 
-import org.bukkit.ChatColor;
-
-import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.bukkit.object.BukkitPlayer;
+import org.bukkit.ChatColor;
 
 public class DefaultTitle extends AbstractTitle {
     @Override

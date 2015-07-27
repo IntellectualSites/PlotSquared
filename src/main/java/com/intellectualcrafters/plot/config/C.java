@@ -20,23 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
-import java.io.File;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualsites.commands.CommandCaller;
+import com.plotsquared.general.commands.CommandCaller;
+import org.bukkit.ChatColor;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * Captions class.

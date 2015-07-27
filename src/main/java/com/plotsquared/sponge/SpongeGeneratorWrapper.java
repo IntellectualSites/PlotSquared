@@ -1,11 +1,10 @@
 package com.plotsquared.sponge;
 
-import org.spongepowered.api.world.gen.WorldGenerator;
-
 import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import org.spongepowered.api.world.gen.WorldGenerator;
 
 public class SpongeGeneratorWrapper extends PlotGenerator<WorldGenerator>{
 

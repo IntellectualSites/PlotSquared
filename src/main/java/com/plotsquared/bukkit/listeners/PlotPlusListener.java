@@ -20,13 +20,18 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
+import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -43,18 +48,8 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.config.C;
-import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
-import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Created 2014-10-30 for PlotSquared

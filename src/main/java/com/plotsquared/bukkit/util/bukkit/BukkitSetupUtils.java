@@ -1,8 +1,11 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import java.io.IOException;
-import java.util.Map.Entry;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.SetupObject;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
+import com.plotsquared.bukkit.util.SetupUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -10,12 +13,8 @@ import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.SetupObject;
-import com.plotsquared.bukkit.util.SetupUtils;
+import java.io.IOException;
+import java.util.Map.Entry;
 
 public class BukkitSetupUtils extends SetupUtils {
     

@@ -1,11 +1,6 @@
 package com.intellectualcrafters.json;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 
 /**
  * A JSONTokener takes a source string and extracts characters and tokens from it. It is used by the JSONObject and

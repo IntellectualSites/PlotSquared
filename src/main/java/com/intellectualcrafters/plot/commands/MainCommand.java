@@ -20,11 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -37,10 +32,15 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.helpmenu.HelpMenu;
-import com.intellectualsites.commands.Argument;
-import com.intellectualsites.commands.Command;
-import com.intellectualsites.commands.CommandHandlingOutput;
-import com.intellectualsites.commands.CommandManager;
+import com.plotsquared.general.commands.Argument;
+import com.plotsquared.general.commands.Command;
+import com.plotsquared.general.commands.CommandHandlingOutput;
+import com.plotsquared.general.commands.CommandManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * PlotSquared command class

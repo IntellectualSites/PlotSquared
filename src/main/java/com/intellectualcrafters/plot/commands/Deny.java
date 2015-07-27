@@ -20,22 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualsites.commands.Argument;
-import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
+import com.plotsquared.general.commands.Argument;
+import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.UUID;
 
 @CommandDeclaration(
         command = "deny",

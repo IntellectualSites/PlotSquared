@@ -1,13 +1,13 @@
-package com.intellectualsites.commands;
+package com.plotsquared.general.commands;
+
+import com.intellectualcrafters.plot.commands.CommandCategory;
+import com.intellectualcrafters.plot.commands.RequiredType;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.intellectualcrafters.plot.commands.CommandCategory;
-import com.intellectualcrafters.plot.commands.RequiredType;
 
 public abstract class Command<E extends CommandCaller> extends CommandManager {
 

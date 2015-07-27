@@ -1,12 +1,11 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import java.util.Collection;
-
+import com.intellectualcrafters.plot.util.MainUtil;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import com.intellectualcrafters.plot.util.MainUtil;
+import java.util.Collection;
 
 public class SetBlockSlow extends BukkitSetBlockManager {
     @Override

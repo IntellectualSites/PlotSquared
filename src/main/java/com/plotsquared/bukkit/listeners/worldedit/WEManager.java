@@ -1,8 +1,5 @@
 package com.plotsquared.bukkit.listeners.worldedit;
 
-import java.util.HashSet;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -10,6 +7,9 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 public class WEManager {
     public static HashSet<String> bypass = new HashSet<>();
@@ -39,10 +39,7 @@ public class WEManager {
     }
     
     public static boolean intersects(RegionWrapper region1, RegionWrapper region2) {
-        if ((region1.minX <= region2.maxX) && (region1.maxX >= region2.minX) && (region1.minZ <= region2.maxZ) && (region1.maxZ >= region2.minZ)) {
-            return true;
-        }
-        return false;
+        return (region1.minX <= region2.maxX) && (region1.maxX >= region2.minX) && (region1.minZ <= region2.maxZ) && (region1.maxZ >= region2.minZ);
     }
     
     public static boolean regionContains(RegionWrapper selection, HashSet<RegionWrapper> mask) {

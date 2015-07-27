@@ -1,10 +1,10 @@
 package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.plot.PS;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.intellectualcrafters.plot.PS;
 
 public abstract class TaskManager {
     public static HashSet<String> TELEPORT_QUEUE = new HashSet<>();

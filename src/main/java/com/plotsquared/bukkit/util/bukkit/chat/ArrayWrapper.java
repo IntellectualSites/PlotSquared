@@ -1,10 +1,10 @@
 package com.plotsquared.bukkit.util.bukkit.chat;
 
+import org.apache.commons.lang.Validate;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
-
-import org.apache.commons.lang.Validate;
 
 /**
  * Represents a wrapper around an array class of an arbitrary reference type,

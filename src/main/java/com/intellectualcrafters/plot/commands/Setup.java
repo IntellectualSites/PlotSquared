@@ -20,30 +20,24 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-
-
-
-import com.intellectualsites.commands.CommandCaller;
-import com.intellectualsites.commands.CommandDeclaration;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.generator.ChunkGenerator;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
-import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.bukkit.generator.HybridGen;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
+import com.plotsquared.bukkit.generator.HybridGen;
 import com.plotsquared.bukkit.util.SetupUtils;
+import com.plotsquared.general.commands.CommandDeclaration;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.generator.ChunkGenerator;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
 
 @CommandDeclaration(
         command = "setup",

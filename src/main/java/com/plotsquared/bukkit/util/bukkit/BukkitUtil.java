@@ -1,14 +1,13 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.*;
+import com.plotsquared.bukkit.object.BukkitPlayer;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -18,24 +17,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Sandstone;
-import org.bukkit.material.Step;
-import org.bukkit.material.Tree;
-import org.bukkit.material.WoodenStep;
-import org.bukkit.material.Wool;
+import org.bukkit.material.*;
 
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();

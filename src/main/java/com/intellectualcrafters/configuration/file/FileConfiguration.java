@@ -1,24 +1,13 @@
 package com.intellectualcrafters.configuration.file;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
 import com.intellectualcrafters.configuration.Configuration;
 import com.intellectualcrafters.configuration.InvalidConfigurationException;
 import com.intellectualcrafters.configuration.MemoryConfiguration;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is a base class for all File based implementations of {@link
@@ -157,7 +146,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *     a valid Configuration.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void load(File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
+    public void load(File file) throws IOException, InvalidConfigurationException {
         if (file == null) throw new NullPointerException("File cannot be null");
 
         final FileInputStream stream = new FileInputStream(file);
@@ -240,7 +229,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *     a valid Configuration.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void load(String file) throws FileNotFoundException, IOException, InvalidConfigurationException {
+    public void load(String file) throws IOException, InvalidConfigurationException {
         if (file == null) throw new NullPointerException("File cannot be null");
 
         load(new File(file));

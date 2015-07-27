@@ -1,24 +1,22 @@
 package com.plotsquared.bukkit.object;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.commands.RequiredType;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import com.intellectualcrafters.plot.commands.RequiredType;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.UUID;
 
 public class BukkitPlayer implements PlotPlayer {
     
@@ -98,10 +96,7 @@ public class BukkitPlayer implements PlotPlayer {
     @Override
     public boolean isOp() {
         if (this.op != 0) {
-            if (this.op == 1) {
-                return false;
-            }
-            return true;
+            return this.op != 1;
         }
         final boolean result = this.player.isOp();
         if (!result) {

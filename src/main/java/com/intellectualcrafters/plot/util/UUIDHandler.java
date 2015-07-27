@@ -1,17 +1,13 @@
 package com.intellectualcrafters.plot.util;
 
+import com.google.common.collect.BiMap;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
-
-import com.google.common.collect.BiMap;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 public class UUIDHandler {
 

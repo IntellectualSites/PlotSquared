@@ -1,15 +1,14 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
 
 public class ConsolePlayer implements PlotPlayer {
 

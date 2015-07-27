@@ -1,86 +1,76 @@
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.util.UUID;
-
-import org.bukkit.generator.ChunkGenerator;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
-import com.plotsquared.bukkit.listeners.APlotListener;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.PlayerManager;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.intellectualcrafters.plot.util.*;
+import com.plotsquared.bukkit.listeners.APlotListener;
 import com.plotsquared.bukkit.util.SetupUtils;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+
+import java.io.File;
+import java.util.UUID;
 
 public interface IPlotMain {
-    public void log(String message);
+    void log(String message);
 
-    public File getDirectory();
+    File getDirectory();
     
-    public void disable();
+    void disable();
 
-    public int[] getPluginVersion();
+    int[] getPluginVersion();
     
-    public int[] getServerVersion();
+    int[] getServerVersion();
 
-    public void handleKick(UUID uuid, C c);
+    void handleKick(UUID uuid, C c);
 
-    public TaskManager getTaskManager();
+    TaskManager getTaskManager();
 
-    public void runEntityTask();
+    void runEntityTask();
 
-    public void registerCommands();
+    void registerCommands();
 
-    public void registerPlayerEvents();
+    void registerPlayerEvents();
 
-    public void registerInventoryEvents();
+    void registerInventoryEvents();
 
-    public void registerPlotPlusEvents();
+    void registerPlotPlusEvents();
 
-    public void registerForceFieldEvents();
+    void registerForceFieldEvents();
 
-    public void registerWorldEditEvents();
+    void registerWorldEditEvents();
     
-    public void registerTNTListener();
+    void registerTNTListener();
 
-    public EconHandler getEconomyHandler();
+    EconHandler getEconomyHandler();
 
-    public BlockManager initBlockManager();
+    BlockManager initBlockManager();
     
-    public EventUtil initEventUtil();
+    EventUtil initEventUtil();
 
-    public ChunkManager initChunkManager();
+    ChunkManager initChunkManager();
 
-    public SetupUtils initSetupUtils();
+    SetupUtils initSetupUtils();
 
-    public HybridUtils initHybridUtils();
+    HybridUtils initHybridUtils();
 
-    public UUIDHandlerImplementation initUUIDHandler();
+    UUIDHandlerImplementation initUUIDHandler();
     
-    public InventoryUtil initInventoryUtil();
+    InventoryUtil initInventoryUtil();
 
-    public boolean initPlotMeConverter();
+    boolean initPlotMeConverter();
     
-    public void unregister(PlotPlayer player);
+    void unregister(PlotPlayer player);
 
-    public PlotGenerator<?> getGenerator(String world, String name);
+    PlotGenerator<?> getGenerator(String world, String name);
 
-    public APlotListener initPlotListener();
+    APlotListener initPlotListener();
 
-    public void registerChunkProcessor();
+    void registerChunkProcessor();
 
-    public void registerWorldEvents();
+    void registerWorldEvents();
 
-    public PlayerManager initPlayerManager();
+    PlayerManager initPlayerManager();
     
-    public String getServerName();
+    String getServerName();
 }

@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.listeners.worldedit;
 
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.RegionWrapper;
@@ -15,6 +13,8 @@ import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
+
+import java.util.HashSet;
 
 public class ProcessedWEExtent extends AbstractDelegateExtent {
     private final HashSet<RegionWrapper> mask;

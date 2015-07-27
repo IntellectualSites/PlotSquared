@@ -20,6 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -28,9 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
 
 /**
  * @author DPOH-VAR

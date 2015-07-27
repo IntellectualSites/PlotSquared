@@ -1,8 +1,8 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.PlayerManager;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 
 public class BukkitPlayerManager extends PlayerManager {
     

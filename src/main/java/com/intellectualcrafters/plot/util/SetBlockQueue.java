@@ -1,13 +1,13 @@
 package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.plotsquared.bukkit.generator.AugmentedPopulator;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
-
-import com.intellectualcrafters.plot.PS;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.PlotBlock;
 
 public class SetBlockQueue {
     

@@ -1,15 +1,10 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.ArrayList;
-
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
+
+import java.util.ArrayList;
 
 /**
  * A plot manager with square plots which tesselate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot)

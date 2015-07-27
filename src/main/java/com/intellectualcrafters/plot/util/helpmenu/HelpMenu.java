@@ -3,8 +3,7 @@ package com.intellectualcrafters.plot.util.helpmenu;
 import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualsites.commands.Command;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import com.plotsquared.general.commands.Command;
 
 import java.util.List;
 
