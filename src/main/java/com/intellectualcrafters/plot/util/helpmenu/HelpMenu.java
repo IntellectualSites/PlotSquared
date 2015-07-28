@@ -32,7 +32,7 @@ public class HelpMenu {
     }
 
     public HelpMenu generateMaxPages() {
-        this._maxPage = Math.max(_commands.size() - 1 / PER_PAGE, 1);
+        this._maxPage = Math.max((_commands.size() - 1) / PER_PAGE, 1);
         return this;
     }
 

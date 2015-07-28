@@ -25,8 +25,8 @@ public class BukkitPlayer implements PlotPlayer {
     private String name;
     private int op = 0;
     private long last = 0;
-    private HashSet<String> hasPerm = new HashSet<>();
-    private HashSet<String> noPerm = new HashSet<>();
+    public HashSet<String> hasPerm = new HashSet<>();
+    public HashSet<String> noPerm = new HashSet<>();
     
     private HashMap<String, Object> meta;
 

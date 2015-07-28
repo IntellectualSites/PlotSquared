@@ -44,12 +44,15 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.intellectualcrafters.plot.object.StaticStrings.*;
+
 /**
  * Player Events involving plots
  *
  * @author Citymonstret
  * @author Empire92
  */
+@SuppressWarnings({"unused","deprecation","unchecked"})
 public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener implements Listener {
 
     private boolean pistonBlocks = true;
@@ -173,7 +176,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                 return;
             }
             default: {
-                return;
+                break;
             }
         }
     }
@@ -199,13 +202,12 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             Plot sPlot = MainUtil.getPlot(sLoc);
             if (sPlot == null || !PlotHandler.sameOwners(plot, sPlot)) {
                 entity.remove();
-                return;
             }
         }
         else if ((shooter instanceof Player)) {
             PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
             if (plot == null) {
-                if (!pp.hasPermission("plots.projectile.unowned")) {
+                if (!pp.hasPermission(PERMISSION_PROJECTILE_UNOWNED)) {
                     entity.remove();
                 }
                 return;
@@ -213,7 +215,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             if (plot.isAdded(pp.getUUID())) {
                 return;
             }
-            if (pp.hasPermission("plots.projectile.other")) {
+            if (pp.hasPermission(PERMISSION_PROJECTILE_OTHER)) {
                 return;
             }
             entity.remove();
@@ -253,7 +255,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
         }
 
         Flag flag;
-        if (!player.hasPermission("plots.admin.interact.blockedcommands") && (flag = FlagManager.getPlotFlag(plot, "blocked-cmds")) != null) {
+        if (!player.hasPermission(PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS) && (flag = FlagManager.getPlotFlag(plot, "blocked-cmds")) != null) {
             List<String> v = (List<String>) flag.getValue();
 
             String msg  = event.getMessage().toLowerCase().replaceFirst("/", "");
@@ -334,7 +336,6 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
         if (name.equals("PlotSquared") || pp.getUUID().equals(DBFunc.everyone)) {
             event.disallow(Result.KICK_WHITELIST, "This account is reserved");
             BukkitUtil.removePlayer(pp.getName());
-            return;
         }
     }
 
@@ -352,7 +353,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
         UUIDHandler.add(name, uuid);
         ExpireManager.dates.put(uuid, System.currentTimeMillis());
         if (PS.get().worldEdit != null) {
-            if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+            if (Permissions.hasPermission(pp, PERMISSION_WORLDEDIT_BYPASS)) {
                 WEManager.bypass.add(pp.getName());
             }
         }
@@ -375,12 +376,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
         }
         plotEntry(pp, plot);
     }
-    
-    /**
-     * Get the int location from double
-     * @param value
-     * @return
-     */
+
     public int getInt(double value) {
         return (int) (value < 0 ? value - 1 : value);
     }
@@ -406,7 +402,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                     return;
                 }
                 if (!plotExit(pp, lastPlot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.exit.denied");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
@@ -423,7 +419,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
                 if (!plotEntry(pp, plot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.entry.denied");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
@@ -468,7 +464,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                     return;
                 }
                 if (!plotExit(pp, lastPlot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.exit.denied");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
@@ -485,7 +481,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
                 if (!plotEntry(pp, plot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.entry.denied");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
@@ -502,16 +498,13 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                     to.setZ(border - 4);
                     player.teleport(event.getTo());
                     MainUtil.sendMessage(pp, C.BORDER);
-                    return;
                 }
                 else if (z2 < -border) {
                     to.setZ(-border + 4);
                     player.teleport(event.getTo());
                     MainUtil.sendMessage(pp, C.BORDER);
-                    return;
                 }
             }
-            return;
         }
     }
 
@@ -539,7 +532,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
         final Set<Player> recipients = event.getRecipients();
         recipients.clear();
         for (final Player p : Bukkit.getOnlinePlayers()) {
-            if (p.hasPermission("plots.admin.command.chat") || plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(p)))) {
+            if (p.hasPermission(PERMISSION_COMMANDS_CHAT) || plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(p)))) {
                 recipients.add(p);
             }
         }
@@ -564,10 +557,10 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             }
             if (!plot.hasOwner()) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(player);
-                if (Permissions.hasPermission(pp, "plots.admin.destroy.unowned")) {
+                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.unowned");
+                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
@@ -578,23 +571,21 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                     return;
                 }
-                if (Permissions.hasPermission(pp, "plots.admin.destroy.other")) {
+                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.other");
+                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
-                return;
             }
             return;
         }
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        if (Permissions.hasPermission(pp, "plots.admin.destroy.road")) {
+        if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.road");
+            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_ROAD);
             event.setCancelled(true);
-            return;
         }
     }
 
@@ -635,7 +626,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
     public void onWorldChanged(final PlayerChangedWorldEvent event) {
         final PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
         if (PS.get().worldEdit != null) {
-            if (!Permissions.hasPermission(player, "plots.worldedit.bypass")) {
+            if (!Permissions.hasPermission(player, PERMISSION_WORLDEDIT_BYPASS)) {
                 WEManager.bypass.remove(player.getName());
             }
             else {
@@ -656,7 +647,6 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
         if (!(e instanceof Player)) {
             if (!(e instanceof org.bukkit.entity.FallingBlock)) {
                 event.setCancelled(true);
-                return;
             }
         } else {
             final Block b = event.getBlock();
@@ -666,28 +656,25 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             if (plot == null) {
                 if (MainUtil.isPlotAreaAbs(loc)) {
                     final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                    if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                    if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_ROAD)) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_ROAD);
                         event.setCancelled(true);
-                        return;
                     }
                 }
             } else {
                 if (!plot.hasOwner()) {
                     final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                    if (!Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
+                    if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_UNOWNED);
                         event.setCancelled(true);
-                        return;
                     }
                 } else {
                     final PlotPlayer pp = BukkitUtil.getPlayer(p);
                     if (!plot.isAdded(pp.getUUID())) {
-                        if (!Permissions.hasPermission(pp, "plots.admin.build.other")) {
+                        if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
                             if (MainUtil.isPlotArea(loc)) {
-                                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
+                                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_OTHER);
                                 event.setCancelled(true);
-                                return;
                             }
                         }
                     }
@@ -734,6 +721,8 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBD(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
+
+        final String world;
         if (player == null) {
             final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
             if (PS.get().isPlotWorld(loc.getWorld())) {
@@ -741,11 +730,15 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                     event.setCancelled(true);
                 }
             }
+            world = loc.getWorld();
+        } else {
+            world = player.getWorld().getName();
         }
-        final String world = player.getWorld().getName();
+
         if (!PS.get().isPlotWorld(world)) {
             return;
         }
+
         final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
         final Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
@@ -755,10 +748,10 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             }
             if (!plot.hasOwner()) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(player);
-                if (Permissions.hasPermission(pp, "plots.admin.destroy.unowned")) {
+                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.unowned");
+                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
@@ -769,23 +762,22 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                     return;
                 }
-                if (Permissions.hasPermission(pp, "plots.admin.destroy.other")) {
+                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.other");
+                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
                 return;
             }
             return;
         }
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        if (Permissions.hasPermission(pp, "plots.admin.destroy.road")) {
+        if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.road");
+            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_ROAD);
             event.setCancelled(true);
-            return;
         }
     }
 
@@ -904,7 +896,6 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             Plot newPlot = MainUtil.getPlot(bloc);
             if (!MainUtil.equals(plot, newPlot)) {
                 event.setCancelled(true);
-                return;
             }
         }
     }
@@ -1167,7 +1158,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             int[] mobs = null;
             if (entityFlag != null) {
                 int cap = ((Integer) entityFlag.getValue());
-                if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
+                mobs = ChunkManager.manager.countEntities(plot);
                 if (mobs[0] >= cap) {
                     return true;
                 }
@@ -1264,28 +1255,25 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
         if (plot == null) {
             if (MainUtil.isPlotAreaAbs(loc)) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_ROAD)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_ROAD);
                     e.setCancelled(true);
-                    return;
                 }
             }
         } else {
             if (!plot.hasOwner()) {
                 final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                if (!Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
+                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_UNOWNED);
                     e.setCancelled(true);
-                    return;
                 }
             } else {
                 final PlotPlayer pp = BukkitUtil.getPlayer(p);
                 if (!plot.isAdded(pp.getUUID())) {
-                    if (!Permissions.hasPermission(pp, "plots.admin.build.other")) {
+                    if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
                         if (MainUtil.isPlotArea(loc)) {
-                            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
+                            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_OTHER);
                             e.setCancelled(true);
-                            return;
                         }
                     }
                 }
@@ -1318,7 +1306,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                     return;
                 }
                 if (!plotExit(pp, lastPlot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.exit.denied");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
@@ -1335,7 +1323,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
                 if (!plotEntry(pp, plot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.entry.denied");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
@@ -1380,7 +1368,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                     return;
                 }
                 if (!plotExit(pp, lastPlot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.exit.denied");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
@@ -1397,7 +1385,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
                 if (!plotEntry(pp, plot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.entry.denied");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
                     }
@@ -1414,16 +1402,13 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                     to.setZ(border - 4);
                     player.teleport(event.getTo());
                     MainUtil.sendMessage(pp, C.BORDER);
-                    return;
                 }
                 else if (z2 < -border) {
                     to.setZ(-border + 4);
                     player.teleport(event.getTo());
                     MainUtil.sendMessage(pp, C.BORDER);
-                    return;
                 }
             }
-            return;
         }
     }
 
@@ -1437,33 +1422,30 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             Plot plot = MainUtil.getPlot(loc);
             if (plot == null) {
                 if (MainUtil.isPlotAreaAbs(loc)) {
-                    if (Permissions.hasPermission(pp, "plots.admin.build.road")) {
+                    if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_ROAD)) {
                         return;
                     }
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_ROAD);
                     e.setCancelled(true);
-                    return;
                 }
             } else {
                 if (!plot.hasOwner()) {
-                    if (Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
+                    if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_UNOWNED)) {
                         return;
                     }
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_UNOWNED);
                     e.setCancelled(true);
-                    return;
                 } else if (!plot.isAdded(pp.getUUID())) {
-                    final Flag use = FlagManager.getPlotFlag(plot, "use");
+                    final Flag use = FlagManager.getPlotFlag(plot, FLAG_USE);
                     if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) e.getBucket().getId(), (byte) 0))) {
                         return;
                     }
-                    if (Permissions.hasPermission(pp, "plots.admin.build.other")) {
+                    if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
                         return;
                     }
                     if (MainUtil.isPlotArea(loc)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_OTHER);
                         e.setCancelled(true);
-                        return;
                     }
                 }
             }
@@ -1478,7 +1460,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
         }
         Player player = (Player) clicker;
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        PlotInventory inv = (PlotInventory) pp.getMeta("inventory");
+        PlotInventory inv = (PlotInventory) pp.getMeta(META_INVENTORY);
         if (inv != null && event.getRawSlot() == event.getSlot()) {
             if (!inv.onClick(event.getSlot())) {
                 event.setCancelled(true);
@@ -1494,7 +1476,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             return;
         }
         Player player = (Player) closer;
-        BukkitUtil.getPlayer(player).deleteMeta("inventory");
+        BukkitUtil.getPlayer(player).deleteMeta(META_INVENTORY);
     }
     
     
@@ -1526,34 +1508,31 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             Plot plot = MainUtil.getPlot(loc);
             if (plot == null) {
                 if (MainUtil.isPlotAreaAbs(loc)) {
-                    if (Permissions.hasPermission(pp, "plots.admin.build.road")) {
+                    if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_ROAD)) {
                         return;
                     }
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_ROAD);
                     e.setCancelled(true);
-                    return;
                 }
             } else {
                 if (!plot.hasOwner()) {
-                    if (Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
+                    if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_UNOWNED)) {
                         return;
                     }
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_UNOWNED);
                     e.setCancelled(true);
-                    return;
                 } else if (!plot.isAdded(pp.getUUID())) {
-                    final Flag use = FlagManager.getPlotFlag(plot, "use");
+                    final Flag use = FlagManager.getPlotFlag(plot, FLAG_USE);
                     final Block block = e.getBlockClicked();
                     if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                         return;
                     }
-                    if (Permissions.hasPermission(pp, "plots.admin.build.other")) {
+                    if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
                         return;
                     }
                     if (MainUtil.isPlotArea(loc)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_OTHER);
                         e.setCancelled(true);
-                        return;
                     }
                 }
             }
@@ -1580,28 +1559,25 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             Plot plot = MainUtil.getPlot(loc);
             if (plot == null) {
                 if (MainUtil.isPlotAreaAbs(loc)) {
-                    if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                    if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_ROAD)) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_ROAD);
                         e.setCancelled(true);
-                        return;
                     }
                 }
             } else {
                 if (!plot.hasOwner()) {
-                    if (!Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
+                    if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_UNOWNED);
                         e.setCancelled(true);
-                        return;
                     }
                 } else if (!plot.isAdded(pp.getUUID())) {
-                    if (FlagManager.isPlotFlagTrue(plot, "hanging-place")) {
+                    if (FlagManager.isPlotFlagTrue(plot, FLAG_HANGING_PLACE)) {
                         return;
                     }
-                    if (!Permissions.hasPermission(pp, "plots.admin.build.other")) {
+                    if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
                         if (MainUtil.isPlotArea(loc)) {
-                            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
+                            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_OTHER);
                             e.setCancelled(true);
-                            return;
                         }
                     }
                 }
@@ -1620,24 +1596,24 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                 Plot plot = MainUtil.getPlot(l);
                 if (plot == null) {
                     if (MainUtil.isPlotAreaAbs(l)) {
-                        if (!Permissions.hasPermission(pp, "plots.admin.destroy.road")) {
-                            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.road");
+                        if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_ROAD)) {
+                            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_ROAD);
                             e.setCancelled(true);
                         }
                     }
                 } else {
                     if (!plot.hasOwner()) {
-                        if (!Permissions.hasPermission(pp, "plots.admin.destroy.unowned")) {
-                            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.unowned");
+                        if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_UNOWNED)) {
+                            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_UNOWNED);
                             e.setCancelled(true);
                         }
                     } else if (!plot.isAdded(pp.getUUID())) {
-                        if (FlagManager.isPlotFlagTrue(plot, "hanging-break")) {
+                        if (FlagManager.isPlotFlagTrue(plot, FLAG_HANGING_BREAK)) {
                             return;
                         }
-                        if (!Permissions.hasPermission(pp, "plots.admin.destroy.other")) {
+                        if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_OTHER)) {
                             if (MainUtil.isPlotArea(l)) {
-                                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.destroy.other");
+                                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_OTHER);
                                 e.setCancelled(true);
                             }
                         }
@@ -1653,15 +1629,15 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                     Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(e.getEntity()));
                     if (plot != null) {
                         if (!plot.hasOwner()) {
-                            if (!Permissions.hasPermission(player, "plots.admin.destroy.unowned")) {
-                                MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.unowned");
+                            if (!Permissions.hasPermission(player, PERMISSION_ADMIN_DESTROY_UNOWNED)) {
+                                MainUtil.sendMessage(player, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_UNOWNED);
                                 e.setCancelled(true);
                             }
                         } else if (!plot.isAdded(player.getUUID())) {
-                            if (!FlagManager.isPlotFlagTrue(plot, "hanging-break")){
-                                if (!Permissions.hasPermission(player, "plots.admin.destroy.other")) {
+                            if (!FlagManager.isPlotFlagTrue(plot, FLAG_HANGING_BREAK)){
+                                if (!Permissions.hasPermission(player, PERMISSION_ADMIN_DESTROY_OTHER)) {
                                     if (MainUtil.isPlotArea(BukkitUtil.getLocation(e.getEntity()))) {
-                                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.admin.destroy.other");
+                                        MainUtil.sendMessage(player, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_OTHER);
                                         e.setCancelled(true);
                                     }
                                 }
@@ -1686,37 +1662,34 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                 if (!MainUtil.isPlotAreaAbs(l)) {
                     return;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
+                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_INTERACT_ROAD)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_INTERACT_ROAD);
                     e.setCancelled(true);
-                    return;
                 }
             } else {
                 if (!plot.hasOwner()) {
-                    if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
+                    if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_INTERACT_UNOWNED)) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_INTERACT_UNOWNED);
                         e.setCancelled(true);
-                        return;
                     }
                 } else if (!plot.isAdded(pp.getUUID())) {
                     final Entity entity = e.getRightClicked();
-                    if ((entity instanceof Monster) && FlagManager.isPlotFlagTrue(plot, "hostile-interact")) {
+                    if ((entity instanceof Monster) && FlagManager.isPlotFlagTrue(plot, FLAG_HOSTILE_INTERACT)) {
                         return;
                     }
-                    if ((entity instanceof Animals) && FlagManager.isPlotFlagTrue(plot, "animal-interact")) {
+                    if ((entity instanceof Animals) && FlagManager.isPlotFlagTrue(plot, FLAG_ANIMAL_INTERACT)) {
                         return;
                     }
-                    if ((entity instanceof Tameable) && ((Tameable) entity).isTamed() && FlagManager.isPlotFlagTrue(plot, "tamed-interact")) {
+                    if ((entity instanceof Tameable) && ((Tameable) entity).isTamed() && FlagManager.isPlotFlagTrue(plot, FLAG_TAMED_INTERACT)) {
                         return;
                     }
-                    if ((entity instanceof RideableMinecart) && FlagManager.isPlotFlagTrue(plot, "vehicle-use")) {
+                    if ((entity instanceof RideableMinecart) && FlagManager.isPlotFlagTrue(plot, FLAG_VEHICLE_USE)) {
                         return;
                     }
-                    if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
+                    if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_INTERACT_OTHER)) {
                         if (MainUtil.isPlotArea(l)) {
-                            MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
+                            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_INTERACT_OTHER);
                             e.setCancelled(true);
-                            return;
                         }
                     }
                 }
@@ -1741,7 +1714,6 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                     if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.road")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.vehicle.break.road");
                         e.setCancelled(true);
-                        return;
                     }
                 } else {
                     if (!plot.hasOwner()) {
@@ -1760,7 +1732,6 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                             if (MainUtil.isPlotArea(l)) {
                                 MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.vehicle.break.other");
                                 e.setCancelled(true);
-                                return;
                             }
                         }
                     }
@@ -1860,7 +1831,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             }
             else if (victim instanceof Player) {
                 if (plot != null) {
-                    Flag pvp = FlagManager.getPlotFlag(plot, "pvp");
+                    Flag pvp = FlagManager.getPlotFlag(plot, FLAG_PVP);
                     if (pvp == null) {
                         return;
                     } else {
@@ -1920,21 +1891,18 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
                 if (!Permissions.hasPermission(pp, "plots.admin.projectile.road")) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.projectile.road");
                     e.setHatching(false);
-                    return;
                 }
             } else {
                 if (!plot.hasOwner()) {
                     if (!Permissions.hasPermission(pp, "plots.admin.projectile.unowned")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.projectile.unowned");
                         e.setHatching(false);
-                        return;
                     }
                 } else if (!plot.isAdded(pp.getUUID())) {
                     if (!Permissions.hasPermission(pp, "plots.admin.projectile.other")) {
                         if (MainUtil.isPlotArea(l)) {
                             MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.projectile.other");
                             e.setHatching(false);
-                            return;
                         }
                     }
                 }
@@ -1954,38 +1922,35 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
         final Plot plot = MainUtil.getPlot(loc); 
         if (plot != null) {
             if (!plot.hasOwner()) {
-                if (!Permissions.hasPermission(pp, "plots.admin.build.unowned")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.unowned");
+                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_UNOWNED);
                     event.setCancelled(true);
                     return;
                 }
             }
             else if (!plot.isAdded(pp.getUUID())) {
-                final Flag place = FlagManager.getPlotFlag(plot, "place");
+                final Flag place = FlagManager.getPlotFlag(plot, FLAG_PLACE);
                 final Block block = event.getBlock();
-                if (((place == null) || !((HashSet<PlotBlock>) place.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) && !Permissions.hasPermission(pp, "plots.admin.build.other")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.other");
+                if (((place == null) || !((HashSet<PlotBlock>) place.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) && !Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
                     return;
                 }
             }
-            if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
+            if (FlagManager.isPlotFlagTrue(plot, FLAG_DISABLE_PHYSICS)) {
                 Block block = event.getBlockPlaced();
                 sendBlockChange(block.getLocation(), block.getType(), block.getData());
             }
             PlotWorld pw = PS.get().getPlotWorld(loc.getWorld());
-            if (loc.getY() >= pw.MAX_BUILD_HEIGHT && !Permissions.hasPermission(pp, "plots.admin.build.heightlimit")) {
+            if (loc.getY() >= pw.MAX_BUILD_HEIGHT && !Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", "" + pw.MAX_BUILD_HEIGHT));
-                return;
             }
-            return;
         }
-        else if (!Permissions.hasPermission(pp, "plots.admin.build.road")) {
+        else if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
             if (MainUtil.isPlotAreaAbs(loc)) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.build.road");
+                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_ROAD);
                 event.setCancelled(true);
-                return;
             }
         }
     }
