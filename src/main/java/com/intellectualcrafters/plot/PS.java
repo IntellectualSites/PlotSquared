@@ -12,9 +12,7 @@ import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.generator.*;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.listeners.APlotListener;
-import com.plotsquared.bukkit.object.comment.CommentManager;
-import com.plotsquared.bukkit.util.SetupUtils;
+import com.plotsquared.listener.APlotListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 import java.io.*;
@@ -73,136 +71,143 @@ public class PS {
      * @param imp_class
      */
     public PS(final IPlotMain imp_class) {
-        instance = this;
-        SetupUtils.generators = new HashMap<>();
-        IMP = imp_class;
         try {
-            FILE = new File(PS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-        } catch (Exception e) {
-            log("Could not determine file path");
-        }
-        VERSION = IMP.getPluginVersion();
-        EconHandler.manager = IMP.getEconomyHandler();
-        if (getJavaVersion() < 1.7) {
-            log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
-            // Didn't know of any other link :D
-            log(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
-            IMP.disable();
-            return;
-        }
-        if (getJavaVersion() < 1.8) {
-            log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
-        }
-        this.TASK = IMP.getTaskManager();
-        if (C.ENABLED.s().length() > 0) {
-            log(C.ENABLED.s());
-        }
-        setupConfigs();
-        this.translationFile = new File(IMP.getDirectory() + File.separator + "translations" + File.separator + "PlotSquared.use_THIS.yml");
-        C.load(translationFile);
-        setupDefaultFlags();
-        setupDatabase();
-        CommentManager.registerDefaultInboxes();
-        // Tasks
-        if (Settings.KILL_ROAD_MOBS) {
-            IMP.runEntityTask();
-        }
-        // Events
-        IMP.registerCommands();
-        IMP.registerPlayerEvents();
-        IMP.registerInventoryEvents();
-        IMP.registerPlotPlusEvents();
-        IMP.registerForceFieldEvents();
-        IMP.registerWorldEditEvents();
-        IMP.registerWorldEvents();
-        if (Settings.METRICS) {
-            IMP.startMetrics();
-        } else {
-            log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
-        }
-        IMP.startMetrics();
-        if (Settings.TNT_LISTENER) {
-            IMP.registerTNTListener();
-        }
-        if (Settings.CHUNK_PROCESSOR) {
-            IMP.registerChunkProcessor();
-        }
-        // create UUIDWrapper
-        UUIDHandler.implementation = IMP.initUUIDHandler();
-        UUIDHandler.implementation.startCaching(null); // TODO maybe a notification when this is done?
-        // create event util class
-        EventUtil.manager = IMP.initEventUtil();
-        // create Hybrid utility class
-        HybridUtils.manager = IMP.initHybridUtils();
-        // Inventory utility class
-        InventoryUtil.manager = IMP.initInventoryUtil();
-        // create setup util class
-        SetupUtils.manager = IMP.initSetupUtils();
-        // Set block
-        BlockManager.manager = IMP.initBlockManager();
-        // Set chunk
-        ChunkManager.manager = IMP.initChunkManager();
-        // Plot listener
-        APlotListener.manager = IMP.initPlotListener();
-        // Player manager
-        PlayerManager.manager = IMP.initPlayerManager();
-
-        // Check for updates
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                URL url = getUpdate();
-                if (url != null) {
-                    update = url;
-                    log("&6You are running an older version of PlotSquared...");
-                    log("&8 - &3Use: &7/plot update");
-                    log("&8 - &3Or: &7" + url);
-                }
-                else if (LAST_VERSION != null && !VERSION.equals(LAST_VERSION)) {
-                    log("&aThanks for updating from: " + LAST_VERSION + " to " + StringMan.join(VERSION, "."));
-                }
+            instance = this;
+            SetupUtils.generators = new HashMap<>();
+            IMP = imp_class;
+            try {
+                FILE = new File(PS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            } catch (Exception e) {
+                FILE = new File(IMP.getDirectory().getParentFile(), "PlotSquared.jar");
+                e.printStackTrace();
+                log("Could not determine file path");
             }
-        });
-        
-        // PlotMe
-        if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
-            TaskManager.runTaskLater(new Runnable() {
-
+            VERSION = IMP.getPluginVersion();
+            EconHandler.manager = IMP.getEconomyHandler();
+            if (getJavaVersion() < 1.7) {
+                log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
+                // Didn't know of any other link :D
+                log(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
+                IMP.disable();
+                return;
+            }
+            if (getJavaVersion() < 1.8) {
+                log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
+            }
+            this.TASK = IMP.getTaskManager();
+            if (C.ENABLED.s().length() > 0) {
+                log(C.ENABLED.s());
+            }
+            setupConfigs();
+            this.translationFile = new File(IMP.getDirectory() + File.separator + "translations" + File.separator + "PlotSquared.use_THIS.yml");
+            C.load(translationFile);
+            setupDefaultFlags();
+            setupDatabase();
+            CommentManager.registerDefaultInboxes();
+            // Tasks
+            if (Settings.KILL_ROAD_MOBS) {
+                IMP.runEntityTask();
+            }
+            // Events
+            IMP.registerCommands();
+            IMP.registerPlayerEvents();
+            IMP.registerInventoryEvents();
+            IMP.registerPlotPlusEvents();
+            IMP.registerForceFieldEvents();
+            IMP.registerWorldEditEvents();
+            IMP.registerWorldEvents();
+            if (Settings.METRICS) {
+                IMP.startMetrics();
+            } else {
+                log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
+            }
+            IMP.startMetrics();
+            if (Settings.TNT_LISTENER) {
+                IMP.registerTNTListener();
+            }
+            if (Settings.CHUNK_PROCESSOR) {
+                IMP.registerChunkProcessor();
+            }
+            // create UUIDWrapper
+            UUIDHandler.implementation = IMP.initUUIDHandler();
+            UUIDHandler.startCaching(null); // TODO maybe a notification when this is done?
+            // create event util class
+            EventUtil.manager = IMP.initEventUtil();
+            // create Hybrid utility class
+            HybridUtils.manager = IMP.initHybridUtils();
+            // Inventory utility class
+            InventoryUtil.manager = IMP.initInventoryUtil();
+            // create setup util class
+            SetupUtils.manager = IMP.initSetupUtils();
+            // Set block
+            BlockManager.manager = IMP.initBlockManager();
+            // Set chunk
+            ChunkManager.manager = IMP.initChunkManager();
+            // Plot listener
+            APlotListener.manager = IMP.initPlotListener();
+            // Player manager
+            PlayerManager.manager = IMP.initPlayerManager();
+    
+            // Check for updates
+            TaskManager.runTaskAsync(new Runnable() {
+                @Override
                 public void run() {
-                    if (IMP.initPlotMeConverter()) {
-                        log("&c=== IMPORTANT ===");
-                        log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
-                        log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                        log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                        log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
+                    URL url = getUpdate();
+                    if (url != null) {
+                        update = url;
+                        log("&6You are running an older version of PlotSquared...");
+                        log("&8 - &3Use: &7/plot update");
+                        log("&8 - &3Or: &7" + url);
+                    }
+                    else if (LAST_VERSION != null && !StringMan.join(VERSION,".").equals(LAST_VERSION)) {
+                        log("&aThanks for updating from: " + LAST_VERSION + " to " + StringMan.join(VERSION, "."));
                     }
                 }
-            }, 200);
-        }
-        
-        // Auto clearing
-        if (Settings.AUTO_CLEAR) {
-            ExpireManager.runTask();
-        }
-        
-        // World generators:
-        ConfigurationSection section = config.getConfigurationSection("worlds");
-        if (section != null) {
-            for (String world : section.getKeys(false)) {
-                if (BlockManager.manager.isWorld(world)) {
-                    break;
+            });
+            
+            // PlotMe
+            if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
+                TaskManager.runTaskLater(new Runnable() {
+    
+                    public void run() {
+                        if (IMP.initPlotMeConverter()) {
+                            log("&c=== IMPORTANT ===");
+                            log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                            log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                            log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                            log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
+                        }
+                    }
+                }, 200);
+            }
+            
+            // Auto clearing
+            if (Settings.AUTO_CLEAR) {
+                ExpireManager.runTask();
+            }
+            
+            // World generators:
+            ConfigurationSection section = config.getConfigurationSection("worlds");
+            if (section != null) {
+                for (String world : section.getKeys(false)) {
+                    if (BlockManager.manager.isWorld(world)) {
+                        break;
+                    }
                 }
             }
+    
+            // Copy files
+            copyFile("town.template", "templates");
+            copyFile("skyblock.template", "templates");
+            copyFile("german.yml", "translations");
+            copyFile("s_chinese_unescaped.yml", "translations");
+            copyFile("s_chinese.yml", "translations");
+            copyFile("italian.yml", "translations");
+            showDebug();
         }
-
-        // Copy files
-        copyFile("town.template", "templates");
-        copyFile("skyblock.template", "templates");
-        copyFile("german.yml", "translations");
-        copyFile("s_chinese_unescaped.yml", "translations");
-        copyFile("s_chinese.yml", "translations");
-        copyFile("italian.yml", "translations");
-        showDebug();
+        catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
     
     public boolean checkVersion(int[] version, int major, int minor, int minor2) {
@@ -1260,7 +1265,7 @@ public class PS {
      */
     public void setupConfig() {
         LAST_VERSION = config.getString("version");
-        config.set("version", VERSION);
+        config.set("version", StringMan.join(VERSION,"."));
         
         final Map<String, Object> options = new HashMap<>();
         // Command confirmation
@@ -1553,7 +1558,7 @@ public class PS {
      * Setup the storage file (load + save missing nodes)
      */
     private void setupStorage() {
-        storage.set("version", VERSION);
+        storage.set("version", StringMan.join(VERSION,"."));
         final Map<String, Object> options = new HashMap<>();
         options.put("mysql.use", false);
         options.put("sqlite.use", true);
@@ -1611,7 +1616,7 @@ public class PS {
      * Setup the style.yml file
      */
     private void setupStyle() {
-        style.set("version", VERSION);
+        style.set("version", StringMan.join(VERSION,"."));
         final Map<String, Object> o = new HashMap<>();
         o.put("color.1", "6");
         o.put("color.2", "7");

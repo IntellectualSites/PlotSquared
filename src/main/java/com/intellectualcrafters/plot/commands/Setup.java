@@ -23,14 +23,16 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.generator.HybridGen;
-import com.plotsquared.bukkit.util.SetupUtils;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.generator.ChunkGenerator;
 
@@ -52,14 +54,11 @@ public class Setup extends SubCommand {
     public void displayGenerators(PlotPlayer plr) {
         StringBuffer message = new StringBuffer();
         message.append("&6What generator do you want?");
-        for (Entry<String, ChunkGenerator> entry : SetupUtils.generators.entrySet()) {
+        for (Entry<String, PlotGenerator<?>> entry : SetupUtils.generators.entrySet()) {
             if (entry.getKey().equals("PlotSquared")) {
                 message.append("\n&8 - &2" + entry.getKey() + " (Default Generator)");
             }
-            else if (entry.getValue() instanceof HybridGen) {
-                message.append("\n&8 - &7" + entry.getKey() + " (Hybrid Generator)");
-            }
-            else if (entry.getValue() instanceof BukkitPlotGenerator) {
+            else if (entry.getValue().isFull()) {
                 message.append("\n&8 - &7" + entry.getKey() + " (Plot Generator)");
             }
             else {
@@ -119,7 +118,7 @@ public class Setup extends SubCommand {
                 List<String> allTypes = Arrays.asList(new String[] { "default", "augmented", "partial"});
                 List<String> allDesc = Arrays.asList(new String[] { "Standard plot generation", "Plot generation with vanilla terrain", "Vanilla with clusters of plots"});
                 ArrayList<String> types = new ArrayList<>();
-                if (SetupUtils.generators.get(object.setupGenerator) instanceof BukkitPlotGenerator) {
+                if (SetupUtils.generators.get(object.setupGenerator).isFull()) {
                     types.add("default");
                 }
                 types.add("augmented");
@@ -140,13 +139,13 @@ public class Setup extends SubCommand {
                     return false;
                 }
                 object.type = allTypes.indexOf(args[0].toLowerCase());
-                ChunkGenerator gen = SetupUtils.generators.get(object.setupGenerator);
+                PlotGenerator<?> gen = SetupUtils.generators.get(object.setupGenerator);
                 if (object.type == 0) {
                     object.current++;
                     if (object.step == null) {
                         object.plotManager = object.setupGenerator;
-                        object.step = ((BukkitPlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
-                        ((BukkitPlotGenerator) SetupUtils.generators.get(object.plotManager)).processSetup(object);
+                        object.step = SetupUtils.generators.get(object.plotManager).getNewPlotWorld(null).getSettingNodes();
+                        SetupUtils.generators.get(object.plotManager).processSetup(object);
                     }
                     if (object.step.length == 0) {
                         object.current = 4;
@@ -157,17 +156,17 @@ public class Setup extends SubCommand {
                     final ConfigurationNode step = object.step[object.setup_index];
                     sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                 } else {
-                    if (gen instanceof BukkitPlotGenerator) {
+                    if (gen.isFull()) {
                         object.plotManager = object.setupGenerator;
                         object.setupGenerator = null;
-                        object.step = ((BukkitPlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
-                        ((BukkitPlotGenerator) SetupUtils.generators.get(object.plotManager)).processSetup(object);
+                        object.step = SetupUtils.generators.get(object.plotManager).getNewPlotWorld(null).getSettingNodes();
+                        SetupUtils.generators.get(object.plotManager).processSetup(object);
                     }
                     else {
                         object.plotManager = "PlotSquared";
                         MainUtil.sendMessage(plr, "&c[WARNING] The specified generator does not identify as BukkitPlotGenerator");
                         MainUtil.sendMessage(plr, "&7 - You may need to manually configure the other plugin");
-                        object.step = ((BukkitPlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
+                        object.step = SetupUtils.generators.get(object.plotManager).getNewPlotWorld(null).getSettingNodes();
                     }
                     MainUtil.sendMessage(plr, "&6What terrain would you like in plots?" + "\n&8 - &2NONE&8 - &7No terrain at all" + "\n&8 - &7ORE&8 - &7Just some ore veins and trees" + "\n&8 - &7ROAD&8 - &7Terrain seperated by roads" + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                 }
@@ -183,7 +182,7 @@ public class Setup extends SubCommand {
                 object.terrain = terrain.indexOf(args[0].toLowerCase());
                 object.current++;
                 if (object.step == null) {
-                    object.step = ((BukkitPlotGenerator) SetupUtils.generators.get(object.plotManager)).getNewPlotWorld(null).getSettingNodes();
+                    object.step = SetupUtils.generators.get(object.plotManager).getNewPlotWorld(null).getSettingNodes();
                 }
                 final ConfigurationNode step = object.step[object.setup_index];
                 sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");

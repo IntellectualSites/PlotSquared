@@ -2,10 +2,13 @@ package com.plotsquared.bukkit.util.bukkit;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.bukkit.util.SetupUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -32,7 +35,7 @@ public class BukkitSetupUtils extends SetupUtils {
                     final String name = plugin.getDescription().getName();
 //                        final PlotGenerator pgen = (PlotGenerator) generator;
 //                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
-                            SetupUtils.generators.put(name, generator);
+                            SetupUtils.generators.put(name, new BukkitGeneratorWrapper("CheckingPlotSquaredGenerator", generator));
 //                        }
 //                    }
                 }
@@ -55,8 +58,8 @@ public class BukkitSetupUtils extends SetupUtils {
             if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
                 PS.get().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
             }
-            ChunkGenerator gen = generators.get(object.setupGenerator);
-            if (gen instanceof BukkitPlotGenerator) {
+            PlotGenerator<ChunkGenerator> gen = (PlotGenerator<ChunkGenerator>) generators.get(object.setupGenerator);
+            if (gen.generator instanceof BukkitPlotGenerator) {
                 object.setupGenerator = null;
             }
         }
@@ -105,8 +108,8 @@ public class BukkitSetupUtils extends SetupUtils {
         if (!(generator instanceof BukkitPlotGenerator)) {
             return null;
         }
-        for (Entry<String, ChunkGenerator> entry : generators.entrySet()) {
-            if (entry.getValue().getClass().getName().equals(generator.getClass().getName())) {
+        for (Entry<String, PlotGenerator<?>> entry : generators.entrySet()) {
+            if (entry.getValue().generator.getClass().getName().equals(generator.getClass().getName())) {
                 return entry.getKey();
             }
         }

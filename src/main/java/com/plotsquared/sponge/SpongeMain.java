@@ -9,11 +9,13 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.listeners.APlotListener;
-import com.plotsquared.bukkit.util.SetupUtils;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.plotsquared.listener.APlotListener;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.GameRegistry;
+import org.spongepowered.api.MinecraftVersion;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.entity.player.gamemode.GameModes;
@@ -23,6 +25,7 @@ import org.spongepowered.api.event.state.PreInitializationEvent;
 import org.spongepowered.api.event.state.ServerAboutToStartEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.service.profile.GameProfileResolver;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
 import org.spongepowered.api.world.World;
@@ -43,7 +46,33 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     @Inject private Game game;
     private Server server;
     
+    private GameProfileResolver resolver;
+    
     private WorldModify modify;
+    
+    private Object plugin;
+    
+    // stuff //
+    public Logger getLogger() {
+        return logger;
+    }
+    
+    public Game getGame() {
+        return game;
+    }
+    
+    public Server getServer() {
+        return server;
+    }
+    
+    public GameProfileResolver getResolver() {
+        return resolver;
+    }
+    
+    public Object getPlugin() {
+        return this.plugin;
+    }
+    /////////
 
     ////////////////////// SPONGE PLUGIN REGISTRATION ////////////////////
     @Override
@@ -84,27 +113,18 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     public void onServerAboutToStart(ServerAboutToStartEvent event) {
         log("INIT");
         THIS = this;
-        PS.instance = new PS(this);
         
-        // Setup metrics
-        if (Settings.METRICS) {
-            try {
-                final SpongeMetrics metrics = new SpongeMetrics(game, this);
-                metrics.start();
-                log(C.PREFIX.s() + "&6Metrics enabled.");
-            } catch (final Exception e) {
-                log(C.PREFIX.s() + "&cFailed to load up metrics.");
-            }
-        } else {
-            log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
-        }
+        // resolver
+        resolver = game.getServiceManager().provide(GameProfileResolver.class).get();
+        plugin = game.getPluginManager().getPlugin("PlotSquared").get().getInstance();
+        
+        PS.instance = new PS(this);
         
         // Set the generators for each world...
         server = game.getServer();
         Collection<World> worlds = server.getWorlds();
         if (worlds.size() > 0) {
             log("INJECTING WORLDS!!!!!!!");
-            UUIDHandler.startCaching(null);
             for (World world : server.getWorlds()) {
                 log("INJECTING WORLD: " + world.getName());
                 world.setWorldGenerator(new SpongePlotGenerator(world.getName()));
@@ -112,29 +132,23 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         }
         
         ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds");
-        for (String world : worldSection.getKeys(false)) {
-            this.modify = new WorldModify(this);
-            Game game = event.getGame();
-            game.getRegistry().registerWorldGeneratorModifier(modify);
-            game.getRegistry().getWorldBuilder()
-            .name(world)
-            .enabled(true)
-            .loadsOnStartup(true)
-            .keepsSpawnLoaded(true)
-            .dimensionType(DimensionTypes.OVERWORLD)
-            .generator(GeneratorTypes.DEBUG)
-            .gameMode(GameModes.CREATIVE)
-            .generatorModifiers(modify)
-            .build();
+        if (worldSection != null) {
+            for (String world : worldSection.getKeys(false)) {
+                this.modify = new WorldModify(this);
+                Game game = event.getGame();
+                game.getRegistry().registerWorldGeneratorModifier(modify);
+                game.getRegistry().getWorldBuilder()
+                .name(world)
+                .enabled(true)
+                .loadsOnStartup(true)
+                .keepsSpawnLoaded(true)
+                .dimensionType(DimensionTypes.OVERWORLD)
+                .generator(GeneratorTypes.DEBUG)
+                .gameMode(GameModes.CREATIVE)
+                .generatorModifiers(modify)
+                .build();
+            }
         }
-    }
-    
-    public Logger getLogger() {
-        return logger;
-    }
-    
-    public Game getGame() {
-        return game;
     }
     
     @Subscribe
@@ -163,68 +177,72 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public int[] getPluginVersion() {
-        // TODO Auto-generated method stub
-        return null;
+        PluginContainer plugin = game.getPluginManager().getPlugin("PlotSquared").get();
+        String version = plugin.getVersion();
+        log("Checking plugin version: PlotSquared: ");
+        String[] split = version.split("\\.");
+        return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), (split.length == 3) ? Integer.parseInt(split[2]) : 0 };
     }
 
     @Override
     public int[] getServerVersion() {
-        // TODO Auto-generated method stub
-        return null;
+        log("Checking minecraft version: Sponge: ");
+        String version = game.getPlatform().getMinecraftVersion().getName();
+        String[] split = version.split("\\.");
+        return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), (split.length == 3) ? Integer.parseInt(split[2]) : 0 };
     }
 
     @Override
     public TaskManager getTaskManager() {
-        // TODO Auto-generated method stub
-        return null;
+        return new SpongeTaskManager();
     }
 
     @Override
     public void runEntityTask() {
         // TODO Auto-generated method stub
-        
+        log("runEntityTask is not implemented!");
     }
 
     @Override
     public void registerCommands() {
         // TODO Auto-generated method stub
-        
+        log("registerCommands is not implemented!");
     }
 
     @Override
     public void registerPlayerEvents() {
         // TODO Auto-generated method stub
-        
+        log("registerPlayerEvents is not implemented!");
     }
 
     @Override
     public void registerInventoryEvents() {
         // TODO Auto-generated method stub
-        
+        log("registerInventoryEvents is not implemented!");
     }
 
     @Override
     public void registerPlotPlusEvents() {
         // TODO Auto-generated method stub
-        
+        log("registerPlotPlusEvents is not implemented!");
     }
 
     @Override
     public void registerForceFieldEvents() {
         // TODO Auto-generated method stub
-        
+        log("registerForceFieldEvents is not implemented!");
     }
 
     @Override
     public void registerWorldEditEvents() {
         // TODO Auto-generated method stub
-        
+        log("registerWorldEditEvents is not implemented!");
     }
 
     @Override
     public void registerTNTListener() {
         // TODO Auto-generated method stub
-        
+        log("registerTNTListener is not implemented!");
     }
 
     @Override
@@ -265,8 +283,14 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public UUIDHandlerImplementation initUUIDHandler() {
-        // TODO Auto-generated method stub
-        return null;
+        UUIDWrapper wrapper;
+        if (Settings.OFFLINE_MODE || !PS.get().checkVersion(this.getServerVersion(), 1, 7, 6)) {
+            wrapper = new SpongeLowerOfflineUUIDWrapper();
+        }
+        else {
+            wrapper = new SpongeOnlineUUIDWrapper();
+        }
+        return new SpongeUUIDHandler(wrapper);
     }
 
     @Override
@@ -319,14 +343,19 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public String getServerName() {
-        // TODO Auto-generated method stub
-        return null;
+     // TODO FIXME
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 
     @Override
     public void startMetrics() {
-        // TODO Auto-generated method stub
-        
+        try {
+            final SpongeMetrics metrics = new SpongeMetrics(game, this);
+            metrics.start();
+            log(C.PREFIX.s() + "&6Metrics enabled.");
+        } catch (final Exception e) {
+            log(C.PREFIX.s() + "&cFailed to load up metrics.");
+        }
     }
 
     @Override

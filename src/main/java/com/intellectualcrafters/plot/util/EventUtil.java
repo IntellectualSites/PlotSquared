@@ -15,7 +15,6 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.plotsquared.bukkit.util.SetupUtils;
 
 public abstract class EventUtil {
     

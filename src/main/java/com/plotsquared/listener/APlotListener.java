@@ -1,4 +1,4 @@
-package com.plotsquared.bukkit.listeners;
+package com.plotsquared.listener;
 
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;

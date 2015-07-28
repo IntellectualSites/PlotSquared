@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.generator;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.SetupObject;
 
 public abstract class PlotGenerator<T> {
     public final String world;
@@ -46,4 +47,6 @@ public abstract class PlotGenerator<T> {
     public abstract boolean isFull();
     
     public abstract String getName();
+    
+    public abstract void processSetup(SetupObject object);
 }

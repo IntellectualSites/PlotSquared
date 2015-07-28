@@ -1,4 +1,4 @@
-package com.plotsquared.bukkit.object.comment;
+package com.intellectualcrafters.plot.util;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -6,9 +6,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.*;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.titles.AbstractTitle;
-import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +48,7 @@ public class CommentManager {
                                 total = count.get();
                             }
                             if (size.decrementAndGet() == 0 && total > 0) {
-                                AbstractTitle.sendTitle(player, "", C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total), ChatColor.GOLD, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
+                                AbstractTitle.sendTitle(player, "", C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total));
                             }
                         }
                     });

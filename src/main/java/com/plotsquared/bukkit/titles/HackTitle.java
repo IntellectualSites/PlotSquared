@@ -8,11 +8,9 @@ import org.bukkit.ChatColor;
 
 public class HackTitle extends AbstractTitle {
     @Override
-    public void sendTitle(final PlotPlayer player, final String head, final String sub, final ChatColor head_color, final ChatColor sub_color, int in, int delay, int out) {
+    public void sendTitle(final PlotPlayer player, final String head, final String sub, int in, int delay, int out) {
         try {
             final HackTitleManager title = new HackTitleManager(head, sub, in, delay, out);
-            title.setTitleColor(head_color);
-            title.setSubtitleColor(sub_color);
             title.send(((BukkitPlayer) player).player);
         } catch (final Throwable e) {
             PS.log("&cYour server version does not support titles!");

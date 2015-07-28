@@ -1,7 +1,7 @@
 package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.plotsquared.bukkit.util.SetupUtils;
+import com.intellectualcrafters.plot.util.SetupUtils;
 
 public class SetupObject {
     

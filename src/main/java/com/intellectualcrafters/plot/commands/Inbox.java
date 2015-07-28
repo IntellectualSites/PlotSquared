@@ -26,10 +26,11 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.CommentInbox;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
+import com.intellectualcrafters.plot.util.CommentManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
-import com.plotsquared.bukkit.object.comment.CommentManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;

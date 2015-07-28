@@ -209,10 +209,8 @@ public enum C {
     /*
      * Title Stuff
      */
-    TITLE_ENTERED_PLOT("Plot: %world%;%x%;%z%", "Titles"),
-    TITLE_ENTERED_PLOT_COLOR("GOLD", "Titles"),
-    TITLE_ENTERED_PLOT_SUB("Owned by %s", "Titles"),
-    TITLE_ENTERED_PLOT_SUB_COLOR("RED", "Titles"),
+    TITLE_ENTERED_PLOT("$1Plot: %world%;%x%;%z%", "Titles"),
+    TITLE_ENTERED_PLOT_SUB("$4Owned by %s", "Titles"),
     PREFIX_GREETING("$1%id%$2> ", "Titles"),
     PREFIX_FAREWELL("$1%id%$2> ", "Titles"),
     /*

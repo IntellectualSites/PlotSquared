@@ -31,8 +31,9 @@ import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.object.comment.CommentManager;
 import com.plotsquared.bukkit.titles.AbstractTitle;
+import com.plotsquared.listener.APlotListener;
+
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -205,7 +206,7 @@ public class PlotListener extends APlotListener {
                                 replacements.put("%s", getName(plot.owner));
                                 String main = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
                                 String sub = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
-                                AbstractTitle.sendTitle(pp, main, sub, ChatColor.valueOf(C.TITLE_ENTERED_PLOT_COLOR.s()), ChatColor.valueOf(C.TITLE_ENTERED_PLOT_SUB_COLOR.s()));
+                                AbstractTitle.sendTitle(pp, main, sub);
                             }
                         }
                     }, 20);

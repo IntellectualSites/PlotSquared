@@ -28,8 +28,8 @@ import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.generator.HybridGen;
-import com.plotsquared.bukkit.util.SetupUtils;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import org.bukkit.generator.ChunkGenerator;
 
 import java.util.ArrayList;

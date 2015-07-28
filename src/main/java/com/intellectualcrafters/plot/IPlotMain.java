@@ -5,8 +5,7 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.listeners.APlotListener;
-import com.plotsquared.bukkit.util.SetupUtils;
+import com.plotsquared.listener.APlotListener;
 
 import java.io.File;
 import java.util.UUID;

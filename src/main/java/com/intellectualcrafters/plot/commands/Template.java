@@ -28,8 +28,8 @@ import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.util.SetupUtils;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.io.File;

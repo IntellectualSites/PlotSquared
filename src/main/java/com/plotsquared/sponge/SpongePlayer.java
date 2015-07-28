@@ -1,5 +1,16 @@
-package com.plotsquared.bukkit.object;
+package com.plotsquared.sponge;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.text.chat.ChatTypes;
+
+import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -8,18 +19,9 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
+public class SpongePlayer implements PlotPlayer {
 
-public class BukkitPlayer implements PlotPlayer {
-    
     public final Player player;
     private UUID uuid;
     private String name;
@@ -30,36 +32,45 @@ public class BukkitPlayer implements PlotPlayer {
     
     private HashMap<String, Object> meta;
 
-    /**
-     * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
-     * @param player
-     */
-    public BukkitPlayer(final Player player) {
+    public SpongePlayer(Player player) {
         this.player = player;
     }
     
+    @Override
+    public void sendMessage(C c, String... args) {
+        MainUtil.sendMessage(this, c, args);
+    }
+
+    @Override
+    public RequiredType getSuperCaller() {
+        return RequiredType.PLAYER;
+    }
+
+    @Override
     public long getPreviousLogin() {
-        if (last == 0) {
-            last = player.getLastPlayed();
-        }
-        return last;
+        return (long) (player.getJoinData().getLastPlayed().getSeconds()) * 1000;
     }
 
     @Override
     public Location getLocation() {
-        return BukkitUtil.getLocation(this.player);
+        return SpongeUtil.getLocation(player);
     }
-    
+
+    @Override
+    public Location getLocationFull() {
+        return SpongeUtil.getLocationFull(player);
+    }
+
     @Override
     public UUID getUUID() {
         if (this.uuid == null) {
             this.uuid = UUIDHandler.getUUID(this);
         }
-        return this.uuid;
+        return uuid;
     }
-    
+
     @Override
-    public boolean hasPermission(final String perm) {
+    public boolean hasPermission(String perm) {
         if (Settings.PERMISSION_CACHING) {
             if (this.noPerm.contains(perm)) {
                 return false;
@@ -77,28 +88,30 @@ public class BukkitPlayer implements PlotPlayer {
         }
         return this.player.hasPermission(perm);
     }
-    
+
     @Override
-    public void sendMessage(final String message) {
-        this.player.sendMessage(message);
+    public void sendMessage(String message) {
+        player.sendMessage(ChatTypes.CHAT, message);
     }
-    
+
     @Override
-    public void sendMessage(C c, String... args) {
-        MainUtil.sendMessage(this, c, args);
+    public void teleport(Location loc) {
+        String world = player.getWorld().getName();
+        if (world != loc.getWorld()) {
+            player.transferToWorld(world, new Vector3d(loc.getX(), loc.getY(), loc.getZ()));
+        }
+        else {
+            org.spongepowered.api.world.Location current = player.getLocation();
+            player.setLocationSafely(current.setPosition(new Vector3d(loc.getX(), loc.getY(), loc.getZ())));
+        }
     }
-    
-    @Override
-    public void teleport(final Location loc) {
-        this.player.teleport(new org.bukkit.Location(BukkitUtil.getWorld(loc.getWorld()), loc.getX() + 0.5, loc.getY(), loc.getZ() + 0.5, loc.getYaw(), loc.getPitch()));
-    }
-    
+
     @Override
     public boolean isOp() {
         if (this.op != 0) {
             return this.op != 1;
         }
-        final boolean result = this.player.isOp();
+        final boolean result = this.player.hasPermission("*");
         if (!result) {
             this.op = 1;
             return false;
@@ -106,7 +119,12 @@ public class BukkitPlayer implements PlotPlayer {
         this.op = 2;
         return true;
     }
-    
+
+    @Override
+    public boolean isOnline() {
+        return player.isOnline();
+    }
+
     @Override
     public String getName() {
         if (this.name == null) {
@@ -114,21 +132,23 @@ public class BukkitPlayer implements PlotPlayer {
         }
         return this.name;
     }
-    
-    @Override
-    public boolean isOnline() {
-        return this.player.isOnline();
-    }
-    
-    @Override
-    public void setCompassTarget(final Location loc) {
-        this.player.setCompassTarget(new org.bukkit.Location(BukkitUtil.getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ()));
 
+    @Override
+    public void setCompassTarget(Location loc) {
+        // TODO set compass target
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 
     @Override
-    public Location getLocationFull() {
-        return BukkitUtil.getLocationFull(this.player);
+    public void loadData() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    }
+
+    @Override
+    public void saveData() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 
     @Override
@@ -181,22 +201,5 @@ public class BukkitPlayer implements PlotPlayer {
     public void removeAttribute(String key) {
         key = "plotsquared_user_attributes." + key;
         EconHandler.manager.setPermission(this, key, false);
-    }
-
-    @Override
-    public void loadData() {
-        if (!player.isOnline()) {
-            player.loadData();
-        }
-    }
-
-    @Override
-    public void saveData() {
-        player.saveData();
-    }
-
-    @Override
-    public RequiredType getSuperCaller() {
-        return RequiredType.PLAYER;
     }
 }

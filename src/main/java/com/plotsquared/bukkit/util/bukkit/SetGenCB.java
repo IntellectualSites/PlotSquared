@@ -1,8 +1,10 @@
 package com.plotsquared.bukkit.util.bukkit;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
-import com.plotsquared.bukkit.util.SetupUtils;
+
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
@@ -22,7 +24,8 @@ public class SetGenCB {
         }
         String name = gen.getClass().getCanonicalName();
         boolean set = false;
-        for (ChunkGenerator newGen : SetupUtils.generators.values()) {
+        for (PlotGenerator<?> wrapper : SetupUtils.generators.values()) {
+            ChunkGenerator newGen = (ChunkGenerator) wrapper.generator;
             if (newGen.getClass().getCanonicalName().equals(name)) {
                 // set generator
                 Field generator = world.getClass().getDeclaredField("generator");

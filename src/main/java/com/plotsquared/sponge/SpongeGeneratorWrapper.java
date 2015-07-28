@@ -4,6 +4,8 @@ import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.SetupObject;
+
 import org.spongepowered.api.world.gen.WorldGenerator;
 
 public class SpongeGeneratorWrapper extends PlotGenerator<WorldGenerator>{
@@ -53,6 +55,11 @@ public class SpongeGeneratorWrapper extends PlotGenerator<WorldGenerator>{
     public String getName() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void processSetup(SetupObject object) {
+        // TODO Auto-generated method stub
     }
     
 }

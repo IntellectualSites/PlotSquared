@@ -51,7 +51,7 @@ public class Delete extends SubCommand {
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
-        if (((!plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUIDWrapper().getUUID(plr)))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
+        if (((!plot.hasOwner() || !plot.isOwner(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         final PlotWorld pWorld = PS.get().getPlotWorld(plot.world);

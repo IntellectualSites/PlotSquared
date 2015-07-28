@@ -5,6 +5,8 @@ import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.SetupObject;
+
 import org.bukkit.generator.ChunkGenerator;
 
 public class BukkitGeneratorWrapper extends PlotGenerator<ChunkGenerator> {
@@ -13,7 +15,7 @@ public class BukkitGeneratorWrapper extends PlotGenerator<ChunkGenerator> {
     
     public BukkitGeneratorWrapper(String world, ChunkGenerator generator) {
         super(world, generator);
-        full = generator != null;
+        full = (generator instanceof BukkitPlotGenerator);
     }
 
     @Override
@@ -75,6 +77,13 @@ public class BukkitGeneratorWrapper extends PlotGenerator<ChunkGenerator> {
             return "Null";
         }
         return generator.getClass().getName();
+    }
+
+    @Override
+    public void processSetup(SetupObject object) {
+        if (generator instanceof BukkitPlotGenerator) {
+            ((BukkitPlotGenerator) generator).processSetup(object);
+        }
     }
     
 }

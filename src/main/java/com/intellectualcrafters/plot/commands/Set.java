@@ -28,8 +28,9 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.listeners.APlotListener;
 import com.plotsquared.general.commands.CommandDeclaration;
+import com.plotsquared.listener.APlotListener;
+
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
