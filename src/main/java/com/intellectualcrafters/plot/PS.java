@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot;
 
+import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
@@ -114,6 +115,12 @@ public class PS {
         IMP.registerForceFieldEvents();
         IMP.registerWorldEditEvents();
         IMP.registerWorldEvents();
+        if (Settings.METRICS) {
+            IMP.startMetrics();
+        } else {
+            log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
+        }
+        IMP.startMetrics();
         if (Settings.TNT_LISTENER) {
             IMP.registerTNTListener();
         }
@@ -122,6 +129,7 @@ public class PS {
         }
         // create UUIDWrapper
         UUIDHandler.implementation = IMP.initUUIDHandler();
+        UUIDHandler.implementation.startCaching(null); // TODO maybe a notification when this is done?
         // create event util class
         EventUtil.manager = IMP.initEventUtil();
         // create Hybrid utility class
@@ -171,8 +179,20 @@ public class PS {
                 }
             }, 200);
         }
+        
+        // Auto clearing
         if (Settings.AUTO_CLEAR) {
             ExpireManager.runTask();
+        }
+        
+        // World generators:
+        ConfigurationSection section = config.getConfigurationSection("worlds");
+        if (section != null) {
+            for (String world : section.getKeys(false)) {
+                if (BlockManager.manager.isWorld(world)) {
+                    break;
+                }
+            }
         }
 
         // Copy files

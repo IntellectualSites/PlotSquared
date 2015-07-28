@@ -23,11 +23,12 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.*;
+import com.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 
@@ -153,7 +154,7 @@ public class DebugExec extends SubCommand {
                         ChunkLoc chunk = BukkitHybridUtils.chunks.get(0);
                         BukkitHybridUtils.chunks.remove(0);
                         HybridUtils.manager.regenerateRoad(BukkitHybridUtils.world, chunk, 0);
-                        ChunkManager.manager.unloadChunk(BukkitHybridUtils.world, chunk);
+                        ChunkManager.manager.unloadChunk(BukkitHybridUtils.world, chunk, true, true);
                     }
                     PS.log("&cCancelled!");
                     return true;

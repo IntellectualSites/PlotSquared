@@ -24,7 +24,7 @@ import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridPop;
 import com.intellectualcrafters.plot.object.*;
-import com.plotsquared.bukkit.object.PlotPopulator;
+import com.plotsquared.bukkit.object.BukkitPlotPopulator;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -169,10 +169,10 @@ public class HybridGen extends BukkitPlotGenerator {
     /**
      * Return the block populator
      */
-    public List<PlotPopulator> getPopulators(final String world) {
+    public List<BukkitPlotPopulator> getPopulators(final String world) {
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator
-        return Arrays.asList((PlotPopulator) new HybridPop(this.plotworld));
+        return Arrays.asList((BukkitPlotPopulator) new HybridPop(this.plotworld));
     }
 
 

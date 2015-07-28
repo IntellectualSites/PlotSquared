@@ -242,7 +242,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
 
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-
+        Location loc = pp.getLocation();
         if (!PS.get().isPlotWorld(BukkitUtil.getWorld(player))) {
             return;
         }

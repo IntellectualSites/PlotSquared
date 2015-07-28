@@ -18,7 +18,7 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-package com.plotsquared.bukkit.object;
+package com.intellectualcrafters.plot.object;
 
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -68,33 +68,5 @@ public class BlockWrapper {
         this.z = z;
         this.id = id;
         this.data = data;
-    }
-
-    /**
-     * Alternative Constructor Uses block data, rather than typed data
-     *
-     * @param block Block from which we get the data
-     */
-    @SuppressWarnings({ "deprecation", "unused" })
-    public BlockWrapper(final Block block) {
-        this.x = block.getX();
-        this.y = block.getY();
-        this.z = block.getZ();
-        this.id = block.getTypeId();
-        this.data = block.getData();
-    }
-
-    /**
-     * Get a block based on the block wrapper
-     *
-     * @param world World in which the block is/will be, located
-     *
-     * @return block created/fetched from settings
-     */
-    @SuppressWarnings({ "unused", "deprecation" })
-    public Block toBlock(final World world) {
-        final Block block = world.getBlockAt(this.x, this.y, this.z);
-        block.setTypeIdAndData(this.id, this.data, true);
-        return block;
     }
 }

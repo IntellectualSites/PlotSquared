@@ -186,25 +186,12 @@ public abstract class SquarePlotManager extends GridPlotManager {
      * Set a plot biome
      */
     @Override
-    public boolean setBiome(final Plot plot, final int biome) {
+    public boolean setBiome(final Plot plot, final String biome) {
         final int bottomX = MainUtil.getPlotBottomLoc(plot.world, plot.id).getX() - 1;
-        final int topX = MainUtil.getPlotTopLoc(plot.world, plot.id).getX() + 1;
+        final int topX = MainUtil.getPlotTopLoc(plot.world, plot.id).getX();
         final int bottomZ = MainUtil.getPlotBottomLoc(plot.world, plot.id).getZ() - 1;
-        final int topZ = MainUtil.getPlotTopLoc(plot.world, plot.id).getZ() + 1;
-        final int size = ((topX - bottomX) + 1) * ((topZ - bottomZ) + 1);
-        final int[] xb = new int[size];
-        final int[] zb = new int[size];
-        final int[] biomes = new int[size];
-        int index = 0;
-        for (int x = bottomX; x <= topX; x++) {
-            for (int z = bottomZ; z <= topZ; z++) {
-                xb[index] = x;
-                zb[index] = z;
-                biomes[index] = biome;
-                index++;
-            }
-        }
-        BlockManager.setBiomes(plot.world, xb, zb, biomes);
+        final int topZ = MainUtil.getPlotTopLoc(plot.world, plot.id).getZ();
+        MainUtil.setBiome(plot.world, bottomX, bottomZ, topX, topZ, biome);
         return true;
     }
 }

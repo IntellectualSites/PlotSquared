@@ -61,7 +61,7 @@ public abstract class PlotManager {
 
     public abstract boolean setComponent(final PlotWorld plotworld, final PlotId plotid, final String component, final PlotBlock[] blocks);
 
-    public abstract boolean setBiome(final Plot plot, final int biome);
+    public abstract boolean setBiome(final Plot plot, final String biome);
 
     /*
      * PLOT MERGING (return false if your generator does not support plot

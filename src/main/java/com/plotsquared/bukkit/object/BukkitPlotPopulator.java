@@ -1,10 +1,16 @@
 package com.plotsquared.bukkit.object;
 
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import com.plotsquared.bukkit.util.bukkit.SetBlockFast;
+
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
@@ -13,17 +19,20 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
 
-public abstract class PlotPopulator extends BlockPopulator {
+public abstract class BukkitPlotPopulator extends BlockPopulator {
     
     private PseudoRandom random = new PseudoRandom();
     
     public int X;
     public int Z;
+    public String worldname;
     private World world;
+    
     
     @Override
     public void populate(World world, Random rand, Chunk chunk) {
         this.world = world;
+        this.worldname = world.getName();
         this.X = chunk.getX() << 4;
         this.Z = chunk.getZ() << 4;
         if (ChunkManager.FORCE_PASTE) {
@@ -67,7 +76,12 @@ public abstract class PlotPopulator extends BlockPopulator {
      * @param data
      */
     public void setBlock(int x, int y, int z, short id, byte data) {
-        BukkitUtil.setBlock(world, X + x, y, Z + z, id, data);
+        if (data == 0) {
+            SetBlockQueue.setBlock(worldname, x, y, z, id);
+        }
+        else {
+            SetBlockQueue.setBlock(worldname, x, y, z, new PlotBlock(id, data));
+        }
     }
     
     /**

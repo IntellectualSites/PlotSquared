@@ -54,6 +54,17 @@ public class MainUtil {
         return true;
     }
     
+    public static String getName(UUID owner) {
+        if (owner == null) {
+            return "unowned";
+        }
+        String name = UUIDHandler.getName(owner);
+        if (name == null) {
+            return "unknown";
+        }
+        return name;
+    }
+    
     public static List<PlotPlayer> getPlayersInPlot(Plot plot) {
         ArrayList<PlotPlayer> players = new ArrayList<>();
         for (PlotPlayer pp : UUIDHandler.getPlayers().values()) {
@@ -1032,9 +1043,10 @@ public class MainUtil {
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
             public void run() {
-                BukkitUtil.loadChunkAt(plot.world, value[0], value[1], false);
-                BukkitUtil.setBiome(plot.world, value[2], value[3], value[4], value[4], biome);
-                BukkitUtil.unloadChunkAt(plot.world, value[0], value[1], true, true);
+                ChunkLoc loc = new ChunkLoc(value[0], value[1]);
+                ChunkManager.manager.loadChunk(plot.world, loc, false);
+                setBiome(plot.world, value[2], value[3], value[4], value[4], biome);
+                ChunkManager.manager.unloadChunk(plot.world, loc, true, true);
             }
         }, new Runnable() {
             @Override
@@ -1045,8 +1057,23 @@ public class MainUtil {
         }, 5);
     }
     
+    public static void setBiome(final String world, int p1x, int p1z, int p2x, int p2z, final String biome) {
+        final int length = (p2x - p1x + 1) * (p2z - p1z + 1);
+        final int[] xl = new int[length];
+        final int[] zl = new int[length];
+        int index = 0;
+        for (int x = p1x; x <= p2x; x++) {
+            for (int z = p1z; z <= p2z; z++) {
+                xl[index] = x;
+                zl[index] = z;
+                index++;
+            }
+        }
+        BlockManager.setBiomes(world, xl, zl, biome);
+    }
+    
     public static int getHeighestBlock(final String world, final int x, final int z) {
-        final int result = BukkitUtil.getHeighestBlock(world, x, z);
+        final int result = BlockManager.manager.getHeighestBlock(world, x, z);
         if (result == 0) {
             return 64;
         }
@@ -1070,7 +1097,7 @@ public class MainUtil {
             return getDefaultHome(plot);
         } else {
             Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z);
-            if (BukkitUtil.getBlock(loc).id != 0) {
+            if (BlockManager.manager.getBlock(loc).id != 0) {
                 // sendConsoleMessage("ID was " + BukkitUtil.getBlock(loc).id);
                 loc.setY(Math.max(getHeighestBlock(w, bot.getX(), bot.getZ()), bot.getY()));
             }

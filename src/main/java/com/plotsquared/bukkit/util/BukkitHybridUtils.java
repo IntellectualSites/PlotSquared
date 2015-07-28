@@ -1,9 +1,11 @@
-package com.intellectualcrafters.plot.generator;
+package com.plotsquared.bukkit.util;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -12,6 +14,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -437,7 +440,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                     ChunkLoc chunk = chunks.get(0);
                                     chunks.remove(0);
                                     regenerateRoad(world, chunk, extend);
-                                    ChunkManager.manager.unloadChunk(world, chunk);
+                                    ChunkManager.manager.unloadChunk(world, chunk, true, true);
                                 }
                                 Bukkit.getScheduler().cancelTask(BukkitHybridUtils.this.task);
                                 TaskManager.runTaskLater(new Runnable() {
@@ -453,7 +456,7 @@ public class BukkitHybridUtils extends HybridUtils {
                         			ChunkLoc chunk = chunks.get(0);
                         			chunks.remove(0);
                         			regenerateRoad(world, chunk, extend);
-                        			ChunkManager.manager.unloadChunk(world, chunk);
+                        			ChunkManager.manager.unloadChunk(world, chunk, true, true);
                         		}
                     		}
                     		last = System.currentTimeMillis();
@@ -466,7 +469,7 @@ public class BukkitHybridUtils extends HybridUtils {
                         final int sz = loc.z << 5;
                         for (int x = sx; x < (sx + 32); x++) {
                             for (int z = sz; z < (sz + 32); z++) {
-                                ChunkManager.manager.unloadChunk(world, new ChunkLoc(x, z));
+                                ChunkManager.manager.unloadChunk(world, new ChunkLoc(x, z), true, true);
                             }
                         }
                         PS.log("&d - Potentially skipping 1024 chunks");

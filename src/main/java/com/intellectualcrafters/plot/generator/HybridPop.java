@@ -7,7 +7,7 @@ import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.BlockManager;
-import com.plotsquared.bukkit.object.PlotPopulator;
+import com.plotsquared.bukkit.object.BukkitPlotPopulator;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
@@ -17,7 +17,7 @@ import java.util.HashSet;
 /**
  * @author Citymonstret
  */
-public class HybridPop extends PlotPopulator {
+public class HybridPop extends BukkitPlotPopulator {
     /*
      * Sorry, this isn't well documented at the moment.
      * We advise you to take a look at a world generation tutorial for

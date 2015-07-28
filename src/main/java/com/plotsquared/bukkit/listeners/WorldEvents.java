@@ -40,9 +40,4 @@ public class WorldEvents implements Listener {
         }
         lastWorld = null;
     }
-    
-    @EventHandler
-    public void worldLoad(final WorldLoadEvent event) {
-        UUIDHandler.startCaching(null);
-    }
 }

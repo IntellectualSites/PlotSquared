@@ -28,11 +28,15 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.object.InfoInventory;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,7 +133,22 @@ public class Info extends SubCommand {
             }
         }
         if ((args.length == 1) && args[0].equalsIgnoreCase("inv")) {
-            new InfoInventory(plot, player).build().display();
+            PlotInventory inv = new PlotInventory(player) {
+                @Override
+                public boolean onClick(int index) {
+                    // TODO InfoInventory not implemented yet!!!!!!!!
+                    // See plot rating or musicsubcommand on examples
+                    return false;
+                }
+            };
+            UUID uuid = player.getUUID();
+            String name = MainUtil.getName(plot.owner);
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info", new String[] { "&cID: &6" + plot.getId().toString(), "&cOwner: &6" + name, "&cAlias: &6" + plot.getSettings().getAlias(), "&cBiome: &6" + plot.getSettings().getBiome().toString().replaceAll("_", "").toLowerCase(), "&cCan Build: &6" + plot.isAdded(uuid), "&cIs Denied: &6" + plot.isDenied(uuid)}));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cTrusted", new String[] {"&cAmount: &6" + plot.getTrusted().size(), "&8Click to view a list of the trusted users"}));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cMembers", new String[] {"&cAmount: &6" + plot.getMembers().size(), "&8Click to view a list of plot members"}));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cDenied", new String[] {"&cDenied", "&cAmount: &6" + plot.getDenied().size(), "&8Click to view a list of denied players"}));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cFlags", new String[] {"&cFlags", "&cAmount: &6" + plot.getSettings().flags.size(), "&8Click to view a list of plot flags"}));
+            inv.openInventory();
             return true;
         }
         final boolean hasOwner = plot.hasOwner();
@@ -194,7 +213,7 @@ public class Info extends SubCommand {
         final String alias = plot.getSettings().getAlias().length() > 0 ? plot.getSettings().getAlias() : C.NONE.s();
         Location top = MainUtil.getPlotTopLoc(world, plot.id);
         Location bot = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final String biome = BlockManager.manager.getBiome(bot.add((top.getX() - bot.getX()) / 2, 0, (top.getX() - bot.getX()) / 2));
+        final String biome = BlockManager.manager.getBiome(plot.world, bot.getX() + ((top.getX() - bot.getX()) / 2), bot.getZ() + ((top.getZ() - bot.getZ()) / 2));
         final String trusted = getPlayerList(plot.getTrusted());
         final String members = getPlayerList(plot.getMembers());
         final String denied = getPlayerList(plot.getDenied());

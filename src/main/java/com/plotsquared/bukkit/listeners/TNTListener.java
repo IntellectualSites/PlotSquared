@@ -92,7 +92,7 @@ public class TNTListener implements Listener {
                 }
                 
                 Location landing = loc.add(shortest.getBlockX() + 1, 0, shortest.getBlockZ() + 1);
-                int ty = BukkitUtil.getHeighestBlock(worldname, landing.getX(), landing.getZ());
+                int ty = MainUtil.getHeighestBlock(worldname, landing.getX(), landing.getZ());
                 int diff = ty - loc.getY();
                 double calcDiff = getY(velocity, Math.sqrt(shortest.getBlockX() * shortest.getBlockX() + shortest.getBlockZ() * shortest.getBlockZ()));
                 if (calcDiff > diff) {

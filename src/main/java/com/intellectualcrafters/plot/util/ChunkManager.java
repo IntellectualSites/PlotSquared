@@ -92,9 +92,9 @@ public abstract class ChunkManager {
     
     public abstract int[] countEntities(Plot plot);
 
-    public abstract boolean loadChunk(String world, ChunkLoc loc);
+    public abstract boolean loadChunk(String world, ChunkLoc loc, boolean force);
     
-    public abstract boolean unloadChunk(String world, ChunkLoc loc);
+    public abstract boolean unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe);
 
     public abstract List<ChunkLoc> getChunkChunks(String world);
 

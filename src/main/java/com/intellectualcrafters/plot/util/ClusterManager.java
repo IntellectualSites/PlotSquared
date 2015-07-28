@@ -51,7 +51,7 @@ public class ClusterManager {
         } else {
             toReturn = getClusterBottom(cluster).add(home.x, home.y, home.z);
         }
-        final int max = BukkitUtil.getHeighestBlock(cluster.world, toReturn.getX(), toReturn.getZ());
+        final int max = MainUtil.getHeighestBlock(cluster.world, toReturn.getX(), toReturn.getZ());
         if (max > toReturn.getY()) {
             toReturn.setY(max);
         }

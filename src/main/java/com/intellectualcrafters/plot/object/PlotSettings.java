@@ -116,7 +116,7 @@ public class PlotSettings {
      */
     public String getBiome() {
         final Location loc = MainUtil.getPlotBottomLoc(this.plot.world, this.plot.getId()).add(1, 0, 1);
-        return BlockManager.manager.getBiome(loc);
+        return BlockManager.manager.getBiome(loc.getWorld(), loc.getX(), loc.getZ());
     }
 
     public BlockLoc getPosition() {

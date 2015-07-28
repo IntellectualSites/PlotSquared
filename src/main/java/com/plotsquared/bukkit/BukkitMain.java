@@ -1,5 +1,19 @@
 package com.plotsquared.bukkit;
 
+import java.io.File;
+import java.util.Arrays;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.Listener;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.intellectualcrafters.plot.IPlotMain;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.MainCommand;
@@ -7,14 +21,20 @@ import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.BukkitHybridUtils;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
-import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
-import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.BlockUpdateUtil;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ConsoleColors;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlayerManager;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.commands.BukkitCommand;
 import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
@@ -22,33 +42,44 @@ import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
 import com.plotsquared.bukkit.generator.HybridGen;
-import com.plotsquared.bukkit.listeners.*;
+import com.plotsquared.bukkit.listeners.APlotListener;
+import com.plotsquared.bukkit.listeners.ChunkListener;
+import com.plotsquared.bukkit.listeners.ForceFieldListener;
+import com.plotsquared.bukkit.listeners.PlayerEvents;
+import com.plotsquared.bukkit.listeners.PlayerEvents_1_8;
+import com.plotsquared.bukkit.listeners.PlayerEvents_1_8_3;
+import com.plotsquared.bukkit.listeners.PlotListener;
+import com.plotsquared.bukkit.listeners.PlotPlusListener;
+import com.plotsquared.bukkit.listeners.TNTListener;
+import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
 import com.plotsquared.bukkit.listeners.worldedit.WESubscriber;
 import com.plotsquared.bukkit.titles.AbstractTitle;
 import com.plotsquared.bukkit.titles.DefaultTitle;
+import com.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.plotsquared.bukkit.util.SetupUtils;
-import com.plotsquared.bukkit.util.bukkit.*;
+import com.plotsquared.bukkit.util.bukkit.BukkitChunkManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitEconHandler;
+import com.plotsquared.bukkit.util.bukkit.BukkitEventUtil;
+import com.plotsquared.bukkit.util.bukkit.BukkitInventoryUtil;
+import com.plotsquared.bukkit.util.bukkit.BukkitPlayerManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitSetupUtils;
+import com.plotsquared.bukkit.util.bukkit.BukkitTaskManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import com.plotsquared.bukkit.util.bukkit.Metrics;
+import com.plotsquared.bukkit.util.bukkit.SendChunk;
+import com.plotsquared.bukkit.util.bukkit.SetBlockFast;
+import com.plotsquared.bukkit.util.bukkit.SetBlockFast_1_8;
+import com.plotsquared.bukkit.util.bukkit.SetBlockSlow;
+import com.plotsquared.bukkit.util.bukkit.SetGenCB;
 import com.plotsquared.bukkit.util.bukkit.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
+import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
+import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
+import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
@@ -79,29 +110,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public void onEnable() {
         THIS = this;
         PS.instance = new PS(this);
-        if (Settings.METRICS) {
-            try {
-                final Metrics metrics = new Metrics(this);
-                metrics.start();
-                log(C.PREFIX.s() + "&6Metrics enabled.");
-            } catch (final Exception e) {
-                log(C.PREFIX.s() + "&cFailed to load up metrics.");
-            }
-        } else {
-            log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
-        }
-        List<World> worlds = Bukkit.getWorlds();
-        if (worlds.size() > 0) {
-            UUIDHandler.startCaching(null);
-            for (World world : worlds) {
-                try {
-                    SetGenCB.setGenerator(world);
-                } catch (Exception e) {
-                    log("Failed to reload world: " + world.getName());
-                    Bukkit.getServer().unloadWorld(world, false);
-                }
-            }
-        }
     }
     
     @Override
@@ -140,15 +148,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public int[] getPluginVersion() {
         String[] split = this.getDescription().getVersion().split("\\.");
         return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]) };
-    }
-    
-    @Override
-    public void handleKick(UUID uuid, C c) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player != null && player.isOnline()) {
-            MainUtil.sendMessage(BukkitUtil.getPlayer(player), c);
-            player.teleport(player.getWorld().getSpawnLocation());
-        }
     }
     
     @Override
@@ -323,7 +322,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void registerInventoryEvents() {
-        getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+        
+        // Part of PlayerEvents - can be moved if necessary
+        
     }
     
     @Override
@@ -521,5 +522,26 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public String getServerName() {
         return Bukkit.getServerName();
+    }
+
+    @Override
+    public void startMetrics() {
+        try {
+            final Metrics metrics = new Metrics(this);
+            metrics.start();
+            log(C.PREFIX.s() + "&6Metrics enabled.");
+        } catch (final Exception e) {
+            log(C.PREFIX.s() + "&cFailed to load up metrics.");
+        }
+    }
+
+    @Override
+    public void setGenerator(String world) {
+        try {
+            SetGenCB.setGenerator(BukkitUtil.getWorld(world));
+        } catch (Exception e) {
+            log("Failed to reload world: " + world);
+            Bukkit.getServer().unloadWorld(world, false);
+        }
     }
 }

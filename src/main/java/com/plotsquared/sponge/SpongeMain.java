@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.bukkit.listeners.APlotListener;
 import com.plotsquared.bukkit.util.SetupUtils;
+
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -173,12 +174,6 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     }
 
     @Override
-    public void handleKick(UUID uuid, C c) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public TaskManager getTaskManager() {
         // TODO Auto-generated method stub
         return null;
@@ -326,5 +321,17 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     public String getServerName() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void startMetrics() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setGenerator(String world) {
+        // TODO Auto-generated method stub
+        
     }
 }

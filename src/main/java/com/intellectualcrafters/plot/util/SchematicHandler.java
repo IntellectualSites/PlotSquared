@@ -152,7 +152,7 @@ public abstract class SchematicHandler {
                         y_offset = 0;
                     }
                     else {
-                        y_offset = BukkitUtil.getHeighestBlock(plot.world, bottom.getX() + 1, bottom.getZ() + 1);
+                        y_offset = MainUtil.getHeighestBlock(plot.world, bottom.getX() + 1, bottom.getZ() + 1);
                     }
                     Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1 + x_offset, y_offset - 1, 1 + z_offset);
                     Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
@@ -346,10 +346,10 @@ public abstract class SchematicHandler {
             return false;
         }
         Location l1 = MainUtil.getPlotBottomLoc(plot.world, plot.getId());
-        final int sy = BukkitUtil.getHeighestBlock(plot.world, l1.getX() + 1, l1.getZ() + 1);
+        final int sy = MainUtil.getHeighestBlock(plot.world, l1.getX() + 1, l1.getZ() + 1);
         final Dimension demensions = schematic.getSchematicDimension();
         final int HEIGHT = demensions.getY();
-        if (!(HEIGHT == BukkitUtil.getMaxHeight(plot.world))) {
+        if ((HEIGHT < 255)) {
             l1 = l1.add(1, sy - 1, 1);
         } else {
             l1 = l1.add(1, 0, 1);

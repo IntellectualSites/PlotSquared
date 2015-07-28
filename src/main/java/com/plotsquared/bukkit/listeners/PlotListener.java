@@ -46,6 +46,10 @@ import java.util.UUID;
  * @author Empire92
  */
 public class PlotListener extends APlotListener {
+    
+    // FIXME if we add a few more functions to PlotPlayer, we could make this generic and not implementation specific
+    // TODO Alternatively we could move functions into BukkitPlayerManager which seems to be heavily lacking
+    
     public void textures(final Player p) {
         if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && PS.get().isPlotWorld(p.getWorld().getName())) {
             p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);

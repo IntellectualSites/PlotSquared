@@ -49,7 +49,7 @@
                         <configuration>
                             <finalName>PlotSquared-Bukkit</finalName>
                             <excludes>
-                                <exclude>**/com/plotsquared/sponge/*</exclude>
+                                <exclude>**/com/plotsquared/sponge/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>
@@ -62,7 +62,8 @@
                         <configuration>
                             <finalName>PlotSquared-Sponge</finalName>
                             <excludes>
-                                <exclude>**/com/plotsquared/bukkit/*</exclude>
+                                <exclude>**/com/plotsquared/bukkit/**</exclude>
+                                <exclude>**/com/intellectualcrafters/plot/api/*</exclude>
                             </excludes>
                         </configuration>
                     </execution>

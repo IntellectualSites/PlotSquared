@@ -929,13 +929,13 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     @Override
-    public boolean loadChunk(final String world, final ChunkLoc loc) {
-        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(false);
+    public boolean loadChunk(final String world, final ChunkLoc loc, boolean force) {
+        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(force);
     }
 
     @Override
-    public boolean unloadChunk(final String world, final ChunkLoc loc) {
-        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).unload(true, true);
+    public boolean unloadChunk(final String world, final ChunkLoc loc, boolean save, boolean safe) {
+        return BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe);
     }
 
     public static void swapChunk(final World world, final Chunk pos1, final Chunk pos2, final RegionWrapper r1, final RegionWrapper r2) {

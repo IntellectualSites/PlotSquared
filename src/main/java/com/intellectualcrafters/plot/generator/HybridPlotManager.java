@@ -23,10 +23,10 @@ package com.intellectualcrafters.plot.generator;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.Template;
 import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -181,14 +181,14 @@ public class HybridPlotManager extends ClassicPlotManager {
             public void run() {
                 // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
                 if (canRegen && value[6] == 0) {
-                    BukkitUtil.regenerateChunk(world, value[0], value[1]);
+                    ChunkManager.manager.regenerateChunk(world, new ChunkLoc(value[0], value[1]));
                     return;
                 }
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // Otherwise we need to set each component, as we don't want to regenerate the road or other plots that share the same chunk //
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // Set the biome
-                BukkitUtil.setBiome(plot.world, value[2], value[3], value[4], value[5], dpw.PLOT_BIOME);
+                MainUtil.setBiome(world, value[2], value[3], value[4], value[5], dpw.PLOT_BIOME);
                 // These two locations are for each component (e.g. bedrock, main block, floor, air)
                 Location bot = new Location(world, value[2], 0, value[3]);
                 Location top = new Location(world, value[4] + 1, 1, value[5] + 1);

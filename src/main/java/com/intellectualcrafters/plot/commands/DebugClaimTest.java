@@ -89,7 +89,7 @@ public class DebugClaimTest extends SubCommand {
             }
             final Location loc = manager.getSignLoc(plotworld, plot);
             final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
-            final boolean result = ChunkManager.manager.loadChunk(world, chunk);
+            final boolean result = ChunkManager.manager.loadChunk(world, chunk, false);
             if (!result) {
                 continue;
             }

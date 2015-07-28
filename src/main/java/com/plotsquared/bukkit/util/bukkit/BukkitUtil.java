@@ -1,13 +1,13 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import org.bukkit.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -17,11 +17,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.*;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Sandstone;
+import org.bukkit.material.Step;
+import org.bukkit.material.Tree;
+import org.bukkit.material.WoodenStep;
+import org.bukkit.material.Wool;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 
 public class BukkitUtil extends BlockManager {
     private static HashMap<String, World> worlds = new HashMap<>();
@@ -36,12 +47,71 @@ public class BukkitUtil extends BlockManager {
         lastPlotPlayer = null;
         UUIDHandler.getPlayers().remove(plr);
     }
+    
+      // These weren't being used, but they might be useful later, so I'm just commenting them out
+//    private static int getMaxHeight(final String world) {
+//        return getWorld(world).getMaxHeight();
+//    }
+//
+//    private static void unloadChunkAt(String worldname, int X, int Z, boolean save, boolean safe) {
+//        final World world = getWorld(worldname);
+//        world.unloadChunk(X, Z, save, safe);
+//    }
+//    
+//    private static void loadChunkAt(final String worldname, int X, int Z, boolean force) {
+//        final World world = getWorld(worldname);
+//        world.loadChunk(X, Z, force);
+//    }
+//    
+//    private static Chunk getChunkAt(final String worldname, final int x, final int z) {
+//        final World world = getWorld(worldname);
+//        return world.getChunkAt(x, z);
+//    }
+//    
+//    private static void teleportPlayer(final Player player, final Location loc) {
+//        final org.bukkit.Location bukkitLoc = new org.bukkit.Location(getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ());
+//        player.teleport(bukkitLoc);
+//    }
+//    
+//    private static void setBiome(final String worldname, final int pos1_x, final int pos1_z, final int pos2_x, final int pos2_z, final String biome) {
+//        final Biome b = Biome.valueOf(biome.toUpperCase());
+//        final World world = getWorld(worldname);
+//        for (int x = pos1_x; x <= pos2_x; x++) {
+//            for (int z = pos1_z; z <= pos2_z; z++) {
+//                if (world.getBiome(x, z) == b) {
+//                    continue;
+//                }
+//                world.setBiome(x, z, b);
+//            }
+//        }
+//    }
+//    
+//    private static void refreshChunk(final String name, final int x, final int z) {
+//        World world = getWorld(name);
+//        world.refreshChunk(x, z);
+//        world.loadChunk(x, z);
+//    }
+//
+//    private static void regenerateChunk(final String world, final int x, final int z) {
+//        World worldObj = getWorld(world);
+//        Chunk chunk = worldObj.getChunkAt(x, z);
+//        if (chunk.isLoaded() || chunk.load(false)) {
+//            ChunkManager.manager.regenerateChunk(world, new ChunkLoc(x, z));
+//        }
+//    }
+//    
+//    private static Location getLocationFull(final org.bukkit.Location loc) {
+//        final String world = loc.getWorld().getName();
+//        return new Location(world, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getYaw(), loc.getPitch());
+//    }
+//    
+//    private static int getViewDistance() {
+//        return Bukkit.getViewDistance();
+//    }
 
-    @Override
-    public boolean isWorld(final String world) {
-        return getWorld(world) != null;
-    }
-
+    ////////////////////////////////////////////////////////////////////////
+    /////////////////// USED BY EVENT SYSTEM AND SUCH //////////////////////
+    ////////////////////////////////////////////////////////////////////////
     public static PlotPlayer getPlayer(final OfflinePlayer op) {
         if (op.isOnline()) {
             return getPlayer(op.getPlayer());
@@ -66,11 +136,6 @@ public class BukkitUtil extends BlockManager {
         return lastPlotPlayer;
     }
 
-    @Override
-    public String getBiome(final Location loc) {
-        return getWorld(loc.getWorld()).getBiome(loc.getX(), loc.getZ()).name();
-    }
-
     public static Location getLocation(final org.bukkit.Location loc) {
         return new Location(loc.getWorld().getName(), (int) loc.getX(), (int) loc.getY(), (int) loc.getZ());
     }
@@ -91,99 +156,14 @@ public class BukkitUtil extends BlockManager {
         return world;
     }
 
-    public static int getMaxHeight(final String world) {
-        return getWorld(world).getMaxHeight();
-    }
-
-    public static int getHeighestBlock(final String world, final int x, final int z) {
-        return getWorld(world).getHighestBlockYAt(x, z);
-    }
-
-    public static void unloadChunkAt(String worldname, int X, int Z, boolean save, boolean safe) {
-        final World world = getWorld(worldname);
-        world.unloadChunk(X, Z, save, safe);
-    }
-    
-    public static void loadChunkAt(final String worldname, int X, int Z, boolean force) {
-        final World world = getWorld(worldname);
-        world.loadChunk(X, Z, force);
-    }
-    
-    public static Chunk getChunkAt(final String worldname, final int x, final int z) {
-        final World world = getWorld(worldname);
-        return world.getChunkAt(x, z);
-    }
-
-//    public static void update(final String world, final int x, final int z) {
-//        final ArrayList<Chunk> chunks = new ArrayList<>();
-//        final int distance = Bukkit.getViewDistance();
-//        for (int cx = -distance; cx < distance; cx++) {
-//            for (int cz = -distance; cz < distance; cz++) {
-//                final Chunk chunk = getChunkAt(world, (x >> 4) + cx, (z >> 4) + cz);
-//                chunks.add(chunk);
-//            }
-//        }
-//        BukkitSetBlockManager.setBlockManager.update(chunks);
-//    }
-
     public static String getWorld(final Entity entity) {
         return entity.getWorld().getName();
-    }
-
-    public static void teleportPlayer(final Player player, final Location loc) {
-        final org.bukkit.Location bukkitLoc = new org.bukkit.Location(getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ());
-        player.teleport(bukkitLoc);
     }
 
     public static List<Entity> getEntities(final String worldname) {
         return getWorld(worldname).getEntities();
     }
-
-    public static void setBlock(final World world, final int x, final int y, final int z, final int id, final byte data) {
-        try {
-            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id, data);
-        } catch (final Throwable e) {
-            BukkitSetBlockManager.setBlockManager = new SetBlockSlow();
-            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id, data);
-        }
-    }
-
-    public static void setBiome(final String worldname, final int pos1_x, final int pos1_z, final int pos2_x, final int pos2_z, final String biome) {
-        final Biome b = Biome.valueOf(biome.toUpperCase());
-        final World world = getWorld(worldname);
-        for (int x = pos1_x; x <= pos2_x; x++) {
-            for (int z = pos1_z; z <= pos2_z; z++) {
-                if (world.getBiome(x, z) == b) {
-                    continue;
-                }
-                world.setBiome(x, z, b);
-            }
-        }
-    }
-
-    public static void refreshChunk(final String name, final int x, final int z) {
-        World world = getWorld(name);
-        world.refreshChunk(x, z);
-        world.loadChunk(x, z);
-    }
-
-    public static void regenerateChunk(final String world, final int x, final int z) {
-        World worldObj = getWorld(world);
-        Chunk chunk = worldObj.getChunkAt(x, z);
-        if (chunk.isLoaded() || chunk.load(false)) {
-            ChunkManager.manager.regenerateChunk(world, new ChunkLoc(x, z));
-        }
-    }
-
-    public static PlotBlock getBlock(final Location loc) {
-        final World world = getWorld(loc.getWorld());
-        final Block block = world.getBlockAt(loc.getX(), loc.getY(), loc.getZ());
-        if (block == null) {
-            return new PlotBlock((short) 0, (byte) 0);
-        }
-        return new PlotBlock((short) block.getTypeId(), block.getData());
-    }
-
+    
     public static Location getLocation(final Entity entity) {
         final org.bukkit.Location loc = entity.getLocation();
         final String world = loc.getWorld().getName();
@@ -193,10 +173,31 @@ public class BukkitUtil extends BlockManager {
     public static Location getLocationFull(final Entity entity) {
         return getLocation(entity.getLocation());
     }
+    ////////////////////////////////////////////////////////////////////////
+
     
-    public static Location getLocationFull(final org.bukkit.Location loc) {
-        final String world = loc.getWorld().getName();
-        return new Location(world, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getYaw(), loc.getPitch());
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////// CLASS ONLY METHODS //////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    private static void setBlock(final World world, final int x, final int y, final int z, final int id, final byte data) {
+        try {
+            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id, data);
+        } catch (final Throwable e) {
+            BukkitSetBlockManager.setBlockManager = new SetBlockSlow();
+            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id, data);
+        }
+    }
+    
+    ////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public boolean isWorld(final String world) {
+        return getWorld(world) != null;
+    }
+    
+    @Override
+    public String getBiome(String world, int x, int z) {
+        return getWorld(world).getBiome(x, z).name();
     }
 
     @Override
@@ -222,16 +223,12 @@ public class BukkitUtil extends BlockManager {
         }
     }
 
-    public static int getViewDistance() {
-        return Bukkit.getViewDistance();
-    }
-    
     @Override
-    public void functionSetBiomes(final String worldname, final int[] x, final int[] z, final int[] biome) {
+    public void functionSetBiomes(final String worldname, final int[] x, final int[] z, final String biomeStr) {
         final World world = getWorld(worldname);
-        final Biome[] biomes = Biome.values();
+        final Biome biome = Biome.valueOf(biomeStr.toUpperCase());
         for (int i = 0; i < x.length; i++) {
-            world.setBiome(x[i], z[i], biomes[biome[i]]);
+            world.setBiome(x[i], z[i], biome);
         }
     }
     
@@ -259,8 +256,8 @@ public class BukkitUtil extends BlockManager {
     }
     
     @Override
-    public int getHeighestBlock(final Location loc) {
-        return getWorld(loc.getWorld()).getHighestBlockAt(loc.getX(), loc.getZ()).getY();
+    public int getHeighestBlock(String world, int x, int z) {
+        return getWorld(world).getHighestBlockAt(x, z).getY();
     }
     
     @Override
@@ -382,5 +379,15 @@ public class BukkitUtil extends BlockManager {
         }
         catch (Exception e) {}
         return null;
+    }
+
+    @Override
+    public PlotBlock getBlock(Location loc) {
+        final World world = getWorld(loc.getWorld());
+        final Block block = world.getBlockAt(loc.getX(), loc.getY(), loc.getZ());
+        if (block == null) {
+            return new PlotBlock((short) 0, (byte) 0);
+        }
+        return new PlotBlock((short) block.getTypeId(), block.getData());
     }
 }

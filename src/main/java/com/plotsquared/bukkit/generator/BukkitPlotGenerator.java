@@ -24,7 +24,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.plotsquared.bukkit.listeners.WorldEvents;
-import com.plotsquared.bukkit.object.PlotPopulator;
+import com.plotsquared.bukkit.object.BukkitPlotPopulator;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
@@ -226,7 +226,7 @@ public abstract class BukkitPlotGenerator extends ChunkGenerator {
      */
     public abstract void generateChunk(final World world, RegionWrapper requiredRegion, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes);
     
-    public abstract List<PlotPopulator> getPopulators(String world);
+    public abstract List<BukkitPlotPopulator> getPopulators(String world);
     
     /**
      * This is called when the generator is initialized. 

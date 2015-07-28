@@ -7,7 +7,7 @@ public class PlotItemStack {
     public final String name;
     public final String[] lore;
     
-    public PlotItemStack(int id, short data, int amount, String name, String[] lore) {
+    public PlotItemStack(int id, short data, int amount, String name, String... lore) {
         this.id = id;
         this.data = data;
         this.amount = amount;

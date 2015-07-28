@@ -4,9 +4,9 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.object.BlockWrapper;
 import com.plotsquared.bukkit.util.bukkit.BukkitChunkManager;
 import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;

@@ -21,9 +21,11 @@ public abstract class BlockManager {
 
     public abstract int getBlockIdFromString(String block);
 
-    public abstract int getHeighestBlock(Location loc);
+    public abstract int getHeighestBlock(String world, int x, int z);
 
-    public abstract String getBiome(Location loc);
+    public abstract String getBiome(String world, int x, int z);
+    
+    public abstract PlotBlock getBlock(Location loc);
 
     public abstract Location getSpawn(String world);
 
@@ -37,9 +39,9 @@ public abstract class BlockManager {
 
     public abstract void functionSetBlock(String worldname, int x, int y, int z, int id, byte data);
 
-    public abstract void functionSetBiomes(final String worldname, final int[] x, final int z[], final int[] biome);
+    public abstract void functionSetBiomes(final String worldname, final int[] x, final int z[], final String biome);
 
-    public static void setBiomes(final String worldname, final int[] x, final int z[], final int[] biome) {
+    public static void setBiomes(final String worldname, final int[] x, final int z[], final String biome) {
         manager.functionSetBiomes(worldname, x, z, biome);
     }
 

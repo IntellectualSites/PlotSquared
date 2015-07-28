@@ -27,6 +27,9 @@ public class CommandManager<T extends CommandCaller> {
     }
 
     final public void addCommand(final Command<T> command) {
+        if (command.getCommand() == null) {
+            command.create();
+        }
         this.commands.put(command.getCommand().toLowerCase(), command);
         for (String alias : command.getAliases()) {
             this.commands.put(alias.toLowerCase(), command);
