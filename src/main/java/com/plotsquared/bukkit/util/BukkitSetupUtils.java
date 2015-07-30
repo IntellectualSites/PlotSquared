@@ -59,7 +59,7 @@ public class BukkitSetupUtils extends SetupUtils {
                 PS.get().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
             }
             PlotGenerator<ChunkGenerator> gen = (PlotGenerator<ChunkGenerator>) generators.get(object.setupGenerator);
-            if (gen.generator instanceof BukkitPlotGenerator) {
+            if (gen != null && gen.generator instanceof BukkitPlotGenerator) {
                 object.setupGenerator = null;
             }
         }
