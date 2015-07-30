@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.util.StringMan;
 import org.bukkit.ChatColor;
 
 import com.intellectualcrafters.plot.PS;
@@ -43,9 +42,10 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.chat.FancyMessage;
 import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.util.bukkit.chat.FancyMessage;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(

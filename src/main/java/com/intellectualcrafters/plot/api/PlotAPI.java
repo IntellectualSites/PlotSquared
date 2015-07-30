@@ -50,8 +50,8 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import com.plotsquared.bukkit.util.BukkitSetBlockManager;
+import com.plotsquared.bukkit.util.BukkitUtil;
 
 /**
  * PlotSquared API
@@ -185,7 +185,7 @@ import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
      *
      * @return BukkitSetBlockManager
      *
-     * @see com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager
+     * @see com.plotsquared.bukkit.util.BukkitSetBlockManager
      */
     public BukkitSetBlockManager getBukkitBlockManager() {
         return BukkitSetBlockManager.setBlockManager;

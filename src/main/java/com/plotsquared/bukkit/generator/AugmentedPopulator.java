@@ -23,8 +23,8 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitChunkManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
+import com.plotsquared.bukkit.util.BukkitChunkManager;
+import com.plotsquared.bukkit.util.BukkitSetBlockManager;
 
 public class AugmentedPopulator extends BlockPopulator {
     public final PlotWorld plotworld;

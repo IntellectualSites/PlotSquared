@@ -35,7 +35,7 @@ public enum Permissions {
 
 
     public static boolean hasPermission(final PlotPlayer player, final String perm) {
-        if ((player == null) || player.isOp() || player.hasPermission(ADMIN.s)) {
+        if ((player == null) || player.hasPermission(ADMIN.s)) {
             return true;
         }
         if (player.hasPermission(perm)) {
@@ -53,7 +53,7 @@ public enum Permissions {
     }
     
     public static boolean hasPermission(final PlotPlayer player, final String perm, boolean notify) {
-        if ((player == null) || player.isOp() || player.hasPermission(ADMIN.s)) {
+        if ((player == null) || player.hasPermission(ADMIN.s)) {
             return true;
         }
         if (player.hasPermission(perm)) {
@@ -74,7 +74,7 @@ public enum Permissions {
     }
 
     public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range) {
-        if ((player == null) || player.isOp() || player.hasPermission(ADMIN.s)) {
+        if ((player == null) || player.hasPermission(ADMIN.s)) {
             return Integer.MAX_VALUE;
         }
         if (player.hasPermission(stub + ".*")) {

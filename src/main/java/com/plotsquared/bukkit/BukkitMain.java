@@ -2,13 +2,16 @@ package com.plotsquared.bukkit;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
@@ -36,9 +39,9 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-import com.plotsquared.bukkit.commands.BukkitCommand;
 import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
 import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
@@ -55,27 +58,28 @@ import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
 import com.plotsquared.bukkit.listeners.worldedit.WESubscriber;
 import com.plotsquared.bukkit.titles.DefaultTitle;
+import com.plotsquared.bukkit.util.BukkitChunkManager;
+import com.plotsquared.bukkit.util.BukkitCommand;
+import com.plotsquared.bukkit.util.BukkitEconHandler;
+import com.plotsquared.bukkit.util.BukkitEventUtil;
 import com.plotsquared.bukkit.util.BukkitHybridUtils;
-import com.plotsquared.bukkit.util.bukkit.BukkitChunkManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitEconHandler;
-import com.plotsquared.bukkit.util.bukkit.BukkitEventUtil;
-import com.plotsquared.bukkit.util.bukkit.BukkitInventoryUtil;
-import com.plotsquared.bukkit.util.bukkit.BukkitSchematicHandler;
-import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitSetupUtils;
-import com.plotsquared.bukkit.util.bukkit.BukkitTaskManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-import com.plotsquared.bukkit.util.bukkit.Metrics;
-import com.plotsquared.bukkit.util.bukkit.SendChunk;
-import com.plotsquared.bukkit.util.bukkit.SetBlockFast;
-import com.plotsquared.bukkit.util.bukkit.SetBlockFast_1_8;
-import com.plotsquared.bukkit.util.bukkit.SetBlockSlow;
-import com.plotsquared.bukkit.util.bukkit.SetGenCB;
-import com.plotsquared.bukkit.util.bukkit.uuid.FileUUIDHandler;
-import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
+import com.plotsquared.bukkit.util.BukkitInventoryUtil;
+import com.plotsquared.bukkit.util.BukkitSchematicHandler;
+import com.plotsquared.bukkit.util.BukkitSetBlockManager;
+import com.plotsquared.bukkit.util.BukkitSetupUtils;
+import com.plotsquared.bukkit.util.BukkitTaskManager;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.Metrics;
+import com.plotsquared.bukkit.util.SendChunk;
+import com.plotsquared.bukkit.util.SetBlockFast;
+import com.plotsquared.bukkit.util.SetBlockFast_1_8;
+import com.plotsquared.bukkit.util.SetBlockSlow;
+import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
+import com.plotsquared.bukkit.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
+import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
@@ -542,5 +546,22 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public AbstractTitle initTitleManager() {
         // Already initialized in UUID handler
         return AbstractTitle.TITLE_CLASS;
+    }
+
+    @Override
+    public PlotPlayer wrapPlayer(Object obj) {
+        if (obj instanceof Player) {
+            return BukkitUtil.getPlayer((Player) obj);
+        }
+        else if (obj instanceof OfflinePlayer) {
+            return BukkitUtil.getPlayer((OfflinePlayer) obj);
+        }
+        else if (obj instanceof String) {
+            return UUIDHandler.getPlayer((String) obj);
+        }
+        else if (obj instanceof UUID) {
+            return UUIDHandler.getPlayer((UUID) obj);
+        }
+        return null;
     }
 }

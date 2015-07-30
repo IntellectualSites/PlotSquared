@@ -40,7 +40,6 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.plotsquared.bukkit.listeners.WorldEvents;
-import com.plotsquared.bukkit.object.BukkitPlotPopulator;
 
 public abstract class BukkitPlotGenerator extends ChunkGenerator {
 

@@ -14,7 +14,6 @@ import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.BlockManager;
-import com.plotsquared.bukkit.object.BukkitPlotPopulator;
 
 /**
  * @author Citymonstret

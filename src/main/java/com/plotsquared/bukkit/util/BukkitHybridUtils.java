@@ -37,7 +37,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 public class BukkitHybridUtils extends HybridUtils {
 

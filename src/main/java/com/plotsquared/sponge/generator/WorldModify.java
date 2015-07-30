@@ -4,10 +4,6 @@ import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.world.WorldCreationSettings;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
-import org.spongepowered.common.world.gen.SpongeWorldGenerator;
-
-import com.intellectualcrafters.plot.PS;
-import com.plotsquared.sponge.SpongeMain;
 
 public class WorldModify implements WorldGeneratorModifier {
 

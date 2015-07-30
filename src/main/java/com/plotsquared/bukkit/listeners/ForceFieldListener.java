@@ -36,8 +36,8 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
-import com.plotsquared.bukkit.util.bukkit.BukkitPlayerFunctions;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import com.plotsquared.bukkit.util.BukkitPlayerFunctions;
+import com.plotsquared.bukkit.util.BukkitUtil;
 
 /**
  * @author Citymonstret

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -23,7 +24,6 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.manipulator.block.StoneData;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.entity.player.gamemode.GameModes;
-import org.spongepowered.api.event.EventHandler;
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.entity.player.PlayerChatEvent;
 import org.spongepowered.api.event.state.PreInitializationEvent;
@@ -38,7 +38,6 @@ import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
@@ -49,21 +48,18 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.generator.SpongeBasicGen;
@@ -72,11 +68,13 @@ import com.plotsquared.sponge.generator.WorldModify;
 import com.plotsquared.sponge.listener.MainListener;
 import com.plotsquared.sponge.util.KillRoadMobs;
 import com.plotsquared.sponge.util.SpongeBlockManager;
+import com.plotsquared.sponge.util.SpongeChunkManager;
 import com.plotsquared.sponge.util.SpongeCommand;
 import com.plotsquared.sponge.util.SpongeEventUtil;
 import com.plotsquared.sponge.util.SpongeInventoryUtil;
 import com.plotsquared.sponge.util.SpongeMetrics;
 import com.plotsquared.sponge.util.SpongeTaskManager;
+import com.plotsquared.sponge.util.SpongeTitleManager;
 import com.plotsquared.sponge.util.SpongeUtil;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
@@ -595,5 +593,22 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     @Override
     public AbstractTitle initTitleManager() {
         return new SpongeTitleManager();
+    }
+
+    @Override
+    public PlotPlayer wrapPlayer(Object obj) {
+        if (obj instanceof Player) {
+            return SpongeUtil.getPlayer((Player) obj);
+        }
+//        else if (obj instanceof OfflinePlayer) {
+//            return BukkitUtil.getPlayer((OfflinePlayer) obj);
+//        }
+        else if (obj instanceof String) {
+            return UUIDHandler.getPlayer((String) obj);
+        }
+        else if (obj instanceof UUID) {
+            return UUIDHandler.getPlayer((UUID) obj);
+        }
+        return null;
     }
 }

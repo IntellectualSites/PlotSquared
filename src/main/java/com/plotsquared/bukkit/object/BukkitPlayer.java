@@ -1,6 +1,5 @@
 package com.plotsquared.bukkit.object;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -13,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -23,19 +21,16 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import com.plotsquared.bukkit.util.BukkitUtil;
 
-public class BukkitPlayer implements PlotPlayer {
+public class BukkitPlayer extends PlotPlayer {
     
     public final Player player;
     private UUID uuid;
     private String name;
-    private int op = 0;
     private long last = 0;
     public HashSet<String> hasPerm = new HashSet<>();
     public HashSet<String> noPerm = new HashSet<>();
-    
-    private HashMap<String, Object> meta;
 
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
@@ -54,7 +49,8 @@ public class BukkitPlayer implements PlotPlayer {
 
     @Override
     public Location getLocation() {
-        return BukkitUtil.getLocation(this.player);
+        Location loc = super.getLocation();
+        return loc == null ? BukkitUtil.getLocation(this.player) : loc; 
     }
     
     @Override
@@ -101,20 +97,6 @@ public class BukkitPlayer implements PlotPlayer {
     }
     
     @Override
-    public boolean isOp() {
-        if (this.op != 0) {
-            return this.op != 1;
-        }
-        final boolean result = this.player.isOp();
-        if (!result) {
-            this.op = 1;
-            return false;
-        }
-        this.op = 2;
-        return true;
-    }
-    
-    @Override
     public String getName() {
         if (this.name == null) {
             this.name = this.player.getName();
@@ -136,34 +118,6 @@ public class BukkitPlayer implements PlotPlayer {
     @Override
     public Location getLocationFull() {
         return BukkitUtil.getLocationFull(this.player);
-    }
-
-    @Override
-    public void setMeta(String key, Object value) {
-        if (this.meta == null) {
-            this.meta = new HashMap<String, Object>();
-        }
-        this.meta.put(key, value);
-    }
-
-    @Override
-    public Object getMeta(String key) {
-        if (this.meta != null) {
-            return this.meta.get(key);
-        }
-        return null;
-    }
-
-    @Override
-    public void deleteMeta(String key) {
-        if (this.meta != null) {
-            this.meta.remove(key);
-        }
-    }
-    
-    @Override
-    public String toString() {
-        return getName();
     }
 
     @Override
@@ -200,11 +154,6 @@ public class BukkitPlayer implements PlotPlayer {
     @Override
     public void saveData() {
         player.saveData();
-    }
-
-    @Override
-    public RequiredType getSuperCaller() {
-        return RequiredType.PLAYER;
     }
 
     @Override

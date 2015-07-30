@@ -7,7 +7,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.SpongeMain;
-import com.plotsquared.sponge.SpongePlayer;
+import com.plotsquared.sponge.object.SpongePlayer;
 
 public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
 

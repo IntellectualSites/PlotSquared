@@ -13,7 +13,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.sponge.SpongeMain;
-import com.plotsquared.sponge.SpongePlayer;
+import com.plotsquared.sponge.object.SpongePlayer;
 
 public class SpongeUtil {
 

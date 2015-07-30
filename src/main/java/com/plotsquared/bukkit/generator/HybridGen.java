@@ -36,7 +36,6 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.plotsquared.bukkit.object.BukkitPlotPopulator;
 
 /**
  * The default generator is very messy, as we have decided to try externalize all calculations from within the loop. -

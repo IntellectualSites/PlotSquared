@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.util.StringMan;
 import org.bukkit.Bukkit;
 
 import com.intellectualcrafters.plot.PS;
@@ -47,6 +46,7 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.plotsquared.general.commands.CommandDeclaration;

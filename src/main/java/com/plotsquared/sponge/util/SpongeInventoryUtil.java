@@ -20,7 +20,7 @@ import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.plotsquared.sponge.SpongeMain;
-import com.plotsquared.sponge.SpongePlayer;
+import com.plotsquared.sponge.object.SpongePlayer;
 
 public class SpongeInventoryUtil extends InventoryUtil {
 

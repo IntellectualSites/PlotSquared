@@ -142,7 +142,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.listeners.worldedit.WEManager;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import com.plotsquared.bukkit.util.BukkitUtil;
 
 /**
  * Player Events involving plots
@@ -445,6 +445,10 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             player.saveData();
         }
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        
+        // Set last location
+        pp.setMeta("location", BukkitUtil.getLocation(player.getLocation()));
+        
         final String username = pp.getName();
         final StringWrapper name = new StringWrapper(username);
         final UUID uuid = pp.getUUID();
@@ -485,6 +489,12 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         org.bukkit.Location to = event.getTo();
         int x2;
         if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
+            Player player = event.getPlayer();
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            
+            // Set last location
+            pp.setMeta("location", BukkitUtil.getLocation(to));
+            
             String worldname = to.getWorld().getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
             if (plotworld == null) {
@@ -492,8 +502,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
             PlotManager plotManager = PS.get().getPlotManager(worldname);
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
-            Player player = event.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
@@ -547,6 +555,12 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
         int z2;
         if (getInt(from.getZ()) != (z2 = getInt(to.getZ())) ) {
+            Player player = event.getPlayer();
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            
+            // Set last location
+            pp.setMeta("location", BukkitUtil.getLocation(to));
+            
             String worldname = to.getWorld().getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
             if (plotworld == null) {
@@ -554,8 +568,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
             PlotManager plotManager = PS.get().getPlotManager(worldname);
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
-            Player player = event.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
@@ -722,13 +734,19 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldChanged(final PlayerChangedWorldEvent event) {
-        final PlotPlayer player = BukkitUtil.getPlayer(event.getPlayer());
+        Player player = event.getPlayer();
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        
+        // Delete last location
+        BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("location");
+        BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("lastplot");
+        
         if (PS.get().worldEdit != null) {
-            if (!Permissions.hasPermission(player, PERMISSION_WORLDEDIT_BYPASS)) {
-                WEManager.bypass.remove(player.getName());
+            if (!Permissions.hasPermission(pp, PERMISSION_WORLDEDIT_BYPASS)) {
+                WEManager.bypass.remove(pp.getName());
             }
             else {
-                WEManager.bypass.add(player.getName());
+                WEManager.bypass.add(pp.getName());
             }
         }
         ((BukkitPlayer) player).hasPerm = new HashSet<>();
@@ -1382,6 +1400,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent event) {
         if (event.getTo() == null || event.getFrom() == null) {
+            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("location");
+            BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("lastplot");
             return;
         }
         final org.bukkit.Location from = event.getFrom();
@@ -1389,6 +1409,12 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         
         int x2;
         if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
+            Player player = event.getPlayer();
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            
+            // Set last location
+            pp.setMeta("location", BukkitUtil.getLocation(to));
+            
             String worldname = to.getWorld().getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
             if (plotworld == null) {
@@ -1396,8 +1422,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
             PlotManager plotManager = PS.get().getPlotManager(worldname);
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
-            Player player = event.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
@@ -1451,6 +1475,12 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
         int z2;
         if (getInt(from.getZ()) != (z2 = getInt(to.getZ())) ) {
+            Player player = event.getPlayer();
+            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            
+            // Set last location
+            pp.setMeta("location", BukkitUtil.getLocation(to));
+            
             String worldname = to.getWorld().getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
             if (plotworld == null) {
@@ -1458,8 +1488,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
             PlotManager plotManager = PS.get().getPlotManager(worldname);
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
-            Player player = event.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {

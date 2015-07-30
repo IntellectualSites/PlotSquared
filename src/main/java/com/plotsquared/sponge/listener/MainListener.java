@@ -22,7 +22,6 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.block.BlockMoveEvent;
 import org.spongepowered.api.event.block.BlockRedstoneUpdateEvent;
@@ -36,20 +35,16 @@ import org.spongepowered.api.event.entity.player.PlayerChangeWorldEvent;
 import org.spongepowered.api.event.entity.player.PlayerChatEvent;
 import org.spongepowered.api.event.entity.player.PlayerInteractBlockEvent;
 import org.spongepowered.api.event.entity.player.PlayerJoinEvent;
-import org.spongepowered.api.event.entity.player.PlayerMessageEvent;
 import org.spongepowered.api.event.entity.player.PlayerMoveEvent;
 import org.spongepowered.api.event.entity.player.PlayerPlaceBlockEvent;
 import org.spongepowered.api.event.entity.player.PlayerQuitEvent;
 import org.spongepowered.api.event.message.CommandEvent;
 import org.spongepowered.api.event.network.PlayerConnectionEvent;
-import org.spongepowered.api.event.world.ChunkLoadEvent;
 import org.spongepowered.api.event.world.ChunkPreGenerateEvent;
-import org.spongepowered.api.event.world.ChunkPrePopulateEvent;
 import org.spongepowered.api.network.PlayerConnection;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.util.command.CommandSource;
-import org.spongepowered.api.util.event.callback.EventCallback;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
 
@@ -80,7 +75,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.listener.PlotListener;
 import com.plotsquared.sponge.SpongeMain;
-import com.plotsquared.sponge.SpongePlayer;
+import com.plotsquared.sponge.object.SpongePlayer;
 import com.plotsquared.sponge.util.SpongeUtil;
 
 public class MainListener {
@@ -557,10 +552,14 @@ public class MainListener {
         org.spongepowered.api.world.Location to = event.getNewLocation();
         int x2;
         if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
+            Player player = event.getUser();
+            PlotPlayer pp = SpongeUtil.getPlayer(player);
             Extent extent = to.getExtent();
             if (!(extent instanceof World)) {
+                pp.deleteMeta("location");
                 return;
             }
+            pp.setMeta("location", SpongeUtil.getLocation(player));
             World world = (World) extent;
             String worldname = ((World) extent).getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
@@ -569,8 +568,6 @@ public class MainListener {
             }
             PlotManager plotManager = PS.get().getPlotManager(worldname);
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
-            Player player = event.getUser();
-            PlotPlayer pp = SpongeUtil.getPlayer(player);
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
@@ -622,10 +619,14 @@ public class MainListener {
         }
         int z2;
         if (getInt(from.getZ()) != (z2 = getInt(to.getZ())) ) {
+            Player player = event.getUser();
+            PlotPlayer pp = SpongeUtil.getPlayer(player);
             Extent extent = to.getExtent();
             if (!(extent instanceof World)) {
+                pp.deleteMeta("location");
                 return;
             }
+            pp.setMeta("location", SpongeUtil.getLocation(player));
             World world = (World) extent;
             String worldname = ((World) extent).getName();
             PlotWorld plotworld = PS.get().getPlotWorld(worldname);
@@ -634,8 +635,6 @@ public class MainListener {
             }
             PlotManager plotManager = PS.get().getPlotManager(worldname);
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
-            Player player = event.getUser();
-            PlotPlayer pp = SpongeUtil.getPlayer(player);
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
@@ -694,10 +693,14 @@ public class MainListener {
             org.spongepowered.api.world.Location to = event.getNewLocation();
             int x2;
             if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
+                Player player = (Player) entity;
+                PlotPlayer pp = SpongeUtil.getPlayer(player);
                 Extent extent = to.getExtent();
                 if (!(extent instanceof World)) {
+                    pp.deleteMeta("location");
                     return;
                 }
+                pp.setMeta("location", SpongeUtil.getLocation(player));
                 World world = (World) extent;
                 String worldname = ((World) extent).getName();
                 PlotWorld plotworld = PS.get().getPlotWorld(worldname);
@@ -706,8 +709,6 @@ public class MainListener {
                 }
                 PlotManager plotManager = PS.get().getPlotManager(worldname);
                 PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
-                Player player = (Player) entity;
-                PlotPlayer pp = SpongeUtil.getPlayer(player);
                 Plot lastPlot = (Plot) pp.getMeta("lastplot");
                 if (id == null) {
                     if (lastPlot == null) {
@@ -759,10 +760,14 @@ public class MainListener {
             }
             int z2;
             if (getInt(from.getZ()) != (z2 = getInt(to.getZ())) ) {
+                Player player = (Player) entity;
+                PlotPlayer pp = SpongeUtil.getPlayer(player);
                 Extent extent = to.getExtent();
                 if (!(extent instanceof World)) {
+                    pp.deleteMeta("location");
                     return;
                 }
+                pp.setMeta("location", SpongeUtil.getLocation(player));
                 World world = (World) extent;
                 String worldname = ((World) extent).getName();
                 PlotWorld plotworld = PS.get().getPlotWorld(worldname);
@@ -771,8 +776,6 @@ public class MainListener {
                 }
                 PlotManager plotManager = PS.get().getPlotManager(worldname);
                 PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
-                Player player = (Player) entity;
-                PlotPlayer pp = SpongeUtil.getPlayer(player);
                 Plot lastPlot = (Plot) pp.getMeta("lastplot");
                 if (id == null) {
                     if (lastPlot == null) {
@@ -827,6 +830,9 @@ public class MainListener {
     @Subscribe
     public void onWorldChange(PlayerChangeWorldEvent event) {
         final PlotPlayer player = SpongeUtil.getPlayer(event.getUser());
+        
+        player.deleteMeta("location");
+        player.deleteMeta("lastplot");
         
         // TODO worldedit mask
         

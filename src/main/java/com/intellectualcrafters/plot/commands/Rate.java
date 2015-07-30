@@ -26,8 +26,6 @@ import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.util.StringMan;
-
 import org.apache.commons.lang.mutable.MutableInt;
 import org.bukkit.Bukkit;
 

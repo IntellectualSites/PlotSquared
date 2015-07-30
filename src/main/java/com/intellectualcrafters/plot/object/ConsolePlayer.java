@@ -12,7 +12,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 
-public class ConsolePlayer implements PlotPlayer {
+public class ConsolePlayer extends PlotPlayer {
 
     private static ConsolePlayer instance;
     private Location loc;
@@ -80,11 +80,6 @@ public class ConsolePlayer implements PlotPlayer {
     @Override
     public void teleport(Location loc) {
         this.loc = loc;
-    }
-
-    @Override
-    public boolean isOp() {
-        return true;
     }
 
     @Override

@@ -28,8 +28,6 @@ import java.util.UUID;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * plot settings
@@ -109,14 +107,6 @@ public class PlotSettings {
 
     public void setMerged(final int direction, final boolean merged) {
         this.merged[direction] = merged;
-    }
-
-    /**
-     * @return biome at plot loc
-     */
-    public String getBiome() {
-        final Location loc = MainUtil.getPlotBottomLoc(this.plot.world, this.plot.getId()).add(1, 0, 1);
-        return BlockManager.manager.getBiome(loc.getWorld(), loc.getX(), loc.getZ());
     }
 
     public BlockLoc getPosition() {

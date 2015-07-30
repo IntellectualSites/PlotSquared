@@ -29,6 +29,7 @@ import java.util.UUID;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 
@@ -471,6 +472,14 @@ public class Plot {
      */
     public void setBiome(String biome, Runnable whenDone) {
         MainUtil.setBiome(this, biome, whenDone);
+    }
+    
+    /**
+     * Get the biome (String)
+     */
+    public String getBiome() {
+        final Location loc = getBottom().add(1, 0, 1);
+        return BlockManager.manager.getBiome(loc.getWorld(), loc.getX(), loc.getZ());
     }
     
     /**

@@ -31,6 +31,13 @@ public interface IPlotMain {
     File getDirectory();
     
     /**
+     * Wrap a player into a PlotPlayer object
+     * @param obj
+     * @return
+     */
+    PlotPlayer wrapPlayer(Object obj);
+    
+    /**
      * Disable the implementation
      *  - If a full disable isn't feasibly, just disable what it can
      */
