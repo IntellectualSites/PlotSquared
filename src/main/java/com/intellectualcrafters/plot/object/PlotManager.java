@@ -49,8 +49,6 @@ public abstract class PlotManager {
 
     public abstract boolean claimPlot(final PlotWorld plotworld, final Plot plot);
 
-    public abstract boolean unclaimPlot(final PlotWorld plotworld, final Plot plot);
-
     public abstract Location getSignLoc(final PlotWorld plotworld, final Plot plot);
 
     /*
@@ -60,8 +58,6 @@ public abstract class PlotManager {
     public abstract String[] getPlotComponents(final PlotWorld plotworld, final PlotId plotid);
 
     public abstract boolean setComponent(final PlotWorld plotworld, final PlotId plotid, final String component, final PlotBlock[] blocks);
-
-    public abstract boolean setBiome(final Plot plot, final String biome);
 
     /*
      * PLOT MERGING (return false if your generator does not support plot
