@@ -49,7 +49,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Animals;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.EnderDragon;
@@ -1898,7 +1897,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return;
                 }
             }
-            else if (victim instanceof ArmorStand) {
+            else if (victim.getEntityId() == 30) {
                 if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "misc-break") || plot.isAdded(pp.getUUID())))) {
                     return;
                 }
