@@ -171,7 +171,8 @@ public class BukkitUtil extends BlockManager {
     }
     
     public static Location getLocationFull(final Entity entity) {
-        return getLocation(entity.getLocation());
+        org.bukkit.Location loc = entity.getLocation();
+        return new Location(loc.getWorld().getName(), (int) loc.getX(), (int) loc.getY(), (int) loc.getZ(), loc.getYaw(), loc.getPitch());
     }
     ////////////////////////////////////////////////////////////////////////
 

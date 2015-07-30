@@ -369,9 +369,10 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             boolean result = cmd.onCommand(plr, args);
             if (!result) {
                 String usage = cmd.getUsage();
-                if (usage != null && !usage.isEmpty()) {
-                    MainUtil.sendMessage(plr, usage);
-                }
+                // Unecessary!
+//                if (usage != null && !usage.isEmpty()) {
+//                    MainUtil.sendMessage(plr, usage);
+//                }
                 return CommandHandlingOutput.WRONG_USAGE;
             }
         } catch (final Throwable t) {

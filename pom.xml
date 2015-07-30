@@ -67,6 +67,21 @@
                             </excludes>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>api</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <finalName>PlotSquared-Null</finalName>
+                            <excludes>
+                                <exclude>**/com/plotsquared/bukkit/**</exclude>
+                                <exclude>**/com/intellectualcrafters/plot/api/*</exclude>
+                                <exclude>**/com/plotsquared/sponge/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

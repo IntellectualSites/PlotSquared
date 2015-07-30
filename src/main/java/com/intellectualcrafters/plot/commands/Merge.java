@@ -54,12 +54,6 @@ public class Merge extends SubCommand {
     public final static String[] values = new String[] { "north", "east", "south", "west" };
     public final static String[] aliases = new String[] { "n", "e", "s", "w" };
 
-    public Merge() {
-        requiredArguments = new Argument[] {
-                Argument.String
-        };
-    }
-
     public static String direction(float yaw) {
         yaw = yaw / 90;
         final int i = Math.round(yaw);
@@ -99,16 +93,29 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (args.length < 1) {
-            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(values, C.BLOCK_LIST_SEPARATER.s()));
-            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
-            return false;
-        }
         int direction = -1;
-        for (int i = 0; i < values.length; i++) {
-            if (args[0].equalsIgnoreCase(values[i]) || args[0].equalsIgnoreCase(aliases[i])) {
-                direction = i;
-                break;
+        if (args.length == 0) {
+            switch (direction(plr.getLocationFull().getYaw())) {
+                case "NORTH":
+                    direction = 0;
+                    break;
+                case "EAST":
+                    direction = 1;
+                    break;
+                case "SOUTH":
+                    direction = 2;
+                    break;
+                case "WEST":
+                    direction = 3;
+                    break;
+            }
+        }
+        else {
+            for (int i = 0; i < values.length; i++) {
+                if (args[0].equalsIgnoreCase(values[i]) || args[0].equalsIgnoreCase(aliases[i])) {
+                    direction = i;
+                    break;
+                }
             }
         }
         if (direction == -1) {
