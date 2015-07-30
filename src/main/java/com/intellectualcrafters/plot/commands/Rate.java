@@ -20,24 +20,32 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.events.PlotRateEvent;
-import com.plotsquared.general.commands.CommandDeclaration;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.mutable.MutableInt;
-import org.bukkit.Bukkit;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.util.StringMan;
+
+import org.apache.commons.lang.mutable.MutableInt;
+import org.bukkit.Bukkit;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotItemStack;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.Rating;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.bukkit.events.PlotRateEvent;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "rate",
@@ -118,13 +126,11 @@ public class Rate extends SubCommand {
                             // handle ratings
                             int rV = rating.intValue();
                             // CALL THE EVENT
-                            PlotRateEvent rateEvent = new PlotRateEvent(player, rV, plot);
+                            PlotRateEvent rateEvent = new PlotRateEvent(player, new Rating(rV), plot);
                             Bukkit.getPluginManager().callEvent(rateEvent);
                             // DONE CALLING THE EVENT
-                            // get new rating
-                            rV = rateEvent.getRating();
                             // set rating
-                            plot.getSettings().ratings.put(player.getUUID(), rV);
+                            plot.getSettings().ratings.put(player.getUUID(), rateEvent.getRating().getAggregate());
                             DBFunc.setRating(plot, player.getUUID(), rV);
                             sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
                             sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
@@ -134,15 +140,15 @@ public class Rate extends SubCommand {
                         return false;
                     }
                 };
-                inventory.setItem(0, new PlotItemStack(35, (short) 12, 0, "0/8", null));
-                inventory.setItem(1, new PlotItemStack(35, (short) 14, 1, "1/8", null));
-                inventory.setItem(2, new PlotItemStack(35, (short) 1, 2, "2/8", null));
-                inventory.setItem(3, new PlotItemStack(35, (short) 4, 3, "3/8", null));
-                inventory.setItem(4, new PlotItemStack(35, (short) 5, 4, "4/8", null));
-                inventory.setItem(5, new PlotItemStack(35, (short) 9, 5, "5/8", null));
-                inventory.setItem(6, new PlotItemStack(35, (short) 11, 6, "6/8", null));
-                inventory.setItem(7, new PlotItemStack(35, (short) 10, 7, "7/8", null));
-                inventory.setItem(8, new PlotItemStack(35, (short) 2, 8, "8/8", null));
+                inventory.setItem(0, new PlotItemStack(35, (short) 12, 0, "0/8"));
+                inventory.setItem(1, new PlotItemStack(35, (short) 14, 1, "1/8"));
+                inventory.setItem(2, new PlotItemStack(35, (short) 1, 2, "2/8"));
+                inventory.setItem(3, new PlotItemStack(35, (short) 4, 3, "3/8"));
+                inventory.setItem(4, new PlotItemStack(35, (short) 5, 4, "4/8"));
+                inventory.setItem(5, new PlotItemStack(35, (short) 9, 5, "5/8"));
+                inventory.setItem(6, new PlotItemStack(35, (short) 11, 6, "6/8"));
+                inventory.setItem(7, new PlotItemStack(35, (short) 10, 7, "7/8"));
+                inventory.setItem(8, new PlotItemStack(35, (short) 2, 8, "8/8"));
                 inventory.openInventory();
                 }
             };
@@ -169,7 +175,7 @@ public class Rate extends SubCommand {
             
         }
         final int rating;
-        if (StringUtils.isNumeric(arg) && arg.length() < 3 && arg.length() > 0) {
+        if (MathMan.isInteger(arg) && arg.length() < 3 && arg.length() > 0) {
             rating = Integer.parseInt(arg);
             if (rating > 10) {
                 sendMessage(player, C.RATING_NOT_VALID);

@@ -1,13 +1,12 @@
 package com.intellectualcrafters.plot.util;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.PlotBlock;
 
 public class SetBlockQueue {
     
@@ -46,8 +45,8 @@ public class SetBlockQueue {
 
     public synchronized static void init() {
         if (blocks == null) {
-            if (AugmentedPopulator.x_loc == null) {
-                AugmentedPopulator.initCache();
+            if (MainUtil.x_loc == null) {
+                MainUtil.initCache();
             }
             blocks = new HashMap<>();
             runnables = new HashSet<>();
@@ -100,9 +99,9 @@ public class SetBlockQueue {
                                         }
                                         PlotBlock block = blocksj[k];
                                         if (block != null) {
-                                            int x = AugmentedPopulator.x_loc[j][k];
-                                            int y = AugmentedPopulator.y_loc[j][k];
-                                            int z = AugmentedPopulator.z_loc[j][k];
+                                            int x = MainUtil.x_loc[j][k];
+                                            int y = MainUtil.y_loc[j][k];
+                                            int z = MainUtil.z_loc[j][k];
                                             BlockManager.manager.functionSetBlock(world, X + x, y, Z + z, block.id, block.data);
                                             blocks[j][k] = null;
                                             once = true;
@@ -120,9 +119,9 @@ public class SetBlockQueue {
                                 for (int k = 0; k < blocksj.length; k++) {
                                     PlotBlock block = blocksj[k];
                                     if (block != null) {
-                                        int x = AugmentedPopulator.x_loc[j][k];
-                                        int y = AugmentedPopulator.y_loc[j][k];
-                                        int z = AugmentedPopulator.z_loc[j][k];
+                                        int x = MainUtil.x_loc[j][k];
+                                        int y = MainUtil.y_loc[j][k];
+                                        int z = MainUtil.z_loc[j][k];
                                         BlockManager.manager.functionSetBlock(world, X + x, y, Z + z, block.id, block.data);
                                     }
                                 }

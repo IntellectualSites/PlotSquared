@@ -1,11 +1,11 @@
 package com.intellectualcrafters.plot.util.helpmenu;
 
+import java.util.List;
+
 import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.Command;
-
-import java.util.List;
 
 public class HelpMenu {
 

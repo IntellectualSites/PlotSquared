@@ -20,6 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.intellectualcrafters.plot.util.StringMan;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -30,11 +35,6 @@ import com.intellectualcrafters.plot.util.CommentManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @CommandDeclaration(
         command = "inbox",
@@ -128,7 +128,7 @@ public class Inbox extends SubCommand {
         }
         final CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
         if (inbox == null) {
-            sendMessage(player, C.INVALID_INBOX, StringUtils.join(CommentManager.inboxes.keySet(),", "));
+            sendMessage(player, C.INVALID_INBOX, StringMan.join(CommentManager.inboxes.keySet(),", "));
             return false;
         }
         player.setMeta("inbox:" + inbox.toString(), System.currentTimeMillis());

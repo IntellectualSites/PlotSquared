@@ -1,12 +1,15 @@
-package com.plotsquared.bukkit.titles;
+package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import org.bukkit.ChatColor;
 
 public abstract class AbstractTitle {
     public static AbstractTitle TITLE_CLASS;
     
     public static void sendTitle(PlotPlayer player, String head, String sub) {
+        if (ConsolePlayer.isConsole(player)) {
+            return;
+        }
         if (TITLE_CLASS != null && !player.getAttribute("disabletitles")) {
             TITLE_CLASS.sendTitle(player, head, sub, 1, 2, 1);
         }

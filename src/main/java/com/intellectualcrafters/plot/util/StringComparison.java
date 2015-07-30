@@ -62,12 +62,16 @@ public class StringComparison<T> {
         this.bestMatchObject = objects[0];
         input = input.toLowerCase();
         for (final T o : objects) {
-            if ((c = compare(input, o.toString().toLowerCase())) < this.match) {
+            if ((c = compare(input, getString(o).toLowerCase())) < this.match) {
                 this.match = c;
                 this.bestMatch = o;
                 this.bestMatchObject = o;
             }
         }
+    }
+    
+    public String getString(T o) {
+        return o.toString();
     }
 
     /**
@@ -137,7 +141,7 @@ public class StringComparison<T> {
      * @return match value
      */
     public String getBestMatch() {
-        return this.bestMatch.toString();
+        return getString(this.bestMatch);
     }
 
     /**

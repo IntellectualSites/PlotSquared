@@ -1,14 +1,20 @@
 package com.intellectualcrafters.plot;
 
-import com.intellectualcrafters.plot.config.C;
+import java.io.File;
+
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.listener.APlotListener;
-
-import java.io.File;
-import java.util.UUID;
+import com.intellectualcrafters.plot.util.AbstractTitle;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 
 public interface IPlotMain {
     
@@ -42,7 +48,13 @@ public interface IPlotMain {
      * @return
      */
     int[] getServerVersion();
-
+    
+    /**
+     * Get the schematic handler
+     * @return
+     */
+    SchematicHandler initSchematicHandler();
+    
     /**
      * The task manager will run and manage minecraft tasks
      * @return
@@ -169,13 +181,6 @@ public interface IPlotMain {
     PlotGenerator<?> getGenerator(String world, String name);
 
     /**
-     * Get the PlotListener class for this implementation
-     * (We should try to make this generic so we don't need this)
-     * @return
-     */
-    APlotListener initPlotListener();
-
-    /**
      * Register the chunk processor which will clean out chunks that have too many blockstates or entities
      */
     void registerChunkProcessor();
@@ -186,14 +191,14 @@ public interface IPlotMain {
     void registerWorldEvents();
 
     /**
-     * This class is currently really empty, but player related stuff can go in here
-     * @return
-     */
-    PlayerManager initPlayerManager();
-    
-    /**
      * Get the name of the server
      * @return
      */
     String getServerName();
+    
+    /**
+     * Get the class that will manage player titles
+     * @return
+     */
+    AbstractTitle initTitleManager();
 }

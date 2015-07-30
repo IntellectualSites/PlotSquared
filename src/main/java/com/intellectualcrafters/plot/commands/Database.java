@@ -1,5 +1,10 @@
 package com.intellectualcrafters.plot.commands;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
@@ -10,11 +15,6 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.UUID;
 
 @CommandDeclaration(
         command = "database",
@@ -30,7 +30,7 @@ public class Database extends SubCommand {
 
     private static boolean sendMessageU(final UUID uuid, final String msg) {
         if (uuid == null) {
-            PS.log(msg);
+            PS.debug(msg);
         } else {
             final PlotPlayer p = UUIDHandler.getPlayer(uuid);
             if ((p != null) && p.isOnline()) {
@@ -127,11 +127,7 @@ public class Database extends SubCommand {
     }
 
     private boolean sendMessage(final PlotPlayer player, final String msg) {
-        if (player == null) {
-            PS.log(msg);
-        } else {
-            MainUtil.sendMessage(player, msg);
-        }
+        MainUtil.sendMessage(player, msg);
         return true;
     }
 }

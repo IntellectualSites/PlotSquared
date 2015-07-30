@@ -1,9 +1,10 @@
 package com.plotsquared.bukkit.object;
 
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import java.util.UUID;
+
 import org.bukkit.OfflinePlayer;
 
-import java.util.UUID;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 
 public class BukkitOfflinePlayer implements OfflinePlotPlayer {
     

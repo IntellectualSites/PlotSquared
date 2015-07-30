@@ -20,12 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.commands.Template;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+
+import com.intellectualcrafters.plot.commands.Template;
 
 public abstract class PlotManager {
     /*

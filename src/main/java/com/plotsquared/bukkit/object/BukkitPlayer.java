@@ -1,5 +1,18 @@
 package com.plotsquared.bukkit.object;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.WeatherType;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -7,16 +20,10 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
 
 public class BukkitPlayer implements PlotPlayer {
     
@@ -198,5 +205,70 @@ public class BukkitPlayer implements PlotPlayer {
     @Override
     public RequiredType getSuperCaller() {
         return RequiredType.PLAYER;
+    }
+
+    @Override
+    public void setWeather(PlotWeather weather) {
+        switch (weather) {
+            case CLEAR:
+                player.setPlayerWeather(WeatherType.CLEAR);
+                return;
+            case RAIN: {
+                player.setPlayerWeather(WeatherType.DOWNFALL);
+                return;
+            }
+            case RESET:
+                player.resetPlayerWeather();
+                return;
+        }
+    }
+
+    @Override
+    public PlotGamemode getGamemode() {
+        switch (player.getGameMode()) {
+            case ADVENTURE:
+                return PlotGamemode.ADVENTURE;
+            case CREATIVE:
+                return PlotGamemode.CREATIVE;
+            case SPECTATOR:
+                return PlotGamemode.SPECTATOR;
+            case SURVIVAL:
+                return PlotGamemode.SURVIVAL;
+        }
+        return null;
+    }
+
+    @Override
+    public void setGamemode(PlotGamemode gamemode) {
+        switch (gamemode) {
+            case ADVENTURE:
+                player.setGameMode(GameMode.ADVENTURE);
+            case CREATIVE:
+                player.setGameMode(GameMode.CREATIVE);
+            case SPECTATOR:
+                player.setGameMode(GameMode.SPECTATOR);
+            case SURVIVAL:
+                player.setGameMode(GameMode.SURVIVAL);
+        }
+    }
+
+    @Override
+    public void setTime(long time) {
+        player.setPlayerTime(time, false);
+    }
+
+    @Override
+    public void setFlight(boolean fly) {
+        player.setAllowFlight(fly);
+    }
+
+    @Override
+    public void playMusic(Location loc, int id) {
+        player.playEffect(BukkitUtil.getLocation(loc), Effect.RECORD_PLAY, Material.getMaterial(id));
+    }
+
+    @Override
+    public void kick(String message) {
+        player.kickPlayer(message);
     }
 }

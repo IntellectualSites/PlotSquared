@@ -20,17 +20,20 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.plotsquared.general.commands.CommandDeclaration;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.*;
-import java.util.Set;
 
 @CommandDeclaration(
         command = "condense",
@@ -42,10 +45,6 @@ import java.util.Set;
 public class Condense extends SubCommand {
 
     public static boolean TASK = false;
-
-    public static void sendMessage(final String message) {
-        PS.log("&3PlotSquared -> Plot condense&8: &7" + message);
-    }
 
     @Override
     public boolean onCommand(final PlotPlayer plr, String ... args) {
@@ -72,7 +71,7 @@ public class Condense extends SubCommand {
                     MainUtil.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
                     return false;
                 }
-                if (!StringUtils.isNumeric(args[2])) {
+                if (!MathMan.isInteger(args[2])) {
                     MainUtil.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }
@@ -102,7 +101,7 @@ public class Condense extends SubCommand {
                     @Override
                     public void run() {
                         if (!TASK) {
-                            sendMessage("CONDENSE TASK CANCELLED");
+                            MainUtil.sendMessage(plr, "CONDENSE TASK CANCELLED");
                             return;
                         }
                         to_move.remove(0);
@@ -130,16 +129,16 @@ public class Condense extends SubCommand {
                             free.remove(0);
                         }
                         if (to_move.size() == 0) {
-                            sendMessage("TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
+                            MainUtil.sendMessage(plr, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
                             TASK = false;
                             return;
                         }
                         if (free.size() == 0) {
-                            sendMessage("TASK FAILED. NO FREE PLOTS FOUND!");
+                            MainUtil.sendMessage(plr, "TASK FAILED. NO FREE PLOTS FOUND!");
                             TASK = false;
                             return;
                         }
-                        sendMessage("MOVING " + to_move.get(0) + " to " + free.get(0));
+                        MainUtil.sendMessage(plr, "MOVING " + to_move.get(0) + " to " + free.get(0));
                         MainUtil.move(MainUtil.getPlot(worldname, to_move.get(0)), MainUtil.getPlot(worldname, free.get(0)), this);
                     }
                 });
@@ -161,7 +160,7 @@ public class Condense extends SubCommand {
                     MainUtil.sendMessage(plr, "/plot condense " + worldname + " info <radius>");
                     return false;
                 }
-                if (!StringUtils.isNumeric(args[2])) {
+                if (!MathMan.isInteger(args[2])) {
                     MainUtil.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }

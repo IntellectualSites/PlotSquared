@@ -1,20 +1,27 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.*;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RunnableVal;
 
 public class ExpireManager {
     public static ConcurrentHashMap<String, List<Plot>> expiredPlots = new ConcurrentHashMap<>();
@@ -42,7 +49,7 @@ public class ExpireManager {
                 public void run() {
                     try {
                         final List<Plot> plots = getOldPlots(world);
-                        PS.log("$2[&5Expire&dManager$2] $4Found " + plots.size() + " expired plots for " + world + "!");
+                        PS.debug("$2[&5Expire&dManager$2] $4Found " + plots.size() + " expired plots for " + world + "!");
                         expiredPlots.put(world, plots);
                         updatingPlots.put(world, false);
                     }
@@ -69,18 +76,18 @@ public class ExpireManager {
                         }
                         final Boolean updating = ExpireManager.updatingPlots.get(world);
                         if (updating) {
-                            PS.log("$2[&5Expire&dManager$2] $4Waiting on fetch...");
+                            PS.debug("$2[&5Expire&dManager$2] $4Waiting on fetch...");
                             return;
                         }
                         if (!expiredPlots.containsKey(world)) {
-                            PS.log("$2[&5Expire&dManager$2] $4Updating expired plots for: " + world);
+                            PS.debug("$2[&5Expire&dManager$2] $4Updating expired plots for: " + world);
                             updateExpired(world);
                             return;
                         }
                         final List<Plot> plots = expiredPlots.get(world);
                         if ((plots == null) || (plots.size() == 0)) {
                             if (updateExpired(world)) {
-                                PS.log("$2[&5Expire&dManager$2] $4Re-evaluating expired plots for: " + world);
+                                PS.debug("$2[&5Expire&dManager$2] $4Re-evaluating expired plots for: " + world);
                                 return;
                             }
                             continue;
@@ -88,7 +95,7 @@ public class ExpireManager {
                         final Plot plot = plots.iterator().next();
                         if (!isExpired(plot)) {
                             expiredPlots.get(world).remove(plot);
-                            PS.log("$2[&5Expire&dManager$2] &bSkipping no longer expired: " + plot);
+                            PS.debug("$2[&5Expire&dManager$2] &bSkipping no longer expired: " + plot);
                             return;
                         }
                         for (final UUID helper : plot.getTrusted()) {
@@ -105,7 +112,7 @@ public class ExpireManager {
                         }
                         final PlotManager manager = PS.get().getPlotManager(world);
                         if (manager == null) {
-                            PS.log("$2[&5Expire&dManager$2] &cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
+                            PS.debug("$2[&5Expire&dManager$2] &cThis is a friendly reminder to create or delete " + world +" as it is currently setup incorrectly");
                             expiredPlots.get(world).remove(plot);
                             return;
                         }
@@ -116,7 +123,7 @@ public class ExpireManager {
                                 PlotAnalysis changed = this.value;
                                 if (Settings.CLEAR_THRESHOLD != -1 && plotworld.TYPE == 0 && changed != null) {
                                     if (changed.getComplexity() > Settings.CLEAR_THRESHOLD) {
-                                        PS.log("$2[&5Expire&dManager$2] &bIgnoring modified plot: " + plot + " : " + changed.getComplexity() + " - " + changed.changes);
+                                        PS.debug("$2[&5Expire&dManager$2] &bIgnoring modified plot: " + plot + " : " + changed.getComplexity() + " - " + changed.changes);
                                         expiredPlots.get(world).remove(plot);
                                         FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("analysis"), value));
                                         return;
@@ -129,17 +136,17 @@ public class ExpireManager {
                                 expiredPlots.get(world).remove(plot);
                                 int complexity = changed == null ? 0 : changed.getComplexity();
                                 int modified = changed == null ? 0 : changed.changes;
-                                PS.log("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " : " + complexity + " - " + modified);
-                                PS.log("$4 - World: " + plot.world);
+                                PS.debug("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " : " + complexity + " - " + modified);
+                                PS.debug("$4 - World: " + plot.world);
                                 if (plot.hasOwner()) {
-                                    PS.log("$4 - Owner: " + UUIDHandler.getName(plot.owner));
+                                    PS.debug("$4 - Owner: " + UUIDHandler.getName(plot.owner));
                                 } else {
-                                    PS.log("$4 - Owner: Unowned");
+                                    PS.debug("$4 - Owner: Unowned");
                                 }
                             }
                         };
                         if (MainUtil.runners.containsKey(plot)) {
-                            PS.log("$2[&5Expire&dManager$2] &bSkipping plot in use: " + plot);
+                            PS.debug("$2[&5Expire&dManager$2] &bSkipping plot in use: " + plot);
                             expiredPlots.get(world).remove(plot);
                             this.run();
                             return;
@@ -148,7 +155,7 @@ public class ExpireManager {
                             PlotAnalysis analysis = plot.getComplexity();
                             if (analysis != null) {
                                 if (analysis.getComplexity() > Settings.CLEAR_THRESHOLD) {
-                                    PS.log("$2[&5Expire&dManager$2] &bSkipping modified: " + plot);
+                                    PS.debug("$2[&5Expire&dManager$2] &bSkipping modified: " + plot);
                                     expiredPlots.get(world).remove(plot);
                                     this.run();
                                     return;

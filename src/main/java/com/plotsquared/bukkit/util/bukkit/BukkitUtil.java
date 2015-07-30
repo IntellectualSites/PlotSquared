@@ -23,6 +23,7 @@ import org.bukkit.material.Step;
 import org.bukkit.material.Tree;
 import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
+import org.spongepowered.api.world.extent.Extent;
 
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -285,12 +286,12 @@ public class BukkitUtil extends BlockManager {
     }
     
     @Override
-    public int getBlockIdFromString(final String block) {
+    public PlotBlock getPlotBlockFromString(final String block) {
         final Material material = Material.valueOf(block.toUpperCase());
         if (material == null) {
-            return -1;
+            return new PlotBlock((short) -1, (byte) 0);
         }
-        return material.getId();
+        return new PlotBlock((short) material.getId(), (byte) 0);
     }
 
     @Override

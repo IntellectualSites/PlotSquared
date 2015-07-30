@@ -1,11 +1,9 @@
 package com.plotsquared.bukkit.generator;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitChunkManager;
-import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -13,15 +11,22 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Random;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.BlockWrapper;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitChunkManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
 
 public class AugmentedPopulator extends BlockPopulator {
-    public static short[][] x_loc;
-    public static short[][] y_loc;
-    public static short[][] z_loc;
     public final PlotWorld plotworld;
     public final PlotManager manager;
     public final BukkitPlotGenerator generator;
@@ -36,7 +41,7 @@ public class AugmentedPopulator extends BlockPopulator {
     private final int tz;
 
     public AugmentedPopulator(final String world, final BukkitPlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
-        initCache();
+        MainUtil.initCache();
         this.cluster = cluster;
         this.generator = generator;
         this.plotworld = PS.get().getPlotWorld(world);
@@ -77,27 +82,7 @@ public class AugmentedPopulator extends BlockPopulator {
             }
         }
     }
-
-    public static void initCache() {
-        if (x_loc == null) {
-            x_loc = new short[16][4096];
-            y_loc = new short[16][4096];
-            z_loc = new short[16][4096];
-            for (int i = 0; i < 16; i++) {
-                int i4 = i << 4;
-                for (int j = 0; j < 4096; j++) {
-                    final int y = (i4) + (j >> 8);
-                    final int a = (j - ((y & 0xF) << 8));
-                    final int z1 = (a >> 4);
-                    final int x1 = a - (z1 << 4);
-                    x_loc[i][j] = (short) x1;
-                    y_loc[i][j] = (short) y;
-                    z_loc[i][j] = (short) z1;
-                }
-            }
-        }
-    }
-
+    
     public BlockWrapper get(final int x, final int z, final int i, final int j, final short[][] r, final boolean c) {
         final int y = (i << 4) + (j >> 8);
         final int a = (j - ((y & 0xF) << 8));
@@ -221,9 +206,9 @@ public class AugmentedPopulator extends BlockPopulator {
         for (int i = 0; i < result.length; i++) {
             if (result[i] != null) {
                 for (int j = 0; j < 4096; j++) {
-                    int x1 = x_loc[i][j];
-                    int y = y_loc[i][j];
-                    int z1 = z_loc[i][j];
+                    int x1 = MainUtil.x_loc[i][j];
+                    int y = MainUtil.y_loc[i][j];
+                    int z1 = MainUtil.z_loc[i][j];
                     short id = result[i][j];
                     final int xx = x + x1;
                     final int zz = z + z1;
@@ -243,7 +228,7 @@ public class AugmentedPopulator extends BlockPopulator {
                 }
             }
             else {
-                short y_min = y_loc[i][0];
+                short y_min = MainUtil.y_loc[i][0];
                 if (y_min < 128) {
                     for (int x1 = x; x1 < x + 16; x1++) {
                         for (int z1 = z; z1 < z + 16; z1++) {

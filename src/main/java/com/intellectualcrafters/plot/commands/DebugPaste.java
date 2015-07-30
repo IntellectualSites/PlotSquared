@@ -1,5 +1,11 @@
 package com.intellectualcrafters.plot.commands;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -7,11 +13,6 @@ import com.intellectualcrafters.plot.util.HastebinUtility;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.general.commands.CommandDeclaration;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-
-import java.io.File;
-import java.io.IOException;
 
 @CommandDeclaration(
         command = "debugpaste",

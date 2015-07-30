@@ -20,17 +20,27 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.general.commands.Argument;
-import com.plotsquared.general.commands.CommandDeclaration;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.util.StringMan;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.CmdConfirm;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.general.commands.Argument;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "merge",
@@ -91,7 +101,7 @@ public class Merge extends SubCommand {
             return false;
         }
         if (args.length < 1) {
-            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
+            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(values, C.BLOCK_LIST_SEPARATER.s()));
             MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }
@@ -103,7 +113,7 @@ public class Merge extends SubCommand {
             }
         }
         if (direction == -1) {
-            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringUtils.join(values, C.BLOCK_LIST_SEPARATER.s()));
+            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(values, C.BLOCK_LIST_SEPARATER.s()));
             MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }

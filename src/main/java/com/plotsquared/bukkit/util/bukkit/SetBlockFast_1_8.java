@@ -20,15 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.util.bukkit;
 
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
-import com.intellectualcrafters.plot.util.TaskManager;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Block;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +28,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
  * SetBlockFast class<br> Used to do fast world editing

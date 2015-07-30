@@ -1,18 +1,19 @@
 package com.plotsquared.bukkit.util.bukkit.chat;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.gson.stream.JsonWriter;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.gson.stream.JsonWriter;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
 
 /**
  * Internal class: Represents a component of a JSON-serializable {@link FancyMessage}.

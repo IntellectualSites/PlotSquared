@@ -1,5 +1,8 @@
 package com.plotsquared.bukkit.listeners.worldedit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.Vector2D;
 import com.sk89q.worldedit.WorldEditException;
@@ -11,9 +14,6 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class NullExtent implements Extent {
 

@@ -20,16 +20,20 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
+import java.io.File;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandCaller;
-import org.bukkit.ChatColor;
-
-import java.io.File;
-import java.util.*;
 
 /**
  * Captions class.
@@ -377,6 +381,7 @@ public enum C {
      * Info
      */
     NONE("None", "Info"),
+    UNKNOWN("Unknown", "Info"),
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
@@ -672,13 +677,8 @@ public enum C {
         return this.prefix;
     }
 
-    /**
-     * @return translated and color decoded
-     *
-     * @see org.bukkit.ChatColor#translateAlternateColorCodes(char, String)
-     */
-    public String translated() {
-        return ChatColor.translateAlternateColorCodes('&', this.s());
+    public String formatted() {
+        return StringMan.replaceFromMap(s(), replacements);
     }
 
     public String getCat() {

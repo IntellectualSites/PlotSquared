@@ -13,7 +13,6 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
         command = "help",
         description = "Get this help menu",
-        permission = "",
         aliases = {"he"},
         category = CommandCategory.INFO
 )

@@ -20,9 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -36,12 +40,6 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandHandlingOutput;
 import com.plotsquared.general.commands.CommandManager;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * PlotSquared command class
@@ -61,39 +59,68 @@ public class MainCommand extends CommandManager<PlotPlayer> {
 
     private MainCommand() {
         super(null, new ArrayList<Command<PlotPlayer>>());
-        List<SubCommand> toAdd = new ArrayList<>(Arrays.asList(
-                new Buy(), new Save(), new Load(),
-                new Template(), new Download(),
-                new Update(), new Template(),
-                new Setup(), new DebugUUID(),
-                new DebugFill(), new DebugSaveTest(),
-                new DebugLoadTest(), new CreateRoadSchematic(),
-                new DebugAllowUnsafe(), new RegenAllRoads(),
-                new DebugClear(), new Claim(),
-                new Auto(), new Home(), new Visit(),
-                new TP(), new Set(), new Toggle(),
-                new Clear(), new Delete(), new SetOwner(),
-                new Trust(), new Add(), new Deny(),
-                new Untrust(), new Remove(), new Undeny(),
-                new Info(), new list(), new Help(),
-                new Debug(), new SchematicCmd(), new plugin(),
-                new Purge(), new Reload(), new Merge(),
-                new DebugPaste(), new Unlink(), new Kick(),
-                new Rate(), new DebugClaimTest(), new Inbox(),
-                new Comment(), new Database(), new Swap(),
-                new MusicSubcommand(), new DebugRoadRegen(),
-                new Trust(), new DebugExec(), new FlagCmd(),
-                new Target(), new DebugFixFlags(), new Move(),
-                new Condense(), new Condense(), new Copy(),
-                new Chat()));
-        if (Settings.ENABLE_CLUSTERS) {
-            toAdd.add(new Cluster());
-        }
-        for (final SubCommand cmd : toAdd) {
-            if (!createCommand(cmd)) {
-                PS.log("Failed to create command: " + cmd.getClass());
-            }
-        }
+        createCommand(new Buy());
+        createCommand(new Save());
+        createCommand(new Load());
+        createCommand(new Template());
+        createCommand(new Download());
+        createCommand(new Update());
+        createCommand(new Template());
+        createCommand(new Setup());
+//        createCommand(new DebugUUID());
+        createCommand(new DebugFill());
+        createCommand(new DebugSaveTest());
+        createCommand(new DebugLoadTest());
+        createCommand(new CreateRoadSchematic());
+        createCommand(new DebugAllowUnsafe());
+        createCommand(new RegenAllRoads());
+        createCommand(new DebugClear());
+        createCommand(new Claim());
+        createCommand(new Auto());
+        createCommand(new Home());
+        createCommand(new Visit());
+        createCommand(new TP());
+        createCommand(new Set());
+        createCommand(new Toggle());
+        createCommand(new Clear());
+        createCommand(new Delete());
+        createCommand(new SetOwner());
+        createCommand(new Trust());
+        createCommand(new Add());
+        createCommand(new Deny());
+        createCommand(new Untrust());
+        createCommand(new Remove());
+        createCommand(new Undeny());
+        createCommand(new Info());
+        createCommand(new list());
+        createCommand(new Help());
+        createCommand(new Debug());
+        createCommand(new SchematicCmd());
+        createCommand(new plugin());
+        createCommand(new Purge());
+        createCommand(new Reload());
+        createCommand(new Merge());
+        createCommand(new DebugPaste());
+        createCommand(new Unlink());
+        createCommand(new Kick());
+        createCommand(new Rate());
+        createCommand(new DebugClaimTest());
+        createCommand(new Inbox());
+        createCommand(new Comment());
+        createCommand(new Database());
+        createCommand(new Swap());
+        createCommand(new MusicSubcommand());
+        createCommand(new DebugRoadRegen());
+        createCommand(new Trust());
+        createCommand(new DebugExec());
+        createCommand(new FlagCmd());
+        createCommand(new Target());
+        createCommand(new DebugFixFlags());
+        createCommand(new Move());
+        createCommand(new Condense());
+        createCommand(new Condense());
+        createCommand(new Copy());
+        createCommand(new Chat());
     }
 
     public static boolean no_permission(final PlotPlayer player, final String permission) {

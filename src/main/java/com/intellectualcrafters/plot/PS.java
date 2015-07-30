@@ -1,32 +1,84 @@
 package com.intellectualcrafters.plot;
 
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.*;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.generator.*;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.listener.APlotListener;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.Database;
+import com.intellectualcrafters.plot.database.MySQL;
+import com.intellectualcrafters.plot.database.SQLManager;
+import com.intellectualcrafters.plot.database.SQLite;
+import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.FlagValue;
+import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.generator.SquarePlotManager;
+import com.intellectualcrafters.plot.generator.SquarePlotWorld;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotFilter;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.AbstractTitle;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.CommentManager;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 /**
  * An implementation of the core,
@@ -143,11 +195,11 @@ public class PS {
             BlockManager.manager = IMP.initBlockManager();
             // Set chunk
             ChunkManager.manager = IMP.initChunkManager();
-            // Plot listener
-            APlotListener.manager = IMP.initPlotListener();
-            // Player manager
-            PlayerManager.manager = IMP.initPlayerManager();
-    
+            // Schematic handler
+            SchematicHandler.manager = IMP.initSchematicHandler();
+            // Titles
+            AbstractTitle.TITLE_CLASS = IMP.initTitleManager();
+            
             // Check for updates
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
@@ -247,6 +299,18 @@ public class PS {
      */
     public static void log(final String message) {
         get().IMP.log(message);
+    }
+    
+    /**
+     * Log a message to the IPlotMain logger
+     *
+     * @param message Message to log
+     * @see IPlotMain#log(String)
+     */
+    public static void debug(final String message) {
+        if (Settings.DEBUG) {
+            get().IMP.log(message);
+        }
     }
 
     /**
@@ -724,7 +788,7 @@ public class PS {
      * @param world The world to load
      * @param generator The generator for that world, or null if no generator
      */
-    public void loadWorld(final String world, PlotGenerator generator) {
+    public void loadWorld(final String world, PlotGenerator<?> generator) {
         PlotWorld plotWorld = getPlotWorld(world);
         if (plotWorld != null) {
             if (generator != null) {
@@ -733,7 +797,7 @@ public class PS {
             return;
         }
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
-        final PlotGenerator plotGenerator;
+        final PlotGenerator<?> plotGenerator;
         final PlotManager plotManager;
         final String path = "worlds." + world;
         if (!LOADING_WORLD && (generator.isFull())) {
@@ -981,18 +1045,18 @@ public class PS {
             stream.close();
             in.close();
             if (new_ver == null || !canUpdate(cur_ver, new_ver))  {
-                PS.log("&7PlotSquared is already up to date!");
+                PS.debug("&7PlotSquared is already up to date!");
                 return null;
             }
             if (link == null) {
-                PS.log("&dCould not check for updates");
-                PS.log("&7 - Manually check for updates: " + url);
+                PS.debug("&dCould not check for updates");
+                PS.debug("&7 - Manually check for updates: " + url);
                 return null;
             }
             return link;
         } catch (Exception e) {
-            PS.log("&dCould not check for updates");
-            PS.log("&7 - Manually check for updates: " + url);
+            PS.debug("&dCould not check for updates");
+            PS.debug("&7 - Manually check for updates: " + url);
             return null;
         }
     }
@@ -1205,20 +1269,23 @@ public class PS {
         FlagManager.addFlag(new AbstractFlag("ice-met", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("gamemode") {
 
-            public String parseValueRaw(final String value) {
-                switch (value) {
-                    case "creative":
-                    case "c":
-                    case "1":
-                        return "creative";
+            public PlotGamemode parseValueRaw(final String value) {
+                switch (value.toLowerCase()) {
                     case "survival":
                     case "s":
                     case "0":
-                        return "survival";
+                        return PlotGamemode.SURVIVAL;
+                    case "creative":
+                    case "c":
+                    case "1":
+                        return PlotGamemode.CREATIVE;
                     case "adventure":
                     case "a":
                     case "2":
-                        return "adventure";
+                        return PlotGamemode.ADVENTURE;
+                    case "spectator":
+                    case "3":
+                        return PlotGamemode.SPECTATOR;
                     default:
                         return null;
                 }
@@ -1226,26 +1293,25 @@ public class PS {
 
 
             public String getValueDesc() {
-                return "Flag value must be a gamemode: 'creative' , 'survival' or 'adventure'";
+                return "Flag value must be a gamemode: 'creative' , 'survival', 'adventure' or 'spectator'";
             }
         });
         FlagManager.addFlag(new AbstractFlag("price", new FlagValue.UnsignedDoubleValue()));
         FlagManager.addFlag(new AbstractFlag("time", new FlagValue.LongValue()));
         FlagManager.addFlag(new AbstractFlag("weather") {
 
-            public String parseValueRaw(final String value) {
+            public PlotWeather parseValueRaw(final String value) {
                 switch (value) {
                     case "rain":
                     case "storm":
                     case "on":
-                        return "rain";
                     case "lightning":
                     case "thunder":
-                        return "thunder";
+                        return PlotWeather.RAIN;
                     case "clear":
                     case "off":
                     case "sun":
-                        return "clear";
+                        return PlotWeather.CLEAR;
                     default:
                         return null;
                 }

@@ -7,7 +7,6 @@ import java.util.UUID;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.plotsquared.bukkit.listeners.PlayerBlockEventType;
 import com.intellectualcrafters.plot.object.LazyBlock;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -15,6 +14,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.bukkit.listeners.PlayerBlockEventType;
 
 public abstract class EventUtil {
     

@@ -1,18 +1,16 @@
-package com.plotsquared.sponge;
+package com.plotsquared.sponge.uuid;
 
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import org.spongepowered.api.GameProfile;
 import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.service.profile.GameProfileResolver;
 
 import com.google.common.base.Charsets;
-import com.google.inject.Inject;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.plotsquared.sponge.SpongeMain;
 
 public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
 

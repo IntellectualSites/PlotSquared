@@ -20,6 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import com.intellectualcrafters.plot.util.StringMan;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
@@ -32,11 +38,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 @CommandDeclaration(
         command = "flag",
@@ -122,7 +123,7 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
-                final String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 final Object parsed = af.parseValueRaw(value);
                 if (parsed == null) {
                     MainUtil.sendMessage(player, "&c" + af.getValueDesc());
@@ -161,7 +162,7 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 if ((args.length == 3) && flag.getAbstractFlag().isList()) {
-                    final String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                    final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                     ((FlagValue.ListValue) flag.getAbstractFlag().value).remove(flag.getValue(), value);
                     DBFunc.setFlags(plot, plot.getSettings().flags.values());
                 } else {
@@ -192,7 +193,7 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
-                final String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 final Object parsed = af.parseValueRaw(value);
                 if (parsed == null) {
                     MainUtil.sendMessage(player, "&c" + af.getValueDesc());
@@ -233,7 +234,7 @@ public class FlagCmd extends SubCommand {
                 String message = "";
                 String prefix = "";
                 for (final String flag : flags.keySet()) {
-                    message += prefix + "&6" + flag + ": &7" + StringUtils.join(flags.get(flag), ", ");
+                    message += prefix + "&6" + flag + ": &7" + StringMan.join(flags.get(flag), ", ");
                     prefix = "\n";
                 }
                 MainUtil.sendMessage(player, message);

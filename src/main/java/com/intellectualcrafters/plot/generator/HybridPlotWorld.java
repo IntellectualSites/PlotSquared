@@ -20,6 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.generator;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -29,9 +32,6 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
-
-import java.util.HashMap;
-import java.util.HashSet;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
     public boolean ROAD_SCHEMATIC_ENABLED;
@@ -68,7 +68,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         try {
             setupSchematics();
         } catch (final Exception e) {
-            PS.log("&c - road schematics are disabled for this world.");
+            PS.debug("&c - road schematics are disabled for this world.");
         }
     }
 
@@ -133,7 +133,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
         if ((schem1 == null) || (schem2 == null) || (this.ROAD_WIDTH == 0)) {
-            PS.log(C.PREFIX.s() + "&3 - schematic: &7false");
+            PS.debug(C.PREFIX.s() + "&3 - schematic: &7false");
             return;
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
@@ -196,6 +196,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         return data;
     }
 
+    // FIXME depends on block ids
+    // Possibly make abstract?
     public static byte rotate(final short id, byte data) {
         switch (id) {
             case 162:

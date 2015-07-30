@@ -1,13 +1,14 @@
 package com.intellectualcrafters.configuration.file;
 
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
 
 public class YamlRepresenter extends Representer {
 

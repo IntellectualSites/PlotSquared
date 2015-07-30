@@ -1,14 +1,16 @@
 package com.intellectualcrafters.plot.object;
 
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.MainUtil;
-
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
 
 public class ConsolePlayer implements PlotPlayer {
 
@@ -134,5 +136,28 @@ public class ConsolePlayer implements PlotPlayer {
     public RequiredType getSuperCaller() {
         return RequiredType.CONSOLE;
     }
+
+    @Override
+    public void setWeather(PlotWeather weather) {}
+
+    @Override
+    public PlotGamemode getGamemode() {
+        return PlotGamemode.CREATIVE;
+    }
+
+    @Override
+    public void setGamemode(PlotGamemode gamemode) {}
+
+    @Override
+    public void setTime(long time) {}
+
+    @Override
+    public void setFlight(boolean fly) {}
+
+    @Override
+    public void playMusic(Location loc, int id) {}
+
+    @Override
+    public void kick(String message) {}
     
 }

@@ -18,83 +18,38 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-package com.plotsquared.bukkit.listeners;
+package com.plotsquared.listener;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
-import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.titles.AbstractTitle;
-import com.plotsquared.listener.APlotListener;
-
-import org.bukkit.*;
-import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.AbstractTitle;
+import com.intellectualcrafters.plot.util.CommentManager;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
  * @author Citymonstret
  * @author Empire92
  */
-public class PlotListener extends APlotListener {
+public class PlotListener {
     
-    // FIXME if we add a few more functions to PlotPlayer, we could make this generic and not implementation specific
-    // TODO Alternatively we could move functions into BukkitPlayerManager which seems to be heavily lacking
-    
-    public void textures(final Player p) {
-        if ((Settings.PLOT_SPECIFIC_RESOURCE_PACK.length() > 1) && PS.get().isPlotWorld(p.getWorld().getName())) {
-            p.setResourcePack(Settings.PLOT_SPECIFIC_RESOURCE_PACK);
-        }
-    }
-
-    private String getName(final UUID id) {
-        if (id == null) {
-            return "none";
-        }
-        final String name = UUIDHandler.getName(id);
-        if (name == null) {
-            return "unknown";
-        }
-        return name;
-    }
-
-    private void setWeather(Player player, String str) {
-        switch (str.toLowerCase()) {
-            case "clear": {
-                player.setPlayerWeather(WeatherType.CLEAR);
-                return;
-            }
-            case "rain": {
-                player.setPlayerWeather(WeatherType.DOWNFALL);
-                return;
-            }
-        }
-    }
-
-    private GameMode getGameMode(final String str) {
-        switch (str) {
-            case "creative":
-                return GameMode.CREATIVE;
-            case "survival":
-                return GameMode.SURVIVAL;
-            case "adventure":
-                return GameMode.ADVENTURE;
-            default:
-                return Bukkit.getDefaultGameMode();
-        }
-    }
-
-    public boolean plotEntry(final PlotPlayer pp, final Plot plot) {
+    public static boolean plotEntry(final PlotPlayer pp, final Plot plot) {
         if (plot.isDenied(pp.getUUID()) && !Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
             return false;
         }
@@ -103,9 +58,7 @@ public class PlotListener extends APlotListener {
             plotExit(pp, last);
         }
         pp.setMeta("lastplot", plot);
-        final Player player = ((BukkitPlayer) pp).player;
-        final PlayerEnterPlotEvent callEvent = new PlayerEnterPlotEvent(player, plot);
-        Bukkit.getPluginManager().callEvent(callEvent);
+        EventUtil.manager.callEntry(pp, plot);
         if (plot.hasOwner()) {
             HashMap<String, Flag> flags = FlagManager.getPlotFlags(plot);
             int size = flags.size();
@@ -127,9 +80,9 @@ public class PlotListener extends APlotListener {
                 
                 final Flag gamemodeFlag = flags.get("gamemode");
                 if (gamemodeFlag != null) {
-                    if (player.getGameMode() != getGameMode(gamemodeFlag.getValueString())) {
-                        if (!player.hasPermission("plots.gamemode.bypass")) {
-                            player.setGameMode(getGameMode(gamemodeFlag.getValueString()));
+                    if (pp.getGamemode() != gamemodeFlag.getValue()) {
+                        if (!Permissions.hasPermission(pp, "plots.gamemode.bypass")) {
+                            pp.setGamemode((PlotGamemode) gamemodeFlag.getValue());
                         }
                         else {
                             MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.id, "{gamemode}", gamemodeFlag.getValue()));
@@ -138,30 +91,30 @@ public class PlotListener extends APlotListener {
                 }
                 final Flag flyFlag = flags.get("fly");
                 if (flyFlag != null) {
-                    player.setAllowFlight((boolean) flyFlag.getValue());
+                    pp.setFlight((boolean) flyFlag.getValue());
                 }
                 final Flag timeFlag = flags.get("time");
                 if (timeFlag != null) {
                     try {
                         final long time = (long) timeFlag.getValue();
-                        player.setPlayerTime(time, false);
+                        pp.setTime(time);
                     } catch (final Exception e) {
                         FlagManager.removePlotFlag(plot, "time");
                     }
                 }
                 final Flag weatherFlag = flags.get("weather");
                 if (weatherFlag != null) {
-                    setWeather(player, weatherFlag.getValueString());
+                    pp.setWeather((PlotWeather) weatherFlag.getValue());
                 }
                 
                 Flag musicFlag = flags.get("music");
                 if (musicFlag != null) {
                     final Integer id = (Integer) musicFlag.getValue();
                     if ((id >= 2256 && id <= 2267) || id == 0) {
-                        final org.bukkit.Location loc = player.getLocation();
-                        org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
+                        Location loc = pp.getLocation();
+                        Location lastLoc = (Location) pp.getMeta("music");
                         if (lastLoc != null) {
-                            player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
+                            pp.playMusic(lastLoc, 0);
                             if (id == 0) {
                                 pp.deleteMeta("music");
                             }
@@ -169,17 +122,17 @@ public class PlotListener extends APlotListener {
                         if (id != 0) {
                             try {
                                 pp.setMeta("music", loc);
-                                player.playEffect(loc, Effect.RECORD_PLAY, Material.getMaterial(id));
+                                pp.playMusic(loc, id);
                             }
                             catch (Exception e) {}
                         }
                     }
                 }
                 else {
-                    org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
+                    Location lastLoc = (Location) pp.getMeta("music");
                     if (lastLoc != null) {
                         pp.deleteMeta("music");
-                        player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
+                        pp.playMusic(lastLoc, 0);
                     }
                 }
                 CommentManager.sendTitle(pp, plot);
@@ -203,7 +156,7 @@ public class PlotListener extends APlotListener {
                                 replacements.put("%world%", plot.world);
                                 replacements.put("%greeting%", greeting);
                                 replacements.put("%alias", plot.toString());
-                                replacements.put("%s", getName(plot.owner));
+                                replacements.put("%s", MainUtil.getName(plot.owner));
                                 String main = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
                                 String sub = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
                                 AbstractTitle.sendTitle(pp, main, sub);
@@ -217,35 +170,40 @@ public class PlotListener extends APlotListener {
         return true;
     }
 
-    public boolean plotExit(final PlotPlayer pp, final Plot plot) {
+    public static boolean plotExit(final PlotPlayer pp, final Plot plot) {
         pp.deleteMeta("lastplot");
-        Player player = ((BukkitPlayer) pp).player;
-        final PlayerLeavePlotEvent callEvent = new PlayerLeavePlotEvent(player, plot);
-        Bukkit.getPluginManager().callEvent(callEvent);
+        EventUtil.manager.callLeave(pp, plot);
         if (plot.hasOwner()) {
-            if (FlagManager.getPlotFlag(plot, "fly") != null) {
-                player.setAllowFlight(Bukkit.getAllowFlight());
+            PlotWorld pw = PS.get().getPlotWorld(pp.getLocation().getWorld());
+            if (pw == null) {
+                return true;
             }
             if (FlagManager.getPlotFlag(plot, "gamemode") != null) {
-                if (player.getGameMode() != Bukkit.getDefaultGameMode()) {
-                    if (!player.hasPermission("plots.gamemode.bypass")) {
-                        player.setGameMode(Bukkit.getDefaultGameMode());
+                if (pp.getGamemode() != pw.GAMEMODE) {
+                    if (!Permissions.hasPermission(pp, "plots.gamemode.bypass")) {
+                        pp.setGamemode(pw.GAMEMODE);
                     }
                     else {
-                        MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.world, "{gamemode}", Bukkit.getDefaultGameMode().name().toLowerCase()));
+                        MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.world, "{gamemode}", pw.GAMEMODE.name().toLowerCase()));
                     }
                 }
             }
+            if (FlagManager.getPlotFlag(plot, "fly") != null) {
+                PlotGamemode gamemode = pp.getGamemode();
+                if (gamemode == PlotGamemode.SURVIVAL || gamemode == PlotGamemode.ADVENTURE) {
+                    pp.setFlight(false);
+                }
+            }
             if (FlagManager.getPlotFlag(plot, "time") != null) {
-                player.resetPlayerTime();
+                pp.setTime(Long.MAX_VALUE);
             }
             if (FlagManager.getPlotFlag(plot, "weather") != null) {
-                player.resetPlayerWeather();
+                pp.setWeather(PlotWeather.RESET);
             }
-            org.bukkit.Location lastLoc = (org.bukkit.Location) pp.getMeta("music");
+            Location lastLoc = (Location) pp.getMeta("music");
             if (lastLoc != null) {
                 pp.deleteMeta("music");
-                player.playEffect(lastLoc, Effect.RECORD_PLAY, 0);
+                pp.playMusic(lastLoc, 0);
             }
         }
         return true;

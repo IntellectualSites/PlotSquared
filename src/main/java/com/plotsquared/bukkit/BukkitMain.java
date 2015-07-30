@@ -24,6 +24,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.BlockUpdateUtil;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -32,7 +33,7 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlayerManager;
+import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
@@ -48,20 +49,18 @@ import com.plotsquared.bukkit.listeners.ForceFieldListener;
 import com.plotsquared.bukkit.listeners.PlayerEvents;
 import com.plotsquared.bukkit.listeners.PlayerEvents_1_8;
 import com.plotsquared.bukkit.listeners.PlayerEvents_1_8_3;
-import com.plotsquared.bukkit.listeners.PlotListener;
 import com.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.plotsquared.bukkit.listeners.TNTListener;
 import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
 import com.plotsquared.bukkit.listeners.worldedit.WESubscriber;
-import com.plotsquared.bukkit.titles.AbstractTitle;
 import com.plotsquared.bukkit.titles.DefaultTitle;
 import com.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.plotsquared.bukkit.util.bukkit.BukkitChunkManager;
 import com.plotsquared.bukkit.util.bukkit.BukkitEconHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitEventUtil;
 import com.plotsquared.bukkit.util.bukkit.BukkitInventoryUtil;
-import com.plotsquared.bukkit.util.bukkit.BukkitPlayerManager;
+import com.plotsquared.bukkit.util.bukkit.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.bukkit.BukkitSetBlockManager;
 import com.plotsquared.bukkit.util.bukkit.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.bukkit.BukkitTaskManager;
@@ -77,7 +76,6 @@ import com.plotsquared.bukkit.util.bukkit.uuid.SQLUUIDHandler;
 import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
 import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
-import com.plotsquared.listener.APlotListener;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
@@ -495,11 +493,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public APlotListener initPlotListener() {
-        return new PlotListener();
-    }
-    
-    @Override
     public void registerChunkProcessor() {
         getServer().getPluginManager().registerEvents(new ChunkListener(), this);
     }
@@ -507,11 +500,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerWorldEvents() {
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);
-    }
-    
-    @Override
-    public PlayerManager initPlayerManager() {
-        return new BukkitPlayerManager();
     }
     
     @Override
@@ -543,5 +531,16 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             log("Failed to reload world: " + world);
             Bukkit.getServer().unloadWorld(world, false);
         }
+    }
+
+    @Override
+    public SchematicHandler initSchematicHandler() {
+        return new BukkitSchematicHandler();
+    }
+
+    @Override
+    public AbstractTitle initTitleManager() {
+        // Already initialized in UUID handler
+        return AbstractTitle.TITLE_CLASS;
     }
 }

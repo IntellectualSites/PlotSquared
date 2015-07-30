@@ -1,14 +1,14 @@
 package com.plotsquared.bukkit.util.bukkit.chat;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.stream.JsonWriter;
 import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
 import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents a textual component of a message part.

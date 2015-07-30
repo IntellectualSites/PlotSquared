@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
@@ -28,10 +29,10 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-import org.apache.commons.lang.StringUtils;
 
 @CommandDeclaration(
         command = "tp",
@@ -84,7 +85,7 @@ public class TP extends SubCommand {
         int index = 0;
         if (a.contains(";")) {
             final String[] split = a.split(";");
-            if ((split[1].length() > 0) && StringUtils.isNumeric(split[1])) {
+            if ((split[1].length() > 0) && MathMan.isInteger(split[1])) {
                 index = Integer.parseInt(split[1]);
             }
             a = split[0];

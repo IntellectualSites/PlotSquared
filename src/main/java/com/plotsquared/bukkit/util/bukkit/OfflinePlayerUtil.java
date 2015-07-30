@@ -1,15 +1,21 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.callConstructor;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.callMethod;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getCbClass;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getNmsClass;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getUtilClass;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.makeConstructor;
+import static com.intellectualcrafters.plot.util.ReflectionUtils.makeMethod;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.*;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public class OfflinePlayerUtil {
 

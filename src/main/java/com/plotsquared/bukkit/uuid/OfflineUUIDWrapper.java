@@ -1,5 +1,14 @@
 package com.plotsquared.bukkit.uuid;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
+import org.bukkit.entity.Player;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
@@ -9,14 +18,6 @@ import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-import org.bukkit.entity.Player;
-
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.UUID;
 
 public class OfflineUUIDWrapper extends UUIDWrapper {
     private Method getOnline = null;
@@ -83,7 +84,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
                 return p.toArray(new Player[0]);
             }
         } catch (final Exception e) {
-            PS.log("Failed to resolve online players");
+            PS.debug("Failed to resolve online players");
             this.getOnline = null;
             return Bukkit.getOnlinePlayers().toArray(new Player[0]);
         }

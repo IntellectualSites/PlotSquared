@@ -1,17 +1,20 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.comment.*;
-import com.plotsquared.bukkit.titles.AbstractTitle;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.intellectualcrafters.plot.object.comment.CommentInbox;
+import com.intellectualcrafters.plot.object.comment.InboxOwner;
+import com.intellectualcrafters.plot.object.comment.InboxPublic;
+import com.intellectualcrafters.plot.object.comment.InboxReport;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 
 public class CommentManager {

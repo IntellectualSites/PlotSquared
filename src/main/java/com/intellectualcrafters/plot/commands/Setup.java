@@ -20,6 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+
+import com.intellectualcrafters.plot.util.StringMan;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
@@ -29,17 +36,7 @@ import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetupUtils;
-import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.bukkit.generator.HybridGen;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.generator.ChunkGenerator;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
 
 @CommandDeclaration(
         command = "setup",
@@ -104,7 +101,7 @@ public class Setup extends SubCommand {
             case 0: { // choose generator
                 if ((args.length != 1) || !SetupUtils.generators.containsKey(args[0])) {
                     final String prefix = "\n&8 - &7";
-                    MainUtil.sendMessage(plr, "&cYou must choose a generator!" + prefix + StringUtils.join(SetupUtils.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
+                    MainUtil.sendMessage(plr, "&cYou must choose a generator!" + prefix + StringMan.join(SetupUtils.generators.keySet(), prefix).replaceAll("PlotSquared", "&2PlotSquared"));
                     sendMessage(plr, C.SETUP_INIT);
                     return false;
                 }

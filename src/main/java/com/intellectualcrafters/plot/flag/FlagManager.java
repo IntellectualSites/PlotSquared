@@ -20,14 +20,23 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
-
-import java.util.*;
 
 /**
  * Flag Manager Utility
@@ -91,7 +100,7 @@ public class FlagManager {
     }
     
     public static boolean addFlag(AbstractFlag af, boolean reserved) {
-        PS.log(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
+        PS.debug(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
         for (PlotWorld plotworld : PS.get().getPlotWorldObjects()) {
             Flag flag = ((HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone()).get(af.getKey());
             if (flag != null) {

@@ -4,13 +4,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.entity.player.gamemode.GameMode;
+import org.spongepowered.api.entity.player.gamemode.GameModes;
+import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.chat.ChatTypes;
+import org.spongepowered.api.text.title.Title;
+import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -18,7 +22,10 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.sponge.util.SpongeUtil;
 
 public class SpongePlayer implements PlotPlayer {
 
@@ -97,12 +104,13 @@ public class SpongePlayer implements PlotPlayer {
     @Override
     public void teleport(Location loc) {
         String world = player.getWorld().getName();
-        if (world != loc.getWorld()) {
-            player.transferToWorld(world, new Vector3d(loc.getX(), loc.getY(), loc.getZ()));
+        if (!world.equals(loc.getWorld())) {
+            player.transferToWorld(loc.getWorld(), new Vector3d(loc.getX(), loc.getY(), loc.getZ()));
         }
         else {
             org.spongepowered.api.world.Location current = player.getLocation();
-            player.setLocationSafely(current.setPosition(new Vector3d(loc.getX(), loc.getY(), loc.getZ())));
+            current = current.setPosition(new Vector3d(loc.getX(), loc.getY(), loc.getZ()));
+            player.setLocation(current);
         }
     }
 
@@ -188,18 +196,82 @@ public class SpongePlayer implements PlotPlayer {
     @Override
     public boolean getAttribute(String key) {
         key = "plotsquared_user_attributes." + key;
-        Permission perm = Bukkit.getServer().getPluginManager().getPermission(key);
-        if (perm == null) {
-            perm = new Permission(key, PermissionDefault.FALSE);
-            Bukkit.getServer().getPluginManager().addPermission(perm);
-            Bukkit.getServer().getPluginManager().recalculatePermissionDefaults(perm);
-        }
-        return player.hasPermission(key);
+        
+        // TODO register attributes
+        
+        return false;
     }
 
     @Override
     public void removeAttribute(String key) {
         key = "plotsquared_user_attributes." + key;
         EconHandler.manager.setPermission(this, key, false);
+    }
+
+    @Override
+    public void setWeather(PlotWeather weather) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    }
+
+    @Override
+    public PlotGamemode getGamemode() {
+        // TODO Auto-generated method stub
+        GameMode gamemode = player.getGameModeData().getValue();
+        if (gamemode == GameModes.ADVENTURE) {
+            return PlotGamemode.ADVENTURE;
+        }
+        if (gamemode == GameModes.CREATIVE) {
+            return PlotGamemode.CREATIVE;
+        }
+        if (gamemode == GameModes.SPECTATOR) {
+            return PlotGamemode.SPECTATOR;
+        }
+        if (gamemode == GameModes.SURVIVAL) {
+            return PlotGamemode.SURVIVAL;
+        }
+        throw new UnsupportedOperationException("INVALID GAMEMODE");
+    }
+
+    @Override
+    public void setGamemode(PlotGamemode gamemode) {
+        // TODO Auto-generated method stub
+        switch (gamemode) {
+            case ADVENTURE:
+                player.getGameModeData().setGameMode(GameModes.ADVENTURE);
+                return;
+            case CREATIVE:
+                player.getGameModeData().setGameMode(GameModes.CREATIVE);
+                return;
+            case SPECTATOR:
+                player.getGameModeData().setGameMode(GameModes.SPECTATOR);
+                return;
+            case SURVIVAL:
+                player.getGameModeData().setGameMode(GameModes.SURVIVAL);
+                return;
+        }
+    }
+
+    @Override
+    public void setTime(long time) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    }
+
+    @Override
+    public void setFlight(boolean fly) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    }
+
+    @Override
+    public void playMusic(Location loc, int id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    }
+
+    @Override
+    public void kick(String message) {
+        player.kick(SpongeMain.THIS.getText(message));
     }
 }

@@ -1,5 +1,8 @@
 package com.plotsquared.bukkit.listeners.worldedit;
 
+import java.util.HashSet;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -7,9 +10,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
-
-import java.util.HashSet;
-import java.util.UUID;
 
 public class WEManager {
     public static HashSet<String> bypass = new HashSet<>();

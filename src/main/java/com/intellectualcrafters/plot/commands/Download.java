@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
+import java.net.URL;
+
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -12,8 +14,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.net.URL;
 
 @CommandDeclaration(
         command = "download",

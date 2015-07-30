@@ -1,9 +1,9 @@
 package com.intellectualcrafters.jnbt;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Helps create compound tags.

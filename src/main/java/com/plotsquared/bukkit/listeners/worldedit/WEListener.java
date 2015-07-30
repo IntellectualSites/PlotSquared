@@ -1,5 +1,16 @@
 package com.plotsquared.bukkit.listeners.worldedit;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+
+import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -11,16 +22,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.bukkit.selections.Selection;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
  
 public class WEListener implements Listener {
     

@@ -1,18 +1,18 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.plotsquared.bukkit.generator.AugmentedPopulator;
 
 public class SetGenCB {
     public static void setGenerator(World world) throws Exception {

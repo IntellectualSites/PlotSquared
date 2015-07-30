@@ -20,6 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Configuration;
@@ -28,12 +33,8 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.StringMan;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Jesse Boyd
@@ -60,6 +61,7 @@ public abstract class PlotWorld {
     public final static boolean WORLD_BORDER_DEFAULT = false;
     public final static int MAX_PLOT_MEMBERS_DEFAULT = 128;
     public final static int MAX_BUILD_HEIGHT_DEFAULT = 256;
+    public final static PlotGamemode GAMEMODE_DEFAULT = PlotGamemode.CREATIVE;
     // are plot clusters enabled
     // require claim in cluster
     // TODO make this configurable
@@ -95,6 +97,7 @@ public abstract class PlotWorld {
     public boolean HOME_ALLOW_NONMEMBER;
     public PlotLoc DEFAULT_HOME;
     public int MAX_BUILD_HEIGHT;
+    public PlotGamemode GAMEMODE = PlotGamemode.CREATIVE;
 
     public PlotWorld(final String worldname) {
         this.worldname = worldname;
@@ -152,6 +155,26 @@ public abstract class PlotWorld {
         this.WORLD_BORDER = config.getBoolean("world.border");
         this.MAX_BUILD_HEIGHT = config.getInt("world.max_height");
         
+        switch (config.getString("world.gamemode").toLowerCase()) {
+            case "survival":
+            case "s":
+            case "0":
+                this.GAMEMODE = PlotGamemode.SURVIVAL;
+            case "creative":
+            case "c":
+            case "1":
+                this.GAMEMODE = PlotGamemode.CREATIVE;
+            case "adventure":
+            case "a":
+            case "2":
+                this.GAMEMODE = PlotGamemode.ADVENTURE;
+            case "spectator":
+            case "3":
+                this.GAMEMODE = PlotGamemode.SPECTATOR;
+            default:
+                PS.debug("&cInvalid gamemode set for: " + worldname);
+        }
+        
         this.HOME_ALLOW_NONMEMBER = config.getBoolean("home.allow-nonmembers");
         String homeDefault = config.getString("home.default");
         if (homeDefault.equalsIgnoreCase("side")) {
@@ -188,7 +211,7 @@ public abstract class PlotWorld {
             this.DEFAULT_FLAGS = FlagManager.parseFlags(flags);
         } catch (final Exception e) {
             e.printStackTrace();
-            PS.log("&cInvalid default flags for " + this.worldname + ": " + StringMan.join(flags, ","));
+            PS.debug("&cInvalid default flags for " + this.worldname + ": " + StringMan.join(flags, ","));
             this.DEFAULT_FLAGS = new HashMap<>();
         }
         this.PVP = config.getBoolean("event.pvp");
@@ -232,6 +255,7 @@ public abstract class PlotWorld {
         options.put("home.default", "side");
         options.put("home.allow-nonmembers", false);
         options.put("world.max_height", PlotWorld.MAX_BUILD_HEIGHT_DEFAULT);
+        options.put("world.gamemode", PlotWorld.GAMEMODE_DEFAULT.name().toLowerCase());
 
         if (Settings.ENABLE_CLUSTERS && (this.TYPE != 0)) {
             options.put("generator.terrain", this.TERRAIN);

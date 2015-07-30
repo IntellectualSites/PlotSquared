@@ -1,18 +1,19 @@
 package com.plotsquared.bukkit.listeners;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import java.util.Iterator;
+
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 
-import java.util.Iterator;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 public class PlayerEvents_1_8_3 implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

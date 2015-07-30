@@ -1,19 +1,11 @@
 package com.plotsquared.bukkit.util;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -27,8 +19,25 @@ import org.bukkit.material.Directional;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 public class BukkitHybridUtils extends HybridUtils {
 
@@ -72,7 +81,7 @@ public class BukkitHybridUtils extends HybridUtils {
         final int ctx = tx >> 4;
         final int ctz = tz >> 4;
         final Random r = new Random();
-        AugmentedPopulator.initCache();
+        MainUtil.initCache();
         final int width = tx - bx + 1;
         final int length = tz - bz + 1;
 
@@ -102,21 +111,21 @@ public class BukkitHybridUtils extends HybridUtils {
                     for (int i = 0; i < result.length; i++) {
                         if (result[i] == null) {
                             for (int j = 0; j < 4096; j++) {
-                                int x = AugmentedPopulator.x_loc[i][j] + xb;
+                                int x = MainUtil.x_loc[i][j] + xb;
                                 if (x < 0 || x >= width) continue;
-                                int z = AugmentedPopulator.z_loc[i][j] + zb;
+                                int z = MainUtil.z_loc[i][j] + zb;
                                 if (z < 0 || z >= length) continue;
-                                int y = AugmentedPopulator.y_loc[i][j];
+                                int y = MainUtil.y_loc[i][j];
                                 oldblocks[y][x][z] = 0;
                             }
                             continue;
                         }
                         for (int j = 0; j < result[i].length; j++) {
-                            int x = AugmentedPopulator.x_loc[i][j] + xb;
+                            int x = MainUtil.x_loc[i][j] + xb;
                             if (x < 0 || x >= width) continue;
-                            int z = AugmentedPopulator.z_loc[i][j] + zb;
+                            int z = MainUtil.z_loc[i][j] + zb;
                             if (z < 0 || z >= length) continue;
-                            int y = AugmentedPopulator.y_loc[i][j];
+                            int y = MainUtil.y_loc[i][j];
                             oldblocks[y][x][z] = result[i][j];
                         }
                     }
@@ -206,7 +215,7 @@ public class BukkitHybridUtils extends HybridUtils {
             }
         };
         System.gc();
-        AugmentedPopulator.initCache();
+        MainUtil.initCache();
         TaskManager.index.incrementAndGet();
         final Integer currentIndex = TaskManager.index.get();
         final Integer task = TaskManager.runTaskRepeat(new Runnable() {
@@ -412,11 +421,11 @@ public class BukkitHybridUtils extends HybridUtils {
             public void run() {
                 count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
-                    PS.log("PROGRESS: " + ((100 * (2048 - chunks.size())) / 2048) + "%");
+                    PS.debug("PROGRESS: " + ((100 * (2048 - chunks.size())) / 2048) + "%");
                 }
                 if (regions.size() == 0 && chunks.size() == 0) {
                     BukkitHybridUtils.UPDATE = false;
-                    PS.log(C.PREFIX.s() + "Finished road conversion");
+                    PS.debug(C.PREFIX.s() + "Finished road conversion");
                     Bukkit.getScheduler().cancelTask(BukkitHybridUtils.this.task);
                     return;
                 } else {
@@ -424,8 +433,8 @@ public class BukkitHybridUtils extends HybridUtils {
                     	if (chunks.size() < 1024) {
                     	    if (regions.size() > 0) {
                         		final ChunkLoc loc = regions.get(0);
-                                PS.log("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
-                                PS.log(" - Remaining: " + regions.size());
+                                PS.debug("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
+                                PS.debug(" - Remaining: " + regions.size());
                         		chunks.addAll(getChunks(loc));
                         		regions.remove(0);
                         		System.gc();
@@ -435,7 +444,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     		long diff = System.currentTimeMillis() + 25;
                     		if (System.currentTimeMillis() - last > 1200 && last != 0) {
                     		    last = 0;
-                    		    PS.log(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
+                    		    PS.debug(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
                     		    while (chunks.size() > 0) {
                                     ChunkLoc chunk = chunks.get(0);
                                     chunks.remove(0);
@@ -464,7 +473,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     } catch (final Exception e) {
                         e.printStackTrace();
                         final ChunkLoc loc = regions.get(0);
-                        PS.log("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
+                        PS.debug("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
                         final int sx = loc.x << 5;
                         final int sz = loc.z << 5;
                         for (int x = sx; x < (sx + 32); x++) {
@@ -472,8 +481,8 @@ public class BukkitHybridUtils extends HybridUtils {
                                 ChunkManager.manager.unloadChunk(world, new ChunkLoc(x, z), true, true);
                             }
                         }
-                        PS.log("&d - Potentially skipping 1024 chunks");
-                        PS.log("&d - TODO: recommend chunkster if corrupt");
+                        PS.debug("&d - Potentially skipping 1024 chunks");
+                        PS.debug("&d - TODO: recommend chunkster if corrupt");
                     }
                 }
             }

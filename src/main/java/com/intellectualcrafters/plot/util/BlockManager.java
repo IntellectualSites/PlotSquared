@@ -19,7 +19,7 @@ public abstract class BlockManager {
 
     public abstract int getBiomeFromString(String biome);
 
-    public abstract int getBlockIdFromString(String block);
+    public abstract PlotBlock getPlotBlockFromString(String block);
 
     public abstract int getHeighestBlock(String world, int x, int z);
 

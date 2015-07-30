@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import org.bukkit.World;
-import org.bukkit.block.Block;
 
 /**
  * Wrapper class for blocks, using pure data rather than the object.

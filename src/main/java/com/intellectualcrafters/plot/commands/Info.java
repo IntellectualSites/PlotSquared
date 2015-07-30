@@ -20,6 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.regex.Matcher;
+
+import com.intellectualcrafters.plot.util.StringMan;
+
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -31,17 +39,12 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
-import java.util.regex.Matcher;
 
 @CommandDeclaration(
         command = "info",
@@ -221,7 +224,7 @@ public class Info extends SubCommand {
         Flag descriptionFlag = FlagManager.getPlotFlag(plot, "description");
         final String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
 
-        final String flags = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "").length() > 0 ? StringUtils.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "$1, $2") : C.NONE.s()), C.replacements);
+        final String flags = StringMan.replaceFromMap("$2" + (StringMan.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "").length() > 0 ? StringMan.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "$1, $2") : C.NONE.s()), C.replacements);
         final boolean build = plot.isAdded(player.getUUID());
 
         String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());

@@ -1,8 +1,10 @@
 package com.intellectualcrafters.plot.object;
 
-import com.plotsquared.general.commands.CommandCaller;
-
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
+import com.plotsquared.general.commands.CommandCaller;
 
 /**
  * Created 2015-02-20 for PlotSquared
@@ -60,4 +62,18 @@ public interface PlotPlayer extends CommandCaller {
     void setMeta(String key, Object value);
     Object getMeta(String key);
     void deleteMeta(String key);
+    
+    void setWeather(PlotWeather weather);
+    
+    PlotGamemode getGamemode();
+    
+    void setGamemode(PlotGamemode gamemode);
+    
+    void setTime(long time);
+    
+    void setFlight(boolean fly);
+    
+    void playMusic(Location loc, int id);
+    
+    void kick(String message);
 }

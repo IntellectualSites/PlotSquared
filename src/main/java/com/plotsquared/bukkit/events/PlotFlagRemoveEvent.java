@@ -20,10 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * Called when a flag is removed from a plot

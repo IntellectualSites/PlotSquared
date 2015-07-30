@@ -1,12 +1,12 @@
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "debugallowunsafe",

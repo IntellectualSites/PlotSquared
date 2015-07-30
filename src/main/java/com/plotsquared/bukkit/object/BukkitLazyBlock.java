@@ -1,8 +1,9 @@
 package com.plotsquared.bukkit.object;
 
+import org.bukkit.block.Block;
+
 import com.intellectualcrafters.plot.object.LazyBlock;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import org.bukkit.block.Block;
 
 public class BukkitLazyBlock extends LazyBlock {
 

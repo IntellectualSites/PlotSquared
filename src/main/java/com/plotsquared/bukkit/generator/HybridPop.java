@@ -1,6 +1,13 @@
-package com.intellectualcrafters.plot.generator;
+package com.plotsquared.bukkit.generator;
+
+import java.util.HashMap;
+import java.util.HashSet;
+
+import org.bukkit.World;
+import org.bukkit.block.Biome;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
@@ -8,11 +15,6 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.plotsquared.bukkit.object.BukkitPlotPopulator;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * @author Citymonstret

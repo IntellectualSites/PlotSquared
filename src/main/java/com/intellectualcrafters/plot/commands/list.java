@@ -20,6 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import com.intellectualcrafters.plot.util.StringMan;
+import org.bukkit.ChatColor;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -29,16 +39,14 @@ import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.bukkit.chat.FancyMessage;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 @CommandDeclaration(
         command = "list",
@@ -357,7 +365,7 @@ public class list extends SubCommand {
                         ChatColor.translateAlternateColorCodes('&', 
                         C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", Info.getPlayerList(plot.getMembers())))))
                         .color(ChatColor.GOLD);
-                String strFlags = StringUtils.join(plot.getSettings().flags.values(), ",");
+                String strFlags = StringMan.join(plot.getSettings().flags.values(), ",");
                 if (strFlags.length() == 0) {
                     strFlags = C.NONE.s();
                 }

@@ -1,8 +1,62 @@
 package com.plotsquared.bukkit.util.bukkit;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.SkullType;
+import org.bukkit.World;
+import org.bukkit.block.Banner;
+import org.bukkit.block.Beacon;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.BrewingStand;
+import org.bukkit.block.Chest;
+import org.bukkit.block.CommandBlock;
+import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.Dispenser;
+import org.bukkit.block.Dropper;
+import org.bukkit.block.Furnace;
+import org.bukkit.block.Hopper;
+import org.bukkit.block.Jukebox;
+import org.bukkit.block.NoteBlock;
+import org.bukkit.block.Sign;
+import org.bukkit.block.Skull;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
+import org.bukkit.generator.BlockPopulator;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -11,19 +65,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.plotsquared.bukkit.object.entity.EntityWrapper;
-import org.bukkit.*;
-import org.bukkit.block.*;
-import org.bukkit.block.banner.Pattern;
-import org.bukkit.block.banner.PatternType;
-import org.bukkit.entity.*;
-import org.bukkit.generator.BlockPopulator;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class BukkitChunkManager extends ChunkManager {
     @Override
@@ -81,7 +122,7 @@ public class BukkitChunkManager extends ChunkManager {
             public void run() {
                 final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
                 final File file = new File(directory);
-                PS.log("&6 - Deleting region: " + file.getName() + " (approx 1024 chunks)");
+                PS.debug("&6 - Deleting region: " + file.getName() + " (approx 1024 chunks)");
                 if (file.exists()) {
                     file.delete();
                 }
@@ -100,7 +141,7 @@ public class BukkitChunkManager extends ChunkManager {
                 for (ChunkLoc loc : chunks) {
                     final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
                     final File file = new File(directory);
-                    PS.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                    PS.debug("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                     if (file.exists()) {
                         file.delete();
                     }
@@ -508,7 +549,7 @@ public class BukkitChunkManager extends ChunkManager {
             try {
                 entity.spawn(world, x_offset, z_offset);
             } catch (final Exception e) {
-                PS.log("Failed to restore entity " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id + " : " + EntityType.fromId(entity.id));
+                PS.debug("Failed to restore entity " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id + " : " + EntityType.fromId(entity.id));
                 e.printStackTrace();
             }
         }
@@ -524,10 +565,10 @@ public class BukkitChunkManager extends ChunkManager {
                     chest.getInventory().setContents(chestContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate chest: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate chest: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : signContents.keySet()) {
@@ -543,10 +584,10 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate sign: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate sign: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : dispenserContents.keySet()) {
@@ -557,10 +598,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Dispenser) (state)).getInventory().setContents(dispenserContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : dropperContents.keySet()) {
@@ -571,10 +612,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Dropper) (state)).getInventory().setContents(dropperContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : beaconContents.keySet()) {
@@ -585,10 +626,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Beacon) (state)).getInventory().setContents(beaconContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate beacon: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate beacon: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : jukeDisc.keySet()) {
@@ -599,10 +640,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Jukebox) (state)).setPlaying(Material.getMaterial(jukeDisc.get(loc)));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to restore jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : skullData.keySet()) {
@@ -622,10 +663,10 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to restore skull: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore skull: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate skull: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate skull: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : hopperContents.keySet()) {
@@ -636,10 +677,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Hopper) (state)).getInventory().setContents(hopperContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate hopper: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate hopper: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : noteBlockContents.keySet()) {
@@ -650,10 +691,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((NoteBlock) (state)).setNote(noteBlockContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate note block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate note block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : brewTime.keySet()) {
@@ -663,10 +704,10 @@ public class BukkitChunkManager extends ChunkManager {
                 if (state instanceof BrewingStand) {
                     ((BrewingStand) (state)).setBrewingTime(brewTime.get(loc));
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to restore brewing stand cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to restore brewing stand cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : spawnerData.keySet()) {
@@ -677,10 +718,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((CreatureSpawner) (state)).setCreatureTypeId(spawnerData.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to restore spawner type: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to restore spawner type: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : cmdData.keySet()) {
@@ -691,10 +732,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((CommandBlock) (state)).setCommand(cmdData.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to restore command block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore command block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to restore command block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to restore command block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : brewingStandContents.keySet()) {
@@ -705,10 +746,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((BrewingStand) (state)).getInventory().setContents(brewingStandContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate brewing stand: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate brewing stand: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : furnaceTime.keySet()) {
@@ -720,10 +761,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Furnace) (state)).setBurnTime(time[0]);
                     ((Furnace) (state)).setCookTime(time[1]);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to restore furnace cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to restore furnace cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : furnaceContents.keySet()) {
@@ -734,10 +775,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Furnace) (state)).getInventory().setContents(furnaceContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate furnace: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate furnace: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
         for (final BlockLoc loc : bannerBase.keySet()) {
@@ -754,10 +795,10 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                     state.update(true);
                 } else {
-                    PS.log("&c[WARN] Plot clear failed to regenerate banner: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
                 }
             } catch (final Exception e) {
-                PS.log("&c[WARN] Plot clear failed to regenerate banner: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
             }
         }
     }

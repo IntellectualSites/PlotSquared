@@ -1,13 +1,11 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
-
-import org.bukkit.generator.ChunkGenerator;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class SetupUtils {
 

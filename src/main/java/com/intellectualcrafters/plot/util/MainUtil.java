@@ -20,16 +20,30 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
-import com.plotsquared.bukkit.listeners.PlotListener;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-
-import java.util.*;
-import java.util.Map.Entry;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.plotsquared.listener.PlotListener;
 
 /**
  * plot functions
@@ -46,6 +60,30 @@ public class MainUtil {
     static long state = 1;
     static PseudoRandom random = new PseudoRandom();
     
+    public static short[][] x_loc;
+    public static short[][] y_loc;
+    public static short[][] z_loc;
+
+    public static void initCache() {
+        if (x_loc == null) {
+            x_loc = new short[16][4096];
+            y_loc = new short[16][4096];
+            z_loc = new short[16][4096];
+            for (int i = 0; i < 16; i++) {
+                int i4 = i << 4;
+                for (int j = 0; j < 4096; j++) {
+                    final int y = (i4) + (j >> 8);
+                    final int a = (j - ((y & 0xF) << 8));
+                    final int z1 = (a >> 4);
+                    final int x1 = a - (z1 << 4);
+                    x_loc[i][j] = (short) x1;
+                    y_loc[i][j] = (short) y;
+                    z_loc[i][j] = (short) z1;
+                }
+            }
+        }
+    }
+    
     public static boolean isPlotArea(final Location location) {
         final PlotWorld plotworld = PS.get().getPlotWorld(location.getWorld());
         if (plotworld.TYPE == 2) {
@@ -56,11 +94,11 @@ public class MainUtil {
     
     public static String getName(UUID owner) {
         if (owner == null) {
-            return "unowned";
+            return C.NONE.s();
         }
         String name = UUIDHandler.getName(owner);
         if (name == null) {
-            return "unknown";
+            return C.UNKNOWN.s();
         }
         return name;
     }
@@ -80,8 +118,8 @@ public class MainUtil {
             @Override
             public void run() {
                 for (PlotPlayer pp : getPlayersInPlot(plot)) {
-                    PlotListener.manager.plotExit(pp, plot);
-                    PlotListener.manager.plotEntry(pp, plot);
+                    PlotListener.plotExit(pp, plot);
+                    PlotListener.plotEntry(pp, plot);
                 }
             }
         }, 1);
@@ -751,7 +789,7 @@ public class MainUtil {
         if (plotworld.ALLOW_SIGNS) {
         final Location loc = manager.getSignLoc(plotworld, p);
             final String id = p.id.x + ";" + p.id.y;
-            final String[] lines = new String[] { C.OWNER_SIGN_LINE_1.translated().replaceAll("%id%", id), C.OWNER_SIGN_LINE_2.translated().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_3.translated().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_4.translated().replaceAll("%id%", id).replaceAll("%plr%", name) };
+            final String[] lines = new String[] { C.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id), C.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_3.formatted().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll("%plr%", name) };
             BlockManager.setSign(p.world, loc.getX(), loc.getY(), loc.getZ(), lines);
         }
     }

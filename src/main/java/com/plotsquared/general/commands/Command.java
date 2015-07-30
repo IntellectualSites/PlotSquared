@@ -1,13 +1,13 @@
 package com.plotsquared.general.commands;
 
-import com.intellectualcrafters.plot.commands.CommandCategory;
-import com.intellectualcrafters.plot.commands.RequiredType;
-
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.intellectualcrafters.plot.commands.CommandCategory;
+import com.intellectualcrafters.plot.commands.RequiredType;
 
 public abstract class Command<E extends CommandCaller> extends CommandManager {
 
@@ -121,6 +121,9 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
     }
 
     final public String getPermission() {
+        if (this.permission == null || this.permission.length() == 0) {
+            this.permission = "plots." + command.toLowerCase();
+        }
         return this.permission;
     }
 

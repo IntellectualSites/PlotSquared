@@ -1,17 +1,23 @@
 package com.plotsquared.bukkit.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
+
+import com.intellectualcrafters.plot.commands.DebugUUID;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 import com.plotsquared.general.commands.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-
-import java.util.*;
 
 /**
  * Created 2015-02-20 for PlotSquared
@@ -19,6 +25,10 @@ import java.util.*;
  * @author Citymonstret
  */
 public class BukkitCommand implements CommandExecutor, TabCompleter {
+    
+    public BukkitCommand() {
+        MainCommand.getInstance().addCommand(new DebugUUID());
+    }
     
     @Override
     public boolean onCommand(final CommandSender commandSender, final org.bukkit.command.Command command, final String commandLabel, final String[] args) {

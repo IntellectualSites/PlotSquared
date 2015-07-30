@@ -1,10 +1,10 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.HashMap;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.CmdInstance;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-
-import java.util.HashMap;
 
 public class CmdConfirm {
 	private static HashMap<String, CmdInstance> pending = new HashMap<>();

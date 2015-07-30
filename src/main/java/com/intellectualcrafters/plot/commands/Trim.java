@@ -20,15 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +27,19 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "trim",
@@ -72,7 +76,7 @@ public class Trim extends SubCommand {
                                 final ChunkLoc loc = new ChunkLoc(x, z);
                                 empty.add(loc);
                             } catch (final Exception e) {
-                                PS.log("INVALID MCA: " + name);
+                                PS.debug("INVALID MCA: " + name);
                             }
                         } else {
                             final Path path = Paths.get(file.getPath());
@@ -89,7 +93,7 @@ public class Trim extends SubCommand {
                                         final ChunkLoc loc = new ChunkLoc(x, z);
                                         empty.add(loc);
                                     } catch (final Exception e) {
-                                        PS.log("INVALID MCA: " + name);
+                                        PS.debug("INVALID MCA: " + name);
                                     }
                                 }
                             } catch (final Exception e) {
@@ -156,7 +160,7 @@ public class Trim extends SubCommand {
     }
 
     public static void sendMessage(final String message) {
-        PS.log("&3PlotSquared -> World trim&8: &7" + message);
+        PS.debug("&3PlotSquared -> World trim&8: &7" + message);
     }
 
     public PlotId getId(final String id) {

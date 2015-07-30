@@ -20,10 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
-import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  * Called when a plot is cleared
@@ -38,7 +39,7 @@ public class PlotClearEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     /**
-     * PlotDeleteEvent: Called when a plot is cleared
+     * PlotClearEvent: Called when a plot is cleared
      *
      * @param world The world in which the plot was cleared
      * @param id    The plot that was cleared

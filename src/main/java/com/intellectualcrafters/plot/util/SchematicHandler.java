@@ -1,29 +1,56 @@
 package com.intellectualcrafters.plot.util;
 
-import com.google.common.collect.Lists;
-import com.intellectualcrafters.jnbt.*;
-import com.intellectualcrafters.json.JSONArray;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.plotsquared.bukkit.object.schematic.StateWrapper;
-import com.plotsquared.bukkit.util.WorldEditSchematic;
-import com.plotsquared.bukkit.util.bukkit.BukkitSchematicHandler;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.google.common.collect.Lists;
+import com.intellectualcrafters.jnbt.ByteArrayTag;
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.jnbt.IntTag;
+import com.intellectualcrafters.jnbt.ListTag;
+import com.intellectualcrafters.jnbt.NBTInputStream;
+import com.intellectualcrafters.jnbt.NBTOutputStream;
+import com.intellectualcrafters.jnbt.ShortTag;
+import com.intellectualcrafters.jnbt.StringTag;
+import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.json.JSONArray;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.plotsquared.bukkit.object.schematic.StateWrapper;
+import com.plotsquared.bukkit.util.WorldEditSchematic;
+
 public abstract class SchematicHandler {
-    public static SchematicHandler manager = new BukkitSchematicHandler();
+    public static SchematicHandler manager;
     
     private boolean exportAll = false;
     
@@ -69,7 +96,7 @@ public abstract class SchematicHandler {
                 Location bot = plot.getBottom();
                 int area = (1 + top.getX() - bot.getX()) * (1 + top.getZ() - bot.getZ());
                 if (area > 4096) {
-                    PS.log("The plot is > 64 x 64 - Fast lossy schematic saving will be used");
+                    PS.debug("The plot is > 64 x 64 - Fast lossy schematic saving will be used");
                 }
                 if (area <= 4096 && PS.get().worldEdit != null) {
                     new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
@@ -126,7 +153,7 @@ public abstract class SchematicHandler {
             public void run() {
                 if (whenDone != null) whenDone.value = false;
                 if (schematic == null) {
-                    PS.log("Schematic == null :|");
+                    PS.debug("Schematic == null :|");
                     TaskManager.runTask(whenDone);
                     return;
                 }
@@ -139,7 +166,7 @@ public abstract class SchematicHandler {
                     Location bottom = plot.getBottom();
                     Location top = plot.getTop();
                     if (top.getX() - bottom.getX() < WIDTH || top.getZ() - bottom.getZ() < LENGTH || HEIGHT > 256) {
-                        PS.log("Schematic is too large");
+                        PS.debug("Schematic is too large");
                         TaskManager.runTask(whenDone);
                         return;
                     }
@@ -338,7 +365,7 @@ public abstract class SchematicHandler {
     
     public boolean pasteStates(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset) {
         if (schematic == null) {
-            PS.log("Schematic == null :|");
+            PS.debug("Schematic == null :|");
             return false;
         }
         HashSet<PlotItem> items = schematic.getItems();
@@ -461,7 +488,7 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(File file) {
         if (!file.exists()) {
-            PS.log(file.toString() + " doesn't exist");
+            PS.debug(file.toString() + " doesn't exist");
             return null;
         }
         try {
@@ -496,7 +523,7 @@ public abstract class SchematicHandler {
         }
         catch (Exception e) {
             e.printStackTrace();
-            PS.log(is.toString() + " | " + is.getClass().getCanonicalName() + " is not in GZIP format : " + e.getMessage());
+            PS.debug(is.toString() + " | " + is.getClass().getCanonicalName() + " is not in GZIP format : " + e.getMessage());
         }
         return null;
     }
@@ -530,7 +557,7 @@ public abstract class SchematicHandler {
     
     public URL upload(final CompoundTag tag, UUID uuid, String file) {
         if (tag == null) {
-            PS.log("&cCannot save empty tag");
+            PS.debug("&cCannot save empty tag");
             return null;
         }
         try {
@@ -610,7 +637,7 @@ public abstract class SchematicHandler {
      */
     public boolean save(final CompoundTag tag, final String path) {
         if (tag == null) {
-            PS.log("&cCannot save empty tag");
+            PS.debug("&cCannot save empty tag");
             return false;
         }
         try {

@@ -20,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.List;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
@@ -31,8 +33,6 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.util.List;
 
 @CommandDeclaration(
         command = "regenallroads",
@@ -70,13 +70,13 @@ public class RegenAllRoads extends SubCommand {
             return false;
         }
         final List<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
-        PS.log("&cIf no schematic is set, the following will not do anything");
-        PS.log("&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        PS.log("&6Potential chunks to update: &7" + (chunks.size() * 1024));
-        PS.log("&6Estimated time: &7" + (chunks.size()) + " seconds");
+        MainUtil.sendMessage(plr, "&cIf no schematic is set, the following will not do anything");
+        MainUtil.sendMessage(plr, "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
+        MainUtil.sendMessage(plr, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
+        MainUtil.sendMessage(plr, "&6Estimated time: &7" + (chunks.size()) + " seconds");
         final boolean result = HybridUtils.manager.scheduleRoadUpdate(name, height);
         if (!result) {
-            PS.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
+            MainUtil.sendMessage(plr, "&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;
         }
         return true;

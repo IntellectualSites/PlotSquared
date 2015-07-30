@@ -1,5 +1,15 @@
 package com.plotsquared.bukkit.database.plotme;
 
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
+
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
@@ -11,12 +21,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import java.io.File;
-import java.sql.*;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 public class PlotMeConnector_017 extends APlotMeConnector {
     private String plugin;

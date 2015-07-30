@@ -1,12 +1,12 @@
 package com.intellectualcrafters.plot.util.helpmenu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HelpPage {
 

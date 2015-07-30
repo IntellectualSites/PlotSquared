@@ -1,5 +1,7 @@
 package com.plotsquared.bukkit.listeners.worldedit;
 
+import java.util.HashSet;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.RegionWrapper;
@@ -13,8 +15,6 @@ import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
-
-import java.util.HashSet;
 
 public class ProcessedWEExtent extends AbstractDelegateExtent {
     private final HashSet<RegionWrapper> mask;
@@ -72,7 +72,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 BScount++;
                 if (BScount > Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES) {
                     BSblocked = true;
-                    PS.log("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
+                    PS.debug("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
                 }
             }
         }
@@ -90,7 +90,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         Ecount++;
         if (Ecount > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
             Eblocked = true;
-            PS.log("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
+            PS.debug("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
         }
         if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
             return super.createEntity(location, entity);

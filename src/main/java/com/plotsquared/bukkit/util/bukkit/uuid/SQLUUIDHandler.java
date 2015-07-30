@@ -1,5 +1,20 @@
 package com.plotsquared.bukkit.util.bukkit.uuid;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
 import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.json.JSONObject;
 import com.intellectualcrafters.plot.PS;
@@ -13,17 +28,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
 
 public class SQLUUIDHandler extends UUIDHandlerImplementation {
     
@@ -109,7 +113,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                                 return;
                             }
                             if (!Settings.OFFLINE_MODE) {
-                                PS.log(C.PREFIX.s() + "&cWill fetch &6" + toFetch.size() + "&c from mojang!");
+                                PS.debug(C.PREFIX.s() + "&cWill fetch &6" + toFetch.size() + "&c from mojang!");
                                 int i = 0;
                                 Iterator<UUID> iterator = toFetch.iterator();
                                 while (iterator.hasNext()) {
@@ -123,7 +127,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                                         }
                                         currentIteration.add(_uuid);
                                     }
-                                    PS.log(C.PREFIX.s() + "&cWill attempt to fetch &6" + currentIteration.size() + "&c uuids from: &6" + url.toString());
+                                    PS.debug(C.PREFIX.s() + "&cWill attempt to fetch &6" + currentIteration.size() + "&c uuids from: &6" + url.toString());
                                     try {
                                         HttpURLConnection connection = (HttpURLConnection) new URL(url.toString()).openConnection();
                                         connection.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -161,7 +165,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
     
     @Override
     public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
-        PS.log(C.PREFIX.s() + "UUID for '" + name + "' was null. We'll cache this from the mojang servers!");
+        PS.debug(C.PREFIX.s() + "UUID for '" + name + "' was null. We'll cache this from the mojang servers!");
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -209,7 +213,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                         statement.setString(1, uuid.toString());
                         statement.setString(2, name.toString());
                         statement.execute();
-                        PS.log(C.PREFIX.s() + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
+                        PS.debug(C.PREFIX.s() + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -227,7 +231,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
      */
     @Deprecated
     public String getName__unused__(final UUID uuid) {
-        PS.log(C.PREFIX.s() + "Name for '" + uuid + "' was null. We'll cache this from the mojang servers!");
+        PS.debug(C.PREFIX.s() + "Name for '" + uuid + "' was null. We'll cache this from the mojang servers!");
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -264,7 +268,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     statement.setString(1, name.value);
                     statement.setString(2, uuid.toString());
                     statement.execute();
-                    PS.log(C.PREFIX.s() + "Name change for '" + uuid + "' to '" + name.value + "'");
+                    PS.debug(C.PREFIX.s() + "Name change for '" + uuid + "' to '" + name.value + "'");
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

@@ -20,11 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.PS;
-
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import com.intellectualcrafters.plot.PS;
 
 /**
  * Connects to and uses a SQLite database
@@ -58,7 +62,7 @@ public class SQLite extends Database {
             try {
                 file.createNewFile();
             } catch (final IOException e) {
-                PS.log("&cUnable to create database!");
+                PS.debug("&cUnable to create database!");
             }
         }
         Class.forName("org.sqlite.JDBC");

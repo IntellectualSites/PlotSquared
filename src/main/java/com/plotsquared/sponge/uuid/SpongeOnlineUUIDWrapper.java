@@ -1,12 +1,13 @@
-package com.plotsquared.sponge;
+package com.plotsquared.sponge.uuid;
 
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.plotsquared.sponge.SpongeMain;
+import com.plotsquared.sponge.SpongePlayer;
 
 public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
 

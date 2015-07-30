@@ -20,19 +20,23 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.generator;
 
-import com.intellectualcrafters.plot.generator.HybridPlotManager;
-import com.intellectualcrafters.plot.generator.HybridPlotWorld;
-import com.intellectualcrafters.plot.generator.HybridPop;
-import com.intellectualcrafters.plot.object.*;
-import com.plotsquared.bukkit.object.BukkitPlotPopulator;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+
+import com.intellectualcrafters.plot.generator.HybridPlotManager;
+import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.object.PlotLoc;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.plotsquared.bukkit.object.BukkitPlotPopulator;
 
 /**
  * The default generator is very messy, as we have decided to try externalize all calculations from within the loop. -

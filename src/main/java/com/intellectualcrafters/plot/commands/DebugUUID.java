@@ -20,6 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -30,24 +40,14 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlayerManager;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
 import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
-import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-import org.bukkit.Bukkit;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 @CommandDeclaration(
         command = "uuidconvert",
@@ -115,7 +115,9 @@ public class DebugUUID extends SubCommand {
         MainUtil.sendConsoleMessage("&6Beginning UUID mode conversion");
         MainUtil.sendConsoleMessage("&7 - Disconnecting players");
         for (PlotPlayer user : UUIDHandler.getPlayers().values()) {
-            PlayerManager.manager.kickPlayer(user, "PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
+            for (PlotPlayer pp : UUIDHandler.getPlayers().values()) {
+                pp.kick("PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
+            }
         }
         
         MainUtil.sendConsoleMessage("&7 - Initializing map");
@@ -145,7 +147,7 @@ public class DebugUUID extends SubCommand {
                         final UUID uuid = UUID.fromString(s);
                         uuids.add(uuid);
                     } catch (final Exception e) {
-                        PS.log(C.PREFIX.s() + "Invalid playerdata: " + current);
+                        MainUtil.sendMessage(plr, C.PREFIX.s() + "Invalid playerdata: " + current);
                     }
                 }
             }
@@ -176,7 +178,7 @@ public class DebugUUID extends SubCommand {
                     uCReverse.put(uuid2, uuid);
                 }
             } catch (final Throwable e) {
-                PS.log(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+                MainUtil.sendMessage(plr, C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
             }
         }
         for (final String name : names) {

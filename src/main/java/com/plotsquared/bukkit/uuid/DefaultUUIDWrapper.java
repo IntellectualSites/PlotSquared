@@ -1,14 +1,15 @@
 package com.plotsquared.bukkit.uuid;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.object.BukkitPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-
-import java.util.UUID;
 
 public class DefaultUUIDWrapper extends UUIDWrapper {
     @Override

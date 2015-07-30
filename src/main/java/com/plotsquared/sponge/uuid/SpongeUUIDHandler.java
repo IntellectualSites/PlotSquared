@@ -1,18 +1,16 @@
-package com.plotsquared.sponge;
+package com.plotsquared.sponge.uuid;
 
-import java.util.Collection;
 import java.util.UUID;
 
 import org.spongepowered.api.GameProfile;
-import org.spongepowered.api.service.profile.GameProfileResolver;
 
-import com.google.inject.Inject;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.plotsquared.sponge.SpongeMain;
 
 public class SpongeUUIDHandler extends UUIDHandlerImplementation {
 

@@ -20,23 +20,36 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.util.BukkitHybridUtils;
-import com.plotsquared.general.commands.CommandDeclaration;
-
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import com.intellectualcrafters.plot.util.StringMan;
+import org.bukkit.Bukkit;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.util.BukkitHybridUtils;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "debugexec",
@@ -93,7 +106,7 @@ public class DebugExec extends SubCommand {
                     PlotAnalysis.calcOptimalModifiers(new Runnable() {
                         @Override
                         public void run() {
-                            PS.log("$1Thank you for calibrating PlotSquared plot expiry");
+                            MainUtil.sendMessage(player, "$1Thank you for calibrating PlotSquared plot expiry");
                         }
                     }, threshold);
                     return true;
@@ -122,7 +135,7 @@ public class DebugExec extends SubCommand {
                 }
                 case "start-rgar": {
                     if (args.length != 2) {
-                        PS.log("&cInvalid syntax: /plot debugexec start-rgar <world>");
+                        MainUtil.sendMessage(player, "&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
                     boolean result;
@@ -137,26 +150,26 @@ public class DebugExec extends SubCommand {
                         result = HybridUtils.manager.scheduleRoadUpdate(args[1], 0);
                     }
                     if (!result) {
-                        PS.log("&cCannot schedule mass schematic update! (Is one already in progress?)");
+                        MainUtil.sendMessage(player, "&cCannot schedule mass schematic update! (Is one already in progress?)");
                         return false;
                     }
                     return true;
                 }
                 case "stop-rgar": {
                     if (((BukkitHybridUtils)(HybridUtils.manager)).task == 0) {
-                        PS.log("&cTASK NOT RUNNING!");
+                        MainUtil.sendMessage(player, "&cTASK NOT RUNNING!");
                         return false;
                     }
                     ((BukkitHybridUtils)(HybridUtils.manager)).task = 0;
                     Bukkit.getScheduler().cancelTask(((BukkitHybridUtils)(HybridUtils.manager)).task);
-                    PS.log("&cCancelling task...");
+                    MainUtil.sendMessage(player, "&cCancelling task...");
                     while (BukkitHybridUtils.chunks.size() > 0) {
                         ChunkLoc chunk = BukkitHybridUtils.chunks.get(0);
                         BukkitHybridUtils.chunks.remove(0);
                         HybridUtils.manager.regenerateRoad(BukkitHybridUtils.world, chunk, 0);
                         ChunkManager.manager.unloadChunk(BukkitHybridUtils.world, chunk, true, true);
                     }
-                    PS.log("&cCancelled!");
+                    MainUtil.sendMessage(player, "&cCancelled!");
                     return true;
                 }
                 case "start-expire": {
@@ -261,7 +274,7 @@ public class DebugExec extends SubCommand {
                 }
             }
         }
-        MainUtil.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringUtils.join(allowed_params, "|") + ">");
+        MainUtil.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, "|") + ">");
         return true;
     }
 }

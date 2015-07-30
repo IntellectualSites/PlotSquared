@@ -20,22 +20,35 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.intellectualcrafters.plot.util.StringMan;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-import com.plotsquared.listener.APlotListener;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.plotsquared.listener.PlotListener;
 
 
 // TODO Make sub-subcommands
@@ -86,8 +99,8 @@ public class Set extends SubCommand {
         }
         if (args[0].equalsIgnoreCase("flag")) {
             if (args.length < 2) {
-                final String message = StringMan.replaceFromMap("$2" + (StringUtils.join(FlagManager.getFlags(plr), "$1, $2")), C.replacements);
-                // final String message = StringUtils.join(FlagManager.getFlags(plr), "&c, &6");
+                final String message = StringMan.replaceFromMap("$2" + (StringMan.join(FlagManager.getFlags(plr), "$1, $2")), C.replacements);
+                // final String message = StringMan.join(FlagManager.getFlags(plr), "&c, &6");
                 MainUtil.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", message));
                 return false;
             }
@@ -116,11 +129,11 @@ public class Set extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(plr, C.FLAG_REMOVED);
-                APlotListener.manager.plotEntry(plr, plot);
+                PlotListener.plotEntry(plr, plot);
                 return true;
             }
             try {
-                final String value = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 final Object parsed_value = af.parseValueRaw(value);
                 if (parsed_value == null) {
                     MainUtil.sendMessage(plr, af.getValueDesc());
@@ -133,7 +146,7 @@ public class Set extends SubCommand {
                     return false;
                 }
                 MainUtil.sendMessage(plr, C.FLAG_ADDED);
-                APlotListener.manager.plotEntry(plr, plot);
+                PlotListener.plotEntry(plr, plot);
                 return true;
             } catch (final Exception e) {
                 MainUtil.sendMessage(plr, "&c" + e.getMessage());

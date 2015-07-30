@@ -20,11 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
-import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+
+import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * @author Citymonstret

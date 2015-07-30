@@ -20,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.Arrays;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -29,11 +31,8 @@ import com.intellectualcrafters.plot.object.comment.CommentInbox;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.CommentManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Arrays;
 
 @CommandDeclaration(
         command = "comment",
@@ -48,12 +47,12 @@ public class Comment extends SubCommand {
     @Override
     public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length < 2) {
-            sendMessage(player, C.COMMENT_SYNTAX, StringUtils.join(CommentManager.inboxes.keySet(),"|"));
+            sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(),"|"));
             return false;
         }
         CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
         if (inbox == null) {
-            sendMessage(player, C.COMMENT_SYNTAX, StringUtils.join(CommentManager.inboxes.keySet(),"|"));
+            sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(),"|"));
             return false;
         }
         Plot plot;
@@ -62,7 +61,7 @@ public class Comment extends SubCommand {
         int index;
         if (id != null) {
             if (args.length < 4) {
-                sendMessage(player, C.COMMENT_SYNTAX, StringUtils.join(CommentManager.inboxes.keySet(),"|"));
+                sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(),"|"));
                 return false;
             }
             index = 2;
@@ -76,12 +75,12 @@ public class Comment extends SubCommand {
             sendMessage(player, C.NO_PERM_INBOX, "");
             return false;
         }
-        String message = StringUtils.join(Arrays.copyOfRange(args,index, args.length), " ");
+        String message = StringMan.join(Arrays.copyOfRange(args,index, args.length), " ");
         PlotComment comment = new PlotComment(loc.getWorld(), id, message, player.getName(), inbox.toString(), System.currentTimeMillis());
         boolean result = inbox.addComment(plot, comment);
         if (!result) {
             sendMessage(player, C.NO_PLOT_INBOX, "");
-            sendMessage(player, C.COMMENT_SYNTAX, StringUtils.join(CommentManager.inboxes.keySet(),"|"));
+            sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(),"|"));
             return false;
         }
         sendMessage(player, C.COMMENT_ADDED);

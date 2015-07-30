@@ -1,5 +1,9 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.PS;
@@ -9,13 +13,7 @@ import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
-import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public abstract class UUIDHandlerImplementation {
     
@@ -83,7 +81,7 @@ public abstract class UUIDHandlerImplementation {
                     }
                     uuidMap.put(name, uuid);
                 }
-                PS.log(C.PREFIX.s() + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
+                PS.debug(C.PREFIX.s() + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
             }
         });
     }
@@ -155,7 +153,7 @@ public abstract class UUIDHandlerImplementation {
             return uuid;
         }
         // Read from disk OR convert directly to offline UUID
-        if (uuidWrapper instanceof OfflineUUIDWrapper || uuidWrapper instanceof LowerOfflineUUIDWrapper) {
+        if (Settings.OFFLINE_MODE) {
             uuid = uuidWrapper.getUUID(name);
             add(new StringWrapper(name), uuid);
             return uuid;

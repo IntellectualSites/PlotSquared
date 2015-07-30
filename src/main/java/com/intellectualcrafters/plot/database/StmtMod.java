@@ -1,9 +1,9 @@
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.util.StringMan;
-
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import com.intellectualcrafters.plot.util.StringMan;
 
 public abstract class StmtMod<T> {
 	public abstract String getCreateMySQL(int size);

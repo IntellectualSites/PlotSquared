@@ -20,19 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.database.plotme;
 
-import com.intellectualcrafters.configuration.file.FileConfiguration;
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.generator.HybridGen;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -46,6 +33,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+
+import com.intellectualcrafters.configuration.file.FileConfiguration;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.bukkit.generator.HybridGen;
 
 /**
  * Created 2014-08-17 for PlotSquared
@@ -75,7 +76,7 @@ public class LikePlotMeConverter {
     }
     
     private void sendMessage(final String message) {
-        PS.log("&3PlotMe&8->&3PlotSquared&8: &7" + message);
+        PS.debug("&3PlotMe&8->&3PlotSquared&8: &7" + message);
     }
     
     public String getPlotMePath() {
@@ -128,7 +129,7 @@ public class LikePlotMeConverter {
                 return false;
             }
             
-            PS.log("&3Using connector: " + connector.getClass().getCanonicalName());
+            PS.debug("&3Using connector: " + connector.getClass().getCanonicalName());
             
             Connection connection = connector.getPlotMeConnection(plugin, plotConfig, dataFolder);
 
@@ -238,7 +239,7 @@ public class LikePlotMeConverter {
                     }
                 }
                 if (duplicate > 0) {
-                    PS.log("&c[WARNING] Found " + duplicate + " duplicate plots already in DB for world: '" + world + "'. Have you run the converter already?");
+                    PS.debug("&c[WARNING] Found " + duplicate + " duplicate plots already in DB for world: '" + world + "'. Have you run the converter already?");
                 }
             }
             sendMessage("Creating plot DB");
@@ -247,10 +248,10 @@ public class LikePlotMeConverter {
                 @Override
                 public void run() {
                     sendMessage("&aDatabase conversion is now complete!");
-                    PS.log("&c - Stop the server");
-                    PS.log("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
-                    PS.log("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
-                    PS.log("&c - Start the server");
+                    PS.debug("&c - Stop the server");
+                    PS.debug("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
+                    PS.debug("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
+                    PS.debug("&c - Start the server");
                     PS.get().setAllPlotsRaw(DBFunc.getPlots());
                 }
             });
@@ -315,7 +316,7 @@ public class LikePlotMeConverter {
             });
         } catch (final Exception e) {
             e.printStackTrace();
-            PS.log("&/end/");
+            PS.debug("&/end/");
         }
         return true;
     }

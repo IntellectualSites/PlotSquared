@@ -20,12 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.lang.reflect.Field;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.lang.reflect.Field;
 
 @CommandDeclaration(
         command = "debugloadtest",
@@ -44,9 +44,9 @@ public class DebugLoadTest extends SubCommand {
             fPlots.setAccessible(true);
             fPlots.set(null, DBFunc.getPlots());
         } catch (final Exception e) {
-            PS.log("&3===FAILED&3===");
+            PS.debug("&3===FAILED&3===");
             e.printStackTrace();
-            PS.log("&3===END OF STACKTRACE===");
+            PS.debug("&3===END OF STACKTRACE===");
         }
         return true;
     }

@@ -1,8 +1,10 @@
 package com.plotsquared.bukkit.events;
 
+import org.bukkit.event.HandlerList;
+
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import org.bukkit.event.HandlerList;
+import com.intellectualcrafters.plot.object.Rating;
 
 /**
  * Created 2015-07-13 for PlotSquaredGit
@@ -13,9 +15,9 @@ public class PlotRateEvent extends PlotEvent {
 
     private static HandlerList handlers = new HandlerList();
     private final PlotPlayer rater;
-    private int rating;
+    private Rating rating;
 
-    public PlotRateEvent(final PlotPlayer rater, final int rating, final Plot plot) {
+    public PlotRateEvent(final PlotPlayer rater, final Rating rating, final Plot plot) {
         super(plot);
         this.rater = rater;
         this.rating = rating;
@@ -29,11 +31,11 @@ public class PlotRateEvent extends PlotEvent {
         return this.rater;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Rating rating) {
         this.rating = rating;
     }
 
-    public int getRating() {
+    public Rating getRating() {
         return this.rating;
     }
 

@@ -1,12 +1,12 @@
 package com.intellectualcrafters.plot.flag;
 
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.util.StringMan;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * Created 2014-11-17 for PlotSquared

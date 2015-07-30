@@ -1,36 +1,110 @@
 package com.plotsquared.bukkit.listeners;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.bukkit.listeners.worldedit.WEManager;
-import com.plotsquared.bukkit.object.BukkitLazyBlock;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
-import org.bukkit.*;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_ANIMAL_INTERACT;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_DISABLE_PHYSICS;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_HANGING_BREAK;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_HANGING_PLACE;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_HOSTILE_INTERACT;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_PLACE;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_PVP;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_TAMED_INTERACT;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_USE;
+import static com.intellectualcrafters.plot.object.StaticStrings.FLAG_VEHICLE_USE;
+import static com.intellectualcrafters.plot.object.StaticStrings.META_INVENTORY;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_BUILD_OTHER;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_BUILD_ROAD;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_BUILD_UNOWNED;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_DESTROY_OTHER;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_DESTROY_ROAD;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_DESTROY_UNOWNED;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_ENTRY_DENIED;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_EXIT_DENIED;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_INTERACT_OTHER;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_INTERACT_ROAD;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_INTERACT_UNOWNED;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_COMMANDS_CHAT;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_PROJECTILE_OTHER;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_PROJECTILE_UNOWNED;
+import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_WORLDEDIT_BYPASS;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.EntityBlockFormEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -41,10 +115,35 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-import java.util.*;
-import java.util.regex.Pattern;
-
-import static com.intellectualcrafters.plot.object.StaticStrings.*;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.RegExUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.listeners.worldedit.WEManager;
+import com.plotsquared.bukkit.object.BukkitLazyBlock;
+import com.plotsquared.bukkit.object.BukkitPlayer;
+import com.plotsquared.bukkit.util.bukkit.BukkitUtil;
 
 /**
  * Player Events involving plots
@@ -53,7 +152,7 @@ import static com.intellectualcrafters.plot.object.StaticStrings.*;
  * @author Empire92
  */
 @SuppressWarnings({"unused","deprecation","unchecked"})
-public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener implements Listener {
+public class PlayerEvents extends com.plotsquared.listener.PlotListener implements Listener {
 
     private boolean pistonBlocks = true;
 
@@ -1492,7 +1591,7 @@ public class PlayerEvents extends com.plotsquared.bukkit.listeners.PlotListener 
             final Collection<Plot> plots = PS.get().getPlots(pp.getName()).values();
             for (final Plot plot : plots) {
                 plot.delete();
-                PS.log(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
+                PS.debug(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
             }
         }
         BukkitUtil.removePlayer(pp.getName());

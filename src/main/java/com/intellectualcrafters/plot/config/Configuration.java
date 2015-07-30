@@ -20,11 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
+import java.util.ArrayList;
+
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.StringComparison;
-
-import java.util.ArrayList;
 
 /**
  * Main Configuration Utility

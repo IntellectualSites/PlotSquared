@@ -1,8 +1,9 @@
 package com.plotsquared.bukkit.util.bukkit;
 
+import org.bukkit.Bukkit;
+
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.BukkitMain;
-import org.bukkit.Bukkit;
 
 public class BukkitTaskManager extends TaskManager {
     @Override

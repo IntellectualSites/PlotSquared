@@ -1,12 +1,13 @@
 package com.plotsquared.bukkit.util.bukkit;
 
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.util.BlockUpdateUtil;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.bukkit.Chunk;
 import org.bukkit.World;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.util.BlockUpdateUtil;
 
 public abstract class BukkitSetBlockManager extends BlockUpdateUtil {
     public static BukkitSetBlockManager setBlockManager = null;

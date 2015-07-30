@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.object.comment;
 
+import java.util.ArrayList;
+
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;
@@ -7,8 +9,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
-
-import java.util.ArrayList;
 
 public class InboxPublic extends CommentInbox {
 

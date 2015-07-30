@@ -1,13 +1,13 @@
 package com.plotsquared.bukkit.generator;
 
+import org.bukkit.generator.ChunkGenerator;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
-
-import org.bukkit.generator.ChunkGenerator;
 
 public class BukkitGeneratorWrapper extends PlotGenerator<ChunkGenerator> {
 

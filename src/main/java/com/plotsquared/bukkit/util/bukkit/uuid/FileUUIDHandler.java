@@ -1,5 +1,16 @@
 package com.plotsquared.bukkit.util.bukkit.uuid;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -10,18 +21,12 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.NbtFactory;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
 
 public class FileUUIDHandler extends UUIDHandlerImplementation {
 
@@ -50,12 +55,12 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                PS.log(C.PREFIX.s() + "&6Starting player data caching for: " + world);
+                PS.debug(C.PREFIX.s() + "&6Starting player data caching for: " + world);
                 final HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
                 toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                 if (Settings.TWIN_MODE_UUID) {
                     HashSet<UUID> all = UUIDHandler.getAllUUIDS();
-                    PS.log("&aFast mode UUID caching enabled!");
+                    PS.debug("&aFast mode UUID caching enabled!");
                     final File playerdataFolder = new File(container, world + File.separator + "playerdata");
                     String[] dat = playerdataFolder.list(new FilenameFilter() {
                         @Override
@@ -81,7 +86,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 }
                             } catch (final Exception e) {
                                 e.printStackTrace();
-                                PS.log(C.PREFIX.s() + "Invalid playerdata: " + current);
+                                PS.debug(C.PREFIX.s() + "Invalid playerdata: " + current);
                             }
                         }
                     }
@@ -111,7 +116,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 final UUID uuid = UUID.fromString(s);
                                 uuids.add(uuid);
                             } catch (final Exception e) {
-                                PS.log(C.PREFIX.s() + "Invalid playerdata: " + current);
+                                PS.debug(C.PREFIX.s() + "Invalid playerdata: " + current);
                             }
                         }
                         break;
@@ -151,7 +156,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         ExpireManager.dates.put(uuid, last);
                         toAdd.put(new StringWrapper(name), uuid);
                     } catch (final Throwable e) {
-                        PS.log(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+                        PS.debug(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
                     }
                 }
                 for (final String name : names) {

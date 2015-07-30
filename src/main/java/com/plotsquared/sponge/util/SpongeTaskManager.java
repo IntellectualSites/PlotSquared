@@ -1,4 +1,4 @@
-package com.plotsquared.sponge;
+package com.plotsquared.sponge.util;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -7,6 +7,7 @@ import org.spongepowered.api.service.scheduler.Task;
 import org.spongepowered.api.service.scheduler.TaskBuilder;
 
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.sponge.SpongeMain;
 
 public class SpongeTaskManager extends TaskManager {
 
@@ -27,25 +28,25 @@ public class SpongeTaskManager extends TaskManager {
     @Override
     public void taskAsync(Runnable r) {
         TaskBuilder builder = SpongeMain.THIS.getGame().getScheduler().getTaskBuilder();
-        builder.async().execute(r);
+        builder.async().execute(r).submit(SpongeMain.THIS.getPlugin());
     }
 
     @Override
     public void task(Runnable r) {
         TaskBuilder builder = SpongeMain.THIS.getGame().getScheduler().getTaskBuilder();
-        builder.execute(r);
+        builder.execute(r).submit(SpongeMain.THIS.getPlugin());
     }
 
     @Override
     public void taskLater(Runnable r, int delay) {
         TaskBuilder builder = SpongeMain.THIS.getGame().getScheduler().getTaskBuilder();
-        builder.delay(delay).execute(r);
+        builder.delay(delay).execute(r).submit(SpongeMain.THIS.getPlugin());
     }
 
     @Override
     public void taskLaterAsync(Runnable r, int delay) {
         TaskBuilder builder = SpongeMain.THIS.getGame().getScheduler().getTaskBuilder();
-        builder.async().delay(delay).execute(r);
+        builder.async().delay(delay).execute(r).submit(SpongeMain.THIS.getPlugin());
     }
 
     @Override
