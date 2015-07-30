@@ -180,17 +180,4 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final int z = dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
         return new Location(plotworld.worldname, x, 1, z);
     }
-
-    /**
-     * Set a plot biome
-     */
-    @Override
-    public boolean setBiome(final Plot plot, final String biome) {
-        final int bottomX = MainUtil.getPlotBottomLoc(plot.world, plot.id).getX() - 1;
-        final int topX = MainUtil.getPlotTopLoc(plot.world, plot.id).getX();
-        final int bottomZ = MainUtil.getPlotBottomLoc(plot.world, plot.id).getZ() - 1;
-        final int topZ = MainUtil.getPlotTopLoc(plot.world, plot.id).getZ();
-        MainUtil.setBiome(plot.world, bottomX, bottomZ, topX, topZ, biome);
-        return true;
-    }
 }

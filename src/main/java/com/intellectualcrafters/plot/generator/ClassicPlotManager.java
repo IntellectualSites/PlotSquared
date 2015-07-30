@@ -255,17 +255,6 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
     }
 
     @Override
-    public boolean unclaimPlot(final PlotWorld plotworld, final Plot plot) {
-        final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
-        final PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        if (unclaim.id != 0 || !claim.equals(unclaim)) {
-            setWall(plotworld, plot.id, new PlotBlock[] { unclaim });
-        }
-        MainUtil.removeSign(plot);
-        return true;
-    }
-
-    @Override
     public String[] getPlotComponents(final PlotWorld plotworld, final PlotId plotid) {
         return new String[] { "floor", "wall", "border" };
     }
