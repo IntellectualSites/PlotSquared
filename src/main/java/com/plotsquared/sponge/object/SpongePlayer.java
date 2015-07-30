@@ -28,8 +28,8 @@ public class SpongePlayer extends PlotPlayer {
     private UUID uuid;
     private String name;
     private long last = 0;
-    private HashSet<String> hasPerm = new HashSet<>();
-    private HashSet<String> noPerm = new HashSet<>();
+    public HashSet<String> hasPerm = new HashSet<>();
+    public HashSet<String> noPerm = new HashSet<>();
 
     public SpongePlayer(Player player) {
         this.player = player;

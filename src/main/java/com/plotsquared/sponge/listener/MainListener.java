@@ -72,7 +72,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.listener.PlotListener;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
@@ -836,7 +835,9 @@ public class MainListener {
         
         // TODO worldedit mask
         
-        ((BukkitPlayer) player).hasPerm = new HashSet<>();
-        ((BukkitPlayer) player).noPerm = new HashSet<>();
+        if (Settings.PERMISSION_CACHING) {
+            ((SpongePlayer) player).hasPerm = new HashSet<>();
+            ((SpongePlayer) player).noPerm = new HashSet<>();
+        }
     }
 }
