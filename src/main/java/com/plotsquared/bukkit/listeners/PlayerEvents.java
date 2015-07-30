@@ -749,8 +749,10 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 WEManager.bypass.add(pp.getName());
             }
         }
-        ((BukkitPlayer) player).hasPerm = new HashSet<>();
-        ((BukkitPlayer) player).noPerm = new HashSet<>();
+        if (Settings.PERMISSION_CACHING) {
+            ((BukkitPlayer) pp).hasPerm = new HashSet<>();
+            ((BukkitPlayer) pp).noPerm = new HashSet<>();
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
