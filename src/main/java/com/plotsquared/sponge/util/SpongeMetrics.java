@@ -54,6 +54,8 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.scheduler.Task;
 import org.spongepowered.api.service.scheduler.TaskBuilder;
 
+import com.intellectualcrafters.plot.PS;
+
 public class SpongeMetrics {
 
     /**
@@ -211,7 +213,7 @@ public class SpongeMetrics {
                         firstPost = false;
                     } catch (IOException e) {
                         if (debug) {
-                            System.out.println("[Metrics] " + e.getMessage());
+                            PS.debug("[Metrics] " + e.getMessage());
                         }
                     }
                 }
@@ -370,7 +372,7 @@ public class SpongeMetrics {
         connection.setDoOutput(true);
 
         if (debug) {
-            System.out.println("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
+            PS.debug("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
         }
 
         // Write the data

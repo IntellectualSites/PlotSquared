@@ -45,6 +45,12 @@ import com.plotsquared.general.commands.CommandDeclaration;
 )
 public class Visit extends SubCommand {
 
+    public Visit() {
+        requiredArguments = new Argument[] {
+                Argument.String
+        };
+    }
+    
     public List<Plot> getPlots(final UUID uuid) {
         final List<Plot> plots = new ArrayList<>();
         for (final Plot p : PS.get().getPlots()) {

@@ -101,13 +101,13 @@ public class SetOwner extends SubCommand {
         }
         
         final String world = loc.getWorld();
+        final UUID uuid = getUUID(args[0]);
+        if (uuid == null) {
+            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            return false;
+        }
         for (final PlotId id : plots) {
             final Plot current = PS.get().getPlots(world).get(id);
-            final UUID uuid = getUUID(args[0]);
-            if (uuid == null) {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
-                return false;
-            }
             current.owner = uuid;
             PS.get().updatePlot(current);
             DBFunc.setOwner(current, current.owner);

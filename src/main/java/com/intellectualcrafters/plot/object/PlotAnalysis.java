@@ -386,7 +386,7 @@ public class PlotAnalysis {
     }
     
     public static void logln(Object obj) {
-        System.out.println(log(obj));
+        PS.debug(log(obj));
     }
     
     public static String log(Object obj) {
