@@ -218,14 +218,16 @@ public class MainListener {
         String sender = player.getName();
         PlotId id = plot.id;
         String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
-        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
+        Text forcedMessage = event.getMessage();
+//        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
         for (PlotPlayer user : UUIDHandler.getPlayers().values()) {
             String toSend;
             if (plot.equals(MainUtil.getPlot(user.getLocation()))) {
                 toSend = newMessage;
             }
             else if (Permissions.hasPermission(user, PERMISSION_COMMANDS_CHAT)) {
-                toSend = forcedMessage;
+                ((SpongePlayer) user).player.sendMessage(forcedMessage);
+                continue;
             }
             else {
                 continue;

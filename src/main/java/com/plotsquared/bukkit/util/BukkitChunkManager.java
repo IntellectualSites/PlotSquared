@@ -57,6 +57,7 @@ import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -194,112 +195,61 @@ public class BukkitChunkManager extends ChunkManager {
      */
     @Override
     public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
-        TaskManager.index.incrementAndGet();
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
+        
+        final int relCX = relX >> 4;
+        final int relCZ = relZ >> 4;
 
         final RegionWrapper region = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
         final World oldWorld = Bukkit.getWorld(pos1.getWorld());
         final World newWorld = Bukkit.getWorld(newPos.getWorld());
-
-        final Chunk c1 = newWorld.getChunkAt(pos1.getX() >> 4, pos1.getZ() >> 4);
-        final Chunk c2 = newWorld.getChunkAt(pos2.getX() >> 4, pos2.getZ() >> 4);
-
-        final int sx = pos1.getX();
-        final int sz = pos1.getZ();
-        final int ex = pos2.getX();
-        final int ez = pos2.getZ();
-
-        final int c1x = c1.getX();
-        final int c1z = c1.getZ();
-        final int c2x = c2.getX();
-        final int c2z = c2.getZ();
-
         final ArrayList<Chunk> chunks = new ArrayList<>();
-        final ArrayList<Chunk> toGenerate = new ArrayList<>();
-        // Load chunks
-        for (int x = c1x; x <= c2x; x++) {
-            for (int z = c1z; z <= c2z; z++) {
-                final Chunk chunk = newWorld.getChunkAt(x, z);
-                toGenerate.add(chunk);
-            }
-        }
-        final Plugin plugin = BukkitMain.THIS;
-        final Integer currentIndex = TaskManager.index.get();
-        final int loadTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+        
+        initMaps();
+        
+        ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
             public void run() {
-                final long start = System.currentTimeMillis();
-                while ((System.currentTimeMillis() - start) < 25) {
-                    if (toGenerate.size() == 0) {
-                        Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
-                        TaskManager.tasks.remove(currentIndex);
-                        TaskManager.runTask(new Runnable() {
-                            @Override
-                            public void run() {
-                                TaskManager.index.incrementAndGet();
-                                // Copy entities
-                                initMaps();
-                                for (int x = c1x; x <= c2x; x++) {
-                                    for (int z = c1z; z <= c2z; z++) {
-                                        final Chunk chunk = oldWorld.getChunkAt(x, z);
-                                        chunks.add(chunk);
-                                        chunk.load(false);
-                                    }
-                                }
-                                // Copy blocks
-                                final AtomicInteger mx = new AtomicInteger(sx);
-                                final Integer currentIndex = TaskManager.index.get();
-                                final int maxY = oldWorld.getMaxHeight();
-                                final Integer task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        final long start = System.currentTimeMillis();
-                                        while ((System.currentTimeMillis() - start) < 25) {
-                                            final int xv = mx.intValue();
-                                            for (int z = sz; z <= ez; z++) {
-                                                saveBlocks(oldWorld, maxY, xv, z);
-                                                for (int y = 1; y <= maxY; y++) {
-                                                    final Block block = oldWorld.getBlockAt(xv, y, z);
-                                                    final int id = block.getTypeId();
-                                                    final byte data = block.getData();
-                                                    BukkitSetBlockManager.setBlockManager.set(newWorld, xv + relX, y, z + relZ, id, data);
-                                                }
-                                            }
-                                            mx.incrementAndGet();
-                                            if (xv == ex) { // done!
-                                                for (int x = c1x; x <= c2x; x++) {
-                                                    for (int z = c1z; z <= c2z; z++) {
-                                                        final Chunk chunk = oldWorld.getChunkAt(x, z);
-                                                        chunks.add(chunk);
-                                                        chunk.load(false);
-                                                        saveEntitiesIn(chunk, region);
-                                                    }
-                                                }
-                                                restoreBlocks(newWorld, relX, relZ);
-                                                restoreEntities(newWorld, relX, relZ);
-                                                BukkitSetBlockManager.setBlockManager.update(chunks);
-                                                TaskManager.runTask(whenDone);
-                                                Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
-                                                TaskManager.tasks.remove(currentIndex);
-                                                return;
-                                            }
-                                        }
-                                    }
-                                }, 1, 1);
-                                TaskManager.tasks.put(currentIndex, task);
-                            }
-                        });
-                        return;
+                int bx = value[2];
+                int bz = value[3];
+                
+                int tx = value[4];
+                int tz = value[5];
+                // Load chunks
+                ChunkLoc loc1 = new ChunkLoc(value[0], value[1]);
+                ChunkLoc loc2 = new ChunkLoc(loc1.x + relCX, loc1.z + relCZ);
+                Chunk c1 = oldWorld.getChunkAt(loc1.x, loc1.z);
+                Chunk c2 = oldWorld.getChunkAt(loc2.x, loc2.z);
+                c1.load(true);
+                c2.load(true);
+                chunks.add(c2);
+                // entities
+                saveEntitiesIn(c1, region);
+                // copy chunk
+                for (int x = bx; x <= tx; x++) {
+                    for (int z = bz; z <= tz; z++) {
+                        saveBlocks(oldWorld, 255, x, z);
+                        for (int y = 1; y < 256; y++) {
+                            final Block block = oldWorld.getBlockAt(x, y, z);
+                            final int id = block.getTypeId();
+                            final byte data = block.getData();
+                            BukkitSetBlockManager.setBlockManager.set(newWorld, x + relX, y, z + relZ, id, data);
+                        }
                     }
-                    final Chunk chunk = toGenerate.get(0);
-                    toGenerate.remove(0);
-                    chunk.load(true);
-                    chunks.add(chunk);
                 }
+                // restore chunk
+                restoreBlocks(newWorld, relX, relZ);
+                restoreEntities(newWorld, relX, relZ);
+                BukkitSetBlockManager.setBlockManager.update(chunks);
             }
-        }, 1l, 1l);
-        TaskManager.tasks.put(currentIndex, loadTask);
+        }, new Runnable() {
+            @Override
+            public void run() {
+                // TODO whenDone
+                TaskManager.runTask(whenDone);
+            }
+        }, 5);
         return true;
     }
     
@@ -549,7 +499,7 @@ public class BukkitChunkManager extends ChunkManager {
             try {
                 entity.spawn(world, x_offset, z_offset);
             } catch (final Exception e) {
-                PS.debug("Failed to restore entity " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id + " : " + EntityType.fromId(entity.id));
+                PS.debug("Failed to restore entity (e): " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id + " : " + EntityType.fromId(entity.id));
                 e.printStackTrace();
             }
         }
@@ -568,7 +518,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate chest (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : signContents.keySet()) {
@@ -601,7 +551,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : dropperContents.keySet()) {
@@ -615,7 +565,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : beaconContents.keySet()) {
@@ -629,7 +579,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate beacon (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : jukeDisc.keySet()) {
@@ -643,7 +593,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to restore jukebox: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate jukebox: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate jukebox (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : skullData.keySet()) {
@@ -666,7 +616,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to restore skull: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate skull: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate skull (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : hopperContents.keySet()) {
@@ -680,7 +630,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate hopper (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : noteBlockContents.keySet()) {
@@ -694,7 +644,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate note block (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : brewTime.keySet()) {
@@ -707,7 +657,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : spawnerData.keySet()) {
@@ -721,7 +671,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to restore spawner type (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : cmdData.keySet()) {
@@ -735,7 +685,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to restore command block: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore command block: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to restore command block (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : brewingStandContents.keySet()) {
@@ -749,7 +699,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : furnaceTime.keySet()) {
@@ -764,7 +714,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to restore furnace cooking (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : furnaceContents.keySet()) {
@@ -778,7 +728,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate furnace (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : bannerBase.keySet()) {
@@ -798,7 +748,7 @@ public class BukkitChunkManager extends ChunkManager {
                     PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
+                PS.debug("&c[WARN] Plot clear failed to regenerate banner (e): " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
     }

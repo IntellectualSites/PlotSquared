@@ -56,9 +56,9 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             @Override
             public void run() {
                 PS.debug(C.PREFIX.s() + "&6Starting player data caching for: " + world);
-                final HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
-                toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                 if (Settings.TWIN_MODE_UUID) {
+                    final HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
+                    toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                     HashSet<UUID> all = UUIDHandler.getAllUUIDS();
                     PS.debug("&aFast mode UUID caching enabled!");
                     final File playerdataFolder = new File(container, world + File.separator + "playerdata");
@@ -99,6 +99,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         PS.debug("Failed to cache: " + all.size() + " uuids - slowly processing all files");
                     }
                 }
+                final HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
+                toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                 final HashSet<String> worlds = new HashSet<>();
                 worlds.add(world);
                 worlds.add("world");

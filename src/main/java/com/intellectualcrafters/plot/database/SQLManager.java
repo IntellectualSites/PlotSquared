@@ -332,7 +332,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setString((i * 6) + 4, DBFunc.everyone.toString());
                 }
                 stmt.setString((i * 6) + 5, plot.world);
-                stmt.setTimestamp((i * 6) + 6, new Timestamp(System.currentTimeMillis()));
+                stmt.setString((i * 6) + 6, System.currentTimeMillis() + "");
             }
 
             @Override

@@ -17,7 +17,10 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.StaticStrings;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.BukkitUtil;
 
 /**
@@ -27,7 +30,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
  */
 public class ChatListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(final AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
@@ -44,20 +47,21 @@ public class ChatListener implements Listener {
         if (plot == null) {
             return;
         }
+        event.setCancelled(true);
         final String message = event.getMessage();
-        String format = C.PLOT_CHAT_FORMAT.s();
         final String sender = event.getPlayer().getDisplayName();
         final PlotId id = plot.id;
-        final Set<Player> recipients = event.getRecipients();
-        recipients.clear();
-        for (final Player p : Bukkit.getOnlinePlayers()) {
-            if (p.hasPermission("plots.admin.command.chat") || plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(p)))) {
-                recipients.add(p);
+        String toSend = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender, "%msg%", message);
+        PS.debug("FORMAT: " + event.getFormat());
+        PS.debug("MESSAGE: " + event.getMessage());
+        for (PlotPlayer recipient : UUIDHandler.getPlayers().values()) {
+            if (plot.equals(recipient.getCurrentPlot())) {
+                recipient.sendMessage(toSend);
+            }
+            else if (recipient.hasPermission(StaticStrings.PERMISSION_COMMANDS_CHAT)) {
+                recipient.sendMessage(toSend);
             }
         }
-        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", sender).replaceAll("%msg%", message.replaceAll("([%]{1})", "%%"));
-        format = ChatColor.translateAlternateColorCodes('&', format);
-        event.setFormat(format);
     }
 
 }
