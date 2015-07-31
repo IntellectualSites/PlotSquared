@@ -58,7 +58,7 @@ public class Visit extends SubCommand {
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
         ArrayList<Plot> plots = new ArrayList<>();
-        UUID user = UUIDHandler.getUUID(args[0], null);
+        UUID user = UUIDHandler.getCachedUUID(args[0], null);
         if (user != null ) {
             // do plots by username
             plots.addAll(PS.get().getPlots(user));

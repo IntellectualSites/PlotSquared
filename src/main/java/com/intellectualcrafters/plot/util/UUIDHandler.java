@@ -110,6 +110,10 @@ public class UUIDHandler {
     public static UUID getUUID(final String name, RunnableVal<UUID> ifFetch) {
         return implementation.getUUID(name, ifFetch);
     }
+    
+    public static UUID getCachedUUID(final String name, RunnableVal<UUID> ifFetch) {
+        return implementation.getUUIDMap().get(new StringWrapper(name));
+    }
 
     public static Map<String, PlotPlayer> getPlayers() {
         return implementation.getPlayers();
