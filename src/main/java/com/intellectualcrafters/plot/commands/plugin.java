@@ -73,7 +73,7 @@ public class plugin extends SubCommand {
                 final ArrayList<String> strings = new ArrayList<String>() {
                     // $2>> $1%id$2:$1%world $2- $1%owner
                     {
-                        add(String.format("$2>> $1&lPlotSquared $2($1Version$2: $1%s$2)", PS.get().IMP.getPluginVersion()));
+                        add(String.format("$2>> $1&lPlotSquared $2($1Version$2: $1%s$2)", StringMan.join(PS.get().IMP.getPluginVersion(), ".")));
                         add(String.format("$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92"));
                         add(String.format("$2>> $1&lWiki$2: $1https://github.com/IntellectualCrafters/PlotSquared/wiki"));
                         add(String.format("$2>> $1&lWebsite$2: $1http://plotsquared.com"));
