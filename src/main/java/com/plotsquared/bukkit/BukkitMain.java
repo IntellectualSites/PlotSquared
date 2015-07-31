@@ -464,7 +464,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             AbstractTitle.TITLE_CLASS = new DefaultTitle();
             if (wrapper instanceof DefaultUUIDWrapper) {
                 Settings.TWIN_MODE_UUID = true;
-            } else if (wrapper instanceof OfflineUUIDWrapper && !Bukkit.getOnlineMode()) {
+            } else if (wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
                 Settings.TWIN_MODE_UUID = true;
             }
         }

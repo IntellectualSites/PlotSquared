@@ -182,7 +182,13 @@ public class PS {
             }
             // create UUIDWrapper
             UUIDHandler.implementation = IMP.initUUIDHandler();
-            UUIDHandler.startCaching(null); // TODO maybe a notification when this is done?
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    PS.debug("Starting UUID caching");
+                    UUIDHandler.startCaching(null);
+                }
+            }, 20);
             // create event util class
             EventUtil.manager = IMP.initEventUtil();
             // create Hybrid utility class

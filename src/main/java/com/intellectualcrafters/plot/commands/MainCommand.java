@@ -27,6 +27,7 @@ import java.util.List;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -62,12 +63,13 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Buy());
         createCommand(new Save());
         createCommand(new Load());
+        createCommand(new Unclaim());
+        createCommand(new Confirm());
         createCommand(new Template());
         createCommand(new Download());
         createCommand(new Update());
         createCommand(new Template());
         createCommand(new Setup());
-//        createCommand(new DebugUUID());
         createCommand(new DebugFill());
         createCommand(new DebugSaveTest());
         createCommand(new DebugLoadTest());
@@ -121,6 +123,15 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Condense());
         createCommand(new Copy());
         createCommand(new Chat());
+        createCommand(new Trim());
+        
+        if (Settings.ENABLE_CLUSTERS) {
+            createCommand(new Cluster());
+        }
+        
+        // Broken
+//        createCommand(new DebugUUID());
+        
     }
 
     public static boolean no_permission(final PlotPlayer player, final String permission) {

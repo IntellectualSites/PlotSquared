@@ -1083,7 +1083,7 @@ public class MainUtil {
             public void run() {
                 ChunkLoc loc = new ChunkLoc(value[0], value[1]);
                 ChunkManager.manager.loadChunk(plot.world, loc, false);
-                setBiome(plot.world, value[2], value[3], value[4], value[4], biome);
+                setBiome(plot.world, value[2], value[3], value[4], value[5], biome);
                 ChunkManager.manager.unloadChunk(plot.world, loc, true, true);
             }
         }, new Runnable() {
