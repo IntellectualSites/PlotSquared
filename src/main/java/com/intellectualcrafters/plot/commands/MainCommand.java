@@ -335,13 +335,13 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         if (cmd == null) {
             MainUtil.sendMessage(plr, C.NOT_VALID_SUBCOMMAND);
             {
-                ArrayList<Command<PlotPlayer>> cmds = getCommands();
+                List<Command<PlotPlayer>> cmds = getCommands(null, plr);
                 cmd = new StringComparison<>(label, cmds).getMatchObject();
                 if (cmd == null) {
                     MainUtil.sendMessage(plr, C.DID_YOU_MEAN, "/plot help");
                 }
                 else {
-                    MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage().replaceAll("\\{label\\}", label));
+                    MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage().replaceAll("\\{label\\}", parts[0]));
                 }
             }
             return CommandHandlingOutput.NOT_FOUND;
