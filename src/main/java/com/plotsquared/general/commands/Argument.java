@@ -64,7 +64,7 @@ public abstract class Argument<T> {
     public static Argument<String> PlayerName = new Argument<String>("PlayerName", "Dinnerbone") {
         @Override
         public String parse(String in) {
-            return in.length() < 16 ? in : null;
+            return in.length() <= 16 ? in : null;
         }
     };
 
