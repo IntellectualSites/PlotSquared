@@ -74,7 +74,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             final String s = current.replaceAll(".dat$", "");
                             try {
                                 UUID uuid = UUID.fromString(s);
-                                if (check || all.contains(uuid)) {
+                                if (check || all.remove(uuid)) {
                                     File file = new File(playerdataFolder + File.separator + current);
                                     InputSupplier<FileInputStream> is = Files.newInputStreamSupplier(file);
                                     NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
@@ -91,8 +91,13 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         }
                     }
                     add(toAdd);
-                    if (whenDone != null) whenDone.run();
-                    return;
+                    if (all.size() == 0) {
+                        if (whenDone != null) whenDone.run();
+                        return;
+                    }
+                    else {
+                        PS.debug("Failed to cache: " + all.size() + " uuids - slowly processing all files");
+                    }
                 }
                 final HashSet<String> worlds = new HashSet<>();
                 worlds.add(world);

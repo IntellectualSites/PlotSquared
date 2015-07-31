@@ -1370,12 +1370,16 @@ public class MainUtil {
         final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(plot2.world, plot2.id);
         final Location top = MainUtil.getPlotTopLoc(plot1.world, plot1.id);
         if (plot1.owner == null) {
+            PS.debug(plot2 +" is unowned (single)");
+            TaskManager.runTask(whenDone);
             return false;
         }
         final Plot pos1 = getBottomPlot(plot1);
         final Plot pos2 = getTopPlot(plot1);
         final PlotId size = MainUtil.getSize(plot1);
         if (!MainUtil.isUnowned(plot2.world, plot2.id, new PlotId((plot2.id.x + size.x) - 1, (plot2.id.y + size.y) - 1))) {
+            PS.debug(plot2 +" is unowned (multi)");
+            TaskManager.runTask(whenDone);
             return false;
         }
         final int offset_x = plot2.id.x - pos1.id.x;

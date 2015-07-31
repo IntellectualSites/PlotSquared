@@ -265,6 +265,7 @@ public class Info extends SubCommand {
                     }
                     MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
                     MainUtil.sendMessage(player, info, false);
+                    MainUtil.sendMessage(player, C.PLOT_INFO_FOOTER);
                 }
             });
             return;

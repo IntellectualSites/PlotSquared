@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -35,7 +36,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         command = "plugin",
         permission = "plots.use",
         description = "Show plugin information",
-        aliases = {"version}"},
+        aliases = {"version"},
         category = CommandCategory.INFO
 )
 public class plugin extends SubCommand {
@@ -80,7 +81,7 @@ public class plugin extends SubCommand {
                     }
                 };
                 for (final String s : strings) {
-                    plr.sendMessage(s);
+                    MainUtil.sendMessage(plr, s);
                 }
             }
         });

@@ -271,6 +271,12 @@ public class list extends SubCommand {
                     break;
                 }
                 UUID uuid = UUIDHandler.getUUID(args[0], null);
+                if (uuid == null) {
+                    try {
+                        uuid = UUID.fromString(args[0]);
+                    }
+                    catch (Exception e) {}
+                }
                 if (uuid != null) {
                     if (!Permissions.hasPermission(plr, "plots.list.player")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.player");

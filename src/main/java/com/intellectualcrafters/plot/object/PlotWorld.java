@@ -160,19 +160,24 @@ public abstract class PlotWorld {
             case "s":
             case "0":
                 this.GAMEMODE = PlotGamemode.SURVIVAL;
+                break;
             case "creative":
             case "c":
             case "1":
                 this.GAMEMODE = PlotGamemode.CREATIVE;
+                break;
             case "adventure":
             case "a":
             case "2":
                 this.GAMEMODE = PlotGamemode.ADVENTURE;
+                break;
             case "spectator":
             case "3":
                 this.GAMEMODE = PlotGamemode.SPECTATOR;
+                break;
             default:
                 PS.debug("&cInvalid gamemode set for: " + worldname);
+                break;
         }
         
         this.HOME_ALLOW_NONMEMBER = config.getBoolean("home.allow-nonmembers");
