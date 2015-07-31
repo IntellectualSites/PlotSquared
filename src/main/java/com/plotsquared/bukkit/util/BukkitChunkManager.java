@@ -565,10 +565,10 @@ public class BukkitChunkManager extends ChunkManager {
                     chest.getInventory().setContents(chestContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : signContents.keySet()) {
@@ -584,10 +584,10 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : dispenserContents.keySet()) {
@@ -598,10 +598,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Dispenser) (state)).getInventory().setContents(dispenserContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : dropperContents.keySet()) {
@@ -612,10 +612,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Dropper) (state)).getInventory().setContents(dropperContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : beaconContents.keySet()) {
@@ -626,10 +626,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Beacon) (state)).getInventory().setContents(beaconContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : jukeDisc.keySet()) {
@@ -640,10 +640,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Jukebox) (state)).setPlaying(Material.getMaterial(jukeDisc.get(loc)));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore jukebox: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate jukebox: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate jukebox: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : skullData.keySet()) {
@@ -663,10 +663,10 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore skull: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore skull: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate skull: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate skull: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : hopperContents.keySet()) {
@@ -677,10 +677,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Hopper) (state)).getInventory().setContents(hopperContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : noteBlockContents.keySet()) {
@@ -691,10 +691,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((NoteBlock) (state)).setNote(noteBlockContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : brewTime.keySet()) {
@@ -704,10 +704,10 @@ public class BukkitChunkManager extends ChunkManager {
                 if (state instanceof BrewingStand) {
                     ((BrewingStand) (state)).setBrewingTime(brewTime.get(loc));
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : spawnerData.keySet()) {
@@ -718,10 +718,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((CreatureSpawner) (state)).setCreatureTypeId(spawnerData.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : cmdData.keySet()) {
@@ -732,10 +732,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((CommandBlock) (state)).setCommand(cmdData.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore command block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore command block: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore command block: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to restore command block: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : brewingStandContents.keySet()) {
@@ -746,10 +746,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((BrewingStand) (state)).getInventory().setContents(brewingStandContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : furnaceTime.keySet()) {
@@ -761,10 +761,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Furnace) (state)).setBurnTime(time[0]);
                     ((Furnace) (state)).setCookTime(time[1]);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : furnaceContents.keySet()) {
@@ -775,10 +775,10 @@ public class BukkitChunkManager extends ChunkManager {
                     ((Furnace) (state)).getInventory().setContents(furnaceContents.get(loc));
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
         for (final BlockLoc loc : bannerBase.keySet()) {
@@ -795,10 +795,10 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                     state.update(true);
                 } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                    PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
                 }
             } catch (final Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + loc.x + x_offset + "," + loc.y + "," + loc.z + z_offset);
+                PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + (loc.x + x_offset) + "," + (loc.y) + "," + (loc.z + z_offset));
             }
         }
     }
@@ -820,118 +820,125 @@ public class BukkitChunkManager extends ChunkManager {
                     datas.put(y, data);
                 }
                 BlockLoc bl;
-                switch (id) {
-                    case 54:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final InventoryHolder chest = (InventoryHolder) block.getState();
-                        final ItemStack[] inventory = chest.getInventory().getContents().clone();
-                        chestContents.put(bl, inventory);
-                        break;
-                    case 52:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final CreatureSpawner spawner = (CreatureSpawner) block.getState();
-                        final String type = spawner.getCreatureTypeId();
-                        if ((type != null) && (type.length() != 0)) {
-                            spawnerData.put(bl, type);
-                        }
-                        break;
-                    case 137:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final CommandBlock cmd = (CommandBlock) block.getState();
-                        final String string = cmd.getCommand();
-                        if ((string != null) && (string.length() > 0)) {
-                            cmdData.put(bl, string);
-                        }
-                        break;
-                    case 63:
-                    case 68:
-                    case 323:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final Sign sign = (Sign) block.getState();
-                        sign.getLines();
-                        signContents.put(bl, sign.getLines().clone());
-                        break;
-                    case 61:
-                    case 62:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final Furnace furnace = (Furnace) block.getState();
-                        final short burn = furnace.getBurnTime();
-                        final short cook = furnace.getCookTime();
-                        final ItemStack[] invFur = furnace.getInventory().getContents().clone();
-                        furnaceContents.put(bl, invFur);
-                        if (cook != 0) {
-                            furnaceTime.put(bl, new Short[] { burn, cook });
-                        }
-                        break;
-                    case 23:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final Dispenser dispenser = (Dispenser) block.getState();
-                        final ItemStack[] invDis = dispenser.getInventory().getContents().clone();
-                        dispenserContents.put(bl, invDis);
-                        break;
-                    case 158:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final Dropper dropper = (Dropper) block.getState();
-                        final ItemStack[] invDro = dropper.getInventory().getContents().clone();
-                        dropperContents.put(bl, invDro);
-                        break;
-                    case 117:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final BrewingStand brewingStand = (BrewingStand) block.getState();
-                        final short time = (short) brewingStand.getBrewingTime();
-                        if (time > 0) {
-                            brewTime.put(bl, time);
-                        }
-                        final ItemStack[] invBre = brewingStand.getInventory().getContents().clone();
-                        brewingStandContents.put(bl, invBre);
-                        break;
-                    case 25:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final NoteBlock noteBlock = (NoteBlock) block.getState();
-                        final Note note = noteBlock.getNote();
-                        noteBlockContents.put(bl, note);
-                        break;
-                    case 138:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final Beacon beacon = (Beacon) block.getState();
-                        final ItemStack[] invBea = beacon.getInventory().getContents().clone();
-                        beaconContents.put(bl, invBea);
-                        break;
-                    case 84:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final Jukebox jukebox = (Jukebox) block.getState();
-                        final Material playing = jukebox.getPlaying();
-                        if (playing != null) {
-                            jukeDisc.put(bl, (short) playing.getId());
-                        }
-                        break;
-                    case 154:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final Hopper hopper = (Hopper) block.getState();
-                        final ItemStack[] invHop = hopper.getInventory().getContents().clone();
-                        hopperContents.put(bl, invHop);
-                        break;
-                    case 397:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final Skull skull = (Skull) block.getState();
-                        final String o = skull.getOwner();
-                        final byte skulltype = getOrdinal(SkullType.values(), skull.getSkullType());
-                        skull.getRotation();
-                        final short rot = getOrdinal(BlockFace.values(), skull.getRotation());
-                        skullData.put(bl, new Object[] { o, rot, skulltype });
-                        break;
-                    case 176:
-                    case 177:
-                        bl = new BlockLoc(x + offset_x, y, z + offset_z);
-                        final Banner banner = (Banner) block.getState();
-                        final byte base = getOrdinal(DyeColor.values(), banner.getBaseColor());
-                        final ArrayList<Byte[]> types = new ArrayList<>();
-                        for (final Pattern pattern : banner.getPatterns()) {
-                            types.add(new Byte[] { getOrdinal(PatternType.values(), pattern.getPattern()), pattern.getColor().getDyeData() });
-                        }
-                        bannerBase.put(bl, base);
-                        bannerColors.put(bl, types);
-                        break;
+                try {
+                    switch (id) {
+                        case 54:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final InventoryHolder chest = (InventoryHolder) block.getState();
+                            final ItemStack[] inventory = chest.getInventory().getContents().clone();
+                            chestContents.put(bl, inventory);
+                            break;
+                        case 52:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final CreatureSpawner spawner = (CreatureSpawner) block.getState();
+                            final String type = spawner.getCreatureTypeId();
+                            if ((type != null) && (type.length() != 0)) {
+                                spawnerData.put(bl, type);
+                            }
+                            break;
+                        case 137:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final CommandBlock cmd = (CommandBlock) block.getState();
+                            final String string = cmd.getCommand();
+                            if ((string != null) && (string.length() > 0)) {
+                                cmdData.put(bl, string);
+                            }
+                            break;
+                        case 63:
+                        case 68:
+                        case 323:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final Sign sign = (Sign) block.getState();
+                            sign.getLines();
+                            signContents.put(bl, sign.getLines().clone());
+                            break;
+                        case 61:
+                        case 62:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final Furnace furnace = (Furnace) block.getState();
+                            final short burn = furnace.getBurnTime();
+                            final short cook = furnace.getCookTime();
+                            final ItemStack[] invFur = furnace.getInventory().getContents().clone();
+                            furnaceContents.put(bl, invFur);
+                            if (cook != 0) {
+                                furnaceTime.put(bl, new Short[] { burn, cook });
+                            }
+                            break;
+                        case 23:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final Dispenser dispenser = (Dispenser) block.getState();
+                            final ItemStack[] invDis = dispenser.getInventory().getContents().clone();
+                            dispenserContents.put(bl, invDis);
+                            break;
+                        case 158:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final Dropper dropper = (Dropper) block.getState();
+                            final ItemStack[] invDro = dropper.getInventory().getContents().clone();
+                            dropperContents.put(bl, invDro);
+                            break;
+                        case 117:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final BrewingStand brewingStand = (BrewingStand) block.getState();
+                            final short time = (short) brewingStand.getBrewingTime();
+                            if (time > 0) {
+                                brewTime.put(bl, time);
+                            }
+                            final ItemStack[] invBre = brewingStand.getInventory().getContents().clone();
+                            brewingStandContents.put(bl, invBre);
+                            break;
+                        case 25:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final NoteBlock noteBlock = (NoteBlock) block.getState();
+                            final Note note = noteBlock.getNote();
+                            noteBlockContents.put(bl, note);
+                            break;
+                        case 138:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final Beacon beacon = (Beacon) block.getState();
+                            final ItemStack[] invBea = beacon.getInventory().getContents().clone();
+                            beaconContents.put(bl, invBea);
+                            break;
+                        case 84:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final Jukebox jukebox = (Jukebox) block.getState();
+                            final Material playing = jukebox.getPlaying();
+                            if (playing != null) {
+                                jukeDisc.put(bl, (short) playing.getId());
+                            }
+                            break;
+                        case 154:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final Hopper hopper = (Hopper) block.getState();
+                            final ItemStack[] invHop = hopper.getInventory().getContents().clone();
+                            hopperContents.put(bl, invHop);
+                            break;
+                        case 397:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final Skull skull = (Skull) block.getState();
+                            final String o = skull.getOwner();
+                            final byte skulltype = getOrdinal(SkullType.values(), skull.getSkullType());
+                            skull.getRotation();
+                            final short rot = getOrdinal(BlockFace.values(), skull.getRotation());
+                            skullData.put(bl, new Object[] { o, rot, skulltype });
+                            break;
+                        case 176:
+                        case 177:
+                            bl = new BlockLoc(x + offset_x, y, z + offset_z);
+                            final Banner banner = (Banner) block.getState();
+                            final byte base = getOrdinal(DyeColor.values(), banner.getBaseColor());
+                            final ArrayList<Byte[]> types = new ArrayList<>();
+                            for (final Pattern pattern : banner.getPatterns()) {
+                                types.add(new Byte[] { getOrdinal(PatternType.values(), pattern.getPattern()), pattern.getColor().getDyeData() });
+                            }
+                            bannerBase.put(bl, base);
+                            bannerColors.put(bl, types);
+                            break;
+                    }
+                }
+                catch (Exception e) {
+                    PS.debug("------------ FAILED TO DO SOMETHING --------");
+                    e.printStackTrace();
+                    PS.debug("------------ but we caught it ^ --------");
                 }
             }
         }

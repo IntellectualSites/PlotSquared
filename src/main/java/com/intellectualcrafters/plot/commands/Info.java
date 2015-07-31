@@ -71,7 +71,7 @@ public class Info extends SubCommand {
 
     public static String getPlayerName(final UUID uuid) {
         if (uuid == null) {
-            return "unknown";
+            return C.UNKNOWN.s();
         }
         if (uuid.equals(DBFunc.everyone) || uuid.toString().equalsIgnoreCase(DBFunc.everyone.toString())) {
             return "everyone";

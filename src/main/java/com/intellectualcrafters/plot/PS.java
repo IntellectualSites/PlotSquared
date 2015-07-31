@@ -1449,7 +1449,7 @@ public class PS {
         options.put("chat.fancy", Settings.FANCY_CHAT);
         options.put("metrics", true);
         options.put("debug", true);
-        options.put("auto_update", false);
+        options.put("update-notifications", true);
         
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {

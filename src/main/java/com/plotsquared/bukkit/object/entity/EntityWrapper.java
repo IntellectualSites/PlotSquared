@@ -138,7 +138,9 @@ public class EntityWrapper {
         if (this.aged.locked) {
             entity.setAgeLock(this.aged.locked);
         }
-        entity.setAge(this.aged.age);
+        if (this.aged.age > 0) {
+            entity.setAge(this.aged.age);
+        }
     }
 
     public void storeAgeable(final Ageable aged) {
@@ -432,9 +434,9 @@ public class EntityWrapper {
             } catch (final Exception e) {
             }
         }
-        entity.setFallDistance(this.base.fall);
-        entity.setFireTicks(this.base.fire);
-        entity.setTicksLived(this.base.age);
+        if (this.base.fall != 0) entity.setFallDistance(this.base.fall);
+        if (this.base.fire != 0) entity.setFireTicks(this.base.fire);
+        if (this.base.age != 0) entity.setTicksLived(this.base.age);
         entity.setVelocity(new Vector(this.base.v_x, this.base.v_y, this.base.v_z));
         if (this.depth == 1) {
             return entity;
