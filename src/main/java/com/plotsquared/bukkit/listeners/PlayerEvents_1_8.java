@@ -86,14 +86,14 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
                 return;
             }
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 cancelled = true;
             }
         }
         else {
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
                     cancelled = true;
                 }
             }
@@ -101,7 +101,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
                 final UUID uuid = pp.getUUID();
                 if (!plot.isAdded(uuid)) {
                     if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
                         cancelled = true;
                     }
                 }
@@ -135,14 +135,14 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
                 return;
             }
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.road");
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
             }
         }
         else {
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.unowned");
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
                     e.setCancelled(true);
                 }
             }
@@ -150,7 +150,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
                 final UUID uuid = pp.getUUID();
                 if (!plot.isAdded(uuid)) {
                     if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, "plots.admin.interact.other");
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
                         e.setCancelled(true);
                     }
                 }

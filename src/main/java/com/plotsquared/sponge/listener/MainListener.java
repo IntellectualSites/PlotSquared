@@ -362,7 +362,7 @@ public class MainListener {
                 if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_UNOWNED);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
@@ -376,7 +376,7 @@ public class MainListener {
                 if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_OTHER);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
             }
             return;
@@ -386,7 +386,7 @@ public class MainListener {
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_ROAD);
+            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_ROAD);
             event.setCancelled(true);
         }
     }
@@ -409,7 +409,7 @@ public class MainListener {
                 if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_UNOWNED);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
@@ -423,7 +423,7 @@ public class MainListener {
                 if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_DESTROY_OTHER);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
             }
             return;
@@ -433,7 +433,7 @@ public class MainListener {
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_BUILD_ROAD);
+            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_ROAD);
             event.setCancelled(true);
         }
     }
@@ -456,7 +456,7 @@ public class MainListener {
                 if (Permissions.hasPermission(pp, PERMISSION_ADMIN_INTERACT_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_INTERACT_UNOWNED);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_INTERACT_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
@@ -470,7 +470,7 @@ public class MainListener {
                 if (Permissions.hasPermission(pp, PERMISSION_ADMIN_INTERACT_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_INTERACT_OTHER);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_INTERACT_OTHER);
                 event.setCancelled(true);
             }
             return;
@@ -480,7 +480,7 @@ public class MainListener {
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_INTERACT_ROAD);
+            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_INTERACT_ROAD);
             event.setCancelled(true);
         }
     }
@@ -575,7 +575,7 @@ public class MainListener {
                     return;
                 }
                 if (!PlotListener.plotExit(pp, lastPlot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_EXIT_DENIED);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                         event.setNewLocation(from);
                     }
@@ -591,7 +591,7 @@ public class MainListener {
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
                 if (!PlotListener.plotEntry(pp, plot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_ENTRY_DENIED);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                         event.setNewLocation(from);
                     }
@@ -642,7 +642,7 @@ public class MainListener {
                     return;
                 }
                 if (!PlotListener.plotExit(pp, lastPlot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_EXIT_DENIED);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                         event.setNewLocation(from);
                     }
@@ -658,7 +658,7 @@ public class MainListener {
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
                 if (!PlotListener.plotEntry(pp, plot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_ENTRY_DENIED);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                         event.setNewLocation(from);
                     }
@@ -716,7 +716,7 @@ public class MainListener {
                         return;
                     }
                     if (!PlotListener.plotExit(pp, lastPlot)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_EXIT_DENIED);
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
                         if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                             event.setNewLocation(from);
                         }
@@ -732,7 +732,7 @@ public class MainListener {
                 else {
                     Plot plot = MainUtil.getPlot(worldname, id);
                     if (!PlotListener.plotEntry(pp, plot)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_ENTRY_DENIED);
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_ENTRY_DENIED);
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                             event.setNewLocation(from);
                         }
@@ -783,7 +783,7 @@ public class MainListener {
                         return;
                     }
                     if (!PlotListener.plotExit(pp, lastPlot)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_EXIT_DENIED);
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
                         if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                             event.setNewLocation(from);
                         }
@@ -799,7 +799,7 @@ public class MainListener {
                 else {
                     Plot plot = MainUtil.getPlot(worldname, id);
                     if (!PlotListener.plotEntry(pp, plot)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION, PERMISSION_ADMIN_ENTRY_DENIED);
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_ENTRY_DENIED);
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                             event.setNewLocation(from);
                         }

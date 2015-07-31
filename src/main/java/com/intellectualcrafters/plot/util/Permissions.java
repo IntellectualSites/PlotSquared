@@ -68,7 +68,7 @@ public enum Permissions {
             }
         }
         if (notify) {
-            MainUtil.sendMessage(player, C.NO_PERMISSION, perm);
+            MainUtil.sendMessage(player, C.NO_PERMISSION_EVENT, perm);
         }
         return false;
     }

@@ -259,6 +259,7 @@ public enum C {
      */
     NO_SCHEMATIC_PERMISSION("$2You don't have the permission required to use schematic $1%s", "Permission"),
     NO_PERMISSION("$2You are lacking the permission node: $1%s", "Permission"),
+    NO_PERMISSION_EVENT("$2You are lacking the permission node: $1%s", "Permission"),
     NO_PLOT_PERMS("$2You must be the plot owner to perform this action", "Permission"),
     CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots.", "Permission"),
     CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user", "Permission"),
