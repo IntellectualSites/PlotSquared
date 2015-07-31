@@ -58,6 +58,18 @@ public class EntityWrapper {
     private HorseStats horse;
     private ArmorStandStats stand;
 
+    private int hash;
+    
+    @Override
+    public boolean equals(Object obj) {
+        return hash == obj.hashCode();
+    }
+    
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+    
     public void storeInventory(final InventoryHolder held) {
         this.inventory = held.getInventory().getContents().clone();
     }
@@ -158,6 +170,7 @@ public class EntityWrapper {
 
     @SuppressWarnings("deprecation")
     public EntityWrapper(final org.bukkit.entity.Entity entity, final short depth) {
+        this.hash = entity.getEntityId();
         this.depth = depth;
         final Location loc = entity.getLocation();
         this.yaw = loc.getYaw();
@@ -372,9 +385,6 @@ public class EntityWrapper {
                 if (stand.isSmall()) {
                     this.stand.small = true;
                 }
-
-
-
                 return;
             }
             case ENDERMITE: // NEW
@@ -420,6 +430,14 @@ public class EntityWrapper {
             case PLAYER:
             case LEASH_HITCH: {
                 return null;
+            }
+            case ITEM_FRAME: {
+                entity = world.spawn(loc, ItemFrame.class);
+                break;
+            }
+            case PAINTING: {
+                entity = world.spawn(loc, Painting.class);
+                break;
             }
             default:
                 entity = world.spawnEntity(loc, type);

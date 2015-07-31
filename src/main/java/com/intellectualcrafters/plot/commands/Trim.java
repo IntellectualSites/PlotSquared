@@ -134,7 +134,7 @@ public class Trim extends SubCommand {
                         return;
                     }
                     final Plot plot = plots.remove(0);
-                    plots.remove(0);
+
                     final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id);
                     final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
                     

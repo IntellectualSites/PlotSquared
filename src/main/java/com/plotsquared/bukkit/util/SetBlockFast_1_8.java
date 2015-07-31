@@ -114,6 +114,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             case 54:
             case 130:
             case 142:
+            case 132:
             case 27:
             case 137:
             case 52:
@@ -124,6 +125,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             case 138:
             case 176:
             case 177:
+            case 119:
             case 63:
             case 68:
             case 323:
@@ -261,9 +263,11 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             block.setData(data);
             return;
         }
+        // blockstate
         switch(currentId) {
             case 54:
             case 130:
+            case 132:
             case 142:
             case 27:
             case 137:
@@ -279,6 +283,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             case 68:
             case 323:
             case 117:
+            case 119:
             case 116:
             case 28:
             case 66:

@@ -351,6 +351,9 @@ public class MainUtil {
     
     public static boolean isPlotAreaAbs(final Location location) {
         final PlotWorld plotworld = PS.get().getPlotWorld(location.getWorld());
+        if (plotworld == null) {
+            return false;
+        }
         if (plotworld.TYPE == 2) {
             return ClusterManager.getClusterAbs(location) != null;
         }
