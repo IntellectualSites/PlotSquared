@@ -118,7 +118,7 @@ public class BukkitUtil extends BlockManager {
         }
         Player player = OfflinePlayerUtil.loadPlayer(op);
         player.loadData();
-        return new BukkitPlayer(player);
+        return new BukkitPlayer(player, true);
     }
     
     public static PlotPlayer getPlayer(final Player player) {

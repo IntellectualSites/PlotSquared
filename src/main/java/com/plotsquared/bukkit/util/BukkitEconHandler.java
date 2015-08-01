@@ -4,8 +4,10 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -68,12 +70,17 @@ public class BukkitEconHandler extends EconHandler {
     }
 
     @Override
-    public void setPermission(PlotPlayer player, String perm, boolean value) {
+    public void setPermission(String player, String perm, boolean value) {
         if (value) {
-            perms.playerAdd(((BukkitPlayer) player).player, perm);
+            perms.playerAdd((World) null, player, perm);
         }
         else {
-            perms.playerRemove(((BukkitPlayer) player).player, perm);
+            perms.playerRemove((World) null, player, perm);
         }
+    }
+
+    @Override
+    public boolean hasPermission(String player, String perm) {
+        return perms.playerHas((String) null, Bukkit.getOfflinePlayer(player), perm);
     }
 }

@@ -637,14 +637,20 @@ public class MainUtil {
         manager.startPlotMerge(plotworld, plotIds);
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
+                final PlotId id = new PlotId(x, y);
+                final Plot plot = PS.get().getPlots(world).get(id);
+                if (removeRoads) {
+                    removeSign(plot);
+                }
+            }
+        }
+        for (int x = pos1.x; x <= pos2.x; x++) {
+            for (int y = pos1.y; y <= pos2.y; y++) {
                 final boolean lx = x < pos2.x;
                 final boolean ly = y < pos2.y;
                 final PlotId id = new PlotId(x, y);
                 final Plot plot = PS.get().getPlots(world).get(id);
                 Plot plot2 = null;
-                if (removeRoads) {
-                    removeSign(plot);
-                }
                 if (lx) {
                     if (ly) {
                         if (!plot.getSettings().getMerged(1) || !plot.getSettings().getMerged(2)) {

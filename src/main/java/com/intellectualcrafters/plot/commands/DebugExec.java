@@ -62,6 +62,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -119,6 +120,7 @@ public class DebugExec extends SubCommand {
         scope.put("BlockManager", BlockManager.manager);
         scope.put("SetupUtils", SetupUtils.manager);
         scope.put("EventUtil", EventUtil.manager);
+        scope.put("EconHandler", EconHandler.manager);
         scope.put("UUIDHandler", UUIDHandler.implementation);
         scope.put("DBFunc", DBFunc.dbManager);
         scope.put("HybridUtils", HybridUtils.manager);

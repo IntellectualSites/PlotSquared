@@ -141,7 +141,7 @@ public class SpongePlayer extends PlotPlayer {
     @Override
     public void setAttribute(String key) {
         key = "plotsquared_user_attributes." + key;
-        EconHandler.manager.setPermission(this, key, true);
+        EconHandler.manager.setPermission(getName(), key, true);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class SpongePlayer extends PlotPlayer {
     @Override
     public void removeAttribute(String key) {
         key = "plotsquared_user_attributes." + key;
-        EconHandler.manager.setPermission(this, key, false);
+        EconHandler.manager.setPermission(getName(), key, false);
     }
 
     @Override

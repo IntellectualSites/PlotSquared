@@ -31,6 +31,7 @@ public class BukkitPlayer extends PlotPlayer {
     private long last = 0;
     public HashSet<String> hasPerm = new HashSet<>();
     public HashSet<String> noPerm = new HashSet<>();
+    public boolean offline;
 
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
@@ -38,6 +39,11 @@ public class BukkitPlayer extends PlotPlayer {
      */
     public BukkitPlayer(final Player player) {
         this.player = player;
+    }
+    
+    public BukkitPlayer(final Player player, boolean offline) {
+        this.player = player;
+        this.offline = offline;
     }
     
     public long getPreviousLogin() {
@@ -78,6 +84,9 @@ public class BukkitPlayer extends PlotPlayer {
             this.hasPerm.add(perm);
             return true;
         }
+        if (offline && EconHandler.manager != null) {
+            return EconHandler.manager.hasPermission(getName(), perm);
+        }
         return this.player.hasPermission(perm);
     }
     
@@ -106,7 +115,7 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public boolean isOnline() {
-        return this.player.isOnline();
+        return !offline && this.player.isOnline();
     }
     
     @Override
@@ -123,7 +132,7 @@ public class BukkitPlayer extends PlotPlayer {
     @Override
     public void setAttribute(String key) {
         key = "plotsquared_user_attributes." + key;
-        EconHandler.manager.setPermission(this, key, true);
+        EconHandler.manager.setPermission(getName(), key, true);
     }
 
     @Override
@@ -141,7 +150,7 @@ public class BukkitPlayer extends PlotPlayer {
     @Override
     public void removeAttribute(String key) {
         key = "plotsquared_user_attributes." + key;
-        EconHandler.manager.setPermission(this, key, false);
+        EconHandler.manager.setPermission(getName(), key, false);
     }
 
     @Override
