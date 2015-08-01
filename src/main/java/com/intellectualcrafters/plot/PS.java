@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -265,6 +266,7 @@ public class PS {
             }
     
             // Copy files
+            copyFile("automerge.js", "scripts");
             copyFile("town.template", "templates");
             copyFile("skyblock.template", "templates");
             copyFile("german.yml", "translations");
@@ -317,8 +319,8 @@ public class PS {
      * @param message Message to log
      * @see IPlotMain#log(String)
      */
-    public static void log(final String message) {
-        get().IMP.log(message);
+    public static void log(Object message) {
+        get().IMP.log(StringMan.getString(message));
     }
     
     /**

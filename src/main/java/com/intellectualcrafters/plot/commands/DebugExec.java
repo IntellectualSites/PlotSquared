@@ -40,6 +40,8 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import org.bukkit.ChatColor;
+
 import com.google.common.io.Files;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -119,7 +121,6 @@ public class DebugExec extends SubCommand {
         scope.put("EventUtil", EventUtil.manager);
         scope.put("UUIDHandler", UUIDHandler.implementation);
         scope.put("DBFunc", DBFunc.dbManager);
-        scope.put("HybridUtils", HybridUtils.manager);
         scope.put("HybridUtils", HybridUtils.manager);
         scope.put("IMP", PS.get().IMP);
         scope.put("MainCommand", MainCommand.getInstance());
@@ -366,7 +367,7 @@ public class DebugExec extends SubCommand {
                 }
                 case "run": {
                     try {
-                        script = StringMan.join(Files.readLines(new File(PS.get().IMP.getDirectory(), args[1]), StandardCharsets.UTF_8), "");
+                        script = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8), System.getProperty("line.separator"));
                         if (args.length > 2) {
                             HashMap<String, String> replacements = new HashMap<>();
                             for (int i = 2; i < args.length; i++) {
@@ -384,9 +385,13 @@ public class DebugExec extends SubCommand {
                     script = StringMan.join(args, " ");
                 }
             }
+            if (!ConsolePlayer.isConsole(player)) {
+                MainUtil.sendMessage(player, C.NOT_CONSOLE);
+                return false;
+            }
             init();
             scope.put("PlotPlayer", player);
-            PS.log("> " + script);
+            System.out.print("> " + script);
             try {
                 if (async) {
                     final String toExec = script;

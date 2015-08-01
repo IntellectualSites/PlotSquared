@@ -1,6 +1,8 @@
 package com.intellectualcrafters.plot.util;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -24,6 +26,37 @@ public class StringMan {
             }
         }
         return sb.toString();
+    }
+    
+    public static String getString(Object obj) {
+        if (obj == null) {
+            return "null";
+        }
+        if (obj.getClass() == String.class) {
+            return (String) obj;
+        }
+        if (obj.getClass().isArray()) {
+            String result = "";
+            String prefix = "";
+            
+            for(int i=0; i<Array.getLength(obj); i++){
+                result += prefix + getString(Array.get(obj, i));
+                prefix = ",";
+            }
+            return "( " + result + " )";
+        }
+        else if (obj instanceof Collection<?>) {
+            String result = "";
+            String prefix = "";
+            for (Object element : (List<?>) obj) {
+                result += prefix + getString(element);
+                prefix = ",";
+            }
+            return "[ " + result + " ]";
+        }
+        else {
+            return obj.toString();
+        }
     }
     
     public static String replaceFirst(char c, String s) {

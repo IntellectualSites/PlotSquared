@@ -476,9 +476,10 @@ public class Plot {
     /**
      * Auto merge the plot with any adjacent plots of the same owner
      * @see MainUtil#autoMerge(Plot, UUID) to specify the owner
+     * @param removeRoads If to remove roads when merging  
      */
-    public void autoMerge() {
-        MainUtil.autoMerge(this, owner);
+    public void autoMerge(boolean removeRoads) {
+        MainUtil.autoMerge(this, owner, removeRoads);
     }
     
     /**

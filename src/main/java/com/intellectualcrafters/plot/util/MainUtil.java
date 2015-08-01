@@ -821,7 +821,7 @@ public class MainUtil {
         return string;
     }
 
-    public static void autoMerge(final Plot plot, final UUID uuid) {
+    public static void autoMerge(final Plot plot, final UUID uuid, boolean removeRoads) {
         if (plot == null) {
             return;
         }
@@ -843,7 +843,7 @@ public class MainUtil {
             final PlotId top = getTopPlot(plot).id;
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
             if (ownsPlots(plot.world, plots, uuid, 0)) {
-                final boolean result = mergePlots(plot.world, plots, true);
+                final boolean result = mergePlots(plot.world, plots, removeRoads);
                 if (result) {
                     merge = true;
                     continue;
@@ -851,7 +851,7 @@ public class MainUtil {
             }
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
             if (ownsPlots(plot.world, plots, uuid, 1)) {
-                final boolean result = mergePlots(plot.world, plots, true);
+                final boolean result = mergePlots(plot.world, plots, removeRoads);
                 if (result) {
                     merge = true;
                     continue;
@@ -859,7 +859,7 @@ public class MainUtil {
             }
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
             if (ownsPlots(plot.world, plots, uuid, 2)) {
-                final boolean result = mergePlots(plot.world, plots, true);
+                final boolean result = mergePlots(plot.world, plots, removeRoads);
                 if (result) {
                     merge = true;
                     continue;
@@ -867,7 +867,7 @@ public class MainUtil {
             }
             plots = getPlotSelectionIds(new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
             if (ownsPlots(plot.world, plots, uuid, 3)) {
-                final boolean result = mergePlots(plot.world, plots, true);
+                final boolean result = mergePlots(plot.world, plots, removeRoads);
                 if (result) {
                     merge = true;
                     continue;
@@ -928,7 +928,7 @@ public class MainUtil {
         }
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.AUTO_MERGE) {
-            autoMerge(p, uuid);
+            autoMerge(p, uuid, true);
         }
         return true;
     }
