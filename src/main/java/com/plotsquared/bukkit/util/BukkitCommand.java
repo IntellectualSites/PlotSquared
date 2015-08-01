@@ -11,8 +11,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import com.intellectualcrafters.plot.commands.Cluster;
 import com.intellectualcrafters.plot.commands.DebugUUID;
 import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.StringComparison;
@@ -27,6 +29,9 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
     
     public BukkitCommand() {
         MainCommand.getInstance().addCommand(new DebugUUID());
+        if (Settings.ENABLE_CLUSTERS) {
+            MainCommand.getInstance().addCommand(new Cluster());
+        }
     }
     
     @Override
@@ -55,6 +60,8 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
             return null;
         }
         final Set<String> tabOptions = new HashSet<>();
+        System.out.print(MainCommand.getInstance() + " mc");
+        System.out.print(MainCommand.getInstance().getCommands() + " gc");
         ArrayList<Command<PlotPlayer>> commands = MainCommand.getInstance().getCommands();
         String best = new StringComparison(strings[0], commands).getBestMatch();
         tabOptions.add(best);

@@ -124,14 +124,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Copy());
         createCommand(new Chat());
         createCommand(new Trim());
-        
-        if (Settings.ENABLE_CLUSTERS) {
-            createCommand(new Cluster());
-        }
-        
-        // Broken
-//        createCommand(new DebugUUID());
-        
     }
 
     public static boolean no_permission(final PlotPlayer player, final String permission) {
@@ -141,7 +133,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
     
     public static List<Command<PlotPlayer>> getCommands(final CommandCategory category, final PlotPlayer player) {
         List<Command<PlotPlayer>> commands = new ArrayList<>();
-        for (Command<PlotPlayer> command : instance.getCommands()) {
+        for (Command<PlotPlayer> command : getInstance().getCommands()) {
             if (category != null && !command.getCategory().equals(category)) {
                 continue;
             }
@@ -330,14 +322,18 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             args = new String[parts.length - 2];
             System.arraycopy(parts, 2, args, 0, args.length);
         }
-        Command<PlotPlayer> cmd = null;
-        cmd = this.commands.get(label);
+        Command<PlotPlayer> cmd;
+        if (label != null) {
+            cmd = getInstance().commands.get(label);
+        }
+        else {
+            cmd = null;
+        }
         if (cmd == null) {
             MainUtil.sendMessage(plr, C.NOT_VALID_SUBCOMMAND);
             {
                 List<Command<PlotPlayer>> cmds = getCommands(null, plr);
-                cmd = new StringComparison<>(label, cmds).getMatchObject();
-                if (cmd == null) {
+                if (label == null || (cmd = new StringComparison<>(label, cmds).getMatchObject()) == null) {
                     MainUtil.sendMessage(plr, C.DID_YOU_MEAN, "/plot help");
                 }
                 else {

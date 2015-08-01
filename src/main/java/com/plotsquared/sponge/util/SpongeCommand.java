@@ -33,7 +33,7 @@ public class SpongeCommand implements CommandCallable {
         catch (Exception e) {
             pp = ConsolePlayer.getConsole();
         }
-        if (MainCommand.onCommand(pp, cmd.getName(), string.split(" "))) {
+        if (MainCommand.onCommand(pp, cmd.getName(), string.length() == 0 ? new String[] {} : string.split(" "))) {
             return CommandResult.success();
         }
         else {

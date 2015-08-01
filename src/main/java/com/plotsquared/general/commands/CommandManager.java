@@ -3,6 +3,7 @@ package com.plotsquared.general.commands;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,7 +52,8 @@ public class CommandManager<T extends CommandCaller> {
     }
 
     final public ArrayList<Command<T>> getCommands() {
-        ArrayList<Command<T>> result = new ArrayList<>(this.commands.values());
+        HashSet<Command<T>> set = new HashSet<>(this.commands.values());
+        ArrayList<Command<T>> result = new ArrayList<>(set);
         Collections.sort(result, new Comparator<Command<T>>() {
             @Override
             public int compare(Command<T> a, Command<T> b) {

@@ -78,7 +78,7 @@ public class plugin extends SubCommand {
                         add(String.format("$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92"));
                         add(String.format("$2>> $1&lWiki$2: $1https://github.com/IntellectualCrafters/PlotSquared/wiki"));
                         add(String.format("$2>> $1&lWebsite$2: $1http://plotsquared.com"));
-                        add(String.format("$2>> $1&lNewest Version$2: $1" + (PS.get().update == null ? PS.get().IMP.getPluginVersion() : PS.get().update)));
+                        add(String.format("$2>> $1&lNewest Version$2: $1" + (PS.get().update == null ? StringMan.join(PS.get().IMP.getPluginVersion(), ".") : PS.get().update)));
                     }
                 };
                 for (final String s : strings) {

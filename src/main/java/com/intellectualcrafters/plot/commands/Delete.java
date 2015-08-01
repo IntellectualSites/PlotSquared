@@ -40,6 +40,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         permission = "plots.delete",
         description = "Delete a plot",
         usage = "/plot delete",
+        aliases = "dispose",
         category = CommandCategory.ACTIONS,
         requiredType = RequiredType.NONE
 )

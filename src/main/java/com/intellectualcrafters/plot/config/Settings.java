@@ -96,6 +96,7 @@ public class Settings {
      * Default kill road mobs: true
      */
     public final static boolean KILL_ROAD_MOBS_DEFAULT = false;
+    public final static boolean KILL_ROAD_VEHICLES_DEFAULT = false;
     /**
      * Default mob pathfinding: true
      */
@@ -132,6 +133,7 @@ public class Settings {
      * Kill road mobs?
      */
     public static boolean KILL_ROAD_MOBS;
+    public static boolean KILL_ROAD_VEHICLES;
     /**
      * mob pathfinding?
      */
