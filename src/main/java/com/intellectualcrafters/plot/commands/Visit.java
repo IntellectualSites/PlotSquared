@@ -39,7 +39,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         permission = "plots.visit",
         description = "Visit someones plot",
         usage = "/plot visit <player|aliases|world|id> [#]",
-        aliases = {"v}"},
+        aliases = {"v"},
         requiredType = RequiredType.NONE,
         category = CommandCategory.TELEPORT
 )

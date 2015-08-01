@@ -20,17 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -42,50 +35,13 @@ import com.plotsquared.general.commands.CommandDeclaration;
 )
 public class plugin extends SubCommand {
 
-    private static String convertToNumericString(final String str, final boolean dividers) {
-        final StringBuilder builder = new StringBuilder();
-        for (final char c : str.toCharArray()) {
-            if (Character.isDigit(c)) {
-                builder.append(c);
-            } else if (dividers && ((c == ',') || (c == '.') || (c == '-') || (c == '_'))) {
-                builder.append(c);
-            }
-        }
-        return builder.toString();
-    }
-
-    private static String getInfo(final String link) throws Exception {
-        final URLConnection connection = new URL(link).openConnection();
-        connection.addRequestProperty("User-Agent", "Mozilla/4.0");
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String document = "", line;
-        while ((line = reader.readLine()) != null) {
-            document += (line + "\n");
-        }
-        reader.close();
-        return document;
-    }
-
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<String> strings = new ArrayList<String>() {
-                    // $2>> $1%id$2:$1%world $2- $1%owner
-                    {
-                        add(String.format("$2>> $1&lPlotSquared $2($1Version$2: $1%s$2)", StringMan.join(PS.get().IMP.getPluginVersion(), ".")));
-                        add(String.format("$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92"));
-                        add(String.format("$2>> $1&lWiki$2: $1https://github.com/IntellectualCrafters/PlotSquared/wiki"));
-                        add(String.format("$2>> $1&lWebsite$2: $1http://plotsquared.com"));
-                        add(String.format("$2>> $1&lNewest Version$2: $1" + (PS.get().update == null ? StringMan.join(PS.get().IMP.getPluginVersion(), ".") : PS.get().update)));
-                    }
-                };
-                for (final String s : strings) {
-                    MainUtil.sendMessage(plr, s);
-                }
-            }
-        });
+        MainUtil.sendMessage(plr, String.format("$2>> $1&lPlotSquared $2($1Version$2: $1%s$2)", StringMan.join(PS.get().IMP.getPluginVersion(), ".")));
+        MainUtil.sendMessage(plr, String.format("$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92"));
+        MainUtil.sendMessage(plr, String.format("$2>> $1&lWiki$2: $1https://github.com/IntellectualCrafters/PlotSquared/wiki"));
+        MainUtil.sendMessage(plr, String.format("$2>> $1&lWebsite$2: $1http://plotsquared.com"));
+        MainUtil.sendMessage(plr, String.format("$2>> $1&lNewest Version$2: $1" + (PS.get().update == null ? StringMan.join(PS.get().IMP.getPluginVersion(), ".") : PS.get().update)));
         return true;
     }
 }
