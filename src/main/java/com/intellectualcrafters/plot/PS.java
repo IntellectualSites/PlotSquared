@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -117,6 +118,7 @@ public class PS {
     private LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
     private Database database;
     private Connection connection;
+    private Thread thread;
 
     /**
      * Initialize PlotSquared with the desired Implementation class
@@ -125,14 +127,22 @@ public class PS {
     public PS(final IPlotMain imp_class) {
         try {
             instance = this;
+            this.thread = Thread.currentThread();
             SetupUtils.generators = new HashMap<>();
             IMP = imp_class;
+            URL url;
             try {
-                FILE = new File(PS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                url = PS.class.getProtectionDomain().getCodeSource().getLocation();
+                FILE = new File(new URL(url.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file")).toURI().getPath());
             } catch (Exception e) {
-                FILE = new File(IMP.getDirectory().getParentFile(), "PlotSquared.jar");
                 e.printStackTrace();
-                log("Could not determine file path");
+                FILE = new File(IMP.getDirectory().getParentFile(), "PlotSquared.jar");
+                if (!FILE.exists()) {
+                    FILE = new File(IMP.getDirectory().getParentFile(), "PlotSquared-Bukkit.jar");
+                    if (!FILE.exists()) {
+                        FILE = new File(IMP.getDirectory().getParentFile(), "PlotSquared-Sponge.jar");
+                    }
+                }
             }
             VERSION = IMP.getPluginVersion();
             EconHandler.manager = IMP.getEconomyHandler();
@@ -266,6 +276,10 @@ public class PS {
         catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+    
+    public boolean isMainThread(Thread thread) {
+        return this.thread == thread;
     }
     
     public boolean checkVersion(int[] version, int major, int minor, int minor2) {

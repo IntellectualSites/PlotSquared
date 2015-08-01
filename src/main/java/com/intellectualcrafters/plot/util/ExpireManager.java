@@ -132,7 +132,7 @@ public class ExpireManager {
                                 if (plot.isMerged()) {
                                     MainUtil.unlinkPlot(plot);
                                 }
-                                plot.delete();
+                                plot.deletePlot(null);
                                 expiredPlots.get(world).remove(plot);
                                 int complexity = changed == null ? 0 : changed.getComplexity();
                                 int modified = changed == null ? 0 : changed.changes;

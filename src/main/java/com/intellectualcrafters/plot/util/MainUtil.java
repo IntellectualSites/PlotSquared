@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.BlockLoc;
@@ -765,6 +766,15 @@ public class MainUtil {
     }
 
     public static void removeSign(final Plot p) {
+        if (!PS.get().isMainThread(Thread.currentThread())) {
+            TaskManager.runTask(new Runnable() {
+                @Override
+                public void run() {
+                    removeSign(p);
+                }
+            });
+            return;
+        }
         final String world = p.world;
         final PlotManager manager = PS.get().getPlotManager(world);
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
@@ -783,16 +793,23 @@ public class MainUtil {
         setSign(UUIDHandler.getName(p.owner), p);
     }
 
-    public static void setSign(String name, final Plot p) {
-        if (name == null) {
-            name = "unknown";
+    public static void setSign(final String name, final Plot p) {
+        if (!PS.get().isMainThread(Thread.currentThread())) {
+            TaskManager.runTask(new Runnable() {
+                @Override
+                public void run() {
+                    setSign(name, p);
+                }
+            });
+            return;
         }
+        String rename = name == null ? "unknown" : name; 
         final PlotManager manager = PS.get().getPlotManager(p.world);
         final PlotWorld plotworld = PS.get().getPlotWorld(p.world);
         if (plotworld.ALLOW_SIGNS) {
         final Location loc = manager.getSignLoc(plotworld, p);
             final String id = p.id.x + ";" + p.id.y;
-            final String[] lines = new String[] { C.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id), C.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_3.formatted().replaceAll("%id%", id).replaceAll("%plr%", name), C.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll("%plr%", name) };
+            final String[] lines = new String[] { C.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id), C.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll("%plr%", rename), C.OWNER_SIGN_LINE_3.formatted().replaceAll("%id%", id).replaceAll("%plr%", rename), C.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll("%plr%", rename) };
             BlockManager.setSign(p.world, loc.getX(), loc.getY(), loc.getZ(), lines);
         }
     }
@@ -1761,5 +1778,9 @@ public class MainUtil {
             ratings[i] /= (double) rating.size();
         }
         return ratings;
+    }
+
+    public static void setComponent(Plot plot, String component, PlotBlock[] blocks) {
+        PS.get().getPlotManager(plot.world).setComponent(PS.get().getPlotWorld(plot.world), plot.id, component, blocks);
     }
 }

@@ -8,7 +8,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <artifactId>PlotSquared</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.5</version>
     <name>PlotSquared</name>
     <packaging>jar</packaging>
     <build>
@@ -64,21 +64,6 @@
                             <excludes>
                                 <exclude>**/com/plotsquared/bukkit/**</exclude>
                                 <exclude>**/com/intellectualcrafters/plot/api/*</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>api</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <phase>package</phase>
-                        <configuration>
-                            <finalName>PlotSquared-Null</finalName>
-                            <excludes>
-                                <exclude>**/com/plotsquared/bukkit/**</exclude>
-                                <exclude>**/com/intellectualcrafters/plot/api/*</exclude>
-                                <exclude>**/com/plotsquared/sponge/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>

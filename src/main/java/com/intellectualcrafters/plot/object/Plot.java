@@ -27,12 +27,16 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
  * The plot class
@@ -310,7 +314,7 @@ public class Plot {
      * Clear a plot
      * @see MainUtil#clear(Plot, boolean, Runnable)
      * @see MainUtil#clearAsPlayer(Plot, boolean, Runnable)
-     * @see #delete() to clear and delete a plot
+     * @see #deletePlot() to clear and delete a plot
      * @param whenDone A runnable to execute when clearing finishes, or null
      */
     public void clear(Runnable whenDone) {
@@ -334,13 +338,14 @@ public class Plot {
      * @see PS#removePlot(String, PlotId, boolean)
      * @see #clear(Runnable) to simply clear a plot
      */
-    public void delete() {
+    public void deletePlot(final Runnable whenDone) {
         MainUtil.removeSign(this);
         MainUtil.clear(this, true, new Runnable() {
             @Override
             public void run() {
                 if (PS.get().removePlot(world, id, true)) {
                     DBFunc.delete(Plot.this);
+                    TaskManager.runTask(whenDone);
                 }
             }
         });
@@ -481,6 +486,22 @@ public class Plot {
      */
     public void setBiome(String biome, Runnable whenDone) {
         MainUtil.setBiome(this, biome, whenDone);
+    }
+    
+    /**
+     * Set components such as border, wall, floor
+     *  (components are generator specific)
+     */
+    public void setComponent(String component, PlotBlock... blocks) {
+        MainUtil.setComponent(this, component, blocks);
+    }
+    
+    /**
+     * Set components such as border, wall, floor
+     *  (components are generator specific)
+     */
+    public void setComponent(String component, String blocks) {
+        MainUtil.setComponent(this, component, Configuration.BLOCKLIST.parseString(blocks));
     }
     
     /**

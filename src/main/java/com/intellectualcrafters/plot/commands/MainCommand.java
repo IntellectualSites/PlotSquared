@@ -60,6 +60,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
 
     private MainCommand() {
         super(null, new ArrayList<Command<PlotPlayer>>());
+        instance = this;
         createCommand(new Buy());
         createCommand(new Save());
         createCommand(new Load());

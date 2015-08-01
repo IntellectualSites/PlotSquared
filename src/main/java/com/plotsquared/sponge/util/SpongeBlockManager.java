@@ -98,6 +98,9 @@ public class SpongeBlockManager extends BlockManager {
     @Override
     public int getHeighestBlock(String worldname, int x, int z) {
         World world = SpongeUtil.getWorld(worldname);
+        if (world == null) {
+            return 64;
+        }
         for (int y = 255; y > 0; y--) {
             BlockState block = world.getBlock(x, y, z);
             if (block != null && block.getType() != BlockTypes.AIR) {

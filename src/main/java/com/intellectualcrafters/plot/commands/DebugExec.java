@@ -22,31 +22,53 @@ package com.intellectualcrafters.plot.commands;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
 
+import com.google.common.io.Files;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -60,11 +82,71 @@ import com.plotsquared.general.commands.CommandDeclaration;
 )
 public class DebugExec extends SubCommand {
 
+    private ScriptEngine engine;
+    private Bindings scope;
+
+    public void init() {
+        if (engine != null) {
+            return;
+        }
+        engine = (new ScriptEngineManager()).getEngineByName("JavaScript");
+        ScriptContext context = new SimpleScriptContext();
+        scope = context.getBindings(ScriptContext.ENGINE_SCOPE);
+        
+        // stuff
+        scope.put("MainUtil", new MainUtil());
+        scope.put("Settings", new Settings());
+        scope.put("StringMan", new StringMan());
+        scope.put("MathMan", new MathMan());
+        
+        // Classes
+        scope.put("Location", Location.class);
+        scope.put("PlotBlock", PlotBlock.class);
+        scope.put("Plot", Plot.class);
+        scope.put("PlotId", PlotId.class);
+        scope.put("Runnable", Runnable.class);
+        scope.put("RunnableVal", RunnableVal.class);
+        
+        // Instances
+        scope.put("PS", PS.get());
+        scope.put("TaskManager", PS.get().TASK);
+        scope.put("TitleManager", AbstractTitle.TITLE_CLASS);
+        scope.put("ConsolePlayer", ConsolePlayer.getConsole());
+        scope.put("SchematicHandler", SchematicHandler.manager);
+        scope.put("ChunkManager", ChunkManager.manager);
+        scope.put("BlockManager", BlockManager.manager);
+        scope.put("SetupUtils", SetupUtils.manager);
+        scope.put("EventUtil", EventUtil.manager);
+        scope.put("UUIDHandler", UUIDHandler.implementation);
+        scope.put("DBFunc", DBFunc.dbManager);
+        scope.put("HybridUtils", HybridUtils.manager);
+        scope.put("HybridUtils", HybridUtils.manager);
+        scope.put("IMP", PS.get().IMP);
+        scope.put("MainCommand", MainCommand.getInstance());
+        
+        // enums
+        for (Enum value : C.values()) {
+            scope.put("C_" + value.name(), value);
+        }
+        for (Enum value : Permissions.values()) {
+            scope.put("Permissions_" + value.name(), value);
+        }
+        addEnums(scope, C.values());
+    }
+    
+    
+    private void addEnums(Bindings scope2, C[] values) {
+        // TODO Auto-generated method stub
+    }
+
+
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
         final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
+            String script;
+            boolean async = false;
             switch (arg) {
                 case "analyze": {
                     Plot plot = MainUtil.getPlot(player.getLocation());
@@ -113,7 +195,7 @@ public class DebugExec extends SubCommand {
                 }
                 case "stop-expire": {
                     if (ExpireManager.task != -1) {
-                        Bukkit.getScheduler().cancelTask(ExpireManager.task);
+                        PS.get().TASK.cancelTask(ExpireManager.task);
                     } else {
                         return MainUtil.sendMessage(player, "Task already halted");
                     }
@@ -161,7 +243,7 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     ((BukkitHybridUtils)(HybridUtils.manager)).task = 0;
-                    Bukkit.getScheduler().cancelTask(((BukkitHybridUtils)(HybridUtils.manager)).task);
+                    PS.get().TASK.cancelTask(((BukkitHybridUtils)(HybridUtils.manager)).task);
                     MainUtil.sendMessage(player, "&cCancelling task...");
                     while (BukkitHybridUtils.chunks.size() > 0) {
                         ChunkLoc chunk = BukkitHybridUtils.chunks.get(0);
@@ -272,9 +354,66 @@ public class DebugExec extends SubCommand {
                     }
                     return result;
                 }
+                case "h":
+                case "he":
+                case "?":
+                case "help": {
+                    MainUtil.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, "|") + ">");
+                    return false;
+                }
+                case "runasync": {
+                    async = true;
+                }
+                case "run": {
+                    try {
+                        script = StringMan.join(Files.readLines(new File(PS.get().IMP.getDirectory(), args[1]), StandardCharsets.UTF_8), "");
+                        if (args.length > 2) {
+                            HashMap<String, String> replacements = new HashMap<>();
+                            for (int i = 2; i < args.length; i++) {
+                                replacements.put("%s" + (i-2), args[i]);
+                            }
+                            script = StringMan.replaceFromMap(script, replacements);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                    break;
+                }
+                default: {
+                    script = StringMan.join(args, " ");
+                }
+            }
+            init();
+            scope.put("PlotPlayer", player);
+            PS.log("> " + script);
+            try {
+                if (async) {
+                    final String toExec = script;
+                    TaskManager.runTaskAsync(new Runnable() {
+                        @Override
+                        public void run() {
+                            long start = System.currentTimeMillis();
+                            try {
+                                engine.eval(toExec, scope);
+                            } catch (ScriptException e) {
+                                e.printStackTrace();
+                            }
+                            PS.log("> " + (System.currentTimeMillis() - start) + "ms");
+                        }
+                    });
+                }
+                else {
+                    long start = System.currentTimeMillis();
+                    engine.eval(script, scope);
+                    PS.log("> " + (System.currentTimeMillis() - start) + "ms");
+                }
+                return true;
+            } catch (ScriptException e) {
+                e.printStackTrace();
+                return false;
             }
         }
-        MainUtil.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, "|") + ">");
-        return true;
+        return false;
     }
 }

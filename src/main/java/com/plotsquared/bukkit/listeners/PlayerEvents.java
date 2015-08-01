@@ -1619,7 +1619,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
             final Collection<Plot> plots = PS.get().getPlots(pp.getName()).values();
             for (final Plot plot : plots) {
-                plot.delete();
+                plot.deletePlot(null);
                 PS.debug(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
             }
         }
