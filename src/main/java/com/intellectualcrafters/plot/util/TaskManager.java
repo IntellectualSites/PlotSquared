@@ -18,6 +18,13 @@ public abstract class TaskManager {
         }
         return -1;
     }
+    
+    public static int runTaskRepeatAsync(final Runnable r, final int interval) {
+        if (r != null) {
+            return PS.get().TASK.taskRepeat(r, interval);
+        }
+        return -1;
+    }
 
     public static void runTaskAsync(final Runnable r) {
         if (r != null) {
@@ -49,6 +56,8 @@ public abstract class TaskManager {
     }
 
     public abstract int taskRepeat(final Runnable r, int interval);
+    
+    public abstract int taskRepeatAsync(final Runnable r, int interval);
 
     public abstract void taskAsync(final Runnable r);
 

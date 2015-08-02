@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.event.Subscribe;
@@ -124,6 +125,13 @@ public class MainListener {
 
         // TODO selectively cancel depending on spawn reason
         // - Not sure if possible to get spawn reason (since there are no callbacks)
+        
+        if (entity.getType() == EntityTypes.DROPPED_ITEM) {
+            if (FlagManager.isPlotFlagFalse(plot, "item-drop")) {
+                event.setCancelled(true);
+            }
+            return;
+        }
         
         event.setCancelled(true);
     }

@@ -24,6 +24,16 @@ public class SpongeTaskManager extends TaskManager {
         tasks.put(val, task);
         return val;
     }
+    
+    @Override
+    public int taskRepeatAsync(Runnable r, int interval) {
+        int val = i.incrementAndGet();
+        TaskBuilder builder = SpongeMain.THIS.getGame().getScheduler().getTaskBuilder();
+        TaskBuilder built = builder.delay(interval).async().interval(interval).execute(r);
+        Task task = built.submit(SpongeMain.THIS.getPlugin());
+        tasks.put(val, task);
+        return val;
+    }
 
     @Override
     public void taskAsync(Runnable r) {

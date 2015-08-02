@@ -10,6 +10,11 @@ public class BukkitTaskManager extends TaskManager {
     public int taskRepeat(final Runnable r, final int interval) {
         return BukkitMain.THIS.getServer().getScheduler().scheduleSyncRepeatingTask(BukkitMain.THIS, r, interval, interval);
     }
+    
+    @Override
+    public int taskRepeatAsync(final Runnable r, final int interval) {
+        return BukkitMain.THIS.getServer().getScheduler().scheduleAsyncRepeatingTask(BukkitMain.THIS, r, interval, interval);
+    }
 
     @Override
     public void taskAsync(final Runnable r) {

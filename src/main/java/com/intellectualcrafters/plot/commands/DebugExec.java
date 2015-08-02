@@ -241,20 +241,12 @@ public class DebugExec extends SubCommand {
                     return true;
                 }
                 case "stop-rgar": {
-                    if (((BukkitHybridUtils)(HybridUtils.manager)).task == 0) {
+                    if (!HybridUtils.UPDATE) {
                         MainUtil.sendMessage(player, "&cTASK NOT RUNNING!");
                         return false;
                     }
-                    ((BukkitHybridUtils)(HybridUtils.manager)).task = 0;
-                    PS.get().TASK.cancelTask(((BukkitHybridUtils)(HybridUtils.manager)).task);
-                    MainUtil.sendMessage(player, "&cCancelling task...");
-                    while (BukkitHybridUtils.chunks.size() > 0) {
-                        ChunkLoc chunk = BukkitHybridUtils.chunks.get(0);
-                        BukkitHybridUtils.chunks.remove(0);
-                        HybridUtils.manager.regenerateRoad(BukkitHybridUtils.world, chunk, 0);
-                        ChunkManager.manager.unloadChunk(BukkitHybridUtils.world, chunk, true, true);
-                    }
-                    MainUtil.sendMessage(player, "&cCancelled!");
+                    HybridUtils.UPDATE = false;
+                    MainUtil.sendMessage(player, "&cCancelling task... (please wait)");
                     return true;
                 }
                 case "start-expire": {

@@ -60,8 +60,6 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
             return null;
         }
         final Set<String> tabOptions = new HashSet<>();
-        System.out.print(MainCommand.getInstance() + " mc");
-        System.out.print(MainCommand.getInstance().getCommands() + " gc");
         ArrayList<Command<PlotPlayer>> commands = MainCommand.getInstance().getCommands();
         String best = new StringComparison(strings[0], commands).getBestMatch();
         tabOptions.add(best);

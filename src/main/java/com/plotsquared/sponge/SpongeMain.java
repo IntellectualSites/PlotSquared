@@ -471,15 +471,13 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public HybridUtils initHybridUtils() {
-        // TODO Auto-generated method stub
-        return null;
+        return new SpongeHybridUtils();
     }
     
 
     @Override
     public SchematicHandler initSchematicHandler() {
-        // TODO Auto-generated method stub
-        return null;
+        return new SpongeSchematicHandler();
     }
 
     @Override
