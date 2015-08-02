@@ -58,7 +58,7 @@ public class Update extends SubCommand {
             }
         }
         else {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, getUsage());
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, getUsage().replaceAll("\\{label\\}", "plot"));
             return false;
         }
         if (url == null) {

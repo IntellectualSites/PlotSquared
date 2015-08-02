@@ -119,7 +119,7 @@ public class CommandManager<T extends CommandCaller> {
                 }
             }
             if (!success) {
-                String usage = cmd.getUsage();
+                String usage = cmd.getUsage().replaceAll("\\{label\\}", parts[0]);
                 C.COMMAND_SYNTAX.send(plr, cmd.getUsage());
                 return CommandHandlingOutput.WRONG_USAGE;
             }

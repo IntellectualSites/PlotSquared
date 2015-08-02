@@ -12,7 +12,7 @@ public class HelpObject {
 
     public HelpObject(final Command command, String label) {
         this._command = command;
-        this._rendered = StringMan.replaceAll(C.HELP_ITEM.s(), "%usage%", _command.getUsage(), "[%alias%]", _command.getAliases().size() > 0 ? "(" + StringMan.join(_command.getAliases(), "|") + ")" : "","%desc%", _command.getDescription(),"%arguments%", buildArgumentList(_command.getRequiredArguments()), "{label}", label);
+        this._rendered = StringMan.replaceAll(C.HELP_ITEM.s(), "%usage%", _command.getUsage().replaceAll("\\{label\\}", label), "[%alias%]", _command.getAliases().size() > 0 ? "(" + StringMan.join(_command.getAliases(), "|") + ")" : "","%desc%", _command.getDescription(),"%arguments%", buildArgumentList(_command.getRequiredArguments()), "{label}", label);
     }
 
     @Override
