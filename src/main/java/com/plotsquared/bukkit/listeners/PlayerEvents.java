@@ -139,6 +139,7 @@ import com.intellectualcrafters.plot.util.RegExUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.listeners.worldedit.WEManager;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
@@ -454,7 +455,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final UUID uuid = pp.getUUID();
         UUIDHandler.add(name, uuid);
         ExpireManager.dates.put(uuid, System.currentTimeMillis());
-        if (PS.get().worldEdit != null) {
+        if (BukkitMain.worldEdit != null) {
             if (Permissions.hasPermission(pp, PERMISSION_WORLDEDIT_BYPASS)) {
                 WEManager.bypass.add(pp.getName());
             }
@@ -741,7 +742,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("location");
         BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("lastplot");
         
-        if (PS.get().worldEdit != null) {
+        if (BukkitMain.worldEdit != null) {
             if (!Permissions.hasPermission(pp, PERMISSION_WORLDEDIT_BYPASS)) {
                 WEManager.bypass.remove(pp.getName());
             }
@@ -1613,7 +1614,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         ExpireManager.dates.put(pp.getUUID(), System.currentTimeMillis());
         EventUtil.unregisterPlayer(pp);
-        if (PS.get().worldEdit != null) {
+        if (BukkitMain.worldEdit != null) {
             WEManager.bypass.remove(pp.getName());
         }
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {

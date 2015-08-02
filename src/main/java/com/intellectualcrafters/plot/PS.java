@@ -80,7 +80,6 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 /**
  * An implementation of the core,
@@ -99,7 +98,6 @@ public class PS {
     private final HashMap<String, PlotManager> plotmanagers = new HashMap<>();
 
     // public:
-    public WorldEditPlugin worldEdit = null;
     public File configFile;
     public File translationFile;
     public YamlConfiguration style;

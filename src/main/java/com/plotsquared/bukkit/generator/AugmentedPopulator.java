@@ -42,6 +42,7 @@ public class AugmentedPopulator extends BlockPopulator {
 
     public AugmentedPopulator(final String world, final BukkitPlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
         MainUtil.initCache();
+        PS.log("== NEW AUGMENTED POPULATOR FOR: " + world);
         this.cluster = cluster;
         this.generator = generator;
         this.plotworld = PS.get().getPlotWorld(world);
@@ -99,6 +100,7 @@ public class AugmentedPopulator extends BlockPopulator {
     public void populate(final World world, final Random rand, final Chunk chunk) {
         final int cx = chunk.getX();
         final int cz = chunk.getZ();
+        PS.log("== POPULATING FOR: " + world + " | " + cx + "," + cz);
         final int bx = cx << 4;
         final int bz = cz << 4;
         final int tx = bx + 15;
@@ -256,9 +258,5 @@ public class AugmentedPopulator extends BlockPopulator {
             Chunk chunk = world.getChunkAt(X, Z);
             populator.populate(world, this.r, chunk);
         }
-    }
-
-    public boolean isIn(final RegionWrapper plot, final int x, final int z) {
-        return ((x >= plot.minX) && (x <= plot.maxX) && (z >= plot.minZ) && (z <= plot.maxZ));
     }
 }

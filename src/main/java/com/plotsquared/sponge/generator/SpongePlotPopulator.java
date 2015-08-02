@@ -55,7 +55,6 @@ public abstract class SpongePlotPopulator<T extends SpongePlotGenerator> impleme
             populate(world, ChunkManager.CURRENT_PLOT_CLEAR, random, cx, cz);
         }
         catch (Exception e) {
-            PS.debug("ERROR GENERATING CHUNK!");
             e.printStackTrace();
         }
     };

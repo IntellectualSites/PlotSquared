@@ -14,6 +14,7 @@ import com.intellectualcrafters.jnbt.ListTag;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -85,8 +86,10 @@ public class SpongeSchematicHandler extends SchematicHandler {
                             // save schematics
                             ChunkLoc chunk = chunks.remove(0);
 
-                            if (!worldObj.loadChunk(chunk.x << 4, 0, chunk.z << 4, false).isPresent()) {
-                                continue;
+                            if (!worldObj.loadChunk(chunk.x << 4, 1, chunk.z << 4, false).isPresent()) {
+                                System.out.println("COULD NOT LOAD CHUNK AT: " + chunk.x + "," + chunk.z);
+                                // TODO continue - right now sponge chunk api seems to be broken :(
+                                // continue;
                             }
 
                             int X = chunk.x;

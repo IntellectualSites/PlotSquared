@@ -8,6 +8,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.plotsquared.bukkit.BukkitMain;
 import com.sk89q.worldedit.CuboidClipboard;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.Vector;
@@ -22,7 +23,7 @@ public class WorldEditSchematic {
         CuboidClipboard clipboard = new CuboidClipboard(size, origin);
         Vector pos1 = new Vector(bot.getX(), bot.getY(), bot.getZ());
         Vector pos2 = new Vector(top.getX(), top.getY(), top.getZ());
-        EditSession session = PS.get().worldEdit.getWorldEdit().getEditSessionFactory().getEditSession(new BukkitWorld(Bukkit.getWorld(world)), 999999999);
+        EditSession session = BukkitMain.worldEdit.getWorldEdit().getEditSessionFactory().getEditSession(new BukkitWorld(Bukkit.getWorld(world)), 999999999);
         clipboard.copy(session);
         try {
             clipboard.saveSchematic(new File(file));

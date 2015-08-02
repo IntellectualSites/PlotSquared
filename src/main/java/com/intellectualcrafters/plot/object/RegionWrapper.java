@@ -12,4 +12,8 @@ public class RegionWrapper {
         this.maxZ = maxZ;
         this.minZ = minZ;
     }
+    
+    public boolean isIn(final int x, final int z) {
+        return ((x >= this.minX) && (x <= this.maxX) && (z >= this.minZ) && (z <= this.maxZ));
+    }
 }

@@ -1,5 +1,6 @@
 package com.plotsquared.sponge.generator;
 
+import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.WorldGenerator;
 
 import com.intellectualcrafters.plot.PS;
@@ -8,6 +9,7 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
+import com.plotsquared.sponge.util.SpongeUtil;
 
 public class SpongeGeneratorWrapper extends PlotGenerator<WorldGenerator>{
 
@@ -29,13 +31,14 @@ public class SpongeGeneratorWrapper extends PlotGenerator<WorldGenerator>{
     public void augment(PlotCluster cluster, PlotWorld plotworld) {
         if (generator instanceof SpongePlotGenerator) {
             SpongePlotGenerator plotgen = (SpongePlotGenerator) generator;
-            if (cluster != null) {
-                // TODO Augment partial
-                throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-            }
-            else {
-                // TODO augment full
-                throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+            World worldObj = SpongeUtil.getWorld(world);
+            if (worldObj != null) {
+                if (cluster != null) {
+                    new AugmentedPopulator(world, worldObj.getWorldGenerator(), plotgen, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
+                }
+                else {
+                    new AugmentedPopulator(world, worldObj.getWorldGenerator(), plotgen, null, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
+                }
             }
         }
     }

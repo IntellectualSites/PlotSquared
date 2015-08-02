@@ -7,6 +7,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.gen.BiomeGenerator;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -15,11 +16,7 @@ import com.plotsquared.sponge.SpongeMain;
 
 public class SpongeBasicGen extends SpongePlotGenerator {
 
-    public final BlockState ROAD_BLOCK = BlockTypes.QUARTZ_BLOCK.getDefaultState(); // Quartz
-    public final BlockState MAIN_BLOCK = BlockTypes.STONE.getDefaultState(); // Stone
-    public final BlockState WALL_BLOCK = BlockTypes.BEDROCK.getDefaultState(); // Bedrock
-    public final BlockState BORDER_BLOCK = BlockTypes.STONE_SLAB.getDefaultState(); // Stone slab
-    public final BlockState[] FLOOR_BLOCK = new BlockState[] {BlockTypes.GRASS.getDefaultState(), BlockTypes.SPONGE.getDefaultState(), BlockTypes.PLANKS.getDefaultState() }; // Grass and sponge
+    public final BlockState AIR = BlockTypes.AIR.getDefaultState();
     
     private static HybridPlotManager manager;
     public HybridPlotWorld plotworld;
@@ -93,7 +90,10 @@ public class SpongeBasicGen extends SpongePlotGenerator {
     @Override
     public PlotWorld getNewPlotWorld(String world) {
         if (this.plotworld == null) {
-            this.plotworld = new HybridPlotWorld(world); 
+            this.plotworld = (HybridPlotWorld) PS.get().getPlotWorld(world);
+            if (this.plotworld == null) {
+                this.plotworld = new HybridPlotWorld(world);
+            }
         }
         return this.plotworld;
     }

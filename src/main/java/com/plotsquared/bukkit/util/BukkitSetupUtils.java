@@ -13,9 +13,11 @@ import org.bukkit.plugin.Plugin;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
+import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 
@@ -33,11 +35,7 @@ public class BukkitSetupUtils extends SetupUtils {
                 if (generator != null) {
                     PS.get().removePlotWorld(testWorld);
                     final String name = plugin.getDescription().getName();
-//                        final PlotGenerator pgen = (PlotGenerator) generator;
-//                        if (pgen.getPlotManager() instanceof SquarePlotManager) {
                             SetupUtils.generators.put(name, new BukkitGeneratorWrapper("CheckingPlotSquaredGenerator", generator));
-//                        }
-//                    }
                 }
             }
         }
@@ -114,5 +112,10 @@ public class BukkitSetupUtils extends SetupUtils {
             }
         }
         return null;
+    }
+
+    @Override
+    public void removePopulator(String world, PlotCluster cluster) {
+        AugmentedPopulator.removePopulator(world, cluster);
     }
 }

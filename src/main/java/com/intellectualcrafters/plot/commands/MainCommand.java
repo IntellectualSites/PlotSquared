@@ -125,6 +125,9 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Copy());
         createCommand(new Chat());
         createCommand(new Trim());
+        if (Settings.ENABLE_CLUSTERS) {
+            MainCommand.getInstance().addCommand(new Cluster());
+        }
     }
 
     public static boolean no_permission(final PlotPlayer player, final String permission) {

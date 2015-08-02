@@ -47,7 +47,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.plotsquared.bukkit.object.schematic.StateWrapper;
-import com.plotsquared.bukkit.util.WorldEditSchematic;
 
 public abstract class SchematicHandler {
     public static SchematicHandler manager;
@@ -98,40 +97,38 @@ public abstract class SchematicHandler {
                 if (area > 4096) {
                     PS.debug("The plot is > 64 x 64 - Fast lossy schematic saving will be used");
                 }
-                if (area <= 4096 && PS.get().worldEdit != null) {
-                    new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
-                }
-                else {
-                    final Runnable THIS = this;
-                    SchematicHandler.manager.getCompoundTag(plot.world, plot.id, new RunnableVal<CompoundTag>() {
-                        @Override
-                        public void run() {
-                            if (value == null) {
-                                MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
-                            }
-                            else {
-                                TaskManager.runTaskAsync(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        MainUtil.sendMessage(null, "&6ID: " + plot.id);
-                                        final boolean result = SchematicHandler.manager.save(value, directory + File.separator + name + ".schematic");
-                                        if (!result) {
-                                            MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
-                                        } else {
-                                            MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
-                                        }
-                                        TaskManager.runTask(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                THIS.run();
-                                            }
-                                        });
-                                    }
-                                });
-                            }
+//                if (area <= 4096 && PS.get().worldEdit != null) {
+//                    new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
+//                }
+                final Runnable THIS = this;
+                SchematicHandler.manager.getCompoundTag(plot.world, plot.id, new RunnableVal<CompoundTag>() {
+                    @Override
+                    public void run() {
+                        if (value == null) {
+                            MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
                         }
-                    });
-                }
+                        else {
+                            TaskManager.runTaskAsync(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MainUtil.sendMessage(null, "&6ID: " + plot.id);
+                                    final boolean result = SchematicHandler.manager.save(value, directory + File.separator + name + ".schematic");
+                                    if (!result) {
+                                        MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
+                                    } else {
+                                        MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
+                                    }
+                                    TaskManager.runTask(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            THIS.run();
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
     	return true;

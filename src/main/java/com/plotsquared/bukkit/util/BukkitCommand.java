@@ -29,9 +29,6 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
     
     public BukkitCommand() {
         MainCommand.getInstance().addCommand(new DebugUUID());
-        if (Settings.ENABLE_CLUSTERS) {
-            MainCommand.getInstance().addCommand(new Cluster());
-        }
     }
     
     @Override

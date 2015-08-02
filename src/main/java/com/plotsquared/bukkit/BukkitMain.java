@@ -88,8 +88,10 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     public static BukkitMain THIS;
+    public static WorldEditPlugin worldEdit;
     
     private int[] version;
+
 
     @Override
     public int[] getServerVersion() {
@@ -345,8 +347,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void registerWorldEditEvents() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            PS.get().worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-            final String version = PS.get().worldEdit.getDescription().getVersion();
+            BukkitMain.worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+            final String version = BukkitMain.worldEdit.getDescription().getVersion();
             if ((version != null) && version.startsWith("5.")) {
                 log("&cThis version of WorldEdit does not support PlotSquared.");
                 log("&cPlease use WorldEdit 6+ for masking support");

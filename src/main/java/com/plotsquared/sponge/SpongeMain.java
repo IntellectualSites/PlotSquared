@@ -50,6 +50,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -240,14 +241,27 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds");
         if (worldSection != null) {
             for (String world : worldSection.getKeys(false)) {
-                
-                SpongeBasicGen generator = new SpongeBasicGen(world);
-                PS.get().loadWorld(world, new SpongeGeneratorWrapper(world, generator));
-                
-                this.modify = new WorldModify(generator);
-                Game game = event.getGame();
+                createWorldFromConfig(world);
+            }
+        }
+    }
+    
+    public World createWorldFromConfig(String world) {
+        SpongeBasicGen generator = new SpongeBasicGen(world);
+        PlotWorld plotworld = generator.getNewPlotWorld(world);
+        SpongeGeneratorWrapper wrapper;
+        if (plotworld.TYPE == 0) {
+            wrapper = new SpongeGeneratorWrapper(world, generator);
+        }
+        else {
+            wrapper = new SpongeGeneratorWrapper(world, null);
+        }
+        PS.get().loadWorld(world, wrapper);
+        switch (plotworld.TYPE) {
+            // Normal
+            case 0: {
+                this.modify = new WorldModify(generator, false);
                 game.getRegistry().registerWorldGeneratorModifier(modify);
-                
                 Optional<World> builder = game.getRegistry().getWorldBuilder()
                 .name(world)
                 .enabled(true)
@@ -255,11 +269,26 @@ public class SpongeMain implements IPlotMain, PluginContainer {
                 .keepsSpawnLoaded(true)
                 .dimensionType(DimensionTypes.OVERWORLD)
                 .generator(GeneratorTypes.FLAT)
-                .gameMode(GameModes.CREATIVE)
                 .usesMapFeatures(false)
                 .generatorModifiers(modify)
                 .build();
-                World worldObj = builder.get();
+                return builder.get();
+            }
+            // Augmented
+            default: {
+                this.modify = new WorldModify(generator, true);
+                game.getRegistry().registerWorldGeneratorModifier(modify);
+                Optional<World> builder = game.getRegistry().getWorldBuilder()
+                .name(world)
+                .enabled(true)
+                .loadsOnStartup(true)
+                .keepsSpawnLoaded(true)
+                .dimensionType(DimensionTypes.OVERWORLD)
+                .generator(GeneratorTypes.OVERWORLD)
+                .usesMapFeatures(false)
+                .generatorModifiers(modify)
+                .build();
+                return builder.get();
             }
         }
     }
@@ -433,7 +462,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
             return new SpongeGeneratorWrapper(world, null);
         }
         if (name.equals("PlotSquared")) {
-            return new SpongeGeneratorWrapper(world, null);
+            return new SpongeGeneratorWrapper(world, new SpongeBasicGen(world));
         }
         else {
             throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
@@ -465,8 +494,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public SetupUtils initSetupUtils() {
-        // TODO Auto-generated method stub
-        return null;
+        return new SpongeSetupUtils();
     }
 
     @Override
@@ -585,7 +613,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public void setGenerator(String world) {
-        // THIS IS DONE DURING STARTUP ALREADY
+        // TODO THIS IS DONE DURING STARTUP ALREADY
     }
 
     @Override

@@ -24,11 +24,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
-import org.bukkit.generator.ChunkGenerator;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -43,9 +42,10 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
-import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.bukkit.generator.HybridGen;
+//import com.plotsquared.bukkit.generator.AugmentedPopulator;
+//import com.plotsquared.bukkit.generator.AugmentedPopulator;
+//import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
+//import com.plotsquared.bukkit.generator.HybridGen;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -157,21 +157,32 @@ public class Cluster extends SubCommand {
                     PS.get().loadWorld(world, PS.get().IMP.getGenerator(world, null));
                 }
                 else {
-                    final String gen_string = PS.get().config.getString("worlds." + world + "." + "generator.plugin");
-                    BukkitPlotGenerator generator;
+                    String gen_string = PS.get().config.getString("worlds." + world + "." + "generator.plugin");
                     if (gen_string == null) {
-                        generator = new HybridGen(world);
-                    } else {
-                        ChunkGenerator chunkgen = (ChunkGenerator) PS.get().IMP.getGenerator(world, gen_string).generator;
-                        if (chunkgen instanceof BukkitPlotGenerator) {
-                            generator = (BukkitPlotGenerator) chunkgen;
-                        }
-                        else {
-                            MainUtil.sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringMan.join(SetupUtils.generators.keySet(), ","));
-                            return false;
-                        }
+                        gen_string = "PlotSquared";
                     }
-                    new AugmentedPopulator(world, generator, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
+                    PlotGenerator<?> wrapper = PS.get().IMP.getGenerator(world, gen_string);
+                    if (wrapper.isFull()) {
+                        wrapper.augment(cluster, plotworld);
+                    }
+                    else {
+                        MainUtil.sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringMan.join(SetupUtils.generators.keySet(), ","));
+                        return false;
+                    }
+//                    BukkitPlotGenerator generator;
+//                    if (gen_string == null) {
+//                        generator = new HybridGen(world);
+//                    } else {
+//                        ChunkGenerator chunkgen = (ChunkGenerator) PS.get().IMP.getGenerator(world, gen_string).generator;
+//                        if (chunkgen instanceof BukkitPlotGenerator) {
+//                            generator = (BukkitPlotGenerator) chunkgen;
+//                        }
+//                        else {
+//                            MainUtil.sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringMan.join(SetupUtils.generators.keySet(), ","));
+//                            return false;
+//                        }
+//                    }
+//                    new AugmentedPopulator(world, generator, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
                 }
                 MainUtil.sendMessage(plr, C.CLUSTER_ADDED);
                 return true;
@@ -222,7 +233,7 @@ public class Cluster extends SubCommand {
                 }
                 DBFunc.delete(cluster);
                 if (plotworld.TYPE == 2) {
-                    AugmentedPopulator.removePopulator(plr.getLocation().getWorld(), cluster);
+                    SetupUtils.manager.removePopulator(plr.getLocation().getWorld(), cluster);
                 }
                 ClusterManager.last = null;
                 ClusterManager.clusters.get(cluster.world).remove(cluster);
