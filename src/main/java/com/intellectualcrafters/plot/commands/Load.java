@@ -77,7 +77,7 @@ public class Load extends SubCommand {
                 }
                 final URL url;
                 try {
-                    url = new URL(Settings.WEB_URL + "saves/" + plr.getUUID() + "/" + schem);
+                    url = new URL(Settings.WEB_URL + "saves/" + plr.getUUID() + "/" + schem + ".schematic");
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     MainUtil.sendMessage(plr, C.LOAD_FAILED);

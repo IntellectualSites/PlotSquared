@@ -35,7 +35,7 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "regenallroads",
+        command = "/plot regenallroads <world>",
         description = "Regenerate all roads in the map using the set road schematic",
         aliases = {"rgar"},
         category = CommandCategory.DEBUG,

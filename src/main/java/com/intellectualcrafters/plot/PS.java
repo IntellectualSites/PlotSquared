@@ -1071,13 +1071,13 @@ public class PS {
                 return null;
             }
             if (link == null) {
-                PS.debug("&dCould not check for updates");
+                PS.debug("&dCould not check for updates (1)");
                 PS.debug("&7 - Manually check for updates: " + url);
                 return null;
             }
             return link;
         } catch (Exception e) {
-            PS.debug("&dCould not check for updates");
+            PS.debug("&dCould not check for updates (2)");
             PS.debug("&7 - Manually check for updates: " + url);
             return null;
         }
