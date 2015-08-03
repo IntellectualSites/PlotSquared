@@ -87,14 +87,14 @@ public class DebugExec extends SubCommand {
 
     private ScriptEngine engine;
     private Bindings scope;
-
+    
     public void init() {
         if (engine != null) {
             return;
         }
-        engine = (new ScriptEngineManager()).getEngineByName("nashorn");
+        engine = (new ScriptEngineManager(null)).getEngineByName("nashorn");
         if (engine == null) {
-            engine = (new ScriptEngineManager()).getEngineByName("JavaScript");
+            engine = (new ScriptEngineManager(null)).getEngineByName("JavaScript");
         }
         ScriptContext context = new SimpleScriptContext();
         scope = context.getBindings(ScriptContext.ENGINE_SCOPE);

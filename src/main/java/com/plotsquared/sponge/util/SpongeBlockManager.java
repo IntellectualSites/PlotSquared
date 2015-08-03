@@ -184,7 +184,12 @@ public class SpongeBlockManager extends BlockManager {
         if (state == null) {
             return;
         }
-        SpongeUtil.getWorld(worldname).setBlock(x, y, z, state);
+        World world = SpongeUtil.getWorld(worldname);
+        BlockState block = world.getBlock(x, y, z);
+        if (block != state) {
+            world.setBlock(x, y, z, state);
+        }
+        
     }
     
     @Override

@@ -57,6 +57,12 @@ public interface IPlotMain {
     int[] getServerVersion();
     
     /**
+     * Get the nms package prefix
+     * @return
+     */
+    String getNMSPackage();
+    
+    /**
      * Get the schematic handler
      * @return
      */

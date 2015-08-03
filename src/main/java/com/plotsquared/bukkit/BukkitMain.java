@@ -1,6 +1,7 @@
 package com.plotsquared.bukkit;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -8,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
@@ -40,6 +42,7 @@ import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
@@ -106,7 +109,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
+                PS.debug(StringMan.getString(Bukkit.getBukkitVersion()));
+                PS.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
+                return new int[] { Integer.MAX_VALUE, 0, 0 };
             }
         }
         return version;
@@ -567,5 +572,30 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             return UUIDHandler.getPlayer((UUID) obj);
         }
         return null;
+    }
+
+    @Override
+    public String getNMSPackage() {
+        final Server server = Bukkit.getServer();
+        final Class<?> bukkitServerClass = server.getClass();
+        String[] pas = bukkitServerClass.getName().split("\\.");
+        if (pas.length == 5) {
+            final String verB = pas[3];
+            return verB;
+        }
+        try {
+            final Method getHandle = bukkitServerClass.getDeclaredMethod("getHandle");
+            final Object handle = getHandle.invoke(server);
+            final Class handleServerClass = handle.getClass();
+            pas = handleServerClass.getName().split("\\.");
+            if (pas.length == 5) {
+                final String verM = pas[3];
+                    return verM;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        PS.debug("Unknown NMS package: " + StringMan.getString(pas));
+        return "1_8_R3";
     }
 }

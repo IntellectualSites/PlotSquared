@@ -45,17 +45,18 @@ import com.intellectualcrafters.plot.util.TaskManager;
  * @author Empire92
  */
 public class SetBlockFast_1_8 extends BukkitSetBlockManager {
-    private static final RefClass classBlock = getRefClass("{nms}.Block");
-    private static final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
-    private static final RefClass classIBlockData = getRefClass("{nms}.IBlockData");
-    private static final RefClass classChunk = getRefClass("{nms}.Chunk");
-    private static final RefClass classWorld = getRefClass("{nms}.World");
-    private static final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
-    private static RefMethod methodGetHandle;
-    private static RefMethod methodGetChunkAt;
-    private static RefMethod methodA;
-    private static RefMethod methodGetByCombinedId;
-    private static RefConstructor constructorBlockPosition;
+    private final RefClass classBlock = getRefClass("{nms}.Block");
+    private final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
+    private final RefClass classIBlockData = getRefClass("{nms}.IBlockData");
+    private final RefClass classChunk = getRefClass("{nms}.Chunk");
+    private final RefClass classWorld = getRefClass("{nms}.World");
+    private final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
+    private RefMethod methodGetHandle;
+    private RefMethod methodGetChunkAt;
+    private RefMethod methodA;
+    private RefMethod methodGetByCombinedId;
+    private RefConstructor constructorBlockPosition;
+    private SendChunk chunksender;
 
     public static HashMap<ChunkLoc, Chunk> toUpdate = new HashMap<>();
     
@@ -88,6 +89,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
                 update(chunks);
             }
         }, 20);
+        this.chunksender = new SendChunk();
     }
 
     private ChunkLoc lastLoc = null;
@@ -345,7 +347,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             return;
         }
         try {
-            SendChunk.sendChunk(chunks);
+            chunksender.sendChunk(chunks);
         } catch (final Throwable e) {
             MainUtil.canSendChunk = false;
         }

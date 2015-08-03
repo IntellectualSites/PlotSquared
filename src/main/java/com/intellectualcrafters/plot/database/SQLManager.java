@@ -947,7 +947,11 @@ public class SQLManager implements AbstractDB {
                     user = UUID.fromString(o);
                     uuids.put(o, user);
                 }
-                Timestamp timestamp = r.getTimestamp("timestamp");
+                Timestamp timestamp = null;
+                try {
+                    timestamp = r.getTimestamp("timestamp");
+                }
+                catch (Exception e) {};
                 long time;
                 if (timestamp == null) {
                     time = plot_id.hashCode();

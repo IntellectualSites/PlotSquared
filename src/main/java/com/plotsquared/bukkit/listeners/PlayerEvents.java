@@ -2068,7 +2068,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
             if (FlagManager.isPlotFlagTrue(plot, FLAG_DISABLE_PHYSICS)) {
                 Block block = event.getBlockPlaced();
-                sendBlockChange(block.getLocation(), block.getType(), block.getData());
+                if (block.getType().hasGravity()) {
+                    sendBlockChange(block.getLocation(), block.getType(), block.getData());
+                }
             }
             PlotWorld pw = PS.get().getPlotWorld(loc.getWorld());
             if (loc.getY() >= pw.MAX_BUILD_HEIGHT && !Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {

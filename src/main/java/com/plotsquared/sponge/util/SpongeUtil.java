@@ -65,8 +65,14 @@ public class SpongeUtil {
         }
         return null;
     }
+    
+    private static World lastWorld;
+    private static String last;
 
     public static World getWorld(String world) {
+        if (world == last) {
+            return lastWorld;
+        }
         Optional<World> optional = SpongeMain.THIS.getServer().getWorld(world);
         if (!optional.isPresent()) {
             return null;

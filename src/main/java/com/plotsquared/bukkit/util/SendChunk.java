@@ -25,22 +25,22 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 public class SendChunk {
     
     // Ref Class
-    private static final RefClass classWorld = getRefClass("{nms}.World");
-    private static final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
-    private static final RefClass classChunkCoordIntPair = getRefClass("{nms}.ChunkCoordIntPair");
-    private static final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-    private static final RefClass classChunk = getRefClass("{nms}.Chunk");
-    private static boolean v1_7_10 = PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 7, 10) && !PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 8, 0);
+    private final RefClass classWorld = getRefClass("{nms}.World");
+    private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
+    private final RefClass classChunkCoordIntPair = getRefClass("{nms}.ChunkCoordIntPair");
+    private final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
+    private final RefClass classChunk = getRefClass("{nms}.Chunk");
+    private boolean v1_7_10 = PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 7, 10) && !PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 8, 0);
     // Ref Method
-    private static RefMethod methodGetHandle;
+    private RefMethod methodGetHandle;
     // Ref Field
-    private static RefField chunkCoordIntPairQueue;
-    private static RefField players;
-    private static RefField locX;
-    private static RefField locZ;
-    private static RefField world;
+    private RefField chunkCoordIntPairQueue;
+    private RefField players;
+    private RefField locX;
+    private RefField locZ;
+    private RefField world;
     // Ref Constructor
-    private static RefConstructor ChunkCoordIntPairCon;
+    private RefConstructor ChunkCoordIntPairCon;
 
     /**
      * Constructor
@@ -57,7 +57,7 @@ public class SendChunk {
         ChunkCoordIntPairCon = classChunkCoordIntPair.getConstructor(int.class, int.class);
     }
 
-    public static void sendChunk(final Collection<Chunk> chunks) {
+    public void sendChunk(final Collection<Chunk> chunks) {
         int diffx, diffz;
         final int view = Bukkit.getServer().getViewDistance() << 4;
         for (final Chunk chunk : chunks) {
@@ -92,7 +92,7 @@ public class SendChunk {
         }
     }
 
-    public static void sendChunk(final String worldname, final List<ChunkLoc> locs) {
+    public void sendChunk(final String worldname, final List<ChunkLoc> locs) {
         final World myworld = Bukkit.getWorld(worldname);
         final ArrayList<Chunk> chunks = new ArrayList<>();
         for (final ChunkLoc loc : locs) {

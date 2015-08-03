@@ -30,14 +30,18 @@ import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 
 /**
  * @author DPOH-VAR
  * @version 1.0
  */
-@SuppressWarnings({ "UnusedDeclaration", "rawtypes" })
 public class ReflectionUtils {
+    
+    public ReflectionUtils(String version) {
+        preClassB += "." + version;
+        preClassM += "." + version;
+    }
+    
     /**
      * prefix of bukkit classes
      */
@@ -46,36 +50,6 @@ public class ReflectionUtils {
      * prefix of minecraft classes
      */
     private static String preClassM = "net.minecraft.server";
-    /**
-     * boolean value, TRUE if server uses forge or MCPC+
-     */
-    private static boolean forge = false;
-    /** check server version and class names */
-    static {
-        if (Bukkit.getServer() != null) {
-            if (Bukkit.getVersion().contains("MCPC") || Bukkit.getVersion().contains("Forge")) {
-                forge = true;
-            }
-            final Server server = Bukkit.getServer();
-            final Class<?> bukkitServerClass = server.getClass();
-            String[] pas = bukkitServerClass.getName().split("\\.");
-            if (pas.length == 5) {
-                final String verB = pas[3];
-                preClassB += "." + verB;
-            }
-            try {
-                final Method getHandle = bukkitServerClass.getDeclaredMethod("getHandle");
-                final Object handle = getHandle.invoke(server);
-                final Class handleServerClass = handle.getClass();
-                pas = handleServerClass.getName().split("\\.");
-                if (pas.length == 5) {
-                    final String verM = pas[3];
-                    preClassM += "." + verM;
-                }
-            } catch (final Exception ignored) {
-            }
-        }
-    }
     
     public static Class<?> getNmsClass(final String name) {
         final String className = "net.minecraft.server." + getVersion() + "." + name;
@@ -209,13 +183,6 @@ public class ReflectionUtils {
         } catch (ClassCastException | ClassNotFoundException ex) {
             return null;
         }
-    }
-
-    /**
-     * @return true if server has forge classes
-     */
-    public static boolean isForge() {
-        return forge;
     }
 
     /**

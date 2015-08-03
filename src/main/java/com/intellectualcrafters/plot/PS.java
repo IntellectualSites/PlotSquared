@@ -75,6 +75,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -129,6 +130,7 @@ public class PS {
             this.thread = Thread.currentThread();
             SetupUtils.generators = new HashMap<>();
             IMP = imp_class;
+            new ReflectionUtils(IMP.getNMSPackage());
             URL url;
             try {
                 url = PS.class.getProtectionDomain().getCodeSource().getLocation();

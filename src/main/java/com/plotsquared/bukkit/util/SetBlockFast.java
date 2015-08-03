@@ -39,16 +39,17 @@ import com.intellectualcrafters.plot.util.TaskManager;
  * @author Empire92
  */
 public class SetBlockFast extends BukkitSetBlockManager {
-    private static final RefClass classBlock = getRefClass("{nms}.Block");
-    private static final RefClass classChunk = getRefClass("{nms}.Chunk");
-    private static final RefClass classWorld = getRefClass("{nms}.World");
-    private static final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
-    private static RefMethod methodGetHandle;
-    private static RefMethod methodGetChunkAt;
-    private static RefMethod methodA;
-    private static RefMethod methodGetById;
+    private final RefClass classBlock = getRefClass("{nms}.Block");
+    private final RefClass classChunk = getRefClass("{nms}.Chunk");
+    private final RefClass classWorld = getRefClass("{nms}.World");
+    private final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
+    private RefMethod methodGetHandle;
+    private RefMethod methodGetChunkAt;
+    private RefMethod methodA;
+    private RefMethod methodGetById;
+    private SendChunk chunksender;
     
-    public static HashMap<ChunkLoc, Chunk> toUpdate = new HashMap<>();
+    public HashMap<ChunkLoc, Chunk> toUpdate = new HashMap<>();
 
     /**
      * Constructor
@@ -69,6 +70,7 @@ public class SetBlockFast extends BukkitSetBlockManager {
                 toUpdate = new HashMap<>();
             }
         }, 20);
+        this.chunksender = new SendChunk();
     }
 
     private ChunkLoc lastLoc = null;
@@ -127,7 +129,7 @@ public class SetBlockFast extends BukkitSetBlockManager {
             return;
         }
         try {
-            SendChunk.sendChunk(chunks);
+            chunksender.sendChunk(chunks);
         } catch (final Throwable e) {
             MainUtil.canSendChunk = false;
         }
