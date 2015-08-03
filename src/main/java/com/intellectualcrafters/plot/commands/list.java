@@ -303,12 +303,7 @@ public class list extends SubCommand {
     
     public void displayPlots(PlotPlayer player, List<Plot> plots, int pageSize, int page, String world, String[] args, boolean sort) {
         if (sort) {
-            if (world != null) {
-                plots = PS.get().sortPlots(plots, world);
-            }
-            else {
-                plots = PS.get().sortPlots(plots);
-            }
+            plots = PS.get().sortPlots(plots, world);
         }
         if (page < 0) {
             page = 0;

@@ -48,16 +48,29 @@ import com.intellectualcrafters.plot.util.TaskManager;
 public class Plot {
     /**
      * plot ID
+     * Direct access is Deprecated: use getId()
      */
+    @Deprecated
     public final PlotId id;
     /**
      * plot world
+     * Direct access is Deprecated: use getWorld()
      */
+    @Deprecated
     public final String world;
     /**
      * plot owner
+     * Direct access is Deprecated: use getOwners()
      */
+    @Deprecated
     public UUID owner;
+    
+    /**
+     * Plot creation timestamp (rough)
+     * Direct access is Deprecated: use getTimestamp()
+     */
+    @Deprecated
+    public long timestamp;
     
     /**
      * List of trusted (with plot permissions)
@@ -132,10 +145,11 @@ public class Plot {
      * @param denied
      * @param merged
      */
-    public Plot(final PlotId id, final UUID owner, final HashSet<UUID> trusted, final HashSet<UUID> members, final HashSet<UUID> denied, final String alias, final BlockLoc position, final Collection<Flag> flags, final String world, final boolean[] merged) {
+    public Plot(final PlotId id, final UUID owner, final HashSet<UUID> trusted, final HashSet<UUID> members, final HashSet<UUID> denied, final String alias, final BlockLoc position, final Collection<Flag> flags, final String world, final boolean[] merged, final long timestamp) {
         this.id = id;
-        this.settings = new PlotSettings(this);
+        this.world = world;
         this.owner = owner;
+        this.settings = new PlotSettings(this);
         this.members = members;
         this.trusted = trusted;
         this.denied = denied;
@@ -147,7 +161,7 @@ public class Plot {
                 this.settings.flags.put(flag.getKey(), flag);
             }
         }
-        this.world = world;
+        this.timestamp = timestamp;
         this.temp = false;
     }
 
@@ -201,12 +215,20 @@ public class Plot {
     public boolean isDenied(final UUID uuid) {
         return (this.getDenied() != null) && ((this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid)) || (!this.isAdded(uuid) && this.denied.contains(uuid)));
     }
-
+    
     /**
      * Get the plot ID
      */
     public PlotId getId() {
         return this.id;
+    }
+    
+    /**
+     * Get the world
+     * @return
+     */
+    public String getWorld() {
+        return this.world;
     }
     
     /**
@@ -225,6 +247,13 @@ public class Plot {
             return false;
         }
         return settings.getMerged(0) || settings.getMerged(2) || settings.getMerged(1) || settings.getMerged(3);
+    }
+    
+    public long getTimestamp() {
+        if (timestamp == 0) {
+            timestamp = System.currentTimeMillis();
+        }
+        return timestamp;
     }
     
     /**

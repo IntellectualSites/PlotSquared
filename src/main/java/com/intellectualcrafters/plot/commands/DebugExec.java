@@ -92,7 +92,10 @@ public class DebugExec extends SubCommand {
         if (engine != null) {
             return;
         }
-        engine = (new ScriptEngineManager()).getEngineByName("JavaScript");
+        engine = (new ScriptEngineManager()).getEngineByName("nashorn");
+        if (engine == null) {
+            engine = (new ScriptEngineManager()).getEngineByName("JavaScript");
+        }
         ScriptContext context = new SimpleScriptContext();
         scope = context.getBindings(ScriptContext.ENGINE_SCOPE);
         
@@ -128,21 +131,14 @@ public class DebugExec extends SubCommand {
         scope.put("MainCommand", MainCommand.getInstance());
         
         // enums
-        for (Enum value : C.values()) {
+        for (Enum<?> value : C.values()) {
             scope.put("C_" + value.name(), value);
         }
-        for (Enum value : Permissions.values()) {
+        for (Enum<?> value : Permissions.values()) {
             scope.put("Permissions_" + value.name(), value);
         }
-        addEnums(scope, C.values());
     }
     
-    
-    private void addEnums(Bindings scope2, C[] values) {
-        // TODO Auto-generated method stub
-    }
-
-
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
         final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");

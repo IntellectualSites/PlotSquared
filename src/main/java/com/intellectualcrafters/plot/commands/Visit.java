@@ -67,10 +67,10 @@ public class Visit extends SubCommand {
         UUID user = UUIDHandler.getCachedUUID(args[0], null);
         if (user != null ) {
             // do plots by username
-            plots.addAll(PS.get().getPlots(user));
+            plots = PS.get().sortPlots(PS.get().getPlots(user), null);
         } else if (PS.get().isPlotWorld(args[0])) {
             // do plots by world
-            plots.addAll(PS.get().getPlots(args[0]).values());
+            plots = PS.get().sortPlots(PS.get().getPlots(args[0]).values(), null);
         }
         else {
             Plot plot = MainUtil.getPlotFromString(plr, args[0], true);

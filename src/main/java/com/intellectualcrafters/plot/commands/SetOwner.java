@@ -62,7 +62,7 @@ public class SetOwner extends SubCommand {
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if ((plot == null) || (plot.owner == null)) {
+        if ((plot == null) || (plot.owner == null && !Permissions.hasPermission(plr, "plots.admin.command.setowner"))) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
@@ -107,10 +107,17 @@ public class SetOwner extends SubCommand {
             return false;
         }
         for (final PlotId id : plots) {
-            final Plot current = PS.get().getPlots(world).get(id);
-            current.owner = uuid;
+            Plot current = PS.get().getPlots(world).get(id);
+            if (current == null) {
+                current = MainUtil.getPlot(world, id);
+                current.owner = uuid;
+                current.create();
+            }
+            else {
+                current.owner = uuid;
+                DBFunc.setOwner(current, current.owner);
+            }
             PS.get().updatePlot(current);
-            DBFunc.setOwner(current, current.owner);
         }
         MainUtil.setSign(args[0], plot);
         MainUtil.sendMessage(plr, C.SET_OWNER);

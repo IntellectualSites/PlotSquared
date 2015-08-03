@@ -84,10 +84,10 @@ public class SQLManager implements AbstractDB {
         // Public final
         this.SET_OWNER = "UPDATE `" + this.prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND `world` = ?";
         this.GET_ALL_PLOTS = "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + this.prefix + "plot`";
-        this.CREATE_PLOTS = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) values ";
+        this.CREATE_PLOTS = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) values ";
         this.CREATE_SETTINGS = "INSERT INTO `" + this.prefix + "plot_settings` (`plot_plot_id`) values ";
         this.CREATE_TIERS = "INSERT INTO `" + this.prefix + "plot_%tier%` (`plot_plot_id`, `user_uuid`) values ";
-        this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`) VALUES(?, ?, ?, ?)";
+        this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) VALUES(?, ?, ?, ?, ?)";
         this.CREATE_CLUSTER = "INSERT INTO `" + this.prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
         // schedule reconnect
         if (Settings.DB.USE_MYSQL) {
@@ -296,7 +296,7 @@ public class SQLManager implements AbstractDB {
         final StmtMod<Plot> mod = new StmtMod<Plot>() {
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(size, CREATE_PLOTS, 4);
+                return getCreateMySQL(size, CREATE_PLOTS, 5);
             }
 
             @Override
@@ -311,14 +311,15 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setMySQL(PreparedStatement stmt, int i, Plot plot) throws SQLException {
-                stmt.setInt((i * 4) + 1, plot.id.x);
-                stmt.setInt((i * 4) + 2, plot.id.y);
+                stmt.setInt((i * 5) + 1, plot.id.x);
+                stmt.setInt((i * 5) + 2, plot.id.y);
                 try {
                     stmt.setString((i * 4) + 3, plot.owner.toString());
                 } catch (final Exception e) {
                     stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
                 }
-                stmt.setString((i * 4) + 4, plot.world);
+                stmt.setString((i * 5) + 4, plot.world);
+                stmt.setTimestamp((i * 5) + 5, new Timestamp(plot.getTimestamp()));
             }
 
             @Override
@@ -332,7 +333,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setString((i * 6) + 4, DBFunc.everyone.toString());
                 }
                 stmt.setString((i * 6) + 5, plot.world);
-                stmt.setString((i * 6) + 6, System.currentTimeMillis() + "");
+                stmt.setTimestamp((i * 6) + 6, new Timestamp(plot.getTimestamp()));
             }
 
             @Override
@@ -341,6 +342,8 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(2, plot.id.y);
                 stmt.setString(3, plot.owner.toString());
                 stmt.setString(4, plot.world);
+                stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
+                
             }
         };
         setBulk(myList, mod, whenDone);
@@ -642,6 +645,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(2, plot.id.y);
                     stmt.setString(3, plot.owner.toString());
                     stmt.setString(4, plot.world);
+                    stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final Exception e) {
@@ -664,6 +668,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(2, plot.id.y);
                     stmt.setString(3, plot.owner.toString());
                     stmt.setString(4, plot.world);
+                    stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
                     stmt.executeUpdate();
                     stmt.close();
                     final int id = getId(plot.world, plot.id);
@@ -879,13 +884,13 @@ public class SQLManager implements AbstractDB {
                 for (String table : new String[]{"plot_denied", "plot_helpers", "plot_trusted"} ) {
                     ResultSet result = statement.executeQuery("SELECT plot_plot_id, user_uuid, COUNT(*) FROM " + this.prefix + table + " GROUP BY plot_plot_id, user_uuid HAVING COUNT(*) > 1");
                     if (result.next()) {
-                        PS.debug("BACKING UP: " + table);
+                        PS.debug("BACKING UP: " + this.prefix + table);
                         result.close();
-                        statement.executeUpdate("CREATE TABLE " + table + "_tmp AS SELECT * FROM " + this.prefix + table + " GROUP BY plot_plot_id, user_uuid");
+                        statement.executeUpdate("CREATE TABLE "  + this.prefix + table + "_tmp AS SELECT * FROM " + this.prefix + table + " GROUP BY plot_plot_id, user_uuid");
                         statement.executeUpdate("DROP TABLE " + this.prefix + table);
-                        statement.executeUpdate("CREATE TABLE " + this.prefix + table + " AS SELECT * FROM " + table + "_tmp");
+                        statement.executeUpdate("CREATE TABLE " + this.prefix + table + " AS SELECT * FROM "  + this.prefix + table + "_tmp");
                         statement.executeUpdate("DROP TABLE " + this.prefix + table + "_tmp");
-                        PS.debug("RESTORING: " + table);
+                        PS.debug("RESTORING: " + this.prefix + table);
                     }
                 }
                 statement.close();
@@ -919,7 +924,7 @@ public class SQLManager implements AbstractDB {
              * Getting plots
              */
             stmt = this.connection.createStatement();
-            ResultSet r = stmt.executeQuery("SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world` FROM `" + this.prefix + "plot`");
+            ResultSet r = stmt.executeQuery("SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp` FROM `" + this.prefix + "plot`");
             PlotId plot_id;
             int id;
             Plot p;
@@ -942,7 +947,15 @@ public class SQLManager implements AbstractDB {
                     user = UUID.fromString(o);
                     uuids.put(o, user);
                 }
-                p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, worldname, new boolean[]{false, false, false, false});
+                Timestamp timestamp = r.getTimestamp("timestamp");
+                long time;
+                if (timestamp == null) {
+                    time = plot_id.hashCode();
+                }
+                else {
+                    time = timestamp.getTime();
+                }
+                p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, worldname, new boolean[]{false, false, false, false}, time);
                 plots.put(id, p);
             }
             if (Settings.CACHE_RATINGS) {

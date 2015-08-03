@@ -543,7 +543,210 @@ public class PS {
         return result;
     }
     
+    public static ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> input) {
+        List<Plot> list;
+        if (input instanceof ArrayList<?>) {
+            list = (List<Plot>) input;
+        }
+        else {
+            list = new ArrayList<Plot>(input);
+        }
+        long min = Integer.MAX_VALUE;
+        long max = 0;
+        int size = list.size();
+        int limit = Math.min(1048576, size * 2);
+        for (int i = 0; i < size; i++) {
+            Plot plot = list.get(i);
+            long time = plot.getTimestamp();
+            if (time < min) {
+                min = time;
+            }
+            if (time > max) {
+                max = time;
+            }
+        }
+        long range = max - min;
+        Plot[] plots;
+        try {
+            ArrayList<Plot> overflow = new ArrayList<>();
+            if (range > limit && size > 1024) {
+                plots = new Plot[Math.min((int) range, limit)];
+                int factor = (int) ((range / limit));
+                for (int i = 0; i < size; i++) {
+                    Plot plot = list.get(i);
+                    int index = (int) (plot.getTimestamp() - min) / factor;
+                    if (index < 0) {
+                        index = 0;
+                    }
+                    if (index >= plots.length) {
+                        overflow.add(plot);
+                        continue;
+                    }
+                    Plot current = plots[index];
+                    while (true) {
+                        if (current == null) {
+                            plots[index] = plot;
+                            break;
+                        }
+                        if (current.getTimestamp() > plot.getTimestamp()) {
+                            plots[index] = plot;
+                            plot = current;
+                        }
+                        index++;
+                        if (index >= plots.length) {
+                            overflow.add(plot);
+                            break;
+                        }
+                        current = plots[index];
+                    }
+                }
+            }
+            else if (range < size || size < 1024) {
+                ArrayList<Plot> result = new ArrayList<Plot>(list);
+                Collections.sort(result, new Comparator<Plot>() {
+                    @Override
+                    public int compare(Plot a, Plot b) {
+                        if (a.getTimestamp() > b.getTimestamp()) {
+                            return -1;
+                        }
+                        else if (b.getTimestamp() > a.getTimestamp()) {
+                            return 1;
+                        }
+                        return 0;
+                    }
+                });
+                return result;
+            }
+            else if (min != 0) {
+                plots = new Plot[(int) range];
+                for (int i = 0; i < size; i++) {
+                    Plot plot = list.get(i);
+                    int index = (int) (plot.getTimestamp() - min);
+                    if (index >= plots.length) {
+                        overflow.add(plot);
+                        continue;
+                    }
+                    Plot current = plots[index];
+                    while (true) {
+                        if (current == null) {
+                            plots[index] = plot;
+                            break;
+                        }
+                        if (current.getTimestamp() > plot.getTimestamp()) {
+                            plots[index] = plot;
+                            plot = current;
+                        }
+                        index++;
+                        if (index >= plots.length) {
+                            overflow.add(plot);
+                            break;
+                        }
+                        current = plots[index];
+                    }
+                }
+            }
+            else {
+                plots = new Plot[(int) range];
+                for (int i = 0; i < size; i++) {
+                    Plot plot = list.get(i);
+                    int index = (int) (plot.getTimestamp());
+                    if (index >= plots.length) {
+                        overflow.add(plot);
+                        continue;
+                    }
+                    Plot current = plots[index];
+                    // Move everything along until a free spot is found
+                    while (true) {
+                        if (current == null) {
+                            plots[index] = plot;
+                            break;
+                        }
+                        if (current.getTimestamp() > plot.getTimestamp()) {
+                            plots[index] = plot;
+                            plot = current;
+                        }
+                        index++;
+                        if (index >= plots.length) {
+                            overflow.add(plot);
+                            break;
+                        }
+                        current = plots[index];
+                    }
+                }
+            }
+            ArrayList<Plot> result = new ArrayList<>(size);
+            if (overflow.size() > 0) {
+                Collections.sort(overflow, new Comparator<Plot>() {
+                    @Override
+                    public int compare(Plot a, Plot b) {
+                        if (a.getTimestamp() > b.getTimestamp()) {
+                            return -1;
+                        }
+                        else if (b.getTimestamp() > a.getTimestamp()) {
+                            return 1;
+                        }
+                        return 0;
+                    }
+                });
+                for (Plot plot : overflow) {
+                    result.add(plot);
+                }
+            }
+            for (int i = plots.length - 1; i >= 0; i--) {
+                if (plots[i] != null) {
+                    result.add(plots[i]);
+                }
+            }
+            return result;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            ArrayList<Plot> result = new ArrayList<Plot>(list);
+            Collections.sort(result, new Comparator<Plot>() {
+                @Override
+                public int compare(Plot a, Plot b) {
+                    if (a.getTimestamp() > b.getTimestamp()) {
+                        return -1;
+                    }
+                    else if (b.getTimestamp() > a.getTimestamp()) {
+                        return 1;
+                    }
+                    return 0;
+                }
+            });
+            return result;
+        }
+    }
+    
     public static void sortPlotsByHash(Plot[] input) {
+        final int SIZE = 100;
+        List<Plot>[] bucket = new ArrayList[SIZE];
+        for (int i = 0; i < bucket.length; i++) {
+            bucket[i] = new ArrayList<Plot>();
+        }
+        boolean maxLength = false;
+        int tmp = -1, placement = 1;
+        while (!maxLength) {
+            maxLength = true;
+            for (Plot i : input) {
+                tmp = MathMan.getPositiveId(i.hashCode()) / placement;
+                bucket[tmp % SIZE].add(i);
+                if (maxLength && tmp > 0) {
+                    maxLength = false;
+                }
+            }
+            int a = 0;
+            for (int b = 0; b < SIZE; b++) {
+                for (Plot i : bucket[b]) {
+                    input[a++] = i;
+                }
+                bucket[b].clear();
+            }
+            placement *= SIZE;
+        }
+    }
+    
+    public static void sortPlotsByTimestamp(Plot[] input) {
         final int SIZE = 100;
         List<Plot>[] bucket = new ArrayList[SIZE];
         for (int i = 0; i < bucket.length; i++) {
@@ -613,7 +816,7 @@ public class PS {
         Collections.sort(worlds, new Comparator<String>() {
             @Override
             public int compare(String a, String b) {
-                if (StringMan.isEqual(a, priorityWorld)) {
+                if (priorityWorld != null && StringMan.isEqual(a, priorityWorld)) {
                     return -1;
                 }
                 return a.hashCode() - b.hashCode();
