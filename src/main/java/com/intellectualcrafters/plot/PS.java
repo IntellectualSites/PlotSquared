@@ -538,7 +538,7 @@ public class PS {
         List<Plot> overflow = new ArrayList<Plot>(overflowSize);
         for (Plot plot : plots) {
             int hash = MathMan.getPositiveId(plot.hashCode());
-            if (hash < hardmax) {
+            if (hash < hardmax && hash > -1) {
                 cache[hash] = plot;
             }
             else {

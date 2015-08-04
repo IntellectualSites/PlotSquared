@@ -304,7 +304,7 @@ public class list extends SubCommand {
     
     public void displayPlots(PlotPlayer player, List<Plot> plots, int pageSize, int page, String world, String[] args, boolean sort) {
         if (sort) {
-            plots = PS.get().sortPlots(plots, SortType.CREATION_DATE, world);
+            plots = PS.get().sortPlots(plots, SortType.DISTANCE_FROM_ORIGIN, world);
         }
         if (page < 0) {
             page = 0;

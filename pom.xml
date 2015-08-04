@@ -12,7 +12,7 @@
     <name>PlotSquared</name>
     <packaging>jar</packaging>
     <build>
-        <finalName>PlotSquared</finalName>
+        <finalName>PlotSquared-Uber</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
             <resource>
@@ -63,6 +63,21 @@
                             <finalName>PlotSquared-Sponge</finalName>
                             <excludes>
                                 <exclude>**/com/plotsquared/bukkit/**</exclude>
+                                <exclude>**/com/intellectualcrafters/plot/api/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>api</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <finalName>PlotSquared-Null</finalName>
+                            <excludes>
+                                <exclude>**/com/plotsquared/bukkit/**</exclude>
+                                <exclude>**/com/plotsquared/sponge/**</exclude>
                                 <exclude>**/com/intellectualcrafters/plot/api/*</exclude>
                             </excludes>
                         </configuration>
