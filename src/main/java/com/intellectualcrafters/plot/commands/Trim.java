@@ -212,6 +212,7 @@ public class Trim extends SubCommand {
             @Override
             public void run() {
                 deleteChunks(world, empty);
+                PS.log("$1Trim task complete!");
             }
         });
         return true;

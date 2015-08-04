@@ -23,15 +23,17 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "target",
-        usage = "/plot target <X;Z>",
+        usage = "/plot target <X;Z|nearest>",
         description = "Target a plot with your compass",
         permission = "plots.target",
         requiredType = RequiredType.NONE,
@@ -52,10 +54,24 @@ public class Target extends SubCommand {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
-        final PlotId id = MainUtil.parseId(args[0]);
+        PlotId id = MainUtil.parseId(args[0]);
         if (id == null) {
-            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            return false;
+            if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
+                Plot closest = null;
+                int distance = Integer.MAX_VALUE;
+                for (Plot plot : PS.get().getPlots(ploc.getWorld()).values()) {
+                    double current = plot.getBottom().getEuclideanDistanceSquared(ploc); 
+                    if (current < distance) {
+                        distance = (int) current;
+                        closest = plot;
+                    }
+                }
+                id = closest.id;
+            }
+            else {
+                MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+                return false;
+            }
         }
         final Location loc = MainUtil.getPlotHome(ploc.getWorld(), id);
         plr.setCompassTarget(loc);
