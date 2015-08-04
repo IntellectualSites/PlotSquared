@@ -44,7 +44,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.object.schematic.StateWrapper;
+import com.plotsquared.object.schematic.StateWrapper;
 
 /**
  * Schematic Handler

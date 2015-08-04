@@ -46,7 +46,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.plotsquared.bukkit.object.schematic.StateWrapper;
+import com.plotsquared.object.schematic.StateWrapper;
 
 public abstract class SchematicHandler {
     public static SchematicHandler manager;
@@ -442,12 +442,17 @@ public abstract class SchematicHandler {
         try {
             List<Tag> blockStates = ListTag.class.cast(tagMap.get("TileEntities")).getValue();
             for (Tag stateTag : blockStates) {
-                CompoundTag ct = ((CompoundTag) stateTag);
-                Map<String, Tag> state = ct.getValue();
-                short x = IntTag.class.cast(state.get("x")).getValue().shortValue();
-                short y = IntTag.class.cast(state.get("y")).getValue().shortValue();
-                short z = IntTag.class.cast(state.get("z")).getValue().shortValue();
-                new StateWrapper(ct).restoreTag(x, y, z, schem);
+                try {
+                    CompoundTag ct = ((CompoundTag) stateTag);
+                    Map<String, Tag> state = ct.getValue();
+                    short x = IntTag.class.cast(state.get("x")).getValue().shortValue();
+                    short y = IntTag.class.cast(state.get("y")).getValue().shortValue();
+                    short z = IntTag.class.cast(state.get("z")).getValue().shortValue();
+                    new StateWrapper(ct).restoreTag(x, y, z, schem);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         catch (Exception e) {

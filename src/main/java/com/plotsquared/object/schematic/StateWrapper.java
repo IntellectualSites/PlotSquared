@@ -1,4 +1,4 @@
-package com.plotsquared.bukkit.object.schematic;
+package com.plotsquared.object.schematic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,6 +90,14 @@ public class StateWrapper {
             }
         }
         return tags;
+    }
+    
+    public Map<String, Tag> serializeItem(org.spongepowered.api.item.inventory.ItemStack item) {
+        Map<String, Tag> data = new HashMap<String, Tag>();
+        
+        // FIXME serialize sponge item
+        
+        return data;
     }
     
     public Map<String, Tag> serializeItem(ItemStack item) {
