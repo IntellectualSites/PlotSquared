@@ -41,6 +41,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -178,8 +179,13 @@ public class Template extends SubCommand {
                 setup.step = new ConfigurationNode[0];
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);
-                MainUtil.sendMessage(plr, "Done!");
-                plr.teleport(BlockManager.manager.getSpawn(world));
+                SetBlockQueue.addNotify(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainUtil.sendMessage(plr, "Done!");
+                        plr.teleport(BlockManager.manager.getSpawn(world));
+                    }
+                });
                 return true;
             }
             case "export": {
@@ -210,7 +216,10 @@ public class Template extends SubCommand {
                 });
                 return true;
             }
+            default: {
+                C.COMMAND_SYNTAX.send(plr, this.getUsage());
+            }
         }
-        return true;
+        return false;
     }
 }

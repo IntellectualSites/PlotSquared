@@ -64,9 +64,6 @@ public class DebugRoadRegen extends SubCommand {
             manager.createRoadSouthEast(plotworld, plot);
             MainUtil.sendMessage(player, "&6Regenerating plot south/east roads: " + plot.id + "\n&6 - Result: &aSuccess");
         }
-        
-        
-        
         return true;
     }
 }
