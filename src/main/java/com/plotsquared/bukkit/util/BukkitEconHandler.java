@@ -7,12 +7,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
-import com.plotsquared.bukkit.object.BukkitPlayer;
 
 public class BukkitEconHandler extends EconHandler {
     

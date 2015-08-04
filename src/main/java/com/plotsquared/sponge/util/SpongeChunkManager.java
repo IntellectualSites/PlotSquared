@@ -103,12 +103,6 @@ public class SpongeChunkManager extends ChunkManager {
     }
     
     @Override
-    public void clearAllEntities(Plot plot) {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
     public void swap(String world, PlotId id, PlotId plotid) {
         // TODO Auto-generated method stub
         
@@ -116,6 +110,12 @@ public class SpongeChunkManager extends ChunkManager {
     
     @Override
     public void swap(String worldname, Location bot1, Location top1, Location bot2, Location top2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void clearAllEntities(Location pos1, Location pos2) {
         // TODO Auto-generated method stub
         
     }

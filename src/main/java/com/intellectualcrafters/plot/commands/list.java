@@ -30,6 +30,7 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.PS.SortType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -303,7 +304,7 @@ public class list extends SubCommand {
     
     public void displayPlots(PlotPlayer player, List<Plot> plots, int pageSize, int page, String world, String[] args, boolean sort) {
         if (sort) {
-            plots = PS.get().sortPlots(plots, world);
+            plots = PS.get().sortPlots(plots, SortType.CREATION_DATE, world);
         }
         if (page < 0) {
             page = 0;

@@ -67,6 +67,7 @@ public class SetBlockQueue {
                                 TaskManager.runTask(runnable);
                             }
                         }
+                        lastInt = -1;
                         lastBlock = null;
                         runnables = null;
                         blocks = new HashMap<>();
@@ -75,8 +76,8 @@ public class SetBlockQueue {
                         return;
                     }
                     long newLast = System.currentTimeMillis();
-                    last = Math.max(newLast - 100, last);
-                    while (blocks.size() > 0 && (System.currentTimeMillis() - last < 100 + allocate)) {
+                    last = Math.max(newLast - 50, last);
+                    while (blocks.size() > 0 && (System.currentTimeMillis() - last < 50 + allocate)) {
                         if (locked) {
                             return;
                         }
@@ -129,7 +130,7 @@ public class SetBlockQueue {
                         }
                     }
                 }
-            }, 2);
+            }, 1);
             TaskManager.tasks.put(current, task);
             running = true;
         }

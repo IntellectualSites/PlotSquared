@@ -38,7 +38,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -212,7 +211,7 @@ public class Merge extends SubCommand {
                                 return;
                             }
                             MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
-                            MainUtil.mergePlots(world, plots, true);
+                            MainUtil.mergePlots(world, plots, true, true);
                             MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
                         }
                         MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
@@ -241,7 +240,7 @@ public class Merge extends SubCommand {
             return false;
         }
         MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
-        MainUtil.mergePlots(world, plots, true);
+        MainUtil.mergePlots(world, plots, true, true);
         MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
         return true;
     }

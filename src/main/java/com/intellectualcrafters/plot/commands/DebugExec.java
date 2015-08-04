@@ -40,8 +40,6 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.bukkit.ChatColor;
-
 import com.google.common.io.Files;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;

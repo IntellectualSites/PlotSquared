@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.PS.SortType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -67,10 +68,10 @@ public class Visit extends SubCommand {
         UUID user = UUIDHandler.getCachedUUID(args[0], null);
         if (user != null ) {
             // do plots by username
-            plots = PS.get().sortPlots(PS.get().getPlots(user), null);
+            plots = PS.get().sortPlots(PS.get().getPlots(user), SortType.CREATION_DATE, null);
         } else if (PS.get().isPlotWorld(args[0])) {
             // do plots by world
-            plots = PS.get().sortPlots(PS.get().getPlots(args[0]).values(), null);
+            plots = PS.get().sortPlots(PS.get().getPlots(args[0]).values(), SortType.CREATION_DATE, null);
         }
         else {
             Plot plot = MainUtil.getPlotFromString(plr, args[0], true);

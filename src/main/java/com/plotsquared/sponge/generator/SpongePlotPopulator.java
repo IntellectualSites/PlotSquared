@@ -7,7 +7,6 @@ import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.gen.GeneratorPopulator;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;

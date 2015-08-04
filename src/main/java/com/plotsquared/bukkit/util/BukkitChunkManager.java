@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -44,7 +43,6 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.BlockLoc;
@@ -63,7 +61,6 @@ import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
 import com.plotsquared.bukkit.object.entity.EntityWrapper;
 
@@ -907,19 +904,28 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     @Override
-    public void clearAllEntities(final Plot plot) {
-        final List<Entity> entities = BukkitUtil.getEntities(plot.world);
+    public void clearAllEntities(final Location pos1, final Location pos2) {
+        final String world = pos1.getWorld();
+        final List<Entity> entities = BukkitUtil.getEntities(world);
+        final int bx = pos1.getX();
+        final int bz = pos1.getZ();
+        final int tx = pos2.getX();
+        final int tz = pos2.getZ();
         for (final Entity entity : entities) {
-            final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
-            if (plot.id.equals(id)) {
-                if (entity instanceof Player) {
-                    final Player player = (Player) entity;
-                    final PlotPlayer pp = BukkitUtil.getPlayer(player);
+            if (entity instanceof Player) {
+                final Player player = (Player) entity;
+                final PlotPlayer pp = BukkitUtil.getPlayer(player);
+                Plot plot = pp.getCurrentPlot();
+                if (plot != null) {
                     final Location plotHome = MainUtil.getDefaultHome(plot);
                     if (pp.getLocation().getY() <= plotHome.getY()) {
                         pp.teleport(plotHome);
                     }
-                } else {
+                }
+            }
+            else {
+                org.bukkit.Location loc = entity.getLocation();
+                if (loc.getX() >= bx && loc.getX() <= tx && loc.getZ() >= bz && loc.getZ() <= tz) {
                     entity.remove();
                 }
             }
@@ -997,8 +1003,13 @@ public class BukkitChunkManager extends ChunkManager {
         final Location top2 = MainUtil.getPlotTopLoc(worldname, pos2);
         swap(worldname, bot1, top1, bot2, top2);
 
-        clearAllEntities(MainUtil.getPlot(worldname, pos1));
-        clearAllEntities(MainUtil.getPlot(worldname, pos2));
+        Plot plot1 = MainUtil.getPlot(worldname, pos1);
+        Plot plot2 = MainUtil.getPlot(worldname, pos2);
+        
+        // TODO clear all entities
+        
+        clearAllEntities(plot1.getBottom().add(1, 0, 1), plot1.getTop());
+        clearAllEntities(plot2.getBottom().add(1, 0, 1), plot2.getTop());
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.bukkit.Bukkit;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;

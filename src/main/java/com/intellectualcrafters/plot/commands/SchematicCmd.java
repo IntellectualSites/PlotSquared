@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
@@ -181,7 +181,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(null, "&cNeed world arg. Use &7/plots sch exportall <world>");
                     return false;
                 }
-                final HashMap<PlotId, Plot> plotmap = PS.get().getPlots(args[1]);
+                final Map<PlotId, Plot> plotmap = PS.get().getPlots(args[1]);
                 if ((plotmap == null) || (plotmap.size() == 0)) {
                     MainUtil.sendMessage(plr, "&cInvalid world. Use &7/plots sch exportall <world>");
                     return false;

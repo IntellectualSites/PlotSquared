@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import javax.annotation.concurrent.ThreadSafe;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -103,9 +101,13 @@ public class Plot {
      */
     public boolean countsTowardsMax = true;
     /**
-     * If this plot is temporary i.e. not stored in the DB
+     * Represents whatever the database manager needs it to: <br>
+     *  - A value of -1 usually indicates the plot will not be stored in the DB<br>
+     *  - A value of 0 usually indicates that the DB manager hasn't set a value<br>
+     * @deprecated magical
      */
-    public final boolean temp;
+    @Deprecated
+    public int temp;
 
     /**
      * Constructor for a new plot
@@ -118,7 +120,6 @@ public class Plot {
         this.world = world;
         this.id = id;
         this.owner = owner;
-        this.temp = false;
     }
     
     /**
@@ -129,7 +130,7 @@ public class Plot {
      * @param owner
      * @param temp
      */
-    public Plot(String world, PlotId id, UUID owner, boolean temp) {
+    public Plot(String world, PlotId id, UUID owner, int temp) {
         this.world = world;
         this.id = id;
         this.owner = owner;
@@ -145,7 +146,7 @@ public class Plot {
      * @param denied
      * @param merged
      */
-    public Plot(final PlotId id, final UUID owner, final HashSet<UUID> trusted, final HashSet<UUID> members, final HashSet<UUID> denied, final String alias, final BlockLoc position, final Collection<Flag> flags, final String world, final boolean[] merged, final long timestamp) {
+    public Plot(final PlotId id, final UUID owner, final HashSet<UUID> trusted, final HashSet<UUID> members, final HashSet<UUID> denied, final String alias, final BlockLoc position, final Collection<Flag> flags, final String world, final boolean[] merged, final long timestamp, final int temp) {
         this.id = id;
         this.world = world;
         this.owner = owner;
@@ -162,7 +163,6 @@ public class Plot {
             }
         }
         this.timestamp = timestamp;
-        this.temp = false;
     }
 
     /**

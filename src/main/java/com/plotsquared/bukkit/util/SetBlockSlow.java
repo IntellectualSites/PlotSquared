@@ -6,8 +6,6 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import com.intellectualcrafters.plot.util.MainUtil;
-
 public class SetBlockSlow extends BukkitSetBlockManager {
     @Override
     public void set(final World world, final int x, final int y, final int z, final int id, final byte data) {

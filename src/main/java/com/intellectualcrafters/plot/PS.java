@@ -7,8 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -23,12 +21,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -115,7 +113,7 @@ public class PS {
     private int[] VERSION = null;
     private String LAST_VERSION;
     private boolean LOADING_WORLD = false;
-    private LinkedHashMap<String, HashMap<PlotId, Plot>> plots;
+    private ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> plots;
     private Database database;
     private Connection connection;
     private Thread thread;
@@ -354,7 +352,7 @@ public class PS {
     public void updatePlot(final Plot plot) {
         final String world = plot.world;
         if (!plots.containsKey(world)) {
-            plots.put(world, new HashMap<PlotId, Plot>());
+            plots.put(world, new ConcurrentHashMap<PlotId, Plot>());
         }
         plots.get(world).put(plot.id, plot);
     }
@@ -386,7 +384,7 @@ public class PS {
         plotworlds.put(world, plotworld);
         plotmanagers.put(world, manager);
         if (!plots.containsKey(world)) {
-            plots.put(world, new HashMap<PlotId, Plot>());
+            plots.put(world, new ConcurrentHashMap<PlotId, Plot>());
         }
     }
 
@@ -418,7 +416,8 @@ public class PS {
      *
      * @return HashMap containing the world name, and another map with the plot id and the plot object
      */
-    public HashMap<String, HashMap<PlotId, Plot>> getAllPlotsRaw() {
+    @Deprecated
+    public ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }
     
@@ -429,7 +428,7 @@ public class PS {
      */
     public Set<Plot> getPlots(PlotFilter... filters) {
         HashSet<Plot> set = new HashSet<>();
-        for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+        for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
             for (PlotFilter filter : filters) {
                 if (!filter.allowsWorld(entry.getKey())) {
                     continue;
@@ -455,7 +454,8 @@ public class PS {
      * @see #getAllPlotsRaw() to get the raw plot object
      * @param plots
      */
-    public void setAllPlotsRaw(final LinkedHashMap<String, HashMap<PlotId, Plot>> plots) {
+    @Deprecated
+    public void setAllPlotsRaw(final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> plots) {
         this.plots = plots;
     }
 
@@ -465,13 +465,19 @@ public class PS {
      * @return Set of Plot
      */
     public Set<Plot> getPlots() {
-        final ArrayList<Plot> newplots = new ArrayList<>();
-        for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+        int size = 0;
+        for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
             if (isPlotWorld(entry.getKey())) {
-                newplots.addAll(entry.getValue().values());
+                size += entry.getValue().size();
             }
         }
-        return new LinkedHashSet<>(newplots);
+        Set<Plot> result = new HashSet<>(size);
+        for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            if (isPlotWorld(entry.getKey())) {
+                result.addAll(entry.getValue().values());
+            }
+        }
+        return result;
     }
 
 
@@ -480,12 +486,17 @@ public class PS {
      * @return set of plot
      * @see #setAllPlotsRaw(LinkedHashMap) to set the raw plot object
      */
+    @Deprecated
     public Set<Plot> getPlotsRaw() {
-        final ArrayList<Plot> newplots = new ArrayList<>();
-        for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            newplots.addAll(entry.getValue().values());
+        int size = 0;
+        for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            size += entry.getValue().size();
         }
-        return new LinkedHashSet<>(newplots);
+        Set<Plot> result = new HashSet<>(size);
+        for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            result.addAll(entry.getValue().values());
+        }
+        return result;
     }
 
 
@@ -493,17 +504,20 @@ public class PS {
      * Sort a collection of plots by the hashcode (assumes that all plots are in the same world)
      * @param plots
      * @return ArrayList of plot
+     * @deprecated use sortPlot
      */
     @Deprecated
     public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
-        return sortPlotsByWorld(plots);
+        return sortPlots(plots, SortType.DISTANCE_FROM_ORIGIN, null);
     }
 
     /**
      * Sort plots by hashcode
      * @param plots
      * @return
+     * @deprecated Unchecked, please use {@link #sortPlots(Collection, SortType, String)} which has additional checks before calling this
      */
+    @Deprecated
     public ArrayList<Plot> sortPlotsByHash(Collection<Plot> plots) {
         int hardmax = 256000;
         int max = 0;
@@ -545,6 +559,13 @@ public class PS {
         return result;
     }
     
+    /**
+     * Sort plots by creation timestamp
+     * @param input
+     * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, String)} instead which will call this after checks
+     * @return
+     */
+    @Deprecated
     public static ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> input) {
         List<Plot> list;
         if (input instanceof ArrayList<?>) {
@@ -720,6 +741,10 @@ public class PS {
         }
     }
     
+    /**
+     * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, String)} instead which will in turn call this
+     * @param input
+     */
     public static void sortPlotsByHash(Plot[] input) {
         final int SIZE = 100;
         List<Plot>[] bucket = new ArrayList[SIZE];
@@ -748,6 +773,12 @@ public class PS {
         }
     }
     
+    /**
+     * Sort plots by timestamp
+     * @param input
+     * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, String)} instead which will in turn call this
+     */
+    @Deprecated
     public static void sortPlotsByTimestamp(Plot[] input) {
         final int SIZE = 100;
         List<Plot>[] bucket = new ArrayList[SIZE];
@@ -776,25 +807,26 @@ public class PS {
         }
     }
     
+    public enum SortType { CREATION_DATE, DISTANCE_FROM_ORIGIN; }
+    
     /**
      * Sort a collection of plots by world (with a priority world), then by hashcode
      * @param plots
-     * @param priorityWorld - Use "world" or "gibberish" if you don't care
-     * @see #sortPlotsByWorld(Collection) to sort plots by world, then by hashcode
-     * @see #sortPlots(Collection) to sort plots just by hashcode
+     * @param type The sorting method to use for each world (timestamp, or hash)
+     * @param priorityWorld - Use null, "world" or "gibberish" if you want default world order
      * @return ArrayList of plot
      */
-    public ArrayList<Plot> sortPlots(Collection<Plot> plots, final String priorityWorld) {
+    public ArrayList<Plot> sortPlots(Collection<Plot> plots, final SortType type, final String priorityWorld) {
         // group by world
         // sort each
         HashMap<String, Collection<Plot>> map = new HashMap<>();
         ArrayList<String> worlds = new ArrayList<String>(getPlotWorlds());
         int totalSize = 0;
-        for (Entry<String, HashMap<PlotId, Plot>> entry : this.plots.entrySet()) {
+        for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : this.plots.entrySet()) {
             totalSize += entry.getValue().size();
         }
         if (plots.size() == totalSize) {
-            for (Entry<String, HashMap<PlotId, Plot>> entry : this.plots.entrySet()) {
+            for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : this.plots.entrySet()) {
                 map.put(entry.getKey(), entry.getValue().values());
             }
         }
@@ -826,7 +858,17 @@ public class PS {
         });
         ArrayList<Plot> toReturn = new ArrayList<Plot>(plots.size());
         for (String world : worlds) {
-            toReturn.addAll(sortPlotsByHash(map.get(world)));
+            switch (type) {
+                case CREATION_DATE:
+                    toReturn.addAll(sortPlotsByTimestamp(map.get(world)));
+                    break;
+                case DISTANCE_FROM_ORIGIN:
+                    toReturn.addAll(sortPlotsByHash(map.get(world)));
+                    break;
+                default:
+                    break;
+                
+            }
         }
         return toReturn;
     }
@@ -835,10 +877,10 @@ public class PS {
     /**
      * Sort a collection of plots by world, then by hashcode
      * @param plots
-     * @see #sortPlots(Collection, String) to sort with a specific priority world
-     * @see #sortPlots(Collection) to sort plots just by hashcode
+     * @deprecated Use #sortPlots(Collection, String) instead
      * @return ArrayList of plot
      */
+    @Deprecated
     public ArrayList<Plot> sortPlotsByWorld(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
         ArrayList<String> worlds = new ArrayList<>(this.plots.keySet());
@@ -928,16 +970,25 @@ public class PS {
     }
 
 
+    private String lastWorld;
+    private Map<PlotId, Plot> lastMap;
+    
     /**
      * Get a map of the plots for a world
      * @param world
      * @return HashMap of PlotId to Plot
      */
-    public HashMap<PlotId, Plot> getPlots(final String world) {
-        if (plots.containsKey(world)) {
-            return plots.get(world);
+    @Deprecated
+    public Map<PlotId, Plot> getPlots(final String world) {
+        if (world == lastWorld) {
+            return lastMap;
         }
-        return new HashMap<>();
+        lastWorld = world;
+        if (plots.containsKey(world)) {
+            lastMap = plots.get(world);
+            return lastMap;
+        }
+        return new ConcurrentHashMap<>();
     }
 
 
@@ -984,7 +1035,7 @@ public class PS {
         if (callEvent) {
             EventUtil.manager.callDelete(world, id);
         }
-        HashMap<PlotId, Plot> allPlots = plots.get(world);
+        ConcurrentHashMap<PlotId, Plot> allPlots = plots.get(world);
         if (allPlots == null) {
             return false;
         }
@@ -1377,6 +1428,10 @@ public class PS {
      */
     public void disable() {
         try {
+            // Validate that all data in the db is correct
+            DBFunc.validatePlots(getPlotsRaw());
+            
+            // Close the connection
             database.closeConnection();
             UUIDHandler.handleShutdown();
         } catch (NullPointerException | SQLException e) {
@@ -1584,6 +1639,7 @@ public class PS {
         options.put("uuid.read-from-disk", Settings.UUID_FROM_DISK);
         
         // Mob stuff
+        options.put("kill_road_vehicles", Settings.KILL_ROAD_VEHICLES);
         options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
         options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
         
@@ -1702,6 +1758,7 @@ public class PS {
         
         // Mob stuff
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
+        Settings.KILL_ROAD_VEHICLES = config.getBoolean("kill_road_vehicles");
         Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
         
         // Clearing + Expiry

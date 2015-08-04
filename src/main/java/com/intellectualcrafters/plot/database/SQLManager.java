@@ -36,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
@@ -909,8 +910,8 @@ public class SQLManager implements AbstractDB {
      * Load all plots, helpers, denied, trusted, and every setting from DB into a hashmap
      */
     @Override
-    public LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots() {
-        final LinkedHashMap<String, HashMap<PlotId, Plot>> newplots = new LinkedHashMap<>();
+    public ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots() {
+        final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> newplots = new ConcurrentHashMap();
         final HashMap<Integer, Plot> plots = new HashMap<>();
         Statement stmt = null;
         try {
@@ -959,7 +960,7 @@ public class SQLManager implements AbstractDB {
                 else {
                     time = timestamp.getTime();
                 }
-                p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, worldname, new boolean[]{false, false, false, false}, time);
+                p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, worldname, new boolean[]{false, false, false, false}, time, id);
                 plots.put(id, p);
             }
             if (Settings.CACHE_RATINGS) {
@@ -1051,7 +1052,7 @@ public class SQLManager implements AbstractDB {
                 if (plot != null) {
                     plots.remove(id);
                     if (!newplots.containsKey(plot.world)) {
-                        newplots.put(plot.world, new HashMap<PlotId, Plot>());
+                        newplots.put(plot.world, new ConcurrentHashMap<PlotId, Plot>());
                     }
                     newplots.get(plot.world).put(plot.id, plot);
                     final String alias = r.getString("alias");
@@ -2262,5 +2263,50 @@ public class SQLManager implements AbstractDB {
             this.id = id;
             this.settings = settings;
         }
+    }
+
+    @Override
+    public void validateAllPlots(Set<Plot> toValidate) {
+//        ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> database = getPlots();
+//        
+//        ArrayList<Plot> toCreate = new ArrayList<>();
+//        ArrayList<UUID> toTrust1 = new ArrayList<>();
+//        ArrayList<Plot> toTrust2 = new ArrayList<>();
+//        
+//        for (Plot plot : plots) {
+//            if (plot.temp) {
+//                continue;
+//            }
+//            ConcurrentHashMap<PlotId, Plot> worldplots = database.get(plot.world);
+//            if (worldplots == null) {
+//                toCreate.add(plot);
+//                continue;
+//            }
+//            Plot dataplot = worldplots.get(plot.id);
+//            if (dataplot == null) {
+//                toCreate.add(plot);
+//                continue;
+//            }
+//            // owner
+//            if (!plot.owner.equals(dataplot)) {
+//                toSet.add(plot);
+//                continue;
+//            }
+//            plot.
+//            // trusted
+//            if (!plot.getTrusted().equals(dataplot.trusted)) {
+//                toSet.add(plot);
+//                continue;
+//            }
+//            if (!plot.getMembers().equals(dataplot.members)) {
+//                toSet.add(plot);
+//                continue;
+//            }
+//            if (!plot.getDenied().equals(dataplot.denied)) {
+//                toSet.add(plot);
+//                continue;
+//            }
+//            ssettings = plot.getSettings();
+//        }
     }
 }

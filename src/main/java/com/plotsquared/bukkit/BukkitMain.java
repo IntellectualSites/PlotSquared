@@ -16,8 +16,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.metadata.MetadataValueAdapter;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -200,98 +198,107 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 for (final PlotWorld pw : PS.get().getPlotWorldObjects()) {
                     world = Bukkit.getWorld(pw.worldname);
                     try {
-                    for (Entity entity : world.getEntities()) {
-                        switch (entity.getType()) {
-                            case EGG:
-                            case ENDER_CRYSTAL:
-                            case COMPLEX_PART:
-                            case ARMOR_STAND:
-                            case FISHING_HOOK:
-                            case ENDER_SIGNAL:
-                            case EXPERIENCE_ORB:
-                            case LEASH_HITCH:
-                            case FIREWORK:
-                            case WEATHER:
-                            case LIGHTNING:
-                            case WITHER_SKULL:
-                            case UNKNOWN:
-                            case ITEM_FRAME:
-                            case PAINTING:
-                            case PLAYER: {
-                                // non moving / unremovable
-                                continue;
-                            }
-                            case THROWN_EXP_BOTTLE:
-                            case SPLASH_POTION:
-                            case SNOWBALL:
-                            case ENDER_PEARL:
-                            case ARROW: {
-                                // managed elsewhere | projectile
-                                continue;
-                            }
-                            case MINECART:
-                            case MINECART_CHEST:
-                            case MINECART_COMMAND:
-                            case MINECART_FURNACE:
-                            case MINECART_HOPPER:
-                            case MINECART_MOB_SPAWNER:
-                            case MINECART_TNT:
-                            case BOAT: {
-                                // vehicle
-                                continue;
-                            }
-                            case SMALL_FIREBALL:
-                            case FIREBALL:
-                            case DROPPED_ITEM: {
-                                // dropped item
-                                continue;
-                            }
-                            case PRIMED_TNT:
-                            case FALLING_BLOCK:  {
-                                // managed elsewhere
-                                continue;
-                            }
-                            case BAT:
-                            case BLAZE:
-                            case CAVE_SPIDER:
-                            case CHICKEN:
-                            case COW:
-                            case CREEPER:
-                            case ENDERMAN:
-                            case ENDERMITE:
-                            case ENDER_DRAGON:
-                            case GHAST:
-                            case GIANT:
-                            case GUARDIAN:
-                            case HORSE:
-                            case IRON_GOLEM:
-                            case MAGMA_CUBE:
-                            case MUSHROOM_COW:
-                            case OCELOT:
-                            case PIG:
-                            case PIG_ZOMBIE:
-                            case RABBIT:
-                            case SHEEP:
-                            case SILVERFISH:
-                            case SKELETON:
-                            case SLIME:
-                            case SNOWMAN:
-                            case SPIDER:
-                            case SQUID:
-                            case VILLAGER:
-                            case WITCH:
-                            case WITHER:
-                            case WOLF:
-                            case ZOMBIE:
-                            default: {
-                                Location loc = entity.getLocation();
-                                if (MainUtil.isPlotRoad(BukkitUtil.getLocation(loc))) {
-                                    entity.remove();
+                        for (Entity entity : world.getEntities()) {
+                            switch (entity.getType()) {
+                                case EGG:
+                                case ENDER_CRYSTAL:
+                                case COMPLEX_PART:
+                                case ARMOR_STAND:
+                                case FISHING_HOOK:
+                                case ENDER_SIGNAL:
+                                case EXPERIENCE_ORB:
+                                case LEASH_HITCH:
+                                case FIREWORK:
+                                case WEATHER:
+                                case LIGHTNING:
+                                case WITHER_SKULL:
+                                case UNKNOWN:
+                                case ITEM_FRAME:
+                                case PAINTING:
+                                case PLAYER: {
+                                    // non moving / unremovable
+                                    continue;
                                 }
-                                break;
+                                case THROWN_EXP_BOTTLE:
+                                case SPLASH_POTION:
+                                case SNOWBALL:
+                                case ENDER_PEARL:
+                                case ARROW: {
+                                    // managed elsewhere | projectile
+                                    continue;
+                                }
+                                case MINECART:
+                                case MINECART_CHEST:
+                                case MINECART_COMMAND:
+                                case MINECART_FURNACE:
+                                case MINECART_HOPPER:
+                                case MINECART_MOB_SPAWNER:
+                                case MINECART_TNT:
+                                case BOAT: {
+                                    if (!Settings.KILL_ROAD_VEHICLES) {
+                                        continue;
+                                    }
+                                    Location loc = entity.getLocation();
+                                    if (MainUtil.isPlotRoad(BukkitUtil.getLocation(loc))) {
+                                        entity.remove();
+                                    }
+                                    break;
+                                }
+                                case SMALL_FIREBALL:
+                                case FIREBALL:
+                                case DROPPED_ITEM: {
+                                    // dropped item
+                                    continue;
+                                }
+                                case PRIMED_TNT:
+                                case FALLING_BLOCK:  {
+                                    // managed elsewhere
+                                    continue;
+                                }
+                                case BAT:
+                                case BLAZE:
+                                case CAVE_SPIDER:
+                                case CHICKEN:
+                                case COW:
+                                case CREEPER:
+                                case ENDERMAN:
+                                case ENDERMITE:
+                                case ENDER_DRAGON:
+                                case GHAST:
+                                case GIANT:
+                                case GUARDIAN:
+                                case HORSE:
+                                case IRON_GOLEM:
+                                case MAGMA_CUBE:
+                                case MUSHROOM_COW:
+                                case OCELOT:
+                                case PIG:
+                                case PIG_ZOMBIE:
+                                case RABBIT:
+                                case SHEEP:
+                                case SILVERFISH:
+                                case SKELETON:
+                                case SLIME:
+                                case SNOWMAN:
+                                case SPIDER:
+                                case SQUID:
+                                case VILLAGER:
+                                case WITCH:
+                                case WITHER:
+                                case WOLF:
+                                case ZOMBIE:
+                                default: {
+                                    if (!Settings.KILL_ROAD_MOBS) {
+                                        continue;
+                                    }
+                                    Location loc = entity.getLocation();
+                                    if (MainUtil.isPlotRoad(BukkitUtil.getLocation(loc))) {
+                                        entity.remove();
+                                    }
+                                    break;
+                                }
                             }
                         }
-                    }
                     } catch (final Throwable e) {
                         ++this.error;
                     } finally {

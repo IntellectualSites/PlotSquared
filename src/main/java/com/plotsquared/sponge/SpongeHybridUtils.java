@@ -1,6 +1,5 @@
 package com.plotsquared.sponge;
 
-import org.bukkit.block.Block;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.World;
@@ -11,7 +10,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.sponge.util.SpongeUtil;
 
 public class SpongeHybridUtils extends HybridUtils {

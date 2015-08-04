@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.PS.SortType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -51,7 +52,7 @@ public class Home extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, String[] args) {
         
-        final ArrayList<Plot> plots = PS.get().sortPlotsByWorld(PS.get().getPlots(plr));
+        final ArrayList<Plot> plots = PS.get().sortPlots(PS.get().getPlots(plr), SortType.CREATION_DATE, null);
         if (plots.size() == 1) {
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;

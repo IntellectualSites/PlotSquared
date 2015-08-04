@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
@@ -56,11 +56,16 @@ public class DBFunc {
     public static AbstractDB dbManager;
 
     public static void movePlot(final Plot originalPlot, final Plot newPlot) {
-        if (originalPlot.temp || newPlot.temp) {
+        if (originalPlot.temp != -1 || newPlot.temp != -1) {
             return;
         }
         dbManager.movePlot(originalPlot, newPlot);
     }
+    
+    public static void validatePlots(Set<Plot> plots) {
+        dbManager.validateAllPlots(plots);
+    }
+    
     /**
      * Check if a resultset contains a column
      * @param rs
@@ -90,7 +95,7 @@ public class DBFunc {
      * @param uuid New Owner
      */
     public static void setOwner(final Plot plot, final UUID uuid) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.setOwner(plot, uuid);
@@ -111,7 +116,7 @@ public class DBFunc {
      * @param plot Plot to create
      */
     public static void createPlot(final Plot plot) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.createPlot(plot);
@@ -123,7 +128,7 @@ public class DBFunc {
      * @param plot Plot to create
      */
     public static void createPlotAndSettings(final Plot plot) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.createPlotAndSettings(plot);
@@ -144,7 +149,7 @@ public class DBFunc {
      * @param plot Plot to delete
      */
     public static void delete(final Plot plot) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.delete(plot);
@@ -161,7 +166,7 @@ public class DBFunc {
      * @param plot Plot Object
      */
     public static void createPlotSettings(final int id, final Plot plot) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.createPlotSettings(id, plot);
@@ -192,19 +197,19 @@ public class DBFunc {
     /**
      * @return Plots
      */
-    public static LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots() {
+    public static ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots() {
         return dbManager.getPlots();
     }
 
     public static void setMerged(final Plot plot, final boolean[] merged) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.setMerged(plot, merged);
     }
 
     public static void setFlags(final Plot plot, final Collection<Flag> flags) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.setFlags(plot, flags);
@@ -219,7 +224,7 @@ public class DBFunc {
      * @param alias
      */
     public static void setAlias(final Plot plot, final String alias) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.setAlias(plot, alias);
@@ -238,7 +243,7 @@ public class DBFunc {
      * @param position
      */
     public static void setPosition(final Plot plot, final String position) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.setPosition(plot, position);
@@ -258,14 +263,14 @@ public class DBFunc {
      * @param comment
      */
     public static void removeComment(final Plot plot, final PlotComment comment) {
-        if (plot != null && plot.temp) {
+        if (plot != null && plot.temp != -1) {
             return;
         }
         dbManager.removeComment(plot, comment);
     }
     
     public static void clearInbox(final Plot plot, final String inbox) {
-        if (plot != null && plot.temp) {
+        if (plot != null && plot.temp != -1) {
             return;
         }
         dbManager.clearInbox(plot, inbox);
@@ -276,7 +281,7 @@ public class DBFunc {
      * @param comment
      */
     public static void setComment(final Plot plot, final PlotComment comment) {
-        if (plot != null && plot.temp) {
+        if (plot != null && plot.temp != -1) {
             return;
         }
         dbManager.setComment(plot, comment);
@@ -286,7 +291,7 @@ public class DBFunc {
      * @param plot
      */
     public static void getComments(final Plot plot, final String inbox, RunnableVal whenDone) {
-        if (plot != null && plot.temp) {
+        if (plot != null && plot.temp != -1) {
             return;
         }
         dbManager.getComments(plot, inbox, whenDone);
@@ -297,7 +302,7 @@ public class DBFunc {
      * @param uuid
      */
     public static void removeTrusted(final Plot plot, final UUID uuid) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.removeTrusted(plot, uuid);
@@ -332,7 +337,7 @@ public class DBFunc {
      * @param uuid
      */
     public static void removeMember(final Plot plot, final UUID uuid) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.removeMember(plot, uuid);
@@ -353,7 +358,7 @@ public class DBFunc {
      * @param uuid
      */
     public static void setTrusted(final Plot plot, final UUID uuid) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.setTrusted(plot, uuid);
@@ -369,7 +374,7 @@ public class DBFunc {
      * @param uuid
      */
     public static void setMember(final Plot plot, final UUID uuid) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.setMember(plot, uuid);
@@ -385,7 +390,7 @@ public class DBFunc {
      * @param uuid
      */
     public static void removeDenied(final Plot plot, final UUID uuid) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.removeDenied(plot, uuid);
@@ -397,21 +402,21 @@ public class DBFunc {
      * @param uuid
      */
     public static void setDenied(final Plot plot, final UUID uuid) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.setDenied(plot, uuid);
     }
 
     public static HashMap<UUID, Integer> getRatings(final Plot plot) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return new HashMap<>();
         }
         return dbManager.getRatings(plot);
     }
     
     public static void setRating(Plot plot, UUID rater, int value) {
-        if (plot.temp) {
+        if (plot.temp != -1) {
             return;
         }
         dbManager.setRating(plot, rater, value);

@@ -17,14 +17,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.Platform;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.manipulator.block.StoneData;
 import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.entity.player.gamemode.GameModes;
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.entity.player.PlayerChatEvent;
 import org.spongepowered.api.event.state.PreInitializationEvent;
@@ -521,7 +519,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public void registerCommands() {
-        getGame().getCommandDispatcher().register(plugin, new SpongeCommand(), "plots", "p", "plot", "ps", "plotsquared", "p2");
+        getGame().getCommandDispatcher().register(plugin, new SpongeCommand(), "plots", "p", "plot", "ps", "plotsquared", "p2", "2");
     }
 
     @Override

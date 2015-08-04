@@ -225,7 +225,7 @@ public class Auto extends SubCommand {
                             Claim.claimPlot(plr, plot, teleport, true);
                         }
                     }
-                    if (!MainUtil.mergePlots(worldname, MainUtil.getPlotSelectionIds(start, end), true)) {
+                    if (!MainUtil.mergePlots(worldname, MainUtil.getPlotSelectionIds(start, end), true, true)) {
                         return false;
                     }
                     br = true;

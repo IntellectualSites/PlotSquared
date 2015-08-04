@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.BlockLoc;
@@ -289,7 +289,7 @@ public class MainUtil {
                 MainUtil.sendMessage(player, C.REMOVED_BALANCE, cost + "");
             }
         }
-        return MainUtil.mergePlots(world, plotIds, true);
+        return MainUtil.mergePlots(world, plotIds, true, true);
     }
     
     public static boolean unlinkPlot(final Plot plot) {
@@ -620,10 +620,13 @@ public class MainUtil {
      *
      * @return boolean (success)
      */
-    public static boolean mergePlots(final String world, final ArrayList<PlotId> plotIds, final boolean removeRoads) {
+    public static boolean mergePlots(final String world, final ArrayList<PlotId> plotIds, final boolean removeRoads, final boolean updateDatabase) {
         if (plotIds.size() < 2) {
             return false;
         }
+        
+//        merged plots set db before finished merging
+        
         final PlotId pos1 = plotIds.get(0);
         final PlotId pos2 = plotIds.get(plotIds.size() - 1);
         final PlotManager manager = PS.get().getPlotManager(world);
@@ -676,14 +679,16 @@ public class MainUtil {
                 }
             }
         }
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                final PlotId id = new PlotId(x, y);
-                final Plot plot = PS.get().getPlots(world).get(id);
-                DBFunc.setMerged(plot, plot.getSettings().getMerged());
+        manager.finishPlotMerge(plotworld, plotIds);
+        if (updateDatabase) {
+            for (int x = pos1.x; x <= pos2.x; x++) {
+                for (int y = pos1.y; y <= pos2.y; y++) {
+                    final PlotId id = new PlotId(x, y);
+                    final Plot plot = PS.get().getPlots(world).get(id);
+                    DBFunc.setMerged(plot, plot.getSettings().getMerged());
+                }
             }
         }
-        manager.finishPlotMerge(plotworld, plotIds);
         return true;
     }
     
@@ -744,7 +749,7 @@ public class MainUtil {
     
     /**
      * Merges 2 plots Removes the road inbetween <br> - Assumes the first plot parameter is lower <br> - Assumes neither
-     * are a Mega-plot <br> - Assumes plots are directly next to each other <br> - Saves to DB
+     * are a Mega-plot <br> - Assumes plots are directly next to each other <br> - Does not save to DB
      *
      * @param world
      * @param lesserPlot
@@ -840,6 +845,7 @@ public class MainUtil {
         ArrayList<PlotId> plots;
         boolean merge = true;
         int count = 0;
+        ArrayList<PlotId> toUpdate = new ArrayList<>();
         while (merge) {
             if (count > 16) {
                 break;
@@ -849,37 +855,45 @@ public class MainUtil {
             final PlotId top = getTopPlot(plot).id;
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
             if (ownsPlots(plot.world, plots, uuid, 0)) {
-                final boolean result = mergePlots(plot.world, plots, removeRoads);
+                final boolean result = mergePlots(plot.world, plots, removeRoads, false);
                 if (result) {
+                    toUpdate.addAll(plots);
                     merge = true;
                     continue;
                 }
             }
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
             if (ownsPlots(plot.world, plots, uuid, 1)) {
-                final boolean result = mergePlots(plot.world, plots, removeRoads);
+                final boolean result = mergePlots(plot.world, plots, removeRoads, false);
                 if (result) {
+                    toUpdate.addAll(plots);
                     merge = true;
                     continue;
                 }
             }
             plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
             if (ownsPlots(plot.world, plots, uuid, 2)) {
-                final boolean result = mergePlots(plot.world, plots, removeRoads);
+                final boolean result = mergePlots(plot.world, plots, removeRoads, false);
                 if (result) {
+                    toUpdate.addAll(plots);
                     merge = true;
                     continue;
                 }
             }
             plots = getPlotSelectionIds(new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
             if (ownsPlots(plot.world, plots, uuid, 3)) {
-                final boolean result = mergePlots(plot.world, plots, removeRoads);
+                final boolean result = mergePlots(plot.world, plots, removeRoads, false);
                 if (result) {
+                    toUpdate.addAll(plots);
                     merge = true;
                     continue;
                 }
             }
             merge = false;
+        }
+        for (PlotId id : toUpdate) {
+            Plot update = getPlot(plot.world, id);
+            DBFunc.setMerged(plot, plot.getSettings().getMerged());
         }
     }
 
@@ -944,7 +958,7 @@ public class MainUtil {
      */
     public static Plot createPlotAbs(final UUID uuid, final Plot plot) {
         final String w = plot.world;
-        HashMap<PlotId, Plot> plots = PS.get().getPlots(plot.world);
+        Map<PlotId, Plot> plots = PS.get().getPlots(plot.world);
         Plot p = plots.get(plot.id);
         if (p != null) {
             return p;
@@ -985,9 +999,12 @@ public class MainUtil {
         if (runners.containsKey(plot)) {
             return false;
         }
-        ChunkManager.manager.clearAllEntities(plot);
+        long start = System.currentTimeMillis();
+        ChunkManager.manager.clearAllEntities(plot.getBottom().add(1, 0, 1), plot.getTop());
+        if (isDelete) {
+            removeSign(plot);
+        }
         clear(plot, isDelete, whenDone);
-        removeSign(plot);
         return true;
     }
 

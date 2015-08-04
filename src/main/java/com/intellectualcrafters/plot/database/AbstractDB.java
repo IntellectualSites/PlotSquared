@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
@@ -119,7 +119,12 @@ public interface AbstractDB {
     /**
      * @return A linked hashmap containing all plots
      */
-    LinkedHashMap<String, HashMap<PlotId, Plot>> getPlots();
+    ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots();
+    
+    /**
+     * 
+     */
+    void validateAllPlots(Set<Plot> toValidate);
 
     /**
      * @return A hashmap containing all plot clusters

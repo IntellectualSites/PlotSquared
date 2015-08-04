@@ -126,7 +126,7 @@ public abstract class ChunkManager {
      */
     public abstract boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone);
 
-    public abstract void clearAllEntities(final Plot plot);
+    public abstract void clearAllEntities(final Location pos1, final Location pos2);
     
     public abstract void swap(String world, PlotId id, PlotId plotid);
 
