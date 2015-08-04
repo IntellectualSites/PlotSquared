@@ -42,7 +42,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class CreateRoadSchematic extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer player, final String ... args) {
+    public boolean onCommand(PlotPlayer player, final String ... args) {
         final Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
