@@ -116,7 +116,7 @@ public class Trim extends SubCommand {
         System.currentTimeMillis();
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
-        plots.addAll(PS.get().getPlots(world).values());
+        plots.addAll(PS.get().getPlotsInWorld(world));
         final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");

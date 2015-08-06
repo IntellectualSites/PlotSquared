@@ -104,7 +104,7 @@ public interface AbstractDB {
      *
      * @return Integer = Plot Entry Id
      */
-    int getId(final String world, final PlotId id2);
+    int getId(final Plot plot);
 
     /**
      * Get the id of a given plot cluster

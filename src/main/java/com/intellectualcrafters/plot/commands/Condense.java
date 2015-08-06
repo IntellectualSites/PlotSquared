@@ -76,7 +76,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 final int radius = Integer.parseInt(args[2]);
-                final Collection<Plot> plots = PS.get().getPlots(worldname).values();
+                final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
                 final int size = plots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {
@@ -165,7 +165,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 final int radius = Integer.parseInt(args[2]);
-                final Collection<Plot> plots = PS.get().getPlots(worldname).values();
+                final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
                 final int size = plots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {

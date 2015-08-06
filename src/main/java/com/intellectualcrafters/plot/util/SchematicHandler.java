@@ -693,7 +693,7 @@ public abstract class SchematicHandler {
      * @return tag
      */
     public void getCompoundTag(final String world, final PlotId id, RunnableVal<CompoundTag> whenDone) {
-        if (!PS.get().getPlots(world).containsKey(id)) {
+        if (PS.get().getPlot(world, id) == null) {
             whenDone.run();
             return;
         }

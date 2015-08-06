@@ -1,7 +1,9 @@
 package com.intellectualcrafters.plot.util;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -123,6 +125,18 @@ public class StringMan {
     
     public static String join(Collection<?> collection, String delimiter) {
         return join(collection.toArray(), delimiter);
+    }
+    
+    public static String joinOrdered(Collection<?> collection, String delimiter) {
+        Object[] array = collection.toArray();
+        Arrays.sort(array, new Comparator<Object>() {
+            @Override
+            public int compare(Object a, Object b) {
+                return a.hashCode() - b.hashCode();
+            }
+            
+        });
+        return join(array, delimiter);
     }
     
     public static String join(Collection<?> collection, char delimiter) {

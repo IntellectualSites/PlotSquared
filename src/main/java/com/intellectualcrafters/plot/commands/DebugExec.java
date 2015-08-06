@@ -72,6 +72,8 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.BukkitHybridUtils;
+import com.plotsquared.general.commands.Command;
+import com.plotsquared.general.commands.CommandCaller;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -85,6 +87,19 @@ public class DebugExec extends SubCommand {
 
     private ScriptEngine engine;
     private Bindings scope;
+    
+    public DebugExec() {
+        File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
+        if (file.exists()) {
+            init();
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    onCommand(ConsolePlayer.getConsole(), new String[] {"runasync", "start.js"});
+                }
+            }, 1);
+        }
+    }
     
     public void init() {
         if (engine != null) {
@@ -350,6 +365,33 @@ public class DebugExec extends SubCommand {
                     MainUtil.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, "|") + ">");
                     return false;
                 }
+                case "addcmd": {
+                    try {
+                    final String cmd = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8), System.getProperty("line.separator"));
+                    Command<PlotPlayer> subcommand = new Command<PlotPlayer>(args[1].split("\\.")[0]) {
+                        @Override
+                        public boolean onCommand(PlotPlayer plr, String[] args) {
+                            try {
+                                scope.put("PlotPlayer", plr);
+                                scope.put("args", args);
+                                engine.eval(cmd, scope);
+                                return true;
+                            } catch (ScriptException e) {
+                                e.printStackTrace();
+                                MainUtil.sendMessage(player, C.COMMAND_WENT_WRONG);
+                                return false;
+                            }
+                        }
+                    };
+                    MainCommand.getInstance().addCommand(subcommand);
+                    return true;
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec addcmd <file>");
+                        return false;
+                    }
+                }
                 case "runasync": {
                     async = true;
                 }
@@ -379,7 +421,7 @@ public class DebugExec extends SubCommand {
             }
             init();
             scope.put("PlotPlayer", player);
-            System.out.print("> " + script);
+            PS.debug("> " + script);
             try {
                 if (async) {
                     final String toExec = script;

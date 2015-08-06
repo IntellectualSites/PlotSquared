@@ -210,7 +210,7 @@ public class Set extends SubCommand {
                 MainUtil.sendMessage(plr, C.ALIAS_TOO_LONG);
                 return false;
             }
-            for (final Plot p : PS.get().getPlots(plr.getLocation().getWorld()).values()) {
+            for (final Plot p : PS.get().getPlotsInWorld(plr.getLocation().getWorld())) {
                 if (p.getSettings().getAlias().equalsIgnoreCase(alias)) {
                     MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;

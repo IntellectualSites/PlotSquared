@@ -107,7 +107,7 @@ public class SetOwner extends SubCommand {
             return false;
         }
         for (final PlotId id : plots) {
-            Plot current = PS.get().getPlots(world).get(id);
+            Plot current = PS.get().getPlot(world, id);
             if (current == null) {
                 current = MainUtil.getPlot(world, id);
                 current.owner = uuid;

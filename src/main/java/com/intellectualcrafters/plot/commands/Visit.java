@@ -71,7 +71,7 @@ public class Visit extends SubCommand {
             plots = PS.get().sortPlots(PS.get().getPlots(user), SortType.CREATION_DATE, null);
         } else if (PS.get().isPlotWorld(args[0])) {
             // do plots by world
-            plots = PS.get().sortPlots(PS.get().getPlots(args[0]).values(), SortType.CREATION_DATE, null);
+            plots = PS.get().sortPlots(PS.get().getPlotsInWorld(args[0]), SortType.CREATION_DATE, null);
         }
         else {
             Plot plot = MainUtil.getPlotFromString(plr, args[0], true);

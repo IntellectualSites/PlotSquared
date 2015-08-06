@@ -181,12 +181,11 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(null, "&cNeed world arg. Use &7/plots sch exportall <world>");
                     return false;
                 }
-                final Map<PlotId, Plot> plotmap = PS.get().getPlots(args[1]);
-                if ((plotmap == null) || (plotmap.size() == 0)) {
+                Collection<Plot> plots = PS.get().getPlotsInWorld(args[1]);
+                if ((plots.size() == 0)) {
                     MainUtil.sendMessage(plr, "&cInvalid world. Use &7/plots sch exportall <world>");
                     return false;
                 }
-                Collection<Plot> plots = plotmap.values();
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
 					@Override
 					public void run() {
@@ -199,7 +198,7 @@ public class SchematicCmd extends SubCommand {
                 }
                 else {
                 	MainUtil.sendMessage(plr, "&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
-                	MainUtil.sendMessage(plr, "&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plotmap.size() + "&7 plots...");
+                	MainUtil.sendMessage(plr, "&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plots.size() + "&7 plots...");
                 }
                 break;
             }

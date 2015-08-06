@@ -163,7 +163,7 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + world);
                     return false;
                 }
-                plots = new ArrayList<>(PS.get().getPlots(world).values());
+                plots = new ArrayList<>(PS.get().getPlotsInWorld(world));
                 break;
             }
             case "all": {
@@ -268,7 +268,7 @@ public class list extends SubCommand {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + args[0]);
                         return false;
                     }
-                    plots = new ArrayList<>(PS.get().getPlots(args[0]).values());
+                    plots = new ArrayList<>(PS.get().getPlotsInWorld(args[0]));
                     break;
                 }
                 UUID uuid = UUIDHandler.getUUID(args[0], null);

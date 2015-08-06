@@ -156,7 +156,7 @@ public class Merge extends SubCommand {
         HashSet<PlotId> multiPlots = new HashSet<>();
         final UUID u1 = plot.owner;
         for (final PlotId myid : plots) {
-            final Plot myplot = PS.get().getPlots(world).get(myid);
+            final Plot myplot = PS.get().getPlot(world, myid);
             if (myplot == null || myplot.owner == null) {
                 MainUtil.sendMessage(plr, C.NO_PERM_MERGE.s().replaceAll("%plot%", myid.toString()));
                 return false;

@@ -100,7 +100,7 @@ public class Purge extends SubCommand {
         final PlotId id = getId(arg);
         if (id != null) {
             final HashSet<Integer> ids = new HashSet<Integer>();
-            final int DBid = DBFunc.getId(worldname, id);
+            final int DBid = DBFunc.getId(MainUtil.getPlot(worldname, id));
             if (DBid != Integer.MAX_VALUE) {
                 ids.add(DBid);
             }
@@ -117,7 +117,7 @@ public class Purge extends SubCommand {
             return finishPurge(length);
         }
         if (arg.equals("unknown")) {
-            final Collection<Plot> plots = PS.get().getPlots(worldname).values();
+            final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
             final Set<PlotId> ids = new HashSet<>();
             for (final Plot plot : plots) {
                 if (plot.owner != null) {
@@ -135,7 +135,7 @@ public class Purge extends SubCommand {
             return finishPurge(length);
         }
         if (arg.equals("unowned")) {
-            final Collection<Plot> plots = PS.get().getPlots(worldname).values();
+            final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
             final Set<PlotId> ids = new HashSet<>();
             for (final Plot plot : plots) {
                 if (plot.owner == null) {

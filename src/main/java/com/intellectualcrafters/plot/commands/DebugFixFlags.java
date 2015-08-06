@@ -60,7 +60,7 @@ public class DebugFixFlags extends SubCommand {
             return false;
         }
         MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
-        for (final Plot plot : PS.get().getPlots(world).values()) {
+        for (final Plot plot : PS.get().getPlotsInWorld(world)) {
             final HashMap<String, Flag> flags = plot.getSettings().flags;
             Iterator<Entry<String, Flag>> i = flags.entrySet().iterator();
             boolean changed = false;

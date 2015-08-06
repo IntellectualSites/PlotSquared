@@ -232,7 +232,7 @@ public class LikePlotMeConverter {
             for (final String world : plots.keySet()) {
                 int duplicate = 0;
                 for (final Plot plot : plots.get(world).values()) {
-                    if (!PS.get().getPlots(world).containsKey(plot.id)) {
+                    if (PS.get().getPlot(world, plot.id) == null) {
                         createdPlots.add(plot);
                     } else {
                         duplicate++;

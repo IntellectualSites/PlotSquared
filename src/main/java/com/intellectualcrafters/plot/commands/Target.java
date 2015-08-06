@@ -59,7 +59,7 @@ public class Target extends SubCommand {
             if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
                 Plot closest = null;
                 int distance = Integer.MAX_VALUE;
-                for (Plot plot : PS.get().getPlots(ploc.getWorld()).values()) {
+                for (Plot plot : PS.get().getPlotsInWorld(ploc.getWorld())) {
                     double current = plot.getBottom().getEuclideanDistanceSquared(ploc); 
                     if (current < distance) {
                         distance = (int) current;

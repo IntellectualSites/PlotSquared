@@ -211,7 +211,7 @@ public class Auto extends SubCommand {
                 MainUtil.lastPlot.put(worldname, start);
                 if (lastPlot) {
                 }
-                if ((PS.get().getPlots(worldname).get(start) != null) && (PS.get().getPlots(worldname).get(start).owner != null)) {
+                if ((PS.get().getPlot(worldname, start) != null) && (PS.get().getPlot(worldname, start).owner != null)) {
                     continue;
                 } else {
                     lastPlot = false;

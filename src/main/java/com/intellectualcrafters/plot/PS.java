@@ -417,7 +417,7 @@ public class PS {
      * @return HashMap containing the world name, and another map with the plot id and the plot object
      */
     @Deprecated
-    public ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getAllPlotsRaw() {
+    public Map<String, ConcurrentHashMap<PlotId, Plot>> getAllPlotsRaw() {
         return plots;
     }
     
@@ -927,7 +927,7 @@ public class PS {
      */
     public Set<Plot> getPlots(final String world, final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
-        for (final Plot plot : getPlots(world).values()) {
+        for (final Plot plot : getPlotsInWorld(world)) {
             if (plot.hasOwner()) {
                 if (PlotHandler.isOwner(plot, uuid)) {
                     myplots.add(plot);
@@ -979,16 +979,37 @@ public class PS {
      * @return HashMap of PlotId to Plot
      */
     @Deprecated
-    public Map<PlotId, Plot> getPlots(final String world) {
+    public HashMap<PlotId, Plot> getPlots(final String world) {
+        if (plots.containsKey(world)) {
+            return new HashMap<>(lastMap);
+        }
+        return new HashMap<>();
+    }
+    
+    public Collection<Plot> getPlotsInWorld(final String world) {
+        ConcurrentHashMap<PlotId, Plot> map = plots.get(world);
+        if (map == null) {
+            return new HashSet<>();
+        }
+        return map.values();
+    }
+    
+    public Plot getPlot(final String world, final PlotId id) {
         if (world == lastWorld) {
-            return lastMap;
+            if (lastMap != null) {
+                return lastMap.get(id);
+            }
+            return null;
         }
         lastWorld = world;
         if (plots.containsKey(world)) {
             lastMap = plots.get(world);
-            return lastMap;
+            if (lastMap != null) {
+                return lastMap.get(id);
+            }
+            return null;
         }
-        return new ConcurrentHashMap<>();
+        return null;
     }
 
 

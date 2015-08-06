@@ -66,7 +66,7 @@ public class Claim extends SubCommand {
             }
             final String world = plot.world;
             final PlotWorld plotworld = PS.get().getPlotWorld(world);
-            final Plot plot2 = PS.get().getPlots(world).get(plot.id);
+            final Plot plot2 = PS.get().getPlot(world, plot.id);
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 Schematic sch;
                 if (schematic.equals("")) {

@@ -474,7 +474,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
      */
     public Plot[] getPlots(final World world, final Player plr, final boolean just_owner) {
         final ArrayList<Plot> pPlots = new ArrayList<>();
-        for (final Plot plot : PS.get().getPlots(world.getName()).values()) {
+        for (final Plot plot : PS.get().getPlotsInWorld(world.getName())) {
             if (just_owner) {
                 if ((plot.owner != null) && (plot.owner.equals(UUIDHandler.getUUID(BukkitUtil.getPlayer(plr))))) {
                     pPlots.add(plot);
@@ -499,7 +499,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Plot[] getPlots(final World world) {
-        Collection<Plot> plots = PS.get().getPlots(world.getName()).values();
+        Collection<Plot> plots = PS.get().getPlotsInWorld(world.getName());
         return plots.toArray(new Plot[plots.size()]);
     }
 

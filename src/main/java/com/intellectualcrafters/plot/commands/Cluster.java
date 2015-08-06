@@ -144,7 +144,7 @@ public class Cluster extends SubCommand {
                 }
                 ClusterManager.clusters.get(world).add(cluster);
                 // Add any existing plots to the current cluster
-                for (final Plot plot : PS.get().getPlots(plr.getLocation().getWorld()).values()) {
+                for (final Plot plot : PS.get().getPlotsInWorld(plr.getLocation().getWorld())) {
                     final PlotCluster current = ClusterManager.getCluster(plot);
                     if (cluster.equals(current) && !cluster.isAdded(plot.owner)) {
                         cluster.invited.add(plot.owner);
@@ -221,7 +221,7 @@ public class Cluster extends SubCommand {
                 final PlotWorld plotworld = PS.get().getPlotWorld(plr.getLocation().getWorld());
                 if (plotworld.TYPE == 2) {
                     final ArrayList<Plot> toRemove = new ArrayList<>();
-                    for (final Plot plot : PS.get().getPlots(plr.getLocation().getWorld()).values()) {
+                    for (final Plot plot : PS.get().getPlotsInWorld(plr.getLocation().getWorld())) {
                         final PlotCluster other = ClusterManager.getCluster(plot);
                         if (cluster.equals(other)) {
                             toRemove.add(plot);
