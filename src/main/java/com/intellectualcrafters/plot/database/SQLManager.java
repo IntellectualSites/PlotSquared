@@ -2378,6 +2378,7 @@ public class SQLManager implements AbstractDB {
             // TODO comments
             // TODO ratings
             // TODO alias
+            // TODO unconnected entries from helpers, trusted, denied, comments, settings, rating
         }
         
         for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : database.entrySet()) {

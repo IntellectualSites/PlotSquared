@@ -45,10 +45,6 @@ public class MusicSubcommand extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] args) {
-        
-        // TODO FIX PLOT MUSIC AS NPE FROM PLAYER.PLAYEFFECT
-        System.out.print("TODO MUSIC");
-        
         final Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

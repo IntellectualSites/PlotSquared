@@ -222,7 +222,6 @@ public class BukkitPlayer extends PlotPlayer {
 
     @Override
     public void playMusic(Location loc, int id) {
-        System.out.print("RECORD: " + id);
         player.playEffect(BukkitUtil.getLocation(loc), Effect.RECORD_PLAY, id);
     }
 

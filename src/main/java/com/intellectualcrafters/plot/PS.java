@@ -536,10 +536,19 @@ public class PS {
         hardmax = Math.min(hardmax, max);
         Plot[] cache = new Plot[hardmax + 1];
         List<Plot> overflow = new ArrayList<Plot>(overflowSize);
+        ArrayList<Plot> extra = new ArrayList<>();
         for (Plot plot : plots) {
             int hash = MathMan.getPositiveId(plot.hashCode());
-            if (hash < hardmax && hash > -1) {
-                cache[hash] = plot;
+            if (hash < hardmax) {
+                if (hash >= 0) {
+                    cache[hash] = plot;
+                }
+                else {
+                    extra.add(plot);
+                }
+            }
+            else if (Math.abs(plot.id.x) > 15446 || Math.abs(plot.id.y) > 15446) {
+                extra.add(plot);
             }
             else {
                 overflow.add(plot);
@@ -554,6 +563,9 @@ public class PS {
             }
         }
         for (Plot plot : overflowArray) {
+            result.add(plot);
+        }
+        for (Plot plot : extra) {
             result.add(plot);
         }
         return result;
@@ -746,8 +758,7 @@ public class PS {
      * @param input
      */
     public static void sortPlotsByHash(Plot[] input) {
-        final int SIZE = 100;
-        List<Plot>[] bucket = new ArrayList[SIZE];
+        List<Plot>[] bucket = new ArrayList[64];
         for (int i = 0; i < bucket.length; i++) {
             bucket[i] = new ArrayList<Plot>();
         }
@@ -757,19 +768,19 @@ public class PS {
             maxLength = true;
             for (Plot i : input) {
                 tmp = MathMan.getPositiveId(i.hashCode()) / placement;
-                bucket[tmp % SIZE].add(i);
+                bucket[tmp & 63].add(i);
                 if (maxLength && tmp > 0) {
                     maxLength = false;
                 }
             }
             int a = 0;
-            for (int b = 0; b < SIZE; b++) {
+            for (int b = 0; b < 64; b++) {
                 for (Plot i : bucket[b]) {
                     input[a++] = i;
                 }
                 bucket[b].clear();
             }
-            placement *= SIZE;
+            placement *= 64;
         }
     }
     
