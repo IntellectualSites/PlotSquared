@@ -201,12 +201,16 @@ public class BukkitPlayer extends PlotPlayer {
         switch (gamemode) {
             case ADVENTURE:
                 player.setGameMode(GameMode.ADVENTURE);
+                return;
             case CREATIVE:
                 player.setGameMode(GameMode.CREATIVE);
+                return;
             case SPECTATOR:
                 player.setGameMode(GameMode.SPECTATOR);
+                return;
             case SURVIVAL:
                 player.setGameMode(GameMode.SURVIVAL);
+                return;
         }
     }
 
