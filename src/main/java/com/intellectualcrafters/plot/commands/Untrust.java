@@ -38,7 +38,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
         command = "untrust",
         aliases = {"ut"},
-        permission = "plot.untrust",
+        permission = "plots.untrust",
         description = "Remove a trusted user from a plot",
         usage = "/plot untrust <player>",
         requiredType = RequiredType.NONE,

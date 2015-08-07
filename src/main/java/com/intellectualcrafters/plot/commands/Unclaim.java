@@ -42,7 +42,6 @@ public class Unclaim extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {

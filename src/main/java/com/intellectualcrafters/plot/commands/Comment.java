@@ -40,7 +40,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Comment on a plot",
         category = CommandCategory.ACTIONS,
         requiredType = RequiredType.NONE,
-        permission = "plot.comment"
+        permission = "plots.comment"
 )
 public class Comment extends SubCommand {
 

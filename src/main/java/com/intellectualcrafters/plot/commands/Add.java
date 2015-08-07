@@ -72,14 +72,11 @@ public class Add extends SubCommand {
         if (args[0].equalsIgnoreCase("*")) {
             uuid = DBFunc.everyone;
         } else {
+            // TODO have a runnable for fetch
             uuid = UUIDHandler.getUUID(args[0], null);
         }
         if (uuid == null) {
-            if (UUIDHandler.implementation instanceof SQLUUIDHandler) {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER_WAIT, args[0]);
-            } else {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
-            }
+            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
         if (plot.isOwner(uuid)) {
