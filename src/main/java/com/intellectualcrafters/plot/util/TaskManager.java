@@ -14,6 +14,9 @@ public abstract class TaskManager {
 
     public static int runTaskRepeat(final Runnable r, final int interval) {
         if (r != null) {
+            if (PS.get().TASK == null) {
+                throw new IllegalArgumentException("disabled");
+            }
             return PS.get().TASK.taskRepeat(r, interval);
         }
         return -1;
@@ -21,6 +24,9 @@ public abstract class TaskManager {
     
     public static int runTaskRepeatAsync(final Runnable r, final int interval) {
         if (r != null) {
+            if (PS.get().TASK == null) {
+                throw new IllegalArgumentException("disabled");
+            }
             return PS.get().TASK.taskRepeat(r, interval);
         }
         return -1;
@@ -28,12 +34,20 @@ public abstract class TaskManager {
 
     public static void runTaskAsync(final Runnable r) {
         if (r != null) {
+            if (PS.get().TASK == null) {
+                r.run();
+                return;
+            }
             PS.get().TASK.taskAsync(r);
         }
     }
 
     public static void runTask(final Runnable r) {
         if (r != null) {
+            if (PS.get().TASK == null) {
+                r.run();
+                return;
+            }
             PS.get().TASK.task(r);
         }
     }
@@ -45,12 +59,20 @@ public abstract class TaskManager {
      */
     public static void runTaskLater(final Runnable r, final int delay) {
         if (r != null) {
+            if (PS.get().TASK == null) {
+                r.run();
+                return;
+            }
             PS.get().TASK.taskLater(r, delay);
         }
     }
 
     public static void runTaskLaterAsync(final Runnable r, final int delay) {
         if (r != null) {
+            if (PS.get().TASK == null) {
+                r.run();
+                return;
+            }
             PS.get().TASK.taskLaterAsync(r, delay);
         }
     }

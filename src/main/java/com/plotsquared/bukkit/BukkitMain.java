@@ -102,7 +102,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 final String[] split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
                 version[0] = Integer.parseInt(split[0]);
                 version[1] = Integer.parseInt(split[1]);
-                if (version.length == 3) {
+                if (split.length == 3) {
                     version[2] = Integer.parseInt(split[2]);
                 }
             } catch (Exception e) {

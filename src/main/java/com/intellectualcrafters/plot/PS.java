@@ -166,7 +166,7 @@ public class PS {
             setupDatabase();
             CommentManager.registerDefaultInboxes();
             // Tasks
-            if (Settings.KILL_ROAD_MOBS) {
+            if (Settings.KILL_ROAD_MOBS || Settings.KILL_ROAD_VEHICLES) {
                 IMP.runEntityTask();
             }
             // Events
@@ -1460,6 +1460,7 @@ public class PS {
      */
     public void disable() {
         try {
+            TASK = null;
             // Validate that all data in the db is correct
             DBFunc.validatePlots(getPlotsRaw());
             
