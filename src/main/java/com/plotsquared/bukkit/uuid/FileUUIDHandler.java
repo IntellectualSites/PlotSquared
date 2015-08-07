@@ -174,11 +174,13 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
 
                 if (getUUIDMap().size() == 0) {
                     for (OfflinePlotPlayer op : uuidWrapper.getOfflinePlayers()) {
-                        if (op.getLastPlayed() != 0) {
+                        long last = op.getLastPlayed();
+                        if (last != 0) {
                             String name = op.getName();
                             StringWrapper wrap = new StringWrapper(name);
                             UUID uuid = uuidWrapper.getUUID(op);
                             toAdd.put(wrap, uuid);
+                            ExpireManager.dates.put(uuid, last);
                         }
                     }
                 }

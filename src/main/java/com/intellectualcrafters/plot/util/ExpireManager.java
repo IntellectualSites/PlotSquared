@@ -188,7 +188,13 @@ public class ExpireManager {
                 last = dates.get(uuid);
             }
             else {
-                final OfflinePlayer op = Bukkit.getOfflinePlayer(name);
+                OfflinePlayer op;
+                if (Settings.TWIN_MODE_UUID) {
+                    op = Bukkit.getOfflinePlayer(uuid);
+                }
+                else {
+                    op = Bukkit.getOfflinePlayer(name);
+                }
                 if (op.hasPlayedBefore()) {
                     last = op.getLastPlayed();
                     dates.put(uuid, last);

@@ -40,7 +40,48 @@
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
-		
+					<execution>
+                        <id>bukkit</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <finalName>PlotSquared-Bukkit</finalName>
+                            <excludes>
+                                <exclude>**/com/plotsquared/sponge/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>sponge</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <finalName>PlotSquared-Sponge</finalName>
+                            <excludes>
+                                <exclude>**/com/plotsquared/bukkit/**</exclude>
+                                <exclude>**/com/intellectualcrafters/plot/api/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>api</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <finalName>PlotSquared-Null</finalName>
+                            <excludes>
+                                <exclude>**/com/plotsquared/bukkit/**</exclude>
+                                <exclude>**/com/plotsquared/sponge/**</exclude>
+                                <exclude>**/com/intellectualcrafters/plot/api/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
