@@ -17,6 +17,16 @@ public class BukkitEconHandler extends EconHandler {
     private Economy econ;
     private Permission perms;
     
+    public Economy getEconomy() {
+        init();
+        return econ;
+    }
+    
+    public Permission getPermissions() {
+        init();
+        return perms;
+    }
+    
     public boolean init() {
         if (econ == null || perms == null) {
             setupPermissions();
