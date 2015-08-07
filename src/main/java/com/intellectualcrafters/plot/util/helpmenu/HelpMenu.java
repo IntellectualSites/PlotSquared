@@ -32,13 +32,16 @@ public class HelpMenu {
     }
 
     public HelpMenu generateMaxPages() {
-        this._maxPage = Math.max((_commands.size() - 1) / PER_PAGE, 1);
+        this._maxPage = Math.max((_commands.size() - 1) / PER_PAGE, 0);
         return this;
     }
 
     public HelpMenu generatePage(int currentPage, String label) {
         if (currentPage > _maxPage) {
             currentPage = _maxPage;
+        }
+        if (currentPage < 0) {
+            currentPage = 0;
         }
         _page = new HelpPage(_commandCategory, currentPage, _maxPage);
         int max = Math.min((currentPage * PER_PAGE) + (PER_PAGE - 1), _commands.size());

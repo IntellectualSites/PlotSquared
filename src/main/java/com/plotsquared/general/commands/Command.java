@@ -140,6 +140,9 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
     }
 
     final public CommandCategory getCategory() {
+        if (category == null) {
+            return CommandCategory.DEBUG;
+        }
         return this.category;
     }
     
