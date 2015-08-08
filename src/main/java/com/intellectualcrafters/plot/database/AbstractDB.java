@@ -337,7 +337,7 @@ public interface AbstractDB {
      */
     void getComments(final Plot plot, final String inbox, RunnableVal whenDone);
 
-    void createPlotAndSettings(Plot plot);
+    void createPlotAndSettings(Plot plot, Runnable whenDone);
 
     void createCluster(PlotCluster cluster);
 

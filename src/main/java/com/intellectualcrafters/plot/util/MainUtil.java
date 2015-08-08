@@ -944,14 +944,24 @@ public class MainUtil {
         if (MainUtil.worldBorder.containsKey(plot.world)) {
             updateWorldBorder(plot);
         }
-        final Plot p = createPlotAbs(uuid, plot);
-        if (p == null) {
+        final String w = plot.world;
+        if (PS.get().getPlot(plot.world, plot.id) != null) {
+            return true;
+        }
+        final Plot p = new Plot(w, plot.id, uuid);
+        if (p.owner == null) {
             return false;
         }
-        final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
-        if (plotworld.AUTO_MERGE) {
-            autoMerge(p, uuid, true);
-        }
+        PS.get().updatePlot(p);
+        DBFunc.createPlotAndSettings(p, new Runnable() {
+            @Override
+            public void run() {
+                final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
+                if (plotworld.AUTO_MERGE) {
+                    autoMerge(p, uuid, true);
+                }
+            }
+        });
         return true;
     }
 
@@ -969,7 +979,7 @@ public class MainUtil {
             return null;
         }
         PS.get().updatePlot(p);
-        DBFunc.createPlotAndSettings(p);
+        DBFunc.createPlotAndSettings(p, null);
         return p;
     }
 

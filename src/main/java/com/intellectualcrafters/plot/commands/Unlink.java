@@ -33,7 +33,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "unlink",
-        aliases = {"u"},
+        aliases = {"u", "unmerge"},
         description = "Unlink a mega-plot",
         usage = "/plot unlink",
         requiredType = RequiredType.NONE,

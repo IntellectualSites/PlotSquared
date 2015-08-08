@@ -59,7 +59,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     @Override
     public void loadConfiguration(final ConfigurationSection config) {
         super.loadConfiguration(config);
-        if ((this.ROAD_WIDTH % 2) == 0) {
+        if ((this.ROAD_WIDTH & 1) == 0) {
             this.PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2) - 1);
         } else {
             this.PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2));
@@ -83,7 +83,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         final Schematic schem3 = SchematicHandler.manager.getSchematic(schem3Str);
         final int shift = (int) this.ROAD_WIDTH / 2;
         int oddshift = 0;
-        if ((this.ROAD_WIDTH % 2) != 0) {
+        if ((this.ROAD_WIDTH & 1) != 0) {
             oddshift = 1;
         }
         if (schem3 != null) {
@@ -184,14 +184,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     
     public static byte wrap(byte data, int start) {
         if (data >= start && data < start + 4) {
-            data = (byte) ((((data - start) + 2) % 4) + start);
+            data = (byte) ((((data - start) + 2) & 3) + start);
         }
         return data;
     }
     
     public static byte wrap2(byte data, int start) {
         if (data >= start && data < start + 2) {
-            data = (byte) ((((data - start) + 1) % 2) + start);
+            data = (byte) ((((data - start) + 1) & 1) + start);
         }
         return data;
     }

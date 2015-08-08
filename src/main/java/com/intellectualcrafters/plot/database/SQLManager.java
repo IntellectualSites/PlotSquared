@@ -81,6 +81,23 @@ public class SQLManager implements AbstractDB {
     public SQLManager(final Connection c, final String p) {
         // Private final
         this.connection = c;
+        try {
+            if (this.connection.getAutoCommit()) {
+                this.connection.setAutoCommit(false);
+            }
+            TaskManager.runTaskRepeat(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        SQLManager.this.connection.commit();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 200);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         this.prefix = p;
         // Set timout
         // setTimout();
@@ -145,10 +162,6 @@ public class SQLManager implements AbstractDB {
             @Override
             public void run() {
                 try {
-                    try {
-                        connection.setAutoCommit(false);
-                    }
-                    catch (SQLException e) {}
                     // Create the plots
                     createPlots(myList, new Runnable() {
                         @Override
@@ -206,7 +219,6 @@ public class SQLManager implements AbstractDB {
                                                         public void run() {
                                                             try {
                                                                 connection.commit();
-                                                                connection.setAutoCommit(true);
                                                             } catch (SQLException e) {
                                                                 e.printStackTrace();
                                                             }
@@ -225,7 +237,6 @@ public class SQLManager implements AbstractDB {
                                 PS.debug("&7[WARN] " + "Failed to set all helpers for plots");
                                 try {
                                     connection.commit();
-                                    connection.setAutoCommit(true);
                                 } catch (SQLException e1) {
                                     e1.printStackTrace();
                                 }
@@ -237,7 +248,6 @@ public class SQLManager implements AbstractDB {
                     PS.debug("&7[WARN] " + "Failed to set all helpers for plots");
                     try {
                         connection.commit();
-                        connection.setAutoCommit(true);
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }
@@ -658,9 +668,17 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+    
+    public void commit() {
+        try {
+            this.connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
-    public void createPlotAndSettings(final Plot plot) {
+    public void createPlotAndSettings(final Plot plot, final Runnable whenDone) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -673,8 +691,17 @@ public class SQLManager implements AbstractDB {
                     stmt.setString(4, plot.world);
                     stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
                     stmt.executeUpdate();
+                    ResultSet keys = stmt.getGeneratedKeys();
+                    int id = -1;
+                    if (keys.next()) {
+                        plot.temp = keys.getInt(1);
+                        stmt.close();
+                    }
+                    else {
+                        commit();
+                    }
                     stmt.close();
-                    final int id = getId(plot);
+                    id = getId(plot);
                     stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(" + "?)");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
@@ -683,6 +710,7 @@ public class SQLManager implements AbstractDB {
                     e.printStackTrace();
                     PS.debug("&c[ERROR] " + "Failed to save plot " + plot.id);
                 }
+                TaskManager.runTask(whenDone);
             }
         });
     }
@@ -827,6 +855,11 @@ public class SQLManager implements AbstractDB {
         }
         PreparedStatement stmt = null;
         try {
+            commit();
+            commit();
+            if (plot.temp > 0) {
+                return plot.temp;
+            }
             stmt = this.connection.prepareStatement("SELECT `id` FROM `" + this.prefix + "plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC");
             stmt.setInt(1, plot.id.x);
             stmt.setInt(2, plot.id.y);
@@ -838,6 +871,12 @@ public class SQLManager implements AbstractDB {
             }
             r.close();
             stmt.close();
+            if (id == Integer.MAX_VALUE || id == 0) {
+                if (plot.temp > 0) {
+                    return plot.temp;
+                }
+                id = 1/0;
+            }
             plot.temp = id;
             return id;
         } catch (final SQLException e) {
@@ -845,7 +884,7 @@ public class SQLManager implements AbstractDB {
         }
         return Integer.MAX_VALUE;
     }
-
+    
     public void updateTables() {
         if (PS.get().getVersion().equals(PS.get().getLastVersion()) ||  PS.get().getLastVersion() == null) {
             return;
@@ -2276,15 +2315,11 @@ public class SQLManager implements AbstractDB {
         PS.debug("$1All DB transactions during this session are being validated (This may take a while if corrections need to be made)");
         try {
             connection.commit();
-            connection.setAutoCommit(false);
         }
         catch (SQLException e) {}
         ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> database = getPlots();
         
         ArrayList<Plot> toCreate = new ArrayList<>();
-        ArrayList<UUID> toTrusted = new ArrayList<>();
-        ArrayList<Plot> toMember = new ArrayList<>();
-        ArrayList<Plot> toDenied = new ArrayList<>();
         
         for (Plot plot : PS.get().getPlotsRaw()) {
             if (plot.temp == -1) {
@@ -2393,7 +2428,6 @@ public class SQLManager implements AbstractDB {
         PS.debug("$4Done!");
         try {
             connection.commit();
-            connection.setAutoCommit(true);
         }
         catch (SQLException e) {}
     }

@@ -90,12 +90,12 @@ public class HybridPlotManager extends ClassicPlotManager {
     public void createSchemAbs(HybridPlotWorld hpw, Location pos1, Location pos2, int height, boolean clear) {
         final int size = hpw.SIZE;
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-            short absX = (short) ((x - hpw.ROAD_OFFSET_X) % size);
+            short absX = (short) ((x - hpw.ROAD_OFFSET_X) & (size - 1));
             if (absX < 0) {
                 absX += size;
             }
             for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                short absZ = (short) ((z - hpw.ROAD_OFFSET_Z) % size);
+                short absZ = (short) ((z - hpw.ROAD_OFFSET_Z) & (size - 1));
                 if (absZ < 0) {
                     absZ += size;
                 }

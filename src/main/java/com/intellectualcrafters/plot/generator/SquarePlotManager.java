@@ -53,16 +53,16 @@ public abstract class SquarePlotManager extends GridPlotManager {
         int idx;
         int idz;
         if (x < 0) {
-            idx = (x/size);
-            x = size + (x % size);
+            idx = ((x - 1)/size);
+            x = size + ((x - 1) % size);
         }
         else {
             idx = (x/size) + 1;
             x = (x % size);
         }
         if (z < 0) {
-            idz = (z/size);
-            z = size + (z % size);
+            idz = ((z - 1)/size);
+            z = size + ((z - 1) % size);
         }
         else {
             idz = (z/size) + 1;
@@ -104,16 +104,16 @@ public abstract class SquarePlotManager extends GridPlotManager {
         int rx;
         int rz;
         if (x < 0) {
-            dx = (x/size);
-            rx = size + (x % size);
+            dx = ((x - 1) / size);
+            rx = size + ((x - 1) % size);
         }
         else {
             dx = (x/size) + 1;
             rx = (x % size);
         }
         if (z < 0) {
-            dz = (z/size);
-            rz = size + (z % size);
+            dz = ((z - 1)/size);
+            rz = size + ((z - 1) % size);
         }
         else {
             dz = (z/size) + 1;

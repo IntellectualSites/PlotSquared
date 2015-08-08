@@ -127,11 +127,11 @@ public class DBFunc {
      *
      * @param plot Plot to create
      */
-    public static void createPlotAndSettings(final Plot plot) {
+    public static void createPlotAndSettings(final Plot plot, Runnable whenDone) {
         if (plot.temp == -1) {
             return;
         }
-        dbManager.createPlotAndSettings(plot);
+        dbManager.createPlotAndSettings(plot, whenDone);
     }
 
     /**

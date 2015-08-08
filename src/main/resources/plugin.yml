@@ -122,6 +122,8 @@ permissions:
       plots.untrust: true
       plots.undeny: true
       plots.kick: true
+      plots.download: true
+      plots.save: true
   plots.worldedit.bypass:
     default: false
   plots.gamemode.bypass:
