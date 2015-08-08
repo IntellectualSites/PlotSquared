@@ -51,6 +51,9 @@ public class PlotInventory {
     }
     
     public PlotItemStack getItem(int index) {
+        if (index < 0 || index >= items.length) {
+            return null;
+        }
         return items[index];
     }
     

@@ -913,13 +913,16 @@ public class BukkitChunkManager extends ChunkManager {
         final int tz = pos2.getZ();
         for (final Entity entity : entities) {
             if (entity instanceof Player) {
-                final Player player = (Player) entity;
-                final PlotPlayer pp = BukkitUtil.getPlayer(player);
-                Plot plot = pp.getCurrentPlot();
-                if (plot != null) {
-                    final Location plotHome = MainUtil.getDefaultHome(plot);
-                    if (pp.getLocation().getY() <= plotHome.getY()) {
-                        pp.teleport(plotHome);
+                org.bukkit.Location loc = entity.getLocation();
+                if (loc.getX() >= bx && loc.getX() <= tx && loc.getZ() >= bz && loc.getZ() <= tz) {
+                    final Player player = (Player) entity;
+                    final PlotPlayer pp = BukkitUtil.getPlayer(player);
+                    Plot plot = pp.getCurrentPlot();
+                    if (plot != null) {
+                        final Location plotHome = MainUtil.getDefaultHome(plot);
+                        if (pp.getLocation().getY() <= plotHome.getY()) {
+                            pp.teleport(plotHome);
+                        }
                     }
                 }
             }
