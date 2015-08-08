@@ -925,8 +925,9 @@ public class MainUtil {
         final String world = plot.world;
         final PlotManager manager = PS.get().getPlotManager(world);
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
-        final Location bot = manager.getPlotBottomLocAbs(plotworld, plot.id);
-        final Location top = manager.getPlotTopLocAbs(plotworld, plot.id);
+        PlotId id = new PlotId(Math.abs(plot.id.x) + 1, Math.abs(plot.id.x) + 1);
+        final Location bot = manager.getPlotBottomLocAbs(plotworld, id);
+        final Location top = manager.getPlotTopLocAbs(plotworld, id);
         final int border = worldBorder.get(plot.world);
         final int botmax = Math.max(Math.abs(bot.getX()), Math.abs(bot.getZ()));
         final int topmax = Math.max(Math.abs(top.getX()), Math.abs(top.getZ()));

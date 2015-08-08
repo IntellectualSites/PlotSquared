@@ -505,10 +505,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
-                if (lastPlot == null) {
-                    return;
-                }
-                if (!plotExit(pp, lastPlot)) {
+                if (lastPlot != null && !plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
@@ -521,7 +518,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             }
             else if (lastPlot != null && id.equals(lastPlot.id)) {
-                    return;
+                return;
             }
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
@@ -571,10 +568,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
-                if (lastPlot == null) {
-                    return;
-                }
-                if (!plotExit(pp, lastPlot)) {
+                if (lastPlot != null && !plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
