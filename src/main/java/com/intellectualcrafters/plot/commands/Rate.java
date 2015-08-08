@@ -39,6 +39,7 @@ import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
+import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -121,14 +122,9 @@ public class Rate extends SubCommand {
                         index.increment();
                         if (index.intValue() >= Settings.RATING_CATEGORIES.size()) {
                             close();
-                            // handle ratings
                             int rV = rating.intValue();
-                            // CALL THE EVENT
-                            PlotRateEvent rateEvent = new PlotRateEvent(player, new Rating(rV), plot);
-                            Bukkit.getPluginManager().callEvent(rateEvent);
-                            // DONE CALLING THE EVENT
-                            // set rating
-                            plot.getSettings().ratings.put(player.getUUID(), rateEvent.getRating().getAggregate());
+                            Rating result = EventUtil.manager.callRating(player, plot, new Rating(rV));
+                            plot.getSettings().ratings.put(player.getUUID(), result.getAggregate());
                             DBFunc.setRating(plot, player.getUUID(), rV);
                             sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
                             sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
@@ -192,8 +188,10 @@ public class Rate extends SubCommand {
                     sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
                     return;
                 }
-                plot.getSettings().ratings.put(uuid, rating);
-                DBFunc.setRating(plot, uuid, rating);
+                Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
+                int resultVal = result.getAggregate();
+                plot.getSettings().ratings.put(uuid, resultVal);
+                DBFunc.setRating(plot, uuid, resultVal);
                 sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
             }
         };

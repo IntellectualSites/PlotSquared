@@ -14,6 +14,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.Rating;
 import com.plotsquared.bukkit.listeners.PlayerBlockEventType;
 
 public abstract class EventUtil {
@@ -28,6 +29,8 @@ public abstract class EventUtil {
         CmdConfirm.removePending(name);
         PS.get().IMP.unregister(player);
     }
+    
+    public abstract Rating callRating(final PlotPlayer player, final Plot plot, final Rating rating);
     
     public abstract boolean callClaim(final PlotPlayer player, final Plot plot, final boolean auto);
     

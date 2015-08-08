@@ -14,6 +14,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.plotsquared.bukkit.events.ClusterFlagRemoveEvent;
 import com.plotsquared.bukkit.events.PlayerClaimPlotEvent;
@@ -28,6 +29,7 @@ import com.plotsquared.bukkit.events.PlotDeleteEvent;
 import com.plotsquared.bukkit.events.PlotFlagAddEvent;
 import com.plotsquared.bukkit.events.PlotFlagRemoveEvent;
 import com.plotsquared.bukkit.events.PlotMergeEvent;
+import com.plotsquared.bukkit.events.PlotRateEvent;
 import com.plotsquared.bukkit.events.PlotUnlinkEvent;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 
@@ -116,6 +118,13 @@ public class BukkitEventUtil extends EventUtil {
     @Override
     public boolean callFlagRemove(Flag flag, PlotCluster cluster) {
         return callEvent(new ClusterFlagRemoveEvent(flag, cluster));
+    }
+
+    @Override
+    public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
+        PlotRateEvent event = new PlotRateEvent(player, rating, plot);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        return event.getRating();
     }
     
 }
