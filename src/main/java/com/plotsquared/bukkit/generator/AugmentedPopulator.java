@@ -99,7 +99,6 @@ public class AugmentedPopulator extends BlockPopulator {
     public void populate(final World world, final Random rand, final Chunk chunk) {
         final int cx = chunk.getX();
         final int cz = chunk.getZ();
-        PS.log("== POPULATING FOR: " + world + " | " + cx + "," + cz);
         final int bx = cx << 4;
         final int bz = cz << 4;
         final int tx = bx + 15;

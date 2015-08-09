@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
@@ -220,7 +221,11 @@ public class Setup extends SubCommand {
                     return false;
                 }
                 if (BlockManager.manager.isWorld(args[0])) {
-                    MainUtil.sendMessage(plr, "&cThat world name is already taken!");
+                    if (PS.get().isPlotWorld(args[0])) {
+                        MainUtil.sendMessage(plr, "&cThat world name is already taken!");
+                        return false;
+                    }
+                    MainUtil.sendMessage(plr, "&cThe world you specified already exists. After restarting, new terrain will use PlotSquared, however you may need to reset the world for it to generate correctly!");
                 }
                 object.world = args[0];
                 SetupUtils.setupMap.remove(name);

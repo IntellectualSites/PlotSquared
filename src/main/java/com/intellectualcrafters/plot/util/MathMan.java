@@ -32,6 +32,10 @@ public class MathMan {
         };
     }
     
+    public static int roundInt(double value) {
+        return (int) (value < 0 ? value - 1 : value);
+    }
+    
     /**
      * Returns [ pitch, yaw ]
      * @param x

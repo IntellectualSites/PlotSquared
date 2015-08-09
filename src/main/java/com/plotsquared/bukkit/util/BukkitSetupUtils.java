@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map.Entry;
 
@@ -10,6 +11,7 @@ import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
@@ -69,14 +71,17 @@ public class BukkitSetupUtils extends SetupUtils {
         if (object.setupGenerator != null) {
             if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.setupGenerator);
+                setGenerator(world, object.setupGenerator);
             } else {
                 if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.setupGenerator);
+                    setGenerator(world, object.setupGenerator);
                 } else {
                     final WorldCreator wc = new WorldCreator(object.world);
                     wc.generator(object.setupGenerator);
                     wc.environment(Environment.NORMAL);
                     Bukkit.createWorld(wc);
+                    setGenerator(world, object.setupGenerator);
                 }
             }
         } else {
@@ -91,6 +96,21 @@ public class BukkitSetupUtils extends SetupUtils {
             }
         }
         return object.world;
+    }
+    
+    public void setGenerator(String world, String generator) {
+        if (Bukkit.getWorlds().size() == 0 || !Bukkit.getWorlds().get(0).getName().equals(world)) {
+            return;
+        }
+        File file = new File("bukkit.yml").getAbsoluteFile();
+        System.out.print(file.getAbsolutePath());
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+        yml.set("worlds." + world + ".generator", generator);
+        try {
+            yml.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

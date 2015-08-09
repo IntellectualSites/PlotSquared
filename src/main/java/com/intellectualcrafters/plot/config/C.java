@@ -197,7 +197,7 @@ public enum C {
     SETUP_STEP("$3[$1Step %s0$3] $1%s1 $2- $1Expecting: $2%s2 $1Default: $2%s3", "Setup"),
     SETUP_INVALID_ARG("$2%s0 is not a valid argument for step %s1. To cancel setup use: $1/plot setup cancel", "Setup"),
     SETUP_VALID_ARG("$2Value $1%s0 $2set to %s1", "Setup"),
-    SETUP_FINISHED("$3If you are using MULTIVERSE or MULTIWORLD the world should have just been created. Otherwise you will need to add the world manually through the bukkit.yml", "Setup"),
+    SETUP_FINISHED("$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or your chosen world management plugin.", "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a registered plotworld", "Setup"),
     SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
     SETUP_MISSING_GENERATOR("$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),

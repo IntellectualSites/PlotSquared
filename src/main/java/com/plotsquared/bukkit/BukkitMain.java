@@ -19,16 +19,19 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.BlockUpdateUtil;
@@ -547,9 +550,40 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    public void setGenerator(String world) {
+    public void setGenerator(String worldname) {
+        World world = BukkitUtil.getWorld(worldname);
+        if (world == null) {
+            // create world
+            
+            System.out.print("CREATING WORLD: " + worldname);
+            System.out.print("CREATING WORLD: " + worldname);
+            System.out.print("CREATING WORLD: " + worldname);
+            System.out.print("CREATING WORLD: " + worldname);
+            
+            ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldname);
+            String manager = worldConfig.getString("generator.plugin");
+            if (manager == null) {
+                manager = "PlotSquared";
+            }
+            String generator = worldConfig.getString("generator.init");
+            if (generator == null) {
+                generator = manager;
+            }
+
+            int type = worldConfig.getInt("generator.type");
+            int terrain = worldConfig.getInt("generator.terrain");
+            SetupObject setup = new SetupObject();
+            setup.plotManager = manager;
+            setup.setupGenerator = generator;
+            setup.type = type;
+            setup.terrain = terrain;
+            setup.step = new ConfigurationNode[0];
+            setup.world = worldname;
+            SetupUtils.manager.setupWorld(setup);
+            return;
+        }
         try {
-            SetGenCB.setGenerator(BukkitUtil.getWorld(world));
+            SetGenCB.setGenerator(BukkitUtil.getWorld(worldname));
         } catch (Exception e) {
             log("Failed to reload world: " + world);
             Bukkit.getServer().unloadWorld(world, false);

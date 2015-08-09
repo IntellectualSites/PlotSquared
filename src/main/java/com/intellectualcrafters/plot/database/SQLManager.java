@@ -81,23 +81,12 @@ public class SQLManager implements AbstractDB {
     public SQLManager(final Connection c, final String p) {
         // Private final
         this.connection = c;
-        try {
-            if (this.connection.getAutoCommit()) {
-                this.connection.setAutoCommit(false);
+        TaskManager.runTaskRepeat(new Runnable() {
+            @Override
+            public void run() {
+                commit();
             }
-            TaskManager.runTaskRepeat(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        SQLManager.this.connection.commit();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, 200);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        }, 200);
         this.prefix = p;
         // Set timout
         // setTimout();
@@ -671,6 +660,9 @@ public class SQLManager implements AbstractDB {
     
     public void commit() {
         try {
+            if (this.connection.getAutoCommit()) {
+                this.connection.setAutoCommit(false);
+            }
             this.connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();

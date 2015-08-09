@@ -137,7 +137,7 @@ public class BukkitUtil extends BlockManager {
     }
 
     public static Location getLocation(final org.bukkit.Location loc) {
-        return new Location(loc.getWorld().getName(), (int) loc.getX(), (int) loc.getY(), (int) loc.getZ());
+        return new Location(loc.getWorld().getName(), MathMan.roundInt(loc.getX()), MathMan.roundInt(loc.getY()), MathMan.roundInt(loc.getZ()));
     }
     
     public static org.bukkit.Location getLocation(final Location loc) {
@@ -172,7 +172,7 @@ public class BukkitUtil extends BlockManager {
     
     public static Location getLocationFull(final Entity entity) {
         org.bukkit.Location loc = entity.getLocation();
-        return new Location(loc.getWorld().getName(), (int) loc.getX(), (int) loc.getY(), (int) loc.getZ(), loc.getYaw(), loc.getPitch());
+        return new Location(loc.getWorld().getName(), MathMan.roundInt(loc.getX()), MathMan.roundInt(loc.getY()), MathMan.roundInt(loc.getZ()), loc.getYaw(), loc.getPitch());
     }
     ////////////////////////////////////////////////////////////////////////
 

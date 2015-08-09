@@ -62,7 +62,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
  *
  */
 
-@SuppressWarnings("unused") public class PlotAPI {
+public class PlotAPI {
 
     /**
      * Permission that allows for admin access, this permission node will allow the player to use any part of the

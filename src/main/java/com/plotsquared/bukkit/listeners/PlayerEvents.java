@@ -134,6 +134,7 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.RegExUtil;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -480,16 +481,12 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         plotEntry(pp, plot);
     }
 
-    public int getInt(double value) {
-        return (int) (value < 0 ? value - 1 : value);
-    }
-    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void PlayerMove(final PlayerMoveEvent event) {
         org.bukkit.Location from = event.getFrom();
         org.bukkit.Location to = event.getTo();
         int x2;
-        if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
+        if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
             Player player = event.getPlayer();
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             
@@ -502,7 +499,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return;
             }
             PlotManager plotManager = PS.get().getPlotManager(worldname);
-            PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
+            PlotId id = plotManager.getPlotId(plotworld, x2, 0, MathMan.roundInt(to.getZ()));
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot)) {
@@ -552,7 +549,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return;
         }
         int z2;
-        if (getInt(from.getZ()) != (z2 = getInt(to.getZ())) ) {
+        if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ())) ) {
             Player player = event.getPlayer();
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             
@@ -1405,7 +1402,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final org.bukkit.Location to = event.getTo();
         
         int x2;
-        if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
+        if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
             Player player = event.getPlayer();
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             
@@ -1418,7 +1415,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return;
             }
             PlotManager plotManager = PS.get().getPlotManager(worldname);
-            PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
+            PlotId id = plotManager.getPlotId(plotworld, x2, 0, MathMan.roundInt(to.getZ()));
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
@@ -1471,7 +1468,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return;
         }
         int z2;
-        if (getInt(from.getZ()) != (z2 = getInt(to.getZ())) ) {
+        if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ())) ) {
             Player player = event.getPlayer();
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             

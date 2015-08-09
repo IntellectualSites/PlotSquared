@@ -254,13 +254,29 @@ public class PS {
             }
             
             // World generators:
-            ConfigurationSection section = config.getConfigurationSection("worlds");
+            final ConfigurationSection section = config.getConfigurationSection("worlds");
             if (section != null) {
                 for (String world : section.getKeys(false)) {
+                    if (world.equals("CheckingPlotSquaredGenerator")) {
+                        continue;
+                    }
                     if (BlockManager.manager.isWorld(world)) {
-                        break;
+                        IMP.setGenerator(world);
                     }
                 }
+                TaskManager.runTaskLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (String world : section.getKeys(false)) {
+                            if (world.equals("CheckingPlotSquaredGenerator")) {
+                                continue;
+                            }
+                            if (!BlockManager.manager.isWorld(world)) {
+                                IMP.setGenerator(world);
+                            }
+                        }
+                    }
+                }, 1);
             }
     
             // Copy files
