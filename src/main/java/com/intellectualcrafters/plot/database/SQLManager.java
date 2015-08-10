@@ -84,7 +84,7 @@ public class SQLManager implements AbstractDB {
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-                commit();
+                SQLManager.this.commit();
             }
         }, 200);
         this.prefix = p;
@@ -111,7 +111,7 @@ public class SQLManager implements AbstractDB {
                 }
             }, 11000);
         }
-        updateTables();
+        this.updateTables();
     }
 
     public Connection getConnection() {
@@ -152,7 +152,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     // Create the plots
-                    createPlots(myList, new Runnable() {
+                    SQLManager.this.createPlots(myList, new Runnable() {
                         @Override
                         public void run() {
                             try {
@@ -167,7 +167,7 @@ public class SQLManager implements AbstractDB {
                             final ArrayList<UUIDPair> denied = new ArrayList<>();
 
                             // Populating structures
-                            final PreparedStatement stmt = connection.prepareStatement(GET_ALL_PLOTS);
+                            final PreparedStatement stmt = SQLManager.this.connection.prepareStatement(SQLManager.this.GET_ALL_PLOTS);
                             final ResultSet result = stmt.executeQuery();
                             while (result.next()) {
                                 final int id = result.getInt("id");
@@ -194,20 +194,20 @@ public class SQLManager implements AbstractDB {
                                     }
                                 }
                             }
-                            createSettings(settings, new Runnable() {
+                            SQLManager.this.createSettings(settings, new Runnable() {
                                 @Override
                                 public void run() {
-                                    createTiers(helpers, "helpers", new Runnable() {
+                                    SQLManager.this.createTiers(helpers, "helpers", new Runnable() {
                                         @Override
                                         public void run() {
-                                            createTiers(trusted, "trusted", new Runnable() {
+                                            SQLManager.this.createTiers(trusted, "trusted", new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    createTiers(denied, "denied", new Runnable() {
+                                                    SQLManager.this.createTiers(denied, "denied", new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             try {
-                                                                connection.commit();
+                                                                SQLManager.this.connection.commit();
                                                             } catch (SQLException e) {
                                                                 e.printStackTrace();
                                                             }
@@ -225,7 +225,7 @@ public class SQLManager implements AbstractDB {
                                 e.printStackTrace();
                                 PS.debug("&7[WARN] " + "Failed to set all helpers for plots");
                                 try {
-                                    connection.commit();
+                                    SQLManager.this.connection.commit();
                                 } catch (SQLException e1) {
                                     e1.printStackTrace();
                                 }
@@ -236,7 +236,7 @@ public class SQLManager implements AbstractDB {
                     e.printStackTrace();
                     PS.debug("&7[WARN] " + "Failed to set all helpers for plots");
                     try {
-                        connection.commit();
+                        SQLManager.this.connection.commit();
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }
@@ -254,13 +254,13 @@ public class SQLManager implements AbstractDB {
         final StmtMod<UUIDPair> mod = new StmtMod<UUIDPair>() {
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(size, CREATE_TIERS.replaceAll("%tier%", tier), 2);
+                return this.getCreateMySQL(size, SQLManager.this.CREATE_TIERS.replaceAll("%tier%", tier), 2);
             }
 
             @Override
             public String getCreateSQLite(int size) {
-                return getCreateSQLite(size,
-                        "INSERT INTO `" + prefix + "plot_" + tier + "` SELECT ? AS `plot_plot_id`, ? AS `user_uuid`", 2);
+                return this.getCreateSQLite(size,
+                        "INSERT INTO `" + SQLManager.this.prefix + "plot_" + tier + "` SELECT ? AS `plot_plot_id`, ? AS `user_uuid`", 2);
             }
 
             @Override
@@ -286,7 +286,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setString(2, pair.uuid.toString());
             }
         };
-        setBulk(myList, mod, whenDone);
+        this.setBulk(myList, mod, whenDone);
     }
     
     /**
@@ -298,17 +298,17 @@ public class SQLManager implements AbstractDB {
         final StmtMod<Plot> mod = new StmtMod<Plot>() {
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(size, CREATE_PLOTS, 5);
+                return this.getCreateMySQL(size, SQLManager.this.CREATE_PLOTS, 5);
             }
 
             @Override
             public String getCreateSQLite(int size) {
-                return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot` SELECT ? AS `id`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ", 6);
+                return this.getCreateSQLite(size, "INSERT INTO `" + SQLManager.this.prefix + "plot` SELECT ? AS `id`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ", 6);
             }
 
             @Override
             public String getCreateSQL() {
-                return CREATE_PLOT;
+                return SQLManager.this.CREATE_PLOT;
             }
 
             @Override
@@ -348,7 +348,7 @@ public class SQLManager implements AbstractDB {
                 
             }
         };
-        setBulk(myList, mod, whenDone);
+        this.setBulk(myList, mod, whenDone);
     }
 
     public <T> void setBulk(ArrayList<T> objList, StmtMod<T> mod, Runnable whenDone) {
@@ -469,12 +469,12 @@ public class SQLManager implements AbstractDB {
         final StmtMod<SettingsPair> mod = new StmtMod<SettingsPair>() {
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(size, "INSERT INTO `" + prefix + "plot_settings`(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`flags`,`merged`,`position`) VALUES ", 10);
+                return this.getCreateMySQL(size, "INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`flags`,`merged`,`position`) VALUES ", 10);
             }
 
             @Override
             public String getCreateSQLite(int size) {
-                return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position`", 10);
+                return this.getCreateSQLite(size, "INSERT INTO `" + SQLManager.this.prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position`", 10);
             }
 
             @Override
@@ -576,7 +576,7 @@ public class SQLManager implements AbstractDB {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                setBulk(myList, mod, whenDone);
+                SQLManager.this.setBulk(myList, mod, whenDone);
             }
         });
     }
@@ -585,12 +585,12 @@ public class SQLManager implements AbstractDB {
         final StmtMod<Integer> mod = new StmtMod<Integer>() {
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(size, CREATE_SETTINGS, 1);
+                return this.getCreateMySQL(size, SQLManager.this.CREATE_SETTINGS, 1);
             }
 
             @Override
             public String getCreateSQLite(int size) {
-                return getCreateSQLite(size, "INSERT INTO `" + prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ", 10);
+                return this.getCreateSQLite(size, "INSERT INTO `" + SQLManager.this.prefix + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS `deny_entry`, ? AS `alias`, ? AS `flags`, ? AS `merged`, ? AS `position` ", 10);
             }
 
             @Override
@@ -625,7 +625,7 @@ public class SQLManager implements AbstractDB {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                setBulk(myList, mod, whenDone);
+                SQLManager.this.setBulk(myList, mod, whenDone);
             }
         });
     }
@@ -676,7 +676,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 PreparedStatement stmt = null;
                 try {
-                    stmt = SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT);
+                    stmt = SQLManager.this.connection.prepareStatement(SQLManager.this.CREATE_PLOT, Statement.RETURN_GENERATED_KEYS);
                     stmt.setInt(1, plot.id.x);
                     stmt.setInt(2, plot.id.y);
                     stmt.setString(3, plot.owner.toString());
@@ -690,10 +690,10 @@ public class SQLManager implements AbstractDB {
                         stmt.close();
                     }
                     else {
-                        commit();
+                        SQLManager.this.commit();
                     }
                     stmt.close();
-                    id = getId(plot);
+                    id = SQLManager.this.getId(plot);
                     stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(" + "?)");
                     stmt.setInt(1, id);
                     stmt.executeUpdate();
@@ -721,10 +721,10 @@ public class SQLManager implements AbstractDB {
             tables = new String[]{"plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings"};
         }
         final boolean mysql = database.equals("mysql");
-        final DatabaseMetaData meta = connection.getMetaData();
+        final DatabaseMetaData meta = this.connection.getMetaData();
         int create = 0;
         for (final String s : tables) {
-            ResultSet set = meta.getTables(null, null, prefix + s, null);
+            ResultSet set = meta.getTables(null, null, this.prefix + s, null);
             if (!set.next()) {
                 create++;
             }
@@ -782,7 +782,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
-                final int id = getId(plot);
+                final int id = SQLManager.this.getId(plot);
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_settings` WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, id);
@@ -847,8 +847,8 @@ public class SQLManager implements AbstractDB {
         }
         PreparedStatement stmt = null;
         try {
-            commit();
-            commit();
+            this.commit();
+            this.commit();
             if (plot.temp > 0) {
                 return plot.temp;
             }
@@ -909,7 +909,7 @@ public class SQLManager implements AbstractDB {
                     }
                 }
             }
-            try (Statement statement = connection.createStatement()) {
+            try (Statement statement = this.connection.createStatement()) {
                 statement.executeUpdate("DELETE FROM `" + this.prefix + "plot_denied` WHERE `plot_plot_id` NOT IN (SELECT `id` FROM `" + this.prefix + "plot`)");
                 statement.close();
             }
@@ -918,7 +918,7 @@ public class SQLManager implements AbstractDB {
             }
             
             rs.close();
-            try (Statement statement = connection.createStatement()) {
+            try (Statement statement = this.connection.createStatement()) {
                 for (String table : new String[]{"plot_denied", "plot_helpers", "plot_trusted"} ) {
                     ResultSet result = statement.executeQuery("SELECT plot_plot_id, user_uuid, COUNT(*) FROM " + this.prefix + table + " GROUP BY plot_plot_id, user_uuid HAVING COUNT(*) > 1");
                     if (result.next()) {
@@ -958,66 +958,70 @@ public class SQLManager implements AbstractDB {
             }
             final HashMap<String, UUID> uuids = new HashMap<String, UUID>();
             final HashMap<String, Integer> noExist = new HashMap<String, Integer>();
-            /*
-             * Getting plots
-             */
-            stmt = this.connection.createStatement();
-            ResultSet r = stmt.executeQuery("SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp` FROM `" + this.prefix + "plot`");
+            
             PlotId plot_id;
             int id;
             Plot p;
             String o;
             UUID user;
-            while (r.next()) {
-                plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
-                id = r.getInt("id");
-                final String worldname = r.getString("world");
-                if (!worlds.contains(worldname)) {
-                    if (noExist.containsKey(worldname)) {
-                        noExist.put(worldname, noExist.get(worldname) + 1);
-                    } else {
-                        noExist.put(worldname, 1);
-                    }
-                }
-                o = r.getString("owner");
-                user = uuids.get(o);
-                if (user == null) {
-                    user = UUID.fromString(o);
-                    uuids.put(o, user);
-                }
-                Timestamp timestamp = null;
-                try {
-                    timestamp = r.getTimestamp("timestamp");
-                }
-                catch (Exception e) {};
-                long time;
-                if (timestamp == null) {
-                    time = plot_id.hashCode();
-                }
-                else {
-                    time = timestamp.getTime();
-                }
-                p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, worldname, new boolean[]{false, false, false, false}, time, id);
-                plots.put(id, p);
-            }
-            if (Settings.CACHE_RATINGS) {
-                r = stmt.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + this.prefix + "plot_rating`");
+            
+            /*
+             * Getting plots
+             */
+            stmt = this.connection.createStatement();
+            try (ResultSet r = stmt.executeQuery("SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp` FROM `" + this.prefix + "plot`")) {
                 while (r.next()) {
-                    id = r.getInt("plot_plot_id");
-                    o = r.getString("player");
+                    plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
+                    id = r.getInt("id");
+                    final String worldname = r.getString("world");
+                    if (!worlds.contains(worldname)) {
+                        if (noExist.containsKey(worldname)) {
+                            noExist.put(worldname, noExist.get(worldname) + 1);
+                        } else {
+                            noExist.put(worldname, 1);
+                        }
+                    }
+                    o = r.getString("owner");
                     user = uuids.get(o);
                     if (user == null) {
                         user = UUID.fromString(o);
                         uuids.put(o, user);
                     }
-                    final Plot plot = plots.get(id);
-                    if (plot != null) {
-                        if (plot.getSettings().ratings == null) {
-                            plot.getSettings().ratings = new HashMap<UUID, Integer>();
+                    Timestamp timestamp = null;
+                    try {
+                        timestamp = r.getTimestamp("timestamp");
+                    }
+                    catch (Exception e) {};
+                    long time;
+                    if (timestamp == null) {
+                        time = plot_id.hashCode();
+                    }
+                    else {
+                        time = timestamp.getTime();
+                    }
+                    p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, worldname, new boolean[]{false, false, false, false}, time, id);
+                    plots.put(id, p);
+                }
+            }
+            if (Settings.CACHE_RATINGS) {
+                try (ResultSet r = stmt.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + this.prefix + "plot_rating`")) {
+                    while (r.next()) {
+                        id = r.getInt("plot_plot_id");
+                        o = r.getString("player");
+                        user = uuids.get(o);
+                        if (user == null) {
+                            user = UUID.fromString(o);
+                            uuids.put(o, user);
                         }
-                        plot.getSettings().ratings.put(user, r.getInt("rating"));
-                    } else {
-                        PS.debug("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
+                        final Plot plot = plots.get(id);
+                        if (plot != null) {
+                            if (plot.getSettings().ratings == null) {
+                                plot.getSettings().ratings = new HashMap<UUID, Integer>();
+                            }
+                            plot.getSettings().ratings.put(user, r.getInt("rating"));
+                        } else {
+                            PS.debug("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
+                        }
                     }
                 }
             }
@@ -1025,149 +1029,151 @@ public class SQLManager implements AbstractDB {
             /*
              * Getting helpers
              */
-            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_helpers`");
-            while (r.next()) {
-                id = r.getInt("plot_plot_id");
-                o = r.getString("user_uuid");
-                user = uuids.get(o);
-                if (user == null) {
-                    user = UUID.fromString(o);
-                    uuids.put(o, user);
-                }
-                final Plot plot = plots.get(id);
-                if (plot != null) {
-                    plot.getTrusted().add(user);
-                } else {
-                    PS.debug("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
+            try (ResultSet r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_helpers`")) {
+                while (r.next()) {
+                    id = r.getInt("plot_plot_id");
+                    o = r.getString("user_uuid");
+                    user = uuids.get(o);
+                    if (user == null) {
+                        user = UUID.fromString(o);
+                        uuids.put(o, user);
+                    }
+                    final Plot plot = plots.get(id);
+                    if (plot != null) {
+                        plot.getTrusted().add(user);
+                    } else {
+                        PS.debug("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
+                    }
                 }
             }
             
             /*
              * Getting trusted
              */
-            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_trusted`");
-            while (r.next()) {
-                id = r.getInt("plot_plot_id");
-                o = r.getString("user_uuid");
-                user = uuids.get(o);
-                if (user == null) {
-                    user = UUID.fromString(o);
-                    uuids.put(o, user);
-                }
-                final Plot plot = plots.get(id);
-                if (plot != null) {
-                    plot.getMembers().add(user);
-                } else {
-                    PS.debug("&cPLOT " + id + " in plot_trusted does not exist. Please create the plot or remove this entry.");
+            try (ResultSet r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_trusted`")) {
+                while (r.next()) {
+                    id = r.getInt("plot_plot_id");
+                    o = r.getString("user_uuid");
+                    user = uuids.get(o);
+                    if (user == null) {
+                        user = UUID.fromString(o);
+                        uuids.put(o, user);
+                    }
+                    final Plot plot = plots.get(id);
+                    if (plot != null) {
+                        plot.getMembers().add(user);
+                    } else {
+                        PS.debug("&cPLOT " + id + " in plot_trusted does not exist. Please create the plot or remove this entry.");
+                    }
                 }
             }
             
             /*
              * Getting denied
              */
-            r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_denied`");
-            while (r.next()) {
-                id = r.getInt("plot_plot_id");
-                o = r.getString("user_uuid");
-                user = uuids.get(o);
-                if (user == null) {
-                    user = UUID.fromString(o);
-                    uuids.put(o, user);
-                }
-                final Plot plot = plots.get(id);
-                if (plot != null) {
-                    plot.getDenied().add(user);
-                } else {
-                    PS.debug("&cPLOT " + id + " in plot_denied does not exist. Please create the plot or remove this entry.");
+            try (ResultSet r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_denied`")) {
+                while (r.next()) {
+                    id = r.getInt("plot_plot_id");
+                    o = r.getString("user_uuid");
+                    user = uuids.get(o);
+                    if (user == null) {
+                        user = UUID.fromString(o);
+                        uuids.put(o, user);
+                    }
+                    final Plot plot = plots.get(id);
+                    if (plot != null) {
+                        plot.getDenied().add(user);
+                    } else {
+                        PS.debug("&cPLOT " + id + " in plot_denied does not exist. Please create the plot or remove this entry.");
+                    }
                 }
             }
             
-            r = stmt.executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`");
-            while (r.next()) {
-                id = r.getInt("plot_plot_id");
-                final Plot plot = plots.get(id);
-                if (plot != null) {
-                    plots.remove(id);
-                    if (!newplots.containsKey(plot.world)) {
-                        newplots.put(plot.world, new ConcurrentHashMap<PlotId, Plot>());
-                    }
-                    newplots.get(plot.world).put(plot.id, plot);
-                    final String alias = r.getString("alias");
-                    if (alias != null) {
-                        plot.getSettings().setAlias(alias);
-                    }
-                    final String pos = r.getString("position");
-                    switch (pos.toLowerCase()) {
-                        case "":
-                        case "default":
-                        case "0,0,0":
-                        case "center":
-                            break;
-                        default:
-                            try {
-                                plot.getSettings().setPosition(BlockLoc.fromString(pos));
-                            } catch (final Exception e) {
-                            }
-                    }
-                    final Integer m = r.getInt("merged");
-                    if (m != null) {
-                        final boolean[] merged = new boolean[4];
-                        for (int i = 0; i < 4; i++) {
-                            merged[3 - i] = ((m) & (1 << i)) != 0;
+            try (ResultSet r = stmt.executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
+                while (r.next()) {
+                    id = r.getInt("plot_plot_id");
+                    final Plot plot = plots.get(id);
+                    if (plot != null) {
+                        plots.remove(id);
+                        if (!newplots.containsKey(plot.world)) {
+                            newplots.put(plot.world, new ConcurrentHashMap<PlotId, Plot>());
                         }
-                        plot.getSettings().setMerged(merged);
-                    } else {
-                        plot.getSettings().setMerged(new boolean[]{false, false, false, false});
-                    }
-                    String[] flags_string;
-                    final String myflags = r.getString("flags");
-                    if (myflags == null) {
-                        flags_string = new String[]{};
-                    } else {
-                        if (myflags.length() > 0) {
-                            flags_string = myflags.split(",");
+                        newplots.get(plot.world).put(plot.id, plot);
+                        final String alias = r.getString("alias");
+                        if (alias != null) {
+                            plot.getSettings().setAlias(alias);
+                        }
+                        final String pos = r.getString("position");
+                        switch (pos.toLowerCase()) {
+                            case "":
+                            case "default":
+                            case "0,0,0":
+                            case "center":
+                                break;
+                            default:
+                                try {
+                                    plot.getSettings().setPosition(BlockLoc.fromString(pos));
+                                } catch (final Exception e) {
+                                }
+                        }
+                        final Integer m = r.getInt("merged");
+                        if (m != null) {
+                            final boolean[] merged = new boolean[4];
+                            for (int i = 0; i < 4; i++) {
+                                merged[3 - i] = ((m) & (1 << i)) != 0;
+                            }
+                            plot.getSettings().setMerged(merged);
                         } else {
+                            plot.getSettings().setMerged(new boolean[]{false, false, false, false});
+                        }
+                        String[] flags_string;
+                        final String myflags = r.getString("flags");
+                        if (myflags == null) {
                             flags_string = new String[]{};
-                        }
-                    }
-                    final HashMap<String, Flag> flags = new HashMap<>();
-                    boolean exception = false;
-                    for (String element : flags_string) {
-                        if (element.contains(":")) {
-                            final String[] split = element.split(":");
-                            try {
-                                final String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
-                                final Flag flag = new Flag(FlagManager.getFlag(split[0], true), flag_str);
-                                flags.put(flag.getKey(), flag);
-                            } catch (final Exception e) {
-                                e.printStackTrace();
-                                exception = true;
-                            }
                         } else {
-                            element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
-                            if (StringMan.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
-                                Flag flag = new Flag(FlagManager.getFlag(element, true), "");
-                                flags.put(flag.getKey(), flag);
+                            if (myflags.length() > 0) {
+                                flags_string = myflags.split(",");
                             } else {
-                                PS.debug("INVALID FLAG: " + element);
+                                flags_string = new String[]{};
                             }
                         }
+                        final HashMap<String, Flag> flags = new HashMap<>();
+                        boolean exception = false;
+                        for (String element : flags_string) {
+                            if (element.contains(":")) {
+                                final String[] split = element.split(":");
+                                try {
+                                    final String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
+                                    final Flag flag = new Flag(FlagManager.getFlag(split[0], true), flag_str);
+                                    flags.put(flag.getKey(), flag);
+                                } catch (final Exception e) {
+                                    e.printStackTrace();
+                                    exception = true;
+                                }
+                            } else {
+                                element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
+                                if (StringMan.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
+                                    Flag flag = new Flag(FlagManager.getFlag(element, true), "");
+                                    flags.put(flag.getKey(), flag);
+                                } else {
+                                    PS.debug("INVALID FLAG: " + element);
+                                }
+                            }
+                        }
+                        if (exception) {
+                            PS.debug("&cPlot " + id + " had an invalid flag. A fix has been attempted.");
+                            PS.debug("&c" + myflags);
+                            this.setFlags(id, flags.values());
+                        }
+                        plot.getSettings().flags = flags;
+                    } else {
+                        PS.debug("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
                     }
-                    if (exception) {
-                        PS.debug("&cPlot " + id + " had an invalid flag. A fix has been attempted.");
-                        PS.debug("&c" + myflags);
-                        setFlags(id, flags.values());
-                    }
-                    plot.getSettings().flags = flags;
-                } else {
-                    PS.debug("&cPLOT " + id + " in plot_settings does not exist. Please create the plot or remove this entry.");
                 }
+                stmt.close();
             }
-            
-            stmt.close();
-            r.close();
             if (plots.keySet().size() > 0) {
-                createEmptySettings(new ArrayList<Integer>(plots.keySet()), null);
+                this.createEmptySettings(new ArrayList<Integer>(plots.keySet()), null);
             }
             boolean invalidPlot = false;
             for (final String worldname : noExist.keySet()) {
@@ -1197,7 +1203,7 @@ public class SQLManager implements AbstractDB {
                     }
                     final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `merged` = ? WHERE `plot_plot_id` = ?");
                     stmt.setInt(1, n);
-                    stmt.setInt(2, getId(plot));
+                    stmt.setInt(2, SQLManager.this.getId(plot));
                     stmt.execute();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -1220,8 +1226,8 @@ public class SQLManager implements AbstractDB {
                  */
                 try {
                     final String world = p1.world;
-                    final int id1 = getId(p1);
-                    final int id2 = getId(p2);
+                    final int id1 = SQLManager.this.getId(p1);
+                    final int id2 = SQLManager.this.getId(p2);
                     final PlotId pos1 = p1.getId();
                     final PlotId pos2 = p2.getId();
                     PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot` SET `plot_id_x` = ?, `plot_id_z` = ? WHERE `id` = ?");
@@ -1249,7 +1255,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void run() {
                 try {
-                    final int id = getId(original);
+                    final int id = SQLManager.this.getId(original);
                     final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot` SET `plot_id_x` = ?, `plot_id_z` = ? WHERE `id` = ?");
                     stmt.setInt(1, newPlot.id.x);
                     stmt.setInt(2, newPlot.id.y);
@@ -1280,7 +1286,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `flags` = ? WHERE `plot_plot_id` = ?");
                     stmt.setString(1, flag_string.toString());
-                    stmt.setInt(2, getId(plot));
+                    stmt.setInt(2, SQLManager.this.getId(plot));
                     stmt.execute();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -1319,7 +1325,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `alias` = ?  WHERE `plot_plot_id` = ?");
                     stmt.setString(1, alias);
-                    stmt.setInt(2, getId(plot));
+                    stmt.setInt(2, SQLManager.this.getId(plot));
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -1388,7 +1394,7 @@ public class SQLManager implements AbstractDB {
                     ids.add(r.getInt("id"));
                 }
             }
-            purgeIds(world, ids);
+            this.purgeIds(world, ids);
             stmt.close();
             r.close();
             for (Iterator<PlotId> iter = plots.iterator(); iter.hasNext(); ) {
@@ -1412,7 +1418,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "plot_settings` SET `position` = ?  WHERE `plot_plot_id` = ?");
                     stmt.setString(1, position);
-                    stmt.setInt(2, getId(plot));
+                    stmt.setInt(2, SQLManager.this.getId(plot));
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -1536,12 +1542,12 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement statement;
                     if (plot != null) {
-                        statement = connection.prepareStatement("SELECT * FROM `" + prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `inbox` = ?");
+                        statement = SQLManager.this.connection.prepareStatement("SELECT * FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `inbox` = ?");
                         statement.setString(1, plot.world);
                         statement.setInt(2, plot.id.hashCode());
                         statement.setString(3, inbox);
                     } else {
-                        statement = connection.prepareStatement("SELECT * FROM `" + prefix + "plot_comments` WHERE `inbox` = ?");
+                        statement = SQLManager.this.connection.prepareStatement("SELECT * FROM `" + SQLManager.this.prefix + "plot_comments` WHERE `inbox` = ?");
                         statement.setString(1, inbox);
                     }
                     final ResultSet set = statement.executeQuery();
@@ -1603,7 +1609,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_helpers` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
-                    statement.setInt(1, getId(plot));
+                    statement.setInt(1, SQLManager.this.getId(plot));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1622,7 +1628,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_trusted` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
-                    statement.setInt(1, getId(plot));
+                    statement.setInt(1, SQLManager.this.getId(plot));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1641,7 +1647,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_helpers` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
-                    statement.setInt(1, getId(plot));
+                    statement.setInt(1, SQLManager.this.getId(plot));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1678,7 +1684,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_trusted` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
-                    statement.setInt(1, getId(plot));
+                    statement.setInt(1, SQLManager.this.getId(plot));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1697,7 +1703,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "plot_denied` WHERE `plot_plot_id` = ? AND `user_uuid` = ?");
-                    statement.setInt(1, getId(plot));
+                    statement.setInt(1, SQLManager.this.getId(plot));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1716,7 +1722,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_denied` (`plot_plot_id`, `user_uuid`) VALUES(?,?)");
-                    statement.setInt(1, getId(plot));
+                    statement.setInt(1, SQLManager.this.getId(plot));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -1733,7 +1739,7 @@ public class SQLManager implements AbstractDB {
         HashMap<UUID, Integer> map = new HashMap<UUID, Integer>();
         try {
             final PreparedStatement statement = this.connection.prepareStatement("SELECT `rating`, `player` FROM `" + this.prefix + "plot_rating` WHERE `plot_plot_id` = ? ");
-            statement.setInt(1, getId(plot));
+            statement.setInt(1, this.getId(plot));
             final ResultSet set = statement.executeQuery();
             while (set.next()) {
                 UUID uuid = UUID.fromString(set.getString("player"));
@@ -1756,7 +1762,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_rating` (`plot_plot_id`, `rating`, `player`) VALUES(?,?,?)");
-                    statement.setInt(1, getId(plot));
+                    statement.setInt(1, SQLManager.this.getId(plot));
                     statement.setInt(2, value);
                     statement.setString(3, rater.toString());
                     statement.executeUpdate();
@@ -1776,7 +1782,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void run() {
                 PreparedStatement stmt = null;
-                final int id = getClusterId(cluster.world, ClusterManager.getClusterId(cluster));
+                final int id = SQLManager.this.getClusterId(cluster.world, ClusterManager.getClusterId(cluster));
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster_settings` WHERE `cluster_id` = ?");
                     stmt.setInt(1, id);
@@ -2020,7 +2026,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     final PreparedStatement stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "cluster_settings` SET `flags` = ? WHERE `cluster_id` = ?");
                     stmt.setString(1, flag_string.toString());
-                    stmt.setInt(2, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    stmt.setInt(2, SQLManager.this.getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
                     stmt.execute();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -2041,7 +2047,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "cluster_settings` SET `alias` = ?  WHERE `cluster_id` = ?");
                     stmt.setString(1, name);
-                    stmt.setInt(2, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    stmt.setInt(2, SQLManager.this.getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -2059,7 +2065,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster_helpers` WHERE `cluster_id` = ? AND `user_uuid` = ?");
-                    statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    statement.setInt(1, SQLManager.this.getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -2078,7 +2084,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "cluster_helpers` (`cluster_id`, `user_uuid`) VALUES(?,?)");
-                    statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    statement.setInt(1, SQLManager.this.getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -2106,7 +2112,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setString(6, cluster.world);
                     stmt.executeUpdate();
                     stmt.close();
-                    final int id = getClusterId(cluster.world, ClusterManager.getClusterId(cluster));
+                    final int id = SQLManager.this.getClusterId(cluster.world, ClusterManager.getClusterId(cluster));
                     stmt = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "cluster_settings`(`cluster_id`, `alias`) VALUES(?, ?" + ")");
                     stmt.setInt(1, id);
                     stmt.setString(2, cluster.settings.getAlias());
@@ -2136,7 +2142,7 @@ public class SQLManager implements AbstractDB {
                     stmt.setInt(2, pos1.y);
                     stmt.setInt(3, pos2.x);
                     stmt.setInt(4, pos2.y);
-                    stmt.setInt(5, getClusterId(current.world, ClusterManager.getClusterId(current)));
+                    stmt.setInt(5, SQLManager.this.getClusterId(current.world, ClusterManager.getClusterId(current)));
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -2156,7 +2162,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt = SQLManager.this.connection.prepareStatement("UPDATE `" + SQLManager.this.prefix + "cluster_settings` SET `position` = ?  WHERE `cluster_id` = ?");
                     stmt.setString(1, position);
-                    stmt.setInt(2, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    stmt.setInt(2, SQLManager.this.getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
                     stmt.executeUpdate();
                     stmt.close();
                 } catch (final SQLException e) {
@@ -2222,7 +2228,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("DELETE FROM `" + SQLManager.this.prefix + "cluster_invited` WHERE `cluster_id` = ? AND `user_uuid` = ?");
-                    statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    statement.setInt(1, SQLManager.this.getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -2241,7 +2247,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     final PreparedStatement statement = SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "cluster_invited` (`cluster_id`, `user_uuid`) VALUES(?,?)");
-                    statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                    statement.setInt(1, SQLManager.this.getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
                     statement.setString(2, uuid.toString());
                     statement.executeUpdate();
                     statement.close();
@@ -2259,20 +2265,20 @@ public class SQLManager implements AbstractDB {
             SQLManager.this.connection.close();
             SQLManager.this.connection = PS.get().getDatabase().forceConnection();
             final Statement stmt = this.connection.createStatement();
-            stmt.addBatch("DROP TABLE `" + prefix + "cluster_invited`");
-            stmt.addBatch("DROP TABLE `" + prefix + "cluster_helpers`");
-            stmt.addBatch("DROP TABLE `" + prefix + "cluster`");
-            stmt.addBatch("DROP TABLE `" + prefix + "plot_rating`");
-            stmt.addBatch("DROP TABLE `" + prefix + "plot_settings`");
-            stmt.addBatch("DROP TABLE `" + prefix + "plot_comments`");
-            stmt.addBatch("DROP TABLE `" + prefix + "plot_trusted`");
-            stmt.addBatch("DROP TABLE `" + prefix + "plot_helpers`");
-            stmt.addBatch("DROP TABLE `" + prefix + "plot_denied`");
+            stmt.addBatch("DROP TABLE `" + this.prefix + "cluster_invited`");
+            stmt.addBatch("DROP TABLE `" + this.prefix + "cluster_helpers`");
+            stmt.addBatch("DROP TABLE `" + this.prefix + "cluster`");
+            stmt.addBatch("DROP TABLE `" + this.prefix + "plot_rating`");
+            stmt.addBatch("DROP TABLE `" + this.prefix + "plot_settings`");
+            stmt.addBatch("DROP TABLE `" + this.prefix + "plot_comments`");
+            stmt.addBatch("DROP TABLE `" + this.prefix + "plot_trusted`");
+            stmt.addBatch("DROP TABLE `" + this.prefix + "plot_helpers`");
+            stmt.addBatch("DROP TABLE `" + this.prefix + "plot_denied`");
             stmt.executeBatch();
             stmt.clearBatch();
             stmt.close();
 
-            PreparedStatement statement = connection.prepareStatement("DROP TABLE `" + prefix + "plot`");
+            PreparedStatement statement = this.connection.prepareStatement("DROP TABLE `" + this.prefix + "plot`");
             statement.executeUpdate();
             statement.close();
             return true;
@@ -2305,12 +2311,9 @@ public class SQLManager implements AbstractDB {
     @Override
     public void validateAllPlots(Set<Plot> toValidate) {
         PS.debug("$1All DB transactions during this session are being validated (This may take a while if corrections need to be made)");
-        try {
-            connection.commit();
-        }
-        catch (SQLException e) {}
-        ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> database = getPlots();
-        
+        this.commit();
+        ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> database = this.getPlots();
+        this.commit();
         ArrayList<Plot> toCreate = new ArrayList<>();
         
         for (Plot plot : PS.get().getPlotsRaw()) {
@@ -2332,7 +2335,7 @@ public class SQLManager implements AbstractDB {
             // owner
             if (!plot.owner.equals(dataplot.owner)) {
                 PS.debug("&8 - &7Setting owner: " + plot +" -> " + MainUtil.getName(plot.owner));
-                setOwner(plot, plot.owner);
+                this.setOwner(plot, plot.owner);
             }
             // trusted
             if (!plot.getTrusted().equals(dataplot.trusted)) {
@@ -2343,12 +2346,12 @@ public class SQLManager implements AbstractDB {
                 PS.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " trusted for: " + plot);
                 if (toRemove.size() > 0) {
                     for (UUID uuid : toRemove) {
-                        removeTrusted(plot, uuid);
+                        this.removeTrusted(plot, uuid);
                     }
                 }
                 if (toAdd.size() > 0) {
                     for (UUID uuid : toAdd) {
-                        setTrusted(plot, uuid);
+                        this.setTrusted(plot, uuid);
                     }
                 }
             }
@@ -2360,12 +2363,12 @@ public class SQLManager implements AbstractDB {
                 PS.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " members for: " + plot);
                 if (toRemove.size() > 0) {
                     for (UUID uuid : toRemove) {
-                        removeMember(plot, uuid);
+                        this.removeMember(plot, uuid);
                     }
                 }
                 if (toAdd.size() > 0) {
                     for (UUID uuid : toAdd) {
-                        setMember(plot, uuid);
+                        this.setMember(plot, uuid);
                     }
                 }
             }
@@ -2377,12 +2380,12 @@ public class SQLManager implements AbstractDB {
                 PS.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " denied for: " + plot);
                 if (toRemove.size() > 0) {
                     for (UUID uuid : toRemove) {
-                        removeDenied(plot, uuid);
+                        this.removeDenied(plot, uuid);
                     }
                 }
                 if (toAdd.size() > 0) {
                     for (UUID uuid : toAdd) {
-                        setDenied(plot, uuid);
+                        this.setDenied(plot, uuid);
                     }
                 }
             }
@@ -2392,14 +2395,14 @@ public class SQLManager implements AbstractDB {
             boolean[] dm = ds.getMerged();
             if (pm[0] != dm[0] || pm[1] != dm[1] || pm[1] != dm[1] || pm[1] != dm[1]) {
                 PS.debug("&8 - &7Correcting merge for: " + plot);
-                setMerged(dataplot, ps.getMerged());
+                this.setMerged(dataplot, ps.getMerged());
             }
             HashMap<String, Flag> pf = ps.flags;
             HashMap<String, Flag> df = ds.flags;
             if (pf.size() != 0 && df.size() != 0) {
                 if (pf.size() != df.size() || !StringMan.isEqual(StringMan.joinOrdered(pf.values(), ","),StringMan.joinOrdered(df.values(), ","))) {
                     PS.debug("&8 - &7Correcting flags for: " + plot);
-                    setFlags(plot, pf.values());
+                    this.setFlags(plot, pf.values());
                 }
             }
             // TODO comments
@@ -2407,7 +2410,11 @@ public class SQLManager implements AbstractDB {
             // TODO alias
             // TODO unconnected entries from helpers, trusted, denied, comments, settings, rating
         }
-        
+        this.commit();
+        if (toCreate.size() > 0) {
+            this.createPlots(toCreate, null);
+        }
+        this.commit();
         for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : database.entrySet()) {
             ConcurrentHashMap<PlotId, Plot> map = entry.getValue();
             if (map.size() > 0) {
@@ -2419,7 +2426,7 @@ public class SQLManager implements AbstractDB {
         
         PS.debug("$4Done!");
         try {
-            connection.commit();
+            this.connection.commit();
         }
         catch (SQLException e) {}
     }
