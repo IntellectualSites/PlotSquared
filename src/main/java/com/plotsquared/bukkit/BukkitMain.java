@@ -126,6 +126,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void onDisable() {
+        Bukkit.getScheduler().cancelTasks(this);
         PS.get().disable();
         THIS = null;
     }
@@ -554,12 +555,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         World world = BukkitUtil.getWorld(worldname);
         if (world == null) {
             // create world
-            
-            System.out.print("CREATING WORLD: " + worldname);
-            System.out.print("CREATING WORLD: " + worldname);
-            System.out.print("CREATING WORLD: " + worldname);
-            System.out.print("CREATING WORLD: " + worldname);
-            
             ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldname);
             String manager = worldConfig.getString("generator.plugin");
             if (manager == null) {

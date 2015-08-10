@@ -42,7 +42,6 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
  * @author Empire92
  */
 public interface AbstractDB {
-    // TODO MongoDB @Brandon
     /**
      * The UUID that will count as everyone
      */
@@ -206,20 +205,6 @@ public interface AbstractDB {
      * @param position
      */
     void setPosition(final PlotCluster cluster, final String position);
-
-    /**
-     * @param id Plot Entry ID
-     *
-     * @return Plot Settings
-     */
-    HashMap<String, Object> getSettings(final int id);
-
-    /**
-     *
-     * @param id
-     * @return HashMap<String, Object>
-     */
-    HashMap<String, Object> getClusterSettings(final int id);
 
     /**
      * @param plot   Plot Object

@@ -64,6 +64,7 @@ public class SendChunk {
             if (!chunk.isLoaded()) {
                 continue;
             }
+            boolean unload = true;
             final Object c = methodGetHandle.of(chunk).call();
             final Object w = world.of(c).get();
             final Object p = players.of(w).get();
@@ -73,6 +74,7 @@ public class SendChunk {
                 diffx = Math.abs(x - (chunk.getX() << 4));
                 diffz = Math.abs(z - (chunk.getZ() << 4));
                 if ((diffx <= view) && (diffz <= view)) {
+                    unload = false;
                     if (v1_7_10) {
                         chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
                         chunk.load(true);
@@ -84,6 +86,15 @@ public class SendChunk {
                     }
                 }
             }
+            if (unload) {
+                try {
+                    chunk.unload(true, true);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            
         }
     }
 

@@ -250,15 +250,6 @@ public class DBFunc {
     }
 
     /**
-     * 
-     * @param id
-     * @return HashMap<String, Object>
-     */
-    public static HashMap<String, Object> getSettings(final int id) {
-        return dbManager.getSettings(id);
-    }
-
-    /**
      * @param plot
      * @param comment
      */
@@ -428,9 +419,5 @@ public class DBFunc {
 
     public static void setPosition(final PlotCluster cluster, final String position) {
         dbManager.setPosition(cluster, position);
-    }
-
-    public static HashMap<String, Object> getClusterSettings(final int id) {
-        return dbManager.getClusterSettings(id);
     }
 }

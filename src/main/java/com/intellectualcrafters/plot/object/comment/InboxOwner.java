@@ -56,6 +56,9 @@ public class InboxOwner extends CommentInbox {
                         plot.getSettings().addComment(comment);
                     }
                 }
+                else {
+                    plot.getSettings().setComments(new ArrayList<PlotComment>());
+                }
                 TaskManager.runTask(whenDone);
             }
         });

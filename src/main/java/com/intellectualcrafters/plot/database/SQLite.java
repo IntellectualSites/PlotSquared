@@ -86,6 +86,7 @@ public class SQLite extends Database {
             return false;
         }
         this.connection.close();
+        this.connection = null;
         return true;
     }
 
