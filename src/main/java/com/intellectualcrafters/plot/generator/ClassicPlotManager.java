@@ -216,7 +216,7 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
         final PlotId pos1 = plotIds.get(0);
         final PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
-        if (!block.equals(unclaim)) {
+        if (block.id != 0 || !block.equals(unclaim)) {
             setWall(plotworld, pos1, new PlotBlock[] { block });
         }
         return true;

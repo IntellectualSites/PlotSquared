@@ -218,7 +218,9 @@ public class HybridPlotManager extends ClassicPlotManager {
             public void run() {
                 // When we are done with the inside of the plot, we can reset the wall / border
                 final PlotBlock wall = isDelete ? dpw.WALL_BLOCK : dpw.CLAIMED_WALL_BLOCK;
-                setWall(dpw, plot.id, new PlotBlock[] { wall });
+                if (wall.id != 0 || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
+                    setWall(dpw, plot.id, new PlotBlock[] { wall });
+                }
                 // And notify whatever called this when plot clearing is done
                 SetBlockQueue.addNotify(whenDone);
             }
