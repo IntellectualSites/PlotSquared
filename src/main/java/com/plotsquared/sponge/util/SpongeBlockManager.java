@@ -131,7 +131,11 @@ public class SpongeBlockManager extends BlockManager {
     
     @Override
     public Location getSpawn(String world) {
-        return SpongeUtil.getLocation(world, SpongeUtil.getWorld(world).getSpawnLocation());
+        World worldObj = SpongeUtil.getWorld(world);
+        org.spongepowered.api.world.Location loc = worldObj.getSpawnLocation();
+        Location result = SpongeUtil.getLocation(world, SpongeUtil.getWorld(world).getSpawnLocation());
+        result.setY(getHeighestBlock(world, result.getX(), result.getZ()));
+        return result;
     }
     
     @Override

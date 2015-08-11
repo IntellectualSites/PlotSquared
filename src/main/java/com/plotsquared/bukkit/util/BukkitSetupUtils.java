@@ -103,7 +103,6 @@ public class BukkitSetupUtils extends SetupUtils {
             return;
         }
         File file = new File("bukkit.yml").getAbsoluteFile();
-        System.out.print(file.getAbsolutePath());
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
         yml.set("worlds." + world + ".generator", generator);
         try {

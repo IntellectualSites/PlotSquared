@@ -50,7 +50,7 @@ public class StringMan {
         else if (obj instanceof Collection<?>) {
             String result = "";
             String prefix = "";
-            for (Object element : (List<?>) obj) {
+            for (Object element : (Collection<?>) obj) {
                 result += prefix + getString(element);
                 prefix = ",";
             }

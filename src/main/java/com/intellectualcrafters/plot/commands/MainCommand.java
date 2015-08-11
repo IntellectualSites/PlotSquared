@@ -337,7 +337,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             MainUtil.sendMessage(plr, C.NOT_VALID_SUBCOMMAND);
             {
                 List<Command<PlotPlayer>> cmds = getCommands(null, plr);
-                if (label == null || (cmd = new StringComparison<>(label, cmds).getMatchObject()) == null) {
+                if (label == null || cmds.size() == 0 || (cmd = new StringComparison<>(label, cmds).getMatchObject()) == null) {
                     MainUtil.sendMessage(plr, C.DID_YOU_MEAN, "/plot help");
                 }
                 else {

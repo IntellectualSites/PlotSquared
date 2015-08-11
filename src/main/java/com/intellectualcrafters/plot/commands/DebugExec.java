@@ -95,7 +95,7 @@ public class DebugExec extends SubCommand {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
-                    onCommand(ConsolePlayer.getConsole(), new String[] {"runasync", "start.js"});
+                    onCommand(ConsolePlayer.getConsole(), new String[] {"run", "start.js"});
                 }
             }, 1);
         }

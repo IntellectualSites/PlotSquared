@@ -178,8 +178,6 @@ public class EntityWrapper {
         this.x = loc.getX();
         this.y = loc.getY();
         this.z = loc.getZ();
-        System.out.print("ENTITY: " + entity.getType());
-        System.out.print("ENTITY: " + entity.getType().getTypeId());
         this.id = entity.getType().getTypeId();
         if (depth == 0) {
             return;

@@ -494,7 +494,6 @@ public class BukkitChunkManager extends ChunkManager {
     public static void restoreEntities(final World world, final int x_offset, final int z_offset) {
         for (final EntityWrapper entity : entities) {
             try {
-                System.out.print("RESTORING ENTITIE!: " + EntityType.fromId(entity.id));
                 entity.spawn(world, x_offset, z_offset);
             } catch (final Exception e) {
                 PS.debug("Failed to restore entity (e): " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.id + " : " + EntityType.fromId(entity.id));
