@@ -71,34 +71,34 @@ public class list extends SubCommand {
 
     private String[] getArgumentList(PlotPlayer player) {
         List<String> args = new ArrayList<>();
-        if (EconHandler.manager != null && player.hasPermission("plots.list.forsale")) {
+        if (EconHandler.manager != null && Permissions.hasPermission(player, "plots.list.forsale")) {
             args.add("forsale");
         }
-        if (player.hasPermission("plots.list.mine")) {
+        if (Permissions.hasPermission(player, "plots.list.mine")) {
             args.add("mine");
         }
-        if (player.hasPermission("plots.list.shared")) {
+        if (Permissions.hasPermission(player, "plots.list.shared")) {
             args.add("shared");
         }
-        if (player.hasPermission("plots.list.world")) {
+        if (Permissions.hasPermission(player, "plots.list.world")) {
             args.add("world");
         }
-        if (player.hasPermission("plots.list.top")) {
+        if (Permissions.hasPermission(player, "plots.list.top")) {
             args.add("top");
         }
-        if (player.hasPermission("plots.list..all")) {
+        if (Permissions.hasPermission(player, "plots.list..all")) {
             args.add("all");
         }
-        if (player.hasPermission("plots.list.unowned")) {
+        if (Permissions.hasPermission(player, "plots.list.unowned")) {
             args.add("unowned");
         }
-        if (player.hasPermission("plots.list.unknown")) {
+        if (Permissions.hasPermission(player, "plots.list.unknown")) {
             args.add("unknown");
         }
-        if (player.hasPermission("plots.list.player")) {
+        if (Permissions.hasPermission(player, "plots.list.player")) {
             args.add("<player>");
         }
-        if (player.hasPermission("plots.list.world")) {
+        if (Permissions.hasPermission(player, "plots.list.world")) {
             args.add("<world>");
         }
         return args.toArray(new String[args.size()]);

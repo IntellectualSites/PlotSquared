@@ -85,8 +85,10 @@ public class BukkitPlayer extends PlotPlayer {
             return true;
         }
         if (offline && EconHandler.manager != null) {
+            System.out.print("CHECKIGN VAULT!");
             return EconHandler.manager.hasPermission(getName(), perm);
         }
+        System.out.print("CHECKING: " + perm + " -> " + player.hasPermission(perm));
         return this.player.hasPermission(perm);
     }
     

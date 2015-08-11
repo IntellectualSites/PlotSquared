@@ -34,6 +34,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.helpmenu.HelpMenu;
@@ -141,7 +142,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             if (category != null && !command.getCategory().equals(category)) {
                 continue;
             }
-            if (player != null && !player.hasPermission(command.getPermission())) {
+            if (player != null && !Permissions.hasPermission(player, command.getPermission())) {
                 continue;
             }
             commands.add(command);

@@ -37,6 +37,7 @@ import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 
 /**
  * Flag Manager Utility
@@ -369,7 +370,7 @@ public class FlagManager {
     public static List<AbstractFlag> getFlags(final PlotPlayer player) {
         final List<AbstractFlag> returnFlags = new ArrayList<>();
         for (final AbstractFlag flag : flags) {
-            if (player.hasPermission("plots.set.flag." + flag.getKey().toLowerCase())) {
+            if (Permissions.hasPermission(player, "plots.set.flag." + flag.getKey().toLowerCase())) {
                 returnFlags.add(flag);
             }
         }

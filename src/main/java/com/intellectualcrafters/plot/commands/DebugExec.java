@@ -92,12 +92,7 @@ public class DebugExec extends SubCommand {
         File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
         if (file.exists()) {
             init();
-            TaskManager.runTaskLater(new Runnable() {
-                @Override
-                public void run() {
-                    onCommand(ConsolePlayer.getConsole(), new String[] {"run", "start.js"});
-                }
-            }, 1);
+            onCommand(ConsolePlayer.getConsole(), new String[] {"run", "start.js"});
         }
     }
     

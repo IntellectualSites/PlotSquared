@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.commands.DebugUUID;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.plotsquared.general.commands.Command;
 
@@ -63,7 +64,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
             String label = cmd.getCommand();
             if (!label.equalsIgnoreCase(best)) {
                 if (label.startsWith(arg)) {
-                    if (player.hasPermission(cmd.getPermission())) {
+                    if (Permissions.hasPermission(player, cmd.getPermission())) {
                         tabOptions.add(cmd.getCommand());
                     } else if (cmd.getAliases().size() > 0) {
                         for (String alias : cmd.getAliases()) {

@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 public enum Permissions {
     // ADMIN
     ADMIN("plots.admin", "do-not-change"),
+    STAR("*", "do-not-change"),
     // BUILD
     BUILD_OTHER("plots.admin.build.other", "build"),
     BUILD_ROAD("plots.admin.build.road", "build"),
@@ -35,17 +36,17 @@ public enum Permissions {
 
 
     public static boolean hasPermission(final PlotPlayer player, final String perm) {
-        if ((player == null) || player.hasPermission(ADMIN.s)) {
+        if ((player == null) || player.hasPermission(ADMIN.s) || player.hasPermission(STAR.s)) {
             return true;
         }
-        if (player.hasPermission(perm)) {
+        if (Permissions.hasPermission(player, perm)) {
             return true;
         }
         final String[] nodes = perm.split("\\.");
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i] + ("."));
-            if (player.hasPermission(n + "*")) {
+            if (player.hasPermission(n + STAR.s)) {
                 return true;
             }
         }
@@ -53,35 +54,24 @@ public enum Permissions {
     }
     
     public static boolean hasPermission(final PlotPlayer player, final String perm, boolean notify) {
-        if ((player == null) || player.hasPermission(ADMIN.s)) {
-            return true;
-        }
-        if (player.hasPermission(perm)) {
-            return true;
-        }
-        final String[] nodes = perm.split("\\.");
-        final StringBuilder n = new StringBuilder();
-        for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i] + ("."));
-            if (player.hasPermission(n + "*")) {
-                return true;
+        if (!hasPermission(player, perm)) {
+            if (notify) {
+                MainUtil.sendMessage(player, C.NO_PERMISSION_EVENT, perm);
             }
+            return false;
         }
-        if (notify) {
-            MainUtil.sendMessage(player, C.NO_PERMISSION_EVENT, perm);
-        }
-        return false;
+        return true;
     }
 
     public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range) {
-        if ((player == null) || player.hasPermission(ADMIN.s)) {
+        if ((player == null) || player.hasPermission(ADMIN.s) || player.hasPermission(STAR.s)) {
             return Integer.MAX_VALUE;
         }
-        if (player.hasPermission(stub + ".*")) {
+        if (Permissions.hasPermission(player, stub + ".*")) {
             return Integer.MAX_VALUE;
         }
         for (int i = range; i > 0; i--) {
-            if (player.hasPermission(stub + "." + i)) {
+            if (Permissions.hasPermission(player, stub + "." + i)) {
                 return i;
             }
         }
