@@ -1,17 +1,21 @@
 package com.plotsquared.sponge.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.Sign;
-import org.spongepowered.api.data.manipulator.tileentity.SignData;
+import org.spongepowered.api.block.tileentity.TileEntity;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
@@ -132,13 +136,22 @@ public class SpongeBlockManager extends BlockManager {
     
     @Override
     public String[] getSign(Location loc) {
-        BlockState block = SpongeUtil.getWorld(loc.getWorld()).getBlock(loc.getX(), loc.getY(), loc.getZ());
-        if (!(block instanceof Sign)) {
+        World world = SpongeUtil.getWorld(loc.getWorld());
+        Optional<TileEntity> block = world.getTileEntity(loc.getX(), loc.getY(), loc.getZ());
+        if (!block.isPresent()) {
             return null;
         }
-        Sign sign = (Sign) block;
+        TileEntity tile = block.get();
+        if (!(tile instanceof Sign)) {
+            return null;
+        }
+        Sign sign = (Sign) tile;
+        Optional<List<Text>> optional = tile.get(Keys.SIGN_LINES);
+        if (!optional.isPresent()) {
+            return null;
+        }
         String[] result = new String[4];
-        List<Text> lines = sign.getData().get().getLines();
+        List<Text> lines = optional.get();
         for (int i = 0; i < 4; i++) {
             result[i] = lines.get(i).toString();
         }
@@ -161,15 +174,20 @@ public class SpongeBlockManager extends BlockManager {
     public void functionSetSign(String worldname, int x, int y, int z, String[] lines) {
         World world = SpongeUtil.getWorld(worldname);
         world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState());
-        BlockState block = world.getBlock(x, y, z);
-        if (!(block instanceof Sign)) {
+        Optional<TileEntity> block = world.getTileEntity(x, y, z);
+        if (!block.isPresent()) {
             return;
         }
-        Sign sign = (Sign) block;
-        SignData data = sign.getData().get();
-        for (int i = 0; i < 4; i++) {
-            data.setLine(i, SpongeMain.THIS.getText(lines[i]));
+        TileEntity tile = block.get();
+        if (!(tile instanceof Sign)) {
+            return;
         }
+        Sign sign = (Sign) tile;
+        List<Text> text = new ArrayList<>(4);
+        for (int i = 0; i < 4; i++) {
+            text.add(SpongeMain.THIS.getText(lines[i]));
+        }
+        sign.offer(Keys.SIGN_LINES, text);
     }
     
     @Override

@@ -138,7 +138,8 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.mine");
                     return false;
                 }
-                plots = new ArrayList<>(PS.get().getPlots(plr));
+                sort = false;
+                plots = PS.get().sortPlotsByTemp(PS.get().getPlots(plr));
                 break;
             }
             case "shared": {
@@ -283,7 +284,8 @@ public class list extends SubCommand {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.player");
                         return false;
                     }
-                    plots = new ArrayList<>(PS.get().getPlots(uuid));
+                    sort = false;
+                    plots = PS.get().sortPlotsByTemp(PS.get().getPlots(uuid));
                     break;
                 }
             }

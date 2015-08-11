@@ -45,7 +45,7 @@ public class Flag {
         this.key = key;
         this.value = key.parseValueRaw(value);
         if (this.value == null) {
-            throw new IllegalArgumentException(key.getValueDesc());
+            throw new IllegalArgumentException(key.getValueDesc() + " (" + value + ")");
         }
     }
 

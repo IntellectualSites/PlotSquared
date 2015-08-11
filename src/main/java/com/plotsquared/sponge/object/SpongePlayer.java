@@ -1,8 +1,12 @@
 package com.plotsquared.sponge.object;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.UUID;
 
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.entity.GameModeData;
+import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.entity.player.gamemode.GameMode;
 import org.spongepowered.api.entity.player.gamemode.GameModes;
@@ -47,7 +51,11 @@ public class SpongePlayer extends PlotPlayer {
 
     @Override
     public long getPreviousLogin() {
-        return (long) (player.getJoinData().getLastPlayed().getSeconds()) * 1000;
+        Value<Date> data = player.getJoinData().lastPlayed();
+        if (data.exists()) {
+            return last = data.get().getSeconds() * 1000;
+        }
+        return 0;
     }
 
     @Override
@@ -168,7 +176,7 @@ public class SpongePlayer extends PlotPlayer {
     @Override
     public PlotGamemode getGamemode() {
         // TODO Auto-generated method stub
-        GameMode gamemode = player.getGameModeData().getValue();
+        GameMode gamemode = player.getGameModeData().type().get();
         if (gamemode == GameModes.ADVENTURE) {
             return PlotGamemode.ADVENTURE;
         }
@@ -187,20 +195,20 @@ public class SpongePlayer extends PlotPlayer {
     @Override
     public void setGamemode(PlotGamemode gamemode) {
         // TODO Auto-generated method stub
-        switch (gamemode) {
-            case ADVENTURE:
-                player.getGameModeData().setGameMode(GameModes.ADVENTURE);
-                return;
-            case CREATIVE:
-                player.getGameModeData().setGameMode(GameModes.CREATIVE);
-                return;
-            case SPECTATOR:
-                player.getGameModeData().setGameMode(GameModes.SPECTATOR);
-                return;
-            case SURVIVAL:
-                player.getGameModeData().setGameMode(GameModes.SURVIVAL);
-                return;
-        }
+//        switch (gamemode) {
+//            case ADVENTURE:
+//                player.offer(Keys.GAME_MODE, GameModes.ADVENTURE);
+//                return;
+//            case CREATIVE:
+//                player.offer(Keys.GAME_MODE, GameModes.CREATIVE);
+//                return;
+//            case SPECTATOR:
+//                player.offer(Keys.GAME_MODE, GameModes.SPECTATOR);
+//                return;
+//            case SURVIVAL:
+//                player.offer(Keys.GAME_MODE, GameModes.SURVIVAL);
+//                return;
+//        }
     }
 
     @Override

@@ -126,8 +126,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void onDisable() {
-        Bukkit.getScheduler().cancelTasks(this);
         PS.get().disable();
+        Bukkit.getScheduler().cancelTasks(this);
         THIS = null;
     }
     

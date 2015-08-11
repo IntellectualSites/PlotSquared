@@ -12,6 +12,7 @@ import org.bukkit.World;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
@@ -87,12 +88,20 @@ public class SendChunk {
                 }
             }
             if (unload) {
-                try {
-                    chunk.unload(true, true);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+                TaskManager.runTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            chunk.unload(true, true);
+                        }
+                        catch (Exception e) {
+                            String worldname = chunk.getWorld().getName();
+                            PS.debug("$4Could not save chunk: " + worldname + ";" + chunk.getX() + ";" + chunk.getZ());
+                            PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
+                            PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname + "level_old.dat may be corrupt (try repairing or removing these)");
+                        }
+                    }
+                });
             }
             
         }

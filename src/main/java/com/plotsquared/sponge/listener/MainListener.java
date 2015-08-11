@@ -27,7 +27,6 @@ import org.spongepowered.api.event.block.BlockMoveEvent;
 import org.spongepowered.api.event.block.BlockRedstoneUpdateEvent;
 import org.spongepowered.api.event.block.FloraGrowEvent;
 import org.spongepowered.api.event.entity.EntityChangeBlockEvent;
-import org.spongepowered.api.event.entity.EntityExplosionEvent;
 import org.spongepowered.api.event.entity.EntitySpawnEvent;
 import org.spongepowered.api.event.entity.EntityTeleportEvent;
 import org.spongepowered.api.event.entity.player.PlayerBreakBlockEvent;
@@ -41,11 +40,13 @@ import org.spongepowered.api.event.entity.player.PlayerQuitEvent;
 import org.spongepowered.api.event.message.CommandEvent;
 import org.spongepowered.api.event.network.PlayerConnectionEvent;
 import org.spongepowered.api.event.world.ChunkPreGenerateEvent;
+import org.spongepowered.api.event.world.WorldOnExplosionEvent;
 import org.spongepowered.api.network.PlayerConnection;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.util.command.CommandSource;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.explosion.Explosion;
 import org.spongepowered.api.world.extent.Extent;
 
 import com.flowpowered.math.vector.Vector3d;
@@ -110,7 +111,8 @@ public class MainListener {
         }
         final Location loc = SpongeUtil.getLocation(event.getLocation());
         final String world = loc.getWorld();
-        if (!PS.get().isPlotWorld(world)) {
+        PlotWorld plotworld = PS.get().getPlotWorld(world);
+        if (plotworld == null) {
             return;
         }
         Plot plot = MainUtil.getPlot(loc);
@@ -132,7 +134,9 @@ public class MainListener {
             return;
         }
         
-        event.setCancelled(true);
+        if (!plotworld.MOB_SPAWNING) {
+            event.setCancelled(true);
+        }
     }
     
     @Subscribe
@@ -164,7 +168,7 @@ public class MainListener {
     
     @Subscribe
     public void onBlockMove(BlockMoveEvent event) {
-        org.spongepowered.api.world.Location block = event.getBlocks().get(0);
+        org.spongepowered.api.world.Location block = event.getLocations().get(0);
         Extent extent = block.getExtent();
         if (extent instanceof World) {
             World world = (World) extent;
@@ -172,7 +176,7 @@ public class MainListener {
             if (!PS.get().isPlotWorld(worldname)) {
                 return;
             }
-            event.filter(new Predicate<org.spongepowered.api.world.Location>() {
+            event.filterLocations(new Predicate<org.spongepowered.api.world.Location>() {
                 @Override
                 public boolean apply(org.spongepowered.api.world.Location loc) {
                     if (MainUtil.isPlotRoad(SpongeUtil.getLocation(worldname, loc))) {
@@ -186,7 +190,7 @@ public class MainListener {
     
     @Subscribe
     public void onFloraGrow(FloraGrowEvent event) {
-        org.spongepowered.api.world.Location block = event.getBlock();
+        org.spongepowered.api.world.Location block = event.getLocation();
         Extent extent = block.getExtent();
         if (extent instanceof World) {
             World world = (World) extent;
@@ -258,19 +262,31 @@ public class MainListener {
     }
     
     @Subscribe
-    public void onBigBoom(final EntityExplosionEvent event) {
-        Location loc = SpongeUtil.getLocation(event.getExplosionLocation());
-        final String world = loc.getWorld();
+    public void onBigBoom(final WorldOnExplosionEvent event) {
+        World worldObj = event.getWorld();
+        final String world = worldObj.getName();
         if (!PS.get().isPlotWorld(world)) {
             return;
         }
+        Explosion explosion = event.getExplosion();
+        Vector3d origin = explosion.getOrigin();
+        Location loc = new Location(world, origin.getFloorX(), origin.getFloorY(), origin.getFloorZ());
         final Plot plot = MainUtil.getPlot(loc);
         if ((plot != null) && plot.hasOwner()) {
             if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
-                event.filter(new Predicate<org.spongepowered.api.world.Location>() {
+                event.filterLocations(new Predicate<org.spongepowered.api.world.Location>() {
                     @Override
                     public boolean apply(org.spongepowered.api.world.Location loc) {
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(loc)))) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+                event.filterEntities(new Predicate<Entity>() {
+                    @Override
+                    public boolean apply(Entity entity) {
+                        if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(entity)))) {
                             return false;
                         }
                         return true;
@@ -280,13 +296,34 @@ public class MainListener {
             }
         }
         if (MainUtil.isPlotArea(loc)) {
-            event.setYield(0);
+            explosion.shouldBreakBlocks(false);
+            explosion.canCauseFire(false);
+            explosion.setRadius(0);
+            event.filterEntities(new Predicate<Entity>() {
+                @Override
+                public boolean apply(Entity entity) {
+                    if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(entity)))) {
+                        return false;
+                    }
+                    return true;
+                }
+            });
+            return;
         } else {
             if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
-                event.filter(new Predicate<org.spongepowered.api.world.Location>() {
+                event.filterLocations(new Predicate<org.spongepowered.api.world.Location>() {
                     @Override
                     public boolean apply(org.spongepowered.api.world.Location loc) {
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(loc)))) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+                event.filterEntities(new Predicate<Entity>() {
+                    @Override
+                    public boolean apply(Entity entity) {
+                        if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(entity)))) {
                             return false;
                         }
                         return true;
@@ -317,7 +354,7 @@ public class MainListener {
     
     @Subscribe
     public void onRedstoneEvent(BlockRedstoneUpdateEvent event) {
-        org.spongepowered.api.world.Location block = event.getBlock();
+        org.spongepowered.api.world.Location block = event.getLocation();
         Location loc = SpongeUtil.getLocation(block);
         if (loc == null || !PS.get().isPlotWorld(loc.getWorld())) {
             return;
@@ -356,11 +393,11 @@ public class MainListener {
         Player player = event.getEntity();
         World world = player.getWorld();
         String worldname = world.getName();
-        org.spongepowered.api.world.Location blockLoc = event.getBlock();
-        final Location loc = SpongeUtil.getLocation(worldname, event.getBlock());
+        org.spongepowered.api.world.Location blockLoc = event.getLocation();
+        final Location loc = SpongeUtil.getLocation(worldname, blockLoc);
         final Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
-            if (event.getBlock().getY() == 0) {
+            if (blockLoc.getY() == 0) {
                 event.setCancelled(true);
                 return;
             }
@@ -403,11 +440,11 @@ public class MainListener {
         Player player = event.getEntity();
         World world = player.getWorld();
         String worldname = world.getName();
-        org.spongepowered.api.world.Location blockLoc = event.getBlock();
-        final Location loc = SpongeUtil.getLocation(worldname, event.getBlock());
+        org.spongepowered.api.world.Location blockLoc = event.getLocation();
+        final Location loc = SpongeUtil.getLocation(worldname, blockLoc);
         final Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
-            if (event.getBlock().getY() == 0) {
+            if (blockLoc.getY() == 0) {
                 event.setCancelled(true);
                 return;
             }
@@ -450,11 +487,11 @@ public class MainListener {
         Player player = event.getEntity();
         World world = player.getWorld();
         String worldname = world.getName();
-        org.spongepowered.api.world.Location blockLoc = event.getBlock();
-        final Location loc = SpongeUtil.getLocation(worldname, event.getBlock());
+        org.spongepowered.api.world.Location blockLoc = event.getLocation();
+        final Location loc = SpongeUtil.getLocation(worldname, blockLoc);
         final Plot plot = MainUtil.getPlot(loc);
         if (plot != null) {
-            if (event.getBlock().getY() == 0) {
+            if (blockLoc.getY() == 0) {
                 event.setCancelled(true);
                 return;
             }

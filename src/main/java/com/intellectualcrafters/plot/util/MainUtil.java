@@ -1362,14 +1362,14 @@ public class MainUtil {
         Plot p2 = PS.get().getPlot(world, newPlot);
         if (p1 == null || p1.owner == null) {
             if (p2 != null && p2.owner != null) {
-                moveData(p2, p1, whenDone);
+                moveData(p2, getPlot(world, current), whenDone);
                 return true;
             }
             return false;
         }
         if (p2 == null || p2.owner == null) {
             if (p1 != null && p1.owner != null) {
-                moveData(p1, p2, whenDone);
+                moveData(p1, getPlot(world, newPlot), whenDone);
                 return true;
             }
             return false;
@@ -1395,21 +1395,24 @@ public class MainUtil {
 
     public static boolean moveData(final Plot plot1, final Plot plot2, final Runnable whenDone) {
         if (plot1.owner == null) {
-            TaskManager.runTaskLater(whenDone, 1);
+            PS.debug(plot2 +" is unowned (single)");
+            TaskManager.runTask(whenDone);
             return false;
         }
         final Plot pos1 = getBottomPlot(plot1);
         final Plot pos2 = getTopPlot(plot1);
         final PlotId size = MainUtil.getSize(plot1);
         if (!MainUtil.isUnowned(plot2.world, plot2.id, new PlotId((plot2.id.x + size.x) - 1, (plot2.id.y + size.y) - 1))) {
-            TaskManager.runTaskLater(whenDone, 1);
+            PS.debug(plot2 +" is unowned (multi)");
+            TaskManager.runTask(whenDone);
             return false;
         }
         final int offset_x = plot2.id.x - pos1.id.x;
         final int offset_y = plot2.id.y - pos1.id.y;
         final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
         for (final PlotId id : selection) {
-            DBFunc.movePlot(getPlot(plot1.world, new PlotId(id.x, id.y)), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
+            String worldOriginal = plot1.world;
+            PlotId idOriginal = new PlotId(id.x, id.y);
             final Plot plot = PS.get().getPlot(plot1.world, id);
             Map<String, ConcurrentHashMap<PlotId, Plot>> raw = PS.get().getAllPlotsRaw();
             raw.get(plot1.world).remove(id);
@@ -1417,6 +1420,7 @@ public class MainUtil {
             plot.id.y += offset_y;
             plot.id.recalculateHash();
             raw.get(plot2.world).put(plot.id, plot);
+            DBFunc.movePlot(getPlot(worldOriginal, idOriginal), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
         }
         TaskManager.runTaskLater(whenDone, 1);
         return true;
@@ -1760,6 +1764,9 @@ public class MainUtil {
         if (plot.getSettings().ratings != null) {
             rating = plot.getSettings().ratings;
         }
+        else if (Settings.CACHE_RATINGS) {
+            rating = new HashMap<>();
+        }
         else {
             rating = DBFunc.getRatings(plot);
         }
@@ -1789,6 +1796,9 @@ public class MainUtil {
         HashMap<UUID, Integer> rating;
         if (plot.getSettings().ratings != null) {
             rating = plot.getSettings().ratings;
+        }
+        else if (Settings.CACHE_RATINGS) {
+            rating = new HashMap<>();
         }
         else {
             rating = DBFunc.getRatings(plot);

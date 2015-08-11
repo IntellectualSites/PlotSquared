@@ -8,9 +8,13 @@ import java.util.Random;
 
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.util.DiscreteTransform3;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.extent.ImmutableBlockVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
+import org.spongepowered.api.world.extent.StorageType;
+import org.spongepowered.api.world.extent.UnmodifiableBlockVolume;
 import org.spongepowered.api.world.gen.GeneratorPopulator;
 import org.spongepowered.api.world.gen.Populator;
 import org.spongepowered.api.world.gen.WorldGenerator;
@@ -282,6 +286,48 @@ public class AugmentedPopulator implements Populator {
             @Override
             public void setBlockType(Vector3i v, BlockType t) {
                 setBlockType(v.getX(), v.getY(), v.getZ(), t);
+            }
+
+            @Override
+            public MutableBlockVolume getBlockCopy() {
+             // TODO Auto-generated method stub
+                return this;
+            }
+
+            @Override
+            public MutableBlockVolume getBlockCopy(StorageType arg0) {
+             // TODO Auto-generated method stub
+                return this;
+            }
+
+            @Override
+            public ImmutableBlockVolume getImmutableBlockCopy() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public UnmodifiableBlockVolume getUnmodifiableBlockView() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public MutableBlockVolume getBlockView(DiscreteTransform3 arg0) {
+                // TODO Auto-generated method stub
+                return this;
+            }
+
+            @Override
+            public MutableBlockVolume getBlockView(Vector3i arg0, Vector3i arg1) {
+                // TODO Auto-generated method stub
+                return this;
+            }
+
+            @Override
+            public MutableBlockVolume getRelativeBlockView() {
+                // TODO Auto-generated method stub
+                return this;
             }
         };
         this.populator.populate(world, blocks , null);

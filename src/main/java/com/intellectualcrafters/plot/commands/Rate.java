@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -147,14 +148,17 @@ public class Rate extends SubCommand {
                 }
             };
             if (plot.getSettings().ratings == null) {
-                TaskManager.runTaskAsync(new Runnable() {
-                    @Override
-                    public void run() {
-                        plot.getSettings().ratings = DBFunc.getRatings(plot);
-                        run.run();
-                    }
-                });
-                return true;
+                if (!Settings.CACHE_RATINGS) {
+                    TaskManager.runTaskAsync(new Runnable() {
+                        @Override
+                        public void run() {
+                            plot.getSettings().ratings = DBFunc.getRatings(plot);
+                            run.run();
+                        }
+                    });
+                    return true;
+                }
+                plot.getSettings().ratings = new HashMap<UUID, Integer>();
             }
             run.run();
             return true;
@@ -196,14 +200,17 @@ public class Rate extends SubCommand {
             }
         };
         if (plot.getSettings().ratings == null) {
-            TaskManager.runTaskAsync(new Runnable() {
-                @Override
-                public void run() {
-                    plot.getSettings().ratings = DBFunc.getRatings(plot);
-                    run.run();
-                }
-            });
-            return true;
+            if (!Settings.CACHE_RATINGS) {
+                TaskManager.runTaskAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        plot.getSettings().ratings = DBFunc.getRatings(plot);
+                        run.run();
+                    }
+                });
+                return true;
+            }
+            plot.getSettings().ratings = new HashMap<UUID, Integer>();
         }
         run.run();
         return true;

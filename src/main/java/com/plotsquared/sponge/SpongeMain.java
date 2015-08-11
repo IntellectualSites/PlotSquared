@@ -21,7 +21,7 @@ import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.manipulator.block.StoneData;
+import org.spongepowered.api.data.manipulator.mutable.block.StoneData;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.entity.player.PlayerChatEvent;
@@ -261,7 +261,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
             case 0: {
                 this.modify = new WorldModify(generator, false);
                 game.getRegistry().registerWorldGeneratorModifier(modify);
-                Optional<World> builder = game.getRegistry().getWorldBuilder()
+                Optional<World> builder = game.getRegistry().createWorldBuilder()
                 .name(world)
                 .enabled(true)
                 .loadsOnStartup(true)
@@ -277,7 +277,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
             default: {
                 this.modify = new WorldModify(generator, true);
                 game.getRegistry().registerWorldGeneratorModifier(modify);
-                Optional<World> builder = game.getRegistry().getWorldBuilder()
+                Optional<World> builder = game.getRegistry().createWorldBuilder()
                 .name(world)
                 .enabled(true)
                 .loadsOnStartup(true)
@@ -356,17 +356,16 @@ public class SpongeMain implements IPlotMain, PluginContainer {
             for (int i = 0; i < data_lines.size(); i++) {
                 String classname = packaze + data_lines.get(i).trim();
                 try {
-                Class<?> clazz = Class.forName(classname);
-                fields = clazz.getDeclaredFields();
-                for (Field field : fields) {
-                    CatalogType type = (CatalogType) field.get(null);
-                    String minecraft_id = type.getId();
-                    BlockState state = states.get(minecraft_id + ":" + 0);
-                    if (state == null) {
-                        continue;
+                    Class<?> clazz = Class.forName(classname);
+                    fields = clazz.getDeclaredFields();
+                    for (Field field : fields) {
+                        CatalogType type = (CatalogType) field.get(null);
+                        String minecraft_id = type.getId();
+                        BlockState state = states.get(minecraft_id + ":" + 0);
+                        if (state == null) {
+                            continue;
+                        }
                     }
-                    state.getManipulator(StoneData.class);
-                }
                 }
                 catch (Throwable e) {}
             }

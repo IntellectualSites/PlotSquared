@@ -108,6 +108,25 @@ public class SQLManager implements AbstractDB {
             tasks = new ConcurrentLinkedQueue<>();
             plotTasks.put(plot, tasks);
         }
+        if (task == null) {
+            task = new UniqueStatement(plot.hashCode() + "") {
+
+                @Override
+                public PreparedStatement get() throws SQLException {
+                    return null;
+                }
+
+                @Override
+                public void set(PreparedStatement stmt) throws SQLException {}
+                
+                @Override
+                public void addBatch(PreparedStatement stmt) throws SQLException {}
+                
+                @Override
+                public void execute(PreparedStatement stmt) throws SQLException {}
+                
+            };
+        }
         tasks.add(task);
     }
     
@@ -140,28 +159,27 @@ public class SQLManager implements AbstractDB {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                commit();
                 long last = System.currentTimeMillis();
                 while (true) {
-                    if (PS.get().getDatabase().getConnection() == null) {
+                    if (PS.get().getDatabase() == null) {
                         break;
                     }
-                 // schedule reconnect
+                    // schedule reconnect
                     if (Settings.DB.USE_MYSQL && System.currentTimeMillis() - last > 550000) {
                         last = System.currentTimeMillis();
-                        commit();
                         try {
-                            connection.close();
+                            close();
                             connection = PS.get().getDatabase().forceConnection();
                         } catch (SQLException | ClassNotFoundException e) {
                             e.printStackTrace();
                         }
                     }
-                    sendBatch();
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if (!sendBatch()) {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -182,14 +200,10 @@ public class SQLManager implements AbstractDB {
     
     public boolean sendBatch() {
         try {
-            try {
+            if (globalTasks.size() > 0) {
                 if (connection.getAutoCommit()) {
                     connection.setAutoCommit(false);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            if (globalTasks.size() > 0) {
                 Runnable task = globalTasks.remove();
                 if (task != null) {
                     task.run();
@@ -197,8 +211,12 @@ public class SQLManager implements AbstractDB {
                 commit();
                 return true;
             }
-            int count = 0;
+            int count = -1;
             if (plotTasks.size() > 0) {
+                count = 0;
+                if (connection.getAutoCommit()) {
+                    connection.setAutoCommit(false);
+                }
                 String method = null;
                 PreparedStatement stmt = null;
                 UniqueStatement task = null;
@@ -232,6 +250,10 @@ public class SQLManager implements AbstractDB {
                 }
             }
             if (clusterTasks.size() > 0) {
+                count = 0;
+                if (connection.getAutoCommit()) {
+                    connection.setAutoCommit(false);
+                }
                 String method = null;
                 PreparedStatement stmt = null;
                 UniqueStatement task = null;
@@ -239,11 +261,11 @@ public class SQLManager implements AbstractDB {
                 ArrayList<PlotCluster> keys = new ArrayList<>(clusterTasks.keySet());
                 for (int i = 0; i < keys.size(); i++) {
                     PlotCluster plot = keys.get(i);
-                    if (plotTasks.get(plot).size() == 0) {
-                        plotTasks.remove(plot);
+                    if (clusterTasks.get(plot).size() == 0) {
+                        clusterTasks.remove(plot);
                         continue;
                     }
-                    task = plotTasks.get(plot).remove();
+                    task = clusterTasks.get(plot).remove();
                     count++;
                     if (task != null) {
                         if (task._method == null || !task._method.equals(method)) {
@@ -264,18 +286,20 @@ public class SQLManager implements AbstractDB {
                     stmt.close();
                 }
             }
-            commit();
-            if (count != 0) {
+            if (count > 0) {
                 commit();
                 return true;
             }
+            else if (count != -1) {
+                if (!connection.getAutoCommit()) {
+                    connection.setAutoCommit(true);
+                }
+            }
             if (clusterTasks.size() > 0) {
                 clusterTasks.clear();
-                commit();
-            }
+               }
             if (plotTasks.size() > 0) {
                 plotTasks.clear();
-                commit();
             }
         }
         catch (Exception e) {
@@ -355,31 +379,32 @@ public class SQLManager implements AbstractDB {
 
                             // Populating structures
                             final PreparedStatement stmt = connection.prepareStatement(GET_ALL_PLOTS);
-                            final ResultSet result = stmt.executeQuery();
-                            while (result.next()) {
-                                final int id = result.getInt("id");
-                                int x = result.getInt("plot_id_x");
-                                int y = result.getInt("plot_id_z");
-                                PlotId plotId = new PlotId(x, y);
-                                Plot plot = plotMap.get(plotId);
-                                if (plot != null) {
-                                    settings.add(new SettingsPair(id, plot.getSettings()));
-                                    if (plot.getDenied() != null) {
-                                        for (UUID uuid : plot.getDenied()) {
-                                            denied.add(new UUIDPair(id, uuid));
+                            try (ResultSet result = stmt.executeQuery()) {
+                                while (result.next()) {
+                                    final int id = result.getInt("id");
+                                    int x = result.getInt("plot_id_x");
+                                    int y = result.getInt("plot_id_z");
+                                    PlotId plotId = new PlotId(x, y);
+                                    Plot plot = plotMap.get(plotId);
+                                    if (plot != null) {
+                                        settings.add(new SettingsPair(id, plot.getSettings()));
+                                        if (plot.getDenied() != null) {
+                                            for (UUID uuid : plot.getDenied()) {
+                                                denied.add(new UUIDPair(id, uuid));
+                                            }
+                                        }
+                                        if (plot.getMembers() != null) {
+                                            for (UUID uuid : plot.getMembers()) {
+                                                trusted.add(new UUIDPair(id, uuid));
+                                            }
+                                        }
+                                        if (plot.getTrusted() != null) {
+                                            for (UUID uuid : plot.getTrusted()) {
+                                                helpers.add(new UUIDPair(id, uuid));
+                                            }
                                         }
                                     }
-                                    if (plot.getMembers() != null) {
-                                        for (UUID uuid : plot.getMembers()) {
-                                            trusted.add(new UUIDPair(id, uuid));
-                                        }
-                                    }
-                                    if (plot.getTrusted() != null) {
-                                        for (UUID uuid : plot.getTrusted()) {
-                                            helpers.add(new UUIDPair(id, uuid));
-                                        }
-                                    }
-                                }
+                            }
                             }
                             createSettings(settings, new Runnable() {
                                 @Override
@@ -843,10 +868,10 @@ public class SQLManager implements AbstractDB {
     
     public void commit() {
         try {
-            if (this.connection.getAutoCommit()) {
-                this.connection.setAutoCommit(false);
+            if (!this.connection.getAutoCommit()) {
+                this.connection.commit();
+                this.connection.setAutoCommit(true);
             }
-            this.connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -1065,7 +1090,6 @@ public class SQLManager implements AbstractDB {
         }
         PreparedStatement stmt = null;
         try {
-            commit();
             commit();
             if (plot.temp > 0) {
                 return plot.temp;
@@ -2326,7 +2350,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void run() {
                 try {
-                    SQLManager.this.connection.close();
+                    close();
                     SQLManager.this.connection = PS.get().getDatabase().forceConnection();
                     final Statement stmt = connection.createStatement();
                     stmt.addBatch("DROP TABLE `" + prefix + "cluster_invited`");
@@ -2381,6 +2405,13 @@ public class SQLManager implements AbstractDB {
             if (!sendBatch()) {
                 break;
             }
+        }
+        try {
+            if (connection.getAutoCommit()) {
+                connection.setAutoCommit(false);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> database = getPlots();
         ArrayList<Plot> toCreate = new ArrayList<>();
@@ -2473,8 +2504,8 @@ public class SQLManager implements AbstractDB {
                     setFlags(plot, pf.values());
                 }
             }
-            // TODO comments
-            // TODO ratings
+            // TODO comments (null)
+            // TODO ratings (null)
             // TODO alias
             // TODO unconnected entries from helpers, trusted, denied, comments, settings, rating
         }
@@ -2487,11 +2518,15 @@ public class SQLManager implements AbstractDB {
                 }
             }
         }
-        
-        PS.debug("$4Done!");
+        commit();
+    }
+
+    @Override
+    public void close() {
         try {
-            connection.commit();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch (SQLException e) {}
     }
 }

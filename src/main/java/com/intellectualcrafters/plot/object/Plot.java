@@ -163,6 +163,7 @@ public class Plot {
             }
         }
         this.timestamp = timestamp;
+        this.temp = temp;
     }
 
     /**

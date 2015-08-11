@@ -334,4 +334,6 @@ public interface AbstractDB {
      * Don't fuck with this one, unless you enjoy it rough
      */
     boolean deleteTables();
+
+    void close();
 }

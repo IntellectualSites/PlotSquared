@@ -51,8 +51,7 @@ public class Home extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer plr, String[] args) {
-        
-        final ArrayList<Plot> plots = PS.get().sortPlots(PS.get().getPlots(plr), SortType.CREATION_DATE, null);
+        final ArrayList<Plot> plots = PS.get().sortPlotsByTemp(PS.get().getPlots(plr));//PS.get().sortPlots(PS.get().getPlots(plr), SortType.CREATION_DATE, null);
         if (plots.size() == 1) {
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;

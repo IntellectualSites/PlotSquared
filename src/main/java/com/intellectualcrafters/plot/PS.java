@@ -526,6 +526,45 @@ public class PS {
     public ArrayList<Plot> sortPlots(Collection<Plot> plots) {
         return sortPlots(plots, SortType.DISTANCE_FROM_ORIGIN, null);
     }
+    
+    public ArrayList<Plot> sortPlotsByTemp(Collection<Plot> plots) {
+        int max = 0;
+        int overflowCount = 0;
+        for (Plot plot : plots) {
+            if (plot.temp > 0) {
+                if (plot.temp > max) {
+                    max = plot.temp;
+                }
+            }
+            else {
+                overflowCount++;
+            }
+        }
+        Plot[] array = new Plot[max + 1];
+        List<Plot> overflow = new ArrayList<>(overflowCount);
+        for (Plot plot : plots) {
+            if (plot.temp <= 0) {
+                overflow.add(plot);
+            }
+            else {
+                array[plot.temp] = plot;
+            }
+        }
+        ArrayList<Plot> result = new ArrayList<>(plots.size());
+        for (Plot plot : array) {
+            if (plot != null) {
+                result.add(plot);
+            }
+        }
+        Collections.sort(overflow, new Comparator<Plot>() {
+            @Override
+            public int compare(Plot a, Plot b) {
+                return a.hashCode() - b.hashCode();
+            }
+        });
+        result.addAll(overflow);
+        return result;
+    }
 
     /**
      * Sort plots by hashcode
@@ -834,7 +873,7 @@ public class PS {
         }
     }
     
-    public enum SortType { CREATION_DATE, DISTANCE_FROM_ORIGIN; }
+    public enum SortType { CREATION_DATE, CREATION_DATE_TIMESTAMP, DISTANCE_FROM_ORIGIN; }
     
     /**
      * Sort a collection of plots by world (with a priority world), then by hashcode
@@ -887,6 +926,9 @@ public class PS {
         for (String world : worlds) {
             switch (type) {
                 case CREATION_DATE:
+                    toReturn.addAll(sortPlotsByTemp(map.get(world)));
+                    break;
+                case CREATION_DATE_TIMESTAMP:
                     toReturn.addAll(sortPlotsByTimestamp(map.get(world)));
                     break;
                 case DISTANCE_FROM_ORIGIN:
@@ -1477,13 +1519,14 @@ public class PS {
     public void disable() {
         try {
             TASK = null;
+            database = null;
             // Validate that all data in the db is correct
             DBFunc.validatePlots(getPlotsRaw());
             
             // Close the connection
-            database.closeConnection();
+            DBFunc.close();
             UUIDHandler.handleShutdown();
-        } catch (NullPointerException | SQLException e) {
+        } catch (NullPointerException e) {
             log("&cCould not close database connection!");
         }
     }
@@ -1630,7 +1673,7 @@ public class PS {
         FlagManager.addFlag(new AbstractFlag("weather") {
 
             public PlotWeather parseValueRaw(final String value) {
-                switch (value) {
+                switch (value.toLowerCase()) {
                     case "rain":
                     case "storm":
                     case "on":

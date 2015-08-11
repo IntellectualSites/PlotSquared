@@ -420,4 +420,8 @@ public class DBFunc {
     public static void setPosition(final PlotCluster cluster, final String position) {
         dbManager.setPosition(cluster, position);
     }
+
+    public static void close() {
+        dbManager.close();
+    }
 }

@@ -27,7 +27,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
     public ItemStackBuilder builder;
 
     public SpongeInventoryUtil() {
-        this.builder = SpongeMain.THIS.getGame().getRegistry().getItemBuilder();
+        this.builder = SpongeMain.THIS.getGame().getRegistry().createItemBuilder();
     }
     
     @Override
