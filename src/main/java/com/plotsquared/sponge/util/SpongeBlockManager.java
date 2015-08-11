@@ -10,10 +10,13 @@ import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
+import org.spongepowered.api.data.value.immutable.ImmutableListValue;
+import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
+import org.spongepowered.common.data.value.mutable.SpongeListValue;
 
 import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.object.Location;
@@ -191,7 +194,13 @@ public class SpongeBlockManager extends BlockManager {
         for (int i = 0; i < 4; i++) {
             text.add(SpongeMain.THIS.getText(lines[i]));
         }
-        sign.offer(Keys.SIGN_LINES, text);
+        try {
+            SpongeListValue<Text> offering = new SpongeListValue<Text>(Keys.SIGN_LINES, text);
+            sign.offer(offering);
+        }
+        catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override

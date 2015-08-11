@@ -685,7 +685,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
-        if (MainUtil.isPlotArea(loc)) {
+        if (MainUtil.isPlotAreaAbs(loc)) {
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_ROAD);
             event.setCancelled(true);
         }
@@ -1268,6 +1268,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             int[] mobs = null;
             if (entityFlag != null) {
                 int cap = ((Integer) entityFlag.getValue());
+                if (cap == 0) {
+                    return true;
+                }
                 mobs = ChunkManager.manager.countEntities(plot);
                 if (mobs[0] >= cap) {
                     return true;
@@ -1277,6 +1280,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 Flag mobFlag = FlagManager.getPlotFlag(plot, "mob-cap");
                 if (mobFlag != null) {
                     int cap = ((Integer) mobFlag.getValue());
+                    if (cap == 0) {
+                        return true;
+                    }
                     if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
                     if (mobs[3] >= cap) {
                         return true;
@@ -1286,6 +1292,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     Flag animalFlag = FlagManager.getPlotFlag(plot, "animal-cap");
                     if (animalFlag != null) {
                         int cap = ((Integer) animalFlag.getValue());
+                        if (cap == 0) {
+                            return true;
+                        }
                         if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
                         if (mobs[1] >= cap) {
                             return true;
@@ -1296,6 +1305,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     Flag monsterFlag = FlagManager.getPlotFlag(plot, "hostile-cap");
                     if (monsterFlag != null) {
                         int cap = ((Integer) monsterFlag.getValue());
+                        if (cap == 0) {
+                            return true;
+                        }
                         if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
                         if (mobs[2] >= cap) {
                             return true;
@@ -1307,6 +1319,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 Flag vehicleFlag = FlagManager.getPlotFlag(plot, "vehicle-cap");
                 if (vehicleFlag != null) {
                     int cap = ((Integer) vehicleFlag.getValue());
+                    if (cap == 0) {
+                        return true;
+                    }
                     if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
                     if (mobs[4] >= cap) {
                         return true;

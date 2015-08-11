@@ -89,4 +89,17 @@ public class SpongeUtil {
     public static Location getLocation(String world, org.spongepowered.api.world.Location spawn) {
         return new Location(world, spawn.getBlockX(), spawn.getBlockY(), spawn.getBlockZ());
     }
+
+    public static String getWorldName(org.spongepowered.api.world.Location origin) {
+        Extent extent = origin.getExtent();
+        if (extent == lastWorld) {
+            return last;
+        }
+        if (extent instanceof World) {
+            lastWorld = (World) extent;
+            last = ((World) extent).getName();
+            return last;
+        }
+        return null;
+    }
 }

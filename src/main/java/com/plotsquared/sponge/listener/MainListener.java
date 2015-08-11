@@ -21,11 +21,18 @@ import java.util.UUID;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.living.Ambient;
+import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.entity.living.animal.Animal;
+import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.entity.vehicle.Boat;
+import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.block.BlockMoveEvent;
 import org.spongepowered.api.event.block.BlockRedstoneUpdateEvent;
 import org.spongepowered.api.event.block.FloraGrowEvent;
+import org.spongepowered.api.event.block.FluidSpreadEvent;
 import org.spongepowered.api.event.entity.EntityChangeBlockEvent;
 import org.spongepowered.api.event.entity.EntitySpawnEvent;
 import org.spongepowered.api.event.entity.EntityTeleportEvent;
@@ -66,6 +73,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -90,18 +98,40 @@ public class MainListener {
      *  - BlockFromToEvent
      *  - BlockDamageEvent
      *  - Structure (tree etc)
-     *  - Per plot mob caps
      *  - PlayerIgniteBlockEvent
      *  - PlayerBucketEmptyEvent
      *  - PlayerBucketFillEvent
      *  - VehicleCreateEvent
      *  - HangingPlaceEvent
      *  - HangingBreakEvent
+     *  - Liquid flow
      *  - PVP
      *  - PVE
      *  - VehicleDestroy
      *  - Projectile
      */
+    
+    @Subscribe
+    public void onFluidSpread(FluidSpreadEvent event) {
+        // TODO This event isn't called
+        Location loc = SpongeUtil.getLocation(event.getLocation());
+        final Plot plot = MainUtil.getPlot(loc);
+        if (plot == null) {
+            if (MainUtil.isPlotAreaAbs(loc)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        event.filterLocations(new Predicate<org.spongepowered.api.world.Location>() {
+            @Override
+            public boolean apply(org.spongepowered.api.world.Location loc) {
+                if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(loc)))) {
+                    return false;
+                }
+                return true;
+            }
+        });
+    }
     
     @Subscribe
     public void onMobSpawn(EntitySpawnEvent event) {
@@ -133,10 +163,86 @@ public class MainListener {
             }
             return;
         }
-        
-        if (!plotworld.MOB_SPAWNING) {
-            event.setCancelled(true);
+        int[] mobs = null;
+        if (entity instanceof Living) {
+            if (!plotworld.MOB_SPAWNING) {
+                event.setCancelled(true);
+                return;
+            }
+            Flag mobCap = FlagManager.getPlotFlag(plot, "mob-cap");
+            if (mobCap != null) {
+                Integer cap = (Integer) mobCap.getValue();
+                if (cap == 0) {
+                    event.setCancelled(true);
+                    return;
+                }
+                if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
+                if (mobs[3] >= cap) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            if (entity instanceof Ambient || entity instanceof Animal) {
+                Flag animalFlag = FlagManager.getPlotFlag(plot, "animal-cap");
+                if (animalFlag != null) {
+                    int cap = ((Integer) animalFlag.getValue());
+                    if (cap == 0) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                    if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
+                    if (mobs[1] >= cap) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+            if (entity instanceof Monster) {
+                Flag monsterFlag = FlagManager.getPlotFlag(plot, "hostile-cap");
+                if (monsterFlag != null) {
+                    int cap = ((Integer) monsterFlag.getValue());
+                    if (cap == 0) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                    if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
+                    if (mobs[2] >= cap) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+            return;
         }
+        if (entity instanceof Minecart || entity instanceof Boat) {
+            Flag vehicleFlag = FlagManager.getPlotFlag(plot, "vehicle-cap");
+            if (vehicleFlag != null) {
+                int cap = ((Integer) vehicleFlag.getValue());
+                if (cap == 0) {
+                    event.setCancelled(true);
+                    return;
+                }
+                if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
+                if (mobs[4] >= cap) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+        Flag entityCap = FlagManager.getPlotFlag(plot, "entity-cap");
+        if (entityCap != null) {
+            Integer cap = (Integer) entityCap.getValue();
+            if (cap == 0) {
+                event.setCancelled(true);
+                return;
+            }
+            if (mobs == null) mobs = ChunkManager.manager.countEntities(plot);
+            if (mobs[0] >= cap) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+        
     }
     
     @Subscribe

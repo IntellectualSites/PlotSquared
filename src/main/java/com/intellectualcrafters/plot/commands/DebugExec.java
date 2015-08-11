@@ -92,7 +92,14 @@ public class DebugExec extends SubCommand {
         File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
         if (file.exists()) {
             init();
-            onCommand(ConsolePlayer.getConsole(), new String[] {"run", "start.js"});
+            try {
+                String script = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"), StandardCharsets.UTF_8), System.getProperty("line.separator"));
+                scope.put("THIS", this);
+                scope.put("PlotPlayer", ConsolePlayer.getConsole());
+                engine.eval(script, scope);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -148,7 +155,7 @@ public class DebugExec extends SubCommand {
     }
     
     @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String... args) {
         final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();

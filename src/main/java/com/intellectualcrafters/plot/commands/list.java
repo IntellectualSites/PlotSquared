@@ -86,7 +86,7 @@ public class list extends SubCommand {
         if (Permissions.hasPermission(player, "plots.list.top")) {
             args.add("top");
         }
-        if (Permissions.hasPermission(player, "plots.list..all")) {
+        if (Permissions.hasPermission(player, "plots.list.all")) {
             args.add("all");
         }
         if (Permissions.hasPermission(player, "plots.list.unowned")) {

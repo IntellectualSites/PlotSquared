@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.entity.living.animal.Animal;
+import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.ChunkDataStream;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -28,8 +33,42 @@ public class SpongeChunkManager extends ChunkManager {
     
     @Override
     public int[] countEntities(Plot plot) {
-        // TODO Auto-generated method stub
-        return new int[5];
+        Location pos1 = plot.getBottom().add(1, 0, 1);
+        Location pos2 = plot.getTop();
+        
+        String worldname = pos1.getWorld();
+        World world = SpongeUtil.getWorld(worldname);
+        final int bx = pos1.getX();
+        final int bz = pos1.getZ();
+        final int tx = pos2.getX();
+        final int tz = pos2.getZ();
+        final int[] count = new int[5];
+        world.getEntities(new Predicate<Entity>() {
+            @Override
+            public boolean apply(Entity entity) {
+                org.spongepowered.api.world.Location loc = entity.getLocation();
+                int x = loc.getBlockX();
+                if (x >= bx && x <= tx) {
+                    int z = loc.getBlockZ();
+                    if (z >= bz && z <= tz) {
+                        count[0]++;
+                        if (entity instanceof Living) {
+                            count[3]++;
+                            if (entity instanceof Animal) {
+                                count[1]++;
+                            } else if (entity instanceof Monster){
+                                count[2]++;
+                            }
+                        } else {
+                            count[4]++;
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+        
+        return count;
     }
     
     @Override
@@ -116,8 +155,26 @@ public class SpongeChunkManager extends ChunkManager {
 
     @Override
     public void clearAllEntities(Location pos1, Location pos2) {
-        // TODO Auto-generated method stub
-        
+        String worldname = pos1.getWorld();
+        World world = SpongeUtil.getWorld(worldname);
+        final int bx = pos1.getX();
+        final int bz = pos1.getZ();
+        final int tx = pos2.getX();
+        final int tz = pos2.getZ();
+        world.getEntities(new Predicate<Entity>() {
+            @Override
+            public boolean apply(Entity entity) {
+                org.spongepowered.api.world.Location loc = entity.getLocation();
+                int x = loc.getBlockX();
+                if (x >= bx && x <= tx) {
+                    int z = loc.getBlockZ();
+                    if (z >= bz && z <= tz) {
+                        entity.remove();
+                    }
+                }
+                return false;
+            }
+        });
     }
     
 }

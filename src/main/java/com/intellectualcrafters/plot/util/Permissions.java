@@ -39,7 +39,7 @@ public enum Permissions {
         if ((player == null) || player.hasPermission(ADMIN.s) || player.hasPermission(STAR.s)) {
             return true;
         }
-        if (Permissions.hasPermission(player, perm)) {
+        if (player.hasPermission(perm)) {
             return true;
         }
         final String[] nodes = perm.split("\\.");
@@ -67,11 +67,11 @@ public enum Permissions {
         if ((player == null) || player.hasPermission(ADMIN.s) || player.hasPermission(STAR.s)) {
             return Integer.MAX_VALUE;
         }
-        if (Permissions.hasPermission(player, stub + ".*")) {
+        if (player.hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
         }
         for (int i = range; i > 0; i--) {
-            if (Permissions.hasPermission(player, stub + "." + i)) {
+            if (player.hasPermission(stub + "." + i)) {
                 return i;
             }
         }
