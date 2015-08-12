@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
@@ -108,6 +109,11 @@ public class Plot {
      */
     @Deprecated
     public int temp;
+    
+    /**
+     * Session only plot metadata (session is until the server stops)
+     */
+    private ConcurrentHashMap<String, Object> meta;
 
     /**
      * Constructor for a new plot
@@ -164,6 +170,42 @@ public class Plot {
         }
         this.timestamp = timestamp;
         this.temp = temp;
+    }
+    
+    /**
+     * Set some session only metadata for the plot
+     * @param key
+     * @param value
+     */
+    public void setMeta(String key, Object value) {
+        if (this.meta == null) {
+            this.meta = new ConcurrentHashMap<String, Object>();
+        }
+        this.meta.put(key, value);
+    }
+
+    /**
+     * Get the metadata for a key
+     * @param key
+     * @return
+     */
+    public Object getMeta(String key) {
+        if (this.meta != null) {
+            return this.meta.get(key);
+        }
+        return null;
+    }
+
+    /**
+     * Delete the metadata for a key<br>
+     *  - metadata is session only
+     *  - deleting other plugin's metadata may cause issues
+     * @param key
+     */
+    public void deleteMeta(String key) {
+        if (this.meta != null) {
+            this.meta.remove(key);
+        }
     }
 
     /**
