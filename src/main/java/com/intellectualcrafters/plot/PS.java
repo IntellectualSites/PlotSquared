@@ -633,7 +633,7 @@ public class PS {
      * @return
      */
     @Deprecated
-    public static ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> input) {
+    public ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> input) {
         List<Plot> list;
         if (input instanceof ArrayList<?>) {
             list = (List<Plot>) input;
@@ -812,7 +812,7 @@ public class PS {
      * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, String)} instead which will in turn call this
      * @param input
      */
-    public static void sortPlotsByHash(Plot[] input) {
+    public void sortPlotsByHash(Plot[] input) {
         List<Plot>[] bucket = new ArrayList[64];
         for (int i = 0; i < bucket.length; i++) {
             bucket[i] = new ArrayList<Plot>();
@@ -845,7 +845,7 @@ public class PS {
      * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, String)} instead which will in turn call this
      */
     @Deprecated
-    public static void sortPlotsByTimestamp(Plot[] input) {
+    public void sortPlotsByTimestamp(Plot[] input) {
         final int SIZE = 100;
         List<Plot>[] bucket = new ArrayList[SIZE];
         for (int i = 0; i < bucket.length; i++) {
@@ -1049,8 +1049,12 @@ public class PS {
      */
     @Deprecated
     public HashMap<PlotId, Plot> getPlots(final String world) {
-        if (plots.containsKey(world)) {
-            return new HashMap<>(lastMap);
+        ConcurrentHashMap<PlotId, Plot> myplots = plots.get(world);
+        if (myplots != null) {
+            if (world == lastWorld) {
+                return new HashMap<>(lastMap);
+            }
+            return new HashMap<>(myplots);
         }
         return new HashMap<>();
     }
@@ -1535,58 +1539,49 @@ public class PS {
      * Setup the database connection
      */
     public void setupDatabase() {
-        if (Settings.DB.USE_MYSQL) {
-            try {
-                database = new MySQL(Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
-                connection = database.openConnection();
-                {
-                    if (DBFunc.dbManager == null) {
-                        DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
-                    }
-                    DBFunc.createTables("mysql");
-                }
-            } catch (final Exception e) {
-                log("&c[Plots] MySQL is not setup correctly. The plugin will disable itself.");
-                if ((config == null) || config.getBoolean("debug")) {
-                    log("&d==== Here is an ugly stacktrace if you are interested in those things ====");
-                    e.printStackTrace();
-                    log("&d==== End of stacktrace ====");
-                    log("&6Please go to the PlotSquared 'storage.yml' and configure MySQL correctly.");
-                }
+        try {
+            if (Settings.DB.USE_MONGO) {
+                log(C.PREFIX.s() + "MongoDB is not yet implemented");
+                log(C.PREFIX + "&cNo storage type is set!");
                 IMP.disable();
                 return;
             }
+            if (DBFunc.dbManager == null) {
+                if (Settings.DB.USE_MYSQL) {
+                    database = new MySQL(Settings.DB.HOST_NAME, Settings.DB.PORT, Settings.DB.DATABASE, Settings.DB.USER, Settings.DB.PASSWORD);
+                }
+                else if (Settings.DB.USE_SQLITE) {
+                    database = new SQLite(IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db");
+                }
+                else {
+                    log(C.PREFIX + "&cNo storage type is set!");
+                    IMP.disable();
+                    return;
+                }
+            }
+            DBFunc.dbManager = new SQLManager(database, Settings.DB.PREFIX, false);
             plots = DBFunc.getPlots();
             if (Settings.ENABLE_CLUSTERS) {
                 ClusterManager.clusters = DBFunc.getClusters();
             }
-        } else if (Settings.DB.USE_MONGO) {
-            // DBFunc.dbManager = new MongoManager();
-            log(C.PREFIX.s() + "MongoDB is not yet implemented");
-        } else if (Settings.DB.USE_SQLITE) {
-            try {
-                this.database = new SQLite(IMP.getDirectory() + File.separator + Settings.DB.SQLITE_DB + ".db");
-                connection = this.database.openConnection();
-                {
-                    DBFunc.dbManager = new SQLManager(connection, Settings.DB.PREFIX);
-                    final DatabaseMetaData meta = connection.getMetaData();
-                    meta.getTables(null, null, Settings.DB.PREFIX + "plot", null);
-                    DBFunc.createTables("sqlite");
-                }
-            } catch (final Exception e) {
-                log(C.PREFIX.s() + "&cFailed to open SQLite connection. The plugin will disable itself.");
-                log("&9==== Here is an ugly stacktrace, if you are interested in those things ===");
-                e.printStackTrace();
-                IMP.disable();
-                return;
+        }
+        catch (Exception e) {
+            log(C.PREFIX.s() + "&cFailed to open DATABASE connection. The plugin will disable itself.");
+            if (Settings.DB.USE_MONGO) {
+                log("$4MONGO");
             }
-            plots = DBFunc.getPlots();
-            if (Settings.ENABLE_CLUSTERS) {
-                ClusterManager.clusters = DBFunc.getClusters();
+            else if (Settings.DB.USE_MYSQL) {
+                log("$4MYSQL");
             }
-        } else {
-            log(C.PREFIX + "&cNo storage type is set!");
+            else if (Settings.DB.USE_SQLITE) {
+                log("$4SQLITE");
+            }
+            log("&d==== Here is an ugly stacktrace, if you are interested in those things ===");
+            e.printStackTrace();
+            log("&d==== End of stacktrace ====");
+            log("&6Please go to the PlotSquared 'storage.yml' and configure the database correctly.");
             IMP.disable();
+            return;
         }
     }
 

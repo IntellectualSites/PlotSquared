@@ -42,6 +42,7 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
  * @author Empire92
  */
 public interface AbstractDB {
+    
     /**
      * The UUID that will count as everyone
      */
@@ -76,7 +77,7 @@ public interface AbstractDB {
      *
      * @throws SQLException If the database manager is unable to create the tables
      */
-    void createTables(final String database) throws Exception;
+    void createTables() throws Exception;
 
     /**
      * Delete a plot

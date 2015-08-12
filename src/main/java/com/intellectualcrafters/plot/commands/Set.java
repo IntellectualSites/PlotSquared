@@ -54,7 +54,7 @@ import com.plotsquared.listener.PlotListener;
         command = "set",
         description = "Set a plot value",
         aliases = {"s"},
-        usage = "/plot set <arg> <value(s)...>",
+        usage = "/plot set <biome|alias|home|flag> <value...>",
         permission = "plots.set",
         category = CommandCategory.ACTIONS,
         requiredType = RequiredType.NONE

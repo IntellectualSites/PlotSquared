@@ -41,6 +41,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
         command = "flag",
         aliases = {"f"},
+        usage = "/plot flag <set|remove|add|list|info> <flag> <value>",
         description = "Manage plot flags",
         category = CommandCategory.ACTIONS,
         requiredType = RequiredType.NONE,
@@ -48,6 +49,11 @@ import com.plotsquared.general.commands.CommandDeclaration;
 )
 public class FlagCmd extends SubCommand {
 
+    @Override
+    public String getUsage() {
+        return super.getUsage().replaceAll("<flag>", StringMan.join(FlagManager.getFlags(), "|"));
+    }
+    
     @Override
     public boolean onCommand(final PlotPlayer player, final String ... args) {
         

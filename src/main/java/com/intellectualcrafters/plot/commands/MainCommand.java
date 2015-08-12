@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -136,9 +137,23 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         return false;
     }
     
-    public static List<Command<PlotPlayer>> getCommands(final CommandCategory category, final PlotPlayer player) {
+    public static List<Command<PlotPlayer>> getCommandAndAliases(final CommandCategory category, final PlotPlayer player) {
         List<Command<PlotPlayer>> commands = new ArrayList<>();
         for (Command<PlotPlayer> command : getInstance().getCommands()) {
+            if (category != null && !command.getCategory().equals(category)) {
+                continue;
+            }
+            if (player != null && !Permissions.hasPermission(player, command.getPermission())) {
+                continue;
+            }
+            commands.add(command);
+        }
+        return commands;
+    }
+    
+    public static List<Command<PlotPlayer>> getCommands(final CommandCategory category, final PlotPlayer player) {
+        List<Command<PlotPlayer>> commands = new ArrayList<>();
+        for (Command<PlotPlayer> command : new HashSet<>(getInstance().getCommands())) {
             if (category != null && !command.getCategory().equals(category)) {
                 continue;
             }
@@ -338,10 +353,57 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             MainUtil.sendMessage(plr, C.NOT_VALID_SUBCOMMAND);
             {
                 List<Command<PlotPlayer>> cmds = getCommands(null, plr);
-                if (label == null || cmds.size() == 0 || (cmd = new StringComparison<>(label, cmds).getMatchObject()) == null) {
+                if (label == null || cmds.size() == 0) {
                     MainUtil.sendMessage(plr, C.DID_YOU_MEAN, "/plot help");
                 }
                 else {
+                    HashSet<String> setargs = new HashSet<>(args.length + 1);
+                    for (String arg : args) {
+                        setargs.add(arg.toLowerCase());
+                    }
+                    setargs.add(label.toLowerCase());
+                    String[] allargs = setargs.toArray(new String[setargs.size()]);
+                    int best = 0;
+                    for (Command<PlotPlayer> current : cmds) {
+                        if (current.getUsage() != null) {
+                            int count = 0;
+                            for (String word : new HashSet<String>(Arrays.asList((current.getUsage() + " " + current.getPermission() + " " + current.getCategory().name()).toLowerCase().replaceAll("\\||\\>|\\<|\\[|\\]|\\{|\\}|\\_|\\/", " ").trim().replaceAll("\\s+", " ").split(" ")))) {
+                                for (int i = 0; i < allargs.length; i++) {
+                                    String arg = allargs[i];
+                                    if (best - count - (allargs.length - i) * 3 >= 0) {
+                                        continue;
+                                    }
+                                    if (StringMan.isEqual(arg, word)) {
+                                        count+=3;
+                                    }
+                                    else if (word.length() > arg.length() && word.contains(arg)) {
+                                        count+=2;
+                                    }
+                                }
+                            }
+                            for (String word : new HashSet<String>(Arrays.asList((current.getDescription()).toLowerCase().replaceAll("\\||\\>|\\<|\\[|\\]|\\{|\\}|\\_|\\/", " ").trim().replaceAll("\\s+", " ").split(" ")))) {
+                                for (int i = 0; i < allargs.length; i++) {
+                                    String arg = allargs[i];
+                                    if (best - count - (allargs.length - i) * 2 >= 0) {
+                                        continue;
+                                    }
+                                    if (StringMan.isEqual(arg, word)) {
+                                        count+=2;
+                                    }
+                                    else if (word.length() > arg.length() && word.contains(arg)) {
+                                        count++;
+                                    }
+                                }
+                            }
+                            if (count > best) {
+                                best = count;
+                                cmd = current;
+                            }
+                        }
+                    }
+                    if (cmd == null) {
+                        cmd = new StringComparison<>(label, getCommandAndAliases(null, plr)).getMatchObject();
+                    }
                     MainUtil.sendMessage(plr, C.DID_YOU_MEAN, cmd.getUsage().replaceAll("\\{label\\}", parts[0]));
                 }
             }

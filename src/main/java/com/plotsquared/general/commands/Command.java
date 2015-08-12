@@ -113,7 +113,7 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
         return this.command;
     }
 
-    final public String getUsage() {
+    public String getUsage() {
         if (this.usage.length() == 0) {
             return "/{label} " + command; 
         }
@@ -127,7 +127,7 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
         return this.permission;
     }
 
-    final public String getDescription() {
+    public String getDescription() {
         return this.description;
     }
 

@@ -71,8 +71,12 @@ public class SQLManager implements AbstractDB {
     public final String CREATE_PLOT;
     public final String CREATE_CLUSTER;
     private final String prefix;
-    // Private Final
+    // Private
     private Connection connection;
+    private boolean CLOSED = false;
+    // Private Final
+    private final Database database;
+    private final boolean MYSQL;
 
     /**
      * important tasks
@@ -97,9 +101,13 @@ public class SQLManager implements AbstractDB {
      * cluster_settings
      */
     public volatile ConcurrentHashMap<PlotCluster, Queue<UniqueStatement>> clusterTasks;
+    private boolean debug;
     
+    public synchronized Queue<Runnable> getGlobalTasks() {
+        return globalTasks;
+    }
     
-    public void addPlotTask(Plot plot, UniqueStatement task) {
+    public synchronized void addPlotTask(Plot plot, UniqueStatement task) {
         if (plot == null) {
             plot = new Plot("", new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE), null);
         }
@@ -130,7 +138,7 @@ public class SQLManager implements AbstractDB {
         tasks.add(task);
     }
     
-    public void addClusterTask(PlotCluster cluster, UniqueStatement task) {
+    public synchronized void addClusterTask(PlotCluster cluster, UniqueStatement task) {
         Queue<UniqueStatement> tasks = clusterTasks.get(cluster);
         if (tasks == null) {
             tasks = new ConcurrentLinkedQueue<>();
@@ -139,8 +147,8 @@ public class SQLManager implements AbstractDB {
         tasks.add(task);
     }
     
-    public void addGlobalTask(Runnable task) {
-        globalTasks.add(task);
+    public synchronized void addGlobalTask(Runnable task) {
+        getGlobalTasks().add(task);
     }
     
     
@@ -149,10 +157,14 @@ public class SQLManager implements AbstractDB {
      *
      * @param c connection
      * @param p prefix
+     * @throws Exception 
      */
-    public SQLManager(final Connection c, final String p) {
+    public SQLManager(final Database database, final String p, final boolean debug) throws Exception {
+        this.debug = debug;
         // Private final
-        this.connection = c;
+        this.database = database;
+        this.connection = database.openConnection();
+        this.MYSQL = (database instanceof MySQL);
         globalTasks = new ConcurrentLinkedQueue<>();
         plotTasks = new ConcurrentHashMap<>();
         clusterTasks = new ConcurrentHashMap<>();
@@ -161,15 +173,15 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 long last = System.currentTimeMillis();
                 while (true) {
-                    if (PS.get().getDatabase() == null) {
+                    if (CLOSED) {
                         break;
                     }
                     // schedule reconnect
-                    if (Settings.DB.USE_MYSQL && System.currentTimeMillis() - last > 550000) {
+                    if (MYSQL && System.currentTimeMillis() - last > 550000) {
                         last = System.currentTimeMillis();
                         try {
                             close();
-                            connection = PS.get().getDatabase().forceConnection();
+                            connection = database.forceConnection();
                         } catch (SQLException | ClassNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -196,15 +208,16 @@ public class SQLManager implements AbstractDB {
         this.CREATE_PLOT = "INSERT INTO `" + this.prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) VALUES(?, ?, ?, ?, ?)";
         this.CREATE_CLUSTER = "INSERT INTO `" + this.prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
         updateTables();
+        createTables();
     }
     
     public boolean sendBatch() {
         try {
-            if (globalTasks.size() > 0) {
+            if (getGlobalTasks().size() > 0) {
                 if (connection.getAutoCommit()) {
                     connection.setAutoCommit(false);
                 }
-                Runnable task = globalTasks.remove();
+                Runnable task = getGlobalTasks().remove();
                 if (task != null) {
                     task.run();
                 }
@@ -530,7 +543,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt.setString((i * 4) + 3, plot.owner.toString());
                 } catch (final Exception e) {
-                    stmt.setString((i * 4) + 3, DBFunc.everyone.toString());
+                    stmt.setString((i * 4) + 3, everyone.toString());
                 }
                 stmt.setString((i * 5) + 4, plot.world);
                 stmt.setTimestamp((i * 5) + 5, new Timestamp(plot.getTimestamp()));
@@ -544,7 +557,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt.setString((i * 6) + 4, plot.owner.toString());
                 } catch (final Exception e1) {
-                    stmt.setString((i * 6) + 4, DBFunc.everyone.toString());
+                    stmt.setString((i * 6) + 4, everyone.toString());
                 }
                 stmt.setString((i * 6) + 5, plot.world);
                 stmt.setTimestamp((i * 6) + 6, new Timestamp(plot.getTimestamp()));
@@ -570,7 +583,7 @@ public class SQLManager implements AbstractDB {
             return;
         }
         int packet;
-        if (Settings.DB.USE_MYSQL) {
+        if (MYSQL) {
             packet = Math.min(size, 5000);
         } else {
             packet = Math.min(size, 50);
@@ -612,7 +625,7 @@ public class SQLManager implements AbstractDB {
             if (whenDone != null) whenDone.run();
             return;
         } catch (Exception e) {
-            if (Settings.DB.USE_MYSQL) {
+            if (MYSQL) {
                 e.printStackTrace();
                 PS.debug("&cERROR 1: " + " | " + objList.get(0).getClass().getCanonicalName());
             }
@@ -868,6 +881,9 @@ public class SQLManager implements AbstractDB {
     
     public void commit() {
         try {
+            if (CLOSED) {
+                return;
+            }
             if (!this.connection.getAutoCommit()) {
                 this.connection.commit();
                 this.connection.setAutoCommit(true);
@@ -928,14 +944,13 @@ public class SQLManager implements AbstractDB {
      * @throws SQLException
      */
     @Override
-    public void createTables(final String database) throws SQLException {
+    public void createTables() throws SQLException {
         final String[] tables;
         if (Settings.ENABLE_CLUSTERS) {
             tables = new String[]{"plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings", "cluster"};
         } else {
             tables = new String[]{"plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings"};
         }
-        final boolean mysql = database.equals("mysql");
         final DatabaseMetaData meta = connection.getMetaData();
         int create = 0;
         for (final String s : tables) {
@@ -952,7 +967,7 @@ public class SQLManager implements AbstractDB {
         add_constraint = create == tables.length;
         PS.debug("Creating tables");
         final Statement stmt = this.connection.createStatement();
-        if (mysql) {
+        if (MYSQL) {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot` (" + "`id` INT(11) NOT NULL AUTO_INCREMENT," + "`plot_id_x` INT(11) NOT NULL," + "`plot_id_z` INT(11) NOT NULL," + "`owner` VARCHAR(40) NOT NULL," + "`world` VARCHAR(45) NOT NULL," + "`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," + "PRIMARY KEY (`id`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_denied` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_helpers` (" + "`plot_plot_id` INT(11) NOT NULL," + "`user_uuid` VARCHAR(40) NOT NULL" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -1154,32 +1169,36 @@ public class SQLManager implements AbstractDB {
                     }
                 }
             }
-            try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate("DELETE FROM `" + this.prefix + "plot_denied` WHERE `plot_plot_id` NOT IN (SELECT `id` FROM `" + this.prefix + "plot`)");
-                statement.close();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-            
             rs.close();
-            try (Statement statement = connection.createStatement()) {
-                for (String table : new String[]{"plot_denied", "plot_helpers", "plot_trusted"} ) {
-                    ResultSet result = statement.executeQuery("SELECT plot_plot_id, user_uuid, COUNT(*) FROM " + this.prefix + table + " GROUP BY plot_plot_id, user_uuid HAVING COUNT(*) > 1");
-                    if (result.next()) {
-                        PS.debug("BACKING UP: " + this.prefix + table);
-                        result.close();
-                        statement.executeUpdate("CREATE TABLE "  + this.prefix + table + "_tmp AS SELECT * FROM " + this.prefix + table + " GROUP BY plot_plot_id, user_uuid");
-                        statement.executeUpdate("DROP TABLE " + this.prefix + table);
-                        statement.executeUpdate("CREATE TABLE " + this.prefix + table + " AS SELECT * FROM "  + this.prefix + table + "_tmp");
-                        statement.executeUpdate("DROP TABLE " + this.prefix + table + "_tmp");
-                        PS.debug("RESTORING: " + this.prefix + table);
-                    }
+            rs = data.getColumns(null, null, this.prefix + "plot_denied", "plot_plot_id");
+            if (rs.next()) {
+                try (Statement statement = connection.createStatement()) {
+                    statement.executeUpdate("DELETE FROM `" + this.prefix + "plot_denied` WHERE `plot_plot_id` NOT IN (SELECT `id` FROM `" + this.prefix + "plot`)");
+                    statement.close();
                 }
-                statement.close();
-            }
-            catch (Exception e2) {
-                e2.printStackTrace();
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+                rs.close();
+                try (Statement statement = connection.createStatement()) {
+                    for (String table : new String[]{"plot_denied", "plot_helpers", "plot_trusted"} ) {
+                        ResultSet result = statement.executeQuery("SELECT plot_plot_id, user_uuid, COUNT(*) FROM " + this.prefix + table + " GROUP BY plot_plot_id, user_uuid HAVING COUNT(*) > 1");
+                        if (result.next()) {
+                            PS.debug("BACKING UP: " + this.prefix + table);
+                            result.close();
+                            statement.executeUpdate("CREATE TABLE "  + this.prefix + table + "_tmp AS SELECT * FROM " + this.prefix + table + " GROUP BY plot_plot_id, user_uuid");
+                            statement.executeUpdate("DROP TABLE " + this.prefix + table);
+                            statement.executeUpdate("CREATE TABLE " + this.prefix + table + " AS SELECT * FROM "  + this.prefix + table + "_tmp");
+                            statement.executeUpdate("DROP TABLE " + this.prefix + table + "_tmp");
+                            PS.debug("RESTORING: " + this.prefix + table);
+                        }
+                    }
+                    statement.close();
+                }
+                catch (Exception e2) {
+                    e2.printStackTrace();
+                }
             }
         }
         catch (Exception e) {
@@ -2351,7 +2370,7 @@ public class SQLManager implements AbstractDB {
             public void run() {
                 try {
                     close();
-                    SQLManager.this.connection = PS.get().getDatabase().forceConnection();
+                    SQLManager.this.connection = database.forceConnection();
                     final Statement stmt = connection.createStatement();
                     stmt.addBatch("DROP TABLE `" + prefix + "cluster_invited`");
                     stmt.addBatch("DROP TABLE `" + prefix + "cluster_helpers`");
@@ -2524,6 +2543,7 @@ public class SQLManager implements AbstractDB {
     @Override
     public void close() {
         try {
+            CLOSED = true;
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
