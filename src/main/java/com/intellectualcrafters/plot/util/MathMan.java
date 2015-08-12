@@ -33,7 +33,7 @@ public class MathMan {
     }
     
     public static int roundInt(double value) {
-        return (int) (value < 0 ? (value == (int) value) ? value : - 1 : value);
+        return (int) (value < 0 ? (value == (int) value) ? value : value - 1 : value);
     }
     
     /**
