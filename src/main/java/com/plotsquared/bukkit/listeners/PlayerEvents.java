@@ -678,7 +678,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
             }
-            else if (FlagManager.isPlotFlagTrue(plot, "done")) {
+            else if (plot.getSettings().flags.containsKey("done")) {
                 if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
@@ -2077,7 +2077,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return;
                 }
             }
-            else if (FlagManager.isPlotFlagTrue(plot, "done")) {
+            else if (plot.getSettings().flags.containsKey("done")) {
                 if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);

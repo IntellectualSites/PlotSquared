@@ -102,4 +102,12 @@ public class SpongeUtil {
         }
         return null;
     }
+
+    public static org.spongepowered.api.world.Location getLocation(Location loc) {
+        Optional<World> world = SpongeMain.THIS.getServer().getWorld(loc.getWorld());
+        if (!world.isPresent()) {
+            return null;
+        }
+        return new org.spongepowered.api.world.Location(world.get(), loc.getX(), loc.getY(), loc.getZ());
+    }
 }

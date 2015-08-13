@@ -2,9 +2,11 @@ package com.plotsquared.sponge.object;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
 import org.spongepowered.api.data.manipulator.mutable.entity.GameModeData;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.entity.player.Player;
@@ -130,8 +132,8 @@ public class SpongePlayer extends PlotPlayer {
 
     @Override
     public void setCompassTarget(Location loc) {
-        // TODO set compass target
-        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+        TargetedLocationData target = player.getOrCreate(TargetedLocationData.class).get();
+        target.set(Keys.TARGETED_LOCATION, SpongeUtil.getLocation(loc));
     }
 
     @Override
@@ -175,7 +177,6 @@ public class SpongePlayer extends PlotPlayer {
 
     @Override
     public PlotGamemode getGamemode() {
-        // TODO Auto-generated method stub
         GameMode gamemode = player.getGameModeData().type().get();
         if (gamemode == GameModes.ADVENTURE) {
             return PlotGamemode.ADVENTURE;

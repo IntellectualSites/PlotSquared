@@ -1792,6 +1792,10 @@ public class PS {
         }
         config.set("clear.keep-if-modified", null);
         config.set("clear.ignore-if-modified", null);
+        
+        // Done
+        config.set("approval.ratings.require-done", Settings.REQUIRE_DONE);
+        config.set("approval.done.counts-towards-limit", Settings.DONE_COUNTS_TOWARDS_LIMIT);
 
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
@@ -1802,6 +1806,8 @@ public class PS {
         
         // Caching
         options.put("cache.permissions", Settings.PERMISSION_CACHING);
+        options.put("cache.ratings", Settings.CACHE_RATINGS);
+        
         options.put("cache.ratings", Settings.CACHE_RATINGS);
         
         // Titles
@@ -1893,6 +1899,10 @@ public class PS {
         PlotAnalysis.MODIFIERS.data_sd = config.getInt("clear.auto.calibration.data_sd");
         PlotAnalysis.MODIFIERS.air_sd = config.getInt("clear.auto.calibration.air_sd");
         PlotAnalysis.MODIFIERS.variety_sd = config.getInt("clear.auto.calibration.variety_sd");
+        
+        // Done
+        Settings.REQUIRE_DONE = config.getBoolean("approval.ratings.require-done");
+        Settings.DONE_COUNTS_TOWARDS_LIMIT = config.getBoolean("approval.done.counts-towards-limit");
         
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");

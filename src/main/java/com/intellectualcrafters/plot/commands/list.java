@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -41,6 +42,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -99,6 +101,9 @@ public class list extends SubCommand {
             args.add("<player>");
         }
         if (Permissions.hasPermission(player, "plots.list.world")) {
+            args.add("<world>");
+        }
+        if (Permissions.hasPermission(player, "plots.list.done")) {
             args.add("<world>");
         }
         return args.toArray(new String[args.size()]);
@@ -173,6 +178,50 @@ public class list extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>(PS.get().getPlots());
+                break;
+            }
+            case "done": {
+                if (!Permissions.hasPermission(plr, "plots.list.done")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.done");
+                    return false;
+                }
+                plots = new ArrayList<>();
+                String match;
+                if (args.length == 2) {
+                    match = args[2];
+                }
+                else {
+                    match = null;
+                }
+                for (Plot plot : PS.get().getPlots()) {
+                    Flag flag = plot.getSettings().flags.get("done"); 
+                    if (flag == null) {
+                        return false;
+                    }
+                    if (match != null) {
+                        flag.getValueString().matches(match);
+                    }
+                    else {
+                        plots.add(plot);
+                    }
+                }
+                if (match != null) {
+                    Collections.sort(plots, new Comparator<Plot>() {
+                        @Override
+                        public int compare(Plot a, Plot b) {
+                            String va = a.getSettings().flags.get("done").getValueString();
+                            String vb = b.getSettings().flags.get("done").getValueString();
+                            if (MathMan.isInteger(va)) {
+                                if (MathMan.isInteger(vb)) {
+                                    return Integer.parseInt(va) - Integer.parseInt(vb);
+                                }
+                                return -1;
+                            }
+                            return 1;
+                        }
+                    });
+                    sort = false;
+                }
                 break;
             }
             case "top": {

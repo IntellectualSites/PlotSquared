@@ -103,6 +103,14 @@ public class DebugExec extends SubCommand {
         }
     }
     
+    public ScriptEngine getEngine() {
+        return engine;
+    }
+    
+    public Bindings getScope() {
+        return scope;
+    }
+    
     public void init() {
         if (engine != null) {
             return;

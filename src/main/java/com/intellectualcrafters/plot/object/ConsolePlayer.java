@@ -21,6 +21,7 @@ public class ConsolePlayer extends PlotPlayer {
     public static ConsolePlayer getConsole() {
         if (instance == null) {
             instance = new ConsolePlayer();
+            instance.teleport(instance.getLocation());
         }
         return instance;
     }
@@ -79,6 +80,8 @@ public class ConsolePlayer extends PlotPlayer {
 
     @Override
     public void teleport(Location loc) {
+        Plot plot = MainUtil.getPlot(loc);
+        setMeta("lastplot", plot);
         this.loc = loc;
     }
 

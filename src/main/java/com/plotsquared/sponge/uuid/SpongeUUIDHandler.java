@@ -16,7 +16,6 @@ public class SpongeUUIDHandler extends UUIDHandlerImplementation {
 
     public SpongeUUIDHandler(UUIDWrapper wrapper) {
         super(wrapper);
-        // TODO Auto-generated constructor stub
     }
     
     @Override
@@ -28,8 +27,6 @@ public class SpongeUUIDHandler extends UUIDHandlerImplementation {
     }
 
     public boolean cache(Runnable whenDone) {
-        // TODO cache UUIDS
-//        SpongeMain.THIS.getRegistry().get
         add(new StringWrapper("*"), DBFunc.everyone);
         for (GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles()) {
             add(new StringWrapper(profile.getName()), profile.getUniqueId());

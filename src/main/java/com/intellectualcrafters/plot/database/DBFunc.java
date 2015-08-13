@@ -140,7 +140,7 @@ public class DBFunc {
      * @throws Exception
      */
     public static void createTables(final String database) throws Exception {
-        dbManager.createTables(database);
+        dbManager.createTables();
     }
 
     /**

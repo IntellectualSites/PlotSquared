@@ -10,13 +10,11 @@ import org.spongepowered.api.block.tileentity.Sign;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
-import org.spongepowered.api.data.value.immutable.ImmutableListValue;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
-import org.spongepowered.common.data.value.mutable.SpongeListValue;
 
 import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.object.Location;
@@ -153,12 +151,12 @@ public class SpongeBlockManager extends BlockManager {
             return null;
         }
         Sign sign = (Sign) tile;
-        Optional<List<Text>> optional = tile.get(Keys.SIGN_LINES);
+        Optional<SignData> optional = sign.getOrCreate(SignData.class);
         if (!optional.isPresent()) {
             return null;
         }
         String[] result = new String[4];
-        List<Text> lines = optional.get();
+        ListValue<Text> lines = optional.get().lines();
         for (int i = 0; i < 4; i++) {
             result[i] = lines.get(i).toString();
         }
@@ -195,8 +193,15 @@ public class SpongeBlockManager extends BlockManager {
             text.add(SpongeMain.THIS.getText(lines[i]));
         }
         try {
-            SpongeListValue<Text> offering = new SpongeListValue<Text>(Keys.SIGN_LINES, text);
-            sign.offer(offering);
+            Optional<SignData> optional = sign.getOrCreate(SignData.class);
+            if(optional.isPresent()) {
+                SignData offering = optional.get();
+                offering.lines().set(0, SpongeMain.THIS.getText(lines[0]));
+                offering.lines().set(1, SpongeMain.THIS.getText(lines[1]));
+                offering.lines().set(2, SpongeMain.THIS.getText(lines[2]));
+                offering.lines().set(3, SpongeMain.THIS.getText(lines[3]));
+                sign.offer(offering);
+            }
         }
         catch (NullPointerException e) {
             e.printStackTrace();

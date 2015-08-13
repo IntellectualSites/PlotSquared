@@ -100,11 +100,12 @@ public class DebugUUID extends SubCommand {
         if (args.length != 2 || !args[1].equals("-o")) {
             MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert " + args[0] + " - o");
             MainUtil.sendMessage(player, "&cBe aware of the following!");
+            MainUtil.sendMessage(player, "&8 - &cUse the database command or another method to backup your plots beforehand");
             MainUtil.sendMessage(player, "&8 - &cIf the process is interrupted, all plots could be deleted");
             MainUtil.sendMessage(player, "&8 - &cIf an error occurs, all plots could be deleted");
             MainUtil.sendMessage(player, "&8 - &cPlot settings WILL be lost upon conversion");
-            MainUtil.sendMessage(player, "&cBACK UP YOUR DATABASE BEFORE USING THIS!!!");
-            MainUtil.sendMessage(player, "&7Retype the command with the override parameter when ready");
+            MainUtil.sendMessage(player, "&cTO REITERATE: BACK UP YOUR DATABASE BEFORE USING THIS!!!");
+            MainUtil.sendMessage(player, "&7Retype the command with the override parameter when ready :)");
             return false;
         }
         
@@ -114,10 +115,8 @@ public class DebugUUID extends SubCommand {
         }
         MainUtil.sendConsoleMessage("&6Beginning UUID mode conversion");
         MainUtil.sendConsoleMessage("&7 - Disconnecting players");
-        for (PlotPlayer user : UUIDHandler.getPlayers().values()) {
-            for (PlotPlayer pp : UUIDHandler.getPlayers().values()) {
-                pp.kick("PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
-            }
+        for (PlotPlayer pp : UUIDHandler.getPlayers().values()) {
+            pp.kick("PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
         }
         
         MainUtil.sendConsoleMessage("&7 - Initializing map");
@@ -240,7 +239,7 @@ public class DebugUUID extends SubCommand {
         MainUtil.sendConsoleMessage("&7 - Creating tables");
         
         try {
-            database.createTables(Settings.DB.USE_MYSQL ? "mysql" : "sqlite");
+            database.createTables();
             if (!result) {
                 MainUtil.sendConsoleMessage("&cConversion failed! Attempting recovery");
                 for (Plot plot : PS.get().getPlots()) {

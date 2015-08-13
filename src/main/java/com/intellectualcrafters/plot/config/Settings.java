@@ -52,6 +52,7 @@ public class Settings {
      */
     public static List<String> RATING_CATEGORIES = null;
     public static boolean REQUIRE_DONE = false;
+    public static boolean DONE_COUNTS_TOWARDS_LIMIT = false;
     /**
      * PlotMe settings
      */

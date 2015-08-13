@@ -40,17 +40,17 @@ public class PlotAnalysis {
         if (flag != null) {
             PlotAnalysis analysis = new PlotAnalysis();
             List<Integer> values = (List<Integer>) flag.getValue();
-            analysis.changes = values.get(0);
-            analysis.faces = values.get(1);
-            analysis.data = values.get(2);
-            analysis.air = values.get(3);
-            analysis.variety = values.get(4);
+            analysis.changes = values.get(0); // 2126
+            analysis.faces = values.get(1); // 90
+            analysis.data = values.get(2); // 0
+            analysis.air = values.get(3); // 19100
+            analysis.variety = values.get(4); // 266
             
-            analysis.changes_sd = values.get(5);
-            analysis.faces_sd = values.get(6);
-            analysis.data_sd = values.get(7);
-            analysis.air_sd = values.get(8);
-            analysis.variety_sd = values.get(9);
+            analysis.changes_sd = values.get(5); // 2104
+            analysis.faces_sd = values.get(6); // 89
+            analysis.data_sd = values.get(7); // 0
+            analysis.air_sd = values.get(8); // 18909
+            analysis.variety_sd = values.get(9); // 263
             
             analysis.complexity = analysis.getComplexity();
             return analysis;

@@ -88,6 +88,10 @@ public class Clear extends SubCommand {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
+        if (Settings.DONE_COUNTS_TOWARDS_LIMIT && FlagManager.isPlotFlagTrue(plot, "done" ) && MainUtil.getAllowedPlots(plr) >= MainUtil.getPlayerPlotCount(plr)) {
+            MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
+            return false;
+        }
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -96,7 +100,7 @@ public class Clear extends SubCommand {
                     @Override
                     public void run() {
                         // If the state changes, then mark it as no longer done
-                        if (FlagManager.isPlotFlagTrue(plot, "done" )) {
+                        if (FlagManager.getPlotFlag(plot, "done" ) != null) {
                             FlagManager.removePlotFlag(plot, "done");
                         }
                         if (FlagManager.getPlotFlag(plot, "analysis") != null) {

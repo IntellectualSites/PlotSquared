@@ -440,7 +440,7 @@ public class MainUtil {
         final UUID uuid = plr.getUUID();
         int count = 0;
         for (final Plot plot : PS.get().getPlotsInWorld(world)) {
-            if (plot.hasOwner() && plot.owner.equals(uuid) && plot.countsTowardsMax) {
+            if (plot.hasOwner() && plot.owner.equals(uuid) && (!Settings.DONE_COUNTS_TOWARDS_LIMIT || !plot.getSettings().flags.containsKey("done"))) {
                 count++;
             }
         }

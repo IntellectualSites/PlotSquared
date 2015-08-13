@@ -507,8 +507,8 @@ public class MainListener {
                 event.setCancelled(true);
                 return;
             }
+            final PlotPlayer pp = SpongeUtil.getPlayer(player);
             if (!plot.hasOwner()) {
-                final PlotPlayer pp = SpongeUtil.getPlayer(player);
                 if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
@@ -516,8 +516,7 @@ public class MainListener {
                 event.setCancelled(true);
                 return;
             }
-            final PlotPlayer pp = SpongeUtil.getPlayer(player);
-            if (!plot.isAdded(pp.getUUID())) {
+            else if (!plot.isAdded(pp.getUUID())) {
                 final Flag destroy = FlagManager.getPlotFlag(plot, "break");
                 BlockState state = blockLoc.getBlock();
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeMain.THIS.getPlotBlock(state))) {
@@ -528,6 +527,13 @@ public class MainListener {
                 }
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
+            }
+            else if (plot.getSettings().flags.containsKey("done")) {
+                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_OTHER);
+                    event.setCancelled(true);
+                    return;
+                }
             }
             return;
         }
@@ -554,8 +560,8 @@ public class MainListener {
                 event.setCancelled(true);
                 return;
             }
+            final PlotPlayer pp = SpongeUtil.getPlayer(player);
             if (!plot.hasOwner()) {
-                final PlotPlayer pp = SpongeUtil.getPlayer(player);
                 if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     return;
                 }
@@ -563,8 +569,7 @@ public class MainListener {
                 event.setCancelled(true);
                 return;
             }
-            final PlotPlayer pp = SpongeUtil.getPlayer(player);
-            if (!plot.isAdded(pp.getUUID())) {
+            else if (!plot.isAdded(pp.getUUID())) {
                 final Flag destroy = FlagManager.getPlotFlag(plot, "place");
                 BlockState state = blockLoc.getBlock();
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeMain.THIS.getPlotBlock(state))) {
@@ -575,6 +580,13 @@ public class MainListener {
                 }
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
+            }
+            else if (plot.getSettings().flags.containsKey("done")) {
+                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_OTHER);
+                    event.setCancelled(true);
+                    return;
+                }
             }
             return;
         }
