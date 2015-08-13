@@ -1633,6 +1633,7 @@ public class PS {
         for (final String flag : intFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
+        FlagManager.addFlag(new AbstractFlag("done", new FlagValue.StringValue()), true);
         FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.IntegerListValue()), true);
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));

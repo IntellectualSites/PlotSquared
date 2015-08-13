@@ -171,14 +171,25 @@ public enum C {
 
     COMMAND_BLOCKED("$2That command is not allowed in this plot", "Blocked Command"),
     /*
+     * Done
+     */
+    DONE_ALREADY_DONE("$2This plot is already marked as done.","Done"),
+    DONE_INSUFFICIENT_COMPLEXITY("$2This plot is too simple. Please add more detail before using this command.","Done"),
+    DONE_SUCCESS("$1Successfully marked this plot as done.","Done"),
+    /*
      * Ratings
      */
-    RATE_THIS("$2Rate this plot!", "Ratings"),
     RATING_NOT_VALID("$2You need to specify a number between 1 and 10", "Ratings"),
     RATING_ALREADY_EXISTS("$2You have already rated plot $2%s", "Ratings"),
     RATING_APPLIED("$4You successfully rated plot $2%s", "Ratings"),
     RATING_NOT_YOUR_OWN("$2You cannot rate your own plot", "Ratings"),
+    RATING_NOT_DONE("$2You can only rate finished plots.", "Ratings"),
     RATING_NOT_OWNED("$2You cannot rate a plot that is not claimed by anyone", "Ratings"),
+    /*
+     * Tutorial
+     */
+    RATE_THIS("$2Rate this plot!", "Tutorial"),
+    COMMENT_THIS("$2Leave some feedback on this plot: %s", "Tutorial"),
     /*
      * Economy Stuff
      */

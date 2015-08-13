@@ -34,6 +34,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotInventory;
@@ -43,8 +44,10 @@ import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.events.PlotRateEvent;
+import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -83,7 +86,7 @@ public class Rate extends SubCommand {
                 });
                 UUID uuid = player.getUUID();
                 for (Plot p : plots) {
-                    if (p.isBasePlot() && (p.getSettings().ratings == null || !p.getSettings().ratings.containsKey(uuid)) && !p.isAdded(uuid)) {
+                    if ((!Settings.REQUIRE_DONE || p.getSettings().flags.containsKey("done")) && p.isBasePlot() && (p.getSettings().ratings == null || !p.getSettings().ratings.containsKey(uuid)) && !p.isAdded(uuid)) {
                         MainUtil.teleportPlayer(player, player.getLocation(), p);
                         MainUtil.sendMessage(player, C.RATE_THIS);
                         return true;
@@ -100,51 +103,61 @@ public class Rate extends SubCommand {
         }
         if (!plot.hasOwner()) {
             sendMessage(player, C.RATING_NOT_OWNED);
-            return true;
+            return false;
         }
         if (plot.isOwner(player.getUUID())) {
             sendMessage(player, C.RATING_NOT_YOUR_OWN);
-            return true;
+            return false;
+        }
+        if (Settings.REQUIRE_DONE && !plot.getSettings().flags.containsKey("done")) {
+            sendMessage(player, C.RATING_NOT_DONE);
+            return false;
         }
         if (Settings.RATING_CATEGORIES != null && Settings.RATING_CATEGORIES.size() != 0) {
             final Runnable run = new Runnable() {
                 @Override
                 public void run() {
-                if (plot.getSettings().ratings.containsKey(player.getUUID())) {
-                    sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
-                    return;
-                }
-                final MutableInt index = new MutableInt(0);
-                final MutableInt rating = new MutableInt(0);
-                String title = Settings.RATING_CATEGORIES.get(0);
-                PlotInventory inventory = new PlotInventory(player, 1, title) {
-                    public boolean onClick(int i) {
-                        rating.add((i + 1) * Math.pow(10, index.intValue()));
-                        index.increment();
-                        if (index.intValue() >= Settings.RATING_CATEGORIES.size()) {
-                            close();
-                            int rV = rating.intValue();
-                            Rating result = EventUtil.manager.callRating(player, plot, new Rating(rV));
-                            plot.getSettings().ratings.put(player.getUUID(), result.getAggregate());
-                            DBFunc.setRating(plot, player.getUUID(), rV);
-                            sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
-                            sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
+                    if (plot.getSettings().ratings.containsKey(player.getUUID())) {
+                        sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
+                        return;
+                    }
+                    final MutableInt index = new MutableInt(0);
+                    final MutableInt rating = new MutableInt(0);
+                    String title = Settings.RATING_CATEGORIES.get(0);
+                    PlotInventory inventory = new PlotInventory(player, 1, title) {
+                        public boolean onClick(int i) {
+                            rating.add((i + 1) * Math.pow(10, index.intValue()));
+                            index.increment();
+                            if (index.intValue() >= Settings.RATING_CATEGORIES.size()) {
+                                close();
+                                int rV = rating.intValue();
+                                Rating result = EventUtil.manager.callRating(player, plot, new Rating(rV));
+                                plot.getSettings().ratings.put(player.getUUID(), result.getAggregate());
+                                DBFunc.setRating(plot, player.getUUID(), rV);
+                                sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
+                                sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
+                                return false;
+                            }
+                            setTitle(Settings.RATING_CATEGORIES.get(index.intValue()));
+                            if (Permissions.hasPermission(player, "plots.comment")) {
+                                Command<PlotPlayer> command = MainCommand.getInstance().getCommand("comment");
+                                if (command != null) {
+                                    MainUtil.sendMessage(player, C.COMMENT_THIS, command.getUsage().replaceAll("{label}", "plot"));
+                                }
+                            }
                             return false;
                         }
-                        setTitle(Settings.RATING_CATEGORIES.get(index.intValue()));
-                        return false;
-                    }
-                };
-                inventory.setItem(0, new PlotItemStack(35, (short) 12, 0, "0/8"));
-                inventory.setItem(1, new PlotItemStack(35, (short) 14, 1, "1/8"));
-                inventory.setItem(2, new PlotItemStack(35, (short) 1, 2, "2/8"));
-                inventory.setItem(3, new PlotItemStack(35, (short) 4, 3, "3/8"));
-                inventory.setItem(4, new PlotItemStack(35, (short) 5, 4, "4/8"));
-                inventory.setItem(5, new PlotItemStack(35, (short) 9, 5, "5/8"));
-                inventory.setItem(6, new PlotItemStack(35, (short) 11, 6, "6/8"));
-                inventory.setItem(7, new PlotItemStack(35, (short) 10, 7, "7/8"));
-                inventory.setItem(8, new PlotItemStack(35, (short) 2, 8, "8/8"));
-                inventory.openInventory();
+                    };
+                    inventory.setItem(0, new PlotItemStack(35, (short) 12, 0, "0/8"));
+                    inventory.setItem(1, new PlotItemStack(35, (short) 14, 1, "1/8"));
+                    inventory.setItem(2, new PlotItemStack(35, (short) 1, 2, "2/8"));
+                    inventory.setItem(3, new PlotItemStack(35, (short) 4, 3, "3/8"));
+                    inventory.setItem(4, new PlotItemStack(35, (short) 5, 4, "4/8"));
+                    inventory.setItem(5, new PlotItemStack(35, (short) 9, 5, "5/8"));
+                    inventory.setItem(6, new PlotItemStack(35, (short) 11, 6, "6/8"));
+                    inventory.setItem(7, new PlotItemStack(35, (short) 10, 7, "7/8"));
+                    inventory.setItem(8, new PlotItemStack(35, (short) 2, 8, "8/8"));
+                    inventory.openInventory();
                 }
             };
             if (plot.getSettings().ratings == null) {

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -27,7 +28,7 @@ public class WEManager {
         HashSet<RegionWrapper> regions = new HashSet<>();
         UUID uuid = player.getUUID();
         for (Plot plot : PS.get().getPlotsInWorld(player.getLocation().getWorld())) {
-            if (!plot.getMerged(0) && !plot.getMerged(3)) {
+            if (plot.isBasePlot() && !FlagManager.isPlotFlagTrue(plot, "done")) {
                 if (Settings.WE_ALLOW_HELPER ? plot.isAdded(uuid) : (plot.isOwner(uuid) || plot.getTrusted().contains(uuid))) {
                     Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
                     Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);

@@ -657,8 +657,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 event.setCancelled(true);
                 return;
             }
+            final PlotPlayer pp = BukkitUtil.getPlayer(player);
             if (!plot.hasOwner()) {
-                final PlotPlayer pp = BukkitUtil.getPlayer(player);
                 if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
@@ -666,8 +666,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 event.setCancelled(true);
                 return;
             }
-            final PlotPlayer pp = BukkitUtil.getPlayer(player);
-            if (!plot.isAdded(pp.getUUID())) {
+            else if (!plot.isAdded(pp.getUUID())) {
                 final Flag destroy = FlagManager.getPlotFlag(plot, "break");
                 final Block block = event.getBlock();
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
@@ -678,6 +677,13 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
+            }
+            else if (FlagManager.isPlotFlagTrue(plot, "done")) {
+                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_OTHER);
+                    event.setCancelled(true);
+                    return;
+                }
             }
             return;
         }
@@ -2066,6 +2072,13 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 final Flag place = FlagManager.getPlotFlag(plot, FLAG_PLACE);
                 final Block block = event.getBlock();
                 if (((place == null) || !((HashSet<PlotBlock>) place.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) && !Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_OTHER);
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            else if (FlagManager.isPlotFlagTrue(plot, "done")) {
+                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
                     return;

@@ -127,6 +127,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Copy());
         createCommand(new Chat());
         createCommand(new Trim());
+        createCommand(new Done());
         if (Settings.ENABLE_CLUSTERS) {
             MainCommand.getInstance().addCommand(new Cluster());
         }

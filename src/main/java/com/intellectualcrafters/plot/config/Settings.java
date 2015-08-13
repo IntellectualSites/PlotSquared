@@ -51,6 +51,7 @@ public class Settings {
      * Ratings
      */
     public static List<String> RATING_CATEGORIES = null;
+    public static boolean REQUIRE_DONE = false;
     /**
      * PlotMe settings
      */

@@ -36,6 +36,10 @@ public class CommandManager<T extends CommandCaller> {
             this.commands.put(alias.toLowerCase(), command);
         }
     }
+    
+    final public Command<T> getCommand(String command) {
+        return commands.get(command);
+    }
 
     final public boolean createCommand(final Command<T> command) {
         try {

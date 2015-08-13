@@ -25,6 +25,7 @@ import java.util.Set;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -94,6 +95,13 @@ public class Clear extends SubCommand {
                 final boolean result = MainUtil.clearAsPlayer(plot, plot.owner == null, new Runnable() {
                     @Override
                     public void run() {
+                        // If the state changes, then mark it as no longer done
+                        if (FlagManager.isPlotFlagTrue(plot, "done" )) {
+                            FlagManager.removePlotFlag(plot, "done");
+                        }
+                        if (FlagManager.getPlotFlag(plot, "analysis") != null) {
+                            FlagManager.removePlotFlag(plot, "analysis");
+                        }
                         MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
                     }
                 });
