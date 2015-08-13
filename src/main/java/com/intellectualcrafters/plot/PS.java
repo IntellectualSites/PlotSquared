@@ -493,6 +493,32 @@ public class PS {
         }
         return result;
     }
+    
+    /**
+     * Get all the base plots in a single set (for merged plots it just returns the bottom plot)
+     * @return Set of base Plot
+     */
+    public Set<Plot> getBasePlots() {
+        int size = 0;
+        for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            if (isPlotWorld(entry.getKey())) {
+                size += entry.getValue().size();
+            }
+        }
+        Set<Plot> result = new HashSet<>(size);
+        for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            if (isPlotWorld(entry.getKey())) {
+                for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                    Plot plot = entry2.getValue();
+                    if (plot.getMerged(0) || plot.getMerged(3)) {
+                        continue;
+                    }
+                    result.add(plot);
+                }
+            }
+        }
+        return result;
+    }
 
 
     /**

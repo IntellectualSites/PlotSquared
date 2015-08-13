@@ -83,7 +83,7 @@ public class Rate extends SubCommand {
                 });
                 UUID uuid = player.getUUID();
                 for (Plot p : plots) {
-                    if ((p.getSettings().ratings == null || !p.getSettings().ratings.containsKey(uuid)) && !p.isAdded(uuid)) {
+                    if (p.isBasePlot() && (p.getSettings().ratings == null || !p.getSettings().ratings.containsKey(uuid)) && !p.isAdded(uuid)) {
                         MainUtil.teleportPlayer(player, player.getLocation(), p);
                         MainUtil.sendMessage(player, C.RATE_THIS);
                         return true;
@@ -168,10 +168,6 @@ public class Rate extends SubCommand {
             return true;
         }
         final String arg = args[0];
-        
-        if (arg.equalsIgnoreCase("next")) {
-            
-        }
         final int rating;
         if (MathMan.isInteger(arg) && arg.length() < 3 && arg.length() > 0) {
             rating = Integer.parseInt(arg);

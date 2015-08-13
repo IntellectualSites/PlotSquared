@@ -285,6 +285,17 @@ public class Plot {
         return settings;
     }
     
+    /**
+     * Returns true if the plot is not merged, or it is the base plot of multiple merged plots
+     * @return
+     */
+    public boolean isBasePlot() {
+        if (settings == null) {
+            return true;
+        }
+        return !settings.getMerged(0) && !settings.getMerged(3);
+    }
+    
     public boolean isMerged() {
         if (settings == null) {
             return false;

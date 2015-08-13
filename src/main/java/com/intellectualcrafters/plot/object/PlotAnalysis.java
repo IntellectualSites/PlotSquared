@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,6 +56,10 @@ public class PlotAnalysis {
             return analysis;
         }
         return null;
+    }
+    
+    public List<Integer> asList() {
+        return Arrays.asList(changes, faces, data, air, variety, changes_sd, faces_sd, data_sd, air_sd, variety_sd);
     }
     
     public int getComplexity() {

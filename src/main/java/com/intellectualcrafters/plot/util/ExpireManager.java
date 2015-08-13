@@ -125,7 +125,7 @@ public class ExpireManager {
                                     if (changed.getComplexity() > Settings.CLEAR_THRESHOLD) {
                                         PS.debug("$2[&5Expire&dManager$2] &bIgnoring modified plot: " + plot + " : " + changed.getComplexity() + " - " + changed.changes);
                                         expiredPlots.get(world).remove(plot);
-                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("analysis"), value));
+                                        FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("analysis"), changed.asList()));
                                         return;
                                     }
                                 }
