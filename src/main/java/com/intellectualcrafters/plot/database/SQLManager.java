@@ -234,9 +234,9 @@ public class SQLManager implements AbstractDB {
                 PreparedStatement stmt = null;
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
-                ArrayList<Plot> keys = new ArrayList<>(plotTasks.keySet());
-                for (int i = 0; i < keys.size(); i++) {
-                    Plot plot = keys.get(i);
+//                ArrayList<Entry<Plot, Queue<UniqueStatement>>> keys = new ArrayList<>(plotTasks.entrySet());
+                for (Entry<Plot, Queue<UniqueStatement>> entry : plotTasks.entrySet()) {
+                    Plot plot = entry.getKey();
                     if (plotTasks.get(plot).size() == 0) {
                         plotTasks.remove(plot);
                         continue;
@@ -271,14 +271,13 @@ public class SQLManager implements AbstractDB {
                 PreparedStatement stmt = null;
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
-                ArrayList<PlotCluster> keys = new ArrayList<>(clusterTasks.keySet());
-                for (int i = 0; i < keys.size(); i++) {
-                    PlotCluster plot = keys.get(i);
-                    if (clusterTasks.get(plot).size() == 0) {
-                        clusterTasks.remove(plot);
+                for (Entry<PlotCluster, Queue<UniqueStatement>> entry : clusterTasks.entrySet()) {
+                    PlotCluster cluster = entry.getKey();
+                    if (clusterTasks.get(cluster).size() == 0) {
+                        clusterTasks.remove(cluster);
                         continue;
                     }
-                    task = clusterTasks.get(plot).remove();
+                    task = clusterTasks.get(cluster).remove();
                     count++;
                     if (task != null) {
                         if (task._method == null || !task._method.equals(method)) {
@@ -1212,7 +1211,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots() {
-        final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> newplots = new ConcurrentHashMap();
+        final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> newplots = new ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>>();
         final HashMap<Integer, Plot> plots = new HashMap<>();
         Statement stmt = null;
         try {
@@ -1436,11 +1435,12 @@ public class SQLManager implements AbstractDB {
                 }
                 stmt.close();
             }
-            if (plots.keySet().size() > 0) {
+            if (plots.entrySet().size() > 0) {
                 this.createEmptySettings(new ArrayList<Integer>(plots.keySet()), null);
             }
             boolean invalidPlot = false;
-            for (final String worldname : noExist.keySet()) {
+            for (Entry<String, Integer> entry : noExist.entrySet()) {
+                String worldname = entry.getKey();
                 invalidPlot = true;
                 PS.debug("&c[WARNING] Found " + noExist.get(worldname) + " plots in DB for non existant world; '" + worldname + "'.");
             }
@@ -2167,7 +2167,8 @@ public class SQLManager implements AbstractDB {
                 newClusters.get(world).add(c);
             }
             boolean invalidPlot = false;
-            for (final String w : noExist.keySet()) {
+            for (Entry<String, Integer> entry : noExist.entrySet()) {
+                String w = entry.getKey();
                 invalidPlot = true;
                 PS.debug("&c[WARNING] Found " + noExist.get(w) + " clusters in DB for non existant world; '" + w + "'.");
             }

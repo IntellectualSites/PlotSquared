@@ -327,7 +327,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     
     public void registerBlocks() {
         blockMap = new BlockState[256][];
-        blockMapReverse = new ConcurrentHashMap<BlockState, PlotBlock>();
+        blockMapReverse = new HashMap<BlockState, PlotBlock>();
         HashMap<String, BlockState> states = new HashMap<>();
         
         PS.get().copyFile("ids.txt", "config");

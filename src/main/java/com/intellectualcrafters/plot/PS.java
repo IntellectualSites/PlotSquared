@@ -11,8 +11,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -952,7 +950,7 @@ public class PS {
     @Deprecated
     public ArrayList<Plot> sortPlotsByWorld(Collection<Plot> plots) {
         ArrayList<Plot> newPlots = new ArrayList<>();
-        ArrayList<String> worlds = new ArrayList<>(this.plots.keySet());
+        ArrayList<String> worlds = new ArrayList<>(this.plotworlds.keySet());
         HashSet<Plot> set = new HashSet<>(plots);
         Collections.sort(worlds);
         for (String world : worlds) {
@@ -1034,7 +1032,7 @@ public class PS {
      * @return A String array of the plot world names
      */
     public String[] getPlotWorldsString() {
-        final Set<String> strings = plots.keySet();
+        final Set<String> strings = plotworlds.keySet();
         return strings.toArray(new String[strings.size()]);
     }
 
@@ -1103,9 +1101,10 @@ public class PS {
      */
     public Set<Plot> getPlots(final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
-        for (final String world : plots.keySet()) {
-            if (isPlotWorld(world)) {
-                for (final Plot plot : plots.get(world).values()) {
+        for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            if (isPlotWorld(entry.getKey())) {
+                for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                    Plot plot = entry2.getValue();
                     if (plot.hasOwner()) {
                         if (PlotHandler.isOwner(plot, uuid)) {
                             myplots.add(plot);
