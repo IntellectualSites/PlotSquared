@@ -57,10 +57,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Tameable;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
@@ -85,6 +87,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -1881,14 +1884,33 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
-        final Location l = BukkitUtil.getLocation(e.getEntity());
+    public void onPotionSplash(final PotionSplashEvent event) {
+        ThrownPotion damager = event.getPotion();
+        final Location l = BukkitUtil.getLocation(damager);
         if (!PS.get().isPlotWorld(l.getWorld())) {
             return;
         }
+        for (LivingEntity victim : event.getAffectedEntities()) {
+            if (!entityDamage(l, damager, victim)) {
+                event.setIntensity(victim, 0);
+            }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
         final Entity damager = e.getDamager();
+        final Location l = BukkitUtil.getLocation(damager);
+        if (!PS.get().isPlotWorld(l.getWorld())) {
+            return;
+        }
         final Entity victim = e.getEntity();
-        
+        if (!entityDamage(l, damager, victim)) {
+            e.setCancelled(true);
+        }
+    }
+    
+    public boolean entityDamage(Location l, Entity damager, Entity victim) {
         Location dloc = BukkitUtil.getLocation(damager);
         Location vloc = BukkitUtil.getLocation(victim);
         
@@ -1899,7 +1921,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         String stub;
         if (dplot == null && vplot == null) {
             if (!MainUtil.isPlotAreaAbs(dloc)) {
-                return;
+                return true;
             }
             plot = null;
             stub = "road";
@@ -1931,90 +1953,88 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             PlotPlayer pp = BukkitUtil.getPlayer(player);
             if (victim instanceof Hanging) { // hanging
                 if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "hanging-break") || plot.isAdded(pp.getUUID())))) {
-                    return;
+                    return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.break." + stub)) {
-                    e.setCancelled(true);
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.break." + stub);
-                    return;
+                    return false;
                 }
             }
             else if (victim.getEntityId() == 30) {
                 if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "misc-break") || plot.isAdded(pp.getUUID())))) {
-                    return;
+                    return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.break." + stub)) {
-                    e.setCancelled(true);
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.break." + stub);
-                    return;
+                    return false;
                 }
             }
             else if (victim instanceof Monster || victim instanceof EnderDragon) { // victim is monster
                 if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "hostile-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
-                    return;
+                    return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
-                    e.setCancelled(true);
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
-                    return;
+                    return false;
                 }
             }
             else if (victim instanceof Tameable) { // victim is tameable
                 if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "tamed-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
-                    return;
+                    return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
-                    e.setCancelled(true);
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
-                    return;
+                    return false;
                 }
             }
             else if (victim instanceof Player) {
                 if (plot != null) {
                     Flag pvp = FlagManager.getPlotFlag(plot, FLAG_PVP);
                     if (pvp == null) {
-                        return;
+                        return true;
                     } else {
                         if ((Boolean) pvp.getValue()) {
-                            return;
+                            return true;
+                        }
+                        else if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
+                            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
+                            return false;
                         }
                     }
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pvp." + stub)) {
-                    e.setCancelled(true);
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pvp." + stub);
-                    return;
+                    return false;
                 }
             }
             else if (victim instanceof Creature) { // victim is animal
                 if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "animal-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
-                    return;
+                    return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
-                    e.setCancelled(true);
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
-                    return;
+                    return false;
                 }
             }
             else if (victim instanceof Vehicle) { // Vehicles are managed in vehicle destroy event
-                return;
+                return true;
             }
             else { // victim is something else
                 if (plot != null && ((FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
-                    return;
+                    return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
-                    e.setCancelled(true);
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
-                    return;
+                    return false;
                 }
             }
-            return;
+            return true;
         }
         // player is null
         if ((damager instanceof Arrow) && (!(victim instanceof Creature))) {
-            e.setCancelled(true);
+            return false;
         }
+        return true;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
