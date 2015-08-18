@@ -244,8 +244,8 @@ public abstract class HybridUtils {
     public abstract int get_ey(final String world, final int sx, final int ex, final int sz, final int ez, final int sy);
 
     public boolean regenerateRoad(final String world, final ChunkLoc chunk, int extend) {
-        final int x = chunk.x << 4;
-        final int z = chunk.z << 4;
+        int x = chunk.x << 4;
+        int z = chunk.z << 4;
         final int ex = x + 15;
         final int ez = z + 15;
         final HybridPlotWorld plotworld = (HybridPlotWorld) PS.get().getPlotWorld(world);
@@ -267,6 +267,8 @@ public abstract class HybridUtils {
         final PlotManager manager = PS.get().getPlotManager(world);
         final PlotId id1 = manager.getPlotId(plotworld, x, 0, z);
         final PlotId id2 = manager.getPlotId(plotworld, ex, 0, ez);
+        x -= plotworld.ROAD_OFFSET_X;
+        z -= plotworld.ROAD_OFFSET_Z;
         if ((id1 == null) || (id2 == null) || (id1 != id2)) {
             final boolean result = ChunkManager.manager.loadChunk(world, chunk, false);
             if (result) {
@@ -284,8 +286,8 @@ public abstract class HybridUtils {
                 }
                 final int size = plotworld.SIZE;
                 for (int X = 0; X < 16; X++) {
+                    short absX = (short) ((x + X) % size);
                     for (int Z = 0; Z < 16; Z++) {
-                        short absX = (short) ((x + X) % size);
                         short absZ = (short) ((z + Z) % size);
                         if (absX < 0) {
                             absX += size;
@@ -295,7 +297,7 @@ public abstract class HybridUtils {
                         }
                         boolean condition;
                         if (toCheck) {
-                            condition = manager.getPlotId(plotworld, x + X, 1, z + Z) == null;
+                            condition = manager.getPlotId(plotworld, x + X + plotworld.ROAD_OFFSET_X, 1, z + Z + plotworld.ROAD_OFFSET_Z) == null;
 //                            condition = MainUtil.isPlotRoad(new Location(plotworld.worldname, x + X, 1, z + Z));
                         } else {
                             final boolean gx = absX > plotworld.PATH_WIDTH_LOWER;
@@ -309,13 +311,13 @@ public abstract class HybridUtils {
                             final PlotLoc loc = new PlotLoc(absX, absZ);
                             final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
                             for (short y = (short) (plotworld.ROAD_HEIGHT); y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT + extend); y++) {
-                                SetBlockQueue.setBlock(world, x + X, y, z + Z, 0);
+                                SetBlockQueue.setBlock(world, x + X + plotworld.ROAD_OFFSET_X, y, z + Z + plotworld.ROAD_OFFSET_Z, 0);
                             }
                             if (blocks != null) {
                                 final HashMap<Short, Byte> datas = plotworld.G_SCH_DATA.get(loc);
                                 if (datas == null) {
                                     for (final Short y : blocks.keySet()) {
-                                        SetBlockQueue.setBlock(world, x + X, sy + y, z + Z, blocks.get(y));
+                                        SetBlockQueue.setBlock(world, x + X + plotworld.ROAD_OFFSET_X, sy + y, z + Z + plotworld.ROAD_OFFSET_Z, blocks.get(y));
                                     }
                                 } else {
                                     for (final Short y : blocks.keySet()) {
@@ -323,7 +325,7 @@ public abstract class HybridUtils {
                                         if (data == null) {
                                             data = 0;
                                         }
-                                        SetBlockQueue.setBlock(world, x + X, sy + y, z + Z, new PlotBlock(blocks.get(y), data));
+                                        SetBlockQueue.setBlock(world, x + X + plotworld.ROAD_OFFSET_X, sy + y, z + Z + plotworld.ROAD_OFFSET_Z, new PlotBlock(blocks.get(y), data));
                                     }
                                 }
                             }

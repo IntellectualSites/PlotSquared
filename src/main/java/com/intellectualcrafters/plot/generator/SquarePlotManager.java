@@ -123,7 +123,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final boolean eastWest = (rx <= pathWidthLower) || (rx > end);
         if (northSouth && eastWest) {
             // This means you are in the intersection
-            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH, 0, z + dpw.ROAD_WIDTH);
+            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH + dpw.ROAD_OFFSET_X, 0, z + dpw.ROAD_WIDTH + dpw.ROAD_OFFSET_Z);
             final PlotId id = MainUtil.getPlotAbs(loc);
             final Plot plot = PS.get().getPlot(plotworld.worldname, id);
             if (plot == null) {
@@ -136,7 +136,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
         if (northSouth) {
             // You are on a road running West to East (yeah, I named the var poorly)
-            final Location loc = new Location(plotworld.worldname, x, 0, z + dpw.ROAD_WIDTH);
+            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_OFFSET_X, 0, z + dpw.ROAD_WIDTH + dpw.ROAD_OFFSET_Z);
             final PlotId id = MainUtil.getPlotAbs(loc);
             final Plot plot = PS.get().getPlot(plotworld.worldname, id);
             if (plot == null) {
@@ -149,7 +149,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
         if (eastWest) {
             // This is the road separating an Eastern and Western plot
-            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH, 0, z);
+            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH + dpw.ROAD_OFFSET_X, 0, z + dpw.ROAD_OFFSET_Z);
             final PlotId id = MainUtil.getPlotAbs(loc);
             final Plot plot = PS.get().getPlot(plotworld.worldname, id);
             if (plot == null) {
