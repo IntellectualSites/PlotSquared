@@ -1795,8 +1795,9 @@ public class PS {
         config.set("clear.ignore-if-modified", null);
         
         // Done
-        config.set("approval.ratings.require-done", Settings.REQUIRE_DONE);
-        config.set("approval.done.counts-towards-limit", Settings.DONE_COUNTS_TOWARDS_LIMIT);
+        options.put("approval.ratings.require-done", Settings.REQUIRE_DONE);
+        options.put("approval.done.counts-towards-limit", Settings.DONE_COUNTS_TOWARDS_LIMIT);
+        options.put("approval.done.restrict-building", Settings.DONE_RESTRICTS_BUILDING);
 
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
@@ -1905,6 +1906,7 @@ public class PS {
         // Done
         Settings.REQUIRE_DONE = config.getBoolean("approval.ratings.require-done");
         Settings.DONE_COUNTS_TOWARDS_LIMIT = config.getBoolean("approval.done.counts-towards-limit");
+        Settings.DONE_RESTRICTS_BUILDING = config.getBoolean("approval.done.restrict-building");
         
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");

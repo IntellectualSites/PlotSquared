@@ -46,13 +46,14 @@ public class Settings {
      */
     public static String WEB_URL = "http://empcraft.com/plots/";
     public static String WEB_IP = "your.ip.here";
-    
     /**
      * Ratings
      */
     public static List<String> RATING_CATEGORIES = null;
     public static boolean REQUIRE_DONE = false;
     public static boolean DONE_COUNTS_TOWARDS_LIMIT = false;
+    public static boolean DONE_RESTRICTS_BUILDING = false;
+    
     /**
      * PlotMe settings
      */

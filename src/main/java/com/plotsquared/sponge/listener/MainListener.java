@@ -515,7 +515,7 @@ public class MainListener {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
             }
-            else if (plot.getSettings().flags.containsKey("done")) {
+            else if (Settings.DONE_RESTRICTS_BUILDING && plot.getSettings().flags.containsKey("done")) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
@@ -568,7 +568,7 @@ public class MainListener {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
             }
-            else if (plot.getSettings().flags.containsKey("done")) {
+            else if (Settings.DONE_RESTRICTS_BUILDING && plot.getSettings().flags.containsKey("done")) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
