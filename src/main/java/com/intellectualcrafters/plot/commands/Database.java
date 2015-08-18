@@ -4,12 +4,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -22,7 +27,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         permission = "plots.database",
         description = "Convert/Backup Storage",
         requiredType = RequiredType.CONSOLE,
-        usage = "/plots database [world] <sqlite|mysql>"
+        usage = "/plots database [world] <sqlite|mysql|import>"
         
 )
 public class Database extends SubCommand {
@@ -53,7 +58,7 @@ public class Database extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer player, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {
             MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql>");
             return false;
@@ -67,7 +72,7 @@ public class Database extends SubCommand {
             plots = PS.get().sortPlotsByTemp(PS.get().getPlotsRaw());
         }
         if (args.length < 1) {
-            MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql>");
+            MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql|import>");
             MainUtil.sendMessage(player, "[arg] indicates an optional argument");
             return false;
         }
@@ -75,6 +80,35 @@ public class Database extends SubCommand {
             com.intellectualcrafters.plot.database.Database implementation;
             String prefix = "";
             switch (args[0].toLowerCase()) {
+                case "import": {
+                    if (args.length < 2) {
+                        MainUtil.sendMessage(player, "/plot database import [sqlite file] [prefix]");
+                        return false;
+                    }
+                    MainUtil.sendMessage(player, "&6Starting...");
+                    implementation = new SQLite(PS.get().IMP.getDirectory() + File.separator + args[1] + ".db");
+                    SQLManager manager = new SQLManager(implementation, (args.length == 3) ? args[2] : "", true);
+                    ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> map = manager.getPlots();
+                    plots = new ArrayList<Plot>();
+                    for (Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : map.entrySet()) {
+                        for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                            Plot plot = entry2.getValue();
+                            if (PS.get().getPlot(plot.world, plot.id) != null) {
+                                MainUtil.sendMessage(player, "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
+                                continue;
+                            }
+                            PS.get().updatePlot(plot);
+                            plots.add(entry2.getValue());
+                        }
+                    }
+                    DBFunc.createPlotsAndData(plots, new Runnable() {
+                        @Override
+                        public void run() {
+                            MainUtil.sendMessage(player, "&6Database conversion finished!");
+                        }
+                    });
+                    return true;
+                }
                 case "mysql":
                     if (args.length < 6) {
                         return MainUtil.sendMessage(player, "/plot database mysql [host] [port] [username] [password] [database] {prefix}");
@@ -91,7 +125,7 @@ public class Database extends SubCommand {
                     break;
                 case "sqlite":
                     if (args.length < 2) {
-                        return MainUtil.sendMessage(player, "/plot database sqlite [file]: " + args.length + " | " + args[0]);
+                        return MainUtil.sendMessage(player, "/plot database sqlite [file]");
                     }
                     implementation = new SQLite(PS.get().IMP.getDirectory() + File.separator + args[1] + ".db");
                     break;
