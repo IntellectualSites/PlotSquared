@@ -20,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,13 +30,18 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
+import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.util.BO3Handler;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
@@ -715,6 +722,71 @@ public class Plot {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Export the plot as a schematic to the configured output directory
+     * @return
+     */
+    public void export(final RunnableVal<Boolean> whenDone) {
+        SchematicHandler.manager.getCompoundTag(world, id, new RunnableVal<CompoundTag>() {
+            @Override
+            public void run() {
+                if (value == null) {
+                    if (whenDone != null) {
+                        whenDone.value = false; 
+                        TaskManager.runTask(whenDone);
+                    }
+                }
+                else {
+                    TaskManager.runTaskAsync(new Runnable() {
+                        @Override
+                        public void run() {
+                            String name = id+ "," + world + "," + MainUtil.getName(owner);
+                            final boolean result = SchematicHandler.manager.save(value, Settings.SCHEMATIC_SAVE_PATH + File.separator + name + ".schematic");
+                            if (whenDone != null) {
+                                whenDone.value = result; 
+                                TaskManager.runTask(whenDone);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+    
+    /**
+     * Export the plot as a BO3 object
+     * @param whenDone value will be false if exporting fails
+     */
+    public void exportBO3(final RunnableVal<Boolean> whenDone) {
+        boolean result = BO3Handler.saveBO3(this);
+        if (whenDone != null) {
+            whenDone.value = result;
+        }
+        TaskManager.runTask(whenDone);
+    }
+    
+    /**
+     * Upload the plot to the configured web interface 
+     * @param whenDone value will be null if uploading fails
+     */
+    public void upload(final RunnableVal<URL> whenDone) {
+        SchematicHandler.manager.getCompoundTag(world, id, new RunnableVal<CompoundTag>() {
+            @Override
+            public void run() {
+                TaskManager.runTaskAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        URL url = SchematicHandler.manager.upload(value, null, null);
+                        if (whenDone != null) {
+                            whenDone.value = url;
+                        }
+                        TaskManager.runTask(whenDone);
+                    }
+                });
+            }
+        });
     }
     
     @Override

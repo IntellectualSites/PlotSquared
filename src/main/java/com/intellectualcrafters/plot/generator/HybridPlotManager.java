@@ -167,7 +167,7 @@ public class HybridPlotManager extends ClassicPlotManager {
      * to have 512x512 sized plots
      */
     @Override
-    public boolean clearPlot(final PlotWorld plotworld, final Plot plot, final boolean isDelete, final Runnable whenDone) {
+    public boolean clearPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone) {
         final String world = plotworld.worldname;
         final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
         
@@ -180,8 +180,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
         final PlotBlock[] bedrock = (dpw.PLOT_BEDROCK ? new PlotBlock[] { new PlotBlock((short) 7, (byte) 0) } : filling);
         final PlotBlock air = new PlotBlock((short) 0, (byte) 0);
-        
-        setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
         
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
@@ -216,11 +214,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         }, new Runnable() {
             @Override
             public void run() {
-                // When we are done with the inside of the plot, we can reset the wall / border
-                final PlotBlock wall = isDelete ? dpw.WALL_BLOCK : dpw.CLAIMED_WALL_BLOCK;
-                if (wall.id != 0 || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
-                    setWall(dpw, plot.id, new PlotBlock[] { wall });
-                }
                 // And notify whatever called this when plot clearing is done
                 SetBlockQueue.addNotify(whenDone);
             }

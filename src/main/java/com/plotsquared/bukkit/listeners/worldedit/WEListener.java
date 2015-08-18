@@ -147,8 +147,7 @@ public class WEListener implements Listener {
         
         long maxVolume = Settings.WE_MAX_VOLUME;
         long maxIterations = Settings.WE_MAX_ITERATIONS;
-        
-        if (WEManager.bypass.contains(pp.getName())) {
+        if (pp.getAttribute("worldedit" )) {
             return true;
         }
         if (split.length >= 2) {

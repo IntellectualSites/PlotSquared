@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.util.Permissions;
 
 @SuppressWarnings("unused")
 public class CommandManager<T extends CommandCaller> {
@@ -106,7 +107,7 @@ public class CommandManager<T extends CommandCaller> {
         if (!cmd.getRequiredType().allows(plr)) {
             return CommandHandlingOutput.CALLER_OF_WRONG_TYPE;
         }
-        if (!plr.hasPermission(cmd.getPermission())) {
+        if (!Permissions.hasPermission(plr, cmd.getPermission())) {
             return CommandHandlingOutput.NOT_PERMITTED;
         }
         Argument<?>[] requiredArguments = cmd.getRequiredArguments();

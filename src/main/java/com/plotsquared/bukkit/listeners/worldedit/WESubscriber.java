@@ -16,6 +16,7 @@ import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 
 public class WESubscriber {
+    
     @Subscribe(priority=Priority.VERY_EARLY)
     public void onEditSession(EditSessionEvent event) {
         String world = event.getWorld().getName();
@@ -25,7 +26,8 @@ public class WESubscriber {
         Actor actor = event.getActor();
         if (actor != null && actor.isPlayer()) {
             String name = actor.getName();
-            if (WEManager.bypass.contains(name)) {
+            PlotPlayer pp = PlotPlayer.wrap(name);
+            if (pp != null && pp.getAttribute("worldedit")) {
                 return;
             }
 

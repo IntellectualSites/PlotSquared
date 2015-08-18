@@ -78,7 +78,7 @@ public class FlagCmd extends SubCommand {
             sendMessage(player, C.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.set.flag.other")) {
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.set.flag.other")) {
             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag.other");
             return false;
         }

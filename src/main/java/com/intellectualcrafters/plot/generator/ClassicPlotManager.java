@@ -14,7 +14,7 @@ import com.intellectualcrafters.plot.util.SetBlockQueue;
 /**
  * A plot manager with square plots which tesselate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot)
  */
-public abstract class ClassicPlotManager extends SquarePlotManager {
+public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean setComponent(final PlotWorld plotworld, final PlotId plotid, final String component, final PlotBlock[] blocks) {
         switch (component) {
@@ -32,6 +32,17 @@ public abstract class ClassicPlotManager extends SquarePlotManager {
             }
         }
         return false;
+    }
+    
+    @Override
+    public boolean unclaimPlot(PlotWorld plotworld, Plot plot, Runnable whenDone) {
+        final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
+        setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
+        if (dpw.WALL_BLOCK.id != 0 || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
+            setWall(dpw, plot.id, new PlotBlock[] { dpw.WALL_BLOCK });
+        }
+        SetBlockQueue.addNotify(whenDone);
+        return true;
     }
     
     public boolean setFloor(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {

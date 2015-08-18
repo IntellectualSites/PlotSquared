@@ -56,6 +56,7 @@ permissions:
       plots.set.flag.vehicle-use: true
       plots.set.flag.vehicle-place: true
       plots.set.flag.vehicle-break: true
+      plots.set.flag.player-interact: true
       plots.set.flag.place: true
       plots.set.flag.break: true
       plots.set.flag.use: true
@@ -109,6 +110,7 @@ permissions:
       plots.confirm: true
       plots.toggle: true
       plots.toggle.titles: true
+      plots.toggle.chat: true
       plots.set.biome: true
       plots.set.home: true
       plots.merge: true
@@ -124,6 +126,8 @@ permissions:
       plots.kick: true
       plots.download: true
       plots.save: true
+      plots.done: true
+      plots.continue: true
   plots.worldedit.bypass:
     default: false
   plots.gamemode.bypass:

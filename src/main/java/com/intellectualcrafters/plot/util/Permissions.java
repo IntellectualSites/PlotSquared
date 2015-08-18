@@ -2,41 +2,19 @@ package com.intellectualcrafters.plot.util;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.general.commands.CommandCaller;
 
-public enum Permissions {
-    // ADMIN
-    ADMIN("plots.admin", "do-not-change"),
-    STAR("*", "do-not-change"),
-    // BUILD
-    BUILD_OTHER("plots.admin.build.other", "build"),
-    BUILD_ROAD("plots.admin.build.road", "build"),
-    BUILD_UNOWNED("plots.admin.build.unowned", "build"),
-    // INTERACT
-    INTERACT_OTHER("plots.admin.interact.other", "interact"),
-    INTERACT_ROAD("plots.admin.interact.road", "interact"),
-    INTERACT_UNOWNED("plots.admin.interact.unowned", "interact"),
-    // BREAK
-    BREAK_OTHER("plots.admin.break.other", "break"),
-    BREAK_ROAD("plots.admin.break.road", "break"),
-    BREAK_UNOWNED("plots.admin.break.unowned", "break"),
-    // MERGE
-    MERGE_OTHER("plots.merge.other", "merge");
-    
-    public String s;
-    public String cat;
-    
-    Permissions(String perm, String cat) {
-        this.s = perm;
-        this.cat = cat;
+public class Permissions {
+    public static boolean hasPermission(final PlotPlayer player, final C c) {
+        return hasPermission(player, c.s());
     }
-    
-    public static boolean hasPermission(final PlotPlayer player, final Permissions perm) {
-        return hasPermission(player, perm.s);
-    }
-
 
     public static boolean hasPermission(final PlotPlayer player, final String perm) {
-        if ((player == null) || player.hasPermission(ADMIN.s) || player.hasPermission(STAR.s)) {
+        return hasPermission((CommandCaller) player, perm);
+    }
+
+    public static boolean hasPermission(final CommandCaller player, final String perm) {
+        if ((player == null) || player.hasPermission(C.PERMISSION_ADMIN.s()) || player.hasPermission(C.PERMISSION_STAR.s())) {
             return true;
         }
         if (player.hasPermission(perm)) {
@@ -46,7 +24,7 @@ public enum Permissions {
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i] + ("."));
-            if (player.hasPermission(n + STAR.s)) {
+            if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
                 return true;
             }
         }
@@ -64,7 +42,7 @@ public enum Permissions {
     }
 
     public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range) {
-        if ((player == null) || player.hasPermission(ADMIN.s) || player.hasPermission(STAR.s)) {
+        if ((player == null) || player.hasPermission(C.PERMISSION_ADMIN.s()) || player.hasPermission(C.PERMISSION_STAR.s())) {
             return Integer.MAX_VALUE;
         }
         if (player.hasPermission(stub + ".*")) {

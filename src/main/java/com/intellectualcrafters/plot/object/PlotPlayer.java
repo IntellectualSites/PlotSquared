@@ -176,8 +176,12 @@ public abstract class PlotPlayer implements CommandCaller {
     public abstract Location getLocationFull();
     
     /**
-     * Get the player's UUID
-     * @return
+     * Get the player's UUID<br>
+     *  === !IMPORTANT ===<br> 
+     *  The UUID is dependent on the mode chosen in the settings.yml and may not be the same as Bukkit has 
+     *  (especially if using an old version of Bukkit that does not support UUIDs)
+     *  
+     * @return UUID
      */
     public abstract UUID getUUID();
     

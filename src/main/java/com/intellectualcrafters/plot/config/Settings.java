@@ -116,6 +116,10 @@ public class Settings {
      */
     public static String SCHEMATIC_SAVE_PATH = "/var/www/schematics";
     /**
+     * BO3 Save Path
+     */
+    public static String BO3_SAVE_PATH = "BO3";
+    /**
      * Max allowed plots
      */
     public static int MAX_PLOTS = 127;

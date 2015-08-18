@@ -24,8 +24,10 @@ package com.intellectualcrafters.plot.api;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -67,22 +69,27 @@ public class PlotAPI {
     /**
      * Permission that allows for admin access, this permission node will allow the player to use any part of the
      * plugin, without limitations.
+     * @deprecated Use C.PERMISSION_ADMIN.s() instead
      */
-    public static final String ADMIN_PERMISSION = "plots.admin";
+    @Deprecated
+    public static final String ADMIN_PERMISSION = C.PERMISSION_ADMIN.s();
 
     /**
-     * Constructor. Insert any Plugin. (Optimally the plugin that is accessing the method)
-     *
-     * @param plugin Plugin used to access this method
-     *
-     * @throws com.intellectualcrafters.plot.util.PlotSquaredException if the program fails to fetch the PlotSquared
-     *                                                                 instance
-     * @see com.intellectualcrafters.plot.PS
+     * @deprecated Use new PlotAPI() instead
      */
     @Deprecated
     public PlotAPI(final JavaPlugin plugin) {
     }
     
+    /**
+     * @param plugin Plugin used to access this method
+     *
+     * @throws com.intellectualcrafters.plot.util.PlotSquaredException if the program fails to fetch the PlotSquared
+     *                                                                 instance
+     * @see com.intellectualcrafters.plot.PS
+     * 
+     * @deprecated Use new PlotAPI() instead
+     */
     public PlotAPI() {
     }
 
@@ -241,16 +248,22 @@ public class PlotAPI {
     }
     
     /**
-     * Do not use this. Instead use Permissions.[method] in your code.
+     * Do not use this. Instead use C.PERMISSION_[method] in your code.
      *  - Basic permission management stuff
      *
-     * @return MainUtil
+     * @return Array of strings
      *
      * @see com.intellectualcrafters.plot.util.Permissions
      */
     @Deprecated
-    public Permissions[] getPermissions() {
-        return Permissions.values();
+    public String[] getPermissions() {
+        ArrayList<String> perms = new ArrayList<>();
+        for (C c : C.values()) {
+            if (c.getCat().equals("static.permissions")) {
+                perms.add(c.s());
+            }
+        }
+        return perms.toArray(new String[0]);
     }
 
     /**
@@ -670,5 +683,55 @@ public class PlotAPI {
     public int getAllowedPlots(final Player player) {
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         return MainUtil.getAllowedPlots(pp);
+    }
+    
+    /**
+     * Get the PlotPlayer for a player<br>
+     *  - The PlotPlayer is usually cached and will provide useful functions relating to players
+     * 
+     * @see PlotPlayer.wrap(Player|OfflinePlayer|String|UUID)
+     * 
+     * @param player
+     * @return
+     */
+    public PlotPlayer wrapPlayer(Player player) {
+        return PlotPlayer.wrap(player);
+    }
+    
+    /**
+     * Get the PlotPlayer for a UUID (Please note that PlotSquared can be configured to provide different UUIDs than bukkit)
+     * 
+     * @see PlotPlayer.wrap(UUID uuid)
+     * 
+     * @param player
+     * @return
+     */
+    public PlotPlayer wrapPlayer(UUID uuid) {
+        return PlotPlayer.wrap(uuid);
+    }
+    
+    /**
+     * Get the PlotPlayer for a username
+     * 
+     * @see PlotPlayer.wrap(String name)
+     * 
+     * @param player
+     * @return
+     */
+    public PlotPlayer wrapPlayer(String player) {
+        return PlotPlayer.wrap(player);
+    }
+    
+    /**
+     * Get the PlotPlayer for an offline player<br>
+     * Note that this will work if the player is offline, however not all functionality will work
+     * 
+     * @see PlotPlayer.wrap(OfflinePlayer op)
+     * 
+     * @param player
+     * @return
+     */
+    public PlotPlayer wrapPlayer(OfflinePlayer player) {
+        return PlotPlayer.wrap(player);
     }
 }

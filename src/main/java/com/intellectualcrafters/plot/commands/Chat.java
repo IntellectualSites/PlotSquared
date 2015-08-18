@@ -17,25 +17,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Chat extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String ... args) {
-        
-        final String world = plr.getLocation().getWorld();
-        if (!PS.get().isPlotWorld(world)) {
-            return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-        }
-        boolean enable = !(plr.getMeta("chat") != null && (Boolean) plr.getMeta("chat"));
-        if (args.length > 0) {
-            if (args[0].equalsIgnoreCase("on")) {
-                enable = true;
-            } else if (args[0].equalsIgnoreCase("off")) {
-                enable = false;
-            }
-        }
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
-        if (!enable && plotworld.PLOT_CHAT) {
-            return !sendMessage(plr, C.PLOT_CHAT_FORCED);
-        }
-        plr.setMeta("chat", enable);
-        return sendMessage(plr, enable ? C.PLOT_CHAT_ON : C.PLOT_CHAT_OFF);
+    public boolean onCommand(final PlotPlayer player, final String ... args) {
+        return MainCommand.onCommand(player, "plot", new String[] {"toggle", "chat"});
     }
 }

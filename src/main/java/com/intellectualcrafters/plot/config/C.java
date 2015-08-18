@@ -43,6 +43,45 @@ import com.plotsquared.general.commands.CommandCaller;
 public enum C {
 
     /*
+     * Static flags
+     */
+    FLAG_USE("use","static.flags"),
+    FLAG_PLACE("place","static.flags"),
+    FLAG_PVP("pvp","static.flags"),
+    FLAG_HANGING_PLACE("hanging-place","static.flags"),
+    FLAG_HANGING_BREAK("hanging-break","static.flags"),
+    FLAG_HOSTILE_INTERACT("hostile-interact","static.flags"),
+    FLAG_ANIMAL_INTERACT("animal-interact","static.flags"),
+    FLAG_VEHICLE_USE("vehicle-use","static.flags"),
+    FLAG_PLAYER_INTERACT("player-interact","static.flags"),
+    FLAG_TAMED_INTERACT("tamed-interact","static.flags"),
+    FLAG_DISABLE_PHYSICS("disable-physics","static.flags"),
+    /*
+     * Static permission
+     */
+    PERMISSION_STAR("*","static.permissions"),
+    PERMISSION_ADMIN("plots.admin","static.permissions"),
+    PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned","static.permissions"),
+    PERMISSION_PROJECTILE_OTHER("plots.projectile.other","static.permissions"),
+    PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS("plots.admin.interact.blockedcommands","static.permissions"),
+    PERMISSION_WORLDEDIT_BYPASS("plots.worldedit.bypass","static.permissions"),
+    PERMISSION_PLOT_TOGGLE_TITLES("plots.toggle.titles","static.permissions"),
+    PERMISSION_PLOT_TOGGLE_CHAT("plots.toggle.chat","static.permissions"),
+    PERMISSION_ADMIN_EXIT_DENIED("plots.admin.exit.denied","static.permissions"),
+    PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied","static.permissions"),
+    PERMISSION_COMMANDS_CHAT("plots.admin.command.chat","static.permissions"),
+    PERMISSION_MERGE_OTHER("plots.merge.other","static.permissions"),
+    PERMISSION_ADMIN_DESTROY_UNOWNED("plots.admin.destroy.unowned","static.permissions"),
+    PERMISSION_ADMIN_DESTROY_OTHER( "plots.admin.destroy.other","static.permissions"),
+    PERMISSION_ADMIN_DESTROY_ROAD("plots.admin.destroy.road","static.permissions"),
+    PERMISSION_ADMIN_BUILD_ROAD("plots.admin.build.road","static.permissions"),
+    PERMISSION_ADMIN_BUILD_UNOWNED("plots.admin.build.unowned","static.permissions"),
+    PERMISSION_ADMIN_BUILD_OTHER("plots.admin.build.other","static.permissions"),
+    PERMISSION_ADMIN_INTERACT_ROAD("plots.admin.interact.road","static.permissions"),
+    PERMISSION_ADMIN_INTERACT_UNOWNED("plots.admin.interact.unowned","static.permissions"),
+    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other","static.permissions"),
+    PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit","static.permissions"),
+    /*
      * Confirm
      */
     FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),
@@ -108,6 +147,7 @@ public enum C {
     WORLDEDIT_ITERATIONS("$2You cannot iterate %current% times. The maximum number of iterations allowed is %max%.", "WorldEdit Masks"),
     WORLDEDIT_UNSAFE("$2Access to that command has been blocked", "WorldEdit Masks"),
     WORLDEDIT_BYPASS("$2&oTo bypass your restrictions use $4/plot wea", "WorldEdit Masks"),
+    WORLDEDIT_BYPASSED("$2Currently bypassing WorldEdit restriction.", "WorldEdit Masks"),
     WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted.", "WorldEdit Masks"),
     WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted.", "WorldEdit Masks"),
 
@@ -581,6 +621,11 @@ public enum C {
         this(d, true, cat.toLowerCase());
     }
 
+    @Override
+    public String toString() {
+        return s;
+    }
+    
     public static String format(String m, Object... args) {
         if (args.length == 0) {
             return m;
@@ -638,6 +683,9 @@ public enum C {
                 String node = split[split.length - 1].toUpperCase();
                 C caption = allNames.contains(node) ? valueOf(node) : null;
                 if (caption != null) {
+                    if (caption.cat.startsWith("static")) {
+                        continue;
+                    }
                     String value = yml.getString(key);
                     if (!split[0].equalsIgnoreCase(caption.cat)) {
                         changed = true;
@@ -670,6 +718,9 @@ public enum C {
             replacements.put("&-", "\n");
             for (C caption : all) {
                 if (!captions.contains(caption)) {
+                    if (caption.cat.startsWith("static")) {
+                        continue;
+                    }
                     changed = true;
                     yml.set(caption.cat + "." + caption.name().toLowerCase(), caption.d);
                 }

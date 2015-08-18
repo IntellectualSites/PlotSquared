@@ -30,6 +30,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.BO3Handler;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -37,15 +38,20 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "done",
-        aliases = {"submit"},
+        command = "bo3",
+        aliases = {"bo2"},
         description = "Mark a plot as done",
         permission = "plots.done",
         category = CommandCategory.ACTIONS,
         requiredType = RequiredType.NONE
 )
-public class Done extends SubCommand {
+public class BO3 extends SubCommand {
 
+    public void noArgs(PlotPlayer plr) {
+        MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot bo3 export [category] [alias] [-r]");
+        MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot bo3 import <file>");
+    }
+    
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
@@ -53,33 +59,32 @@ public class Done extends SubCommand {
         if (plot == null || !plot.hasOwner()) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.done")) {
+        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.bo3")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (plot.getSettings().flags.containsKey("done")) {
-            MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
+        if (args.length == 0) {
+            noArgs(plr);
             return false;
         }
-        if (MainUtil.runners.containsKey(plot)) {
-            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
-            return false;
-        }
-        MainUtil.runners.put(plot, 1);
-        HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
-            @Override
-            public void run() {
-                MainUtil.runners.remove(plot);
-                if (value == null || value.getComplexity() >= Settings.CLEAR_THRESHOLD) {
-                    Flag flag = new Flag(FlagManager.getFlag("done"), (System.currentTimeMillis() / 1000));
-                    FlagManager.addPlotFlag(plot, flag);
-                    MainUtil.sendMessage(plr, C.DONE_SUCCESS);
-                }
-                else {
-                    MainUtil.sendMessage(plr, C.DONE_INSUFFICIENT_COMPLEXITY);
-                }
+        switch (args[0].toLowerCase()) {
+            case "output":
+            case "save":
+            case "export": {
+                return BO3Handler.saveBO3(plr, plot);
             }
-        });
-        return true;
+            case "paste":
+            case "load":
+            case "import":
+            case "input": {
+                // TODO NOT IMPLEMENTED YET
+                MainUtil.sendMessage(plr, "NOT IMPLEMENTED YET!!!");
+                return false;
+            }
+            default: {
+                noArgs(plr);
+                return false;
+            }
+        }
     }
 }

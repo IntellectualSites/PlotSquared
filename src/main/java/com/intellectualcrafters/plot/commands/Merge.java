@@ -175,8 +175,8 @@ public class Merge extends SubCommand {
             multiUUID.add(u2);
         }
         if (multiMerge) {
-            if (!Permissions.hasPermission(plr, Permissions.MERGE_OTHER)) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, Permissions.MERGE_OTHER.s);
+            if (!Permissions.hasPermission(plr, C.PERMISSION_MERGE_OTHER)) {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, C.PERMISSION_MERGE_OTHER.s());
                 return false;
             }
             for (final UUID uuid : multiUUID) {

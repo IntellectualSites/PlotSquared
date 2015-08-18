@@ -129,6 +129,8 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Chat());
         createCommand(new Trim());
         createCommand(new Done());
+        createCommand(new Continue());
+        createCommand(new BO3());
         if (Settings.ENABLE_CLUSTERS) {
             MainCommand.getInstance().addCommand(new Cluster());
         }
@@ -419,7 +421,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             }
             return CommandHandlingOutput.CALLER_OF_WRONG_TYPE;
         }
-        if (!plr.hasPermission(cmd.getPermission())) {
+        if (!Permissions.hasPermission(plr, cmd.getPermission())) {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, cmd.getPermission());
             return CommandHandlingOutput.NOT_PERMITTED;
         }

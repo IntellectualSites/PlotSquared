@@ -1033,25 +1033,30 @@ public class MainUtil {
         System.currentTimeMillis();
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         runners.put(plot, 1);
-        if (plotworld.TERRAIN != 0 || Settings.FAST_CLEAR) {
-            final Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
-            ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
-                @Override
-                public void run() {
-                    runners.remove(plot);
-                    TaskManager.runTask(whenDone);
-                }
-            });
-            return;
-        }
         final Runnable run = new Runnable() {
             @Override
             public void run() {
-                runners.remove(plot);
-                TaskManager.runTask(whenDone);
+                if (isDelete) {
+                    manager.unclaimPlot(plotworld, plot, new Runnable() {
+                        @Override
+                        public void run() {
+                            runners.remove(plot);
+                            TaskManager.runTask(whenDone);
+                        }
+                    });
+                }
+                else {
+                    runners.remove(plot);
+                    TaskManager.runTask(whenDone);
+                }
             }
         };
-        manager.clearPlot(plotworld, plot, isDelete, run);
+        if (plotworld.TERRAIN != 0 || Settings.FAST_CLEAR) {
+            final Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
+            ChunkManager.manager.regenerateRegion(pos1, pos2, run);
+            return;
+        }
+        manager.clearPlot(plotworld, plot, run);
     }
 
     public static void setCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
@@ -1634,6 +1639,29 @@ public class MainUtil {
      * @return boolean success
      */
     public static boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
+        if (c.s().length() > 1) {
+            String msg = c.s();
+            if ((args != null) && (args.length > 0)) {
+                msg = C.format(c, args);
+            }
+            if (plr == null) {
+                PS.log(msg);
+            } else {
+                sendMessage(plr, msg, c.usePrefix());
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Send a message to the player
+     *
+     * @param plr Player to recieve message
+     * @param c   Caption to send
+     *
+     * @return boolean success
+     */
+    public static boolean sendMessage(final PlotPlayer plr, final C c, final Object... args) {
         if (c.s().length() > 1) {
             String msg = c.s();
             if ((args != null) && (args.length > 0)) {

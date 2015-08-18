@@ -37,25 +37,13 @@ import com.plotsquared.general.commands.CommandDeclaration;
         requiredType = RequiredType.NONE,
         category = CommandCategory.DEBUG
 )
+
+@Deprecated
 public class WE_Anywhere extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer player, String[] arguments) {
-        if (BukkitMain.worldEdit == null) {
-            MainUtil.sendMessage(player, "&cWorldEdit is not enabled on this server");
-            return true;
-        }
-        if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
-            if (WEManager.bypass.contains(player.getName())) {
-                WEManager.bypass.remove(player.getName());
-                MainUtil.sendMessage(player, C.WORLDEDIT_RESTRICTED);
-            }
-            else {
-                WEManager.bypass.add(player.getName());
-                MainUtil.sendMessage(player, C.WORLDEDIT_UNMASKED);
-            }
-        }
-        return true;
+        return MainCommand.onCommand(player, "plot", new String[] {"toggle", "worldedit"});
     }
 
 }

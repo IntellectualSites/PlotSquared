@@ -75,7 +75,7 @@ public class Set extends SubCommand {
             sendMessage(plr, C.PLOT_NOT_CLAIMED);
             return false;
         }
-        if (!plot.isAdded(plr.getUUID())) {
+        if (!plot.isOwner(plr.getUUID())) {
             if (!Permissions.hasPermission(plr, "plots.set.other")) {
                 MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.other");
                 return false;

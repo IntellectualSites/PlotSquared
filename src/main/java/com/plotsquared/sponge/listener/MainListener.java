@@ -1,18 +1,5 @@
 package com.plotsquared.sponge.listener;
 
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_BUILD_OTHER;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_BUILD_ROAD;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_BUILD_UNOWNED;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_DESTROY_OTHER;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_DESTROY_ROAD;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_DESTROY_UNOWNED;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_ENTRY_DENIED;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_EXIT_DENIED;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_INTERACT_OTHER;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_INTERACT_ROAD;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_ADMIN_INTERACT_UNOWNED;
-import static com.intellectualcrafters.plot.object.StaticStrings.PERMISSION_COMMANDS_CHAT;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -122,9 +109,9 @@ public class MainListener {
             }
             return;
         }
-        event.filterLocations(new Predicate<org.spongepowered.api.world.Location>() {
+        event.filterLocations(new Predicate<org.spongepowered.api.world.Location<World>>() {
             @Override
-            public boolean apply(org.spongepowered.api.world.Location loc) {
+            public boolean apply(org.spongepowered.api.world.Location<World> loc) {
                 if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(loc)))) {
                     return false;
                 }
@@ -282,7 +269,7 @@ public class MainListener {
             if (!PS.get().isPlotWorld(worldname)) {
                 return;
             }
-            event.filterLocations(new Predicate<org.spongepowered.api.world.Location>() {
+            event.filterLocations(new Predicate<org.spongepowered.api.world.Location<World>>() {
                 @Override
                 public boolean apply(org.spongepowered.api.world.Location loc) {
                     if (MainUtil.isPlotRoad(SpongeUtil.getLocation(worldname, loc))) {
@@ -342,7 +329,7 @@ public class MainListener {
             if (plot.equals(MainUtil.getPlot(user.getLocation()))) {
                 toSend = newMessage;
             }
-            else if (Permissions.hasPermission(user, PERMISSION_COMMANDS_CHAT)) {
+            else if (Permissions.hasPermission(user, C.PERMISSION_COMMANDS_CHAT)) {
                 ((SpongePlayer) user).player.sendMessage(forcedMessage);
                 continue;
             }
@@ -380,7 +367,7 @@ public class MainListener {
         final Plot plot = MainUtil.getPlot(loc);
         if ((plot != null) && plot.hasOwner()) {
             if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
-                event.filterLocations(new Predicate<org.spongepowered.api.world.Location>() {
+                event.filterLocations(new Predicate<org.spongepowered.api.world.Location<World>>() {
                     @Override
                     public boolean apply(org.spongepowered.api.world.Location loc) {
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(loc)))) {
@@ -417,7 +404,7 @@ public class MainListener {
             return;
         } else {
             if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
-                event.filterLocations(new Predicate<org.spongepowered.api.world.Location>() {
+                event.filterLocations(new Predicate<org.spongepowered.api.world.Location<World>>() {
                     @Override
                     public boolean apply(org.spongepowered.api.world.Location loc) {
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(loc)))) {
@@ -509,10 +496,10 @@ public class MainListener {
             }
             final PlotPlayer pp = SpongeUtil.getPlayer(player);
             if (!plot.hasOwner()) {
-                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_UNOWNED)) {
+                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_UNOWNED);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
@@ -522,15 +509,15 @@ public class MainListener {
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeMain.THIS.getPlotBlock(state))) {
                     return;
                 }
-                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_OTHER)) {
+                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_OTHER);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
             }
             else if (plot.getSettings().flags.containsKey("done")) {
-                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_OTHER);
+                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
                     return;
                 }
@@ -538,11 +525,11 @@ public class MainListener {
             return;
         }
         final PlotPlayer pp = SpongeUtil.getPlayer(player);
-        if (Permissions.hasPermission(pp, PERMISSION_ADMIN_DESTROY_ROAD)) {
+        if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_ROAD);
+            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_ROAD);
             event.setCancelled(true);
         }
     }
@@ -562,10 +549,10 @@ public class MainListener {
             }
             final PlotPlayer pp = SpongeUtil.getPlayer(player);
             if (!plot.hasOwner()) {
-                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_UNOWNED);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
@@ -575,15 +562,15 @@ public class MainListener {
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeMain.THIS.getPlotBlock(state))) {
                     return;
                 }
-                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
+                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_DESTROY_OTHER);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
             }
             else if (plot.getSettings().flags.containsKey("done")) {
-                if (!Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_OTHER)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_OTHER);
+                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
                     return;
                 }
@@ -591,11 +578,11 @@ public class MainListener {
             return;
         }
         final PlotPlayer pp = SpongeUtil.getPlayer(player);
-        if (Permissions.hasPermission(pp, PERMISSION_ADMIN_BUILD_ROAD)) {
+        if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_BUILD_ROAD);
+            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_ROAD);
             event.setCancelled(true);
         }
     }
@@ -615,10 +602,10 @@ public class MainListener {
             }
             if (!plot.hasOwner()) {
                 final PlotPlayer pp = SpongeUtil.getPlayer(player);
-                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_INTERACT_UNOWNED)) {
+                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_INTERACT_UNOWNED);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
@@ -629,20 +616,20 @@ public class MainListener {
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeMain.THIS.getPlotBlock(state))) {
                     return;
                 }
-                if (Permissions.hasPermission(pp, PERMISSION_ADMIN_INTERACT_OTHER)) {
+                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_INTERACT_OTHER);
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_OTHER);
                 event.setCancelled(true);
             }
             return;
         }
         final PlotPlayer pp = SpongeUtil.getPlayer(player);
-        if (Permissions.hasPermission(pp, PERMISSION_ADMIN_INTERACT_ROAD)) {
+        if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD)) {
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_INTERACT_ROAD);
+            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_ROAD);
             event.setCancelled(true);
         }
     }
@@ -737,7 +724,7 @@ public class MainListener {
                     return;
                 }
                 if (!PlotListener.plotExit(pp, lastPlot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                         event.setNewLocation(from);
                     }
@@ -753,7 +740,7 @@ public class MainListener {
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
                 if (!PlotListener.plotEntry(pp, plot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_ENTRY_DENIED);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                         event.setNewLocation(from);
                     }
@@ -804,7 +791,7 @@ public class MainListener {
                     return;
                 }
                 if (!PlotListener.plotExit(pp, lastPlot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                         event.setNewLocation(from);
                     }
@@ -820,7 +807,7 @@ public class MainListener {
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
                 if (!PlotListener.plotEntry(pp, plot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_ENTRY_DENIED);
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                         event.setNewLocation(from);
                     }
@@ -878,7 +865,7 @@ public class MainListener {
                         return;
                     }
                     if (!PlotListener.plotExit(pp, lastPlot)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                         if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                             event.setNewLocation(from);
                         }
@@ -894,7 +881,7 @@ public class MainListener {
                 else {
                     Plot plot = MainUtil.getPlot(worldname, id);
                     if (!PlotListener.plotEntry(pp, plot)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_ENTRY_DENIED);
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                             event.setNewLocation(from);
                         }
@@ -945,7 +932,7 @@ public class MainListener {
                         return;
                     }
                     if (!PlotListener.plotExit(pp, lastPlot)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_EXIT_DENIED);
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                         if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                             event.setNewLocation(from);
                         }
@@ -961,7 +948,7 @@ public class MainListener {
                 else {
                     Plot plot = MainUtil.getPlot(worldname, id);
                     if (!PlotListener.plotEntry(pp, plot)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, PERMISSION_ADMIN_ENTRY_DENIED);
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                             event.setNewLocation(from);
                         }

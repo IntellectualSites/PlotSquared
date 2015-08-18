@@ -13,8 +13,9 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.StaticStrings;
+
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -35,7 +36,7 @@ public class ChatListener implements Listener {
         }
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
         final PlotPlayer plr = BukkitUtil.getPlayer(player);
-        if (!plotworld.PLOT_CHAT && (plr.getMeta("chat") == null || !(Boolean) plr.getMeta("chat"))) {
+        if (!plotworld.PLOT_CHAT && (plr.getAttribute("chat"))) {
             return;
         }
         final Location loc = BukkitUtil.getLocation(player);
@@ -54,7 +55,7 @@ public class ChatListener implements Listener {
             if (plot.equals(recipient.getCurrentPlot())) {
                 recipient.sendMessage(toSend);
             }
-            else if (recipient.hasPermission(StaticStrings.PERMISSION_COMMANDS_CHAT)) {
+            else if (Permissions.hasPermission(recipient, C.PERMISSION_COMMANDS_CHAT)) {
                 recipient.sendMessage(toSend);
             }
         }

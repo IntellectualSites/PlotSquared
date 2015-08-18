@@ -168,12 +168,12 @@ public class PS {
                 IMP.runEntityTask();
             }
             // Events
+            IMP.registerWorldEditEvents();
             IMP.registerCommands();
             IMP.registerPlayerEvents();
             IMP.registerInventoryEvents();
             IMP.registerPlotPlusEvents();
             IMP.registerForceFieldEvents();
-            IMP.registerWorldEditEvents();
             IMP.registerWorldEvents();
             if (Settings.METRICS) {
                 IMP.startMetrics();
@@ -1645,6 +1645,7 @@ public class PS {
         FlagManager.addFlag(new AbstractFlag("animal-attack", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("tamed-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("tamed-attack", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("player-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("misc-interact", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("misc-place", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("misc-break", new FlagValue.BooleanValue()));
@@ -1799,6 +1800,7 @@ public class PS {
 
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
+        options.put("bo3.save_path", Settings.BO3_SAVE_PATH);
         
         // Web
         options.put("web.url", Settings.WEB_URL);
@@ -1906,6 +1908,7 @@ public class PS {
         
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
+        Settings.BO3_SAVE_PATH = config.getString("bo3.save_path");
         
         // Web
         Settings.WEB_URL = config.getString("web.url");

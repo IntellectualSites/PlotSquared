@@ -13,7 +13,7 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 
 public class WEManager {
-    public static HashSet<String> bypass = new HashSet<>();
+//    public static HashSet<String> bypass = new HashSet<>();
     
     public static boolean maskContains(HashSet<RegionWrapper> mask, int x, int z) {
         for (RegionWrapper region : mask) {

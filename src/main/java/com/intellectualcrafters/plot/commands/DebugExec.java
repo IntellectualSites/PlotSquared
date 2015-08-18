@@ -157,9 +157,6 @@ public class DebugExec extends SubCommand {
         for (Enum<?> value : C.values()) {
             scope.put("C_" + value.name(), value);
         }
-        for (Enum<?> value : Permissions.values()) {
-            scope.put("Permissions_" + value.name(), value);
-        }
     }
     
     @Override

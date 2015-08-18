@@ -45,9 +45,11 @@ public abstract class PlotManager {
     /*
      * Plot clearing (return false if you do not support some method)
      */
-    public abstract boolean clearPlot(final PlotWorld plotworld, final Plot plot, boolean isDelete, Runnable whenDone);
+    public abstract boolean clearPlot(final PlotWorld plotworld, final Plot plot, Runnable whenDone);
 
     public abstract boolean claimPlot(final PlotWorld plotworld, final Plot plot);
+    
+    public abstract boolean unclaimPlot(final PlotWorld plotworld, final Plot plot, Runnable whenDone);
 
     public abstract Location getSignLoc(final PlotWorld plotworld, final Plot plot);
 
