@@ -3,6 +3,7 @@ package com.plotsquared.bukkit.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -19,6 +20,8 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class ChunkListener implements Listener {
@@ -26,6 +29,27 @@ public class ChunkListener implements Listener {
     private Chunk lastChunk = null;
     private long last = 0;
     private int count = 0;
+    
+    public ChunkListener() {
+        final PseudoRandom r = new PseudoRandom();
+        r.state = System.currentTimeMillis();
+        if (Settings.CHUNK_PROCESSOR_RANDOM_CHUNK_UNLOADS > 0) {
+            TaskManager.runTaskRepeat(new Runnable() {
+                @Override
+                public void run() {
+                    for (World world : Bukkit.getWorlds()) {
+                        if (!PS.get().isPlotWorld(world.getName())) {
+                            continue;
+                        }
+                        Chunk[] chunks = world.getLoadedChunks();
+                        for (int i = 0; i < Math.min(chunks.length, Settings.CHUNK_PROCESSOR_RANDOM_CHUNK_UNLOADS); i++) {
+                            chunks[r.random(chunks.length)].unload(true, true);
+                        }
+                    }
+                }
+            }, 1);
+        }
+    }
     
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {

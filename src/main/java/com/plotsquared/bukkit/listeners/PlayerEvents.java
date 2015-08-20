@@ -64,6 +64,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -83,6 +84,7 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.help.HelpTopic;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
@@ -157,10 +159,60 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     }
 
     @EventHandler
+    public void onInventoryPickup(InventoryPickupItemEvent event) {
+        Inventory inv = event.getInventory();
+        System.out.print(inv.getTitle() + " | " + inv.getHolder() + " | " + inv + " | " + inv.getType());
+        Location loc = BukkitUtil.getLocation(event.getItem().getLocation());
+        if (!PS.get().isPlotWorld(loc.getWorld())) {
+            return;
+        }
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot == null || !plot.hasOwner()) {
+            return;
+        }
+        Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
+        if (redstone != null) {
+            if ((Boolean) redstone.getValue()) {
+                return;
+            }
+            else {
+                event.setCancelled(true);
+                return;
+            }
+        }
+        if (Settings.REDSTONE_DISABLER) {
+            if (UUIDHandler.getPlayer(plot.owner) == null) {
+                boolean disable = true;
+                for (UUID trusted : plot.getTrusted()) {
+                    if (UUIDHandler.getPlayer(trusted) != null) {
+                        disable = false;
+                        break;
+                    }
+                }
+                if (disable) {
+                    event.setCancelled(true);
+                    
+                    return;
+                }
+            }
+        }
+        if (Settings.REDSTONE_DISABLER_UNOCCUPIED) {
+            for (PlotPlayer pp : UUIDHandler.getPlayers().values()) {
+                if (plot.equals(pp.getCurrentPlot())) {
+                    return;
+                }
+            }
+            event.setCancelled(true);
+            return;
+        }
+    }
+    
+    @EventHandler
     public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
         switch (block.getType()) {
             case REDSTONE_LAMP_OFF:
+            case REDSTONE_WIRE:
             case REDSTONE_LAMP_ON:
             case PISTON_BASE:
             case PISTON_STICKY_BASE:
@@ -198,10 +250,16 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return;
                 }
                 Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
-                if (Settings.REDSTONE_DISABLER) {
-                    if (redstone != null && (Boolean) redstone.getValue()) {
+                if (redstone != null) {
+                    if ((Boolean) redstone.getValue()) {
                         return;
                     }
+                    else {
+                        event.setNewCurrent(0);
+                        return;
+                    }
+                }
+                if (Settings.REDSTONE_DISABLER) {
                     if (UUIDHandler.getPlayer(plot.owner) == null) {
                         boolean disable = true;
                         for (UUID trusted : plot.getTrusted()) {
@@ -216,10 +274,15 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                         }
                     }
                 }
-                if (redstone == null || (Boolean) redstone.getValue()) {
+                if (Settings.REDSTONE_DISABLER_UNOCCUPIED) {
+                    for (PlotPlayer pp : UUIDHandler.getPlayers().values()) {
+                        if (plot.equals(pp.getCurrentPlot())) {
+                            return;
+                        }
+                    }
+                    event.setNewCurrent(0);
                     return;
                 }
-                event.setNewCurrent(0);
             }
         }
     }

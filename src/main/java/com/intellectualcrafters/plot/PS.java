@@ -1743,6 +1743,7 @@ public class PS {
         
         // Protection
         options.put("protection.redstone.disable-offline", Settings.REDSTONE_DISABLER);
+        options.put("protection.redstone.disable-unoccupied", Settings.REDSTONE_DISABLER_UNOCCUPIED);
         options.put("protection.tnt-listener.enabled", Settings.TNT_LISTENER);
         options.put("protection.piston.falling-blocks", Settings.PISTON_FALLING_BLOCK_CHECK);
         
@@ -1837,6 +1838,7 @@ public class PS {
         
         // Chunk processor
         options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
+        options.put("chunk-processor.random-chunk-unloads", Settings.CHUNK_PROCESSOR_RANDOM_CHUNK_UNLOADS);
         options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
         options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
         options.put("chunk-processor.disable-physics", Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS);
@@ -1869,6 +1871,8 @@ public class PS {
         
         // Protection
         Settings.REDSTONE_DISABLER = config.getBoolean("protection.redstone.disable-offline");
+        Settings.REDSTONE_DISABLER_UNOCCUPIED = config.getBoolean("protection.redstone.disable-unoccupied");
+        
         Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
         
@@ -1948,6 +1952,7 @@ public class PS {
         
         // Chunk processor
         Settings.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled");
+        Settings.CHUNK_PROCESSOR_RANDOM_CHUNK_UNLOADS = config.getInt("chunk-processor.random-chunk-unloads");
         Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES = config.getInt("chunk-processor.max-blockstates");
         Settings.CHUNK_PROCESSOR_MAX_ENTITIES = config.getInt("chunk-processor.max-entities");
         Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS = config.getBoolean("chunk-processor.disable-physics");

@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -46,10 +47,13 @@ public class Reload extends SubCommand {
             C.load(PS.get().translationFile);
             for (final String pw : PS.get().getPlotWorlds()) {
                 final PlotWorld plotworld = PS.get().getPlotWorld(pw);
-                plotworld.loadDefaultConfiguration(PS.get().config.getConfigurationSection("worlds." + pw));
+                ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + pw);
+                plotworld.saveConfiguration(section);
+                plotworld.loadDefaultConfiguration(section);
             }
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
         } catch (final Exception e) {
+            e.printStackTrace();
             MainUtil.sendMessage(plr, C.RELOAD_FAILED);
         }
         return true;
