@@ -19,6 +19,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -83,19 +84,18 @@ public class BukkitPlayer extends PlotPlayer {
         }
         boolean value = this.player.hasPermission(node);
         if (!value) {
-            Permission perm = Bukkit.getServer().getPluginManager().getPermission(node);
-            if (perm == null) {
-                perm = new Permission(node, PermissionDefault.FALSE);
-                Map<String, Boolean> children = perm.getChildren();
-                
-                final String[] nodes = node.split("\\.");
+            final String[] nodes = node.split("\\.");
+            if (!MathMan.isInteger(nodes[nodes.length - 1])) {
                 final StringBuilder n = new StringBuilder();
                 for (int i = 0; i < (nodes.length - 1); i++) {
                     n.append(nodes[i] + ("."));
-                    children.put(n + C.PERMISSION_STAR.s(), true);
+                    if (!node.equals(n + C.PERMISSION_STAR.s())) {
+                        value = player.hasPermission(n + C.PERMISSION_STAR.s());
+                        if (value) {
+                            break;
+                        }
+                    }
                 }
-                Bukkit.getServer().getPluginManager().addPermission(perm);
-                Bukkit.getServer().getPluginManager().recalculatePermissionDefaults(perm);
                 value = this.player.hasPermission(node);
             }
         }
