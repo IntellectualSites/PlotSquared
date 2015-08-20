@@ -124,11 +124,11 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
-                if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
+                final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase()) && !Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + "." + value.toLowerCase())) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
                     return false;
                 }
-                final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 final Object parsed = af.parseValueRaw(value);
                 if (parsed == null) {
                     MainUtil.sendMessage(player, "&c" + af.getValueDesc());
@@ -157,11 +157,15 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
                     return false;
                 }
-                if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
-                    return false;
-                }
                 final Flag flag = FlagManager.getPlotFlagAbs(plot, args[1].toLowerCase());
+                if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
+                    for (String entry : args[2].split(",")) {
+                        if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + "." + entry)) {
+                            MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
+                            return false;
+                        }
+                    }
+                }
                 if (flag == null) {
                     MainUtil.sendMessage(player, C.FLAG_NOT_IN_PLOT);
                     return false;
@@ -195,8 +199,12 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
-                    return false;
+                    for (String entry : args[2].split(",")) {
+                        if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + "." + entry)) {
+                            MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
+                            return false;
+                        }
+                    }
                 }
                 final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 final Object parsed = af.parseValueRaw(value);

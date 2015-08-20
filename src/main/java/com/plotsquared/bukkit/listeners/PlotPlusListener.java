@@ -171,8 +171,9 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         Player player = event.getPlayer();
         final Plot plot = event.getPlot();
-        if (FlagManager.getPlotFlag(plot, "greeting") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_GREETING.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "greeting").getValueString()));
+        Flag greeting = FlagManager.getPlotFlag(plot, "greeting");
+        if (greeting != null) {
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_GREETING.s().replaceAll("%id%", plot.id + "") + greeting.getValueString()));
         }
         Flag feed = FlagManager.getPlotFlag(plot, "feed");
         if (feed != null) {
@@ -222,8 +223,9 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (!plot.hasOwner()) {
             return;
         }
-        if (FlagManager.getPlotFlag(plot, "farewell") != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + FlagManager.getPlotFlag(plot, "farewell").getValueString()));
+        Flag farewell = FlagManager.getPlotFlag(plot, "farewell"); 
+        if (farewell != null) {
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + farewell.getValueString()));
         }
         final PlotPlayer pl = BukkitUtil.getPlayer(leaver);
         String name = leaver.getName();

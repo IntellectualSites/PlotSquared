@@ -1,6 +1,7 @@
 package com.plotsquared.bukkit.object;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -68,26 +69,45 @@ public class BukkitPlayer extends PlotPlayer {
     }
     
     @Override
-    public boolean hasPermission(final String perm) {
+    public boolean hasPermission(final String node) {
         if (Settings.PERMISSION_CACHING) {
-            if (this.noPerm.contains(perm)) {
+            if (this.noPerm.contains(node)) {
                 return false;
             }
-            if (this.hasPerm.contains(perm)) {
+            if (this.hasPerm.contains(node)) {
                 return true;
             }
-            final boolean result = this.player.hasPermission(perm);
-            if (!result) {
-                this.noPerm.add(perm);
-                return false;
-            }
-            this.hasPerm.add(perm);
-            return true;
         }
         if (offline && EconHandler.manager != null) {
-            return EconHandler.manager.hasPermission(getName(), perm);
+            return EconHandler.manager.hasPermission(getName(), node);
         }
-        return this.player.hasPermission(perm);
+        boolean value = this.player.hasPermission(node);
+        if (!value) {
+            Permission perm = Bukkit.getServer().getPluginManager().getPermission(node);
+            if (perm == null) {
+                perm = new Permission(node, PermissionDefault.FALSE);
+                Map<String, Boolean> children = perm.getChildren();
+                
+                final String[] nodes = node.split("\\.");
+                final StringBuilder n = new StringBuilder();
+                for (int i = 0; i < (nodes.length - 1); i++) {
+                    n.append(nodes[i] + ("."));
+                    children.put(n + C.PERMISSION_STAR.s(), true);
+                }
+                Bukkit.getServer().getPluginManager().addPermission(perm);
+                Bukkit.getServer().getPluginManager().recalculatePermissionDefaults(perm);
+                value = this.player.hasPermission(node);
+            }
+        }
+        if (Settings.PERMISSION_CACHING) {
+            if (value) {
+                this.hasPerm.add(node);
+            }
+            else {
+                this.noPerm.add(node);
+            }
+        }
+        return value;
     }
     
     @Override

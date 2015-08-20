@@ -2,13 +2,8 @@ package com.plotsquared.sponge.object;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
-import org.spongepowered.api.data.manipulator.mutable.entity.GameModeData;
-import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.entity.player.gamemode.GameMode;
 import org.spongepowered.api.entity.player.gamemode.GameModes;
@@ -96,7 +91,11 @@ public class SpongePlayer extends PlotPlayer {
             this.hasPerm.add(perm);
             return true;
         }
-        return this.player.hasPermission(perm);
+        boolean value = this.player.hasPermission(perm);
+        
+        // TODO check children
+        
+        return value;
     }
 
     @Override

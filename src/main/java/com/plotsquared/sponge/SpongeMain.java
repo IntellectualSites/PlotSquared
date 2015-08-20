@@ -229,7 +229,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         server = game.getServer();
         //
         
-        PS.instance = new PS(this);
+        PS.instance = new PS(this, "Sponge");
         
         // TODO Until P^2 has json chat stuff for sponge, disable this
         Settings.FANCY_CHAT = false;

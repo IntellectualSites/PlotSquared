@@ -20,14 +20,6 @@ public class Permissions {
         if (player.hasPermission(perm)) {
             return true;
         }
-        final String[] nodes = perm.split("\\.");
-        final StringBuilder n = new StringBuilder();
-        for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i] + ("."));
-            if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
-                return true;
-            }
-        }
         return false;
     }
     

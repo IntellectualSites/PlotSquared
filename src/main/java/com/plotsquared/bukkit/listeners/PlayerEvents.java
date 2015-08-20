@@ -105,6 +105,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -877,11 +878,20 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFade(final BlockFadeEvent e) {
         final Block b = e.getBlock();
-        final Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (PS.get().isPlotWorld(loc.getWorld())) {
-            if (MainUtil.isPlotRoad(loc)) {
-                e.setCancelled(true);
+        String world = b.getWorld().getName();
+        PlotWorld plotworld = PS.get().getPlotWorld(world);
+        if (plotworld == null) {
+            return;
+        }
+        PlotManager manager = PS.get().getPlotManager(world);
+        PlotId id = manager.getPlotId(plotworld, b.getX(), b.getY(), b.getZ());
+        if (id == null) {
+            if (plotworld.TYPE == 2) {
+                if (ClusterManager.getClusterAbs(BukkitUtil.getLocation(b.getLocation())) != null) {
+                    return;
+                }
             }
+            e.setCancelled(true);
         }
     }
 

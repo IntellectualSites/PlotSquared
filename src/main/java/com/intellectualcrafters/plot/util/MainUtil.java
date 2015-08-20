@@ -526,8 +526,13 @@ public class MainUtil {
 
     public static int getBorder(final String worldname) {
         if (worldBorder.containsKey(worldname)) {
-            PS.get().getPlotWorld(worldname);
-            return worldBorder.get(worldname) + 16;
+            int border = worldBorder.get(worldname) + 16;
+            if (border == 0) {
+                return Integer.MAX_VALUE;
+            }
+            else {
+                return border;
+            }
         }
         return Integer.MAX_VALUE;
     }

@@ -66,7 +66,7 @@ public class ExpireManager {
     }
 
     public static void runTask() {
-        ExpireManager.task = TaskManager.runTaskRepeat(new Runnable() {
+        ExpireManager.task = TaskManager.runTaskRepeatAsync(new Runnable() {
             @Override
             public void run() {
                 try {

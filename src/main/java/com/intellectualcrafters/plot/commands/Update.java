@@ -34,7 +34,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         permission = "plots.admin",
         description = "Update PlotSquared",
         usage = "/plot update",
-        requiredType = RequiredType.PLAYER,
+        requiredType = RequiredType.NONE,
         aliases = {"updateplugin"},
         category = CommandCategory.DEBUG
 )

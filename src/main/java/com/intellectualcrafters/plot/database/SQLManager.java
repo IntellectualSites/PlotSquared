@@ -181,6 +181,7 @@ public class SQLManager implements AbstractDB {
                         last = System.currentTimeMillis();
                         try {
                             close();
+                            CLOSED = false;
                             connection = database.forceConnection();
                         } catch (SQLException | ClassNotFoundException e) {
                             e.printStackTrace();
@@ -2419,6 +2420,15 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void validateAllPlots(Set<Plot> toValidate) {
+        try {
+            if (connection.isClosed() || CLOSED) {
+                CLOSED = false;
+                connection = database.forceConnection();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         PS.debug("$1All DB transactions during this session are being validated (This may take a while if corrections need to be made)");
         commit();
         while (true) {

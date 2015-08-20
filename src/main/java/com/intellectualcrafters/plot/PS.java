@@ -109,6 +109,7 @@ public class PS {
     private File storageFile;
     private File FILE = null; // This file
     private int[] VERSION = null;
+    private String PLATFORM = null;
     private String LAST_VERSION;
     private boolean LOADING_WORLD = false;
     private ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> plots;
@@ -120,7 +121,7 @@ public class PS {
      * Initialize PlotSquared with the desired Implementation class
      * @param imp_class
      */
-    public PS(final IPlotMain imp_class) {
+    public PS(final IPlotMain imp_class, String platform) {
         try {
             instance = this;
             this.thread = Thread.currentThread();
@@ -135,13 +136,11 @@ public class PS {
                 e.printStackTrace();
                 FILE = new File(IMP.getDirectory().getParentFile(), "PlotSquared.jar");
                 if (!FILE.exists()) {
-                    FILE = new File(IMP.getDirectory().getParentFile(), "PlotSquared-Bukkit.jar");
-                    if (!FILE.exists()) {
-                        FILE = new File(IMP.getDirectory().getParentFile(), "PlotSquared-Sponge.jar");
-                    }
+                    FILE = new File(IMP.getDirectory().getParentFile(), "PlotSquared-" + platform + ".jar");
                 }
             }
             VERSION = IMP.getPluginVersion();
+            PLATFORM = platform;
             EconHandler.manager = IMP.getEconomyHandler();
             if (getJavaVersion() < 1.7) {
                 log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
@@ -220,9 +219,6 @@ public class PS {
                     URL url = getUpdate();
                     if (url != null) {
                         update = url;
-                        log("&6You are running an older version of PlotSquared...");
-                        log("&8 - &3Use: &7/plot update");
-                        log("&8 - &3Or: &7" + url);
                     }
                     else if (LAST_VERSION != null && !StringMan.join(VERSION,".").equals(LAST_VERSION)) {
                         log("&aThanks for updating from: " + LAST_VERSION + " to " + StringMan.join(VERSION, "."));
@@ -323,6 +319,14 @@ public class PS {
      */
     public int[] getVersion() {
         return VERSION;
+    }
+    
+    /**
+     * Get the platform this is running on (Bukkit, Sponge)
+     * @return
+     */
+    public String getPlatform() {
+        return PLATFORM;
     }
 
     /**
@@ -1412,48 +1416,38 @@ public class PS {
      * @return
      */
     public URL getUpdate() {
-        String resource = "plotsquared.1177";
-        String url = "https://www.spigotmc.org/resources/" + resource + "/history";
-        String download = "<a href=\"resources/" + resource + "/download?version=";
-        String version = "<td class=\"version\">";
+        String pom = "https://raw.githubusercontent.com/IntellectualSites/PlotSquared/master/pom.xml";
+        String dl = "https://raw.githubusercontent.com/IntellectualSites/PlotSquared/master/target/PlotSquared-${PLATFORM}.jar";
+        String agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1";
         try {
-            URL history = new URL(url);
-            URLConnection con = history.openConnection();
-            con.addRequestProperty("User-Agent", "Mozilla/5.0");
-            InputStream stream = con.getInputStream();
-            BufferedReader in = new BufferedReader(new InputStreamReader(stream));
-            String l;
-            URL link = null;
-            String cur_ver = config.getString("version");
-            String new_ver = null;
-            while ((l = in.readLine()) != null) {
-                if (l.length() > version.length() && l.startsWith(version)) {
-                    new_ver = l.substring(version.length(), l.length() - 5);
+            URL page = new URL(pom);
+            URLConnection con = page.openConnection();
+            con.addRequestProperty("User-Agent", agent);
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String line = null;
+            while ((line = in.readLine()) !=  null) {
+                line = line.trim();
+                if (line.startsWith("<version>")) {
+                    line = line.replaceAll("[^\\d.]", "");
                     break;
                 }
-                if (link == null && l.length() > download.length() && l.startsWith(download)) {
-                    String subString = l.substring(download.length());
-                    link = new URL("https://www.spigotmc.org/resources/" + resource + "/download?version=" + subString.substring(0, subString.indexOf("\"")));
-                    continue;
-                }
             }
-            stream.close();
             in.close();
-            if (new_ver == null || !canUpdate(cur_ver, new_ver))  {
+            if (!canUpdate(config.getString("version"), line) ) {
                 PS.debug("&7PlotSquared is already up to date!");
                 return null;
             }
-            if (link == null) {
-                PS.debug("&dCould not check for updates (1)");
-                PS.debug("&7 - Manually check for updates: " + url);
-                return null;
-            }
-            return link;
+            dl = dl.replaceAll("${PLATFORM}", getPlatform());
+            log("&6PlotSquared v" + line + " is available:");
+            log("&8 - &3Use: &7/plot update");
+            log("&8 - &3Or: &7" + dl);
+            return new URL(dl);
         } catch (Exception e) {
-            PS.debug("&dCould not check for updates (2)");
-            PS.debug("&7 - Manually check for updates: " + url);
-            return null;
+            e.printStackTrace();
+            log("&dCould not check for updates (0)");
+            log("&7 - Manually check for updates: " + pom);
         }
+        return null;
     }
     
     public boolean update(PlotPlayer sender, URL url) {
@@ -1505,7 +1499,6 @@ public class PS {
      */
     public void copyFile(String file, String folder) {
         try {
-            byte[] buffer = new byte[2048];
             File output = IMP.getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
@@ -1514,26 +1507,39 @@ public class PS {
             if (newFile.exists()) {
                 return;
             }
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(FILE));
-            ZipEntry ze = zis.getNextEntry();
-            while (ze != null) {
-                String name = ze.getName();
-                if (name.equals(file)) {
-                    new File(newFile.getParent()).mkdirs();
-                    FileOutputStream fos = new FileOutputStream(newFile);
-                    int len;
-                    while ((len = zis.read(buffer)) > 0) {
-                        fos.write(buffer, 0, len);
+            InputStream stream = IMP.getClass().getResourceAsStream(file);
+            byte[] buffer = new byte[2048];
+            if (stream == null) {
+                ZipInputStream zis = new ZipInputStream(new FileInputStream(FILE));
+                ZipEntry ze = zis.getNextEntry();
+                while (ze != null) {
+                    String name = ze.getName();
+                    if (name.equals(file)) {
+                        new File(newFile.getParent()).mkdirs();
+                        FileOutputStream fos = new FileOutputStream(newFile);
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                        fos.close();
+                        ze = null;
                     }
-                    fos.close();
-                    ze = null;
+                    else {
+                        ze = zis.getNextEntry();
+                    }
                 }
-                else {
-                    ze = zis.getNextEntry();
-                }
+                zis.closeEntry();
+                zis.close();
+                return;
             }
-            zis.closeEntry();
-            zis.close();
+            newFile.createNewFile();
+            FileOutputStream fos = new FileOutputStream(newFile);
+            int len;
+            while ((len = stream.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+            }
+            fos.close();
+            stream.close();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -1726,6 +1732,7 @@ public class PS {
     public void setupConfig() {
         LAST_VERSION = config.getString("version");
         config.set("version", StringMan.join(VERSION,"."));
+        config.set("platform", PLATFORM);
         
         final Map<String, Object> options = new HashMap<>();
         // Command confirmation

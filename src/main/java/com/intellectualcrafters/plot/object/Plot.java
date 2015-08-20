@@ -37,6 +37,7 @@ import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.BO3Handler;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -118,12 +119,16 @@ public class Plot {
     public int temp;
     
     /**
-     * Session only plot metadata (session is until the server stops)
+     * Session only plot metadata (session is until the server stops)<br>
+     * <br>
+     *  For persistent metadata use the flag system
+     *  @see FlagManager
      */
     private ConcurrentHashMap<String, Object> meta;
 
     /**
-     * Constructor for a new plot
+     * Constructor for a new plot<br>
+     * (Only changes after plot.create() will be properly set in the database)
      * 
      * @param world
      * @param id
@@ -136,7 +141,9 @@ public class Plot {
     }
     
     /**
-     * Constructor for a temporary plot
+     * Constructor for a temporary plot (use -1 for temp)<br>
+     * The database will ignore any queries regarding temporary plots. 
+     * Please note that some bulk plot management functions may still affect temporary plots (TODO: fix this)
      * 
      * @param world
      * @param id
@@ -151,7 +158,7 @@ public class Plot {
     }
     
     /**
-     * Constructor for a saved plots
+     * Constructor for a saved plots (Used by the database manager when plots are fetched)
      *
      * @param id
      * @param owner
@@ -180,7 +187,10 @@ public class Plot {
     }
     
     /**
-     * Set some session only metadata for the plot
+     * Session only plot metadata (session is until the server stops)<br>
+     * <br>
+     * For persistent metadata use the flag system
+     * @see FlagManager
      * @param key
      * @param value
      */
@@ -245,18 +255,18 @@ public class Plot {
     }
 
     /**
-     * Check if the player is either the owner or on the trusted list
+     * Check if the player is either the owner or on the trusted/added list
      *
      * @param uuid
      *
-     * @return true if the player is added as a helper or is the owner
+     * @return true if the player is added/trusted or is the owner
      */
     public boolean isAdded(final UUID uuid) {
         return PlotHandler.isAdded(this, uuid);
     }
 
     /**
-     * Should the player be allowed to enter?
+     * Should the player be denied from entering?
      *
      * @param uuid
      *
@@ -303,6 +313,10 @@ public class Plot {
         return !settings.getMerged(0) && !settings.getMerged(3);
     }
     
+    /**
+     * Check if the plot is merged
+     * @return
+     */
     public boolean isMerged() {
         if (settings == null) {
             return false;
@@ -310,6 +324,10 @@ public class Plot {
         return settings.getMerged(0) || settings.getMerged(2) || settings.getMerged(1) || settings.getMerged(3);
     }
     
+    /**
+     * Get the timestamp in milliseconds of when the plot was created (unreliable)
+     * @return
+     */
     public long getTimestamp() {
         if (timestamp == 0) {
             timestamp = System.currentTimeMillis();
@@ -363,7 +381,7 @@ public class Plot {
     }
 
     /**
-     * Deny someone (use DBFunc.addDenied() as well)
+     * Deny someone (updates database as well)
      *
      * @param uuid
      */
@@ -372,7 +390,7 @@ public class Plot {
     }
 
     /**
-     * Add someone as a helper (use DBFunc as well)
+     * Add someone as a helper (updates database as well)
      *
      * @param uuid
      */
@@ -381,7 +399,7 @@ public class Plot {
     }
 
     /**
-     * Add someone as a trusted user (use DBFunc as well)
+     * Add someone as a trusted user (updates database as well)
      *
      * @param uuid
      */
@@ -390,7 +408,7 @@ public class Plot {
     }
     
     /**
-     * Set the plot owner
+     * Set the plot owner (and update the database)
      * @param owner
      */
     public void setOwner(final UUID owner) {
@@ -811,8 +829,7 @@ public class Plot {
     /**
      * Get the plot hashcode
      *
-     * @return integer. You can easily make this a character array <br> xI = c[0] x = c[1 -&gt; xI...] yI = c[xI ... + 1] y
-     * = c[xI ... + 2 -&gt; yI ...]
+     * @return integer.
      */
     @Override
     public int hashCode() {

@@ -121,7 +121,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void onEnable() {
         THIS = this;
-        PS.instance = new PS(this);
+        PS.instance = new PS(this, "Bukkit");
     }
     
     @Override

@@ -60,6 +60,10 @@ public class Continue extends SubCommand {
             MainUtil.sendMessage(plr, C.DONE_NOT_DONE);
             return false;
         }
+        if (FlagManager.isPlotFlagTrue(plot, "done" ) && (!Permissions.hasPermission(plr, "plots.continue") || (Settings.DONE_COUNTS_TOWARDS_LIMIT && MainUtil.getAllowedPlots(plr) >= MainUtil.getPlayerPlotCount(plr)))) {
+            MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
+            return false;
+        }
         if (MainUtil.runners.containsKey(plot)) {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;

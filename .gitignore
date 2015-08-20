@@ -3,7 +3,8 @@
 *.bat
 
 ### Maven template
-target/
+target/classes
+target/maven-archiver
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -123,7 +124,7 @@ local.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
+
 *.war
 *.ear
 *.zip
@@ -132,3 +133,6 @@ local.properties
 hs_err_pid*
 
 
+*.java
+target/PlotSquared-Null.jar
+target/PlotSquared-Uber.jar
