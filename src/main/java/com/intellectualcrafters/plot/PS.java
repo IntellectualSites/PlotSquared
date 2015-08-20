@@ -1437,7 +1437,7 @@ public class PS {
                 PS.debug("&7PlotSquared is already up to date!");
                 return null;
             }
-            dl = dl.replaceAll("${PLATFORM}", getPlatform());
+            dl = dl.replaceAll(Pattern.quote("${PLATFORM}"), getPlatform());
             log("&6PlotSquared v" + line + " is available:");
             log("&8 - &3Use: &7/plot update");
             log("&8 - &3Or: &7" + dl);
@@ -1455,7 +1455,8 @@ public class PS {
             return false;
         }
         try {
-            File newJar = new File("plugins/update/PlotSquared.jar");
+            String name = FILE.getName();
+            File newJar = new File("plugins/update/" + name);
             MainUtil.sendMessage(sender, "$1Downloading from provided URL: &7" + url);
             MainUtil.sendMessage(sender, "$2 - User-Agent: " + "Mozilla/4.0");
             URLConnection con = url.openConnection();
