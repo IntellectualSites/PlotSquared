@@ -157,55 +157,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
         }, 3);
     }
-
-    @EventHandler
-    public void onInventoryPickup(InventoryPickupItemEvent event) {
-        Inventory inv = event.getInventory();
-        System.out.print(inv.getTitle() + " | " + inv.getHolder() + " | " + inv + " | " + inv.getType());
-        Location loc = BukkitUtil.getLocation(event.getItem().getLocation());
-        if (!PS.get().isPlotWorld(loc.getWorld())) {
-            return;
-        }
-        Plot plot = MainUtil.getPlot(loc);
-        if (plot == null || !plot.hasOwner()) {
-            return;
-        }
-        Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
-        if (redstone != null) {
-            if ((Boolean) redstone.getValue()) {
-                return;
-            }
-            else {
-                event.setCancelled(true);
-                return;
-            }
-        }
-        if (Settings.REDSTONE_DISABLER) {
-            if (UUIDHandler.getPlayer(plot.owner) == null) {
-                boolean disable = true;
-                for (UUID trusted : plot.getTrusted()) {
-                    if (UUIDHandler.getPlayer(trusted) != null) {
-                        disable = false;
-                        break;
-                    }
-                }
-                if (disable) {
-                    event.setCancelled(true);
-                    
-                    return;
-                }
-            }
-        }
-        if (Settings.REDSTONE_DISABLER_UNOCCUPIED) {
-            for (PlotPlayer pp : UUIDHandler.getPlayers().values()) {
-                if (plot.equals(pp.getCurrentPlot())) {
-                    return;
-                }
-            }
-            event.setCancelled(true);
-            return;
-        }
-    }
     
     @EventHandler
     public void onRedstoneEvent(BlockRedstoneEvent event) {

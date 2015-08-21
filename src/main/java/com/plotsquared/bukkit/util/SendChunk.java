@@ -22,6 +22,7 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.object.BukkitPlayer;
+
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
@@ -37,10 +38,10 @@ public class SendChunk {
 //    // Ref Class
     private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
     private final RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-    private final RefClass classConnection = getRefClass("{nms}.EntityPlayer.playerConnection");
-    private final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-    private final RefClass classCraftPlayer = getRefClass("{cb}.CraftPlayer");
-    private RefMethod methodGetHandleChunk;
+    private final RefClass classPacket = getRefClass("{nms}.Packet");
+    private final RefClass classConnection = getRefClass("{nms}.PlayerConnection");
+    private final RefClass classChunk = getRefClass("{nms}.Chunk");
+    private final RefClass classCraftPlayer = getRefClass("{cb}.entity.CraftPlayer");
     private RefMethod methodGetHandlePlayer;
     private RefConstructor MapChunk;
     private RefField connection;
@@ -52,11 +53,10 @@ public class SendChunk {
      * @throws NoSuchMethodException
      */
     public SendChunk() throws NoSuchMethodException {
-        methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
-        MapChunk = classMapChunk.getConstructor(Chunk.class, boolean.class, int.class);
-        connection = classCraftPlayer.getField("playerConnection");
-        send = classConnection.getMethod("sendPacket", classMapChunk.getRealClass());
+        MapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+        connection = classEntityPlayer.getField("playerConnection");
+        send = classConnection.getMethod("sendPacket", classPacket.getRealClass());
     }
 
     public void sendChunk(final Collection<Chunk> input) {

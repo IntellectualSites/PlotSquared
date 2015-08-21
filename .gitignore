@@ -136,3 +136,4 @@ hs_err_pid*
 *.java
 target/PlotSquared-Null.jar
 target/PlotSquared-Uber.jar
+/target/
