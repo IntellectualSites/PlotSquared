@@ -30,27 +30,6 @@ public class ChunkListener implements Listener {
     private long last = 0;
     private int count = 0;
     
-    public ChunkListener() {
-        final PseudoRandom r = new PseudoRandom();
-        r.state = System.currentTimeMillis();
-        if (Settings.CHUNK_PROCESSOR_RANDOM_CHUNK_UNLOADS > 0) {
-            TaskManager.runTaskRepeat(new Runnable() {
-                @Override
-                public void run() {
-                    for (World world : Bukkit.getWorlds()) {
-                        if (!PS.get().isPlotWorld(world.getName())) {
-                            continue;
-                        }
-                        Chunk[] chunks = world.getLoadedChunks();
-                        for (int i = 0; i < Math.min(chunks.length, Settings.CHUNK_PROCESSOR_RANDOM_CHUNK_UNLOADS); i++) {
-                            chunks[r.random(chunks.length)].unload(true, true);
-                        }
-                    }
-                }
-            }, 1);
-        }
-    }
-    
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
         if (processChunk(event.getChunk(), true)) {

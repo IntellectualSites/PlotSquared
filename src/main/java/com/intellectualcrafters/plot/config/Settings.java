@@ -69,7 +69,6 @@ public class Settings {
      */
     public static boolean CHUNK_PROCESSOR = false;
     public static int CHUNK_PROCESSOR_MAX_BLOCKSTATES = 4096;
-    public static int CHUNK_PROCESSOR_RANDOM_CHUNK_UNLOADS = 1;
     public static int CHUNK_PROCESSOR_MAX_ENTITIES = 512;
     public static boolean CHUNK_PROCESSOR_DISABLE_PHYSICS = false;
     /**
