@@ -8,7 +8,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
         command = "chat",
-        description = "Toggle plto chant on or off",
+        description = "Toggle plot chat on or off",
         usage = "/plot chat [on|off]",
         permission = "plots.chat",
         category = CommandCategory.ACTIONS,
