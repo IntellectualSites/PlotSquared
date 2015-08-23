@@ -82,51 +82,61 @@ public abstract class EventUtil {
             }
             case BREAK_BLOCK: {
                 if (plot == null) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
-                Flag flag = FlagManager.getPlotFlag(plot, "break");
-                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
-                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER.s(), notifyPerms);
+                Flag use = FlagManager.getPlotFlag(plot, "break");
+                if (use != null) {
+                    HashSet<PlotBlock> value = (HashSet<PlotBlock>) use.getValue();
+                    if (value.contains(PlotBlock.EVERYTHING) || value.contains(block.getPlotBlock())) {
+                        return true;
+                    }
                 }
-                return true;
+                
+                Flag destroy = FlagManager.getPlotFlag(plot, "break");
+                if (destroy != null) {
+                    HashSet<PlotBlock> value = (HashSet<PlotBlock>) destroy.getValue();
+                    if (value.contains(PlotBlock.EVERYTHING) || value.contains(block.getPlotBlock())) {
+                        return true;
+                    }
+                }
+                return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
             }
             case BREAK_HANGING:
                 if (plot == null) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
                 if (FlagManager.isPlotFlagTrue(plot, "hanging-break")) {
                     return true;
                 }
                 if (plot.hasOwner()) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
                 }
-                return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED.s(), notifyPerms);
+                return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
             case BREAK_MISC:
                 if (plot == null) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
                 if (FlagManager.isPlotFlagTrue(plot, "misc-break")) {
                     return true;
                 }
                 if (plot.hasOwner()) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
                 }
-                return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED.s(), notifyPerms);
+                return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
             case BREAK_VEHICLE:
                 if (plot == null) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
                 if (FlagManager.isPlotFlagTrue(plot, "vehicle-break")) {
                     return true;
                 }
                 if (plot.hasOwner()) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
                 }
-                return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED.s(), notifyPerms);
+                return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
             case INTERACT_BLOCK: {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
