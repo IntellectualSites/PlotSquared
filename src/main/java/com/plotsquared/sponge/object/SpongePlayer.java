@@ -4,9 +4,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.UUID;
 
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
+import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.entity.player.gamemode.GameMode;
 import org.spongepowered.api.entity.player.gamemode.GameModes;
+import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.chat.ChatType;
 import org.spongepowered.api.text.chat.ChatTypes;
 
 import com.flowpowered.math.vector.Vector3d;
@@ -100,7 +105,7 @@ public class SpongePlayer extends PlotPlayer {
 
     @Override
     public void sendMessage(String message) {
-        player.sendMessage(ChatTypes.CHAT, message);
+        player.sendMessage(ChatTypes.CHAT, Texts.of(message));
     }
 
     @Override
