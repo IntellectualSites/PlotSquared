@@ -610,10 +610,17 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return;
         }
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
-        final PlotPlayer plr = BukkitUtil.getPlayer(player);
-        if (!plotworld.PLOT_CHAT && (plr.getMeta("chat") == null || !(Boolean) plr.getMeta("chat"))) {
+
+        if (!plotworld.PLOT_CHAT) {
             return;
         }
+
+        final PlotPlayer plr = BukkitUtil.getPlayer(player);
+
+        if (!plr.getAttribute("chat")) {
+            return;
+        }
+
         final Location loc = BukkitUtil.getLocation(player);
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
@@ -631,9 +638,10 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 recipients.add(p);
             }
         }
-        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", sender).replaceAll("%msg%", message);
+        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", "%s").replaceAll("%msg%", "%s");
         format = ChatColor.translateAlternateColorCodes('&', format);
         event.setFormat(format);
+        event.setMessage(message);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
