@@ -349,6 +349,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
         try {
             chunksender.sendChunk(chunks);
         } catch (final Throwable e) {
+            e.printStackTrace();
             MainUtil.canSendChunk = false;
         }
     }

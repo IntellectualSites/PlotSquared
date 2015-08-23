@@ -34,6 +34,8 @@ public class WorldModify implements WorldGeneratorModifier {
             }
         }
         else {
+            gen.getGeneratorPopulators().clear();
+            gen.getPopulators().clear();
             gen.setBaseGeneratorPopulator(plotgen.getBaseGeneratorPopulator());
             gen.setBiomeGenerator(plotgen.getBiomeGenerator());
         }

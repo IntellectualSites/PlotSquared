@@ -89,17 +89,17 @@ public class DebugExec extends SubCommand {
     private Bindings scope;
     
     public DebugExec() {
-        File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
-        if (file.exists()) {
-            init();
-            try {
-                String script = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"), StandardCharsets.UTF_8), System.getProperty("line.separator"));
-                scope.put("THIS", this);
-                scope.put("PlotPlayer", ConsolePlayer.getConsole());
-                engine.eval(script, scope);
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
+            if (file.exists()) {
+                init();
+                    String script = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"), StandardCharsets.UTF_8), System.getProperty("line.separator"));
+                    scope.put("THIS", this);
+                    scope.put("PlotPlayer", ConsolePlayer.getConsole());
+                    engine.eval(script, scope);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     

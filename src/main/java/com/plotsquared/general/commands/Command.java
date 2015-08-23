@@ -136,6 +136,9 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
     }
 
     final public Argument<?>[] getRequiredArguments() {
+        if (this.requiredArguments == null) {
+            return new Argument<?>[0];
+        }
         return this.requiredArguments;
     }
 

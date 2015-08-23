@@ -42,7 +42,9 @@ public class SendChunk {
     private final RefClass classConnection = getRefClass("{nms}.PlayerConnection");
     private final RefClass classChunk = getRefClass("{nms}.Chunk");
     private final RefClass classCraftPlayer = getRefClass("{cb}.entity.CraftPlayer");
+    private final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
     private RefMethod methodGetHandlePlayer;
+    private RefMethod methodGetHandleChunk;
     private RefConstructor MapChunk;
     private RefField connection;
     private RefMethod send;
@@ -54,6 +56,7 @@ public class SendChunk {
      */
     public SendChunk() throws NoSuchMethodException {
         methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
+        methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         MapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
         connection = classEntityPlayer.getField("playerConnection");
         send = classConnection.getMethod("sendPacket", classPacket.getRealClass());
@@ -101,19 +104,15 @@ public class SendChunk {
                 if (dx > view || dz > view) {
                     continue;
                 }
+                Object c = methodGetHandleChunk.of(chunk).call();
                 chunks.remove(chunk);
-                
-                Object packet = MapChunk.create(chunk, true, 0);
                 Object con = connection.of(entity).get();
+                if (dx != 0 || dz != 0) {
+                    Object packet = MapChunk.create(c, true, 1);
+                    send.of(con).call(packet);
+                }
+                Object packet = MapChunk.create(c, true, 65565);
                 send.of(con).call(packet);
-                packet = MapChunk.create(chunk, true, 65565);
-                send.of(con).call(packet);
-//                Object packet = MapChunk.create(chunk, true, 0);
-//                
-//                PacketPlayOutMapChunk packet = new PacketPlayOutMapChunk(chunk, true, 0);
-//                entity.playerConnection.sendPacket(packet);
-//                packet = new PacketPlayOutMapChunk(chunk, true, 65565);
-//                entity.playerConnection.sendPacket(packet);
             }
         }
         for (final Chunk chunk : chunks) {

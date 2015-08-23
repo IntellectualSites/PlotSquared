@@ -47,6 +47,9 @@ public class Unclaim extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
+        if (!plot.hasOwner()) {
+            return !sendMessage(plr, C.PLOT_NOT_CLAIMED);
+        }
         if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return !sendMessage(plr, C.UNLINK_REQUIRED);
         }
