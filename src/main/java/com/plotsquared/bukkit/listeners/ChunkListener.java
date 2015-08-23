@@ -110,7 +110,7 @@ public class ChunkListener implements Listener {
                     String name = world.getName();
                     boolean autosave = world.isAutoSave();
                     boolean plotworld = PS.get().isPlotWorld(name);
-                    if (autosave && plotworld) {
+                    if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autosave && plotworld) {
                         world.setAutoSave(false);
                     }
                     HashMap<ChunkLoc, Integer> map = players.get(name);
@@ -121,12 +121,7 @@ public class ChunkListener implements Listener {
                         int x = chunk.getX();
                         int z = chunk.getZ();
                         if (!map.containsKey(new ChunkLoc(x, z))) {
-                            Plot plot = MainUtil.getPlot(new Location(name, x << 4, 1, z << 4));
-                            if (Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && plot == null || plot.owner == null && plotworld) {
-                                unloadChunk(chunk);
-                                CraftChunk c = null;
-                            }
-                            else {
+                            if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE || !plotworld || !unloadChunk(name, chunk)) {
                                 chunk.unload(true, false);
                             }
                         }
@@ -139,10 +134,28 @@ public class ChunkListener implements Listener {
         }, 300);
     }
     
-    public void unloadChunk(Chunk chunk) {
+    public boolean unloadChunk(String world, Chunk chunk) {
+        int X = chunk.getX();
+        int Z = chunk.getZ();
+        int x = X << 4;
+        int z = Z << 4;
+        int x2 = x + 15;
+        int z2 = z + 15;
+        Plot plot;
+        plot = MainUtil.getPlot(new Location(world, x, 1, z));
+        if (plot != null && plot.owner != null) return false;
+        plot = MainUtil.getPlot(new Location(world, x2, 1, z2));
+        if (plot != null && plot.owner != null) return false;
+        plot = MainUtil.getPlot(new Location(world, x2, 1, z));
+        if (plot != null && plot.owner != null) return false;
+        plot = MainUtil.getPlot(new Location(world, x, 1, z2));
+        if (plot != null && plot.owner != null) return false;
+        plot = MainUtil.getPlot(new Location(world, x + 7, 1, z + 7));
+        if (plot != null && plot.owner != null) return false;
         Object c = methodGetHandleChunk.of(chunk).call();
         mustSave.of(c).set(false);
         chunk.unload(false, false);
+        return true;
     }
     
     @EventHandler
@@ -151,11 +164,7 @@ public class ChunkListener implements Listener {
             Chunk chunk = event.getChunk();
             String world = chunk.getWorld().getName();
             if (PS.get().isPlotWorld(world)) {
-                int x = chunk.getX();
-                int z = chunk.getZ();
-                Plot plot = MainUtil.getPlot(new Location(world, x << 4, 1, z << 4));
-                if (plot == null || plot.owner == null && PS.get().isPlotWorld(world)) {
-                    unloadChunk(chunk);
+                if (unloadChunk(world, chunk)) {
                     return;
                 }
             }
@@ -164,6 +173,7 @@ public class ChunkListener implements Listener {
             event.setCancelled(true);
         }
     }
+    
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
