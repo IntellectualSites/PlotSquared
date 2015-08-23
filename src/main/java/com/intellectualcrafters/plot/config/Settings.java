@@ -68,6 +68,8 @@ public class Settings {
      * Chunk processor
      */
     public static boolean CHUNK_PROCESSOR = false;
+    public static boolean CHUNK_PROCESSOR_TRIM_ON_SAVE = false;
+    public static boolean CHUNK_PROCESSOR_GC = false;
     public static int CHUNK_PROCESSOR_MAX_BLOCKSTATES = 4096;
     public static int CHUNK_PROCESSOR_MAX_ENTITIES = 512;
     public static boolean CHUNK_PROCESSOR_DISABLE_PHYSICS = false;

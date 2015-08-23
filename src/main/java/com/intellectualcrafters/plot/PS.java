@@ -1838,6 +1838,8 @@ public class PS {
         
         // Chunk processor
         options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
+        options.put("chunk-processor.auto-unload", Settings.CHUNK_PROCESSOR_GC);
+        options.put("chunk-processor.auto-trim", Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE);
         options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
         options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
         options.put("chunk-processor.disable-physics", Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS);
@@ -1951,6 +1953,10 @@ public class PS {
         
         // Chunk processor
         Settings.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled");
+        
+        Settings.CHUNK_PROCESSOR_GC = config.getBoolean("chunk-processor.auto-unload");
+        Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE = config.getBoolean("chunk-processor.auto-trim");
+        
         Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES = config.getInt("chunk-processor.max-blockstates");
         Settings.CHUNK_PROCESSOR_MAX_ENTITIES = config.getInt("chunk-processor.max-entities");
         Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS = config.getBoolean("chunk-processor.disable-physics");
