@@ -1,6 +1,9 @@
 package com.plotsquared.bukkit.database.plotme;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -102,7 +105,16 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         try {
                             byte[] bytes = r.getBytes("ownerid");
                             if (bytes != null) {
-                                owner = UUID.nameUUIDFromBytes(bytes);
+                                try {
+                                    ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                    long high = bb.getLong();
+                                    long low = bb.getLong();
+                                    owner = new UUID(high, low);
+                                }
+                                catch (Exception e) {
+                                    e.printStackTrace();
+                                    owner = UUID.nameUUIDFromBytes(bytes);
+                                }
                                 if (owner != null) {
                                     UUIDHandler.add(new StringWrapper(name), owner);
                                 }
