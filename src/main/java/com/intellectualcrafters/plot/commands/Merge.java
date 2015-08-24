@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -141,6 +142,11 @@ public class Merge extends SubCommand {
                 break;
             default:
                 return false;
+        }
+        int size = selPlots.size();
+        if (Permissions.hasPermissionRange(plr, "plots.merge", Settings.MAX_PLOTS) < size) {
+            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.merge." + size);
+            return false;
         }
         final PlotId botId = selPlots.get(0);
         final PlotId topId = selPlots.get(selPlots.size() - 1);
