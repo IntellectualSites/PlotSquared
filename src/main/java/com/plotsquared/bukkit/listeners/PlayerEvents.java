@@ -1422,7 +1422,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
         final org.bukkit.Location from = event.getFrom();
         final org.bukkit.Location to = event.getTo();
-        
         int x2;
         if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
             Player player = event.getPlayer();
@@ -1440,10 +1439,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, MathMan.roundInt(to.getZ()));
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
-                if (lastPlot == null) {
-                    return;
-                }
-                if (!plotExit(pp, lastPlot)) {
+                if (lastPlot != null && !plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
@@ -1456,7 +1452,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             }
             else if (lastPlot != null && id.equals(lastPlot.id)) {
-                    return;
+                return;
             }
             else {
                 Plot plot = MainUtil.getPlot(worldname, id);
@@ -1506,10 +1502,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
             Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
-                if (lastPlot == null) {
-                    return;
-                }
-                if (!plotExit(pp, lastPlot)) {
+                if (lastPlot != null && !plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
                         player.teleport(from);
