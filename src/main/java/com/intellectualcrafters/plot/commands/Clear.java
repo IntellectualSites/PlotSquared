@@ -77,9 +77,9 @@ public class Clear extends SubCommand {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
-            return sendMessage(plr, C.UNLINK_REQUIRED);
-        }
+//        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
+//            return sendMessage(plr, C.UNLINK_REQUIRED);
+//        }
         if (((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }

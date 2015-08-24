@@ -37,6 +37,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -171,8 +172,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         final String world = plotworld.worldname;
         final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
         
-        final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.id).add(1, 0, 1);
-        final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.id);
+        final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
+        final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
         // If augmented
         final boolean canRegen = plotworld.TYPE == 0 && plotworld.TERRAIN == 0;
         // The component blocks
@@ -186,7 +187,9 @@ public class HybridPlotManager extends ClassicPlotManager {
             public void run() {
                 // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
                 if (canRegen && value[6] == 0) {
+                    ChunkManager.CURRENT_PLOT_CLEAR = new RegionWrapper(value[2], value[4], value[3], value[5]);
                     ChunkManager.manager.regenerateChunk(world, new ChunkLoc(value[0], value[1]));
+                    ChunkManager.CURRENT_PLOT_CLEAR = null;
                     return;
                 }
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
