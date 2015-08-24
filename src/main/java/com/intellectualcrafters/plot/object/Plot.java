@@ -25,8 +25,10 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
@@ -397,7 +399,7 @@ public class Plot {
     public void addTrusted(final UUID uuid) {
         if (this.getTrusted().add(uuid)) DBFunc.setTrusted(this, uuid);
     }
-
+    
     /**
      * Add someone as a trusted user (updates database as well)
      *
@@ -415,6 +417,66 @@ public class Plot {
         if (!this.owner.equals(owner)) {
             this.owner = owner;
             DBFunc.setOwner(this, owner);
+        }
+    }
+    
+    /**
+     * Set the trusted users for this plot
+     * @param uuids
+     */
+    public void setTrusted(Set<UUID> uuids) {
+        if (uuids.size() == 0) {
+            return;
+        }
+        if (trusted != null && trusted.size() > 0) {
+            trusted.removeAll(uuids);
+            for (UUID uuid : trusted) {
+                DBFunc.removeTrusted(this, uuid);
+            }
+            trusted.clear();
+        }
+        for (UUID uuid : uuids) {
+            addTrusted(uuid);
+        }
+    }
+    
+    /**
+     * Set the members for this plot
+     * @param uuids
+     */
+    public void setMembers(Set<UUID> uuids) {
+        if (uuids.size() == 0) {
+            return;
+        }
+        if (members != null && members.size() > 0) {
+            members.removeAll(uuids);
+            for (UUID uuid : members) {
+                DBFunc.removeMember(this, uuid);
+            }
+            members.clear();
+        }
+        for (UUID uuid : uuids) {
+            addMember(uuid);
+        }
+    }
+    
+    /**
+     * Set the denied users for this plot
+     * @param uuids
+     */
+    public void setDenied(Set<UUID> uuids) {
+        if (uuids.size() == 0) {
+            return;
+        }
+        if (denied != null && denied.size() > 0) {
+            denied.removeAll(uuids);
+            for (UUID uuid : denied) {
+                DBFunc.removeDenied(this, uuid);
+            }
+            denied.clear();
+        }
+        for (UUID uuid : uuids) {
+            addDenied(uuid);
         }
     }
     

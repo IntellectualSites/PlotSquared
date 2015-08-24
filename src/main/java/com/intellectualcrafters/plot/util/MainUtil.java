@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -645,23 +646,36 @@ public class MainUtil {
         if (!result) {
             return false;
         }
+        
+        HashSet<UUID> trusted = new HashSet<UUID>();
+        HashSet<UUID> members = new HashSet<UUID>();
+        HashSet<UUID> denied = new HashSet<UUID>();
 
         manager.startPlotMerge(plotworld, plotIds);
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final PlotId id = new PlotId(x, y);
                 final Plot plot = PS.get().getPlot(world, id);
+                trusted.addAll(plot.getTrusted());
+                members.addAll(plot.getMembers());
+                denied.addAll(plot.getDenied());
                 if (removeRoads) {
                     removeSign(plot);
                 }
             }
         }
+        members.removeAll(trusted);
+        denied.removeAll(trusted);
+        denied.removeAll(members);
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final boolean lx = x < pos2.x;
                 final boolean ly = y < pos2.y;
                 final PlotId id = new PlotId(x, y);
                 final Plot plot = PS.get().getPlot(world, id);
+                plot.setTrusted(trusted);
+                plot.setMembers(members);
+                plot.setDenied(denied);
                 Plot plot2 = null;
                 if (lx) {
                     if (ly) {
