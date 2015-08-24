@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
 import com.intellectualcrafters.plot.object.BO3;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -128,7 +129,7 @@ public class BO3Handler {
             List<String> lines = Files.readAllLines(base.toPath(), StandardCharsets.UTF_8);
             for (int i = 0; i < lines.size(); i++) {
                 String line = lines.get(i).trim();
-                String result = StringMan.replaceAll(line, "%owner%", MainUtil.getName(plot.owner), "%alias%", plot.toString(), "%blocks%", bo3.getBlocks(), "%branches%", bo3.getChildren());
+                String result = StringMan.replaceAll(line, "%owner%", MainUtil.getName(plot.owner), "%alias%", plot.toString(), "%blocks%", bo3.getBlocks(), "%branches%", bo3.getChildren(), "%flags%", StringMan.join(FlagManager.getPlotFlags(plot).values(), ","));
                 if (!StringMan.isEqual(result, line)) {
                     lines.set(i, result);
                 }
