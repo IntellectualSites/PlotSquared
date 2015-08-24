@@ -859,6 +859,7 @@ public class MainUtil {
             if (count > 16) {
                 break;
             }
+            merge = false;
             count++;
             final PlotId bot = getBottomPlot(plot).id;
             final PlotId top = getTopPlot(plot).id;
@@ -898,10 +899,8 @@ public class MainUtil {
                     continue;
                 }
             }
-            merge = false;
         }
         for (PlotId id : toUpdate) {
-            Plot update = getPlot(plot.world, id);
             DBFunc.setMerged(plot, plot.getSettings().getMerged());
         }
     }

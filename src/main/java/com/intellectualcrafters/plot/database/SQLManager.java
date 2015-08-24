@@ -84,6 +84,11 @@ public class SQLManager implements AbstractDB {
     public volatile Queue<Runnable> globalTasks;
     
     /**
+     * Notify tasks
+     */
+    public volatile Queue<Runnable> notifyTasks;
+    
+    /**
      * plot
      * plot_denied
      * plot_helpers
@@ -105,6 +110,10 @@ public class SQLManager implements AbstractDB {
     
     public synchronized Queue<Runnable> getGlobalTasks() {
         return globalTasks;
+    }
+    
+    public synchronized Queue<Runnable> getNotifyTasks() {
+        return notifyTasks;
     }
     
     public synchronized void addPlotTask(Plot plot, UniqueStatement task) {
@@ -151,6 +160,12 @@ public class SQLManager implements AbstractDB {
         getGlobalTasks().add(task);
     }
     
+    public synchronized void addNotifyTask(Runnable task) {
+        if (task != null) {
+            getNotifyTasks().add(task);
+        }
+    }
+    
     
     /**
      * Constructor
@@ -166,6 +181,7 @@ public class SQLManager implements AbstractDB {
         this.connection = database.openConnection();
         this.MYSQL = (database instanceof MySQL);
         globalTasks = new ConcurrentLinkedQueue<>();
+        notifyTasks = new ConcurrentLinkedQueue<>();
         plotTasks = new ConcurrentHashMap<>();
         clusterTasks = new ConcurrentHashMap<>();
         TaskManager.runTaskAsync(new Runnable() {
@@ -189,6 +205,12 @@ public class SQLManager implements AbstractDB {
                     }
                     if (!sendBatch()) {
                         try {
+                            if (getNotifyTasks().size() > 0) {
+                                for (Runnable task : getNotifyTasks()) {
+                                    TaskManager.runTask(task);
+                                }
+                                getNotifyTasks().clear();
+                            }
                             Thread.sleep(50);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -936,6 +958,7 @@ public class SQLManager implements AbstractDB {
                 return SQLManager.this.connection.prepareStatement("INSERT INTO `" + SQLManager.this.prefix + "plot_settings`(`plot_plot_id`) VALUES(" + "?)");
             }
         });
+        addNotifyTask(whenDone);
     }
 
     /**
