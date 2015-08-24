@@ -162,7 +162,7 @@ public class BukkitPlayer extends PlotPlayer {
     @Override
     public boolean getAttribute(String key) {
         key = "plotsquared_user_attributes." + key;
-        if (EconHandler.manager == null) {
+        if (EconHandler.manager == null || player.hasPermission("plotsquared_user_attributes.*")) {
             Object v = getMeta(key);
             return v == null ? false : (Boolean) v;
         }

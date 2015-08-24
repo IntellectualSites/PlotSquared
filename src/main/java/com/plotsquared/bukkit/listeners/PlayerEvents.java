@@ -606,21 +606,14 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     public void onChat(final AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
-        if (!PS.get().isPlotWorld(world)) {
-            return;
-        }
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
-
-        if (!plotworld.PLOT_CHAT) {
+        if (plotworld == null) {
             return;
         }
-
         final PlotPlayer plr = BukkitUtil.getPlayer(player);
-
-        if (!plr.getAttribute("chat")) {
+        if (!plotworld.PLOT_CHAT && !plr.getAttribute("chat")) {
             return;
         }
-
         final Location loc = BukkitUtil.getLocation(player);
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
@@ -641,7 +634,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", "%s").replaceAll("%msg%", "%s");
         format = ChatColor.translateAlternateColorCodes('&', format);
         event.setFormat(format);
-        event.setMessage(message);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
