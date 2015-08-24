@@ -72,28 +72,36 @@ public class BukkitSetupUtils extends SetupUtils {
             if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.setupGenerator);
                 setGenerator(world, object.setupGenerator);
-            } else {
-                if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.setupGenerator);
-                    setGenerator(world, object.setupGenerator);
-                } else {
-                    final WorldCreator wc = new WorldCreator(object.world);
-                    wc.generator(object.setupGenerator);
-                    wc.environment(Environment.NORMAL);
-                    Bukkit.createWorld(wc);
-                    setGenerator(world, object.setupGenerator);
+                if (Bukkit.getWorld(world) != null) {
+                    return world;
                 }
             }
+            if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
+                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.setupGenerator);
+                setGenerator(world, object.setupGenerator);
+                if (Bukkit.getWorld(world) != null) {
+                    return world;
+                }
+            }
+            final WorldCreator wc = new WorldCreator(object.world);
+            wc.generator(object.setupGenerator);
+            wc.environment(Environment.NORMAL);
+            Bukkit.createWorld(wc);
+            setGenerator(world, object.setupGenerator);
         } else {
             if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal");
-            } else {
-                if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world);
-                } else {
-                    Bukkit.createWorld(new WorldCreator(object.world).environment(World.Environment.NORMAL));
+                if (Bukkit.getWorld(world) != null) {
+                    return world;
                 }
             }
+            if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
+                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world);
+                if (Bukkit.getWorld(world) != null) {
+                    return world;
+                }
+            }
+            Bukkit.createWorld(new WorldCreator(object.world).environment(World.Environment.NORMAL));
         }
         return object.world;
     }

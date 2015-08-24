@@ -81,10 +81,10 @@ public class DebugClaimTest extends SubCommand {
         try {
             final String[] split1 = args[1].split(";");
             final String[] split2 = args[2].split(";");
-            min = new PlotId(Integer.parseInt(split1[0]), Integer.parseInt(split1[1]));
-            max = new PlotId(Integer.parseInt(split2[0]), Integer.parseInt(split2[1]));
+            min = PlotId.fromString(args[1]);
+            max = PlotId.fromString(args[2]);
         } catch (final Exception e) {
-            return !MainUtil.sendMessage(null, "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X,Y are the plot coords\nThe conversion will only check the plots in the selected area.");
+            return !MainUtil.sendMessage(null, "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X;Y are the plot coords\nThe conversion will only check the plots in the selected area.");
         }
         MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
         MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");

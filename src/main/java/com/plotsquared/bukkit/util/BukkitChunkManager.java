@@ -56,6 +56,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.BlockUpdateUtil;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -101,6 +102,9 @@ public class BukkitChunkManager extends ChunkManager {
         World worldObj = Bukkit.getWorld(world);
 //        Chunk chunk = worldObj.getChunkAt(loc.x, loc.z);
         worldObj.regenerateChunk(loc.x, loc.z);
+        if (MainUtil.canSendChunk && BlockUpdateUtil.setBlockManager != null) {
+            BlockUpdateUtil.setBlockManager.update(world, Arrays.asList(loc));
+        }
         for (final Player player : worldObj.getPlayers()) {
             org.bukkit.Location locObj = player.getLocation();
             if (locObj.getBlockX() >> 4 == loc.x && locObj.getBlockZ() >> 4 == loc.z && !locObj.getBlock().isEmpty()) {

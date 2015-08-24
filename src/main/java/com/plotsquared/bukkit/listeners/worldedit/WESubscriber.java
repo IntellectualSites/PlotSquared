@@ -41,7 +41,7 @@ public class WESubscriber {
                 return;
             }
             if (Settings.CHUNK_PROCESSOR) {
-                event.setExtent(new ProcessedWEExtent(mask, event.getExtent()));
+                event.setExtent(new ProcessedWEExtent(world, mask, event.getExtent()));
             }
             else {
                 event.setExtent(new WEExtent(mask, event.getExtent()));

@@ -104,14 +104,15 @@ public class SendChunk {
                 if (dx > view || dz > view) {
                     continue;
                 }
-                Object c = methodGetHandleChunk.of(chunk).call();
+                net.minecraft.server.v1_8_R2.Chunk c = (net.minecraft.server.v1_8_R2.Chunk) methodGetHandleChunk.of(chunk).call();
+                c.initLighting();
                 chunks.remove(chunk);
                 Object con = connection.of(entity).get();
-                if (dx != 0 || dz != 0) {
-                    Object packet = MapChunk.create(c, true, 1);
-                    send.of(con).call(packet);
-                }
-                Object packet = MapChunk.create(c, true, 65565);
+//                if (dx != 0 || dz != 0) {
+//                    Object packet = MapChunk.create(c, true, 0);
+//                    send.of(con).call(packet);
+//                }
+                Object packet = MapChunk.create(c, true, 65535);
                 send.of(con).call(packet);
             }
         }

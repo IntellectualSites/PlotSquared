@@ -53,6 +53,7 @@ import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
 import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.generator.HybridGen;
 import com.plotsquared.bukkit.listeners.ChunkListener;
 import com.plotsquared.bukkit.listeners.ForceFieldListener;
@@ -578,13 +579,26 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             setup.step = new ConfigurationNode[0];
             setup.world = worldname;
             SetupUtils.manager.setupWorld(setup);
-            return;
         }
-        try {
-            SetGenCB.setGenerator(BukkitUtil.getWorld(worldname));
-        } catch (Exception e) {
-            log("Failed to reload world: " + world);
-            Bukkit.getServer().unloadWorld(world, false);
+        else {
+            try {
+                if (!PS.get().isPlotWorld(worldname)) {
+                    SetGenCB.setGenerator(BukkitUtil.getWorld(worldname));
+                }
+            } catch (Exception e) {
+                log("Failed to reload world: " + world);
+                Bukkit.getServer().unloadWorld(world, false);
+            }
+        }
+        world = Bukkit.getWorld(worldname);
+        final ChunkGenerator gen = world.getGenerator();
+        if (gen instanceof BukkitPlotGenerator) {
+            PS.get().loadWorld(worldname, new BukkitGeneratorWrapper(worldname, (BukkitPlotGenerator) gen));
+        }
+        else {
+            if (PS.get().config.contains("worlds." + worldname)) {
+                PS.get().loadWorld(worldname, new BukkitGeneratorWrapper(worldname, null));
+            }
         }
     }
 

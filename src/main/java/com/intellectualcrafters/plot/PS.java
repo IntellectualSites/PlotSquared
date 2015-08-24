@@ -268,7 +268,10 @@ public class PS {
                             if (world.equals("CheckingPlotSquaredGenerator")) {
                                 continue;
                             }
-                            if (!BlockManager.manager.isWorld(world)) {
+                            if (!BlockManager.manager.isWorld(world) || (BlockManager.manager.isWorld(world) && !isPlotWorld(world))) {
+                                PS.debug("&c`" + world + "` was not properly loaded - PlotSquared will now try to load it properly: ");
+                                PS.debug("&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml as well");
+                                PS.debug("&8 - &7Your world management plugin may be faulty. Consider using an up to date plugin.");
                                 IMP.setGenerator(world);
                             }
                         }
@@ -1250,6 +1253,7 @@ public class PS {
                     LOADING_WORLD = false;
                 }
             } else {
+                LOADING_WORLD = false;
                 plotWorld = generator.getNewPlotWorld(world);
                 plotManager = generator.getPlotManager();
                 if (!config.contains(path)) {
@@ -1842,6 +1846,7 @@ public class PS {
         // Chunk processor
         options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
         options.put("chunk-processor.auto-unload", Settings.CHUNK_PROCESSOR_GC);
+        options.put("chunk-processor.experimental-fast-async-worldedit", Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT);
         options.put("chunk-processor.auto-trim", Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE);
         options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
         options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
@@ -1956,10 +1961,9 @@ public class PS {
         
         // Chunk processor
         Settings.CHUNK_PROCESSOR = config.getBoolean("chunk-processor.enabled");
-        
         Settings.CHUNK_PROCESSOR_GC = config.getBoolean("chunk-processor.auto-unload");
         Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE = config.getBoolean("chunk-processor.auto-trim");
-        
+        Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT = config.getBoolean("chunk-processor.experimental-fast-async-worldedit");
         Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES = config.getInt("chunk-processor.max-blockstates");
         Settings.CHUNK_PROCESSOR_MAX_ENTITIES = config.getInt("chunk-processor.max-entities");
         Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS = config.getBoolean("chunk-processor.disable-physics");
