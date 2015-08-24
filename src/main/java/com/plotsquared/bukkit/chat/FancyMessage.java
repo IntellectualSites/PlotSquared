@@ -35,6 +35,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
 import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
+import com.intellectualcrafters.plot.config.C;
 
 /**
  * Represents a formattable message. Such messages can use elements such as colors, formatting codes, hover and click data, and other features provided by the vanilla Minecraft <a href="http://minecraft.gamepedia.com/Tellraw#Raw_JSON_Text">JSON message formatter</a>.
@@ -134,9 +135,6 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @exception IllegalArgumentException If the specified {@code ChatColor} enumeration value is not a color (but a format value).
 	 */
 	public FancyMessage color(final ChatColor color) {
-		if (!color.isColor()) {
-			throw new IllegalArgumentException(color.name() + " is not a color");
-		}
 		latest().color = color;
 		dirty = true;
 		return this;

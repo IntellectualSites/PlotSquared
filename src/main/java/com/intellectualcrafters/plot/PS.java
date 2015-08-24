@@ -60,6 +60,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.CommentManager;
@@ -211,6 +212,8 @@ public class PS {
             SchematicHandler.manager = IMP.initSchematicHandler();
             // Titles
             AbstractTitle.TITLE_CLASS = IMP.initTitleManager();
+            // Chat
+            ChatManager.manager = IMP.initChatManager();
             
             // Check for updates
             TaskManager.runTaskAsync(new Runnable() {

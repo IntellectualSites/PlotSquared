@@ -152,7 +152,7 @@ public class BukkitPlayer extends PlotPlayer {
     @Override
     public void setAttribute(String key) {
         key = "plotsquared_user_attributes." + key;
-        if (EconHandler.manager == null) {
+        if (EconHandler.manager == null || player.hasPermission("plotsquared_user_attributes.*")) {
             setMeta(key, true);
             return;
         }

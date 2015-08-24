@@ -35,6 +35,7 @@ import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.BlockUpdateUtil;
+import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ConsoleColors;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -64,12 +65,14 @@ import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
 import com.plotsquared.bukkit.listeners.worldedit.WESubscriber;
 import com.plotsquared.bukkit.titles.DefaultTitle;
+import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
 import com.plotsquared.bukkit.util.BukkitCommand;
 import com.plotsquared.bukkit.util.BukkitEconHandler;
 import com.plotsquared.bukkit.util.BukkitEventUtil;
 import com.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.plotsquared.bukkit.util.BukkitInventoryUtil;
+import com.plotsquared.bukkit.util.BukkitPlainChatManager;
 import com.plotsquared.bukkit.util.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitSetBlockManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
@@ -636,5 +639,15 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         PS.debug("Unknown NMS package: " + StringMan.getString(pas));
         return "1_8_R3";
+    }
+
+    @Override
+    public ChatManager<?> initChatManager() {
+        if (Settings.FANCY_CHAT) {
+            return new BukkitChatManager();
+        }
+        else {
+            return new BukkitPlainChatManager();
+        }
     }
 }

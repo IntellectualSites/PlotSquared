@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
@@ -67,6 +68,12 @@ public interface IPlotMain {
      * @return
      */
     SchematicHandler initSchematicHandler();
+    
+    /**
+     * Get the schematic handler
+     * @return
+     */
+    ChatManager initChatManager();
     
     /**
      * The task manager will run and manage minecraft tasks

@@ -50,6 +50,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
@@ -66,6 +67,7 @@ import com.plotsquared.sponge.generator.WorldModify;
 import com.plotsquared.sponge.listener.MainListener;
 import com.plotsquared.sponge.util.KillRoadMobs;
 import com.plotsquared.sponge.util.SpongeBlockManager;
+import com.plotsquared.sponge.util.SpongeChatManager;
 import com.plotsquared.sponge.util.SpongeChunkManager;
 import com.plotsquared.sponge.util.SpongeCommand;
 import com.plotsquared.sponge.util.SpongeEventUtil;
@@ -228,10 +230,6 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         //
         
         PS.instance = new PS(this, "Sponge");
-        
-        // TODO Until P^2 has json chat stuff for sponge, disable this
-        Settings.FANCY_CHAT = false;
-        // done
         
         registerBlocks();
         
@@ -637,5 +635,10 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     @Override
     public String getNMSPackage() {
         return "1_8_R3";
+    }
+
+    @Override
+    public ChatManager<?> initChatManager() {
+        return new SpongeChatManager();
     }
 }

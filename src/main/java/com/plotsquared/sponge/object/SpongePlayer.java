@@ -10,7 +10,9 @@ import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.entity.player.gamemode.GameMode;
 import org.spongepowered.api.entity.player.gamemode.GameModes;
+import org.spongepowered.api.text.TextBuilder;
 import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.action.HoverAction;
 import org.spongepowered.api.text.chat.ChatTypes;
 
 import com.flowpowered.math.vector.Vector3d;
