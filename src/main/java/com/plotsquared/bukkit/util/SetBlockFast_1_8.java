@@ -75,10 +75,13 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             
             @Override
             public void run() {
+                if (toUpdate.size() == 0) {
+                    return;
+                }
                 int count = 0;
                 ArrayList<Chunk> chunks = new ArrayList<Chunk>();
                 Iterator<Entry<ChunkLoc, Chunk>> i = toUpdate.entrySet().iterator();
-                while (i.hasNext() && count < 1024) {
+                while (i.hasNext() && count < 128) {
                     chunks.add(i.next().getValue());
                     i.remove();
                     count++;
@@ -88,7 +91,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
                 }
                 update(chunks);
             }
-        }, 20);
+        }, 1);
         this.chunksender = new SendChunk();
     }
 
