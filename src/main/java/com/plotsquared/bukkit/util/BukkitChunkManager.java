@@ -102,7 +102,7 @@ public class BukkitChunkManager extends ChunkManager {
         World worldObj = Bukkit.getWorld(world);
 //        Chunk chunk = worldObj.getChunkAt(loc.x, loc.z);
         worldObj.regenerateChunk(loc.x, loc.z);
-        if (MainUtil.canSendChunk && BlockUpdateUtil.setBlockManager != null) {
+        if (BlockUpdateUtil.setBlockManager != null) {
             BlockUpdateUtil.setBlockManager.update(world, Arrays.asList(loc));
         }
         for (final Player player : worldObj.getPlayers()) {

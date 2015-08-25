@@ -409,6 +409,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 new SendChunk();
                 MainUtil.canSendChunk = true;
             } catch (final Throwable e) {
+                e.printStackTrace();
                 MainUtil.canSendChunk = false;
             }
         } else {

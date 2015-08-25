@@ -48,6 +48,7 @@ public class SendChunk {
     private RefConstructor MapChunk;
     private RefField connection;
     private RefMethod send;
+    private RefMethod methodInitLighting;
 
     /**
      * Constructor
@@ -57,6 +58,7 @@ public class SendChunk {
     public SendChunk() throws NoSuchMethodException {
         methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
         methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
+        methodInitLighting = classChunk.getMethod("initLighting");
         MapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
         connection = classEntityPlayer.getField("playerConnection");
         send = classConnection.getMethod("sendPacket", classPacket.getRealClass());
@@ -104,8 +106,8 @@ public class SendChunk {
                 if (dx > view || dz > view) {
                     continue;
                 }
-                net.minecraft.server.v1_8_R2.Chunk c = (net.minecraft.server.v1_8_R2.Chunk) methodGetHandleChunk.of(chunk).call();
-                c.initLighting();
+                Object c = methodGetHandleChunk.of(chunk).call();
+                methodInitLighting.of(c).call();
                 chunks.remove(chunk);
                 Object con = connection.of(entity).get();
 //                if (dx != 0 || dz != 0) {
