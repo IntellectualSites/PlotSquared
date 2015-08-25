@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.listeners.worldedit;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 
 import com.intellectualcrafters.plot.PS;
@@ -27,11 +28,20 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     boolean BSblocked = false;
     boolean Eblocked = false;
     private String world;
+    private int max;
+    private int count;
+    private Extent parent;
  
-    public ProcessedWEExtent(String world, HashSet<RegionWrapper> mask, Extent extent) {
-        super(extent);
+    public ProcessedWEExtent(String world, HashSet<RegionWrapper> mask, int max, Extent child, Extent parent) {
+        super(child);
         this.mask = mask;
         this.world = world;
+        if (max == -1) {
+            max = Integer.MAX_VALUE;
+        }
+        this.max = max;
+        this.count = 0;
+        this.parent = parent;
     }
     
     @Override
@@ -82,6 +92,19 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                     PS.debug("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
                 }
                 if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
+                    if (count++ > max) {
+                        if (parent != null) {
+                            try {
+                                Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
+                                field.setAccessible(true);
+                                field.set(parent, new NullExtent());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            parent = null;
+                        }
+                        return false;
+                    }
                     return super.setBlock(location, block);
                 }
                 break;
@@ -91,6 +114,19 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 int y = location.getBlockY();
                 int z = location.getBlockZ();
                 if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
+                    if (count++ > max) {
+                        if (parent != null) {
+                            try {
+                                Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
+                                field.setAccessible(true);
+                                field.set(parent, new NullExtent());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            parent = null;
+                        }
+                        return false;
+                    }
                     switch(id) {
                         case 0:
                         case 2:
