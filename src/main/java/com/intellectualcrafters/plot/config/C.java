@@ -142,6 +142,8 @@ public enum C {
     /*
      * WorldEdit masks
      */
+    WORLDEDIT_DELAYED("$2Please wait while we process your WorldEdit action...", "WorldEdit Masks"),
+    WORLDEDIT_RUN("$2Apologies for the delay. Now executing: %s", "WorldEdit Masks"),
     REQUIRE_SELECTION_IN_MASK("$2%s of your selection is not within your plot mask. You can only make edits within your plot.", "WorldEdit Masks"),
     WORLDEDIT_VOLUME("$2You cannot select a volume of %current%. The maximum volume you can modify is %max%.", "WorldEdit Masks"),
     WORLDEDIT_ITERATIONS("$2You cannot iterate %current% times. The maximum number of iterations allowed is %max%.", "WorldEdit Masks"),

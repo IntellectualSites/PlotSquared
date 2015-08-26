@@ -1,7 +1,7 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.PS;
@@ -14,7 +14,7 @@ public class SetBlockQueue {
     private volatile static int allocate = 25;
     private volatile static boolean running = false;
     private volatile static boolean locked = false;
-    private volatile static HashSet<Runnable> runnables;
+    private volatile static ArrayDeque<Runnable> runnables;
     private volatile static boolean slow = false;
     private static long last;
     private static int lastInt = 0;
@@ -32,15 +32,22 @@ public class SetBlockQueue {
         slow = value;
     }
     
-    public synchronized static void addNotify(Runnable whenDone) {
+    public synchronized static boolean addNotify(Runnable whenDone) {
         if (runnables == null) {
-            TaskManager.runTask(whenDone);
-            slow = false;
-            locked = false;
+            if (blocks == null) {
+                if (whenDone != null) {
+                    whenDone.run();
+                }
+                slow = false;
+                locked = false;
+                return true;
+            }
+            runnables = new ArrayDeque<>();
         }
-        else {
+        if (whenDone != null) {
             runnables.add(whenDone);
         }
+        return false;
     }
 
     public synchronized static void init() {
@@ -49,7 +56,7 @@ public class SetBlockQueue {
                 MainUtil.initCache();
             }
             blocks = new HashMap<>();
-            runnables = new HashSet<>();
+            runnables = new ArrayDeque<>();
         }
         if (!running) {
             TaskManager.index.incrementAndGet();
@@ -62,17 +69,18 @@ public class SetBlockQueue {
                     }
                     if (blocks == null || blocks.size() == 0) {
                         PS.get().TASK.cancelTask(TaskManager.tasks.get(current));
-                        if (runnables != null) {
-                            for (Runnable runnable : runnables) {
-                                TaskManager.runTask(runnable);
-                            }
-                        }
+                        ArrayDeque<Runnable> tasks = runnables;
                         lastInt = -1;
                         lastBlock = null;
                         runnables = null;
-                        blocks = new HashMap<>();
+                        blocks = null;
                         running = false;
                         slow = false;
+                        if (tasks != null) {
+                            for (Runnable runnable : tasks) {
+                                runnable.run();
+                            }
+                        }
                         return;
                     }
                     long newLast = System.currentTimeMillis();

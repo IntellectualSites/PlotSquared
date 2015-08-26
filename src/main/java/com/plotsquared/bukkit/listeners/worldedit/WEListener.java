@@ -3,7 +3,9 @@ package com.plotsquared.bukkit.listeners.worldedit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -19,8 +21,10 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.SetBlockFast;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.bukkit.selections.Selection;
  
@@ -39,6 +43,7 @@ public class WEListener implements Listener {
     public final HashSet<String> unregioned = new HashSet<>(Arrays.asList("paste", "redo", "undo", "rotate", "flip", "generate", "schematic", "schem"));
     public final HashSet<String> unsafe1 =  new HashSet<>(Arrays.asList("cs", ".s", "restore", "snapshot", "delchunks", "listchunks"));
     public final HashSet<String> restricted = new HashSet<>(Arrays.asList("up"));
+    public final HashSet<String> other = new HashSet<>(Arrays.asList("undo", "redo"));
     
     public boolean checkCommand(List<String> list, String cmd) {
         for (String identifier : list) {
@@ -134,6 +139,36 @@ public class WEListener implements Listener {
         return checkVolume(pp, volume, max, e);
     }
     
+    private boolean set = false;
+    
+    public boolean delay(final Player player, final String command, boolean delayed) {
+        if (!Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT || set) {
+            return false;
+        }
+        boolean free = SetBlockQueue.addNotify(null);
+        if (free) {
+            if (delayed) {
+                MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.WORLDEDIT_RUN, command);
+                Bukkit.getServer().dispatchCommand(player, command.substring(1));
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            if (!delayed) {
+                MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.WORLDEDIT_DELAYED);
+            }
+            SetBlockQueue.addNotify(new Runnable() {
+                @Override
+                public void run() {
+                    delay(player, command, true);
+                }
+            });
+        }
+        return true;
+    }
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public boolean onPlayerCommand(final PlayerCommandPreprocessEvent e) {
         final Player p = e.getPlayer();
@@ -141,23 +176,26 @@ public class WEListener implements Listener {
         if (!PS.get().isPlotWorld(p.getWorld().getName())) {
             return true;
         }
-        String cmd = e.getMessage().toLowerCase();
+        String message = e.getMessage();
+        String cmd = message.toLowerCase();
         boolean single = true;
         String[] split = cmd.split(" ");
         
         long maxVolume = Settings.WE_MAX_VOLUME;
         long maxIterations = Settings.WE_MAX_ITERATIONS;
-        if (pp.getAttribute("worldedit" )) {
+        if (pp.getAttribute("worldedit")) {
             return true;
         }
         if (split.length >= 2) {
             String reduced = reduceCmd(split[0], single);
             String reduced2 = reduceCmd(split[0] + " " + split[1], single);
             if (rad1.contains(reduced)) {
+                if (delay(p, message, false)) { e.setCancelled(true); return true; }
                 long volume = getInt(split[1]) * 256;
                 return checkVolume(pp, volume, maxVolume, e);
             }
             if (rad2.contains(reduced)) {
+                if (delay(p, message, false)) { e.setCancelled(true); return true; }
                 if (split.length >= 3) {
                     long volume = getInt(split[2]) * 256;
                     return checkVolume(pp, volume, maxVolume, e);
@@ -165,6 +203,7 @@ public class WEListener implements Listener {
                 return true;
             }
             if (rad2_1.contains(reduced)) {
+                if (delay(p, message, false)) { e.setCancelled(true); return true; }
                 if (split.length >= 4) {
                     long volume = getInt(split[2]) * getInt(split[3]);
                     return checkVolume(pp, volume, maxVolume, e);
@@ -172,6 +211,7 @@ public class WEListener implements Listener {
                 return true;
             }
             if (rad2_2.contains(reduced)) {
+                if (delay(p, message, false)) { e.setCancelled(true); return true; }
                 if (split.length >= 3) {
                     long radius = getInt(split[2]);
                     long volume = radius * radius;
@@ -180,6 +220,7 @@ public class WEListener implements Listener {
                 return true;
             }
             if (rad2_3.contains(reduced2)) {
+                if (delay(p, message, false)) { e.setCancelled(true); return true; }
                 if (split.length >= 3) {
                     if (split.length == 4) {
                         int iterations = getInt(split[3]);
@@ -199,6 +240,7 @@ public class WEListener implements Listener {
                 return true;
             }
             if (rad3_1.contains(reduced2)) {
+                if (delay(p, message, false)) { e.setCancelled(true); return true; }
                 if (split.length >= 3) {
                     int i = 2;
                     if (split[i].equalsIgnoreCase("-h")) {
@@ -211,6 +253,7 @@ public class WEListener implements Listener {
                 return true;
             }
             if (rad3_2.contains(reduced2)) {
+                if (delay(p, message, false)) { e.setCancelled(true); return true; }
                 if (split.length >= 4) {
                     int i = 3;
                     if (split[i].equalsIgnoreCase("-h")) {
@@ -223,6 +266,7 @@ public class WEListener implements Listener {
                 return true;
             }
             if (regionExtend.contains(reduced)) {
+                if (delay(p, message, false)) { e.setCancelled(true); return true; }
                 return checkSelection(p, pp, getInt(split[1]), maxVolume, e);
             }
         }
@@ -237,6 +281,7 @@ public class WEListener implements Listener {
         if (restricted.contains(reduced)) {
             Plot plot = MainUtil.getPlot(pp.getLocation());
             if (plot != null && plot.isAdded(pp.getUUID())) {
+                if (delay(p, message, false)) { e.setCancelled(true); return true; }
                 return true;
             }
             e.setCancelled(true);
@@ -247,7 +292,11 @@ public class WEListener implements Listener {
             return true;
         }
         if (region.contains(reduced)) {
+            if (delay(p, message, false)) { e.setCancelled(true); return true; }
             return checkSelection(p, pp, 1, maxVolume, e);
+        }
+        if (other.contains(reduced)) {
+            if (delay(p, message, false)) { e.setCancelled(true); return true; }
         }
         return true;
     }
