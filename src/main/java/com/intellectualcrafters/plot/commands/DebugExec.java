@@ -99,7 +99,6 @@ public class DebugExec extends SubCommand {
                     engine.eval(script, scope);
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
     

@@ -41,7 +41,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         command = "bo3",
         aliases = {"bo2"},
         description = "Mark a plot as done",
-        permission = "plots.done",
+        permission = "plots.bo3",
         category = CommandCategory.ACTIONS,
         requiredType = RequiredType.NONE
 )

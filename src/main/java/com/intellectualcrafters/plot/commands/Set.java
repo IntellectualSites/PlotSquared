@@ -238,14 +238,6 @@ public class Set extends SubCommand {
                 return true;
             }
             final int biome = BlockManager.manager.getBiomeFromString(args[1]);
-            /*
-             * for (Biome b : Biome.values()) {
-             * if (b.toString().equalsIgnoreCase(args[1])) {
-             * biome = b;
-             * break;
-             * }
-             * }
-             */
             if (biome == -1) {
                 MainUtil.sendMessage(plr, getBiomeList(BlockManager.manager.getBiomeList()));
                 return true;
