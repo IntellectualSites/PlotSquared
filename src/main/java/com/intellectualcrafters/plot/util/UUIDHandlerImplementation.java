@@ -90,15 +90,20 @@ public abstract class UUIDHandlerImplementation {
         if ((uuid == null) || (name == null)) {
             return false;
         }
-        BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
-        if (inverse.containsKey(uuid)) {
-            if (uuidMap.containsKey(name)) {
+        try {
+            uuidMap.put(name, uuid);
+        }
+        catch (Exception e) {
+            BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
+            if (inverse.containsKey(uuid)) {
+                if (uuidMap.containsKey(name)) {
+                    return false;
+                }
+                rename(uuid, name);
                 return false;
             }
-            rename(uuid, name);
-            return false;
+            uuidMap.put(name, uuid);
         }
-        uuidMap.put(name, uuid);
         return true;
     }
     

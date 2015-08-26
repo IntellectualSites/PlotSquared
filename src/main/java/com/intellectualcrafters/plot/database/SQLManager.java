@@ -439,7 +439,7 @@ public class SQLManager implements AbstractDB {
                                             }
                                         }
                                     }
-                            }
+                                }
                             }
                             createSettings(settings, new Runnable() {
                                 @Override
@@ -977,9 +977,12 @@ public class SQLManager implements AbstractDB {
         final DatabaseMetaData meta = connection.getMetaData();
         int create = 0;
         for (final String s : tables) {
-            ResultSet set = meta.getTables(null, null, prefix + s, null);
+            ResultSet set = meta.getTables(null, null, prefix + s, new String[] {"TABLE"});
+//            ResultSet set = meta.getTables(null, null, prefix + s, null);
             if (!set.next()) {
                 create++;
+            }
+            else {
             }
             set.close();
         }
@@ -2390,34 +2393,30 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public boolean deleteTables() {
-        addGlobalTask(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    close();
-                    SQLManager.this.connection = database.forceConnection();
-                    final Statement stmt = connection.createStatement();
-                    stmt.addBatch("DROP TABLE `" + prefix + "cluster_invited`");
-                    stmt.addBatch("DROP TABLE `" + prefix + "cluster_helpers`");
-                    stmt.addBatch("DROP TABLE `" + prefix + "cluster`");
-                    stmt.addBatch("DROP TABLE `" + prefix + "plot_rating`");
-                    stmt.addBatch("DROP TABLE `" + prefix + "plot_settings`");
-                    stmt.addBatch("DROP TABLE `" + prefix + "plot_comments`");
-                    stmt.addBatch("DROP TABLE `" + prefix + "plot_trusted`");
-                    stmt.addBatch("DROP TABLE `" + prefix + "plot_helpers`");
-                    stmt.addBatch("DROP TABLE `" + prefix + "plot_denied`");
-                    stmt.executeBatch();
-                    stmt.clearBatch();
-                    stmt.close();
-        
-                    PreparedStatement statement = connection.prepareStatement("DROP TABLE `" + prefix + "plot`");
-                    statement.executeUpdate();
-                    statement.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        try {
+            close();
+            CLOSED = false;
+            SQLManager.this.connection = database.forceConnection();
+            final Statement stmt = connection.createStatement();
+            stmt.addBatch("DROP TABLE `" + prefix + "cluster_invited`");
+            stmt.addBatch("DROP TABLE `" + prefix + "cluster_helpers`");
+            stmt.addBatch("DROP TABLE `" + prefix + "cluster`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_rating`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_settings`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_comments`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_trusted`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_helpers`");
+            stmt.addBatch("DROP TABLE `" + prefix + "plot_denied`");
+            stmt.executeBatch();
+            stmt.clearBatch();
+            stmt.close();
+
+            PreparedStatement statement = connection.prepareStatement("DROP TABLE `" + prefix + "plot`");
+            statement.executeUpdate();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return true;
     }
 

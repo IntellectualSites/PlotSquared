@@ -3,6 +3,9 @@ package com.plotsquared.bukkit.uuid;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import com.google.common.collect.HashBiMap;
-import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -23,6 +25,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.NbtFactory;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
@@ -56,6 +59,36 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             @Override
             public void run() {
                 PS.debug(C.PREFIX.s() + "&6Starting player data caching for: " + world);
+                File uuidfile = new File(PS.get().IMP.getDirectory(), "uuids.txt");
+                if (uuidfile.exists()) {
+                    try {
+                        List<String> lines = Files.readAllLines(uuidfile.toPath(), StandardCharsets.UTF_8);
+                        for (String line : lines) {
+                            try {
+                                line = line.trim();
+                                if (line.length() == 0) {
+                                    continue;
+                                }
+                                line = line.replaceAll("[\\|][0-9]+[\\|][0-9]+[\\|]", "");
+                                String[] split = line.split("\\|");
+                                String name = split[0];
+                                if (name.length() == 0 || name.length() > 16 || !StringMan.isAlphanumericUnd(name)) {
+                                    continue;
+                                }
+                                UUID uuid = uuidWrapper.getUUID(name);
+                                if (uuid == null) {
+                                    continue;
+                                }
+                                UUIDHandler.add(new StringWrapper(name), uuid);
+                            }
+                            catch (Exception e2) {
+                                e2.printStackTrace();
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 if (Settings.TWIN_MODE_UUID) {
                     final HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
                     toAdd.put(new StringWrapper("*"), DBFunc.everyone);
@@ -76,7 +109,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 UUID uuid = UUID.fromString(s);
                                 if (check || all.remove(uuid)) {
                                     File file = new File(playerdataFolder + File.separator + current);
-                                    InputSupplier<FileInputStream> is = Files.newInputStreamSupplier(file);
+                                    InputSupplier<FileInputStream> is = com.google.common.io.Files.newInputStreamSupplier(file);
                                     NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
                                     NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
                                     String name = (String) bukkit.get("lastKnownName");
@@ -146,7 +179,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 for (UUID uuid : uuids) {
                     try {
                         File file = new File(playerdataFolder + File.separator + uuid.toString() + ".dat");
-                        InputSupplier<FileInputStream> is = Files.newInputStreamSupplier(file);
+                        InputSupplier<FileInputStream> is = com.google.common.io.Files.newInputStreamSupplier(file);
                         NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
                         NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
                         String name = (String) bukkit.get("lastKnownName");

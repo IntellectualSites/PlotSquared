@@ -22,9 +22,13 @@ package com.intellectualcrafters.plot.commands;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -40,6 +44,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
@@ -69,8 +74,8 @@ public class DebugUUID extends SubCommand {
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         PlotPlayer player = null;
 
-        UUIDWrapper currentUUIDWrapper = UUIDHandler.getUUIDWrapper();
-        UUIDWrapper newWrapper = null;
+        final UUIDWrapper currentUUIDWrapper = UUIDHandler.getUUIDWrapper();
+        final UUIDWrapper newWrapper;
         
         switch (args[0].toLowerCase()) {
             case "lower": {
@@ -121,8 +126,8 @@ public class DebugUUID extends SubCommand {
         
         MainUtil.sendConsoleMessage("&7 - Initializing map");
         
-        HashMap<UUID, UUID> uCMap = new HashMap<UUID, UUID>();
-        HashMap<UUID, UUID> uCReverse = new HashMap<UUID, UUID>();
+        final HashMap<UUID, UUID> uCMap = new HashMap<UUID, UUID>();
+        final HashMap<UUID, UUID> uCReverse = new HashMap<UUID, UUID>();
         
         MainUtil.sendConsoleMessage("&7 - Collecting playerdata");
 
@@ -172,7 +177,7 @@ public class DebugUUID extends SubCommand {
                 final OfflinePlotPlayer op = wrapper.getOfflinePlayer(uuid);
                 uuid = currentUUIDWrapper.getUUID(op);
                 uuid2 = newWrapper.getUUID(op);
-                if (!uuid.equals(uuid2)) {
+                if (!uuid.equals(uuid2) && !uCMap.containsKey(uuid) && !uCReverse.containsKey(uuid2)) {
                     uCMap.put(uuid, uuid2);
                     uCReverse.put(uuid2, uuid);
                 }
@@ -192,8 +197,8 @@ public class DebugUUID extends SubCommand {
             MainUtil.sendConsoleMessage("&c - Error! Attempting to repopulate");
             for (OfflinePlotPlayer op : currentUUIDWrapper.getOfflinePlayers()) {
                 if (op.getLastPlayed() != 0) {
-                    String name = op.getName();
-                    StringWrapper wrap = new StringWrapper(name);
+//                    String name = op.getName();
+//                    StringWrapper wrap = new StringWrapper(name);
                     UUID uuid = currentUUIDWrapper.getUUID(op);
                     uuid2 = newWrapper.getUUID(op);
                     if (!uuid.equals(uuid2)) {
@@ -212,92 +217,135 @@ public class DebugUUID extends SubCommand {
         }
         
         MainUtil.sendConsoleMessage("&7 - Replacing cache");
-        for (Entry<UUID, UUID> entry : uCMap.entrySet()) {
-            String name = UUIDHandler.getName(entry.getKey());
-            UUIDHandler.add(new StringWrapper(name), entry.getValue());
-        }
-        
-        MainUtil.sendConsoleMessage("&7 - Replacing wrapper");
-        UUIDHandler.setUUIDWrapper(newWrapper);
-        
-        MainUtil.sendConsoleMessage("&7 - Updating plot objects");
-
-        for (Plot plot : PS.get().getPlotsRaw()) {
-            UUID value = uCMap.get(plot.owner);
-            if (value != null) {
-                plot.owner = value;
-            }
-            plot.getTrusted().clear();
-            plot.getMembers().clear();
-            plot.getDenied().clear();
-        }
-        
-        MainUtil.sendConsoleMessage("&7 - Deleting database");
-        final AbstractDB database = DBFunc.dbManager;
-        boolean result = database.deleteTables();
-
-        MainUtil.sendConsoleMessage("&7 - Creating tables");
-        
-        try {
-            database.createTables();
-            if (!result) {
-                MainUtil.sendConsoleMessage("&cConversion failed! Attempting recovery");
-                for (Plot plot : PS.get().getPlots()) {
-                    UUID value = uCReverse.get(plot.owner);
-                    if (value != null) {
-                        plot.owner = value;
-                    }
-                }
-                database.createPlotsAndData(new ArrayList<>(PS.get().getPlots()), new Runnable() {
-                    @Override
-                    public void run() {
-                        MainUtil.sendMessage(null, "&6Recovery was successful!");
-                    }
-                });
-                return false;
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        
-        if (newWrapper instanceof OfflineUUIDWrapper) {
-            PS.get().config.set("UUID.force-lowercase", false);
-            PS.get().config.set("UUID.offline", true);
-        }
-        else if (newWrapper instanceof LowerOfflineUUIDWrapper) {
-            PS.get().config.set("UUID.force-lowercase", true);
-            PS.get().config.set("UUID.offline", true);
-        }
-        else if (newWrapper instanceof DefaultUUIDWrapper) {
-            PS.get().config.set("UUID.force-lowercase", false);
-            PS.get().config.set("UUID.offline", false);
-        }
-        try {
-            PS.get().config.save(PS.get().configFile);
-        }
-        catch (Exception e) {
-            MainUtil.sendConsoleMessage("Could not save configuration. It will need to be manuall set!");
-        }
-        
-        MainUtil.sendConsoleMessage("&7 - Populating tables");
-        
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
-                database.createPlotsAndData(plots, new Runnable() {
+                for (Entry<UUID, UUID> entry : uCMap.entrySet()) {
+                    String name = UUIDHandler.getName(entry.getKey());
+                    if (name != null) {
+                        UUIDHandler.add(new StringWrapper(name), entry.getValue());
+                    }
+                }
+                
+                MainUtil.sendConsoleMessage("&7 - Scanning for applicable files (uuids.txt)");
+                
+                File file = new File(PS.get().IMP.getDirectory(), "uuids.txt");
+                if (file.exists()) {
+                    try {
+                        List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+                        for (String line : lines) {
+                            try {
+                                line = line.trim();
+                                if (line.length() == 0) {
+                                    continue;
+                                }
+                                line = line.replaceAll("[\\|][0-9]+[\\|][0-9]+[\\|]", "");
+                                String[] split = line.split("\\|");
+                                String name = split[0];
+                                if (name.length() == 0 || name.length() > 16 || !StringMan.isAlphanumericUnd(name)) {
+                                    continue;
+                                }
+                                UUID old = currentUUIDWrapper.getUUID(name);
+                                if (old == null) {
+                                    continue;
+                                }
+                                UUID now = newWrapper.getUUID(name);
+                                UUIDHandler.add(new StringWrapper(name), now);
+                                uCMap.put(old, now);
+                                uCReverse.put(now, old);
+                            }
+                            catch (Exception e2) {
+                                e2.printStackTrace();
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                
+                MainUtil.sendConsoleMessage("&7 - Replacing wrapper");
+                UUIDHandler.setUUIDWrapper(newWrapper);
+                
+                MainUtil.sendConsoleMessage("&7 - Updating plot objects");
+
+                for (Plot plot : PS.get().getPlotsRaw()) {
+                    UUID value = uCMap.get(plot.owner);
+                    if (value != null) {
+                        plot.owner = value;
+                    }
+                    plot.getTrusted().clear();
+                    plot.getMembers().clear();
+                    plot.getDenied().clear();
+                }
+                
+                MainUtil.sendConsoleMessage("&7 - Deleting database");
+                final AbstractDB database = DBFunc.dbManager;
+                boolean result = database.deleteTables();
+
+                MainUtil.sendConsoleMessage("&7 - Creating tables");
+                
+                try {
+                    database.createTables();
+                    if (!result) {
+                        MainUtil.sendConsoleMessage("&cConversion failed! Attempting recovery");
+                        for (Plot plot : PS.get().getPlots()) {
+                            UUID value = uCReverse.get(plot.owner);
+                            if (value != null) {
+                                plot.owner = value;
+                            }
+                        }
+                        database.createPlotsAndData(new ArrayList<>(PS.get().getPlots()), new Runnable() {
+                            @Override
+                            public void run() {
+                                MainUtil.sendMessage(null, "&6Recovery was successful!");
+                            }
+                        });
+                        return;
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+                
+                if (newWrapper instanceof OfflineUUIDWrapper) {
+                    PS.get().config.set("UUID.force-lowercase", false);
+                    PS.get().config.set("UUID.offline", true);
+                }
+                else if (newWrapper instanceof LowerOfflineUUIDWrapper) {
+                    PS.get().config.set("UUID.force-lowercase", true);
+                    PS.get().config.set("UUID.offline", true);
+                }
+                else if (newWrapper instanceof DefaultUUIDWrapper) {
+                    PS.get().config.set("UUID.force-lowercase", false);
+                    PS.get().config.set("UUID.offline", false);
+                }
+                try {
+                    PS.get().config.save(PS.get().configFile);
+                }
+                catch (Exception e) {
+                    MainUtil.sendConsoleMessage("Could not save configuration. It will need to be manuall set!");
+                }
+                
+                MainUtil.sendConsoleMessage("&7 - Populating tables");
+                
+                TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        MainUtil.sendConsoleMessage("&aConversion complete!");
+                        ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
+                        database.createPlotsAndData(plots, new Runnable() {
+                            @Override
+                            public void run() {
+                                MainUtil.sendConsoleMessage("&aConversion complete!");
+                            }
+                        });
                     }
                 });
+                
+                MainUtil.sendConsoleMessage("&aIt is now safe for players to join");
+                MainUtil.sendConsoleMessage("&cConversion is still in progress, you will be notified when it is complete");
             }
         });
-        
-        MainUtil.sendConsoleMessage("&aIt is now safe for players to join");
-        MainUtil.sendConsoleMessage("&cConversion is still in progress, you will be notified when it is complete");
         return true;
     }
 }

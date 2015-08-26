@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.util;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.PS;
@@ -89,7 +90,11 @@ public class SetBlockQueue {
                         if (locked) {
                             return;
                         }
-                        Entry<ChunkWrapper, PlotBlock[][]> n = blocks.entrySet().iterator().next();
+                        Iterator<Entry<ChunkWrapper, PlotBlock[][]>> iter = blocks.entrySet().iterator();
+                        if (!iter.hasNext()) {
+                            return;
+                        }
+                        Entry<ChunkWrapper, PlotBlock[][]> n = iter.next();
                         ChunkWrapper chunk = n.getKey();
                         PlotBlock[][] blocks = n.getValue();
                         int X = chunk.x << 4;
