@@ -76,6 +76,8 @@ public class SendChunk {
                 map.put(world, list);
             }
             list.add(chunk);
+            Object c = methodGetHandleChunk.of(chunk).call();
+            methodInitLighting.of(c).call();
         }
         for (PlotPlayer pp : UUIDHandler.getPlayers().values() ) {
             Plot plot = pp.getCurrentPlot();
@@ -107,7 +109,6 @@ public class SendChunk {
                     continue;
                 }
                 Object c = methodGetHandleChunk.of(chunk).call();
-                methodInitLighting.of(c).call();
                 chunks.remove(chunk);
                 Object con = connection.of(entity).get();
 //                if (dx != 0 || dz != 0) {
