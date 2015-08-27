@@ -136,6 +136,7 @@ public class Inbox extends SubCommand {
                 case "delete": {
                     if (!inbox.canModify(plot, player)) {
                         sendMessage(player, C.NO_PERM_INBOX_MODIFY);
+                        return false;
                     }
                     if (args.length != 3) {
                         sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox " + inbox.toString() + " delete <index>");

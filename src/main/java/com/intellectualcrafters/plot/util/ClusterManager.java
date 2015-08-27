@@ -216,6 +216,10 @@ public class ClusterManager {
     }
 
     public static PlotId estimatePlotId(final Location loc) {
+        Plot plot = MainUtil.getPlot(loc);
+        if (plot != null) {
+            return plot.id;
+        }
         final PlotId a = new PlotId(0, 0);
         final PlotId b = new PlotId(1, 1);
         int xw;
