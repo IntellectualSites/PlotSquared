@@ -27,6 +27,12 @@ public class WEManager {
     public static HashSet<RegionWrapper> getMask(PlotPlayer player) {
         HashSet<RegionWrapper> regions = new HashSet<>();
         UUID uuid = player.getUUID();
+        Location location = player.getLocation();
+        String world = location.getWorld();
+        if (!PS.get().isPlotWorld(world)) {
+            regions.add(new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE));
+            return regions;
+        }
         for (Plot plot : PS.get().getPlotsInWorld(player.getLocation().getWorld())) {
             if (!plot.isBasePlot() || (Settings.DONE_RESTRICTS_BUILDING && FlagManager.getPlotFlag(plot, "done") != null)) {
                 continue;

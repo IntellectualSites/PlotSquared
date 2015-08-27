@@ -23,6 +23,7 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.ChangeSetExtent;
 import com.sk89q.worldedit.extent.Extent;
+import com.sk89q.worldedit.extent.MaskingExtent;
 import com.sk89q.worldedit.extent.cache.LastAccessExtentCache;
 import com.sk89q.worldedit.extent.inventory.BlockBagExtent;
 import com.sk89q.worldedit.extent.reorder.MultiStageReorder;
@@ -31,6 +32,7 @@ import com.sk89q.worldedit.extent.world.BlockQuirkExtent;
 import com.sk89q.worldedit.extent.world.ChunkLoadingExtent;
 import com.sk89q.worldedit.extent.world.FastModeExtent;
 import com.sk89q.worldedit.extent.world.SurvivalModeExtent;
+import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
@@ -41,9 +43,6 @@ public class WESubscriber {
     public void onEditSession(EditSessionEvent event) {
         World worldObj = event.getWorld();
         String world = worldObj.getName();
-        if (!PS.get().isPlotWorld(world)) {
-            return;
-        }
         Actor actor = event.getActor();
         if (actor != null && actor.isPlayer()) {
             String name = actor.getName();
@@ -58,16 +57,21 @@ public class WESubscriber {
                 if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
                     MainUtil.sendMessage(player, C.WORLDEDIT_BYPASS);
                 }
-                event.setExtent(new NullExtent());
+                if (PS.get().isPlotWorld(world)) {
+                    event.setExtent(new NullExtent());
+                }
                 return;
             }
             if (Settings.CHUNK_PROCESSOR) {
                 if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
                     try {
+                        LocalSession session = ((BukkitMain) PS.get().IMP).worldEdit.getWorldEdit().getSession(name);
+                        boolean hasMask = session.getMask() != null;
                         AbstractDelegateExtent extent = (AbstractDelegateExtent) event.getExtent();
                         ChangeSetExtent history = null;
                         MultiStageReorder reorder = null;
-                        boolean fast = ((BukkitMain) PS.get().IMP).worldEdit.getWorldEdit().getSession(name).hasFastMode();
+                        MaskingExtent maskextent = null;
+                        boolean fast = session.hasFastMode();
                         while (extent.getExtent() != null && extent.getExtent() instanceof AbstractDelegateExtent) {
                             AbstractDelegateExtent tmp = (AbstractDelegateExtent) extent.getExtent();
                             if (tmp.getExtent() != null && tmp.getExtent() instanceof AbstractDelegateExtent) {
@@ -76,6 +80,9 @@ public class WESubscriber {
                                 }
                                 if (tmp instanceof MultiStageReorder) {
                                     reorder = (MultiStageReorder) tmp;
+                                }
+                                if (hasMask && tmp instanceof MaskingExtent) {
+                                    maskextent = tmp;
                                 }
                                 extent = tmp;
                             }
@@ -96,8 +103,15 @@ public class WESubscriber {
                                 event.setExtent(new ExtentWrapper(extent));
                             }
                             else {
-                                ExtentWrapper wrapper = new ExtentWrapper(history);
-                                event.setExtent(wrapper);
+                                if (maskextent != null) {
+                                    ExtentWrapper wrapper = new ExtentWrapper(maskextent);
+                                    field.set(maskextent, history);
+                                    event.setExtent(wrapper);
+                                }
+                                else {
+                                    ExtentWrapper wrapper = new ExtentWrapper(history);
+                                    event.setExtent(wrapper);
+                                }
                                 field.set(history, reorder);
                                 field.set(reorder, new ProcessedWEExtent(world, mask, max, new FastModeExtent(worldObj, true), wrapper));
                             }
@@ -108,9 +122,11 @@ public class WESubscriber {
                         e.printStackTrace();
                     }
                 }
-                event.setExtent(new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(), event.getExtent()));
+                if (PS.get().isPlotWorld(world)) {
+                    event.setExtent(new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(), event.getExtent()));
+                }
             }
-            else {
+            else if (PS.get().isPlotWorld(world)) {
                 event.setExtent(new WEExtent(mask, event.getExtent()));
             }
         }

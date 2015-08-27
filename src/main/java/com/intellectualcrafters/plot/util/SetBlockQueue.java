@@ -35,7 +35,7 @@ public class SetBlockQueue {
     
     public synchronized static boolean addNotify(Runnable whenDone) {
         if (runnables == null) {
-            if (blocks == null) {
+            if (blocks == null || blocks.size() == 0) {
                 if (whenDone != null) {
                     whenDone.run();
                 }
@@ -46,7 +46,22 @@ public class SetBlockQueue {
             runnables = new ArrayDeque<>();
         }
         if (whenDone != null) {
+            init();
             runnables.add(whenDone);
+        }
+        if (blocks == null || blocks.size() == 0) {
+            ArrayDeque<Runnable> tasks = runnables;
+            lastInt = -1;
+            lastBlock = null;
+            runnables = null;
+            running = false;
+            blocks = null;
+            slow = false;
+            if (tasks != null) {
+                for (Runnable runnable : tasks) {
+                    runnable.run();
+                }
+            }
         }
         return false;
     }
@@ -66,6 +81,7 @@ public class SetBlockQueue {
                 @Override
                 public void run() {
                     if (locked) {
+                        System.out.print("LOCKED!");
                         return;
                     }
                     if (blocks == null || blocks.size() == 0) {
@@ -74,8 +90,8 @@ public class SetBlockQueue {
                         lastInt = -1;
                         lastBlock = null;
                         runnables = null;
-                        blocks = null;
                         running = false;
+                        blocks = null;
                         slow = false;
                         if (tasks != null) {
                             for (Runnable runnable : tasks) {
@@ -92,6 +108,19 @@ public class SetBlockQueue {
                         }
                         Iterator<Entry<ChunkWrapper, PlotBlock[][]>> iter = blocks.entrySet().iterator();
                         if (!iter.hasNext()) {
+                            PS.get().TASK.cancelTask(TaskManager.tasks.get(current));
+                            ArrayDeque<Runnable> tasks = runnables;
+                            lastInt = -1;
+                            lastBlock = null;
+                            runnables = null;
+                            running = false;
+                            blocks = null;
+                            slow = false;
+                            if (tasks != null) {
+                                for (Runnable runnable : tasks) {
+                                    runnable.run();
+                                }
+                            }
                             return;
                         }
                         Entry<ChunkWrapper, PlotBlock[][]> n = iter.next();
@@ -196,7 +225,10 @@ public class SetBlockQueue {
         ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
         PlotBlock[][] result;
         result = blocks.get(wrap);
-        if (!blocks.containsKey(wrap)) {
+        if (result == null) {
+            if (blocks == null) {
+                init();
+            }
             result = new PlotBlock[16][];
             blocks.put(wrap, result);
         }
@@ -219,7 +251,10 @@ public class SetBlockQueue {
         ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
         PlotBlock[][] result;
         result = blocks.get(wrap);
-        if (!blocks.containsKey(wrap)) {
+        if (result == null) {
+            if (blocks == null) {
+                init();
+            }
             result = new PlotBlock[16][];
             blocks.put(wrap, result);
         }
