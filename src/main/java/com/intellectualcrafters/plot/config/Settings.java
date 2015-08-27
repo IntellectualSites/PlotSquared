@@ -46,6 +46,7 @@ public class Settings {
      */
     public static String WEB_URL = "http://empcraft.com/plots/";
     public static String WEB_IP = "your.ip.here";
+    public static boolean DOWNLOAD_REQUIRES_DONE = false;
     /**
      * Ratings
      */

@@ -6,6 +6,7 @@ import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
@@ -44,7 +45,7 @@ public class Download extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.download")) {
+        if ((!plot.isOwner(plr.getUUID()) || (Settings.DOWNLOAD_REQUIRES_DONE && FlagManager.getPlotFlag(plot, "done") != null)) && !Permissions.hasPermission(plr, "plots.admin.command.download")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }

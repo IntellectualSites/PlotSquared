@@ -66,6 +66,7 @@ public class Done extends SubCommand {
             return false;
         }
         MainUtil.runners.put(plot, 1);
+        MainUtil.sendMessage(plr, C.GENERATING_LINK);
         HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
             @Override
             public void run() {

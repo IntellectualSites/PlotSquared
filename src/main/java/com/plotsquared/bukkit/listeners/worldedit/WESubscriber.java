@@ -82,7 +82,7 @@ public class WESubscriber {
                                     reorder = (MultiStageReorder) tmp;
                                 }
                                 if (hasMask && tmp instanceof MaskingExtent) {
-                                    maskextent = tmp;
+                                    maskextent = (MaskingExtent) tmp;
                                 }
                                 extent = tmp;
                             }
@@ -103,13 +103,14 @@ public class WESubscriber {
                                 event.setExtent(new ExtentWrapper(extent));
                             }
                             else {
+                                ExtentWrapper wrapper;
                                 if (maskextent != null) {
-                                    ExtentWrapper wrapper = new ExtentWrapper(maskextent);
+                                    wrapper = new ExtentWrapper(maskextent);
                                     field.set(maskextent, history);
                                     event.setExtent(wrapper);
                                 }
                                 else {
-                                    ExtentWrapper wrapper = new ExtentWrapper(history);
+                                    wrapper = new ExtentWrapper(history);
                                     event.setExtent(wrapper);
                                 }
                                 field.set(history, reorder);
