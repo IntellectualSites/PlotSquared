@@ -215,7 +215,7 @@ public enum C {
     /*
      * Done
      */
-    DONE_ALREADY_DONE("$2This plot is already marked as done, and you are not allowed to claim more plots","Done"),
+    DONE_ALREADY_DONE("$2This plot is already marked as done","Done"),
     DONE_NOT_DONE("$2This plot is not marked as done.","Done"),
     DONE_INSUFFICIENT_COMPLEXITY("$2This plot is too simple. Please add more detail before using this command.","Done"),
     DONE_SUCCESS("$1Successfully marked this plot as done.","Done"),

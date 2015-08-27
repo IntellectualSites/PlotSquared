@@ -104,7 +104,7 @@ public class list extends SubCommand {
             args.add("<world>");
         }
         if (Permissions.hasPermission(player, "plots.list.done")) {
-            args.add("<world>");
+            args.add("done");
         }
         return args.toArray(new String[args.size()]);
     }
@@ -188,7 +188,7 @@ public class list extends SubCommand {
                 plots = new ArrayList<>();
                 String match;
                 if (args.length == 2) {
-                    match = args[2];
+                    match = args[1];
                 }
                 else {
                     match = null;
@@ -196,32 +196,37 @@ public class list extends SubCommand {
                 for (Plot plot : PS.get().getPlots()) {
                     Flag flag = plot.getSettings().flags.get("done"); 
                     if (flag == null) {
-                        return false;
+                        continue;
                     }
                     if (match != null) {
-                        flag.getValueString().matches(match);
+                        try {
+                            if (flag.getValueString().matches(match)) {
+                                plots.add(plot);
+                            }
+                        }
+                        catch (Exception e) {
+                            break;
+                        }
                     }
                     else {
                         plots.add(plot);
                     }
                 }
-                if (match != null) {
-                    Collections.sort(plots, new Comparator<Plot>() {
-                        @Override
-                        public int compare(Plot a, Plot b) {
-                            String va = a.getSettings().flags.get("done").getValueString();
-                            String vb = b.getSettings().flags.get("done").getValueString();
-                            if (MathMan.isInteger(va)) {
-                                if (MathMan.isInteger(vb)) {
-                                    return Integer.parseInt(va) - Integer.parseInt(vb);
-                                }
-                                return -1;
+                Collections.sort(plots, new Comparator<Plot>() {
+                    @Override
+                    public int compare(Plot a, Plot b) {
+                        String va = a.getSettings().flags.get("done").getValueString();
+                        String vb = b.getSettings().flags.get("done").getValueString();
+                        if (MathMan.isInteger(va)) {
+                            if (MathMan.isInteger(vb)) {
+                                return Integer.parseInt(vb) - Integer.parseInt(va);
                             }
-                            return 1;
+                            return -1;
                         }
-                    });
-                    sort = false;
-                }
+                        return 1;
+                    }
+                });
+                sort = false;
                 break;
             }
             case "top": {

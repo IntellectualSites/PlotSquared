@@ -10,11 +10,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -603,21 +605,23 @@ public abstract class SchematicHandler {
                 nos.close();
                 output.close();
             }
-//            try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
-//                final char[] buffer = new char[256];
-//                StringBuilder result = new StringBuilder();
-//                while (true) {
-//                    int r = response.read(buffer);
-//                    if (r < 0) {
-//                        break;
-//                    }
-//                    result.append(buffer, 0, r);
-//                }
-//                System.out.print(result);
-//            }
-//            catch (Exception e) {
-//                e.printStackTrace();
-//            }
+            try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
+                final char[] buffer = new char[256];
+                StringBuilder result = new StringBuilder();
+                while (true) {
+                    int r = response.read(buffer);
+                    if (r < 0) {
+                        break;
+                    }
+                    result.append(buffer, 0, r);
+                }
+                if (!result.toString().equals("The file plot.schematic has been uploaded.")) {
+                    PS.debug(result);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
             int responseCode = ((HttpURLConnection) con).getResponseCode();
             if (responseCode != 200) {
                 return null;

@@ -1647,6 +1647,13 @@ public class PS {
         for (final String flag : intFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
+        FlagManager.addFlag(new AbstractFlag("cluster") {
+            @Override
+            public Object parseValueRaw(String value) {
+                String[] split = value.split(";");
+                return ClusterManager.getCluster(split[0], split[1]);
+            }
+        }, true);
         FlagManager.addFlag(new AbstractFlag("done", new FlagValue.StringValue()), true);
         FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.IntegerListValue()), true);
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
@@ -1814,6 +1821,7 @@ public class PS {
         options.put("approval.ratings.require-done", Settings.REQUIRE_DONE);
         options.put("approval.done.counts-towards-limit", Settings.DONE_COUNTS_TOWARDS_LIMIT);
         options.put("approval.done.restrict-building", Settings.DONE_RESTRICTS_BUILDING);
+        options.put("approval.done.required-for-download", Settings.DOWNLOAD_REQUIRES_DONE);
 
         // Schematics
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
@@ -1928,6 +1936,7 @@ public class PS {
         Settings.REQUIRE_DONE = config.getBoolean("approval.ratings.require-done");
         Settings.DONE_COUNTS_TOWARDS_LIMIT = config.getBoolean("approval.done.counts-towards-limit");
         Settings.DONE_RESTRICTS_BUILDING = config.getBoolean("approval.done.restrict-building");
+        Settings.DOWNLOAD_REQUIRES_DONE = config.getBoolean("approval.done.required-for-download");
         
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
