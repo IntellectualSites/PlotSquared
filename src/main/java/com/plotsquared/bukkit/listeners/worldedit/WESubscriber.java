@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -14,10 +15,11 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.EditSession.Stage;
 import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.bukkit.BukkitPlayer;
+import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
@@ -67,6 +69,14 @@ public class WESubscriber {
                     try {
                         LocalSession session = ((BukkitMain) PS.get().IMP).worldEdit.getWorldEdit().getSession(name);
                         boolean hasMask = session.getMask() != null;
+                        Player objPlayer = ((BukkitPlayer) player).player;
+                        ItemStack item = objPlayer.getItemInHand();
+                        if (item != null && !hasMask) {
+                            BrushTool tool = session.getBrushTool(item.getTypeId());
+                            if (tool != null) {
+                                hasMask = tool.getMask() != null;
+                            }
+                        }
                         AbstractDelegateExtent extent = (AbstractDelegateExtent) event.getExtent();
                         ChangeSetExtent history = null;
                         MultiStageReorder reorder = null;
