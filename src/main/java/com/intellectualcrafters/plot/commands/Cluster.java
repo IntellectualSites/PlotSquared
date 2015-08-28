@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -142,12 +143,30 @@ public class Cluster extends SubCommand {
                 Set<Plot> plots = MainUtil.getPlotSelectionOwned(world, pos1, pos2);
                 if (plots.size() > 0) {
                     if (!Permissions.hasPermission(plr, "plots.cluster.create.other")) {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.create.other");
-                        return false;
+                        UUID uuid = plr.getUUID();
+                        for (Plot plot : plots) {
+                            if (!plot.isOwner(uuid)) {
+                                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.create.other");
+                                return false;
+                            }
+                        }
                     }
                 }
-                // Set the generator (if applicable)
+                // Check allowed cluster size
                 final PlotCluster cluster = new PlotCluster(world, pos1, pos2, UUIDHandler.getUUID(plr));
+                int current;
+                if (Settings.GLOBAL_LIMIT) {
+                    current = ClusterManager.getPlayerClusterCount(plr);
+                }
+                else {
+                    current = ClusterManager.getPlayerClusterCount(world, plr);
+                }
+                int allowed = Permissions.hasPermissionRange(plr, "plots.cluster", Settings.MAX_PLOTS);
+                if (current + cluster.getArea() > allowed) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
+                    return false;
+                }
+                // Set the generator (if applicable)
                 PlotWorld plotworld = PS.get().getPlotWorld(world);
                 if (plotworld == null) {
                     PS.get().config.createSection("worlds." + world);
@@ -315,6 +334,20 @@ public class Cluster extends SubCommand {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize.expand");
                         return false;
                     }
+                }
+                // Check allowed cluster size
+                int current;
+                if (Settings.GLOBAL_LIMIT) {
+                    current = ClusterManager.getPlayerClusterCount(plr);
+                }
+                else {
+                    current = ClusterManager.getPlayerClusterCount(world, plr);
+                }
+                current -= cluster.getArea() + (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y); 
+                int allowed = Permissions.hasPermissionRange(plr, "plots.cluster", Settings.MAX_PLOTS);
+                if (current + cluster.getArea() > allowed) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
+                    return false;
                 }
                 for (Plot plot : removed) {
                     FlagManager.removePlotFlag(plot, "cluster");

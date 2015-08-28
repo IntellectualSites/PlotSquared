@@ -449,6 +449,11 @@ public class MainUtil {
         return count;
     }
 
+    /**
+     * Get a player's total number of plots that count towards their limit
+     * @param plr
+     * @return
+     */
     public static int getPlayerPlotCount(final PlotPlayer plr) {
         int count = 0;
         for (final String world : PS.get().getPlotWorldsString()) {

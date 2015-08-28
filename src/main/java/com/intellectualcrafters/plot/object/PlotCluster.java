@@ -49,6 +49,14 @@ public class PlotCluster {
     public String getName() {
         return this.settings.getAlias();
     }
+    
+    /**
+     * Get the area (in plots)
+     * @return
+     */
+    public int getArea() {
+        return (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
+    }
 
     @Override
     public int hashCode() {

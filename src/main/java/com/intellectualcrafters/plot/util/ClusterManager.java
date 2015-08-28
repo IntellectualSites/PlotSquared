@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -13,6 +14,7 @@ import org.bukkit.generator.BlockPopulator;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -43,6 +45,25 @@ public class ClusterManager {
             return clusters.get(world);
         }
         return new HashSet<>();
+    }
+    
+    public static int getPlayerClusterCount(String world, PlotPlayer player) {
+        final UUID uuid = player.getUUID();
+        int count = 0;
+        for (PlotCluster cluster : ClusterManager.getClusters(world)) {
+            if (uuid.equals(cluster.owner)) {
+                count += cluster.getArea();
+            }
+        }
+        return count;
+    }
+    
+    public static int getPlayerClusterCount(final PlotPlayer plr) {
+        int count = 0;
+        for (final String world : PS.get().getPlotWorldsString()) {
+            count += getPlayerClusterCount(world, plr);
+        }
+        return count;
     }
     
     public static Location getHome(final PlotCluster cluster) {
