@@ -122,6 +122,9 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public void teleport(final Location loc) {
+        if (Math.abs(loc.getX()) >= 30000000 || Math.abs(loc.getZ()) >= 30000000) {
+            return;
+        }
         this.player.teleport(new org.bukkit.Location(BukkitUtil.getWorld(loc.getWorld()), loc.getX() + 0.5, loc.getY(), loc.getZ() + 0.5, loc.getYaw(), loc.getPitch()));
     }
     

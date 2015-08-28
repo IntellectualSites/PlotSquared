@@ -111,6 +111,9 @@ public class SpongePlayer extends PlotPlayer {
 
     @Override
     public void teleport(Location loc) {
+        if (Math.abs(loc.getX()) >= 30000000 || Math.abs(loc.getZ()) >= 30000000) {
+            return;
+        }
         String world = player.getWorld().getName();
         if (!world.equals(loc.getWorld())) {
             player.transferToWorld(loc.getWorld(), new Vector3d(loc.getX(), loc.getY(), loc.getZ()));
