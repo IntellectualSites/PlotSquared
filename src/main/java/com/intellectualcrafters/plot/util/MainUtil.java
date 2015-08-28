@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -381,7 +382,7 @@ public class MainUtil {
     public static boolean isPlotArea(final Plot plot) {
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.TYPE == 2) {
-            return ClusterManager.getCluster(plot) != null;
+            return plot.getCluster() != null;
         }
         return true;
     }
@@ -609,6 +610,12 @@ public class MainUtil {
         return id;
     }
 
+    /**
+     * Get a list of plot ids within a selection
+     * @param pos1
+     * @param pos2
+     * @return
+     */
     public static ArrayList<PlotId> getPlotSelectionIds(final PlotId pos1, final PlotId pos2) {
         final ArrayList<PlotId> myplots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {
@@ -617,6 +624,38 @@ public class MainUtil {
             }
         }
         return myplots;
+    }
+    
+    /**
+     * Get a set of owned plots within a selection (chooses the best algorithm based on selection size.<br>
+     * i.e. A selection of billions of plots will work fine
+     * @param pos1
+     * @param pos2
+     * @return
+     */
+    public static HashSet<Plot> getPlotSelectionOwned(String world, final PlotId pos1, final PlotId pos2) {
+        int size = (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
+        HashSet<Plot> result = new HashSet<>();
+        if (PS.get().isPlotWorld(world)) {
+            if (size < PS.get().getAllPlotsRaw().get(world).size()) {
+                for (PlotId pid : MainUtil.getPlotSelectionIds(pos1, pos2)) {
+                    Plot plot = MainUtil.getPlot(world, pid);
+                    if (plot.hasOwner()) {
+                        if (plot.id.x > pos1.x || plot.id.y > pos1.y || plot.id.x < pos2.x || plot.id.y < pos2.y) {
+                            result.add(plot);
+                        }
+                    }
+                }
+            }
+            else {
+                for (Plot plot : PS.get().getPlotsInWorld(world)) {
+                    if (plot.id.x > pos1.x || plot.id.y > pos1.y || plot.id.x < pos2.x || plot.id.y < pos2.y) {
+                        result.add(plot);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -1333,7 +1372,7 @@ public class MainUtil {
             return false;
         }
         if (Settings.ENABLE_CLUSTERS) {
-            PlotCluster cluster = ClusterManager.getCluster(plot);
+            PlotCluster cluster = plot.getCluster();
             if (cluster != null) {
                 if (!cluster.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.claim")) {
                     return false;

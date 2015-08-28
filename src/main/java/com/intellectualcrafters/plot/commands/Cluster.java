@@ -22,11 +22,14 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -123,34 +126,28 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                //check if overlap
-                final PlotClusterId id = new PlotClusterId(pos1, pos2);
-                final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(plr.getLocation().getWorld(), id);
-                if ((intersects.size() > 0)) {
-                    MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, intersects.size() + "");
-                    return false;
-                }
                 if ((pos2.x < pos1.x) || (pos2.y < pos1.y) ) {
                     pos1 = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
                     pos2 = new PlotId(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
                 }
-                // create cluster
-                final String world = plr.getLocation().getWorld();
-                final PlotCluster cluster = new PlotCluster(world, pos1, pos2, UUIDHandler.getUUID(plr));
-                cluster.settings.setAlias(name);
-                DBFunc.createCluster(world, cluster);
-                if (!ClusterManager.clusters.containsKey(world)) {
-                    ClusterManager.clusters.put(world, new HashSet<PlotCluster>());
+                //check if overlap
+                String world = plr.getLocation().getWorld();
+                final PlotClusterId id = new PlotClusterId(pos1, pos2);
+                final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(world, id);
+                if ((intersects.size() > 0)) {
+                    MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, intersects.size() + "");
+                    return false;
                 }
-                ClusterManager.clusters.get(world).add(cluster);
-                // Add any existing plots to the current cluster
-                for (final Plot plot : PS.get().getPlotsInWorld(plr.getLocation().getWorld())) {
-                    final PlotCluster current = ClusterManager.getCluster(plot);
-                    if (cluster.equals(current) && !cluster.isAdded(plot.owner)) {
-                        cluster.invited.add(plot.owner);
-                        DBFunc.setInvited(world, cluster, plot.owner);
+                // Check if it occupies existing plots
+                Set<Plot> plots = MainUtil.getPlotSelectionOwned(world, pos1, pos2);
+                if (plots.size() > 0) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.create.other")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.create.other");
+                        return false;
                     }
                 }
+                // Set the generator (if applicable)
+                final PlotCluster cluster = new PlotCluster(world, pos1, pos2, UUIDHandler.getUUID(plr));
                 PlotWorld plotworld = PS.get().getPlotWorld(world);
                 if (plotworld == null) {
                     PS.get().config.createSection("worlds." + world);
@@ -183,6 +180,24 @@ public class Cluster extends SubCommand {
 //                        }
 //                    }
 //                    new AugmentedPopulator(world, generator, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
+                }
+                // create cluster
+                cluster.settings.setAlias(name);
+                DBFunc.createCluster(world, cluster);
+                if (!ClusterManager.clusters.containsKey(world)) {
+                    ClusterManager.clusters.put(world, new HashSet<PlotCluster>());
+                }
+                ClusterManager.clusters.get(world).add(cluster);
+                // Add any existing plots to the current cluster
+                for (Plot plot : plots) {
+                    if (plot.hasOwner()) {
+                        Flag flag = new Flag(FlagManager.getFlag("cluster"), cluster);
+                        FlagManager.addPlotFlag(plot, flag);
+                        if (!cluster.isAdded(plot.owner)) {
+                            cluster.invited.add(plot.owner);
+                            DBFunc.setInvited(world, cluster, plot.owner);
+                        }
+                    }
                 }
                 MainUtil.sendMessage(plr, C.CLUSTER_ADDED);
                 return true;
@@ -252,14 +267,20 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // check pos1 / pos2
-                final PlotId pos1 = MainUtil.parseId(args[1]);
-                final PlotId pos2 = MainUtil.parseId(args[2]);
+                PlotId pos1 = MainUtil.parseId(args[1]);
+                PlotId pos2 = MainUtil.parseId(args[2]);
                 if ((pos1 == null) || (pos2 == null)) {
                     MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
                 }
+                if ((pos2.x < pos1.x) || (pos2.y < pos1.y) ) {
+                    pos1 = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
+                    pos2 = new PlotId(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
+                }
                 // check if in cluster
-                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                Location loc = plr.getLocation();
+                String world = loc.getWorld();
+                final PlotCluster cluster = ClusterManager.getCluster(loc);
                 if (cluster == null) {
                     MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -272,10 +293,34 @@ public class Cluster extends SubCommand {
                 }
                 //check if overlap
                 final PlotClusterId id = new PlotClusterId(pos1, pos2);
-                final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(plr.getLocation().getWorld(), id);
+                final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(world, id);
                 if (intersects.size() > 1) {
                     MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, (intersects.size() - 1) + "");
                     return false;
+                }
+                HashSet<Plot> existing = MainUtil.getPlotSelectionOwned(world, cluster.getP1(), cluster.getP2());
+                HashSet<Plot> newplots = MainUtil.getPlotSelectionOwned(world, pos1, pos2);
+                HashSet<Plot> removed = ((HashSet<Plot>) existing.clone());
+                removed.removeAll(newplots);
+                // Check expand / shrink
+                if (removed.size() > 0) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.resize.shrink")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize.shrink");
+                        return false;
+                    }
+                }
+                newplots.removeAll(existing);
+                if (newplots.size() > 0) {
+                    if (!Permissions.hasPermission(plr, "plots.cluster.resize.expand")) {
+                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize.expand");
+                        return false;
+                    }
+                }
+                for (Plot plot : removed) {
+                    FlagManager.removePlotFlag(plot, "cluster");
+                }
+                for (Plot plot : newplots) {
+                    FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("cluster"), cluster));
                 }
                 // resize cluster
                 DBFunc.resizeCluster(cluster, id);

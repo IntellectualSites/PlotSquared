@@ -167,7 +167,7 @@ public class Auto extends SubCommand {
             if (plot == null) {
                 return sendMessage(plr, C.NOT_IN_PLOT);
             }
-            final PlotCluster cluster = ClusterManager.getCluster(loc);
+            final PlotCluster cluster = plot.getCluster();
             // Must be standing in a cluster
             if (cluster == null) {
                 MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
@@ -183,7 +183,7 @@ public class Auto extends SubCommand {
             for (int i = 0; i <= max; i++) {
                 final PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
                 final Plot current = MainUtil.getPlot(worldname, currentId);
-                if (MainUtil.canClaim(plr, current) && (current.getSettings().isMerged() == false) && cluster.equals(ClusterManager.getCluster(current))) {
+                if (MainUtil.canClaim(plr, current) && (current.getSettings().isMerged() == false) && cluster.equals(current.getCluster())) {
                     Claim.claimPlot(plr, current, true, true);
                     return true;
                 }

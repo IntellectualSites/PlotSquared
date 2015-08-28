@@ -43,6 +43,7 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.util.BO3Handler;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -225,6 +226,44 @@ public class Plot {
         if (this.meta != null) {
             this.meta.remove(key);
         }
+    }
+    
+    /**
+     * Get the cluster this plot is associated with
+     * @return
+     */
+    public PlotCluster getCluster() {
+        if (!Settings.ENABLE_CLUSTERS) {
+            return null;
+        }
+        if (owner == null) {
+            return ClusterManager.getCluster(this);
+        }
+        Flag flag = FlagManager.getPlotFlag(this, "cluster");
+        if (flag != null) {
+            PlotCluster cluster = (PlotCluster) flag.getValue();
+            cluster = ClusterManager.getCluster(cluster.world, cluster.getName());
+            if (cluster != null) {
+                return cluster;
+            }
+            cluster = ClusterManager.getCluster(this);
+            if (cluster == null) {
+                FlagManager.removePlotFlag(this, "cluster");
+                return null;
+            }
+            else {
+                flag = new Flag(flag.getAbstractFlag(), cluster);
+                FlagManager.addPlotFlag(this, flag);
+                return cluster;
+            }
+        }
+        PlotCluster cluster = ClusterManager.getCluster(this);
+        if (cluster != null) {
+            flag = new Flag(FlagManager.getFlag("cluster"), cluster);
+            FlagManager.addPlotFlag(this, flag);
+            return cluster;
+        }
+        return null;
     }
 
     /**

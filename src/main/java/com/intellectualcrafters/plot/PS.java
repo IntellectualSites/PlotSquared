@@ -351,9 +351,9 @@ public class PS {
      * @param message Message to log
      * @see IPlotMain#log(String)
      */
-    public static void debug(final String message) {
+    public static void debug(final Object message) {
         if (Settings.DEBUG) {
-            get().IMP.log(message);
+            log(message);
         }
     }
 
