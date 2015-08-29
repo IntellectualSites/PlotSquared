@@ -72,10 +72,13 @@ public class WESubscriber {
                         Player objPlayer = ((BukkitPlayer) player).player;
                         ItemStack item = objPlayer.getItemInHand();
                         if (item != null && !hasMask) {
-                            BrushTool tool = session.getBrushTool(item.getTypeId());
-                            if (tool != null) {
-                                hasMask = tool.getMask() != null;
+                            try {
+                                BrushTool tool = session.getBrushTool(item.getTypeId());
+                                if (tool != null) {
+                                    hasMask = tool.getMask() != null;
+                                }
                             }
+                            catch (Exception e) {}
                         }
                         AbstractDelegateExtent extent = (AbstractDelegateExtent) event.getExtent();
                         ChangeSetExtent history = null;
