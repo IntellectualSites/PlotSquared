@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.util.ChatManager;
 
 public class PlotMessage {
@@ -44,7 +45,7 @@ public class PlotMessage {
     }
     
     public PlotMessage color(String color) {
-        ChatManager.manager.color(this, color);
+        ChatManager.manager.color(this, C.color(color));
         return this;
     }
     
