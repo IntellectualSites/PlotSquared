@@ -1,18 +1,5 @@
 package com.plotsquared.bukkit.database.plotme;
 
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
@@ -24,6 +11,17 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 public class ClassicPlotMeConnector extends APlotMeConnector {
 
@@ -109,7 +107,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     owner = DBFunc.everyone;
                 }
                 else {
-                    if (checkUUID){
+                    if (checkUUID || checkUUID2){
                         try {
                             byte[] bytes = r.getBytes(column);
                             if (bytes != null) {
@@ -174,6 +172,29 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     if (name.equals("*")) {
                         denied = DBFunc.everyone;
                     } else {
+                        if (DBFunc.hasColumn(r, "playerid")) {
+                            try {
+                                byte[] bytes = r.getBytes("playerid");
+                                if (bytes != null) {
+                                    try {
+                                        ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                        long high = bb.getLong();
+                                        long low = bb.getLong();
+                                        denied = new UUID(high, low);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        denied = UUID.nameUUIDFromBytes(bytes);
+                                    }
+                                    if (denied != null) {
+                                        UUIDHandler.add(new StringWrapper(name), denied);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    if (denied == null){
                         MainUtil.sendConsoleMessage("&6Could not identify denied for plot: " + id);
                         continue;
                     }
@@ -195,6 +216,29 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     if (name.equals("*")) {
                         helper = DBFunc.everyone;
                     } else {
+                        if (DBFunc.hasColumn(r, "playerid")) {
+                            try {
+                                byte[] bytes = r.getBytes("playerid");
+                                if (bytes != null) {
+                                    try {
+                                        ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                        long high = bb.getLong();
+                                        long low = bb.getLong();
+                                        helper = new UUID(high, low);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        helper = UUID.nameUUIDFromBytes(bytes);
+                                    }
+                                    if (helper != null) {
+                                        UUIDHandler.add(new StringWrapper(name), helper);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    if (helper == null){
                         MainUtil.sendConsoleMessage("&6Could not identify helper for plot: " + id);
                         continue;
                     }
