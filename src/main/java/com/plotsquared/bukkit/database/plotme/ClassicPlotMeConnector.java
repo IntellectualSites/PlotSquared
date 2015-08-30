@@ -57,7 +57,15 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         final HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
         stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Plots`");
         r = stmt.executeQuery();
+        String column = null;
         boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
+        boolean checkUUID2 = DBFunc.hasColumn(r, "ownerId");
+        if (checkUUID) {
+            column = "ownerid";
+        }
+        else if (checkUUID2) {
+            column = "ownerId";
+        }
         boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
         while (r.next()) {
             final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
@@ -103,7 +111,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 else {
                     if (checkUUID){
                         try {
-                            byte[] bytes = r.getBytes("ownerid");
+                            byte[] bytes = r.getBytes(column);
                             if (bytes != null) {
                                 try {
                                     ByteBuffer bb = ByteBuffer.wrap(bytes);

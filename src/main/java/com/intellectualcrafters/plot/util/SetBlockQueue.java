@@ -49,7 +49,7 @@ public class SetBlockQueue {
             init();
             runnables.add(whenDone);
         }
-        if (blocks == null || blocks.size() == 0) {
+        if (blocks == null || blocks.size() == 0 || !blocks.entrySet().iterator().hasNext()) {
             ArrayDeque<Runnable> tasks = runnables;
             lastInt = -1;
             lastBlock = null;
@@ -81,7 +81,6 @@ public class SetBlockQueue {
                 @Override
                 public void run() {
                     if (locked) {
-                        System.out.print("LOCKED!");
                         return;
                     }
                     if (blocks == null || blocks.size() == 0) {
@@ -205,7 +204,10 @@ public class SetBlockQueue {
             result = new PlotBlock[16][];
             blocks.put(wrap, result);
         }
-
+        if ((y > 255) || (y < 0)) {
+            locked = false;
+            return;
+        }
         if (result[y >> 4] == null) {
             result[y >> 4] = new PlotBlock[4096];
         }
@@ -232,6 +234,10 @@ public class SetBlockQueue {
             result = new PlotBlock[16][];
             blocks.put(wrap, result);
         }
+        if ((y > 255) || (y < 0)) {
+            locked = false;
+            return;
+        }
         if (result[y >> 4] == null) {
             result[y >> 4] = new PlotBlock[4096];
         }
@@ -257,6 +263,10 @@ public class SetBlockQueue {
             }
             result = new PlotBlock[16][];
             blocks.put(wrap, result);
+        }
+        if ((y > 255) || (y < 0)) {
+            locked = false;
+            return;
         }
         if (result[y >> 4] == null) {
             result[y >> 4] = new PlotBlock[4096];

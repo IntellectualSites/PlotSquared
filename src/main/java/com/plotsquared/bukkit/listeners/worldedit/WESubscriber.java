@@ -17,8 +17,10 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.EditSession.Stage;
 import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -43,6 +45,11 @@ public class WESubscriber {
     
     @Subscribe(priority=Priority.VERY_EARLY)
     public void onEditSession(EditSessionEvent event) {
+        WorldEditPlugin worldedit = BukkitMain.worldEdit;
+        if (worldedit == null) {
+            WorldEdit.getInstance().getEventBus().unregister(this);
+            return;
+        }
         World worldObj = event.getWorld();
         String world = worldObj.getName();
         Actor actor = event.getActor();
@@ -67,7 +74,7 @@ public class WESubscriber {
             if (Settings.CHUNK_PROCESSOR) {
                 if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
                     try {
-                        LocalSession session = ((BukkitMain) PS.get().IMP).worldEdit.getWorldEdit().getSession(name);
+                        LocalSession session = worldedit.getWorldEdit().getSession(name);
                         boolean hasMask = session.getMask() != null;
                         Player objPlayer = ((BukkitPlayer) player).player;
                         ItemStack item = objPlayer.getItemInHand();

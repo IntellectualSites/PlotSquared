@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
@@ -26,6 +27,8 @@ import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SetBlockFast;
 import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
  
 public class WEListener implements Listener {
@@ -171,6 +174,11 @@ public class WEListener implements Listener {
     
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public boolean onPlayerCommand(final PlayerCommandPreprocessEvent e) {
+        WorldEditPlugin worldedit = BukkitMain.worldEdit;
+        if (worldedit == null) {
+            HandlerList.unregisterAll(this);
+            return true;
+        }
         final Player p = e.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(p);
         if (!PS.get().isPlotWorld(p.getWorld().getName())) {
