@@ -35,7 +35,6 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -1814,7 +1813,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     if ((entity instanceof Tameable) && ((Tameable) entity).isTamed() && FlagManager.isPlotFlagTrue(plot, C.FLAG_TAMED_INTERACT.s())) {
                         return;
                     }
-                    if ((entity instanceof RideableMinecart) && FlagManager.isPlotFlagTrue(plot, C.FLAG_VEHICLE_USE.s())) {
+                    if ((entity instanceof Vehicle) && FlagManager.isPlotFlagTrue(plot, C.FLAG_VEHICLE_USE.s())) {
                         return;
                     }
                     if ((entity instanceof Player) && FlagManager.isPlotFlagTrue(plot, C.FLAG_PLAYER_INTERACT.s())) {
