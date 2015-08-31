@@ -317,7 +317,7 @@ public class BukkitChunkManager extends ChunkManager {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
-                while (chunks.size() > 0 && System.currentTimeMillis() - start < 20) {
+                while (chunks.size() > 0 && System.currentTimeMillis() - start < 5) {
                     ChunkLoc chunk = chunks.remove(0);
                     int x = chunk.x;
                     int z = chunk.z;
