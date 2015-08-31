@@ -164,7 +164,7 @@ public abstract class SchematicHandler {
                     // Validate dimensions
                     Location bottom = plot.getBottom();
                     Location top = plot.getTop();
-                    if (top.getX() - bottom.getX() < WIDTH || top.getZ() - bottom.getZ() < LENGTH || HEIGHT > 256) {
+                    if (top.getX() - bottom.getX() + 1 < WIDTH || top.getZ() - bottom.getZ() + 1 < LENGTH || HEIGHT > 256) {
                         PS.debug("Schematic is too large");
                         TaskManager.runTask(whenDone);
                         return;

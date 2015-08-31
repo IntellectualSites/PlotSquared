@@ -1076,7 +1076,7 @@ public class MainUtil {
             return false;
         }
         long start = System.currentTimeMillis();
-        ChunkManager.manager.clearAllEntities(plot.getBottom().add(1, 0, 1), plot.getTop());
+        ChunkManager.manager.clearAllEntities(plot.getBottom(), plot.getTop());
         if (isDelete) {
             removeSign(plot);
         }
@@ -1200,7 +1200,7 @@ public class MainUtil {
     }
 
     public static void setBiome(final Plot plot, final String biome, final Runnable whenDone) {
-        Location pos1 = plot.getBottom().add(1, 0, 1);
+        Location pos1 = plot.getBottom();
         Location pos2 = plot.getTop();
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
@@ -1348,7 +1348,11 @@ public class MainUtil {
      * @param id
      *
      * @return Location bottom of mega plot
+     * 
+     * @deprecated Incorrect offset / legacy / use plot.getBottom()
+     * 
      */
+    @Deprecated
     public static Location getPlotBottomLoc(final String world, PlotId id) {
         final Plot plot = PS.get().getPlot(world, id);
         if (plot != null) {

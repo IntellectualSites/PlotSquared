@@ -24,7 +24,7 @@ public class WEExtent extends AbstractDelegateExtent {
     
     @Override
     public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
-        if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
+        if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
             return super.setBlock(location, block);
         }
         return false;
@@ -32,7 +32,7 @@ public class WEExtent extends AbstractDelegateExtent {
     
     @Override
     public Entity createEntity(Location location, BaseEntity entity) {
-        if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
+        if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
             return super.createEntity(location, entity);
         }
         return null;

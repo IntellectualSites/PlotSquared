@@ -718,7 +718,7 @@ public class Plot {
      * Get the biome (String)
      */
     public String getBiome() {
-        final Location loc = getBottom().add(1, 0, 1);
+        final Location loc = getBottom();
         return BlockManager.manager.getBiome(loc.getWorld(), loc.getX(), loc.getZ());
     }
     
@@ -735,7 +735,7 @@ public class Plot {
      * @return
      */
     public Location getBottom() {
-        return MainUtil.getPlotBottomLoc(world, id);
+        return MainUtil.getPlotBottomLoc(world, id).add(1, 0, 1);
     }
     
     /**

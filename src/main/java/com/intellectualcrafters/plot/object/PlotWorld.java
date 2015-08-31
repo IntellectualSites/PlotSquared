@@ -61,6 +61,7 @@ public abstract class PlotWorld {
     public final static boolean WORLD_BORDER_DEFAULT = false;
     public final static int MAX_PLOT_MEMBERS_DEFAULT = 128;
     public final static int MAX_BUILD_HEIGHT_DEFAULT = 256;
+    public final static int MIN_BUILD_HEIGHT_DEFAULT = 1;
     public final static PlotGamemode GAMEMODE_DEFAULT = PlotGamemode.CREATIVE;
     // are plot clusters enabled
     // require claim in cluster
@@ -97,6 +98,7 @@ public abstract class PlotWorld {
     public boolean HOME_ALLOW_NONMEMBER;
     public PlotLoc DEFAULT_HOME;
     public int MAX_BUILD_HEIGHT;
+    public int MIN_BUILD_HEIGHT;
     public PlotGamemode GAMEMODE = PlotGamemode.CREATIVE;
 
     public PlotWorld(final String worldname) {
@@ -154,6 +156,7 @@ public abstract class PlotWorld {
         this.PLOT_CHAT = config.getBoolean("chat.enabled");
         this.WORLD_BORDER = config.getBoolean("world.border");
         this.MAX_BUILD_HEIGHT = config.getInt("world.max_height");
+        this.MIN_BUILD_HEIGHT = config.getInt("min.max_height");
         
         switch (config.getString("world.gamemode").toLowerCase()) {
             case "survival":
@@ -260,6 +263,7 @@ public abstract class PlotWorld {
         options.put("home.default", "side");
         options.put("home.allow-nonmembers", false);
         options.put("world.max_height", PlotWorld.MAX_BUILD_HEIGHT_DEFAULT);
+        options.put("world.min_height", PlotWorld.MIN_BUILD_HEIGHT_DEFAULT);
         options.put("world.gamemode", PlotWorld.GAMEMODE_DEFAULT.name().toLowerCase());
 
         if (Settings.ENABLE_CLUSTERS && (this.TYPE != 0)) {

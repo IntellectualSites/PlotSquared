@@ -33,7 +33,7 @@ public class SpongeChunkManager extends ChunkManager {
     
     @Override
     public int[] countEntities(Plot plot) {
-        Location pos1 = plot.getBottom().add(1, 0, 1);
+        Location pos1 = plot.getBottom();
         Location pos2 = plot.getTop();
         
         String worldname = pos1.getWorld();

@@ -1016,8 +1016,8 @@ public class BukkitChunkManager extends ChunkManager {
         
         // TODO clear all entities
         
-        clearAllEntities(plot1.getBottom().add(1, 0, 1), plot1.getTop());
-        clearAllEntities(plot2.getBottom().add(1, 0, 1), plot2.getTop());
+        clearAllEntities(plot1.getBottom(), plot1.getTop());
+        clearAllEntities(plot2.getBottom(), plot2.getTop());
     }
 
     @Override

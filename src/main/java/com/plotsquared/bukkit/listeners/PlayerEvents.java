@@ -2101,7 +2101,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             }
             PlotWorld pw = PS.get().getPlotWorld(loc.getWorld());
-            if (loc.getY() >= pw.MAX_BUILD_HEIGHT && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+            if ((loc.getY() > pw.MAX_BUILD_HEIGHT && loc.getY() < pw.MIN_BUILD_HEIGHT) && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", "" + pw.MAX_BUILD_HEIGHT));
             }

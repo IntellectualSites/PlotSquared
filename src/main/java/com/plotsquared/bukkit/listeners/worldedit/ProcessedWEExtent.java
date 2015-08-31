@@ -91,7 +91,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                     BSblocked = true;
                     PS.debug("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
                 }
-                if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
+                if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
                     if (count++ > max) {
                         if (parent != null) {
                             try {
@@ -113,7 +113,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 int x = location.getBlockX();
                 int y = location.getBlockY();
                 int z = location.getBlockZ();
-                if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
+                if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
                     if (count++ > max) {
                         if (parent != null) {
                             try {
@@ -251,7 +251,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             Eblocked = true;
             PS.debug("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
         }
-        if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockZ())) {
+        if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
             return super.createEntity(location, entity);
         }
         return null;

@@ -10,6 +10,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -62,14 +63,19 @@ public class WESubscriber {
 
             PlotPlayer player = UUIDHandler.getPlayer(actor.getName());
             HashSet<RegionWrapper> mask = WEManager.getMask(player);
+            PlotWorld plotworld = PS.get().getPlotWorld(world);
             if (mask.size() == 0) {
                 if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
                     MainUtil.sendMessage(player, C.WORLDEDIT_BYPASS);
                 }
-                if (PS.get().isPlotWorld(world)) {
+                if (plotworld != null) {
                     event.setExtent(new NullExtent());
                 }
                 return;
+            }
+            HeightLimitExtent heightLimit = null;
+            if (plotworld != null) {
+                
             }
             if (Settings.CHUNK_PROCESSOR) {
                 if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {

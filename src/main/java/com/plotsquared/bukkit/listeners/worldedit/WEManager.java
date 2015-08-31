@@ -15,9 +15,18 @@ import com.intellectualcrafters.plot.util.MainUtil;
 public class WEManager {
 //    public static HashSet<String> bypass = new HashSet<>();
     
+    public static boolean maskContains(HashSet<RegionWrapper> mask, int x, int y, int z) {
+        for (RegionWrapper region : mask) {
+            if (region.isIn(x, y, z)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public static boolean maskContains(HashSet<RegionWrapper> mask, int x, int z) {
         for (RegionWrapper region : mask) {
-            if ((x >= region.minX) && (x <= region.maxX) && (z >= region.minZ) && (z <= region.maxZ)) {
+            if (region.isIn(x, z)) {
                 return true;
             }
         }
@@ -40,7 +49,7 @@ public class WEManager {
             if (Settings.WE_ALLOW_HELPER ? plot.isAdded(uuid) : (plot.isOwner(uuid) || plot.getTrusted().contains(uuid))) {
                 Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
                 Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
-                regions.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ()));
+                regions.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getY(), pos2.getY(), pos1.getZ(), pos2.getZ()));
             }
         }
         return regions;

@@ -115,10 +115,10 @@ public class WEListener implements Listener {
             if (!WEManager.regionContains(region, mask)) {
                 arg = "pos1 + pos2";
             }
-            else if (!WEManager.maskContains(mask, pos1.getBlockX(), pos1.getBlockZ())) {
+            else if (!WEManager.maskContains(mask, pos1.getBlockX(), pos1.getBlockY(), pos1.getBlockZ())) {
                 arg = "pos1";
             }
-            else if (!WEManager.maskContains(mask, pos2.getBlockX(), pos2.getBlockZ())) {
+            else if (!WEManager.maskContains(mask, pos2.getBlockX(), pos2.getBlockY(), pos2.getBlockZ())) {
                 arg = "pos2";
             }
             if (arg != null) {

@@ -46,7 +46,7 @@ public class BO3Handler {
             return false;
         }
         String alias = plot.toString();
-        Location pos1 = plot.getBottom().add(1, 0, 1);
+        Location pos1 = plot.getBottom();
         Location pos2 = plot.getTop();
         ClassicPlotWorld cpw = (ClassicPlotWorld) plotworld;
         int height = cpw.PLOT_HEIGHT;

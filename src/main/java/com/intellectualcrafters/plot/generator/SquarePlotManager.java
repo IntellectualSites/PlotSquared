@@ -27,7 +27,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final int pz = plotid.y;
         final int x = dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
         final int z = dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-        return new Location(plotworld.worldname, x, 255, z);
+        return new Location(plotworld.worldname, x, Math.min(plotworld.MAX_BUILD_HEIGHT, 255), z);
     }
 
     @Override
@@ -178,6 +178,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final int pz = plotid.y;
         final int x = dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
         final int z = dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH)) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-        return new Location(plotworld.worldname, x, 1, z);
+        return new Location(plotworld.worldname, x, plotworld.MIN_BUILD_HEIGHT, z);
     }
 }
