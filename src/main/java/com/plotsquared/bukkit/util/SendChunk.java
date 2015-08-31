@@ -124,7 +124,7 @@ public class SendChunk {
                 @Override
                 public void run() {
                     try {
-                        chunk.unload(true, true);
+                        chunk.unload(true, false);
                     }
                     catch (Exception e) {
                         String worldname = chunk.getWorld().getName();

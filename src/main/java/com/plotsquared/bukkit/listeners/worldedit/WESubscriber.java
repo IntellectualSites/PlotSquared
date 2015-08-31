@@ -73,10 +73,6 @@ public class WESubscriber {
                 }
                 return;
             }
-            HeightLimitExtent heightLimit = null;
-            if (plotworld != null) {
-                
-            }
             if (Settings.CHUNK_PROCESSOR) {
                 if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
                     try {

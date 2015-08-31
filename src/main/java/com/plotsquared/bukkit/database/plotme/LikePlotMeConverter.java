@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -244,15 +245,22 @@ public class LikePlotMeConverter {
             }
             sendMessage("Creating plot DB");
             Thread.sleep(1000);
+            final AtomicBoolean done = new AtomicBoolean(false);
             DBFunc.createPlotsAndData(createdPlots, new Runnable() {
                 @Override
                 public void run() {
-                    sendMessage("&aDatabase conversion is now complete!");
-                    PS.debug("&c - Stop the server");
-                    PS.debug("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
-                    PS.debug("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
-                    PS.debug("&c - Start the server");
-                    PS.get().setAllPlotsRaw(DBFunc.getPlots());
+                    if (done.get()) {
+                        sendMessage("&aDatabase conversion is now complete!");
+                        PS.debug("&c - Stop the server");
+                        PS.debug("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
+                        PS.debug("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
+                        PS.debug("&c - Start the server");
+                        PS.get().setAllPlotsRaw(DBFunc.getPlots());
+                    }
+                    else {
+                        sendMessage("&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
+                        done.set(true);
+                    }
                 }
             });
             sendMessage("Saving configuration...");
@@ -311,7 +319,17 @@ public class LikePlotMeConverter {
                     } catch (final Exception e) {
                         e.printStackTrace();
                     }
-                    sendMessage("&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
+                    if (done.get()) {
+                        sendMessage("&aDatabase conversion is now complete!");
+                        PS.debug("&c - Stop the server");
+                        PS.debug("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
+                        PS.debug("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
+                        PS.debug("&c - Start the server");
+                    }
+                    else {
+                        sendMessage("&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
+                        done.set(true);
+                    }
                 }
             });
         } catch (final Exception e) {
