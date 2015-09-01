@@ -16,6 +16,16 @@ public abstract class EconHandler {
     public abstract void withdrawMoney(PlotPlayer player, double amount);
     public abstract void depositMoney(PlotPlayer player, double amount);
     public abstract void depositMoney(OfflinePlotPlayer player, double amount);
-    public abstract void setPermission(String player, String perm, boolean value);
-    public abstract boolean hasPermission(String player, String perm);
+    
+    public void setPermission(String player, String perm, boolean value) {
+        setPermission(null, player, perm, value);
+    }
+    
+    public abstract void setPermission(String world, String player, String perm, boolean value);
+    
+    public abstract boolean hasPermission(String world, String player, String perm);
+    
+    public boolean hasPermission(String player, String perm) {
+        return hasPermission(null, player, perm);
+    }
 }

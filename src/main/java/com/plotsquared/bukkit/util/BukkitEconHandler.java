@@ -78,17 +78,17 @@ public class BukkitEconHandler extends EconHandler {
     }
 
     @Override
-    public void setPermission(String player, String perm, boolean value) {
+    public void setPermission(String world, String player, String perm, boolean value) {
         if (value) {
-            perms.playerAdd((World) null, player, perm);
+            perms.playerAdd(world, player, perm);
         }
         else {
-            perms.playerRemove((World) null, player, perm);
+            perms.playerRemove(world, player, perm);
         }
     }
 
     @Override
-    public boolean hasPermission(String player, String perm) {
-        return perms.playerHas((String) null, Bukkit.getOfflinePlayer(player), perm);
+    public boolean hasPermission(String world, String player, String perm) {
+        return perms.playerHas(world, Bukkit.getOfflinePlayer(player), perm);
     }
 }
