@@ -41,12 +41,6 @@ import com.plotsquared.general.commands.CommandDeclaration;
 )
 public class Target extends SubCommand {
 
-    public Target() {
-        requiredArguments = new Argument[] {
-                Argument.PlotID
-        };
-    }
-
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location ploc = plr.getLocation();

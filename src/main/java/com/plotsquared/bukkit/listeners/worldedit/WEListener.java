@@ -145,7 +145,7 @@ public class WEListener implements Listener {
     private boolean set = false;
     
     public boolean delay(final Player player, final String command, boolean delayed) {
-        if (!Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT || set) {
+        if (!Settings.QUEUE_COMMANDS || !Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT || set) {
             return false;
         }
         boolean free = SetBlockQueue.addNotify(null);

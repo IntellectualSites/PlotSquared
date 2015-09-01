@@ -96,6 +96,7 @@ public class Settings {
      * Default worldedit-require-selection-in-mask: false
      */
     public static boolean REQUIRE_SELECTION = true;
+    public static boolean QUEUE_COMMANDS = false;
     public static boolean WE_ALLOW_HELPER = false;
     public static long WE_MAX_VOLUME = 500000;
     public static long WE_MAX_ITERATIONS = 1000;

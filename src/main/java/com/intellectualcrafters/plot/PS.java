@@ -1846,6 +1846,7 @@ public class PS {
         
         // WorldEdit
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
+        options.put("worldedit.queue-commands", Settings.QUEUE_COMMANDS);
         options.put("worldedit.enable-for-helpers", Settings.WE_ALLOW_HELPER);
         options.put("worldedit.max-volume", Settings.WE_MAX_VOLUME);
         options.put("worldedit.max-iterations", Settings.WE_MAX_ITERATIONS);
@@ -1962,6 +1963,7 @@ public class PS {
         Settings.TELEPORT_ON_LOGIN = config.getBoolean("teleport.on_login");
         
         // WorldEdit
+        Settings.QUEUE_COMMANDS = config.getBoolean("worldedit.queue-commands");
         Settings.REQUIRE_SELECTION = config.getBoolean("worldedit.require-selection-in-mask");
         Settings.WE_ALLOW_HELPER = config.getBoolean("worldedit.enable-for-helpers");
         Settings.WE_MAX_VOLUME = config.getLong("worldedit.max-volume");
