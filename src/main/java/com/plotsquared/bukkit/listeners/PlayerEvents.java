@@ -626,7 +626,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         recipients.clear();
         for (final Player p : Bukkit.getOnlinePlayers()) {
             PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (Permissions.hasPermission(pp, C.PERMISSION_COMMANDS_CHAT) || plot.equals(pp.getCurrentPlot())) {
+            if (pp.getAttribute("chatspy") || plot.equals(pp.getCurrentPlot())) {
                 recipients.add(p);
             }
         }

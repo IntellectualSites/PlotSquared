@@ -64,18 +64,32 @@ public class Toggle extends SubCommand {
     public Toggle() {
         toggles = new HashMap<>();
         toggles.put("titles", 
-            new Command<PlotPlayer>("titles", "/plot toggle titles", "Toggle titles for yourself", C.PERMISSION_PLOT_TOGGLE_TITLES.s()) {
-            
-            @Override
-            public boolean onCommand(PlotPlayer player, String[] args) {
-                if (toggle(player, "disabletitles")) {
-                    MainUtil.sendMessage(player, C.TOGGLE_ENABLED, getCommand());
+                new Command<PlotPlayer>("titles", "/plot toggle titles", "Toggle titles for yourself", C.PERMISSION_PLOT_TOGGLE_TITLES.s()) {
+                
+                @Override
+                public boolean onCommand(PlotPlayer player, String[] args) {
+                    if (toggle(player, "disabletitles")) {
+                        MainUtil.sendMessage(player, C.TOGGLE_ENABLED, getCommand());
+                    }
+                    else {
+                        MainUtil.sendMessage(player, C.TOGGLE_DISABLED, getCommand());
+                    }
+                    return true;
                 }
-                else {
-                    MainUtil.sendMessage(player, C.TOGGLE_DISABLED, getCommand());
+        });
+        toggles.put("chatspy", 
+                new Command<PlotPlayer>("chatspy", "/plot toggle chatspy", "Toggle chat spying", C.PERMISSION_COMMANDS_CHAT.s()) {
+                
+                @Override
+                public boolean onCommand(PlotPlayer player, String[] args) {
+                    if (toggle(player, "chatspy")) {
+                        MainUtil.sendMessage(player, C.TOGGLE_ENABLED, getCommand());
+                    }
+                    else {
+                        MainUtil.sendMessage(player, C.TOGGLE_DISABLED, getCommand());
+                    }
+                    return true;
                 }
-                return true;
-            }
         });
         toggles.put("chat", 
             new Command<PlotPlayer>("chat", "/plot toggle chat", "Toggle plot chat for yourself", C.PERMISSION_PLOT_TOGGLE_CHAT.s()) {
