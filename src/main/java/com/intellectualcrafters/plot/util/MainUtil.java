@@ -487,7 +487,7 @@ public class MainUtil {
         final int z = bot.getZ();
         PlotManager manager = PS.get().getPlotManager(plot.world);
         final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PS.get().getPlotWorld(plot.world), plot).getY());
-        return new Location(plot.world, x, y + 1, z);
+        return new Location(plot.world, x, y + 1, z - 1);
     }
 
     public static boolean teleportPlayer(final PlotPlayer player, final Location from, final Plot plot) {

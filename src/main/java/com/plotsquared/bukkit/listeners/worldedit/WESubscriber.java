@@ -23,6 +23,7 @@ import com.sk89q.worldedit.EditSession.Stage;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.command.tool.BrushTool;
+import com.sk89q.worldedit.command.tool.Tool;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
@@ -82,9 +83,9 @@ public class WESubscriber {
                         ItemStack item = objPlayer.getItemInHand();
                         if (item != null && !hasMask) {
                             try {
-                                BrushTool tool = session.getBrushTool(item.getTypeId());
-                                if (tool != null) {
-                                    hasMask = tool.getMask() != null;
+                                Tool tool = session.getTool(item.getTypeId());
+                                if (tool != null && tool instanceof BrushTool) {
+                                    hasMask = ((BrushTool) tool).getMask() != null;
                                 }
                             }
                             catch (Exception e) {}
