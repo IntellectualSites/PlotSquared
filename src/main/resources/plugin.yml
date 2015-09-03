@@ -36,7 +36,10 @@ permissions:
       plots.set.flag.invincible.*: true
       plots.set.flag.instabreak.*: true
       plots.set.flag.fly.*: true
-      plots.set.flag.gamemode.*: true
+      plots.set.flag.gamemode: true
+      plots.set.flag.gamemode.creative: true
+      plots.set.flag.gamemode.survival: true
+      plots.set.flag.gamemode.adventure: true
       plots.set.flag.time.*: true
       plots.set.flag.weather.*: true
       plots.set.flag.music.*: true
