@@ -346,7 +346,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
 
         Flag flag;
-        if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS) && (flag = FlagManager.getPlotFlag(plot, "blocked-cmds")) != null) {
+        if ((flag = FlagManager.getPlotFlag(plot, "blocked-cmds")) != null && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
             List<String> v = (List<String>) flag.getValue();
 
             String msg  = event.getMessage().toLowerCase().replaceFirst("/", "");

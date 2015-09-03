@@ -543,6 +543,31 @@ public class Plot {
     }
     
     /**
+     * Set a flag for this plot
+     * @param flag
+     * @param value
+     */
+    public void setFlag(String flag, Object value) {
+        FlagManager.addPlotFlag(this, new Flag(FlagManager.getFlag(flag), value));
+    }
+    
+    /**
+     * Remove a flag from this plot
+     * @param flag
+     */
+    public void removeFlag(String flag) {
+        FlagManager.removePlotFlag(this, flag);
+    }
+    
+    /**
+     * Get the flag for a given key
+     * @param flag
+     */
+    public Flag getFlag(String key) {
+        return FlagManager.getPlotFlag(this, key);
+    }
+    
+    /**
      * Delete a plot
      * @see PS#removePlot(String, PlotId, boolean)
      * @see #clear(Runnable) to simply clear a plot

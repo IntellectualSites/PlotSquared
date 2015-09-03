@@ -1,17 +1,16 @@
 package com.plotsquared.bukkit.object;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.PluginManager;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -19,7 +18,6 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -83,22 +81,7 @@ public class BukkitPlayer extends PlotPlayer {
             return EconHandler.manager.hasPermission(getName(), node);
         }
         boolean value = this.player.hasPermission(node);
-        if (!value) {
-            final String[] nodes = node.split("\\.");
-            if (!MathMan.isInteger(nodes[nodes.length - 1])) {
-                final StringBuilder n = new StringBuilder();
-                for (int i = 0; i < (nodes.length - 1); i++) {
-                    n.append(nodes[i] + ("."));
-                    if (!node.equals(n + C.PERMISSION_STAR.s())) {
-                        value = player.hasPermission(n + C.PERMISSION_STAR.s());
-                        if (value) {
-                            break;
-                        }
-                    }
-                }
-                value = this.player.hasPermission(node);
-            }
-        }
+        System.out.print(value + " | " + node);
         if (Settings.PERMISSION_CACHING) {
             if (value) {
                 this.hasPerm.add(node);
@@ -108,6 +91,29 @@ public class BukkitPlayer extends PlotPlayer {
             }
         }
         return value;
+    }
+    
+    public Permission getPermission(String node) {
+        PluginManager manager = Bukkit.getPluginManager();
+        Permission perm = manager.getPermission(node);
+        if (perm == null) {
+            String[] nodes = node.split("\\.");
+            perm = new Permission(node);
+            final StringBuilder n = new StringBuilder();
+            for (int i = 0; i < (nodes.length - 1); i++) {
+                n.append(nodes[i] + ("."));
+                if (!node.equals(n + C.PERMISSION_STAR.s())) {
+                    Permission parent = getPermission(n + C.PERMISSION_STAR.s());
+                    if (parent != null) {
+                        perm.addParent(parent, true);
+                    }
+                }
+            }
+            manager.addPermission(perm);
+        }
+        manager.recalculatePermissionDefaults(perm);
+        perm.recalculatePermissibles();
+        return perm;
     }
     
     @Override

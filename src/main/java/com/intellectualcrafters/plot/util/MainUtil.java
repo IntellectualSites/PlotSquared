@@ -1261,7 +1261,7 @@ public class MainUtil {
             Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z);
             if (BlockManager.manager.getBlock(loc).id != 0) {
                 // sendConsoleMessage("ID was " + BukkitUtil.getBlock(loc).id);
-                loc.setY(Math.max(getHeighestBlock(w, bot.getX(), bot.getZ()), bot.getY()));
+                loc.setY(Math.max(getHeighestBlock(w, loc.getX(), loc.getZ()), bot.getY()));
             }
             return loc;
         }

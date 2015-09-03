@@ -190,8 +190,16 @@ public class LikePlotMeConverter {
                             pathwidth = 7;
                         }
                         PS.get().config.set("worlds." + world + ".road.width", pathwidth);
+                        
+                        Integer pathheight = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
+                        if (pathheight == null || pathheight == 0) {
+                            pathheight = 64;
+                        }
+                        PS.get().config.set("worlds." + world + ".road.height", pathheight);
+                        PS.get().config.set("worlds." + world + ".wall.height", pathheight);
+                        PS.get().config.set("worlds." + world + ".plot.height", pathheight);
                         Integer plotsize = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".PlotSize"); //
-                        if (plotsize == null) {
+                        if (plotsize == null || plotsize == 0) {
                             plotsize = 32;
                         }
                         PS.get().config.set("worlds." + world + ".plot.size", plotsize);

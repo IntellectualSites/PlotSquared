@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.util;
 
+import org.bukkit.permissions.Permission;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandCaller;
@@ -13,12 +15,23 @@ public class Permissions {
         return hasPermission((CommandCaller) player, perm);
     }
 
-    public static boolean hasPermission(final CommandCaller player, final String perm) {
+    public static boolean hasPermission(final CommandCaller player, String perm) {
         if ((player == null) || player.hasPermission(C.PERMISSION_ADMIN.s()) || player.hasPermission(C.PERMISSION_STAR.s())) {
             return true;
         }
         if (player.hasPermission(perm)) {
             return true;
+        }
+        perm = perm.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
+        String[] nodes = perm.split("\\.");
+        final StringBuilder n = new StringBuilder();
+        for (int i = 0; i < (nodes.length - 1); i++) {
+            n.append(nodes[i] + ("."));
+            if (!perm.equals(n + C.PERMISSION_STAR.s())) {
+                if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -40,6 +53,7 @@ public class Permissions {
         if (player.hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
         }
+        System.out.print(range);
         for (int i = range; i > 0; i--) {
             if (player.hasPermission(stub + "." + i)) {
                 return i;

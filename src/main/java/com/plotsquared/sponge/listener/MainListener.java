@@ -12,29 +12,13 @@ import org.spongepowered.api.entity.living.Ambient;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.monster.Monster;
-import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.vehicle.Boat;
 import org.spongepowered.api.entity.vehicle.minecart.Minecart;
-import org.spongepowered.api.event.Subscribe;
-import org.spongepowered.api.event.block.BlockMoveEvent;
-import org.spongepowered.api.event.block.BlockRedstoneUpdateEvent;
-import org.spongepowered.api.event.block.FloraGrowEvent;
-import org.spongepowered.api.event.block.FluidSpreadEvent;
-import org.spongepowered.api.event.entity.EntityChangeBlockEvent;
-import org.spongepowered.api.event.entity.EntitySpawnEvent;
-import org.spongepowered.api.event.entity.EntityTeleportEvent;
-import org.spongepowered.api.event.entity.player.PlayerBreakBlockEvent;
-import org.spongepowered.api.event.entity.player.PlayerChangeWorldEvent;
-import org.spongepowered.api.event.entity.player.PlayerChatEvent;
-import org.spongepowered.api.event.entity.player.PlayerInteractBlockEvent;
-import org.spongepowered.api.event.entity.player.PlayerJoinEvent;
-import org.spongepowered.api.event.entity.player.PlayerMoveEvent;
-import org.spongepowered.api.event.entity.player.PlayerPlaceBlockEvent;
-import org.spongepowered.api.event.entity.player.PlayerQuitEvent;
-import org.spongepowered.api.event.message.CommandEvent;
-import org.spongepowered.api.event.network.PlayerConnectionEvent;
-import org.spongepowered.api.event.world.ChunkPreGenerateEvent;
-import org.spongepowered.api.event.world.WorldOnExplosionEvent;
+import org.spongepowered.api.event.entity.living.player.PlayerChatEvent;
+import org.spongepowered.api.event.entity.living.player.PlayerConnectionEvent;
+import org.spongepowered.api.event.entity.living.player.PlayerJoinEvent;
+import org.spongepowered.api.event.entity.living.player.PlayerQuitEvent;
 import org.spongepowered.api.network.PlayerConnection;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
@@ -46,6 +30,7 @@ import org.spongepowered.api.world.extent.Extent;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Predicate;
+import com.google.common.eventbus.Subscribe;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -726,10 +711,10 @@ public class MainListener {
                 if (!PlotListener.plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
-                        event.setNewLocation(from);
+                        event.setTo(from);
                     }
                     else {
-                        event.setNewLocation(world.getSpawnLocation());
+                        event.setTo(world.getSpawnLocation());
                     }
                     return;
                 }
@@ -742,10 +727,10 @@ public class MainListener {
                 if (!PlotListener.plotEntry(pp, plot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
-                        event.setNewLocation(from);
+                        event.setTo(from);
                     }
                     else {
-                        event.setNewLocation(world.getSpawnLocation());
+                        event.setTo(world.getSpawnLocation());
                     }
                     return;
                 }
@@ -755,13 +740,13 @@ public class MainListener {
                 if (x2 > border) {
                     Vector3d pos = to.getPosition();
                     to = to.setPosition(new Vector3d(border - 4, pos.getY(), pos.getZ()));
-                    event.setNewLocation(to);
+                    event.setTo(to);
                     MainUtil.sendMessage(pp, C.BORDER);
                 }
                 else if (x2 < -border) {
                     Vector3d pos = to.getPosition();
                     to = to.setPosition(new Vector3d(-border + 4, pos.getY(), pos.getZ()));
-                    event.setNewLocation(to);
+                    event.setTo(to);
                     MainUtil.sendMessage(pp, C.BORDER);
                 }
             }
@@ -793,10 +778,10 @@ public class MainListener {
                 if (!PlotListener.plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
-                        event.setNewLocation(from);
+                        event.setTo(from);
                     }
                     else {
-                        event.setNewLocation(world.getSpawnLocation());
+                        event.setTo(world.getSpawnLocation());
                     }
                     return;
                 }
@@ -809,10 +794,10 @@ public class MainListener {
                 if (!PlotListener.plotEntry(pp, plot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                     if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
-                        event.setNewLocation(from);
+                        event.setTo(from);
                     }
                     else {
-                        event.setNewLocation(world.getSpawnLocation());
+                        event.setTo(world.getSpawnLocation());
                     }
                     return;
                 }
@@ -822,13 +807,13 @@ public class MainListener {
                 if (z2 > border) {
                     Vector3d pos = to.getPosition();
                     to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), border - 4));
-                    event.setNewLocation(to);
+                    event.setTo(to);
                     MainUtil.sendMessage(pp, C.BORDER);
                 }
                 else if (z2 < -border) {
                     Vector3d pos = to.getPosition();
                     to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), -border + 4));
-                    event.setNewLocation(to);
+                    event.setTo(to);
                     MainUtil.sendMessage(pp, C.BORDER);
                 }
             }
@@ -867,10 +852,10 @@ public class MainListener {
                     if (!PlotListener.plotExit(pp, lastPlot)) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                         if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
-                            event.setNewLocation(from);
+                            event.setTo(from);
                         }
                         else {
-                            event.setNewLocation(world.getSpawnLocation());
+                            event.setTo(world.getSpawnLocation());
                         }
                         return;
                     }
@@ -883,10 +868,10 @@ public class MainListener {
                     if (!PlotListener.plotEntry(pp, plot)) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
-                            event.setNewLocation(from);
+                            event.setTo(from);
                         }
                         else {
-                            event.setNewLocation(world.getSpawnLocation());
+                            event.setTo(world.getSpawnLocation());
                         }
                         return;
                     }
@@ -896,13 +881,13 @@ public class MainListener {
                     if (x2 > border) {
                         Vector3d pos = to.getPosition();
                         to = to.setPosition(new Vector3d(border - 4, pos.getY(), pos.getZ()));
-                        event.setNewLocation(to);
+                        event.setTo(to);
                         MainUtil.sendMessage(pp, C.BORDER);
                     }
                     else if (x2 < -border) {
                         Vector3d pos = to.getPosition();
                         to = to.setPosition(new Vector3d(-border + 4, pos.getY(), pos.getZ()));
-                        event.setNewLocation(to);
+                        event.setTo(to);
                         MainUtil.sendMessage(pp, C.BORDER);
                     }
                 }
@@ -934,10 +919,10 @@ public class MainListener {
                     if (!PlotListener.plotExit(pp, lastPlot)) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                         if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
-                            event.setNewLocation(from);
+                            event.setTo(from);
                         }
                         else {
-                            event.setNewLocation(player.getWorld().getSpawnLocation());
+                            event.setTo(player.getWorld().getSpawnLocation());
                         }
                         return;
                     }
@@ -950,10 +935,10 @@ public class MainListener {
                     if (!PlotListener.plotEntry(pp, plot)) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
-                            event.setNewLocation(from);
+                            event.setTo(from);
                         }
                         else {
-                            event.setNewLocation(player.getWorld().getSpawnLocation());
+                            event.setTo(player.getWorld().getSpawnLocation());
                         }
                         return;
                     }
@@ -963,13 +948,13 @@ public class MainListener {
                     if (z2 > border) {
                         Vector3d pos = to.getPosition();
                         to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), border - 4));
-                        event.setNewLocation(to);
+                        event.setTo(to);
                         MainUtil.sendMessage(pp, C.BORDER);
                     }
                     else if (z2 < -border) {
                         Vector3d pos = to.getPosition();
                         to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), -border + 4));
-                        event.setNewLocation(to);
+                        event.setTo(to);
                         MainUtil.sendMessage(pp, C.BORDER);
                     }
                 }

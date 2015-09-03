@@ -68,6 +68,9 @@ public class ChunkListener implements Listener {
                     PlotPlayer pp = entry.getValue();
                     Location loc = pp.getLocation();
                     String world = loc.getWorld();
+                    if (!PS.get().isPlotWorld(world)) {
+                        continue;
+                    }
                     HashMap<ChunkLoc, Integer> map = players.get(world);
                     if (map == null) {
                         map = new HashMap<>();
@@ -107,8 +110,10 @@ public class ChunkListener implements Listener {
                 for (World world : Bukkit.getWorlds()) {
                     String name = world.getName();
                     boolean autosave = world.isAutoSave();
-                    boolean plotworld = PS.get().isPlotWorld(name);
-                    if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autosave && plotworld) {
+                    if (!PS.get().isPlotWorld(name)) {
+                        continue;
+                    }
+                    if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autosave) {
                         world.setAutoSave(false);
                     }
                     HashMap<ChunkLoc, Integer> map = players.get(name);
@@ -119,12 +124,12 @@ public class ChunkListener implements Listener {
                         int x = chunk.getX();
                         int z = chunk.getZ();
                         if (!map.containsKey(new ChunkLoc(x, z))) {
-                            if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE || !plotworld || !unloadChunk(name, chunk)) {
+                            if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE || !unloadChunk(name, chunk)) {
                                 chunk.unload(true, false);
                             }
                         }
                     }
-                    if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autosave && plotworld) {
+                    if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autosave) {
                         world.setAutoSave(true);
                     }
                 }

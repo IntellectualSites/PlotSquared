@@ -61,7 +61,6 @@ public class WESubscriber {
             if (pp != null && pp.getAttribute("worldedit")) {
                 return;
             }
-
             PlotPlayer player = UUIDHandler.getPlayer(actor.getName());
             HashSet<RegionWrapper> mask = WEManager.getMask(player);
             PlotWorld plotworld = PS.get().getPlotWorld(world);

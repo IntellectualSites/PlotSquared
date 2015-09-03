@@ -122,7 +122,7 @@ public class ExpireManager {
                             public void run() {
                                 PlotAnalysis changed = this.value;
                                 if (Settings.CLEAR_THRESHOLD != -1 && plotworld.TYPE == 0 && changed != null) {
-                                    if (changed.getComplexity() > Settings.CLEAR_THRESHOLD) {
+                                    if (changed.changes != 0 && changed.getComplexity() > Settings.CLEAR_THRESHOLD) {
                                         PS.debug("$2[&5Expire&dManager$2] &bIgnoring modified plot: " + plot + " : " + changed.getComplexity() + " - " + changed.changes);
                                         expiredPlots.get(world).remove(plot);
                                         FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("analysis"), changed.asList()));

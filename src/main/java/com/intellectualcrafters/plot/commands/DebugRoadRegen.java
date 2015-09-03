@@ -69,6 +69,7 @@ public class DebugRoadRegen extends SubCommand {
             }
             boolean result = HybridUtils.manager.regenerateRoad(world, chunk, extend);
             MainUtil.sendMessage(player, "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
+            MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
         }
         else {
             HybridPlotManager manager = (HybridPlotManager) PS.get().getPlotManager(world);
@@ -76,6 +77,7 @@ public class DebugRoadRegen extends SubCommand {
             manager.createRoadSouth(plotworld, plot);
             manager.createRoadSouthEast(plotworld, plot);
             MainUtil.sendMessage(player, "&6Regenerating plot south/east roads: " + plot.id + "\n&6 - Result: &aSuccess");
+            MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
         }
         return true;
     }

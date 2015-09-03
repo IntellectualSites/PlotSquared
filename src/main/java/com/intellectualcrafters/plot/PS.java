@@ -1835,8 +1835,6 @@ public class PS {
         options.put("cache.permissions", Settings.PERMISSION_CACHING);
         options.put("cache.ratings", Settings.CACHE_RATINGS);
         
-        options.put("cache.ratings", Settings.CACHE_RATINGS);
-        
         // Titles
         options.put("titles", Settings.TITLES);
         

@@ -15,10 +15,6 @@ commands:
     permission: plots.use
     permission-message: "You are lacking the permission node 'plots.use'"
 permissions:
-  plots.admin:
-    children:
-      plots.*: true
-    default: op
   plots.use:
     default: true
   plots.permpack.basicflags:
@@ -26,43 +22,48 @@ permissions:
     children:
       plots.set.flag: true
       plots.flag: true
-      plots.set.flag.titles: true
-      plots.set.flag.greeting: true
-      plots.set.flag.farewell: true
-      plots.set.flag.notify-enter: true
-      plots.set.flag.notify-leave: true
-      plots.set.flag.feed: true
-      plots.set.flag.heal: true
-      plots.set.flag.invincible: true
-      plots.set.flag.instabreak: true
-      plots.set.flag.fly: true
-      plots.set.flag.gamemode: true
-      plots.set.flag.time: true
-      plots.set.flag.weather: true
-      plots.set.flag.music: true
-      plots.set.flag.disable-physics: true
-      plots.set.flag.pve: true
-      plots.set.flag.pvp: true
-      plots.set.flag.explosion: true
-      plots.set.flag.hostile-interact: true
-      plots.set.flag.hostile-attack: true
-      plots.set.flag.animal-interact: true
-      plots.set.flag.animal-attack: true
-      plots.set.flag.tamed-interact: true
-      plots.set.flag.tamed-attack: true
-      plots.set.flag.misc-interact: true
-      plots.set.flag.hanging-place: true
-      plots.set.flag.hanging-break: true
-      plots.set.flag.vehicle-use: true
-      plots.set.flag.vehicle-place: true
-      plots.set.flag.vehicle-break: true
-      plots.set.flag.player-interact: true
-      plots.set.flag.place: true
-      plots.set.flag.break: true
-      plots.set.flag.use: true
-      plots.set.flag.forcefield: true
-      plots.set.flag.price: true
-      plots.set.flag.no-worldedit: true
+      plots.flag.add: true
+      plots.flag.remove: true
+      plots.flag.list: true
+      plots.flag.info: true
+      plots.set.flag.titles.*: true
+      plots.set.flag.greeting.*: true
+      plots.set.flag.farewell.*: true
+      plots.set.flag.notify-enter.*: true
+      plots.set.flag.notify-leave.*: true
+      plots.set.flag.feed.*: true
+      plots.set.flag.heal.*: true
+      plots.set.flag.invincible.*: true
+      plots.set.flag.instabreak.*: true
+      plots.set.flag.fly.*: true
+      plots.set.flag.gamemode.*: true
+      plots.set.flag.time.*: true
+      plots.set.flag.weather.*: true
+      plots.set.flag.music.*: true
+      plots.set.flag.disable-physics.*: true
+      plots.set.flag.pve.*: true
+      plots.set.flag.pvp.*: true
+      plots.set.flag.explosion.*: true
+      plots.set.flag.hostile-interact.*: true
+      plots.set.flag.hostile-attack.*: true
+      plots.set.flag.player-interact.*: true
+      plots.set.flag.animal-interact.*: true
+      plots.set.flag.animal-attack.*: true
+      plots.set.flag.tamed-interact.*: true
+      plots.set.flag.tamed-attack.*: true
+      plots.set.flag.misc-interact.*: true
+      plots.set.flag.hanging-place.*: true
+      plots.set.flag.hanging-break.*: true
+      plots.set.flag.vehicle-use.*: true
+      plots.set.flag.vehicle-place.*: true
+      plots.set.flag.vehicle-break.*: true
+      plots.set.flag.player-interact.*: true
+      plots.set.flag.place.*: true
+      plots.set.flag.break.*: true
+      plots.set.flag.use.*: true
+      plots.set.flag.forcefield.*: true
+      plots.set.flag.price.*: true
+      plots.set.flag.no-worldedit.*: true
   plots.permpack.basicinbox:
     default: op
     children:
@@ -104,6 +105,10 @@ permissions:
       plots.visit.owned: true
       plots.visit.shared: true
       plots.set.flag: true
+      plots.flag.add: true
+      plots.flag.remove: true
+      plots.flag.list: true
+      plots.flag.info: true
       plots.flag: true
       plots.buy: true
       plots.chat: true
