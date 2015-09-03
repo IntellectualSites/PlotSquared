@@ -1617,11 +1617,15 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     @EventHandler(priority= EventPriority.MONITOR)
     public void onLeave(final PlayerQuitEvent event) {
         PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
+        Plot plot = pp.getCurrentPlot();
+        if (plot != null) {
+            plotExit(pp, plot);
+        }
         ExpireManager.dates.put(pp.getUUID(), System.currentTimeMillis());
         EventUtil.unregisterPlayer(pp);
         if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
-            for (final Plot plot : PS.get().getPlotsInWorld(pp.getName())) {
-                plot.deletePlot(null);
+            for (final Plot owned : PS.get().getPlotsInWorld(pp.getName())) {
+                owned.deletePlot(null);
                 PS.debug(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
             }
         }
