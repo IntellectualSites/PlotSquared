@@ -130,7 +130,7 @@ public class ExpireManager {
                                     }
                                 }
                                 if (plot.isMerged()) {
-                                    MainUtil.unlinkPlot(plot);
+                                    MainUtil.unlinkPlot(plot, true);
                                 }
                                 plot.deletePlot(null);
                                 expiredPlots.get(world).remove(plot);

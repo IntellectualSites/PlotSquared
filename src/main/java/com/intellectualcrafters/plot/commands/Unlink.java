@@ -56,11 +56,10 @@ public class Unlink extends SubCommand {
         if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
             return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
-        
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if (!MainUtil.unlinkPlot(plot)) {
+                if (!MainUtil.unlinkPlot(plot, true)) {
                     MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
                     return;
                 }

@@ -111,6 +111,11 @@ public class Merge extends SubCommand {
             }
         }
         else {
+            if (args[0].equalsIgnoreCase("all")) {
+                plot.autoMerge(args.length != 2 || !args[1].equalsIgnoreCase("false"));
+                MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
+                return true;
+            }
             for (int i = 0; i < values.length; i++) {
                 if (args[0].equalsIgnoreCase(values[i]) || args[0].equalsIgnoreCase(aliases[i])) {
                     direction = i;

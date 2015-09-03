@@ -53,7 +53,6 @@ public class Permissions {
         if (player.hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
         }
-        System.out.print(range);
         for (int i = range; i > 0; i--) {
             if (player.hasPermission(stub + "." + i)) {
                 return i;

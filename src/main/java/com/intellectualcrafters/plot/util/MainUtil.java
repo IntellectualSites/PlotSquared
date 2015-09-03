@@ -298,7 +298,7 @@ public class MainUtil {
         return MainUtil.mergePlots(world, plotIds, true, true);
     }
     
-    public static boolean unlinkPlot(final Plot plot) {
+    public static boolean unlinkPlot(final Plot plot, boolean createRoad) {
         final String world = plot.world;
         final PlotId pos1 = MainUtil.getBottomPlot(plot).id;
         final PlotId pos2 = MainUtil.getTopPlot(plot).id;
@@ -324,7 +324,7 @@ public class MainUtil {
             myplot.getSettings().setMerged(new boolean[] { false, false, false, false });
             DBFunc.setMerged(myplot, myplot.getSettings().getMerged());
         }
-        if (plotworld.TERRAIN != 3) {
+        if (plotworld.TERRAIN != 3 && createRoad) {
             for (int x = pos1.x; x <= pos2.x; x++) {
                 for (int y = pos1.y; y <= pos2.y; y++) {
                     final boolean lx = x < pos2.x;

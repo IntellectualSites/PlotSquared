@@ -595,11 +595,11 @@ public class Plot {
     
     /**
      * Unlink a plot and remove the roads
-     * @see MainUtil#unlinkPlot(Plot)
+     * @see MainUtil#unlinkPlot(Plot, boolean removeRoad)
      * @return true if plot was linked
      */
     public boolean unlink() {
-        return MainUtil.unlinkPlot(this);
+        return MainUtil.unlinkPlot(this, true);
     }
     
     /**

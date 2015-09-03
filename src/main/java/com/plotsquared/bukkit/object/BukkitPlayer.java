@@ -81,7 +81,6 @@ public class BukkitPlayer extends PlotPlayer {
             return EconHandler.manager.hasPermission(getName(), node);
         }
         boolean value = this.player.hasPermission(node);
-        System.out.print(value + " | " + node);
         if (Settings.PERMISSION_CACHING) {
             if (value) {
                 this.hasPerm.add(node);
