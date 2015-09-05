@@ -31,11 +31,11 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 
 public class BukkitUtil extends BlockManager {
-    private static HashMap<String, World> worlds = new HashMap<>();
     private static String lastString = null;
     private static World lastWorld = null;
 
@@ -145,14 +145,12 @@ public class BukkitUtil extends BlockManager {
     }
 
     public static World getWorld(final String string) {
-        if (string == lastString) {
+        if (StringMan.isEqual(string,lastString)) {
             return lastWorld;
         }
-        World world = worlds.get(string);
-        if (world == null) {
-            world = Bukkit.getWorld(string);
-            worlds.put(string, world);
-        }
+        World world = Bukkit.getWorld(string);
+        lastString = string;
+        lastWorld = world;
         return world;
     }
 

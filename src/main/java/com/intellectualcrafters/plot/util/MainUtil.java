@@ -492,7 +492,6 @@ public class MainUtil {
 
     public static boolean teleportPlayer(final PlotPlayer player, final Location from, final Plot plot) {
         final Plot bot = MainUtil.getBottomPlot(plot);
-
         boolean result = EventUtil.manager.callTeleport(player, from, plot);
 
         if (result) {

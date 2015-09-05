@@ -87,14 +87,13 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
-                Flag use = FlagManager.getPlotFlag(plot, "break");
+                Flag use = FlagManager.getPlotFlag(plot, "use");
                 if (use != null) {
                     HashSet<PlotBlock> value = (HashSet<PlotBlock>) use.getValue();
                     if (value.contains(PlotBlock.EVERYTHING) || value.contains(block.getPlotBlock())) {
                         return true;
                     }
                 }
-                
                 Flag destroy = FlagManager.getPlotFlag(plot, "break");
                 if (destroy != null) {
                     HashSet<PlotBlock> value = (HashSet<PlotBlock>) destroy.getValue();

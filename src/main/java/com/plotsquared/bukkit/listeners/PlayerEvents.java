@@ -1096,6 +1096,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     case BEACON:
                     case BED_BLOCK:
                     case SIGN:
+                    case WALL_SIGN:
                     case SIGN_POST:
                     case ENCHANTMENT_TABLE:
                     case BREWING_STAND:
@@ -1125,7 +1126,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 if (eventType != null && !player.isSneaking()) {
                     break;
                 }
-                if (hand == null) {
+                if (hand == null || hand.getType() == Material.AIR || hand.getType().isBlock()) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
                     lb = new BukkitLazyBlock(block);
                     break;

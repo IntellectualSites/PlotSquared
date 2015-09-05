@@ -126,6 +126,7 @@ public class DebugExec extends SubCommand {
         scope.put("Settings", new Settings());
         scope.put("StringMan", new StringMan());
         scope.put("MathMan", new MathMan());
+        scope.put("FlagManager", new FlagManager());
         
         // Classes
         scope.put("Location", Location.class);
