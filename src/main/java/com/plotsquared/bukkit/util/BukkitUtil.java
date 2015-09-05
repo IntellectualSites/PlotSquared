@@ -145,8 +145,10 @@ public class BukkitUtil extends BlockManager {
     }
 
     public static World getWorld(final String string) {
-        if (StringMan.isEqual(string,lastString)) {
-            return lastWorld;
+        if (StringMan.isEqual(string, lastString)) {
+            if (lastWorld != null) {
+                return lastWorld;
+            }
         }
         World world = Bukkit.getWorld(string);
         lastString = string;
