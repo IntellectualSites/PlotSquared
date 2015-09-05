@@ -20,14 +20,14 @@ public class Rating {
     public Rating(int value) {
         this.initial = value;
         ratingMap = new HashMap<>();
-        if (value < 10) {
-            for (int i = 0 ; i < Settings.RATING_CATEGORIES.size(); i++) {
-                ratingMap.put(Settings.RATING_CATEGORIES.get(i), value);
-            }
-            changed = true;
-            return;
-        }
         if (Settings.RATING_CATEGORIES != null && Settings.RATING_CATEGORIES.size() > 1) {
+            if (value < 10) {
+                for (int i = 0 ; i < Settings.RATING_CATEGORIES.size(); i++) {
+                    ratingMap.put(Settings.RATING_CATEGORIES.get(i), value);
+                }
+                changed = true;
+                return;
+            }
             for (int i = 0 ; i < Settings.RATING_CATEGORIES.size(); i++) {
                 ratingMap.put(Settings.RATING_CATEGORIES.get(i), (value % 10) - 1);
                 value /= 10;
