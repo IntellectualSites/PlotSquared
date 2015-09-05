@@ -193,7 +193,18 @@ public class PS {
                 @Override
                 public void run() {
                     PS.debug("Starting UUID caching");
-                    UUIDHandler.startCaching(null);
+                    UUIDHandler.startCaching(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (Plot plot : getPlots()) {
+                                if (plot.owner != null && plot.temp != -1) {
+                                    if (UUIDHandler.getName(plot.owner) == null) {
+                                        UUIDHandler.implementation.unknown.add(plot.owner);
+                                    }
+                                }
+                            }
+                        }
+                    });
                 }
             }, 20);
             // create event util class

@@ -2572,6 +2572,28 @@ public class SQLManager implements AbstractDB {
         }
         commit();
     }
+    
+    @Override
+    public void replaceUUID(final UUID old, final UUID now) {
+        addGlobalTask(new Runnable() {
+            @Override
+            public void run() {
+                try (Statement stmt = connection.createStatement()) {
+                    stmt.executeUpdate("UPDATE `" + prefix + "cluster` SET `owner` = '" + now.toString() + "' WHERE `owner` = '" + old.toString() + "'");
+                    stmt.executeUpdate("UPDATE `" + prefix + "cluster_helpers` SET `user_uuid` = '" + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + "'");
+                    stmt.executeUpdate("UPDATE `" + prefix + "cluster_invited` SET `user_uuid` = '" + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + "'");
+                    stmt.executeUpdate("UPDATE `" + prefix + "plot` SET `owner` = '" + now.toString() + "' WHERE `owner` = '" + old.toString() + "'");
+                    stmt.executeUpdate("UPDATE `" + prefix + "plot_denied` SET `user_uuid` = '" + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + "'");
+                    stmt.executeUpdate("UPDATE `" + prefix + "plot_helpers` SET `user_uuid` = '" + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + "'");
+                    stmt.executeUpdate("UPDATE `" + prefix + "plot_trusted` SET `user_uuid` = '" + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + "'");
+                    stmt.close();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
     @Override
     public void close() {

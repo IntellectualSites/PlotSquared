@@ -1,15 +1,20 @@
 package com.intellectualcrafters.plot.util;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
@@ -62,36 +67,82 @@ public abstract class UUIDHandlerImplementation {
         if (uuidMap.size() == 0) {
             uuidMap = toAdd;
         }
-        TaskManager.runTask(new Runnable() {
-            @Override
-            public void run() {
-                for (Map.Entry<StringWrapper, UUID> entry : toAdd.entrySet()) {
-                    UUID uuid = entry.getValue();
-                    StringWrapper name = entry.getKey();
-                    if ((uuid == null) || (name == null)) {
-                        continue;
-                    }
-                    BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
-                    if (inverse.containsKey(uuid)) {
-                        if (uuidMap.containsKey(name)) {
-                            continue;
-                        }
-                        rename(uuid, name);
-                        continue;
-                    }
-                    uuidMap.put(name, uuid);
-                }
-                PS.debug(C.PREFIX.s() + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
+        for (Map.Entry<StringWrapper, UUID> entry : toAdd.entrySet()) {
+            UUID uuid = entry.getValue();
+            StringWrapper name = entry.getKey();
+            if ((uuid == null) || (name == null)) {
+                continue;
             }
-        });
+            BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
+            if (inverse.containsKey(uuid)) {
+                if (uuidMap.containsKey(name)) {
+                    continue;
+                }
+                rename(uuid, name);
+                continue;
+            }
+            uuidMap.put(name, uuid);
+        }
+        PS.debug(C.PREFIX.s() + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
     }
     
+    public HashSet<UUID> unknown = new HashSet<>();
+    
     public boolean add(final StringWrapper name, final UUID uuid) {
-        if ((uuid == null) || (name == null)) {
+        if ((uuid == null)) {
             return false;
         }
+        if (name == null) {
+            try {
+                unknown.add(uuid);
+            }
+            catch (Exception e) {
+                PS.log("&c(minor) Invalid UUID mapping: " + uuid);
+                e.printStackTrace();
+            }
+            return false;
+        }
+        
+        /*
+         * lazy UUID conversion:
+         *  - Useful if the person misconfigured the database, or settings before PlotMe conversion
+         */
+        if (!Settings.OFFLINE_MODE) {
+            UUID offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
+            if (!unknown.contains(offline) && !name.value.equals(name.value.toLowerCase())){
+                offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
+                if (!unknown.contains(offline)) {
+                    offline = null;
+                }
+            }
+            if (offline != null) {
+                unknown.remove(offline);
+                Set<Plot> plots = PS.get().getPlots(offline);
+                if (plots.size() > 0) {
+                    for (Plot plot : PS.get().getPlots(offline)) {
+                        plot.owner = uuid;
+                    }
+                    DBFunc.replaceUUID(offline, uuid);
+                    PS.debug("&cDetected invalid UUID stored for: " + name.value);
+                    PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
+                    PS.debug("&6PlotSquared will update incorrect entries when the user logs in, or you can reconstruct your database.");
+                }
+            }
+        }
         try {
-            uuidMap.put(name, uuid);
+            UUID offline = uuidMap.put(name, uuid);
+            if (offline != null && !offline.equals(uuid)) {
+                Set<Plot> plots = PS.get().getPlots(offline);
+                if (plots.size() > 0) {
+                    for (Plot plot : PS.get().getPlots(offline)) {
+                        plot.owner = uuid;
+                    }
+                    DBFunc.replaceUUID(offline, uuid);
+                    PS.debug("&cDetected invalid UUID stored for (1): " + name.value);
+                    PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
+                    PS.debug("&6PlotSquared will update incorrect entries when the user logs in, or you can reconstruct your database.");
+                }
+            }
         }
         catch (Exception e) {
             BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();

@@ -420,6 +420,15 @@ public class DBFunc {
     public static void setPosition(final PlotCluster cluster, final String position) {
         dbManager.setPosition(cluster, position);
     }
+    
+    /**
+     * Replace all occurances of a uuid in the database with another one
+     * @param old
+     * @param now
+     */
+    public static void replaceUUID(UUID old, UUID now) {
+        dbManager.replaceUUID(old, now);
+    }
 
     public static void close() {
         dbManager.close();

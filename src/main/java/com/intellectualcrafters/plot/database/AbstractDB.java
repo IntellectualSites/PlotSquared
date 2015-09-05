@@ -330,6 +330,15 @@ public interface AbstractDB {
     void resizeCluster(PlotCluster current, PlotClusterId resize);
 
     void movePlot(Plot originalPlot, Plot newPlot);
+
+    /**
+     * Replace a old uuid with a new one in the database<br>
+     * - Useful for replacing a few uuids (not the entire database)<br>
+     * - For entire conversion, the uuidconvert command scales better
+     * @param old
+     * @param now
+     */
+    void replaceUUID(UUID old, UUID now);
     
     /**
      * Don't fuck with this one, unless you enjoy it rough
