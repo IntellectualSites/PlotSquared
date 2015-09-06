@@ -601,7 +601,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled=true)
     public void onChat(final AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
@@ -626,7 +626,12 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         recipients.clear();
         for (final Player p : Bukkit.getOnlinePlayers()) {
             PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (pp.getAttribute("chatspy") || plot.equals(pp.getCurrentPlot())) {
+            if (pp.getAttribute("chatspy")) {
+                String spy = event.getFormat();
+                spy = String.format(spy, sender, message);
+                pp.sendMessage(spy);
+            }
+            else if (plot.equals(pp.getCurrentPlot())) {
                 recipients.add(p);
             }
         }

@@ -32,6 +32,7 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.CommentManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -82,6 +83,11 @@ public class Comment extends SubCommand {
             sendMessage(player, C.NO_PLOT_INBOX, "");
             sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(),"|"));
             return false;
+        }
+        for (PlotPlayer pp : UUIDHandler.getPlayers().values()) {
+            if (pp.getAttribute("chatspy")) {
+                MainUtil.sendMessage(pp, "/plot comment " + StringMan.join(args, " "));
+            }
         }
         sendMessage(player, C.COMMENT_ADDED);
         return true;

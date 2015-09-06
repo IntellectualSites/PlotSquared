@@ -83,10 +83,10 @@ public class Toggle extends SubCommand {
                 @Override
                 public boolean onCommand(PlotPlayer player, String[] args) {
                     if (toggle(player, "chatspy")) {
-                        MainUtil.sendMessage(player, C.TOGGLE_ENABLED, getCommand());
+                        MainUtil.sendMessage(player, C.TOGGLE_DISABLED, getCommand());
                     }
                     else {
-                        MainUtil.sendMessage(player, C.TOGGLE_DISABLED, getCommand());
+                        MainUtil.sendMessage(player, C.TOGGLE_ENABLED, getCommand());
                     }
                     return true;
                 }

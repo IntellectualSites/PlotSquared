@@ -46,6 +46,7 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
@@ -948,7 +949,7 @@ public class Plot {
         if (this.hashCode() != other.hashCode()) {
             return false;
         }
-        return ((this.id.x.equals(other.id.x)) && (this.id.y.equals(other.id.y)) && (this.world.equals(other.world)));
+        return ((this.id.x.equals(other.id.x)) && (this.id.y.equals(other.id.y)) && (StringMan.isEqual(this.world, other.world)));
     }
 
     
