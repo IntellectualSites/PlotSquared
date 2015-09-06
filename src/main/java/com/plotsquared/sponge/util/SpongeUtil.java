@@ -1,7 +1,7 @@
 package com.plotsquared.sponge.util;
 
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
 

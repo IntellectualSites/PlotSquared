@@ -171,10 +171,6 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         Player player = event.getPlayer();
         final Plot plot = event.getPlot();
-        Flag greeting = FlagManager.getPlotFlag(plot, "greeting");
-        if (greeting != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_GREETING.s().replaceAll("%id%", plot.id + "") + greeting.getValueString()));
-        }
         Flag feed = FlagManager.getPlotFlag(plot, "feed");
         if (feed != null) {
             Integer[] value = (Integer[]) feed.getValue();
@@ -184,27 +180,6 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (heal != null) {
             Integer[] value = (Integer[]) heal.getValue();
             healRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
-        }
-        if (FlagManager.isBooleanFlag(plot, "notify-enter", false)) {
-            final Player trespasser = event.getPlayer();
-            final PlotPlayer pt = BukkitUtil.getPlayer(trespasser);
-            if (Permissions.hasPermission(pt, "plots.flag.notify-enter.bypass")) {
-                return;
-            }
-            if (plot.hasOwner()) {
-                for (UUID owner : PlotHandler.getOwners(plot)) {
-                    final PlotPlayer pp = UUIDHandler.getPlayer(owner);
-                    if (pp == null) {
-                        return;
-                    }
-                    if (pp.getUUID().equals(pt.getUUID())) {
-                        return;
-                    }
-                    if (pp.isOnline()) {
-                        MainUtil.sendMessage(pp, C.NOTIFY_ENTER.s().replace("%player", trespasser.getName()).replace("%plot", plot.getId().toString()));
-                    }
-                }
-            }
         }
     }
 
@@ -223,33 +198,10 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (!plot.hasOwner()) {
             return;
         }
-        Flag farewell = FlagManager.getPlotFlag(plot, "farewell"); 
-        if (farewell != null) {
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + farewell.getValueString()));
-        }
         final PlotPlayer pl = BukkitUtil.getPlayer(leaver);
         String name = leaver.getName();
         feedRunnable.remove(name);
         healRunnable.remove(name);
-        if (FlagManager.isBooleanFlag(plot, "notify-leave", false)) {
-            if (Permissions.hasPermission(pl, "plots.flag.notify-leave.bypass")) {
-                return;
-            }
-            if (plot.hasOwner()) {
-                for (UUID owner : PlotHandler.getOwners(plot)) {
-                    final PlotPlayer pp = UUIDHandler.getPlayer(owner);
-                    if (pp == null) {
-                        return;
-                    }
-                    if (pp.getUUID().equals(pl.getUUID())) {
-                        return;
-                    }
-                    if (pp.isOnline()) {
-                        MainUtil.sendMessage(pp, C.NOTIFY_LEAVE.s().replace("%player", leaver.getName()).replace("%plot", plot.getId().toString()));
-                    }
-                }
-            }
-        }
     }
 
     public static class Interval {
