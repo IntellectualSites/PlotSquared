@@ -31,6 +31,8 @@ import java.util.zip.ZipInputStream;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
@@ -78,6 +80,8 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.listener.WESubscriber;
+import com.sk89q.worldedit.WorldEdit;
 
 /**
  * An implementation of the core,
@@ -103,6 +107,7 @@ public class PS {
     public YamlConfiguration storage;
     public IPlotMain IMP = null;
     public TaskManager TASK;
+    public WorldEdit worldedit;
     public URL update;
 
     // private:
@@ -167,8 +172,13 @@ public class PS {
             if (Settings.KILL_ROAD_MOBS || Settings.KILL_ROAD_VEHICLES) {
                 IMP.runEntityTask();
             }
+            if (IMP.initWorldEdit()) {
+                worldedit = WorldEdit.getInstance();
+                WorldEdit.getInstance().getEventBus().register(new WESubscriber());
+                MainCommand.getInstance().createCommand(new WE_Anywhere());
+            }
+            
             // Events
-            IMP.registerWorldEditEvents();
             IMP.registerCommands();
             IMP.registerPlayerEvents();
             IMP.registerInventoryEvents();

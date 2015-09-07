@@ -64,7 +64,6 @@ import com.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.plotsquared.bukkit.listeners.TNTListener;
 import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
-import com.plotsquared.bukkit.listeners.worldedit.WESubscriber;
 import com.plotsquared.bukkit.titles.DefaultTitle;
 import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
@@ -90,6 +89,7 @@ import com.plotsquared.bukkit.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
+import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
@@ -368,7 +368,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public void registerWorldEditEvents() {
+    public boolean initWorldEdit() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
             BukkitMain.worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
             final String version = BukkitMain.worldEdit.getDescription().getVersion();
@@ -378,10 +378,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 log("&c - http://builds.enginehub.org/job/worldedit");
             } else {
                 getServer().getPluginManager().registerEvents(new WEListener(), this);
-                WorldEdit.getInstance().getEventBus().register(new WESubscriber());
-                MainCommand.getInstance().createCommand(new WE_Anywhere());
+                return true;
             }
         }
+        return false;
     }
     
     @Override

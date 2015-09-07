@@ -1,4 +1,4 @@
-package com.plotsquared.bukkit.listeners.worldedit;
+package com.plotsquared.listener;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEditException;

@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -105,7 +106,7 @@ public class Toggle extends SubCommand {
                 return true;
             }
         });
-        if (BukkitMain.worldEdit != null) {
+        if (PS.get().worldedit != null) {
             toggles.put("worldedit", 
                 new Command<PlotPlayer>("worldedit", "/plot toggle worldedit", "Toggle worldedit bypass", C.PERMISSION_WORLDEDIT_BYPASS.s()) {
                 

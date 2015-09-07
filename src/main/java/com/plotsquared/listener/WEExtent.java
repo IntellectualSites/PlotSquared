@@ -1,4 +1,4 @@
-package com.plotsquared.bukkit.listeners.worldedit;
+package com.plotsquared.listener;
 
 import java.util.HashSet;
 

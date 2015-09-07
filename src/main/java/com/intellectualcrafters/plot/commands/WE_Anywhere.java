@@ -25,8 +25,8 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.bukkit.listeners.worldedit.WEManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+import com.plotsquared.listener.WEManager;
 
 @CommandDeclaration(
         command = "weanywhere",

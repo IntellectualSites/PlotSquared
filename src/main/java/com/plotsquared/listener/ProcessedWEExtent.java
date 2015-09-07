@@ -1,4 +1,4 @@
-package com.plotsquared.bukkit.listeners.worldedit;
+package com.plotsquared.listener;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -7,9 +7,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
-import com.plotsquared.bukkit.util.BukkitUtil;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.Vector2D;
 import com.sk89q.worldedit.WorldEditException;

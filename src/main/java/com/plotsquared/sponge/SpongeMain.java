@@ -21,7 +21,9 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.entity.player.PlayerChatEvent;
+import org.spongepowered.api.event.state.InitializationEvent;
 import org.spongepowered.api.event.state.PreInitializationEvent;
 import org.spongepowered.api.event.state.ServerAboutToStartEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -36,7 +38,6 @@ import org.spongepowered.api.world.GeneratorTypes;
 import org.spongepowered.api.world.World;
 
 import com.google.common.base.Optional;
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
@@ -79,12 +80,13 @@ import com.plotsquared.sponge.util.SpongeUtil;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
+import com.sk89q.worldedit.WorldEdit;
 
 /**
  * Created by robin on 01/11/2014
  */
 
-@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.0.0")
+@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.0.0", dependencies="before:WorldEdit")
 public class SpongeMain implements IPlotMain, PluginContainer {
     public static SpongeMain THIS;
     
@@ -210,7 +212,12 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     }
     ///////////////////////////////////////////////////////////////////////
     
-    ///////////////////// ON ENABLE /////////////////////  
+    ///////////////////// ON ENABLE /////////////////////
+    @Subscribe
+    public void init(InitializationEvent event) {
+        log("INIT");
+    }
+    
     @Subscribe
     public void onInit(PreInitializationEvent event) {
         log("PRE INIT");
@@ -218,13 +225,11 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     
     @Subscribe
     public void onServerAboutToStart(ServerAboutToStartEvent event) {
-        log("INIT");
+        log("ABOUT START");
         THIS = this;
         
         //
         resolver = game.getServiceManager().provide(GameProfileResolver.class).get();
-        plugin = game.getPluginManager().getPlugin("PlotSquared").get().getInstance();
-        log("PLUGIN IS THIS: " + (plugin == this));
         plugin = this;
         server = game.getServer();
         //
@@ -514,7 +519,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public void registerCommands() {
-        getGame().getCommandDispatcher().register(plugin, new SpongeCommand(), "plots", "p", "plot", "ps", "plotsquared", "p2", "2");
+        getGame().getCommandDispatcher().register(plugin, new SpongeCommand(), new String[] {"plots", "p", "plot", "ps", "plotsquared", "p2", "2"});
     }
 
     @Override
@@ -541,9 +546,15 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     }
 
     @Override
-    public void registerWorldEditEvents() {
-        // TODO Auto-generated method stub
-        log("registerWorldEditEvents is not implemented!");
+    public boolean initWorldEdit() {
+        try {
+            log("CHECKING FOR WORLDEDIT!?");
+            Class.forName("com.sk89q.worldedit.WorldEdit");
+            return true;
+        }
+        catch (Throwable e) {
+            return false;
+        }
     }
 
     @Override

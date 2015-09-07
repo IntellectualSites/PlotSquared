@@ -43,11 +43,11 @@ public class WorldModify implements WorldGeneratorModifier {
     
     @Override
     public String getName() {
-        return "PlotSquared";
+        return "plotsquared";
     }
 
     @Override
     public String getId() {
-        return "PlotSquared";
+        return "plotsquared";
     }
 }

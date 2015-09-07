@@ -26,6 +26,7 @@ import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SetBlockFast;
+import com.plotsquared.listener.WEManager;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;

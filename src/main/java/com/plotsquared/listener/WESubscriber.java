@@ -1,10 +1,7 @@
-package com.plotsquared.bukkit.listeners.worldedit;
+package com.plotsquared.listener;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
-
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -14,31 +11,18 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.EditSession.Stage;
 import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.command.tool.BrushTool;
 import com.sk89q.worldedit.command.tool.Tool;
+import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.ChangeSetExtent;
-import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.MaskingExtent;
-import com.sk89q.worldedit.extent.cache.LastAccessExtentCache;
-import com.sk89q.worldedit.extent.inventory.BlockBagExtent;
 import com.sk89q.worldedit.extent.reorder.MultiStageReorder;
-import com.sk89q.worldedit.extent.validation.DataValidatorExtent;
-import com.sk89q.worldedit.extent.world.BlockQuirkExtent;
-import com.sk89q.worldedit.extent.world.ChunkLoadingExtent;
 import com.sk89q.worldedit.extent.world.FastModeExtent;
-import com.sk89q.worldedit.extent.world.SurvivalModeExtent;
-import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
@@ -47,9 +31,9 @@ public class WESubscriber {
     
     @Subscribe(priority=Priority.VERY_EARLY)
     public void onEditSession(EditSessionEvent event) {
-        WorldEditPlugin worldedit = BukkitMain.worldEdit;
+        WorldEdit worldedit = PS.get().worldedit;
         if (worldedit == null) {
-            WorldEdit.getInstance().getEventBus().unregister(this);
+            worldedit.getEventBus().unregister(this);
             return;
         }
         World worldObj = event.getWorld();
@@ -61,12 +45,11 @@ public class WESubscriber {
             if (pp != null && pp.getAttribute("worldedit")) {
                 return;
             }
-            PlotPlayer player = UUIDHandler.getPlayer(actor.getName());
-            HashSet<RegionWrapper> mask = WEManager.getMask(player);
+            HashSet<RegionWrapper> mask = WEManager.getMask(pp);
             PlotWorld plotworld = PS.get().getPlotWorld(world);
             if (mask.size() == 0) {
-                if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
-                    MainUtil.sendMessage(player, C.WORLDEDIT_BYPASS);
+                if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+                    MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
                 }
                 if (plotworld != null) {
                     event.setExtent(new NullExtent());
@@ -76,13 +59,13 @@ public class WESubscriber {
             if (Settings.CHUNK_PROCESSOR) {
                 if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
                     try {
-                        LocalSession session = worldedit.getWorldEdit().getSession(name);
+                        LocalSession session = worldedit.getSession(name);
                         boolean hasMask = session.getMask() != null;
-                        Player objPlayer = ((BukkitPlayer) player).player;
-                        ItemStack item = objPlayer.getItemInHand();
-                        if (item != null && !hasMask) {
+                        Player objPlayer = (Player) actor;
+                        int item = objPlayer.getItemInHand();
+                        if (!hasMask) {
                             try {
-                                Tool tool = session.getTool(item.getTypeId());
+                                Tool tool = session.getTool(item);
                                 if (tool != null && tool instanceof BrushTool) {
                                     hasMask = ((BrushTool) tool).getMask() != null;
                                 }
@@ -149,7 +132,7 @@ public class WESubscriber {
                     event.setExtent(new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(), event.getExtent()));
                 }
             }
-            else if (PS.get().isPlotWorld(world)) {
+            else if (plotworld != null) {
                 event.setExtent(new WEExtent(mask, event.getExtent()));
             }
         }

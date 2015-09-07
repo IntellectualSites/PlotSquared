@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.sk89q.worldedit.WorldEdit;
 
 public interface IPlotMain {
     
@@ -114,7 +115,7 @@ public interface IPlotMain {
     /**
      * Register the WorldEdit hook
      */
-    void registerWorldEditEvents();
+    boolean initWorldEdit();
     
     /**
      * Register TNT related events (if TNT protection is enabled)

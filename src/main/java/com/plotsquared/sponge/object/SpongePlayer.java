@@ -98,9 +98,6 @@ public class SpongePlayer extends PlotPlayer {
             return true;
         }
         boolean value = this.player.hasPermission(perm);
-        
-        // TODO check children
-        
         return value;
     }
 

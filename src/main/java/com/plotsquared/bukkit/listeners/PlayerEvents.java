@@ -117,10 +117,10 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.bukkit.listeners.worldedit.WEManager;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.listener.WEManager;
 
 /**
  * Player Events involving plots
