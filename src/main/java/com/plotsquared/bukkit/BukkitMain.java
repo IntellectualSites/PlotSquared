@@ -180,7 +180,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public File getDirectory() {
         return getDataFolder();
     }
-    
+
+    @Override
+    public File getWorldContainer() {
+        return Bukkit.getWorldContainer();
+    }
+
     @Override
     public TaskManager getTaskManager() {
         return new BukkitTaskManager();

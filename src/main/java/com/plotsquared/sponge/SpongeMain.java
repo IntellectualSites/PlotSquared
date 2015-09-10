@@ -428,6 +428,11 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     }
 
     @Override
+    public File getWorldContainer() {
+        return new File(".");
+    }
+
+    @Override
     public void disable() {
         PS.get().disable();
         THIS = null;
