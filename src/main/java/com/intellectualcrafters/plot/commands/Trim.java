@@ -63,7 +63,7 @@ public class Trim extends SubCommand {
             @Override
             public void run() {
                 final String directory = world + File.separator + "region";
-                final File folder = new File(directory);
+                final File folder = new File(PS.get().IMP.getWorldContainer(), directory);
                 final File[] regionFiles = folder.listFiles();
                 for (final File file : regionFiles) {
                     final String name = file.getName();
@@ -155,12 +155,12 @@ public class Trim extends SubCommand {
         return true;
     }
 
-    public static void deleteChunks(final String world, final ArrayList<ChunkLoc> chunks) {
-        ChunkManager.manager.deleteRegionFiles(world, chunks);
+    public static void deleteChunks(final String world, final ArrayList<ChunkLoc> chunks, final Runnable whenDone) {
+        ChunkManager.manager.deleteRegionFiles(world, chunks, whenDone);
     }
 
     public static void sendMessage(final String message) {
-        PS.debug("&3PlotSquared -> World trim&8: &7" + message);
+        PS.log("&3PlotSquared -> World trim&8: &7" + message);
     }
 
     public PlotId getId(final String id) {
@@ -211,8 +211,12 @@ public class Trim extends SubCommand {
         getTrimRegions(empty, world, new Runnable() {
             @Override
             public void run() {
-                deleteChunks(world, empty);
-                PS.log("$1Trim task complete!");
+                deleteChunks(world, empty, new Runnable() {
+                    @Override
+                    public void run() {
+                        PS.log("$1Trim task complete!");
+                    }
+                });
             }
         });
         return true;

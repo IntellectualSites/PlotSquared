@@ -68,8 +68,8 @@ import com.plotsquared.bukkit.object.entity.EntityWrapper;
 public class BukkitChunkManager extends ChunkManager {
     @Override
     public ArrayList<ChunkLoc> getChunkChunks(final String world) {
-        final String directory = Bukkit.getWorldContainer() + File.separator + world + File.separator + "region";
-        final File folder = new File(directory);
+        final String directory = world + File.separator + "region";
+        final File folder = new File(PS.get().IMP.getWorldContainer(), directory);
         final File[] regionFiles = folder.listFiles();
         final ArrayList<ChunkLoc> chunks = new ArrayList<>();
         if (regionFiles == null) {
@@ -123,8 +123,8 @@ public class BukkitChunkManager extends ChunkManager {
             @Override
             public void run() {
                 final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
-                final File file = new File(directory);
-                PS.debug("&6 - Deleting region: " + file.getName() + " (approx 1024 chunks)");
+                final File file = new File(PS.get().IMP.getWorldContainer(), directory);
+                PS.log("&6 - Deleting region: " + file.getName() + " (approx 1024 chunks)");
                 if (file.exists()) {
                     file.delete();
                 }
@@ -136,17 +136,25 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     @Override
-    public void deleteRegionFiles(final String world, final List<ChunkLoc> chunks) {
+    public void deleteRegionFiles(String world, List<ChunkLoc> chunks) {
+        deleteRegionFiles(world, chunks, null);
+    }
+
+    @Override
+    public void deleteRegionFiles(final String world, final List<ChunkLoc> chunks, final Runnable whenDone) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 for (ChunkLoc loc : chunks) {
                     final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
-                    final File file = new File(directory);
-                    PS.debug("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                    final File file = new File(PS.get().IMP.getWorldContainer(), directory);
+                    PS.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                     if (file.exists()) {
                         file.delete();
                     }
+                }
+                if (whenDone != null) {
+                    whenDone.run();
                 }
             }
         });
