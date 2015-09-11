@@ -3,7 +3,8 @@ package com.intellectualcrafters.jnbt;
 /**
  * The {@code TAG_Float} tag.
  */
-public final class FloatTag extends Tag {
+public final class FloatTag extends Tag
+{
     private final float value;
 
     /**
@@ -11,7 +12,8 @@ public final class FloatTag extends Tag {
      *
      * @param value the value of the tag
      */
-    public FloatTag(final float value) {
+    public FloatTag(final float value)
+    {
         super();
         this.value = value;
     }
@@ -22,23 +24,27 @@ public final class FloatTag extends Tag {
      * @param name  the name of the tag
      * @param value the value of the tag
      */
-    public FloatTag(final String name, final float value) {
+    public FloatTag(final String name, final float value)
+    {
         super(name);
         this.value = value;
     }
 
     @Override
-    public Float getValue() {
-        return this.value;
+    public Float getValue()
+    {
+        return value;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         final String name = getName();
         String append = "";
-        if ((name != null) && !name.equals("")) {
-            append = "(\"" + this.getName() + "\")";
+        if ((name != null) && !name.equals(""))
+        {
+            append = "(\"" + getName() + "\")";
         }
-        return "TAG_Float" + append + ": " + this.value;
+        return "TAG_Float" + append + ": " + value;
     }
 }

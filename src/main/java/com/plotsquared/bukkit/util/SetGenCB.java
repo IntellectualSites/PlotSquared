@@ -14,29 +14,31 @@ import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
 
-public class SetGenCB {
-    public static void setGenerator(World world) throws Exception {
+public class SetGenCB
+{
+    public static void setGenerator(final World world) throws Exception
+    {
         SetupUtils.manager.updateGenerators();
         PS.get().removePlotWorldAbs(world.getName());
-        ChunkGenerator gen = world.getGenerator();
-        if (gen == null) {
-            return;
-        }
-        String name = gen.getClass().getCanonicalName();
+        final ChunkGenerator gen = world.getGenerator();
+        if (gen == null) { return; }
+        final String name = gen.getClass().getCanonicalName();
         boolean set = false;
-        for (PlotGenerator<?> wrapper : SetupUtils.generators.values()) {
-            ChunkGenerator newGen = (ChunkGenerator) wrapper.generator;
-            if (newGen.getClass().getCanonicalName().equals(name)) {
+        for (final PlotGenerator<?> wrapper : SetupUtils.generators.values())
+        {
+            final ChunkGenerator newGen = (ChunkGenerator) wrapper.generator;
+            if (newGen.getClass().getCanonicalName().equals(name))
+            {
                 // set generator
-                Field generator = world.getClass().getDeclaredField("generator");
-                Field populators = world.getClass().getDeclaredField("populators");
+                final Field generator = world.getClass().getDeclaredField("generator");
+                final Field populators = world.getClass().getDeclaredField("populators");
                 generator.setAccessible(true);
                 populators.setAccessible(true);
                 // Set populators (just in case)
                 populators.set(world, new ArrayList<>());
                 // Set generator
-                Constructor<? extends ChunkGenerator> constructor = newGen.getClass().getConstructor(String.class);
-                ChunkGenerator newNewGen = constructor.newInstance(world.getName());
+                final Constructor<? extends ChunkGenerator> constructor = newGen.getClass().getConstructor(String.class);
+                final ChunkGenerator newNewGen = constructor.newInstance(world.getName());
                 generator.set(world, newNewGen);
                 populators.set(world, newNewGen.getDefaultPopulators(world));
                 // end
@@ -44,10 +46,13 @@ public class SetGenCB {
                 break;
             }
         }
-        if (!set) {
-            Iterator<BlockPopulator> iter = world.getPopulators().iterator();
-            while (iter.hasNext()) {
-                if (iter.next() instanceof AugmentedPopulator) {
+        if (!set)
+        {
+            final Iterator<BlockPopulator> iter = world.getPopulators().iterator();
+            while (iter.hasNext())
+            {
+                if (iter.next() instanceof AugmentedPopulator)
+                {
                     iter.remove();
                 }
             }

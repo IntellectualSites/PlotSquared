@@ -25,11 +25,10 @@ import java.util.List;
 
 /**
  * Updater and DB settings
- *
- * @author Citymonstret
- * @author Empire92
+ *
  */
-public class Settings {
+public class Settings
+{
     public static boolean USE_SQLUUIDHANDLER = false;
 
     public static boolean ENABLE_CLUSTERS = false;
@@ -40,7 +39,7 @@ public class Settings {
     public static boolean PERMISSION_CACHING = false;
     public static boolean CACHE_RATINGS = true;
     public static boolean UUID_FROM_DISK = false;
-    
+
     /**
      * Web
      */
@@ -54,7 +53,7 @@ public class Settings {
     public static boolean REQUIRE_DONE = false;
     public static boolean DONE_COUNTS_TOWARDS_LIMIT = false;
     public static boolean DONE_RESTRICTS_BUILDING = false;
-    
+
     /**
      * PlotMe settings
      */
@@ -208,17 +207,17 @@ public class Settings {
 
     /**
      * Database settings
-     *
-     * @author Citymonstret
+     *
      */
-    public static class DB {
+    public static class DB
+    {
         /**
          * MongoDB enabled?
          */
         public static boolean USE_MONGO = false; /*
-         * TODO: Implement Mongo
-         * @Brandon
-         */
+                                                 * TODO: Implement Mongo
+                                                 * @Brandon
+                                                 */
         /**
          * SQLite enabled?
          */

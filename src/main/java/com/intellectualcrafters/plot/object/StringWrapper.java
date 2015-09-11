@@ -20,10 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-/**
- * @author Empire92
+/**
  */
-public class StringWrapper {
+public class StringWrapper
+{
     public final String value;
 
     /**
@@ -31,7 +31,8 @@ public class StringWrapper {
      *
      * @param value to wrap
      */
-    public StringWrapper(final String value) {
+    public StringWrapper(final String value)
+    {
         this.value = value;
     }
 
@@ -43,24 +44,15 @@ public class StringWrapper {
      * @return true if obj equals the stored value
      */
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        if (obj.hashCode() != hashCode()) {
-            return false;
-        }
+    public boolean equals(final Object obj)
+    {
+        if (this == obj) { return true; }
+        if (obj == null) { return false; }
+        if (getClass() != obj.getClass()) { return false; }
+        if (obj.hashCode() != hashCode()) { return false; }
         final StringWrapper other = (StringWrapper) obj;
-        if ((other.value == null) || (this.value == null)) {
-            return false;
-        }
-        return other.value.equalsIgnoreCase(this.value.toLowerCase());
+        if ((other.value == null) || (value == null)) { return false; }
+        return other.value.equalsIgnoreCase(value.toLowerCase());
     }
 
     /**
@@ -69,24 +61,25 @@ public class StringWrapper {
      * @return string value
      */
     @Override
-    public String toString() {
-        return this.value;
+    public String toString()
+    {
+        return value;
     }
 
     private int hash;
-    
+
     /**
      * Get the hash value
      *
      * @return has value
      */
     @Override
-    public int hashCode() {
-        if (this.value == null) {
-            return 0;
-        }
-        if (this.hash == 0) {
-            this.hash = this.value.toLowerCase().hashCode();
+    public int hashCode()
+    {
+        if (value == null) { return 0; }
+        if (hash == 0)
+        {
+            hash = value.toLowerCase().hashCode();
         }
         return hash;
     }

@@ -6,7 +6,8 @@ import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.StringMan;
 
-public abstract class ClassicPlotWorld extends SquarePlotWorld {
+public abstract class ClassicPlotWorld extends SquarePlotWorld
+{
     public static int ROAD_HEIGHT_DEFAULT = 64;
     public static int PLOT_HEIGHT_DEFAULT = 64;
     public static int WALL_HEIGHT_DEFAULT = 64;
@@ -29,15 +30,27 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
 
     /**
      * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED FOR INITIAL SETUP
-     * 
+     *
      * Set the last boolean to false if you do not require a specific config node to be set while using the setup
      * command - this may be useful if a config value can be changed at a later date, and has no impact on the actual
      * world generation
      */
     @Override
-    public ConfigurationNode[] getSettingNodes() {
-        return new ConfigurationNode[] { new ConfigurationNode("plot.height", ClassicPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true), new ConfigurationNode("plot.size", SquarePlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true), new ConfigurationNode("plot.filling", ClassicPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true), new ConfigurationNode("plot.floor", ClassicPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true), new ConfigurationNode("wall.block", ClassicPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true), new ConfigurationNode("wall.block_claimed", ClassicPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true), new ConfigurationNode("road.width", SquarePlotWorld.ROAD_WIDTH_DEFAULT, "Road width", Configuration.INTEGER, true),
-                new ConfigurationNode("road.height", ClassicPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true), new ConfigurationNode("road.block", ClassicPlotWorld.ROAD_BLOCK_DEFAULT, "Road block", Configuration.BLOCK, true), new ConfigurationNode("wall.filling", ClassicPlotWorld.WALL_FILLING_DEFAULT, "Wall filling block", Configuration.BLOCK, true), new ConfigurationNode("wall.height", ClassicPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true), new ConfigurationNode("plot.bedrock", true, "Plot bedrock generation", Configuration.BOOLEAN, true) };
+    public ConfigurationNode[] getSettingNodes()
+    {
+        return new ConfigurationNode[] {
+        new ConfigurationNode("plot.height", ClassicPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true),
+        new ConfigurationNode("plot.size", SquarePlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true),
+        new ConfigurationNode("plot.filling", ClassicPlotWorld.MAIN_BLOCK_DEFAULT, "Plot block", Configuration.BLOCKLIST, true),
+        new ConfigurationNode("plot.floor", ClassicPlotWorld.TOP_BLOCK_DEFAULT, "Plot floor block", Configuration.BLOCKLIST, true),
+        new ConfigurationNode("wall.block", ClassicPlotWorld.WALL_BLOCK_DEFAULT, "Top wall block", Configuration.BLOCK, true),
+        new ConfigurationNode("wall.block_claimed", ClassicPlotWorld.CLAIMED_WALL_BLOCK_DEFAULT, "Wall block (claimed)", Configuration.BLOCK, true),
+        new ConfigurationNode("road.width", SquarePlotWorld.ROAD_WIDTH_DEFAULT, "Road width", Configuration.INTEGER, true),
+        new ConfigurationNode("road.height", ClassicPlotWorld.ROAD_HEIGHT_DEFAULT, "Road height", Configuration.INTEGER, true),
+        new ConfigurationNode("road.block", ClassicPlotWorld.ROAD_BLOCK_DEFAULT, "Road block", Configuration.BLOCK, true),
+        new ConfigurationNode("wall.filling", ClassicPlotWorld.WALL_FILLING_DEFAULT, "Wall filling block", Configuration.BLOCK, true),
+        new ConfigurationNode("wall.height", ClassicPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true),
+        new ConfigurationNode("plot.bedrock", true, "Plot bedrock generation", Configuration.BOOLEAN, true) };
     }
 
     /**
@@ -45,21 +58,23 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
      * configuration section for that specific world.
      */
     @Override
-    public void loadConfiguration(final ConfigurationSection config) {
+    public void loadConfiguration(final ConfigurationSection config)
+    {
         super.loadConfiguration(config);
-        this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
-        this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
-        this.MAIN_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringMan.join(config.getStringList("plot.filling"), ','));
-        this.TOP_BLOCK = (PlotBlock[]) Configuration.BLOCKLIST.parseString(StringMan.join(config.getStringList("plot.floor"), ','));
-        this.WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block"));
-        this.ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
-        this.ROAD_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("road.block"));
-        this.WALL_FILLING = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.filling"));
-        this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
-        this.CLAIMED_WALL_BLOCK = (PlotBlock) Configuration.BLOCK.parseString(config.getString("wall.block_claimed"));
+        PLOT_BEDROCK = config.getBoolean("plot.bedrock");
+        PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
+        MAIN_BLOCK = Configuration.BLOCKLIST.parseString(StringMan.join(config.getStringList("plot.filling"), ','));
+        TOP_BLOCK = Configuration.BLOCKLIST.parseString(StringMan.join(config.getStringList("plot.floor"), ','));
+        WALL_BLOCK = Configuration.BLOCK.parseString(config.getString("wall.block"));
+        ROAD_HEIGHT = Math.min(255, config.getInt("road.height"));
+        ROAD_BLOCK = Configuration.BLOCK.parseString(config.getString("road.block"));
+        WALL_FILLING = Configuration.BLOCK.parseString(config.getString("wall.filling"));
+        WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
+        CLAIMED_WALL_BLOCK = Configuration.BLOCK.parseString(config.getString("wall.block_claimed"));
     }
 
-    public ClassicPlotWorld(final String worldname) {
+    public ClassicPlotWorld(final String worldname)
+    {
         super(worldname);
     }
 }

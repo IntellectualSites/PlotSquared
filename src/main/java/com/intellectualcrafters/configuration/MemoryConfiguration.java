@@ -7,14 +7,16 @@ import java.util.Map;
  * from any source, and stores all values in memory only.
  * This is useful for temporary Configurations for providing defaults.
  */
-public class MemoryConfiguration extends MemorySection implements Configuration {
+public class MemoryConfiguration extends MemorySection implements Configuration
+{
     protected Configuration defaults;
     protected MemoryConfigurationOptions options;
 
     /**
      * Creates an empty {@link MemoryConfiguration} with no default values.
      */
-    public MemoryConfiguration() {}
+    public MemoryConfiguration()
+    {}
 
     /**
      * Creates an empty {@link MemoryConfiguration} using the specified {@link
@@ -23,51 +25,67 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
      * @param defaults Default value provider
      * @throws IllegalArgumentException Thrown if defaults is null
      */
-    public MemoryConfiguration(Configuration defaults) {
+    public MemoryConfiguration(final Configuration defaults)
+    {
         this.defaults = defaults;
     }
 
     @Override
-    public void addDefault(String path, Object value) {
-        if (path == null) throw new NullPointerException("Path may not be null");
-        if (defaults == null) {
+    public void addDefault(final String path, final Object value)
+    {
+        if (path == null) { throw new NullPointerException("Path may not be null"); }
+        if (defaults == null)
+        {
             defaults = new MemoryConfiguration();
         }
 
         defaults.set(path, value);
     }
 
-    public void addDefaults(Map<String, Object> defaults) {
-        if (defaults == null) throw new NullPointerException("Defaults may not be null");
+    @Override
+    public void addDefaults(final Map<String, Object> defaults)
+    {
+        if (defaults == null) { throw new NullPointerException("Defaults may not be null"); }
 
-        for (Map.Entry<String, Object> entry : defaults.entrySet()) {
+        for (final Map.Entry<String, Object> entry : defaults.entrySet())
+        {
             addDefault(entry.getKey(), entry.getValue());
         }
     }
 
-    public void addDefaults(Configuration defaults) {
-        if (defaults == null) throw new NullPointerException("Defaults may not be null");
+    @Override
+    public void addDefaults(final Configuration defaults)
+    {
+        if (defaults == null) { throw new NullPointerException("Defaults may not be null"); }
 
         addDefaults(defaults.getValues(true));
     }
 
-    public void setDefaults(Configuration defaults) {
-        if (defaults == null) throw new NullPointerException("Defaults may not be null");
+    @Override
+    public void setDefaults(final Configuration defaults)
+    {
+        if (defaults == null) { throw new NullPointerException("Defaults may not be null"); }
 
         this.defaults = defaults;
     }
 
-    public Configuration getDefaults() {
+    @Override
+    public Configuration getDefaults()
+    {
         return defaults;
     }
 
     @Override
-    public ConfigurationSection getParent() {
+    public ConfigurationSection getParent()
+    {
         return null;
     }
 
-    public MemoryConfigurationOptions options() {
-        if (options == null) {
+    @Override
+    public MemoryConfigurationOptions options()
+    {
+        if (options == null)
+        {
             options = new MemoryConfigurationOptions(this);
         }
 

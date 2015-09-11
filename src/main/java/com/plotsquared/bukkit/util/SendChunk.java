@@ -8,7 +8,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -23,19 +26,14 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.Bukkit;
-
-
 /**
  * An utility that can be used to send chunks, rather than using bukkit code to do so (uses heavy NMS)
- *
- * @author Empire92
+ *
  */
-public class SendChunk {
-    
-//    // Ref Class
+public class SendChunk
+{
+
+    //    // Ref Class
     private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
     private final RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
     private final RefClass classPacket = getRefClass("{nms}.Packet");
@@ -43,19 +41,20 @@ public class SendChunk {
     private final RefClass classChunk = getRefClass("{nms}.Chunk");
     private final RefClass classCraftPlayer = getRefClass("{cb}.entity.CraftPlayer");
     private final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-    private RefMethod methodGetHandlePlayer;
-    private RefMethod methodGetHandleChunk;
-    private RefConstructor MapChunk;
-    private RefField connection;
-    private RefMethod send;
-    private RefMethod methodInitLighting;
+    private final RefMethod methodGetHandlePlayer;
+    private final RefMethod methodGetHandleChunk;
+    private final RefConstructor MapChunk;
+    private final RefField connection;
+    private final RefMethod send;
+    private final RefMethod methodInitLighting;
 
     /**
      * Constructor
      *
      * @throws NoSuchMethodException
      */
-    public SendChunk() throws NoSuchMethodException {
+    public SendChunk() throws NoSuchMethodException
+    {
         methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
         methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         methodInitLighting = classChunk.getMethod("initLighting");
@@ -64,70 +63,85 @@ public class SendChunk {
         send = classConnection.getMethod("sendPacket", classPacket.getRealClass());
     }
 
-    public void sendChunk(final Collection<Chunk> input) {
-        HashSet<Chunk> chunks = new HashSet<Chunk>(input);
-        HashMap<String, ArrayList<Chunk>> map = new HashMap<>();
-        int view = Bukkit.getServer().getViewDistance();
-        for (Chunk chunk : chunks) {
-            String world = chunk.getWorld().getName();
+    public void sendChunk(final Collection<Chunk> input)
+    {
+        final HashSet<Chunk> chunks = new HashSet<Chunk>(input);
+        final HashMap<String, ArrayList<Chunk>> map = new HashMap<>();
+        final int view = Bukkit.getServer().getViewDistance();
+        for (final Chunk chunk : chunks)
+        {
+            final String world = chunk.getWorld().getName();
             ArrayList<Chunk> list = map.get(world);
-            if (list == null) {
+            if (list == null)
+            {
                 list = new ArrayList<>();
                 map.put(world, list);
             }
             list.add(chunk);
-            Object c = methodGetHandleChunk.of(chunk).call();
+            final Object c = methodGetHandleChunk.of(chunk).call();
             methodInitLighting.of(c).call();
         }
-        for (PlotPlayer pp : UUIDHandler.getPlayers().values() ) {
-            Plot plot = pp.getCurrentPlot();
+        for (final PlotPlayer pp : UUIDHandler.getPlayers().values())
+        {
+            final Plot plot = pp.getCurrentPlot();
             Location loc = null;
             String world;
-            if (plot != null) {
+            if (plot != null)
+            {
                 world = plot.world;
             }
-            else {
+            else
+            {
                 loc = pp.getLocation();
                 world = loc.getWorld();
             }
-            ArrayList<Chunk> list = map.get(world);
-            if (list == null) {
+            final ArrayList<Chunk> list = map.get(world);
+            if (list == null)
+            {
                 continue;
             }
-            if (loc == null) {
+            if (loc == null)
+            {
                 loc = pp.getLocation();
             }
-            int cx = loc.getX() >> 4;
-            int cz = loc.getZ() >> 4;
-            Player player = ((BukkitPlayer) pp).player;
-            Object entity = methodGetHandlePlayer.of(player).call();
-            
-            for (Chunk chunk : list) {
-                int dx = Math.abs(cx - chunk.getX());
-                int dz = Math.abs(cz - chunk.getZ());
-                if (dx > view || dz > view) {
+            final int cx = loc.getX() >> 4;
+            final int cz = loc.getZ() >> 4;
+            final Player player = ((BukkitPlayer) pp).player;
+            final Object entity = methodGetHandlePlayer.of(player).call();
+
+            for (final Chunk chunk : list)
+            {
+                final int dx = Math.abs(cx - chunk.getX());
+                final int dz = Math.abs(cz - chunk.getZ());
+                if ((dx > view) || (dz > view))
+                {
                     continue;
                 }
-                Object c = methodGetHandleChunk.of(chunk).call();
+                final Object c = methodGetHandleChunk.of(chunk).call();
                 chunks.remove(chunk);
-                Object con = connection.of(entity).get();
-//                if (dx != 0 || dz != 0) {
-//                    Object packet = MapChunk.create(c, true, 0);
-//                    send.of(con).call(packet);
-//                }
-                Object packet = MapChunk.create(c, true, 65535);
+                final Object con = connection.of(entity).get();
+                //                if (dx != 0 || dz != 0) {
+                //                    Object packet = MapChunk.create(c, true, 0);
+                //                    send.of(con).call(packet);
+                //                }
+                final Object packet = MapChunk.create(c, true, 65535);
                 send.of(con).call(packet);
             }
         }
-        for (final Chunk chunk : chunks) {
-            TaskManager.runTask(new Runnable() {
+        for (final Chunk chunk : chunks)
+        {
+            TaskManager.runTask(new Runnable()
+            {
                 @Override
-                public void run() {
-                    try {
+                public void run()
+                {
+                    try
+                    {
                         chunk.unload(true, false);
                     }
-                    catch (Exception e) {
-                        String worldname = chunk.getWorld().getName();
+                    catch (final Exception e)
+                    {
+                        final String worldname = chunk.getWorld().getName();
                         PS.debug("$4Could not save chunk: " + worldname + ";" + chunk.getX() + ";" + chunk.getZ());
                         PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
                         PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname + "level_old.dat may be corrupt (try repairing or removing these)");
@@ -135,60 +149,62 @@ public class SendChunk {
                 }
             });
         }
-//        
-//        
-//        int diffx, diffz;
-//         << 4;
-//        for (final Chunk chunk : chunks) {
-//            if (!chunk.isLoaded()) {
-//                continue;
-//            }
-//            boolean unload = true;
-//            final Object c = methodGetHandle.of(chunk).call();
-//            final Object w = world.of(c).get();
-//            final Object p = players.of(w).get();
-//            for (final Object ep : (List<Object>) p) {
-//                final int x = ((Double) locX.of(ep).get()).intValue();
-//                final int z = ((Double) locZ.of(ep).get()).intValue();
-//                diffx = Math.abs(x - (chunk.getX() << 4));
-//                diffz = Math.abs(z - (chunk.getZ() << 4));
-//                if ((diffx <= view) && (diffz <= view)) {
-//                    unload = false;
-//                    if (v1_7_10) {
-//                        chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
-//                        chunk.load(true);
-//                    }
-//                    else {
-//                        final Object pair = ChunkCoordIntPairCon.create(chunk.getX(), chunk.getZ());
-//                        final Object pq = chunkCoordIntPairQueue.of(ep).get();
-//                        ((List) pq).add(pair);
-//                    }
-//                }
-//            }
-//            if (unload) {
-//                TaskManager.runTask(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            chunk.unload(true, true);
-//                        }
-//                        catch (Exception e) {
-//                            String worldname = chunk.getWorld().getName();
-//                            PS.debug("$4Could not save chunk: " + worldname + ";" + chunk.getX() + ";" + chunk.getZ());
-//                            PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
-//                            PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname + "level_old.dat may be corrupt (try repairing or removing these)");
-//                        }
-//                    }
-//                });
-//            }
-//            
-//        }
+        //
+        //
+        //        int diffx, diffz;
+        //         << 4;
+        //        for (final Chunk chunk : chunks) {
+        //            if (!chunk.isLoaded()) {
+        //                continue;
+        //            }
+        //            boolean unload = true;
+        //            final Object c = methodGetHandle.of(chunk).call();
+        //            final Object w = world.of(c).get();
+        //            final Object p = players.of(w).get();
+        //            for (final Object ep : (List<Object>) p) {
+        //                final int x = ((Double) locX.of(ep).get()).intValue();
+        //                final int z = ((Double) locZ.of(ep).get()).intValue();
+        //                diffx = Math.abs(x - (chunk.getX() << 4));
+        //                diffz = Math.abs(z - (chunk.getZ() << 4));
+        //                if ((diffx <= view) && (diffz <= view)) {
+        //                    unload = false;
+        //                    if (v1_7_10) {
+        //                        chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
+        //                        chunk.load(true);
+        //                    }
+        //                    else {
+        //                        final Object pair = ChunkCoordIntPairCon.create(chunk.getX(), chunk.getZ());
+        //                        final Object pq = chunkCoordIntPairQueue.of(ep).get();
+        //                        ((List) pq).add(pair);
+        //                    }
+        //                }
+        //            }
+        //            if (unload) {
+        //                TaskManager.runTask(new Runnable() {
+        //                    @Override
+        //                    public void run() {
+        //                        try {
+        //                            chunk.unload(true, true);
+        //                        }
+        //                        catch (Exception e) {
+        //                            String worldname = chunk.getWorld().getName();
+        //                            PS.debug("$4Could not save chunk: " + worldname + ";" + chunk.getX() + ";" + chunk.getZ());
+        //                            PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
+        //                            PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname + "level_old.dat may be corrupt (try repairing or removing these)");
+        //                        }
+        //                    }
+        //                });
+        //            }
+        //
+        //        }
     }
 
-    public void sendChunk(final String worldname, final List<ChunkLoc> locs) {
+    public void sendChunk(final String worldname, final List<ChunkLoc> locs)
+    {
         final World myworld = Bukkit.getWorld(worldname);
         final ArrayList<Chunk> chunks = new ArrayList<>();
-        for (final ChunkLoc loc : locs) {
+        for (final ChunkLoc loc : locs)
+        {
             chunks.add(myworld.getChunkAt(loc.x, loc.z));
         }
         sendChunk(chunks);

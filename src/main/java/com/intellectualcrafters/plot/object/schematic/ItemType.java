@@ -4,7 +4,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ItemType {
+public enum ItemType
+{
     AIR("air", 0),
     STONE("stone", 1),
     GRANITE("stone", 1, 1),
@@ -599,7 +600,7 @@ public enum ItemType {
     WARD_DISC("record_ward", 2265),
     DISC_11("record_11", 2266),
     WAIT_DISC("record_wait", 2267);
-    
+
     private static final Map<String, Integer> ids = new HashMap<String, Integer>();
     private static final Map<String, Byte> datas = new HashMap<String, Byte>();
 
@@ -607,37 +608,40 @@ public enum ItemType {
     private final byte data;
     private final String name;
 
-    static {
-        for (ItemType type : EnumSet.allOf(ItemType.class)) {
+    static
+    {
+        for (final ItemType type : EnumSet.allOf(ItemType.class))
+        {
             ids.put(type.name, type.id);
             datas.put(type.name, type.data);
         }
     }
 
-    ItemType(String name, int id) {
+    ItemType(final String name, final int id)
+    {
         this.id = id;
-        this.data = 0;
+        data = 0;
         this.name = name;
     }
-    
-    ItemType(String name, int id, int data) {
+
+    ItemType(final String name, final int id, final int data)
+    {
         this.id = id;
         this.data = (byte) data;
         this.name = name;
     }
 
-    public static int getId(String name) {
-        Integer value = ids.get(name);
-        if (value == null) {
-            return 0;
-        }
+    public static int getId(final String name)
+    {
+        final Integer value = ids.get(name);
+        if (value == null) { return 0; }
         return value;
     }
-    public static byte getData(String name) {
-        Byte value = datas.get(name);
-        if (value == null) {
-            return 0;
-        }
+
+    public static byte getData(final String name)
+    {
+        final Byte value = datas.get(name);
+        if (value == null) { return 0; }
         return value;
     }
 }

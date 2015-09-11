@@ -20,10 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
-public class ConsoleColors {
-    public static String fromString(String input) {
-        input = input.replaceAll("&0", fromChatColor("&0")).replaceAll("&1", fromChatColor("&1")).replaceAll("&2", fromChatColor("&2")).replaceAll("&3", fromChatColor("&3")).replaceAll("&4", fromChatColor("&4")).replaceAll("&5", fromChatColor("&5")).replaceAll("&6", fromChatColor("&6")).replaceAll("&7", fromChatColor("&7")).replaceAll("&8", fromChatColor("&8")).replaceAll("&9", fromChatColor("&9")).replaceAll("&a", fromChatColor("&a")).replaceAll("&b", fromChatColor("&b")).replaceAll("&c", fromChatColor("&c")).replaceAll("&d", fromChatColor("&d")).replaceAll("&e", fromChatColor("&e")).replaceAll("&f", fromChatColor("&f")).replaceAll("&k", fromChatColor("&k")).replaceAll("&l", fromChatColor("&l")).replaceAll("&m", fromChatColor("&m"))
-                .replaceAll("&n", fromChatColor("&n")).replaceAll("&o", fromChatColor("&o")).replaceAll("&r", fromChatColor("&r"));
+public class ConsoleColors
+{
+    public static String fromString(String input)
+    {
+        input = input.replaceAll("&0", fromChatColor("&0")).replaceAll("&1", fromChatColor("&1")).replaceAll("&2", fromChatColor("&2")).replaceAll("&3", fromChatColor("&3"))
+        .replaceAll("&4", fromChatColor("&4")).replaceAll("&5", fromChatColor("&5")).replaceAll("&6", fromChatColor("&6")).replaceAll("&7", fromChatColor("&7")).replaceAll("&8", fromChatColor("&8"))
+        .replaceAll("&9", fromChatColor("&9")).replaceAll("&a", fromChatColor("&a")).replaceAll("&b", fromChatColor("&b")).replaceAll("&c", fromChatColor("&c")).replaceAll("&d", fromChatColor("&d"))
+        .replaceAll("&e", fromChatColor("&e")).replaceAll("&f", fromChatColor("&f")).replaceAll("&k", fromChatColor("&k")).replaceAll("&l", fromChatColor("&l")).replaceAll("&m", fromChatColor("&m"))
+        .replaceAll("&n", fromChatColor("&n")).replaceAll("&o", fromChatColor("&o")).replaceAll("&r", fromChatColor("&r"));
         return input + "\u001B[0m";
     }
 
@@ -39,12 +44,15 @@ public class ConsoleColors {
      * String ANSI_UNDERLINE = "\033[0m"; public static final String ANSI_ITALIC
      * = "\033[3m]";
      */
-    public static String fromChatColor(final String color) {
+    public static String fromChatColor(final String color)
+    {
         return chatColor(color).getLin();
     }
 
-    public static ConsoleColor chatColor(final String color) {
-        switch (color) {
+    public static ConsoleColor chatColor(final String color)
+    {
+        switch (color)
+        {
             case "&r":
                 return ConsoleColor.RESET;
             case "&7":
@@ -81,7 +89,8 @@ public class ConsoleColors {
         }
     }
 
-    static enum ConsoleColor {
+    static enum ConsoleColor
+    {
         RESET("\u001B[0m"),
         BLACK("\u001B[30m"),
         RED("\u001B[31m"),
@@ -97,18 +106,21 @@ public class ConsoleColors {
         private final String win;
         private final String lin;
 
-        ConsoleColor(final String lin) {
+        ConsoleColor(final String lin)
+        {
             this.lin = lin;
-            this.win = lin;
+            win = lin;
         }
 
         @SuppressWarnings("unused")
-        public String getWin() {
-            return this.win;
+        public String getWin()
+        {
+            return win;
         }
 
-        public String getLin() {
-            return this.lin;
+        public String getLin()
+        {
+            return lin;
         }
     }
 }

@@ -27,11 +27,10 @@ import org.bukkit.event.HandlerList;
 
 import com.intellectualcrafters.plot.object.Plot;
 
-/**
- * @author Citymonstret
- * @author Empire92
+/**
  */
-public class PlayerPlotTrustedEvent extends PlotEvent {
+public class PlayerPlotTrustedEvent extends PlotEvent
+{
 
     private static HandlerList handlers = new HandlerList();
     private final Player initiator;
@@ -46,14 +45,16 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      * @param player    Player that was added/removed from the trusted list
      * @param added     true of the player was added, false if the player was removed
      */
-    public PlayerPlotTrustedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added) {
+    public PlayerPlotTrustedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added)
+    {
         super(plot);
         this.initiator = initiator;
         this.added = added;
         this.player = player;
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList()
+    {
         return handlers;
     }
 
@@ -62,8 +63,9 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      *
      * @return boolean
      */
-    public boolean wasAdded() {
-        return this.added;
+    public boolean wasAdded()
+    {
+        return added;
     }
 
     /**
@@ -71,8 +73,9 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      *
      * @return UUID
      */
-    public UUID getPlayer() {
-        return this.player;
+    public UUID getPlayer()
+    {
+        return player;
     }
 
     /**
@@ -80,12 +83,14 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      *
      * @return Player
      */
-    public Player getInitiator() {
-        return this.initiator;
+    public Player getInitiator()
+    {
+        return initiator;
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
         return handlers;
     }
 }

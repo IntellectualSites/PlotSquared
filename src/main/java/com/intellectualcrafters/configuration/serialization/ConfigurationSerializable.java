@@ -21,7 +21,8 @@ import java.util.Map;
  * @see DelegateDeserialization
  * @see SerializableAs
  */
-public interface ConfigurationSerializable {
+public interface ConfigurationSerializable
+{
 
     /**
      * Creates a Map representation of this class.

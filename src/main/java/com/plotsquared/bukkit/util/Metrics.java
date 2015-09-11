@@ -51,7 +51,8 @@ import com.intellectualcrafters.configuration.InvalidConfigurationException;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 
-public class Metrics {
+public class Metrics
+{
     /**
      * The current revision number
      */
@@ -101,26 +102,26 @@ public class Metrics {
      */
     private volatile BukkitTask task = null;
 
-    public Metrics(final Plugin plugin) throws IOException {
-        if (plugin == null) {
-            throw new IllegalArgumentException("Plugin cannot be null");
-        }
+    public Metrics(final Plugin plugin) throws IOException
+    {
+        if (plugin == null) { throw new IllegalArgumentException("Plugin cannot be null"); }
         this.plugin = plugin;
         // load the config
-        this.configurationFile = getConfigFile();
-        this.configuration = YamlConfiguration.loadConfiguration(this.configurationFile);
+        configurationFile = getConfigFile();
+        configuration = YamlConfiguration.loadConfiguration(configurationFile);
         // add some defaults
-        this.configuration.addDefault("opt-out", false);
-        this.configuration.addDefault("guid", UUID.randomUUID().toString());
-        this.configuration.addDefault("debug", false);
+        configuration.addDefault("opt-out", false);
+        configuration.addDefault("guid", UUID.randomUUID().toString());
+        configuration.addDefault("debug", false);
         // Do we need to create the file?
-        if (this.configuration.get("guid", null) == null) {
-            this.configuration.options().header("http://mcstats.org").copyDefaults(true);
-            this.configuration.save(this.configurationFile);
+        if (configuration.get("guid", null) == null)
+        {
+            configuration.options().header("http://mcstats.org").copyDefaults(true);
+            configuration.save(configurationFile);
         }
         // Load the guid then
-        this.guid = this.configuration.getString("guid");
-        this.debug = this.configuration.getBoolean("debug", false);
+        guid = configuration.getString("guid");
+        debug = configuration.getBoolean("debug", false);
     }
 
     /**
@@ -130,20 +131,29 @@ public class Metrics {
      *
      * @return byte[] the file as a byte array
      */
-    public static byte[] gzip(final String input) {
+    public static byte[] gzip(final String input)
+    {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         GZIPOutputStream gzos = null;
-        try {
+        try
+        {
             gzos = new GZIPOutputStream(baos);
             gzos.write(input.getBytes("UTF-8"));
-        } catch (final IOException e) {
+        }
+        catch (final IOException e)
+        {
             e.printStackTrace();
-        } finally {
-            if (gzos != null) {
-                try {
+        }
+        finally
+        {
+            if (gzos != null)
+            {
+                try
+                {
                     gzos.close();
-                } catch (final IOException ignore) {
                 }
+                catch (final IOException ignore)
+                {}
             }
         }
         return baos.toByteArray();
@@ -158,24 +168,33 @@ public class Metrics {
      *
      * @throws UnsupportedEncodingException
      */
-    private static void appendJSONPair(final StringBuilder json, final String key, final String value) throws UnsupportedEncodingException {
+    private static void appendJSONPair(final StringBuilder json, final String key, final String value) throws UnsupportedEncodingException
+    {
         boolean isValueNumeric = false;
-        try {
-            if (value.equals("0") || !value.endsWith("0")) {
+        try
+        {
+            if (value.equals("0") || !value.endsWith("0"))
+            {
                 Double.parseDouble(value);
                 isValueNumeric = true;
             }
-        } catch (final NumberFormatException e) {
+        }
+        catch (final NumberFormatException e)
+        {
             isValueNumeric = false;
         }
-        if (json.charAt(json.length() - 1) != '{') {
+        if (json.charAt(json.length() - 1) != '{')
+        {
             json.append(',');
         }
         json.append(escapeJSON(key));
         json.append(':');
-        if (isValueNumeric) {
+        if (isValueNumeric)
+        {
             json.append(value);
-        } else {
+        }
+        else
+        {
             json.append(escapeJSON(value));
         }
     }
@@ -187,12 +206,15 @@ public class Metrics {
      *
      * @return String
      */
-    private static String escapeJSON(final String text) {
+    private static String escapeJSON(final String text)
+    {
         final StringBuilder builder = new StringBuilder();
         builder.append('"');
-        for (int index = 0; index < text.length(); index++) {
+        for (int index = 0; index < text.length(); index++)
+        {
             final char chr = text.charAt(index);
-            switch (chr) {
+            switch (chr)
+            {
                 case '"':
                 case '\\':
                     builder.append('\\');
@@ -211,10 +233,13 @@ public class Metrics {
                     builder.append("\\r");
                     break;
                 default:
-                    if (chr < ' ') {
+                    if (chr < ' ')
+                    {
                         final String t = "000" + Integer.toHexString(chr);
                         builder.append("\\u" + t.substring(t.length() - 4));
-                    } else {
+                    }
+                    else
+                    {
                         builder.append(chr);
                     }
                     break;
@@ -231,7 +256,8 @@ public class Metrics {
      *
      * @return the encoded text, as UTF-8
      */
-    private static String urlEncode(final String text) throws UnsupportedEncodingException {
+    private static String urlEncode(final String text) throws UnsupportedEncodingException
+    {
         return URLEncoder.encode(text, "UTF-8");
     }
 
@@ -243,14 +269,13 @@ public class Metrics {
      *
      * @return Graph object created. Will never return NULL under normal circumstances unless bad parameters are given
      */
-    public Graph createGraph(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Graph name cannot be null");
-        }
+    public Graph createGraph(final String name)
+    {
+        if (name == null) { throw new IllegalArgumentException("Graph name cannot be null"); }
         // Construct the graph object
         final Graph graph = new Graph(name);
         // Now we can add our graph
-        this.graphs.add(graph);
+        graphs.add(graph);
         // and return back
         return graph;
     }
@@ -260,11 +285,10 @@ public class Metrics {
      *
      * @param graph The name of the graph
      */
-    public void addGraph(final Graph graph) {
-        if (graph == null) {
-            throw new IllegalArgumentException("Graph cannot be null");
-        }
-        this.graphs.add(graph);
+    public void addGraph(final Graph graph)
+    {
+        if (graph == null) { throw new IllegalArgumentException("Graph cannot be null"); }
+        graphs.add(graph);
     }
 
     /**
@@ -274,36 +298,40 @@ public class Metrics {
      *
      * @return True if statistics measuring is running, otherwise false.
      */
-    public boolean start() {
-        synchronized (this.optOutLock) {
+    public boolean start()
+    {
+        synchronized (optOutLock)
+        {
             // Did we opt out?
-            if (isOptOut()) {
-                return false;
-            }
+            if (isOptOut()) { return false; }
             // Is metrics already running?
-            if (this.task != null) {
-                return true;
-            }
+            if (task != null) { return true; }
             // Begin hitting the server with glorious data
-            this.task = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, new Runnable() {
+            task = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable()
+            {
                 private boolean firstPost = true;
 
                 @Override
-                public void run() {
-                    try {
+                public void run()
+                {
+                    try
+                    {
                         // This has to be synchronized or it can collide
                         // with
                         // the disable method.
-                        synchronized (Metrics.this.optOutLock) {
+                        synchronized (optOutLock)
+                        {
                             // Disable Task, if it is running and the
                             // server
                             // owner decided to opt-out
-                            if (isOptOut() && (Metrics.this.task != null)) {
-                                Metrics.this.task.cancel();
-                                Metrics.this.task = null;
+                            if (isOptOut() && (task != null))
+                            {
+                                task.cancel();
+                                task = null;
                                 // Tell all plotters to stop gathering
                                 // information.
-                                for (final Graph graph : Metrics.this.graphs) {
+                                for (final Graph graph : graphs)
+                                {
                                     graph.onOptOut();
                                 }
                             }
@@ -316,13 +344,16 @@ public class Metrics {
                         // Each time thereafter it will evaluate to
                         // TRUE, i.e
                         // PING!
-                        postPlugin(!this.firstPost);
+                        postPlugin(!firstPost);
                         // After the first post we set firstPost to
                         // false
                         // Each post thereafter will be a ping
-                        this.firstPost = false;
-                    } catch (final IOException e) {
-                        if (Metrics.this.debug) {
+                        firstPost = false;
+                    }
+                    catch (final IOException e)
+                    {
+                        if (debug)
+                        {
                             Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
                         }
                     }
@@ -337,23 +368,32 @@ public class Metrics {
      *
      * @return true if metrics should be opted out of it
      */
-    public boolean isOptOut() {
-        synchronized (this.optOutLock) {
-            try {
+    public boolean isOptOut()
+    {
+        synchronized (optOutLock)
+        {
+            try
+            {
                 // Reload the metrics file
-                this.configuration.load(getConfigFile());
-            } catch (final IOException ex) {
-                if (this.debug) {
-                    Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
-                }
-                return true;
-            } catch (final InvalidConfigurationException ex) {
-                if (this.debug) {
+                configuration.load(getConfigFile());
+            }
+            catch (final IOException ex)
+            {
+                if (debug)
+                {
                     Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
                 }
                 return true;
             }
-            return this.configuration.getBoolean("opt-out", false);
+            catch (final InvalidConfigurationException ex)
+            {
+                if (debug)
+                {
+                    Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
+                }
+                return true;
+            }
+            return configuration.getBoolean("opt-out", false);
         }
     }
 
@@ -362,18 +402,22 @@ public class Metrics {
      *
      * @throws java.io.IOException
      */
-    public void enable() throws IOException {
+    public void enable() throws IOException
+    {
         // This has to be synchronized or it can collide with the check in the
         // task.
-        synchronized (this.optOutLock) {
+        synchronized (optOutLock)
+        {
             // Check if the server owner has already set opt-out, if not, set
             // it.
-            if (isOptOut()) {
-                this.configuration.set("opt-out", false);
-                this.configuration.save(this.configurationFile);
+            if (isOptOut())
+            {
+                configuration.set("opt-out", false);
+                configuration.save(configurationFile);
             }
             // Enable Task, if it is not running
-            if (this.task == null) {
+            if (task == null)
+            {
                 start();
             }
         }
@@ -384,20 +428,24 @@ public class Metrics {
      *
      * @throws java.io.IOException
      */
-    public void disable() throws IOException {
+    public void disable() throws IOException
+    {
         // This has to be synchronized or it can collide with the check in the
         // task.
-        synchronized (this.optOutLock) {
+        synchronized (optOutLock)
+        {
             // Check if the server owner has already set opt-out, if not, set
             // it.
-            if (!isOptOut()) {
-                this.configuration.set("opt-out", true);
-                this.configuration.save(this.configurationFile);
+            if (!isOptOut())
+            {
+                configuration.set("opt-out", true);
+                configuration.save(configurationFile);
             }
             // Disable Task, if it is running
-            if (this.task != null) {
-                this.task.cancel();
-                this.task = null;
+            if (task != null)
+            {
+                task.cancel();
+                task = null;
             }
         }
     }
@@ -407,14 +455,15 @@ public class Metrics {
      *
      * @return the File object for the config file
      */
-    public File getConfigFile() {
+    public File getConfigFile()
+    {
         // I believe the easiest way to get the base folder (e.g craftbukkit set
         // via -P) for plugins to use
         // is to abuse the plugin object we already have
         // plugin.getDataFolder() => base/plugins/PluginA/
         // pluginsFolder => base/plugins/
         // The base is not necessarily relative to the startup directory.
-        final File pluginsFolder = this.plugin.getDataFolder().getParentFile();
+        final File pluginsFolder = plugin.getDataFolder().getParentFile();
         // return => base/plugins/PluginMetrics/config.yml
         return new File(new File(pluginsFolder, "PluginMetrics"), "config.yml");
     }
@@ -422,9 +471,10 @@ public class Metrics {
     /**
      * Generic method that posts a plugin to the metrics website
      */
-    private void postPlugin(final boolean isPing) throws IOException {
+    private void postPlugin(final boolean isPing) throws IOException
+    {
         // Server software specific section
-        final PluginDescriptionFile description = this.plugin.getDescription();
+        final PluginDescriptionFile description = plugin.getDescription();
         final String pluginName = description.getName();
         final boolean onlineMode = Bukkit.getServer().getOnlineMode(); // TRUE
         // if
@@ -435,14 +485,19 @@ public class Metrics {
         final String pluginVersion = description.getVersion();
         final String serverVersion = Bukkit.getVersion();
         int playersOnline = 0;
-        try {
-            if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class) {
+        try
+        {
+            if (Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).getReturnType() == Collection.class)
+            {
                 playersOnline = ((Collection<?>) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0])).size();
-            } else {
+            }
+            else
+            {
                 playersOnline = ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null, new Object[0])).length;
             }
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
         }
+        catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex)
+        {}
         // END server software specific section -- all code below does not use
         // any code outside of this class / Java
         // Construct the post data
@@ -450,7 +505,7 @@ public class Metrics {
         json.append('{');
         // The plugin's description file containg all of the plugin data such as
         // name, version, author, etc
-        appendJSONPair(json, "guid", this.guid);
+        appendJSONPair(json, "guid", guid);
         appendJSONPair(json, "plugin_version", pluginVersion);
         appendJSONPair(json, "server_version", serverVersion);
         appendJSONPair(json, "players_online", Integer.toString(playersOnline));
@@ -461,7 +516,8 @@ public class Metrics {
         final String java_version = System.getProperty("java.version");
         final int coreCount = Runtime.getRuntime().availableProcessors();
         // normalize os arch .. amd64 -> x86_64
-        if (osarch.equals("amd64")) {
+        if (osarch.equals("amd64"))
+        {
             osarch = "x86_64";
         }
         appendJSONPair(json, "osname", osname);
@@ -471,11 +527,14 @@ public class Metrics {
         appendJSONPair(json, "auth_mode", onlineMode ? "1" : "0");
         appendJSONPair(json, "java_version", java_version);
         // If we're pinging, append it
-        if (isPing) {
+        if (isPing)
+        {
             appendJSONPair(json, "ping", "1");
         }
-        if (this.graphs.size() > 0) {
-            synchronized (this.graphs) {
+        if (graphs.size() > 0)
+        {
+            synchronized (graphs)
+            {
                 json.append(',');
                 json.append('"');
                 json.append("graphs");
@@ -483,14 +542,17 @@ public class Metrics {
                 json.append(':');
                 json.append('{');
                 boolean firstGraph = true;
-                for (final Graph graph : this.graphs) {
+                for (final Graph graph : graphs)
+                {
                     final StringBuilder graphJson = new StringBuilder();
                     graphJson.append('{');
-                    for (final Plotter plotter : graph.getPlotters()) {
+                    for (final Plotter plotter : graph.getPlotters())
+                    {
                         appendJSONPair(graphJson, plotter.getColumnName(), Integer.toString(plotter.getValue()));
                     }
                     graphJson.append('}');
-                    if (!firstGraph) {
+                    if (!firstGraph)
+                    {
                         json.append(',');
                     }
                     json.append(escapeJSON(graph.getName()));
@@ -509,9 +571,12 @@ public class Metrics {
         URLConnection connection;
         // Mineshafter creates a socks proxy, so we can safely bypass it
         // It does not reroute POST requests so we need to go around it
-        if (isMineshafterPresent()) {
+        if (isMineshafterPresent())
+        {
             connection = url.openConnection(Proxy.NO_PROXY);
-        } else {
+        }
+        else
+        {
             connection = url.openConnection();
         }
         final byte[] uncompressed = json.toString().getBytes();
@@ -524,7 +589,8 @@ public class Metrics {
         connection.addRequestProperty("Accept", "application/json");
         connection.addRequestProperty("Connection", "close");
         connection.setDoOutput(true);
-        if (this.debug) {
+        if (debug)
+        {
             PS.debug("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
         }
         // Write the data
@@ -537,19 +603,29 @@ public class Metrics {
         // close resources
         os.close();
         reader.close();
-        if ((response == null) || response.startsWith("ERR") || response.startsWith("7")) {
-            if (response == null) {
+        if ((response == null) || response.startsWith("ERR") || response.startsWith("7"))
+        {
+            if (response == null)
+            {
                 response = "null";
-            } else if (response.startsWith("7")) {
+            }
+            else if (response.startsWith("7"))
+            {
                 response = response.substring(response.startsWith("7,") ? 2 : 1);
             }
             throw new IOException(response);
-        } else {
+        }
+        else
+        {
             // Is this the first update this hour?
-            if (response.equals("1") || response.contains("This is your first update this hour")) {
-                synchronized (this.graphs) {
-                    for (final Graph graph : this.graphs) {
-                        for (final Plotter plotter : graph.getPlotters()) {
+            if (response.equals("1") || response.contains("This is your first update this hour"))
+            {
+                synchronized (graphs)
+                {
+                    for (final Graph graph : graphs)
+                    {
+                        for (final Plotter plotter : graph.getPlotters())
+                        {
                             plotter.reset();
                         }
                     }
@@ -563,11 +639,15 @@ public class Metrics {
      *
      * @return true if mineshafter is installed on the server
      */
-    private boolean isMineshafterPresent() {
-        try {
+    private boolean isMineshafterPresent()
+    {
+        try
+        {
             Class.forName("mineshafter.MineServer");
             return true;
-        } catch (final Exception e) {
+        }
+        catch (final Exception e)
+        {
             return false;
         }
     }
@@ -575,7 +655,8 @@ public class Metrics {
     /**
      * Represents a custom graph on the website
      */
-    public static class Graph {
+    public static class Graph
+    {
         /**
          * The graph's name, alphanumeric and spaces only :) If it does not comply to the above when submitted, it is
          * rejected
@@ -586,7 +667,8 @@ public class Metrics {
          */
         private final Set<Plotter> plotters = new LinkedHashSet<Plotter>();
 
-        private Graph(final String name) {
+        private Graph(final String name)
+        {
             this.name = name;
         }
 
@@ -595,8 +677,9 @@ public class Metrics {
          *
          * @return the Graph's name
          */
-        public String getName() {
-            return this.name;
+        public String getName()
+        {
+            return name;
         }
 
         /**
@@ -604,8 +687,9 @@ public class Metrics {
          *
          * @param plotter the plotter to add to the graph
          */
-        public void addPlotter(final Plotter plotter) {
-            this.plotters.add(plotter);
+        public void addPlotter(final Plotter plotter)
+        {
+            plotters.add(plotter);
         }
 
         /**
@@ -613,8 +697,9 @@ public class Metrics {
          *
          * @param plotter the plotter to remove from the graph
          */
-        public void removePlotter(final Plotter plotter) {
-            this.plotters.remove(plotter);
+        public void removePlotter(final Plotter plotter)
+        {
+            plotters.remove(plotter);
         }
 
         /**
@@ -622,35 +707,37 @@ public class Metrics {
          *
          * @return an unmodifiable {@link java.util.Set} of the plotter objects
          */
-        public Set<Plotter> getPlotters() {
-            return Collections.unmodifiableSet(this.plotters);
+        public Set<Plotter> getPlotters()
+        {
+            return Collections.unmodifiableSet(plotters);
         }
 
         @Override
-        public int hashCode() {
-            return this.name.hashCode();
+        public int hashCode()
+        {
+            return name.hashCode();
         }
 
         @Override
-        public boolean equals(final Object object) {
-            if (!(object instanceof Graph)) {
-                return false;
-            }
+        public boolean equals(final Object object)
+        {
+            if (!(object instanceof Graph)) { return false; }
             final Graph graph = (Graph) object;
-            return graph.name.equals(this.name);
+            return graph.name.equals(name);
         }
 
         /**
          * Called when the server owner decides to opt-out of BukkitMetrics while the server is running.
          */
-        protected void onOptOut() {
-        }
+        protected void onOptOut()
+        {}
     }
 
     /**
      * Interface used to collect custom data for a plugin
      */
-    public static abstract class Plotter {
+    public static abstract class Plotter
+    {
         /**
          * The plot's name
          */
@@ -659,7 +746,8 @@ public class Metrics {
         /**
          * Construct a plotter with the default plot name
          */
-        public Plotter() {
+        public Plotter()
+        {
             this("Default");
         }
 
@@ -668,7 +756,8 @@ public class Metrics {
          *
          * @param name the name of the plotter to use, which will show up on the website
          */
-        public Plotter(final String name) {
+        public Plotter(final String name)
+        {
             this.name = name;
         }
 
@@ -686,28 +775,29 @@ public class Metrics {
          *
          * @return the plotted point's column name
          */
-        public String getColumnName() {
-            return this.name;
+        public String getColumnName()
+        {
+            return name;
         }
 
         /**
          * Called after the website graphs have been updated
          */
-        public void reset() {
-        }
+        public void reset()
+        {}
 
         @Override
-        public int hashCode() {
+        public int hashCode()
+        {
             return getColumnName().hashCode();
         }
 
         @Override
-        public boolean equals(final Object object) {
-            if (!(object instanceof Plotter)) {
-                return false;
-            }
+        public boolean equals(final Object object)
+        {
+            if (!(object instanceof Plotter)) { return false; }
             final Plotter plotter = (Plotter) object;
-            return plotter.name.equals(this.name) && (plotter.getValue() == getValue());
+            return plotter.name.equals(name) && (plotter.getValue() == getValue());
         }
     }
 }

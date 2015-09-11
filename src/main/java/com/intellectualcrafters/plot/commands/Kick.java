@@ -31,38 +31,41 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "kick",
-        aliases = {"k"},
-        description = "Kick a player from your plot",
-        permission = "plots.kick",
-        category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.NONE
-)
-public class Kick extends SubCommand {
+command = "kick",
+aliases = { "k" },
+description = "Kick a player from your plot",
+permission = "plots.kick",
+category = CommandCategory.ACTIONS,
+requiredType = RequiredType.NONE)
+public class Kick extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
+
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if (plot == null || ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.kick"))) {
+        if (plot == null) { return !sendMessage(plr, C.NOT_IN_PLOT); }
+        if ((plot == null) || ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.kick")))
+        {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (args.length != 1) {
+        if (args.length != 1)
+        {
             MainUtil.sendMessage(plr, "&c/plot kick <player>");
             return false;
         }
         final PlotPlayer player = UUIDHandler.getPlayer(args[0]);
-        if (player == null) {
+        if (player == null)
+        {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        Location otherLoc = player.getLocation();
-        if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(MainUtil.getPlot(otherLoc))) {
+        final Location otherLoc = player.getLocation();
+        if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(MainUtil.getPlot(otherLoc)))
+        {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }

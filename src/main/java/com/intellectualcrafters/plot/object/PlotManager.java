@@ -27,7 +27,8 @@ import java.util.HashSet;
 
 import com.intellectualcrafters.plot.commands.Template;
 
-public abstract class PlotManager {
+public abstract class PlotManager
+{
     /*
      * Plot locations (methods with Abs in them will not need to consider mega
      * plots)
@@ -45,11 +46,11 @@ public abstract class PlotManager {
     /*
      * Plot clearing (return false if you do not support some method)
      */
-    public abstract boolean clearPlot(final PlotWorld plotworld, final Plot plot, Runnable whenDone);
+    public abstract boolean clearPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone);
 
     public abstract boolean claimPlot(final PlotWorld plotworld, final Plot plot);
-    
-    public abstract boolean unclaimPlot(final PlotWorld plotworld, final Plot plot, Runnable whenDone);
+
+    public abstract boolean unclaimPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone);
 
     public abstract Location getSignLoc(final PlotWorld plotworld, final Plot plot);
 
@@ -84,10 +85,11 @@ public abstract class PlotManager {
     public abstract boolean finishPlotMerge(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
 
     public abstract boolean finishPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
-    
-    public void exportTemplate(PlotWorld plotworld) throws IOException {
-        HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
+
+    public void exportTemplate(final PlotWorld plotworld) throws IOException
+    {
+        final HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
         Template.zipAll(plotworld.worldname, files);
     }
-    
+
 }

@@ -20,62 +20,72 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
-public abstract class UUIDHandlerImplementation {
-    
+public abstract class UUIDHandlerImplementation
+{
+
     private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
     public boolean CACHED = false;
     public UUIDWrapper uuidWrapper = null;
     public final HashMap<String, PlotPlayer> players;
-    
-    public UUIDHandlerImplementation(UUIDWrapper wrapper) {
-        this.uuidWrapper = wrapper;
-        this.players = new HashMap<>();
+
+    public UUIDHandlerImplementation(final UUIDWrapper wrapper)
+    {
+        uuidWrapper = wrapper;
+        players = new HashMap<>();
     }
-    
+
     /**
      * If the UUID is not found, some commands can request to fetch the UUID when possible
      * @param player
      * @param ifFetch
      */
-    public abstract void fetchUUID(String name, RunnableVal<UUID> ifFetch);
-    
+    public abstract void fetchUUID(final String name, final RunnableVal<UUID> ifFetch);
+
     /**
      * Start UUID caching (this should be an async task)
      * Recommended to override this is you want to cache offline players
      */
-    public boolean startCaching(Runnable whenDone) {
-        if (CACHED) {
-            return false;
-        }
-        return this.CACHED = true;
+    public boolean startCaching(final Runnable whenDone)
+    {
+        if (CACHED) { return false; }
+        return CACHED = true;
     }
-    
-    public UUIDWrapper getUUIDWrapper() {
-        return this.uuidWrapper;
+
+    public UUIDWrapper getUUIDWrapper()
+    {
+        return uuidWrapper;
     }
-    
-    public void setUUIDWrapper(UUIDWrapper wrapper) {
-        this.uuidWrapper = wrapper;
+
+    public void setUUIDWrapper(final UUIDWrapper wrapper)
+    {
+        uuidWrapper = wrapper;
     }
-    
-    public void rename(UUID uuid, StringWrapper name) {
+
+    public void rename(final UUID uuid, final StringWrapper name)
+    {
         uuidMap.inverse().remove(uuid);
         uuidMap.put(name, uuid);
     }
-    
-    public void add(final BiMap<StringWrapper, UUID> toAdd) {
-        if (uuidMap.size() == 0) {
+
+    public void add(final BiMap<StringWrapper, UUID> toAdd)
+    {
+        if (uuidMap.size() == 0)
+        {
             uuidMap = toAdd;
         }
-        for (Map.Entry<StringWrapper, UUID> entry : toAdd.entrySet()) {
-            UUID uuid = entry.getValue();
-            StringWrapper name = entry.getKey();
-            if ((uuid == null) || (name == null)) {
+        for (final Map.Entry<StringWrapper, UUID> entry : toAdd.entrySet())
+        {
+            final UUID uuid = entry.getValue();
+            final StringWrapper name = entry.getKey();
+            if ((uuid == null) || (name == null))
+            {
                 continue;
             }
-            BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
-            if (inverse.containsKey(uuid)) {
-                if (uuidMap.containsKey(name)) {
+            final BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
+            if (inverse.containsKey(uuid))
+            {
+                if (uuidMap.containsKey(name))
+                {
                     continue;
                 }
                 rename(uuid, name);
@@ -85,41 +95,49 @@ public abstract class UUIDHandlerImplementation {
         }
         PS.debug(C.PREFIX.s() + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
     }
-    
+
     public HashSet<UUID> unknown = new HashSet<>();
-    
-    public boolean add(final StringWrapper name, final UUID uuid) {
-        if ((uuid == null)) {
-            return false;
-        }
-        if (name == null) {
-            try {
+
+    public boolean add(final StringWrapper name, final UUID uuid)
+    {
+        if ((uuid == null)) { return false; }
+        if (name == null)
+        {
+            try
+            {
                 unknown.add(uuid);
             }
-            catch (Exception e) {
+            catch (final Exception e)
+            {
                 PS.log("&c(minor) Invalid UUID mapping: " + uuid);
                 e.printStackTrace();
             }
             return false;
         }
-        
+
         /*
          * lazy UUID conversion:
          *  - Useful if the person misconfigured the database, or settings before PlotMe conversion
          */
-        if (!Settings.OFFLINE_MODE) {
+        if (!Settings.OFFLINE_MODE)
+        {
             UUID offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
-            if (!unknown.contains(offline) && !name.value.equals(name.value.toLowerCase())){
+            if (!unknown.contains(offline) && !name.value.equals(name.value.toLowerCase()))
+            {
                 offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
-                if (!unknown.contains(offline)) {
+                if (!unknown.contains(offline))
+                {
                     offline = null;
                 }
             }
-            if (offline != null) {
+            if (offline != null)
+            {
                 unknown.remove(offline);
-                Set<Plot> plots = PS.get().getPlots(offline);
-                if (plots.size() > 0) {
-                    for (Plot plot : PS.get().getPlots(offline)) {
+                final Set<Plot> plots = PS.get().getPlots(offline);
+                if (plots.size() > 0)
+                {
+                    for (final Plot plot : PS.get().getPlots(offline))
+                    {
                         plot.owner = uuid;
                     }
                     DBFunc.replaceUUID(offline, uuid);
@@ -129,12 +147,16 @@ public abstract class UUIDHandlerImplementation {
                 }
             }
         }
-        try {
-            UUID offline = uuidMap.put(name, uuid);
-            if (offline != null && !offline.equals(uuid)) {
-                Set<Plot> plots = PS.get().getPlots(offline);
-                if (plots.size() > 0) {
-                    for (Plot plot : PS.get().getPlots(offline)) {
+        try
+        {
+            final UUID offline = uuidMap.put(name, uuid);
+            if ((offline != null) && !offline.equals(uuid))
+            {
+                final Set<Plot> plots = PS.get().getPlots(offline);
+                if (plots.size() > 0)
+                {
+                    for (final Plot plot : PS.get().getPlots(offline))
+                    {
                         plot.owner = uuid;
                     }
                     DBFunc.replaceUUID(offline, uuid);
@@ -144,12 +166,12 @@ public abstract class UUIDHandlerImplementation {
                 }
             }
         }
-        catch (Exception e) {
-            BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
-            if (inverse.containsKey(uuid)) {
-                if (uuidMap.containsKey(name)) {
-                    return false;
-                }
+        catch (final Exception e)
+        {
+            final BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();
+            if (inverse.containsKey(uuid))
+            {
+                if (uuidMap.containsKey(name)) { return false; }
                 rename(uuid, name);
                 return false;
             }
@@ -157,92 +179,92 @@ public abstract class UUIDHandlerImplementation {
         }
         return true;
     }
-    
-    public boolean uuidExists(final UUID uuid) {
+
+    public boolean uuidExists(final UUID uuid)
+    {
         return uuidMap.containsValue(uuid);
     }
-    
-    public BiMap<StringWrapper, UUID> getUUIDMap() {
+
+    public BiMap<StringWrapper, UUID> getUUIDMap()
+    {
         return uuidMap;
     }
-    
-    public boolean nameExists(final StringWrapper wrapper) {
+
+    public boolean nameExists(final StringWrapper wrapper)
+    {
         return uuidMap.containsKey(wrapper);
     }
-    
-    public void handleShutdown() {
+
+    public void handleShutdown()
+    {
         players.clear();
         uuidMap.clear();
         uuidWrapper = null;
     }
-    
-    public String getName(final UUID uuid) {
-        if (uuid == null) {
-            return null;
-        }
+
+    public String getName(final UUID uuid)
+    {
+        if (uuid == null) { return null; }
         // check online
         final PlotPlayer player = getPlayer(uuid);
-        if (player != null) {
-            return player.getName();
-        }
+        if (player != null) { return player.getName(); }
         // check cache
         final StringWrapper name = uuidMap.inverse().get(uuid);
-        if (name != null) {
-            return name.value;
-        }
+        if (name != null) { return name.value; }
         return null;
     }
-    
-    public UUID getUUID(final String name, RunnableVal<UUID> ifFetch) {
-        if ((name == null) || (name.length() == 0)) {
-            return null;
-        }
+
+    public UUID getUUID(final String name, final RunnableVal<UUID> ifFetch)
+    {
+        if ((name == null) || (name.length() == 0)) { return null; }
         // check online
         final PlotPlayer player = getPlayer(name);
-        if (player != null) {
-            return player.getUUID();
-        }
+        if (player != null) { return player.getUUID(); }
         // check cache
         final StringWrapper wrap = new StringWrapper(name);
         UUID uuid = uuidMap.get(wrap);
-        if (uuid != null) {
-            return uuid;
-        }
+        if (uuid != null) { return uuid; }
         // Read from disk OR convert directly to offline UUID
-        if (Settings.OFFLINE_MODE) {
+        if (Settings.OFFLINE_MODE)
+        {
             uuid = uuidWrapper.getUUID(name);
             add(new StringWrapper(name), uuid);
             return uuid;
         }
-        if (Settings.UUID_FROM_DISK && ifFetch != null) {
+        if (Settings.UUID_FROM_DISK && (ifFetch != null))
+        {
             fetchUUID(name, ifFetch);
             return null;
         }
         return null;
     }
-    
-    public UUID getUUID(final PlotPlayer player) {
+
+    public UUID getUUID(final PlotPlayer player)
+    {
         return uuidWrapper.getUUID(player);
     }
-    
-    public UUID getUUID(final OfflinePlotPlayer player) {
+
+    public UUID getUUID(final OfflinePlotPlayer player)
+    {
         return uuidWrapper.getUUID(player);
     }
-    
-    public PlotPlayer getPlayer(final UUID uuid) {
-        for (final PlotPlayer player : players.values()) {
-            if (player.getUUID().equals(uuid)) {
-                return player;
-            }
+
+    public PlotPlayer getPlayer(final UUID uuid)
+    {
+        for (final PlotPlayer player : players.values())
+        {
+            if (player.getUUID().equals(uuid)) { return player; }
         }
         return null;
     }
-    
-    public PlotPlayer getPlayer(String name) {
+
+    public PlotPlayer getPlayer(final String name)
+    {
         return players.get(name);
     }
-    
-    public Map<String, PlotPlayer> getPlayers() {
+
+    public Map<String, PlotPlayer> getPlayers()
+    {
         return players;
     }
 

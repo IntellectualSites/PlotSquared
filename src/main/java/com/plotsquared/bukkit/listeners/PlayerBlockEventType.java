@@ -1,16 +1,17 @@
 package com.plotsquared.bukkit.listeners;
 
-public enum PlayerBlockEventType {
+public enum PlayerBlockEventType
+{
     // Non interactive
     EAT,
     READ,
-    
+
     // Right click with monster egg
     SPAWN_MOB,
-    
+
     // Dragon egg
     TELEPORT_OBJECT,
-    
+
     // armor stands
     PLACE_MISC,
     // blocks
@@ -27,7 +28,7 @@ public enum PlayerBlockEventType {
     // paintings / item frames
     BREAK_HANGING,
     BREAK_VEHICLE,
-    
+
     // armor stands
     INTERACT_MISC,
     // blocks
@@ -36,7 +37,7 @@ public enum PlayerBlockEventType {
     INTERACT_VEHICLE,
     // item frame / painting
     INTERACT_HANGING,
-    
+
     // Pressure plate, tripwire etc
     TRIGGER_PHYSICAL,
 }

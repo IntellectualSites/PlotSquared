@@ -26,11 +26,10 @@ import org.bukkit.event.player.PlayerEvent;
 
 import com.intellectualcrafters.plot.object.Plot;
 
-/**
- * @author Citymonstret
- * @author Empire92
+/**
  */
-public class PlayerLeavePlotEvent extends PlayerEvent {
+public class PlayerLeavePlotEvent extends PlayerEvent
+{
 
     private static HandlerList handlers = new HandlerList();
     private final Plot plot;
@@ -41,12 +40,14 @@ public class PlayerLeavePlotEvent extends PlayerEvent {
      * @param player Player that left the plot
      * @param plot   Plot that was left
      */
-    public PlayerLeavePlotEvent(final Player player, final Plot plot) {
+    public PlayerLeavePlotEvent(final Player player, final Plot plot)
+    {
         super(player);
         this.plot = plot;
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList()
+    {
         return handlers;
     }
 
@@ -55,12 +56,14 @@ public class PlayerLeavePlotEvent extends PlayerEvent {
      *
      * @return Plot
      */
-    public Plot getPlot() {
-        return this.plot;
+    public Plot getPlot()
+    {
+        return plot;
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
         return handlers;
     }
 }

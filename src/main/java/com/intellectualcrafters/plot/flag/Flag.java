@@ -22,7 +22,8 @@ package com.intellectualcrafters.plot.flag;
 
 import com.intellectualcrafters.plot.util.StringMan;
 
-public class Flag {
+public class Flag
+{
     private AbstractFlag key;
     private Object value;
 
@@ -35,31 +36,29 @@ public class Flag {
      *
      * @throws IllegalArgumentException if you provide inadequate inputs
      */
-    public Flag(final AbstractFlag key, final String value) {
-        if (!StringMan.isAsciiPrintable(value)) {
-            throw new IllegalArgumentException("Flag must be ascii");
-        }
-        if (value.length() > 128) {
-            throw new IllegalArgumentException("Value must be <= 128 characters");
-        }
+    public Flag(final AbstractFlag key, final String value)
+    {
+        if (!StringMan.isAsciiPrintable(value)) { throw new IllegalArgumentException("Flag must be ascii"); }
+        if (value.length() > 128) { throw new IllegalArgumentException("Value must be <= 128 characters"); }
         this.key = key;
         this.value = key.parseValueRaw(value);
-        if (this.value == null) {
-            throw new IllegalArgumentException(key.getValueDesc() + " (" + value + ")");
-        }
+        if (this.value == null) { throw new IllegalArgumentException(key.getValueDesc() + " (" + value + ")"); }
     }
 
-    public void setKey(final AbstractFlag key) {
+    public void setKey(final AbstractFlag key)
+    {
         this.key = key;
-        if (this.value instanceof String) {
-            this.value = key.parseValueRaw((String) this.value);
+        if (value instanceof String)
+        {
+            value = key.parseValueRaw((String) value);
         }
     }
 
     /**
      * Warning: Unchecked
      */
-    public Flag(final AbstractFlag key, final Object value) {
+    public Flag(final AbstractFlag key, final Object value)
+    {
         this.key = key;
         this.value = value;
     }
@@ -69,8 +68,9 @@ public class Flag {
      *
      * @return AbstractFlag
      */
-    public AbstractFlag getAbstractFlag() {
-        return this.key;
+    public AbstractFlag getAbstractFlag()
+    {
+        return key;
     }
 
     /**
@@ -78,8 +78,9 @@ public class Flag {
      *
      * @return String
      */
-    public String getKey() {
-        return this.key.getKey();
+    public String getKey()
+    {
+        return key.getKey();
     }
 
     /**
@@ -87,39 +88,36 @@ public class Flag {
      *
      * @return String
      */
-    public Object getValue() {
-        return this.value;
+    public Object getValue()
+    {
+        return value;
     }
 
-    public String getValueString() {
-        return this.key.toString(this.value);
-    }
-
-    @Override
-    public String toString() {
-        if (this.value.equals("")) {
-            return this.key.getKey();
-        }
-        return this.key + ":" + getValueString();
+    public String getValueString()
+    {
+        return key.toString(value);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+    public String toString()
+    {
+        if (value.equals("")) { return key.getKey(); }
+        return key + ":" + getValueString();
+    }
+
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (this == obj) { return true; }
+        if (obj == null) { return false; }
+        if (getClass() != obj.getClass()) { return false; }
         final Flag other = (Flag) obj;
-        return (this.key.getKey().equals(other.key.getKey()) && this.value.equals(other.value));
+        return (key.getKey().equals(other.key.getKey()) && value.equals(other.value));
     }
 
     @Override
-    public int hashCode() {
-        return this.key.getKey().hashCode();
+    public int hashCode()
+    {
+        return key.getKey().hashCode();
     }
 }

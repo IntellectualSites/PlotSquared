@@ -2,83 +2,88 @@ package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.util.InventoryUtil;
 
-public class PlotInventory {
+public class PlotInventory
+{
 
     public final PlotPlayer player;
     public final int size;
     private String title;
     private final PlotItemStack[] items;
-    
+
     private boolean open = false;
-    
-    public PlotInventory(PlotPlayer player) {
-        this.size = 4;
-        this.title = null;
+
+    public PlotInventory(final PlotPlayer player)
+    {
+        size = 4;
+        title = null;
         this.player = player;
         items = InventoryUtil.manager.getItems(player);
     }
 
-    public PlotInventory(PlotPlayer player, int size, String name) {
+    public PlotInventory(final PlotPlayer player, final int size, final String name)
+    {
         this.size = size;
-        this.title = name == null ? "" : name;
+        title = name == null ? "" : name;
         this.player = player;
         items = new PlotItemStack[size * 9];
     }
-    
-    public boolean onClick(int index) {
+
+    public boolean onClick(final int index)
+    {
         return true;
     }
-    
-    public void openInventory() {
-        if (title == null) {
-            return;
-        }
+
+    public void openInventory()
+    {
+        if (title == null) { return; }
         open = true;
         InventoryUtil.manager.open(this);
     }
-    
-    public void close() {
-        if (title == null) {
-            return;
-        }
+
+    public void close()
+    {
+        if (title == null) { return; }
         InventoryUtil.manager.close(this);
         open = false;
     }
-    
-    public void setItem(int index, PlotItemStack item) {
+
+    public void setItem(final int index, final PlotItemStack item)
+    {
         items[index] = item;
         InventoryUtil.manager.setItem(this, index, item);
     }
-    
-    public PlotItemStack getItem(int index) {
-        if (index < 0 || index >= items.length) {
-            return null;
-        }
+
+    public PlotItemStack getItem(final int index)
+    {
+        if ((index < 0) || (index >= items.length)) { return null; }
         return items[index];
     }
-    
-    public void setTitle(String title) {
-        if (title == null) {
-            return;
-        }
-        boolean tmp = open;
+
+    public void setTitle(final String title)
+    {
+        if (title == null) { return; }
+        final boolean tmp = open;
         close();
         this.title = title;
-        if (tmp) {
+        if (tmp)
+        {
             openInventory();
         }
     }
-    
-    public PlotItemStack[] getItems() {
+
+    public PlotItemStack[] getItems()
+    {
         return items;
     }
-    
-    public String getTitle() {
-        return this.title;
+
+    public String getTitle()
+    {
+        return title;
     }
-    
-    public boolean isOpen() {
+
+    public boolean isOpen()
+    {
         return open;
     }
-    
+
 }

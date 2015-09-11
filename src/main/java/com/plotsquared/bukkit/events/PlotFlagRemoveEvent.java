@@ -28,11 +28,10 @@ import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * Called when a flag is removed from a plot
- *
- * @author Citymonstret
- * @author Empire92
+ *
  */
-public class PlotFlagRemoveEvent extends PlotEvent implements Cancellable {
+public class PlotFlagRemoveEvent extends PlotEvent implements Cancellable
+{
 
     private static HandlerList handlers = new HandlerList();
     private final Flag flag;
@@ -44,37 +43,42 @@ public class PlotFlagRemoveEvent extends PlotEvent implements Cancellable {
      * @param flag Flag that was removed
      * @param plot Plot from which the flag was removed
      */
-    public PlotFlagRemoveEvent(final Flag flag, final Plot plot) {
+    public PlotFlagRemoveEvent(final Flag flag, final Plot plot)
+    {
         super(plot);
         this.flag = flag;
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList()
+    {
         return handlers;
     }
-
 
     /**
      * Get the flag involved
      *
      * @return Flag
      */
-    public Flag getFlag() {
-        return this.flag;
+    public Flag getFlag()
+    {
+        return flag;
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
         return handlers;
     }
 
     @Override
-    public final boolean isCancelled() {
-        return this.cancelled;
+    public final boolean isCancelled()
+    {
+        return cancelled;
     }
 
     @Override
-    public final void setCancelled(boolean cancelled) {
+    public final void setCancelled(final boolean cancelled)
+    {
         this.cancelled = cancelled;
     }
 }

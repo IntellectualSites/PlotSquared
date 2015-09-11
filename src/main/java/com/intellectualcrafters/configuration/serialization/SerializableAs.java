@@ -21,7 +21,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface SerializableAs {
+public @interface SerializableAs
+{
     /**
      * This is the name your class will be stored and retrieved as.
      * <p>

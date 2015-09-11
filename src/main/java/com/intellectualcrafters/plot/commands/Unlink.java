@@ -32,44 +32,43 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "unlink",
-        aliases = {"u", "unmerge"},
-        description = "Unlink a mega-plot",
-        usage = "/plot unlink",
-        requiredType = RequiredType.NONE,
-        category = CommandCategory.ACTIONS
-)
-public class Unlink extends SubCommand {
+command = "unlink",
+aliases = { "u", "unmerge" },
+description = "Unlink a mega-plot",
+usage = "/plot unlink",
+requiredType = RequiredType.NONE,
+category = CommandCategory.ACTIONS)
+public class Unlink extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
 
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
-            return sendMessage(plr, C.NO_PLOT_PERMS);
-        }
-        if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
-            return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
-        }
-        Runnable runnable = new Runnable() {
+        if (plot == null) { return !sendMessage(plr, C.NOT_IN_PLOT); }
+        if ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) { return sendMessage(plr, C.NO_PLOT_PERMS); }
+        if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) { return sendMessage(plr, C.UNLINK_IMPOSSIBLE); }
+        final Runnable runnable = new Runnable()
+        {
             @Override
-            public void run() {
-                if (!MainUtil.unlinkPlot(plot, true)) {
+            public void run()
+            {
+                if (!MainUtil.unlinkPlot(plot, true))
+                {
                     MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
                     return;
                 }
                 MainUtil.sendMessage(plr, C.UNLINK_SUCCESS);
             }
         };
-        if (Settings.CONFIRM_UNLINK && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
+        if (Settings.CONFIRM_UNLINK && !(Permissions.hasPermission(plr, "plots.confirm.bypass")))
+        {
             CmdConfirm.addPending(plr, "/plot unlink " + plot.id, runnable);
         }
-        else {
+        else
+        {
             TaskManager.runTask(runnable);
         }
         return true;

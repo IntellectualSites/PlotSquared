@@ -16,29 +16,29 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
-import com.sk89q.worldedit.WorldEdit;
 
-public interface IPlotMain {
-    
+public interface IPlotMain
+{
+
     /**
      * Log a message to console
      * @param message
      */
-    void log(String message);
+    void log(final String message);
 
     /**
      * Get the `PlotSquared` directory (e.g. /plugins/PlotSquared or /mods/PlotSquared)
      * @return
      */
     File getDirectory();
-    
+
     /**
      * Wrap a player into a PlotPlayer object
      * @param obj
      * @return
      */
-    PlotPlayer wrapPlayer(Object obj);
-    
+    PlotPlayer wrapPlayer(final Object obj);
+
     /**
      * Disable the implementation
      *  - If a full disable isn't feasibly, just disable what it can
@@ -50,32 +50,32 @@ public interface IPlotMain {
      * @return
      */
     int[] getPluginVersion();
-    
+
     /**
      * Get the version of Minecraft that is running
      * (used to check what protocols and such are supported)
      * @return
      */
     int[] getServerVersion();
-    
+
     /**
      * Get the nms package prefix
      * @return
      */
     String getNMSPackage();
-    
+
     /**
      * Get the schematic handler
      * @return
      */
     SchematicHandler initSchematicHandler();
-    
+
     /**
      * Get the schematic handler
      * @return
      */
     ChatManager initChatManager();
-    
+
     /**
      * The task manager will run and manage minecraft tasks
      * @return
@@ -116,7 +116,7 @@ public interface IPlotMain {
      * Register the WorldEdit hook
      */
     boolean initWorldEdit();
-    
+
     /**
      * Register TNT related events (if TNT protection is enabled)
      */
@@ -133,7 +133,7 @@ public interface IPlotMain {
      * @return
      */
     BlockManager initBlockManager();
-    
+
     /**
      * Get the EventUtil class
      * @return
@@ -157,24 +157,24 @@ public interface IPlotMain {
      * @return
      */
     HybridUtils initHybridUtils();
-    
+
     /**
      * Start the metrics task
      */
     void startMetrics();
-    
+
     /**
      * If a world is already loaded, set the generator (use NMS if required)
      * @param world
      */
-    void setGenerator(String world);
+    void setGenerator(final String world);
 
     /**
      * Get the UUIDHandlerImplementation which will cache and provide UUIDs
      * @return
      */
     UUIDHandlerImplementation initUUIDHandler();
-    
+
     /**
      * Get the InventoryUtil class (used for implementation specific inventory guis)
      * @return
@@ -186,12 +186,12 @@ public interface IPlotMain {
      * @return
      */
     boolean initPlotMeConverter();
-    
+
     /**
      * Unregister a PlotPlayer from cache e.g. if they have logged off
      * @param player
      */
-    void unregister(PlotPlayer player);
+    void unregister(final PlotPlayer player);
 
     /**
      * Get the generator wrapper for a world (world) and generator (name)
@@ -199,7 +199,7 @@ public interface IPlotMain {
      * @param name
      * @return
      */
-    PlotGenerator<?> getGenerator(String world, String name);
+    PlotGenerator<?> getGenerator(final String world, final String name);
 
     /**
      * Register the chunk processor which will clean out chunks that have too many blockstates or entities
@@ -216,7 +216,7 @@ public interface IPlotMain {
      * @return
      */
     String getServerName();
-    
+
     /**
      * Get the class that will manage player titles
      * @return

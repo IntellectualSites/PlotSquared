@@ -20,16 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-
 /**
  * Wrapper class for blocks, using pure data rather than the object.
- * 
- * Useful for NMS
  *
- * @author Empire92
- * @author Citymonstret
+ * Useful for NMS
+ *
  */
-public class BlockWrapper {
+public class BlockWrapper
+{
     /**
      * X Coordinate
      */
@@ -60,7 +58,8 @@ public class BlockWrapper {
      * @param id   Material ID
      * @param data Data Value
      */
-    public BlockWrapper(final int x, final int y, final int z, final short id, final byte data) {
+    public BlockWrapper(final int x, final int y, final int z, final short id, final byte data)
+    {
         this.x = x;
         this.y = y;
         this.z = z;

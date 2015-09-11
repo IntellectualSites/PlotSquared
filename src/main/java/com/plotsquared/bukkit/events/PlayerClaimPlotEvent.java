@@ -27,11 +27,10 @@ import org.bukkit.event.player.PlayerEvent;
 
 import com.intellectualcrafters.plot.object.Plot;
 
-/**
- * @author Citymonstret
- * @author Empire92
+/**
  */
-public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
+public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable
+{
     private static HandlerList handlers = new HandlerList();
     private final Plot plot;
     private final boolean auto;
@@ -43,13 +42,15 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
      * @param player Player that claimed the plot
      * @param plot   Plot that was claimed
      */
-    public PlayerClaimPlotEvent(final Player player, final Plot plot, final boolean auto) {
+    public PlayerClaimPlotEvent(final Player player, final Plot plot, final boolean auto)
+    {
         super(player);
         this.plot = plot;
         this.auto = auto;
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList()
+    {
         return handlers;
     }
 
@@ -58,29 +59,34 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
      *
      * @return Plot
      */
-    public Plot getPlot() {
-        return this.plot;
+    public Plot getPlot()
+    {
+        return plot;
     }
 
     /**
      * @return true if it was an automated claim, else false
      */
-    public boolean wasAuto() {
-        return this.auto;
+    public boolean wasAuto()
+    {
+        return auto;
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
         return handlers;
     }
 
     @Override
-    public boolean isCancelled() {
-        return this.cancelled;
+    public boolean isCancelled()
+    {
+        return cancelled;
     }
 
     @Override
-    public void setCancelled(final boolean b) {
-        this.cancelled = b;
+    public void setCancelled(final boolean b)
+    {
+        cancelled = b;
     }
 }

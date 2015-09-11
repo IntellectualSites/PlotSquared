@@ -15,28 +15,33 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 
-public abstract class BukkitPlotPopulator extends BlockPopulator {
-    
-    private PseudoRandom random = new PseudoRandom();
-    
+public abstract class BukkitPlotPopulator extends BlockPopulator
+{
+
+    private final PseudoRandom random = new PseudoRandom();
+
     public int X;
     public int Z;
     public String worldname;
     private World world;
-    
-    
+
     @Override
-    public void populate(World world, Random rand, Chunk chunk) {
+    public void populate(final World world, final Random rand, final Chunk chunk)
+    {
         this.world = world;
-        this.worldname = world.getName();
-        this.X = chunk.getX() << 4;
-        this.Z = chunk.getZ() << 4;
-        if (ChunkManager.FORCE_PASTE) {
-            for (short x = 0; x < 16; x++) {
-                for (short z = 0; z < 16; z++) {
+        worldname = world.getName();
+        X = chunk.getX() << 4;
+        Z = chunk.getZ() << 4;
+        if (ChunkManager.FORCE_PASTE)
+        {
+            for (short x = 0; x < 16; x++)
+            {
+                for (short z = 0; z < 16; z++)
+                {
                     final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
                     final HashMap<Short, Byte> blocks = ChunkManager.GENERATE_DATA.get(loc);
-                    for (final Entry<Short, Byte> entry : blocks.entrySet()) {
+                    for (final Entry<Short, Byte> entry : blocks.entrySet())
+                    {
                         setBlock(x, entry.getKey(), z, entry.getValue());
                     }
                 }
@@ -44,25 +49,30 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
             return;
         }
         populate(world, ChunkManager.CURRENT_PLOT_CLEAR, random, X, Z);
-        if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
+        if (ChunkManager.CURRENT_PLOT_CLEAR != null)
+        {
             PlotLoc loc;
-            for (Entry<PlotLoc, HashMap<Short, Byte>> entry : ChunkManager.GENERATE_DATA.entrySet()) {
-                for (Entry<Short, Byte> entry2 : entry.getValue().entrySet()) {
+            for (final Entry<PlotLoc, HashMap<Short, Byte>> entry : ChunkManager.GENERATE_DATA.entrySet())
+            {
+                for (final Entry<Short, Byte> entry2 : entry.getValue().entrySet())
+                {
                     loc = entry.getKey();
-                    int xx = loc.x - X;
-                    int zz = loc.z - Z;
-                    if (xx >= 0 && xx < 16) {
-                    	if (zz >= 0 && zz < 16) {
-                    		setBlock(xx, entry2.getKey(), zz, entry2.getValue());
-                    	}
+                    final int xx = loc.x - X;
+                    final int zz = loc.z - Z;
+                    if ((xx >= 0) && (xx < 16))
+                    {
+                        if ((zz >= 0) && (zz < 16))
+                        {
+                            setBlock(xx, entry2.getKey(), zz, entry2.getValue());
+                        }
                     }
                 }
             }
         }
     }
-    
-    public abstract void populate(World world, RegionWrapper requiredRegion, PseudoRandom random, int cx, int cz);
-    
+
+    public abstract void populate(final World world, final RegionWrapper requiredRegion, final PseudoRandom random, final int cx, final int cz);
+
     /**
      * Set the id and data at a location. (x, y, z) must be between [0,15], [0,255], [0,15]
      * @param x
@@ -71,15 +81,18 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
      * @param id
      * @param data
      */
-    public void setBlock(int x, int y, int z, short id, byte data) {
-        if (data == 0) {
+    public void setBlock(final int x, final int y, final int z, final short id, final byte data)
+    {
+        if (data == 0)
+        {
             SetBlockQueue.setBlock(worldname, x, y, z, id);
         }
-        else {
+        else
+        {
             SetBlockQueue.setBlock(worldname, x, y, z, new PlotBlock(id, data));
         }
     }
-    
+
     /**
      * Set the data at a location. (x, y, z) must be between [0,15], [0,255], [0,15]
      * @param x
@@ -87,12 +100,14 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
      * @param z
      * @param data
      */
-    public void setBlock(int x, int y, int z, byte data) {
-        if (data != 0) {
+    public void setBlock(final int x, final int y, final int z, final byte data)
+    {
+        if (data != 0)
+        {
             world.getBlockAt(X + x, y, Z + z).setData(data);
         }
     }
-    
+
     /**
      * Like setblock, but lacks the data != 0 check
      * @param x
@@ -100,10 +115,11 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
      * @param z
      * @param data
      */
-    public void setBlockAbs(int x, int y, int z, byte data) {
+    public void setBlockAbs(final int x, final int y, final int z, final byte data)
+    {
         world.getBlockAt(X + x, y, Z + z).setData(data);
     }
-    
+
     /**
      * check if a region contains a location. (x, z) must be between [0,15], [0,15]
      * @param plot
@@ -111,10 +127,11 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
      * @param z
      * @return
      */
-    public boolean contains(final RegionWrapper plot, final int x, final int z) {
-        int xx = X + x;
-        int zz = Z + z;
+    public boolean contains(final RegionWrapper plot, final int x, final int z)
+    {
+        final int xx = X + x;
+        final int zz = Z + z;
         return ((xx >= plot.minX) && (xx <= plot.maxX) && (zz >= plot.minZ) && (zz <= plot.maxZ));
     }
-    
+
 }

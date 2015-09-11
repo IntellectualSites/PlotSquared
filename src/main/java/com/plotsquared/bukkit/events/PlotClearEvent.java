@@ -28,11 +28,10 @@ import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  * Called when a plot is cleared
- *
- * @author Citymonstret
- * @author Empire92
+ *
  */
-public class PlotClearEvent extends Event implements Cancellable {
+public class PlotClearEvent extends Event implements Cancellable
+{
     private static HandlerList handlers = new HandlerList();
     private final PlotId id;
     private final String world;
@@ -44,12 +43,14 @@ public class PlotClearEvent extends Event implements Cancellable {
      * @param world The world in which the plot was cleared
      * @param id    The plot that was cleared
      */
-    public PlotClearEvent(final String world, final PlotId id) {
+    public PlotClearEvent(final String world, final PlotId id)
+    {
         this.id = id;
         this.world = world;
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList()
+    {
         return handlers;
     }
 
@@ -58,8 +59,9 @@ public class PlotClearEvent extends Event implements Cancellable {
      *
      * @return PlotId
      */
-    public PlotId getPlotId() {
-        return this.id;
+    public PlotId getPlotId()
+    {
+        return id;
     }
 
     /**
@@ -67,22 +69,26 @@ public class PlotClearEvent extends Event implements Cancellable {
      *
      * @return String
      */
-    public String getWorld() {
-        return this.world;
+    public String getWorld()
+    {
+        return world;
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
         return handlers;
     }
 
     @Override
-    public boolean isCancelled() {
-        return this.cancelled;
+    public boolean isCancelled()
+    {
+        return cancelled;
     }
 
     @Override
-    public void setCancelled(final boolean b) {
-        this.cancelled = b;
+    public void setCancelled(final boolean b)
+    {
+        cancelled = b;
     }
 }

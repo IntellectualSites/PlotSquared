@@ -22,49 +22,46 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "continue",
-        description = "Continue a plot that was previously marked as done",
-        permission = "plots.continue",
-        category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.NONE
-)
-public class Continue extends SubCommand {
+command = "continue",
+description = "Continue a plot that was previously marked as done",
+permission = "plots.continue",
+category = CommandCategory.ACTIONS,
+requiredType = RequiredType.NONE)
+public class Continue extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null || !plot.hasOwner()) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.continue")) {
+        if ((plot == null) || !plot.hasOwner()) { return !sendMessage(plr, C.NOT_IN_PLOT); }
+        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.continue"))
+        {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (!plot.getSettings().flags.containsKey("done")) {
+        if (!plot.getSettings().flags.containsKey("done"))
+        {
             MainUtil.sendMessage(plr, C.DONE_NOT_DONE);
             return false;
         }
-        if (Settings.DONE_COUNTS_TOWARDS_LIMIT && MainUtil.getAllowedPlots(plr) >= MainUtil.getPlayerPlotCount(plr)) {
+        if (Settings.DONE_COUNTS_TOWARDS_LIMIT && (MainUtil.getAllowedPlots(plr) >= MainUtil.getPlayerPlotCount(plr)))
+        {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.continue");
             return false;
         }
-        if (MainUtil.runners.containsKey(plot)) {
+        if (MainUtil.runners.containsKey(plot))
+        {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }

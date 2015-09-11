@@ -12,64 +12,72 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 
-public abstract class SpongePlotGenerator implements WorldGenerator {
+public abstract class SpongePlotGenerator implements WorldGenerator
+{
 
     public final String world;
-    
-    public SpongePlotGenerator(String world) {
+
+    public SpongePlotGenerator(final String world)
+    {
         this.world = world;
     }
 
     @Override
-    public GeneratorPopulator getBaseGeneratorPopulator() {
+    public GeneratorPopulator getBaseGeneratorPopulator()
+    {
         return getGenerator();
     }
 
     @Override
-    public BiomeGenerator getBiomeGenerator() {
+    public BiomeGenerator getBiomeGenerator()
+    {
         return getPlotBiomeProvider();
     }
 
     @Override
-    public List<GeneratorPopulator> getGeneratorPopulators() {
-        List<GeneratorPopulator> pops = new ArrayList<>();
-        pops.addAll(this.getPlotPopulators());
+    public List<GeneratorPopulator> getGeneratorPopulators()
+    {
+        final List<GeneratorPopulator> pops = new ArrayList<>();
+        pops.addAll(getPlotPopulators());
         return pops;
     }
 
     @Override
-    public List<Populator> getPopulators() {
+    public List<Populator> getPopulators()
+    {
         return new ArrayList<>();
     }
 
     @Override
-    public void setBaseGeneratorPopulator(GeneratorPopulator arg0) {
+    public void setBaseGeneratorPopulator(final GeneratorPopulator arg0)
+    {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-        
+
     }
 
     @Override
-    public void setBiomeGenerator(BiomeGenerator biomeGenerator) {
+    public void setBiomeGenerator(final BiomeGenerator biomeGenerator)
+    {
         // TODO
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
-    
+
     public abstract SpongePlotPopulator getGenerator();
-    
+
     public abstract BiomeGenerator getPlotBiomeProvider();
-    
+
     public abstract List<SpongePlotPopulator> getPlotPopulators();
-    
+
     /**
-     * This is called when the generator is initialized. 
+     * This is called when the generator is initialized.
      * You don't need to do anything with it necessarily.
      * @param plotworld
      */
-    public abstract void init(PlotWorld plotworld);
-    
+    public abstract void init(final PlotWorld plotworld);
+
     /**
-     * Return a new instance of the PlotWorld for a world 
+     * Return a new instance of the PlotWorld for a world
      * @param world
      * @return
      */
@@ -80,12 +88,13 @@ public abstract class SpongePlotGenerator implements WorldGenerator {
      * @return
      */
     public abstract PlotManager getPlotManager();
-    
+
     /**
      * If you need to do anything fancy for /plot setup<br>
      *  - Otherwise it will just use the PlotWorld configuration<br>
      * Feel free to extend BukkitSetupUtils and customize world creation
      * @param object
      */
-    public void processSetup(SetupObject object) {}
+    public void processSetup(final SetupObject object)
+    {}
 }

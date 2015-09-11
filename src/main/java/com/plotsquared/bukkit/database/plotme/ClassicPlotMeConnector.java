@@ -1,5 +1,16 @@
 package com.plotsquared.bukkit.database.plotme;
 
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
+
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
@@ -12,41 +23,38 @@ import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-public class ClassicPlotMeConnector extends APlotMeConnector {
+public class ClassicPlotMeConnector extends APlotMeConnector
+{
 
     private String plugin;
 
     @Override
-    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
+    public Connection getPlotMeConnection(final String plugin, final FileConfiguration plotConfig, final String dataFolder)
+    {
         this.plugin = plugin.toLowerCase();
-        try {
-            if (plotConfig.getBoolean("usemySQL")) {
+        try
+        {
+            if (plotConfig.getBoolean("usemySQL"))
+            {
                 final String user = plotConfig.getString("mySQLuname");
                 final String password = plotConfig.getString("mySQLpass");
                 final String con = plotConfig.getString("mySQLconn");
                 return DriverManager.getConnection(con, user, password);
-//                return new MySQL(plotsquared, hostname, port, database, username, password)
-            } else {
+                //                return new MySQL(plotsquared, hostname, port, database, username, password)
+            }
+            else
+            {
                 return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
             }
         }
-        catch (SQLException | ClassNotFoundException e) {}
+        catch (SQLException | ClassNotFoundException e)
+        {}
         return null;
     }
 
     @Override
-    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
+    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(final Connection connection) throws SQLException
+    {
         ResultSet r;
         PreparedStatement stmt;
         final HashMap<String, Integer> plotWidth = new HashMap<>();
@@ -56,211 +64,269 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Plots`");
         r = stmt.executeQuery();
         String column = null;
-        boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
-        boolean checkUUID2 = DBFunc.hasColumn(r, "ownerId");
-        if (checkUUID) {
+        final boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
+        final boolean checkUUID2 = DBFunc.hasColumn(r, "ownerId");
+        if (checkUUID)
+        {
             column = "ownerid";
         }
-        else if (checkUUID2) {
+        else if (checkUUID2)
+        {
             column = "ownerId";
         }
-        boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
-        while (r.next()) {
+        final boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
+        while (r.next())
+        {
             final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
             final String name = r.getString("owner");
             final String world = LikePlotMeConverter.getWorld(r.getString("world"));
-            if (!plots.containsKey(world)) {
+            if (!plots.containsKey(world))
+            {
                 plots.put(world, new HashMap<PlotId, Plot>());
-                if (merge) {
-                    int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
-                    int path = PS.get().config.getInt("worlds." + world + ".road.width");
+                if (merge)
+                {
+                    final int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
+                    final int path = PS.get().config.getInt("worlds." + world + ".road.width");
                     plotWidth.put(world, plot);
                     roadWidth.put(world, path);
-                    merges.put(world, new HashMap<PlotId,boolean[]>());
+                    merges.put(world, new HashMap<PlotId, boolean[]>());
                 }
             }
-            if (merge) {
-                int tx = r.getInt("topX");
-                int tz = r.getInt("topZ");
-                int bx = r.getInt("bottomX") - 1;
-                int bz = r.getInt("bottomZ") - 1;
-                int path = roadWidth.get(world);
-                int plot = plotWidth.get(world);
-                Location top = getPlotTopLocAbs(path, plot, id);
-                Location bot = getPlotBottomLocAbs(path, plot, id);
-                if (tx > top.getX()) {
+            if (merge)
+            {
+                final int tx = r.getInt("topX");
+                final int tz = r.getInt("topZ");
+                final int bx = r.getInt("bottomX") - 1;
+                final int bz = r.getInt("bottomZ") - 1;
+                final int path = roadWidth.get(world);
+                final int plot = plotWidth.get(world);
+                final Location top = getPlotTopLocAbs(path, plot, id);
+                final Location bot = getPlotBottomLocAbs(path, plot, id);
+                if (tx > top.getX())
+                {
                     setMerged(merges, world, id, 1);
                 }
-                if (tz > top.getZ()) {
+                if (tz > top.getZ())
+                {
                     setMerged(merges, world, id, 2);
                 }
-                if (bx < bot.getX()) {
+                if (bx < bot.getX())
+                {
                     setMerged(merges, world, id, 3);
                 }
-                if (bz > bot.getZ()) {
+                if (bz > bot.getZ())
+                {
                     setMerged(merges, world, id, 0);
                 }
             }
             UUID owner = UUIDHandler.getUUID(name, null);
-            if (owner == null) {
-                if (name.equals("*")) {
+            if (owner == null)
+            {
+                if (name.equals("*"))
+                {
                     owner = DBFunc.everyone;
                 }
-                else {
-                    if (checkUUID || checkUUID2){
-                        try {
-                            byte[] bytes = r.getBytes(column);
-                            if (bytes != null) {
-                                try {
-                                    ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                    long high = bb.getLong();
-                                    long low = bb.getLong();
+                else
+                {
+                    if (checkUUID || checkUUID2)
+                    {
+                        try
+                        {
+                            final byte[] bytes = r.getBytes(column);
+                            if (bytes != null)
+                            {
+                                try
+                                {
+                                    final ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                    final long high = bb.getLong();
+                                    final long low = bb.getLong();
                                     owner = new UUID(high, low);
                                 }
-                                catch (Exception e) {
+                                catch (final Exception e)
+                                {
                                     e.printStackTrace();
                                     owner = UUID.nameUUIDFromBytes(bytes);
                                 }
-                                if (owner != null) {
+                                if (owner != null)
+                                {
                                     UUIDHandler.add(new StringWrapper(name), owner);
                                 }
                             }
                         }
-                        catch (Exception e) {
+                        catch (final Exception e)
+                        {
                             e.printStackTrace();
                         }
                     }
-                    if (owner == null) {
+                    if (owner == null)
+                    {
                         MainUtil.sendConsoleMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
                         continue;
                     }
                 }
             }
-            else {
+            else
+            {
                 UUIDHandler.add(new StringWrapper(name), owner);
             }
             final Plot plot = new Plot(world, id, owner);
             plots.get(world).put(id, plot);
         }
-        
-        for (Entry<String, HashMap<PlotId, boolean[]>> entry : merges.entrySet()) {
-            String world = entry.getKey();
-            for (Entry<PlotId, boolean[]> entry2 : entry.getValue().entrySet()) {
-                HashMap<PlotId, Plot> newplots = plots.get(world);
-                Plot plot = newplots.get(entry2.getKey());
-                if (plot != null) {
+
+        for (final Entry<String, HashMap<PlotId, boolean[]>> entry : merges.entrySet())
+        {
+            final String world = entry.getKey();
+            for (final Entry<PlotId, boolean[]> entry2 : entry.getValue().entrySet())
+            {
+                final HashMap<PlotId, Plot> newplots = plots.get(world);
+                final Plot plot = newplots.get(entry2.getKey());
+                if (plot != null)
+                {
                     plot.getSettings().setMerged(entry2.getValue());
                 }
             }
         }
-        
+
         r.close();
         stmt.close();
-        
-        try {
-        
+
+        try
+        {
+
             MainUtil.sendConsoleMessage(" - " + plugin + "Denied");
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Denied`");
             r = stmt.executeQuery();
-            
-            while (r.next()) {
+
+            while (r.next())
+            {
                 final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                 final String name = r.getString("player");
                 final String world = LikePlotMeConverter.getWorld(r.getString("world"));
                 UUID denied = UUIDHandler.getUUID(name, null);
-                if (denied == null) {
-                    if (name.equals("*")) {
+                if (denied == null)
+                {
+                    if (name.equals("*"))
+                    {
                         denied = DBFunc.everyone;
-                    } else {
-                        if (DBFunc.hasColumn(r, "playerid")) {
-                            try {
-                                byte[] bytes = r.getBytes("playerid");
-                                if (bytes != null) {
-                                    try {
-                                        ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                        long high = bb.getLong();
-                                        long low = bb.getLong();
+                    }
+                    else
+                    {
+                        if (DBFunc.hasColumn(r, "playerid"))
+                        {
+                            try
+                            {
+                                final byte[] bytes = r.getBytes("playerid");
+                                if (bytes != null)
+                                {
+                                    try
+                                    {
+                                        final ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                        final long high = bb.getLong();
+                                        final long low = bb.getLong();
                                         denied = new UUID(high, low);
-                                    } catch (Exception e) {
+                                    }
+                                    catch (final Exception e)
+                                    {
                                         e.printStackTrace();
                                         denied = UUID.nameUUIDFromBytes(bytes);
                                     }
-                                    if (denied != null) {
+                                    if (denied != null)
+                                    {
                                         UUIDHandler.add(new StringWrapper(name), denied);
                                     }
                                 }
-                            } catch (Exception e) {
+                            }
+                            catch (final Exception e)
+                            {
                                 e.printStackTrace();
                             }
                         }
                     }
-                    if (denied == null){
+                    if (denied == null)
+                    {
                         MainUtil.sendConsoleMessage("&6Could not identify denied for plot: " + id);
                         continue;
                     }
                 }
-                if (plots.get(world).containsKey(id)) {
+                if (plots.get(world).containsKey(id))
+                {
                     plots.get(world).get(id).getDenied().add(denied);
                 }
             }
-            
+
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Allowed`");
             r = stmt.executeQuery();
-            
-            while (r.next()) {
+
+            while (r.next())
+            {
                 final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                 final String name = r.getString("player");
                 final String world = LikePlotMeConverter.getWorld(r.getString("world"));
                 UUID helper = UUIDHandler.getUUID(name, null);
-                if (helper == null) {
-                    if (name.equals("*")) {
+                if (helper == null)
+                {
+                    if (name.equals("*"))
+                    {
                         helper = DBFunc.everyone;
-                    } else {
-                        if (DBFunc.hasColumn(r, "playerid")) {
-                            try {
-                                byte[] bytes = r.getBytes("playerid");
-                                if (bytes != null) {
-                                    try {
-                                        ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                        long high = bb.getLong();
-                                        long low = bb.getLong();
+                    }
+                    else
+                    {
+                        if (DBFunc.hasColumn(r, "playerid"))
+                        {
+                            try
+                            {
+                                final byte[] bytes = r.getBytes("playerid");
+                                if (bytes != null)
+                                {
+                                    try
+                                    {
+                                        final ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                        final long high = bb.getLong();
+                                        final long low = bb.getLong();
                                         helper = new UUID(high, low);
-                                    } catch (Exception e) {
+                                    }
+                                    catch (final Exception e)
+                                    {
                                         e.printStackTrace();
                                         helper = UUID.nameUUIDFromBytes(bytes);
                                     }
-                                    if (helper != null) {
+                                    if (helper != null)
+                                    {
                                         UUIDHandler.add(new StringWrapper(name), helper);
                                     }
                                 }
-                            } catch (Exception e) {
+                            }
+                            catch (final Exception e)
+                            {
                                 e.printStackTrace();
                             }
                         }
                     }
-                    if (helper == null){
+                    if (helper == null)
+                    {
                         MainUtil.sendConsoleMessage("&6Could not identify helper for plot: " + id);
                         continue;
                     }
                 }
-                if (plots.get(world).containsKey(id)) {
+                if (plots.get(world).containsKey(id))
+                {
                     plots.get(world).get(id).getTrusted().add(helper);
                 }
             }
-            
+
             r.close();
             stmt.close();
-        
+
         }
-        catch (Exception e) {}
+        catch (final Exception e)
+        {}
         return plots;
     }
 
     @Override
-    public boolean accepts(String version) {
-        if (version ==  null) {
-            return true;
-        }
+    public boolean accepts(final String version)
+    {
+        if (version == null) { return true; }
         return PS.get().canUpdate(version, "0.17.0");
     }
 }

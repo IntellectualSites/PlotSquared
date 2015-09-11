@@ -22,10 +22,10 @@ package com.intellectualcrafters.plot.util;
 
 /**
  * TPS and Lag Checker.
- *
- * @author Citymonstret
+ *
  */
-public class Lag implements Runnable {
+public class Lag implements Runnable
+{
     /**
      * Ticks
      */
@@ -45,7 +45,8 @@ public class Lag implements Runnable {
      *
      * @return server tick per second
      */
-    public static double getTPS() {
+    public static double getTPS()
+    {
         return Math.round(getTPS(100)) > 20.0D ? 20.0D : Math.round(getTPS(100));
     }
 
@@ -56,10 +57,9 @@ public class Lag implements Runnable {
      *
      * @return ticks per second
      */
-    public static double getTPS(final int ticks) {
-        if (TC < ticks) {
-            return 20.0D;
-        }
+    public static double getTPS(final int ticks)
+    {
+        if (TC < ticks) { return 20.0D; }
         final int t = (TC - 1 - ticks) % T.length;
         final long e = System.currentTimeMillis() - T[t];
         return ticks / (e / 1000.0D);
@@ -72,7 +72,8 @@ public class Lag implements Runnable {
      *
      * @return number of ticks since $tI
      */
-    public static long getElapsed(final int tI) {
+    public static long getElapsed(final int tI)
+    {
         final long t = T[tI % T.length];
         return System.currentTimeMillis() - t;
     }
@@ -82,7 +83,8 @@ public class Lag implements Runnable {
      *
      * @return lag percentage
      */
-    public static double getPercentage() {
+    public static double getPercentage()
+    {
         return Math.round((1.0D - (Lag.getTPS() / 20.0D)) * 100.0D);
     }
 
@@ -91,12 +93,14 @@ public class Lag implements Runnable {
      *
      * @return TPS percentage
      */
-    public static double getFullPercentage() {
+    public static double getFullPercentage()
+    {
         return getTPS() * 5.0D;
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
         T[TC % T.length] = System.currentTimeMillis();
         TC++;
     }

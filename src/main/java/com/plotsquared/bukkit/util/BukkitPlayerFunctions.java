@@ -37,7 +37,8 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 /**
  * Functions involving players, plots and locations.
  */
-public class BukkitPlayerFunctions {
+public class BukkitPlayerFunctions
+{
 
     /*
      * =========== NOTICE ================
@@ -51,29 +52,31 @@ public class BukkitPlayerFunctions {
      * @param plot
      * @param isDelete
      */
-    public static void clear(final Player player, final String world, final Plot plot, final boolean isDelete) {
+    public static void clear(final Player player, final String world, final Plot plot, final boolean isDelete)
+    {
         final long start = System.currentTimeMillis();
-        final Runnable whenDone = new Runnable() {
+        final Runnable whenDone = new Runnable()
+        {
             @Override
-            public void run() {
-                if ((player != null) && player.isOnline()) {
+            public void run()
+            {
+                if ((player != null) && player.isOnline())
+                {
                     MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
                 }
             }
         };
-        if (!MainUtil.clearAsPlayer(plot, isDelete, whenDone)) {
+        if (!MainUtil.clearAsPlayer(plot, isDelete, whenDone))
+        {
             MainUtil.sendMessage(null, C.WAIT_FOR_TIMER);
         }
     }
 
-    public static String getPlayerName(final UUID uuid) {
-        if (uuid == null) {
-            return "unknown";
-        }
+    public static String getPlayerName(final UUID uuid)
+    {
+        if (uuid == null) { return "unknown"; }
         final String name = UUIDHandler.getName(uuid);
-        if (name == null) {
-            return "unknown";
-        }
+        if (name == null) { return "unknown"; }
         return name;
     }
 
@@ -82,22 +85,28 @@ public class BukkitPlayerFunctions {
      *
      * @return boolean
      */
-    public static boolean isInPlot(final Player player) {
+    public static boolean isInPlot(final Player player)
+    {
         return getCurrentPlot(player) != null;
     }
 
-    public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
+    public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2)
+    {
         final Plot plot1 = PS.get().getPlot(world, pos1);
         final Plot plot2 = PS.get().getPlot(world, pos2);
-        if (plot1 != null) {
+        if (plot1 != null)
+        {
             pos1 = MainUtil.getBottomPlot(plot1).id;
         }
-        if (plot2 != null) {
+        if (plot2 != null)
+        {
             pos2 = MainUtil.getTopPlot(plot2).id;
         }
         final ArrayList<PlotId> myplots = new ArrayList<>();
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
+        for (int x = pos1.x; x <= pos2.x; x++)
+        {
+            for (int y = pos1.y; y <= pos2.y; y++)
+            {
                 myplots.add(new PlotId(x, y));
             }
         }
@@ -111,15 +120,12 @@ public class BukkitPlayerFunctions {
      *
      * @return boolean
      */
-    public static Plot getCurrentPlot(final Player player) {
-        if (!PS.get().isPlotWorld(player.getWorld().getName())) {
-            return null;
-        }
+    public static Plot getCurrentPlot(final Player player)
+    {
+        if (!PS.get().isPlotWorld(player.getWorld().getName())) { return null; }
         final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(player));
         final String world = player.getWorld().getName();
-        if (id == null) {
-            return null;
-        }
+        if (id == null) { return null; }
         return MainUtil.getPlot(world, id);
     }
 
@@ -130,11 +136,10 @@ public class BukkitPlayerFunctions {
      *
      * @return boolean
      */
-    public static Set<Plot> getPlayerPlots(final String world, final Player plr) {
+    public static Set<Plot> getPlayerPlots(final String world, final Player plr)
+    {
         final Set<Plot> p = PS.get().getPlots(world, plr.getName());
-        if (p == null) {
-            return new HashSet<>();
-        }
+        if (p == null) { return new HashSet<>(); }
         return p;
     }
 }

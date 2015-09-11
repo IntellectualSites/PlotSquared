@@ -27,7 +27,8 @@ package com.intellectualcrafters.json;
  * @author JSON.org
  * @version 2014-05-03
  */
-public class Cookie {
+public class Cookie
+{
     /**
      * Produce a copy of a string in which the characters '+', '%', '=', ';' and control characters are replaced with
      * "%hh". This is a gentle form of URL encoding, attempting to cause as little distortion to the string as possible.
@@ -39,18 +40,23 @@ public class Cookie {
      *
      * @return The escaped result.
      */
-    public static String escape(final String string) {
+    public static String escape(final String string)
+    {
         char c;
         final String s = string.trim();
         final int length = s.length();
         final StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i += 1) {
+        for (int i = 0; i < length; i += 1)
+        {
             c = s.charAt(i);
-            if ((c < ' ') || (c == '+') || (c == '%') || (c == '=') || (c == ';')) {
+            if ((c < ' ') || (c == '+') || (c == '%') || (c == '=') || (c == ';'))
+            {
                 sb.append('%');
                 sb.append(Character.forDigit((char) ((c >>> 4) & 0x0f), 16));
                 sb.append(Character.forDigit((char) (c & 0x0f), 16));
-            } else {
+            }
+            else
+            {
                 sb.append(c);
             }
         }
@@ -71,7 +77,8 @@ public class Cookie {
      *
      * @throws JSONException
      */
-    public static JSONObject toJSONObject(final String string) throws JSONException {
+    public static JSONObject toJSONObject(final String string) throws JSONException
+    {
         String name;
         final JSONObject jo = new JSONObject();
         Object value;
@@ -80,15 +87,22 @@ public class Cookie {
         x.next('=');
         jo.put("value", x.nextTo(';'));
         x.next();
-        while (x.more()) {
+        while (x.more())
+        {
             name = unescape(x.nextTo("=;"));
-            if (x.next() != '=') {
-                if (name.equals("secure")) {
+            if (x.next() != '=')
+            {
+                if (name.equals("secure"))
+                {
                     value = Boolean.TRUE;
-                } else {
+                }
+                else
+                {
                     throw x.syntaxError("Missing '=' in cookie parameter.");
                 }
-            } else {
+            }
+            else
+            {
                 value = unescape(x.nextTo(';'));
                 x.next();
             }
@@ -108,24 +122,29 @@ public class Cookie {
      *
      * @throws JSONException
      */
-    public static String toString(final JSONObject jo) throws JSONException {
+    public static String toString(final JSONObject jo) throws JSONException
+    {
         final StringBuilder sb = new StringBuilder();
         sb.append(escape(jo.getString("name")));
         sb.append("=");
         sb.append(escape(jo.getString("value")));
-        if (jo.has("expires")) {
+        if (jo.has("expires"))
+        {
             sb.append(";expires=");
             sb.append(jo.getString("expires"));
         }
-        if (jo.has("domain")) {
+        if (jo.has("domain"))
+        {
             sb.append(";domain=");
             sb.append(escape(jo.getString("domain")));
         }
-        if (jo.has("path")) {
+        if (jo.has("path"))
+        {
             sb.append(";path=");
             sb.append(escape(jo.getString("path")));
         }
-        if (jo.optBoolean("secure")) {
+        if (jo.optBoolean("secure"))
+        {
             sb.append(";secure");
         }
         return sb.toString();
@@ -139,17 +158,23 @@ public class Cookie {
      *
      * @return The unescaped string.
      */
-    public static String unescape(final String string) {
+    public static String unescape(final String string)
+    {
         final int length = string.length();
         final StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; ++i) {
+        for (int i = 0; i < length; ++i)
+        {
             char c = string.charAt(i);
-            if (c == '+') {
+            if (c == '+')
+            {
                 c = ' ';
-            } else if ((c == '%') && ((i + 2) < length)) {
+            }
+            else if ((c == '%') && ((i + 2) < length))
+            {
                 final int d = JSONTokener.dehexchar(string.charAt(i + 1));
                 final int e = JSONTokener.dehexchar(string.charAt(i + 2));
-                if ((d >= 0) && (e >= 0)) {
+                if ((d >= 0) && (e >= 0))
+                {
                     c = (char) ((d * 16) + e);
                     i += 2;
                 }

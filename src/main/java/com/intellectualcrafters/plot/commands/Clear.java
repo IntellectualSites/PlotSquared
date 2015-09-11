@@ -38,86 +38,105 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "clear",
-        description = "Clear a plot",
-        permission = "plots.clear",
-        category = CommandCategory.ACTIONS,
-        usage = "/plot clear [id]"
-)
-public class Clear extends SubCommand {
+command = "clear",
+description = "Clear a plot",
+permission = "plots.clear",
+category = CommandCategory.ACTIONS,
+usage = "/plot clear [id]")
+public class Clear extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String ... args) {
+    public boolean onCommand(final PlotPlayer plr, final String... args)
+    {
         final Location loc = plr.getLocation();
         final Plot plot;
-        if (args.length == 2) {
-            PlotId id = PlotId.fromString(args[0]);
-            if (id == null) {
-                if (args[1].equalsIgnoreCase("mine")) {
-                    Set<Plot> plots = PS.get().getPlots(plr);
-                    if (plots.size() == 0) {
+        if (args.length == 2)
+        {
+            final PlotId id = PlotId.fromString(args[0]);
+            if (id == null)
+            {
+                if (args[1].equalsIgnoreCase("mine"))
+                {
+                    final Set<Plot> plots = PS.get().getPlots(plr);
+                    if (plots.size() == 0)
+                    {
                         MainUtil.sendMessage(plr, C.NO_PLOTS);
                         return false;
                     }
                     plot = plots.iterator().next();
                 }
-                else {
+                else
+                {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
                     return false;
                 }
             }
-            else {
+            else
+            {
                 plot = MainUtil.getPlot(loc.getWorld(), id);
             }
         }
-        else {
+        else
+        {
             plot = MainUtil.getPlot(loc);
         }
-        if (plot == null) {
+        if (plot == null)
+        {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-//        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
-//            return sendMessage(plr, C.UNLINK_REQUIRED);
-//        }
-        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
-            return sendMessage(plr, C.NO_PLOT_PERMS);
-        }
+        //        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
+        //            return sendMessage(plr, C.UNLINK_REQUIRED);
+        //        }
+        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) { return sendMessage(plr, C.NO_PLOT_PERMS); }
         assert plot != null;
-        if (MainUtil.runners.containsKey(plot)) {
+        if (MainUtil.runners.containsKey(plot))
+        {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
-        if (FlagManager.getPlotFlag(plot, "done") != null && (!Permissions.hasPermission(plr, "plots.continue") || (Settings.DONE_COUNTS_TOWARDS_LIMIT && MainUtil.getAllowedPlots(plr) >= MainUtil.getPlayerPlotCount(plr)))) {
+        if ((FlagManager.getPlotFlag(plot, "done") != null)
+        && (!Permissions.hasPermission(plr, "plots.continue") || (Settings.DONE_COUNTS_TOWARDS_LIMIT && (MainUtil.getAllowedPlots(plr) >= MainUtil.getPlayerPlotCount(plr)))))
+        {
             MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
             return false;
         }
-        Runnable runnable = new Runnable() {
+        final Runnable runnable = new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 final long start = System.currentTimeMillis();
-                final boolean result = MainUtil.clearAsPlayer(plot, plot.owner == null, new Runnable() {
+                final boolean result = MainUtil.clearAsPlayer(plot, plot.owner == null, new Runnable()
+                {
                     @Override
-                    public void run() {
+                    public void run()
+                    {
                         // If the state changes, then mark it as no longer done
-                        if (FlagManager.getPlotFlag(plot, "done" ) != null) {
+                        if (FlagManager.getPlotFlag(plot, "done") != null)
+                        {
                             FlagManager.removePlotFlag(plot, "done");
                         }
-                        if (FlagManager.getPlotFlag(plot, "analysis") != null) {
+                        if (FlagManager.getPlotFlag(plot, "analysis") != null)
+                        {
                             FlagManager.removePlotFlag(plot, "analysis");
                         }
                         MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
                     }
                 });
-                if (!result) {
+                if (!result)
+                {
                     MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
                 }
             }
         };
-        if (Settings.CONFIRM_CLEAR && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
+        if (Settings.CONFIRM_CLEAR && !(Permissions.hasPermission(plr, "plots.confirm.bypass")))
+        {
             CmdConfirm.addPending(plr, "/plot clear " + plot.id, runnable);
         }
-        else {
+        else
+        {
             TaskManager.runTask(runnable);
         }
         return true;

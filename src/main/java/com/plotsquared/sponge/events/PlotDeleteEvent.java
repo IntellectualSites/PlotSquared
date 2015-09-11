@@ -4,7 +4,8 @@ import org.spongepowered.api.event.AbstractEvent;
 
 import com.intellectualcrafters.plot.object.PlotId;
 
-public class PlotDeleteEvent extends AbstractEvent  {
+public class PlotDeleteEvent extends AbstractEvent
+{
     private final PlotId id;
     private final String world;
 
@@ -14,18 +15,20 @@ public class PlotDeleteEvent extends AbstractEvent  {
      * @param world The world in which the plot was deleted
      * @param id    The ID of the plot that was deleted
      */
-    public PlotDeleteEvent(final String world, final PlotId id) {
+    public PlotDeleteEvent(final String world, final PlotId id)
+    {
         this.id = id;
         this.world = world;
     }
-    
+
     /**
      * Get the PlotId
      *
      * @return PlotId
      */
-    public PlotId getPlotId() {
-        return this.id;
+    public PlotId getPlotId()
+    {
+        return id;
     }
 
     /**
@@ -33,7 +36,8 @@ public class PlotDeleteEvent extends AbstractEvent  {
      *
      * @return String
      */
-    public String getWorld() {
-        return this.world;
+    public String getWorld()
+    {
+        return world;
     }
 }

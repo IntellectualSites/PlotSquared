@@ -32,7 +32,8 @@ import java.sql.Statement;
  * @author -_Husky_-
  * @author tips48
  */
-public class MySQL extends Database {
+public class MySQL extends Database
+{
     private final String user;
     private final String database;
     private final String password;
@@ -49,66 +50,73 @@ public class MySQL extends Database {
      * @param username Username
      * @param password Password
      */
-    public MySQL(final String hostname, final String port, final String database, final String username, final String password) {
+    public MySQL(final String hostname, final String port, final String database, final String username, final String password)
+    {
         this.hostname = hostname;
         this.port = port;
         this.database = database;
-        this.user = username;
+        user = username;
         this.password = password;
-        this.connection = null;
+        connection = null;
     }
 
-    public Connection forceConnection() throws SQLException, ClassNotFoundException {
+    @Override
+    public Connection forceConnection() throws SQLException, ClassNotFoundException
+    {
         Class.forName("com.mysql.jdbc.Driver");
-        this.connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
-        return this.connection;
+        connection = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, user, password);
+        return connection;
     }
 
     @Override
-    public Connection openConnection() throws SQLException, ClassNotFoundException {
-        if (checkConnection()) {
-            return this.connection;
-        }
+    public Connection openConnection() throws SQLException, ClassNotFoundException
+    {
+        if (checkConnection()) { return connection; }
         Class.forName("com.mysql.jdbc.Driver");
-        this.connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
-        return this.connection;
+        connection = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, user, password);
+        return connection;
     }
 
     @Override
-    public boolean checkConnection() throws SQLException {
-        return (this.connection != null) && !this.connection.isClosed();
+    public boolean checkConnection() throws SQLException
+    {
+        return (connection != null) && !connection.isClosed();
     }
 
     @Override
-    public Connection getConnection() {
-        return this.connection;
+    public Connection getConnection()
+    {
+        return connection;
     }
 
     @Override
-    public boolean closeConnection() throws SQLException {
-        if (this.connection == null) {
-            return false;
-        }
-        this.connection.close();
-        this.connection = null;
+    public boolean closeConnection() throws SQLException
+    {
+        if (connection == null) { return false; }
+        connection.close();
+        connection = null;
         return true;
     }
 
     @Override
-    public ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException {
-        if (checkConnection()) {
+    public ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException
+    {
+        if (checkConnection())
+        {
             openConnection();
         }
-        final Statement statement = this.connection.createStatement();
+        final Statement statement = connection.createStatement();
         return statement.executeQuery(query);
     }
 
     @Override
-    public int updateSQL(final String query) throws SQLException, ClassNotFoundException {
-        if (checkConnection()) {
+    public int updateSQL(final String query) throws SQLException, ClassNotFoundException
+    {
+        if (checkConnection())
+        {
             openConnection();
         }
-        final Statement statement = this.connection.createStatement();
+        final Statement statement = connection.createStatement();
         return statement.executeUpdate(query);
     }
 }

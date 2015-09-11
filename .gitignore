@@ -7,3 +7,4 @@
 /target/maven-archiver
 *.project
 *.classpath
+/target/

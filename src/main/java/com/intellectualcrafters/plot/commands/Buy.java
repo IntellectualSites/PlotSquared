@@ -38,83 +38,78 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "buy",
-        aliases = {"b"},
-        description = "Buy the plot you are standing on",
-        usage = "/plot buy",
-        permission = "plots.buy",
-        category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.NONE
-)
-public class Buy extends SubCommand {
+command = "buy",
+aliases = { "b" },
+description = "Buy the plot you are standing on",
+usage = "/plot buy",
+permission = "plots.buy",
+category = CommandCategory.CLAIMING,
+requiredType = RequiredType.NONE)
+public class Buy extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String ... args) {
-        
-        if (EconHandler.manager == null) {
-            return sendMessage(plr, C.ECON_DISABLED);
-        }
+    public boolean onCommand(final PlotPlayer plr, final String... args)
+    {
+
+        if (EconHandler.manager == null) { return sendMessage(plr, C.ECON_DISABLED); }
         final Location loc = plr.getLocation();
         final String world = loc.getWorld();
-        if (!PS.get().isPlotWorld(world)) {
-            return sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-        }
+        if (!PS.get().isPlotWorld(world)) { return sendMessage(plr, C.NOT_IN_PLOT_WORLD); }
         Plot plot;
-        if (args.length > 0) {
-            try {
+        if (args.length > 0)
+        {
+            try
+            {
                 final String[] split = args[0].split(";");
                 final PlotId id = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                 plot = MainUtil.getPlot(world, id);
-            } catch (final Exception e) {
+            }
+            catch (final Exception e)
+            {
                 return sendMessage(plr, C.NOT_VALID_PLOT_ID);
             }
-        } else {
+        }
+        else
+        {
             plot = MainUtil.getPlot(loc);
         }
-        if (plot == null) {
-            return sendMessage(plr, C.NOT_IN_PLOT);
-        }
+        if (plot == null) { return sendMessage(plr, C.NOT_IN_PLOT); }
         final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(world, plr);
-        if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
-            return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
-        }
-        if (!plot.hasOwner()) {
-            return sendMessage(plr, C.PLOT_UNOWNED);
-        }
-        if (PlotHandler.isOwner(plot, plr.getUUID())) {
-            return sendMessage(plr, C.CANNOT_BUY_OWN);
-        }
+        if (currentPlots >= MainUtil.getAllowedPlots(plr)) { return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS); }
+        if (!plot.hasOwner()) { return sendMessage(plr, C.PLOT_UNOWNED); }
+        if (PlotHandler.isOwner(plot, plr.getUUID())) { return sendMessage(plr, C.CANNOT_BUY_OWN); }
         final Flag flag = FlagManager.getPlotFlag(plot, "price");
-        if (flag == null) {
-            return sendMessage(plr, C.NOT_FOR_SALE);
-        }
+        if (flag == null) { return sendMessage(plr, C.NOT_FOR_SALE); }
         double initPrice = (double) flag.getValue();
         double price = initPrice;
         final PlotId id = plot.id;
         final PlotId id2 = MainUtil.getTopPlot(plot).id;
         final int size = MainUtil.getPlotSelectionIds(id, id2).size();
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
-        if (plotworld.USE_ECONOMY) {
+        if (plotworld.USE_ECONOMY)
+        {
             price += plotworld.PLOT_PRICE * size;
             initPrice += plotworld.SELL_PRICE * size;
         }
-        if ((EconHandler.manager != null) && (price > 0d)) {
-            if (EconHandler.manager.getMoney(plr) < price) {
-                return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + price);
-            }
+        if ((EconHandler.manager != null) && (price > 0d))
+        {
+            if (EconHandler.manager.getMoney(plr) < price) { return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + price); }
             EconHandler.manager.withdrawMoney(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
             EconHandler.manager.depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), initPrice);
             final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
-            if (owner != null) {
+            if (owner != null)
+            {
                 sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");
             }
             FlagManager.removePlotFlag(plot, "price");
         }
-        Plot top = MainUtil.getTopPlot(plot);
-        
-        for (PlotId myId : MainUtil.getPlotSelectionIds(plot.id, top.id)) {
-            Plot myPlot = MainUtil.getPlot(plot.world, myId);
+        final Plot top = MainUtil.getTopPlot(plot);
+
+        for (final PlotId myId : MainUtil.getPlotSelectionIds(plot.id, top.id))
+        {
+            final Plot myPlot = MainUtil.getPlot(plot.world, myId);
             myPlot.owner = plr.getUUID();
             DBFunc.setOwner(plot, myPlot.owner);
         }

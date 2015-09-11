@@ -6,24 +6,27 @@ import org.spongepowered.api.event.Cancellable;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.PlotCluster;
 
-public class ClusterFlagRemoveEvent extends AbstractEvent implements Cancellable {
+public class ClusterFlagRemoveEvent extends AbstractEvent implements Cancellable
+{
 
     private final PlotCluster cluster;
     private final Flag flag;
     private boolean cancelled;
-    
-    public ClusterFlagRemoveEvent(final Flag flag, final PlotCluster cluster) {
+
+    public ClusterFlagRemoveEvent(final Flag flag, final PlotCluster cluster)
+    {
         this.cluster = cluster;
         this.flag = flag;
     }
-    
+
     /**
      * Get the cluster involved
      *
      * @return PlotCluster
      */
-    public PlotCluster getCluster() {
-        return this.cluster;
+    public PlotCluster getCluster()
+    {
+        return cluster;
     }
 
     /**
@@ -31,17 +34,20 @@ public class ClusterFlagRemoveEvent extends AbstractEvent implements Cancellable
      *
      * @return Flag
      */
-    public Flag getFlag() {
-        return this.flag;
+    public Flag getFlag()
+    {
+        return flag;
     }
 
     @Override
-    public boolean isCancelled() {
-       return cancelled;
+    public boolean isCancelled()
+    {
+        return cancelled;
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
-       cancelled = cancel;
+    public void setCancelled(final boolean cancel)
+    {
+        cancelled = cancel;
     }
- }
+}

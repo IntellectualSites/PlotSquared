@@ -36,66 +36,73 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "delete",
-        permission = "plots.delete",
-        description = "Delete a plot",
-        usage = "/plot delete",
-        aliases = {"dispose", "del"},
-        category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.NONE
-)
-public class Delete extends SubCommand {
+command = "delete",
+permission = "plots.delete",
+description = "Delete a plot",
+usage = "/plot delete",
+aliases = { "dispose", "del" },
+category = CommandCategory.ACTIONS,
+requiredType = RequiredType.NONE)
+public class Delete extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
+
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
-            return !sendMessage(plr, C.UNLINK_REQUIRED);
-        }
-        if (((!plot.hasOwner() || !plot.isOwner(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
-            return !sendMessage(plr, C.NO_PLOT_PERMS);
-        }
+        if (plot == null) { return !sendMessage(plr, C.NOT_IN_PLOT); }
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) { return !sendMessage(plr, C.UNLINK_REQUIRED); }
+        if (((!plot.hasOwner() || !plot.isOwner(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) { return !sendMessage(plr, C.NO_PLOT_PERMS); }
         final PlotWorld pWorld = PS.get().getPlotWorld(plot.world);
-        if (MainUtil.runners.containsKey(plot)) {
+        if (MainUtil.runners.containsKey(plot))
+        {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
-        Runnable runnable = new Runnable() {
+        final Runnable runnable = new Runnable()
+        {
             @Override
-            public void run() {
-                if ((EconHandler.manager != null) && pWorld.USE_ECONOMY && plot.hasOwner() && plot.isOwner(UUIDHandler.getUUID(plr))) {
+            public void run()
+            {
+                if ((EconHandler.manager != null) && pWorld.USE_ECONOMY && plot.hasOwner() && plot.isOwner(UUIDHandler.getUUID(plr)))
+                {
                     final double c = pWorld.SELL_PRICE;
-                    if (c > 0d) {
+                    if (c > 0d)
+                    {
                         EconHandler.manager.depositMoney(plr, c);
                         sendMessage(plr, C.ADDED_BALANCE, c + "");
                     }
                 }
-                if (plot.unclaim()) {
+                if (plot.unclaim())
+                {
                     final long start = System.currentTimeMillis();
-                    final boolean result = MainUtil.clearAsPlayer(plot, true, new Runnable() {
+                    final boolean result = MainUtil.clearAsPlayer(plot, true, new Runnable()
+                    {
                         @Override
-                        public void run() {
+                        public void run()
+                        {
                             MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
                         }
                     });
-                    if (!result) {
+                    if (!result)
+                    {
                         MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
                     }
                 }
-                else {
+                else
+                {
                     MainUtil.sendMessage(plr, C.UNCLAIM_FAILED);
                 }
             }
         };
-        if (Settings.CONFIRM_DELETE && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
+        if (Settings.CONFIRM_DELETE && !(Permissions.hasPermission(plr, "plots.confirm.bypass")))
+        {
             CmdConfirm.addPending(plr, "/plot delete " + plot.id, runnable);
         }
-        else {
+        else
+        {
             TaskManager.runTask(runnable);
         }
         return true;

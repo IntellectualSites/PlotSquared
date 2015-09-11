@@ -9,18 +9,21 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
-public class PlotHandler {
-    public static HashSet<UUID> getOwners(Plot plot) {
-        if (plot.owner == null) {
-            return new HashSet<UUID>();
-        }
-        if (plot.isMerged()) {
-            HashSet<UUID> owners = new HashSet<UUID>();
-            Plot top = MainUtil.getTopPlot(plot);
-            ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
-            for (PlotId id : ids) {
-                UUID owner = MainUtil.getPlot(plot.world, id).owner;
-                if (owner != null) {
+public class PlotHandler
+{
+    public static HashSet<UUID> getOwners(final Plot plot)
+    {
+        if (plot.owner == null) { return new HashSet<UUID>(); }
+        if (plot.isMerged())
+        {
+            final HashSet<UUID> owners = new HashSet<UUID>();
+            final Plot top = MainUtil.getTopPlot(plot);
+            final ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
+            for (final PlotId id : ids)
+            {
+                final UUID owner = MainUtil.getPlot(plot.world, id).owner;
+                if (owner != null)
+                {
                     owners.add(owner);
                 }
             }
@@ -28,79 +31,69 @@ public class PlotHandler {
         }
         return new HashSet<>(Arrays.asList(plot.owner));
     }
-    
-    public static boolean isOwner(Plot plot, UUID uuid) {
-        if (plot.owner == null) {
-            return false;
-        }
-        if (plot.isMerged()) {
-            Plot top = MainUtil.getTopPlot(plot);
-            ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
-            for (PlotId id : ids) {
-                UUID owner = MainUtil.getPlot(plot.world, id).owner;
-                if (owner != null && owner.equals(uuid)) {
-                    return true;
-                }
+
+    public static boolean isOwner(final Plot plot, final UUID uuid)
+    {
+        if (plot.owner == null) { return false; }
+        if (plot.isMerged())
+        {
+            final Plot top = MainUtil.getTopPlot(plot);
+            final ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
+            for (final PlotId id : ids)
+            {
+                final UUID owner = MainUtil.getPlot(plot.world, id).owner;
+                if ((owner != null) && owner.equals(uuid)) { return true; }
             }
         }
         return plot.owner.equals(uuid);
     }
-    
-    public static boolean isOnline(Plot plot) {
-        if (plot.owner == null) {
-            return false;
-        }
-        if (plot.isMerged()) {
-            Plot top = MainUtil.getTopPlot(plot);
-            ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
-            for (PlotId id : ids) {
-                UUID owner = MainUtil.getPlot(plot.world, id).owner;
-                if (owner != null) {
-                    if (UUIDHandler.getPlayer(owner) != null) {
-                        return true;
-                    }
+
+    public static boolean isOnline(final Plot plot)
+    {
+        if (plot.owner == null) { return false; }
+        if (plot.isMerged())
+        {
+            final Plot top = MainUtil.getTopPlot(plot);
+            final ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
+            for (final PlotId id : ids)
+            {
+                final UUID owner = MainUtil.getPlot(plot.world, id).owner;
+                if (owner != null)
+                {
+                    if (UUIDHandler.getPlayer(owner) != null) { return true; }
                 }
             }
             return false;
         }
         return UUIDHandler.getPlayer(plot.owner) != null;
     }
-    
-    public static boolean sameOwners(Plot plot1, Plot plot2) {
-        if (plot1.owner == null || plot2.owner == null) {
-            return false;
-        }
-        HashSet<UUID> owners = getOwners(plot1);
+
+    public static boolean sameOwners(final Plot plot1, final Plot plot2)
+    {
+        if ((plot1.owner == null) || (plot2.owner == null)) { return false; }
+        final HashSet<UUID> owners = getOwners(plot1);
         owners.retainAll(getOwners(plot2));
         return owners.size() > 0;
     }
-    
-    public static boolean isAdded(Plot plot, final UUID uuid) {
-        if (plot.owner == null) {
-            return false;
+
+    public static boolean isAdded(final Plot plot, final UUID uuid)
+    {
+        if (plot.owner == null) { return false; }
+        if (isOwner(plot, uuid)) { return true; }
+        if (plot.getDenied().contains(uuid)) { return false; }
+        if (plot.getTrusted().contains(uuid) || plot.getTrusted().contains(DBFunc.everyone)) { return true; }
+        if (plot.getMembers().contains(uuid) || plot.getMembers().contains(DBFunc.everyone))
+        {
+            if (PlotHandler.isOnline(plot)) { return true; }
         }
-        if (isOwner(plot, uuid)) {
-            return true;
-        }
-        if (plot.getDenied().contains(uuid)) {
-            return false;
-        }
-        if (plot.getTrusted().contains(uuid) || plot.getTrusted().contains(DBFunc.everyone)) {
-            return true;
-        }
-        if (plot.getMembers().contains(uuid) || plot.getMembers().contains(DBFunc.everyone)) {
-            if (PlotHandler.isOnline(plot)) {
-                return true;
-            }
-        }
-        if (plot.isMerged()) {
-            Plot top = MainUtil.getTopPlot(plot);
-            ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
-            for (PlotId id : ids) {
-                UUID owner = MainUtil.getPlot(plot.world, id).owner;
-                if (owner != null && owner.equals(uuid)) {
-                    return true;
-                }
+        if (plot.isMerged())
+        {
+            final Plot top = MainUtil.getTopPlot(plot);
+            final ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(plot.id, top.id);
+            for (final PlotId id : ids)
+            {
+                final UUID owner = MainUtil.getPlot(plot.world, id).owner;
+                if ((owner != null) && owner.equals(uuid)) { return true; }
             }
         }
         return false;

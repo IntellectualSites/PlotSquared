@@ -23,7 +23,6 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.PS.SortType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -31,42 +30,53 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "home",
-        aliases = {"h"},
-        description = "Go to your plot",
-        usage = "/plot home [id|alias]",
-        category = CommandCategory.TELEPORT,
-        requiredType = RequiredType.NONE
-)
-public class Home extends SubCommand {
+command = "home",
+aliases = { "h" },
+description = "Go to your plot",
+usage = "/plot home [id|alias]",
+category = CommandCategory.TELEPORT,
+requiredType = RequiredType.NONE)
+public class Home extends SubCommand
+{
 
-    private Plot isAlias(final String a) {
-        for (final Plot p : PS.get().getPlots()) {
-            if ((p.getSettings().getAlias().length() > 0) && p.getSettings().getAlias().equalsIgnoreCase(a)) {
-                return p;
-            }
+    private Plot isAlias(final String a)
+    {
+        for (final Plot p : PS.get().getPlots())
+        {
+            if ((p.getSettings().getAlias().length() > 0) && p.getSettings().getAlias().equalsIgnoreCase(a)) { return p; }
         }
         return null;
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args)
+    {
         final ArrayList<Plot> plots = PS.get().sortPlotsByTemp(PS.get().getPlots(plr));//PS.get().sortPlots(PS.get().getPlots(plr), SortType.CREATION_DATE, null);
-        if (plots.size() == 1) {
+        if (plots.size() == 1)
+        {
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));
             return true;
-        } else if (plots.size() > 1) {
-            if (args.length < 1) {
+        }
+        else if (plots.size() > 1)
+        {
+            if (args.length < 1)
+            {
                 args = new String[] { "1" };
             }
             int id = 0;
-            try {
+            try
+            {
                 id = Integer.parseInt(args[0]);
-            } catch (final Exception e) {
+            }
+            catch (final Exception e)
+            {
                 Plot temp;
-                if ((temp = isAlias(args[0])) != null) {
-                    if (temp.hasOwner()) {
-                        if (temp.isOwner(plr.getUUID())) {
+                if ((temp = isAlias(args[0])) != null)
+                {
+                    if (temp.hasOwner())
+                    {
+                        if (temp.isOwner(plr.getUUID()))
+                        {
                             MainUtil.teleportPlayer(plr, plr.getLocation(), temp);
                             return true;
                         }
@@ -77,19 +87,23 @@ public class Home extends SubCommand {
                 MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + plots.size() + ")");
                 return true;
             }
-            if ((id > (plots.size())) || (id < 1)) {
+            if ((id > (plots.size())) || (id < 1))
+            {
                 MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + plots.size() + ")");
                 return false;
             }
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(id - 1));
             return true;
-        } else {
+        }
+        else
+        {
             MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
             return true;
         }
     }
 
-    public void teleportPlayer(final PlotPlayer player, final Plot plot) {
+    public void teleportPlayer(final PlotPlayer player, final Plot plot)
+    {
         MainUtil.teleportPlayer(player, player.getLocation(), plot);
     }
 }

@@ -28,22 +28,26 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "debugloadtest",
-        permission = "plots.debugloadtest",
-        description = "This debug command will force the reload of all plots in the DB",
-        usage = "/plot debugloadtest",
-        category = CommandCategory.DEBUG,
-        requiredType = RequiredType.CONSOLE
-)
-public class DebugLoadTest extends SubCommand {
+command = "debugloadtest",
+permission = "plots.debugloadtest",
+description = "This debug command will force the reload of all plots in the DB",
+usage = "/plot debugloadtest",
+category = CommandCategory.DEBUG,
+requiredType = RequiredType.CONSOLE)
+public class DebugLoadTest extends SubCommand
+{
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
-        try {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
+        try
+        {
             final Field fPlots = PS.class.getDeclaredField("plots");
             fPlots.setAccessible(true);
             fPlots.set(null, DBFunc.getPlots());
-        } catch (final Exception e) {
+        }
+        catch (final Exception e)
+        {
             PS.debug("&3===FAILED&3===");
             e.printStackTrace();
             PS.debug("&3===END OF STACKTRACE===");

@@ -29,30 +29,35 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "reload",
-        permission = "plots.admin.command.reload",
-        description = "Reload configurations",
-        usage = "/plot reload",
-        category = CommandCategory.INFO
-)
-public class Reload extends SubCommand {
+command = "reload",
+permission = "plots.admin.command.reload",
+description = "Reload configurations",
+usage = "/plot reload",
+category = CommandCategory.INFO)
+public class Reload extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        try {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
+        try
+        {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
             PS.get().config.load(PS.get().configFile);
             PS.get().setupConfig();
             C.load(PS.get().translationFile);
-            for (final String pw : PS.get().getPlotWorlds()) {
+            for (final String pw : PS.get().getPlotWorlds())
+            {
                 final PlotWorld plotworld = PS.get().getPlotWorld(pw);
-                ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + pw);
+                final ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + pw);
                 plotworld.saveConfiguration(section);
                 plotworld.loadDefaultConfiguration(section);
             }
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
-        } catch (final Exception e) {
+        }
+        catch (final Exception e)
+        {
             e.printStackTrace();
             MainUtil.sendMessage(plr, C.RELOAD_FAILED);
         }

@@ -3,7 +3,8 @@ package com.intellectualcrafters.jnbt;
 /**
  * The {@code TAG_Long} tag.
  */
-public final class LongTag extends Tag {
+public final class LongTag extends Tag
+{
     private final long value;
 
     /**
@@ -11,7 +12,8 @@ public final class LongTag extends Tag {
      *
      * @param value the value of the tag
      */
-    public LongTag(final long value) {
+    public LongTag(final long value)
+    {
         super();
         this.value = value;
     }
@@ -22,23 +24,27 @@ public final class LongTag extends Tag {
      * @param name  the name of the tag
      * @param value the value of the tag
      */
-    public LongTag(final String name, final long value) {
+    public LongTag(final String name, final long value)
+    {
         super(name);
         this.value = value;
     }
 
     @Override
-    public Long getValue() {
-        return this.value;
+    public Long getValue()
+    {
+        return value;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         final String name = getName();
         String append = "";
-        if ((name != null) && !name.equals("")) {
-            append = "(\"" + this.getName() + "\")";
+        if ((name != null) && !name.equals(""))
+        {
+            append = "(\"" + getName() + "\")";
         }
-        return "TAG_Long" + append + ": " + this.value;
+        return "TAG_Long" + append + ": " + value;
     }
 }

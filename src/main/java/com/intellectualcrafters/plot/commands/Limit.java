@@ -23,7 +23,6 @@ package com.intellectualcrafters.plot.commands;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -31,38 +30,40 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "limit",
-        permission = "plots.limit",
-        description = "Set or increment player plot claim limits",
-        aliases = {"setlimit"},
-        usage = "/plot limit <player> <expression>",
-        category = CommandCategory.DEBUG
-)
-public class Limit extends SubCommand {
+command = "limit",
+permission = "plots.limit",
+description = "Set or increment player plot claim limits",
+aliases = { "setlimit" },
+usage = "/plot limit <player> <expression>",
+category = CommandCategory.DEBUG)
+public class Limit extends SubCommand
+{
 
-    public Limit() {
+    public Limit()
+    {
         requiredArguments = new Argument[] {
-                Argument.String,
-                Argument.String
+        Argument.String,
+        Argument.String
         };
     }
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        UUID uuid = UUIDHandler.getUUID(args[0], null);
-        if (uuid == null) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
+        final UUID uuid = UUIDHandler.getUUID(args[0], null);
+        if (uuid == null)
+        {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        OfflinePlotPlayer op = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
-        
+        UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
+
         // get current plot limit
         // increase
-        
-//        EconHandler.manager.setPermission(op, perm, value);
+
+        //        EconHandler.manager.setPermission(op, perm, value);
         plr.sendMessage("TODO");
-        
-        
+
         return true;
     }
 }

@@ -38,82 +38,98 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "setowner",
-        permission = "plots.set.owner",
-        description = "Set the plot owner",
-        usage = "/plot setowner <player>",
-        aliases = {"so"},
-        category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.NONE
-)
-public class SetOwner extends SubCommand {
+command = "setowner",
+permission = "plots.set.owner",
+description = "Set the plot owner",
+usage = "/plot setowner <player>",
+aliases = { "so" },
+category = CommandCategory.ACTIONS,
+requiredType = RequiredType.NONE)
+public class SetOwner extends SubCommand
+{
 
-    public SetOwner() {
+    public SetOwner()
+    {
         requiredArguments = new Argument[] {
-                Argument.PlayerName
+        Argument.PlayerName
         };
     }
 
-    private UUID getUUID(final String string) {
+    private UUID getUUID(final String string)
+    {
         return UUIDHandler.getUUID(string, null);
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if ((plot == null) || (plot.owner == null && !Permissions.hasPermission(plr, "plots.admin.command.setowner"))) {
+        if ((plot == null) || ((plot.owner == null) && !Permissions.hasPermission(plr, "plots.admin.command.setowner")))
+        {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
         }
-        if (args.length < 1) {
+        if (args.length < 1)
+        {
             MainUtil.sendMessage(plr, C.NEED_USER);
             return false;
         }
-        
+
         final PlotId bot = MainUtil.getBottomPlot(plot).id;
         final PlotId top = MainUtil.getTopPlot(plot).id;
         final ArrayList<PlotId> plots = MainUtil.getPlotSelectionIds(bot, top);
-        
-        PlotPlayer other = UUIDHandler.getPlayer(args[0]);
-        if (other == null) {
-        	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
-        		MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
-        		return false;
-        	}
+
+        final PlotPlayer other = UUIDHandler.getPlayer(args[0]);
+        if (other == null)
+        {
+            if (!Permissions.hasPermission(plr, "plots.admin.command.setowner"))
+            {
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+                return false;
+            }
         }
-        else {
-        	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
-        		int size = plots.size();
+        else
+        {
+            if (!Permissions.hasPermission(plr, "plots.admin.command.setowner"))
+            {
+                final int size = plots.size();
                 final int currentPlots = (Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(other) : MainUtil.getPlayerPlotCount(loc.getWorld(), other)) + size;
-        		if (currentPlots > MainUtil.getAllowedPlots(other)) {
+                if (currentPlots > MainUtil.getAllowedPlots(other))
+                {
                     sendMessage(plr, C.CANT_TRANSFER_MORE_PLOTS);
                     return false;
                 }
-        	}
+            }
         }
-        
-        if (!plot.isOwner(plr.getUUID())) {
-        	if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
-        		MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
-        		return false;
-        	}
+
+        if (!plot.isOwner(plr.getUUID()))
+        {
+            if (!Permissions.hasPermission(plr, "plots.admin.command.setowner"))
+            {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
+                return false;
+            }
         }
-        
+
         final String world = loc.getWorld();
         final UUID uuid = getUUID(args[0]);
-        if (uuid == null) {
+        if (uuid == null)
+        {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        for (final PlotId id : plots) {
+        for (final PlotId id : plots)
+        {
             Plot current = PS.get().getPlot(world, id);
-            if (current == null) {
+            if (current == null)
+            {
                 current = MainUtil.getPlot(world, id);
                 current.owner = uuid;
                 current.create();
             }
-            else {
+            else
+            {
                 current.owner = uuid;
                 DBFunc.setOwner(current, current.owner);
             }
@@ -121,8 +137,9 @@ public class SetOwner extends SubCommand {
         }
         MainUtil.setSign(args[0], plot);
         MainUtil.sendMessage(plr, C.SET_OWNER);
-        if (other != null) {
-        	MainUtil.sendMessage(other, C.NOW_OWNER, plot.world + ";" + plot.id);
+        if (other != null)
+        {
+            MainUtil.sendMessage(other, C.NOW_OWNER, plot.world + ";" + plot.id);
         }
         return true;
     }

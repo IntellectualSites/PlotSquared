@@ -35,44 +35,49 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "debugroadregen",
-        usage = "/plot debugroadregen",
-        requiredType = RequiredType.NONE,
-        description = "Regenerate all roads based on the road schematic",
-        category = CommandCategory.DEBUG,
-        permission = "plots.debugroadregen"
-)
-public class DebugRoadRegen extends SubCommand {
+command = "debugroadregen",
+usage = "/plot debugroadregen",
+requiredType = RequiredType.NONE,
+description = "Regenerate all roads based on the road schematic",
+category = CommandCategory.DEBUG,
+permission = "plots.debugroadregen")
+public class DebugRoadRegen extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer player, final String ... args) {
+    public boolean onCommand(final PlotPlayer player, final String... args)
+    {
         final Location loc = player.getLocation();
         final String world = loc.getWorld();
-        PlotWorld plotworld = PS.get().getPlotWorld(world);
-        if (!(plotworld instanceof HybridPlotWorld)) {
-            return sendMessage(player, C.NOT_IN_PLOT_WORLD);
-        }
-        Plot plot = player.getCurrentPlot();
-        if (plot == null) {
+        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        if (!(plotworld instanceof HybridPlotWorld)) { return sendMessage(player, C.NOT_IN_PLOT_WORLD); }
+        final Plot plot = player.getCurrentPlot();
+        if (plot == null)
+        {
             final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
             int extend = 0;
-            if (args.length == 1) {
-                if (MathMan.isInteger(args[0])) {
-                    try {
+            if (args.length == 1)
+            {
+                if (MathMan.isInteger(args[0]))
+                {
+                    try
+                    {
                         extend = Integer.parseInt(args[0]);
                     }
-                    catch (Exception e) {
+                    catch (final Exception e)
+                    {
                         C.NOT_VALID_NUMBER.send(player, "(0, <EXTEND HEIGHT>)");
                         return false;
                     }
                 }
             }
-            boolean result = HybridUtils.manager.regenerateRoad(world, chunk, extend);
+            final boolean result = HybridUtils.manager.regenerateRoad(world, chunk, extend);
             MainUtil.sendMessage(player, "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
             MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
         }
-        else {
-            HybridPlotManager manager = (HybridPlotManager) PS.get().getPlotManager(world);
+        else
+        {
+            final HybridPlotManager manager = (HybridPlotManager) PS.get().getPlotManager(world);
             manager.createRoadEast(plotworld, plot);
             manager.createRoadSouth(plotworld, plot);
             manager.createRoadSouthEast(plotworld, plot);

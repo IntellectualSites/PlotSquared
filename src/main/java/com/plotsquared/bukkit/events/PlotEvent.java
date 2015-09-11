@@ -4,16 +4,19 @@ import org.bukkit.event.Event;
 
 import com.intellectualcrafters.plot.object.Plot;
 
-public abstract class PlotEvent extends Event {
+public abstract class PlotEvent extends Event
+{
 
     private final Plot plot;
 
-    public PlotEvent(final Plot plot) {
+    public PlotEvent(final Plot plot)
+    {
         this.plot = plot;
     }
 
-    public final Plot getPlot() {
-        return this.plot;
+    public final Plot getPlot()
+    {
+        return plot;
     }
 
 }

@@ -2,7 +2,8 @@ package com.plotsquared.general.commands;
 
 import java.lang.reflect.Field;
 
-public class CommandHandlingOutput {
+public class CommandHandlingOutput
+{
 
     public static int CALLER_OF_WRONG_TYPE = -6;
     public static int NOT_COMMAND = -5;
@@ -13,15 +14,19 @@ public class CommandHandlingOutput {
 
     public static int SUCCESS = 1;
 
-    public static String nameField(int code) {
-        Field[] fields = CommandHandlingOutput.class.getDeclaredFields();
-        for (final Field field : fields) {
-            if (field.getGenericType() == Integer.TYPE) {
-                try {
-                    if ((Integer) field.get(CommandHandlingOutput.class) == code) {
-                        return field.getName();
-                    }
-                } catch (IllegalAccessException e) {
+    public static String nameField(final int code)
+    {
+        final Field[] fields = CommandHandlingOutput.class.getDeclaredFields();
+        for (final Field field : fields)
+        {
+            if (field.getGenericType() == Integer.TYPE)
+            {
+                try
+                {
+                    if ((Integer) field.get(CommandHandlingOutput.class) == code) { return field.getName(); }
+                }
+                catch (final IllegalAccessException e)
+                {
                     e.printStackTrace();
                 }
             }

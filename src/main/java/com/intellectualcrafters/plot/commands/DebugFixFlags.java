@@ -37,40 +37,47 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "debugfixflags",
-        usage = "/plot debugfixflags <world>",
-        permission = "plots.debugfixflags",
-        description = "Attempt to fix all flags for a world",
-        requiredType = RequiredType.CONSOLE,
-        category = CommandCategory.DEBUG
-)
-public class DebugFixFlags extends SubCommand {
+command = "debugfixflags",
+usage = "/plot debugfixflags <world>",
+permission = "plots.debugfixflags",
+description = "Attempt to fix all flags for a world",
+requiredType = RequiredType.CONSOLE,
+category = CommandCategory.DEBUG)
+public class DebugFixFlags extends SubCommand
+{
 
-    public DebugFixFlags() {
+    public DebugFixFlags()
+    {
         requiredArguments = new Argument[] {
-                Argument.String
+        Argument.String
         };
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
         final String world = args[0];
-        if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(world)) {
+        if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(world))
+        {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
         MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
-        for (final Plot plot : PS.get().getPlotsInWorld(world)) {
+        for (final Plot plot : PS.get().getPlotsInWorld(world))
+        {
             final HashMap<String, Flag> flags = plot.getSettings().flags;
-            Iterator<Entry<String, Flag>> i = flags.entrySet().iterator();
+            final Iterator<Entry<String, Flag>> i = flags.entrySet().iterator();
             boolean changed = false;
-            while (i.hasNext()) {
-                if (FlagManager.getFlag(i.next().getKey()) == null) {
+            while (i.hasNext())
+            {
+                if (FlagManager.getFlag(i.next().getKey()) == null)
+                {
                     changed = true;
                     i.remove();
                 }
             }
-            if (changed) {
+            if (changed)
+            {
                 DBFunc.setFlags(plot, plot.getSettings().flags.values());
             }
         }

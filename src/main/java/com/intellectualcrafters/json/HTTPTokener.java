@@ -6,13 +6,15 @@ package com.intellectualcrafters.json;
  * @author JSON.org
  * @version 2014-05-03
  */
-public class HTTPTokener extends JSONTokener {
+public class HTTPTokener extends JSONTokener
+{
     /**
      * Construct an HTTPTokener from a string.
      *
      * @param string A source string.
      */
-    public HTTPTokener(final String string) {
+    public HTTPTokener(final String string)
+    {
         super(string);
     }
 
@@ -23,30 +25,30 @@ public class HTTPTokener extends JSONTokener {
      *
      * @throws JSONException
      */
-    public String nextToken() throws JSONException {
+    public String nextToken() throws JSONException
+    {
         char c;
         char q;
         final StringBuilder sb = new StringBuilder();
-        do {
+        do
+        {
             c = next();
-        } while (Character.isWhitespace(c));
-        if ((c == '"') || (c == '\'')) {
+        }
+        while (Character.isWhitespace(c));
+        if ((c == '"') || (c == '\''))
+        {
             q = c;
-            for (;;) {
+            for (;;)
+            {
                 c = next();
-                if (c < ' ') {
-                    throw syntaxError("Unterminated string.");
-                }
-                if (c == q) {
-                    return sb.toString();
-                }
+                if (c < ' ') { throw syntaxError("Unterminated string."); }
+                if (c == q) { return sb.toString(); }
                 sb.append(c);
             }
         }
-        for (;;) {
-            if ((c == 0) || Character.isWhitespace(c)) {
-                return sb.toString();
-            }
+        for (;;)
+        {
+            if ((c == 0) || Character.isWhitespace(c)) { return sb.toString(); }
             sb.append(c);
             c = next();
         }

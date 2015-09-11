@@ -12,80 +12,101 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.SpongeMain;
 
-public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
+public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper
+{
 
-    public SpongeLowerOfflineUUIDWrapper() {
+    public SpongeLowerOfflineUUIDWrapper()
+    {
         // Anything?
     }
 
     @Override
-    public UUID getUUID(final PlotPlayer player) {
+    public UUID getUUID(final PlotPlayer player)
+    {
         return getUUID(player.getName());
     }
 
     @Override
-    public UUID getUUID(final OfflinePlotPlayer player) {
+    public UUID getUUID(final OfflinePlotPlayer player)
+    {
         return getUUID(player.getName());
     }
 
     @Override
-    public OfflinePlotPlayer getOfflinePlayer(final UUID uuid) {
+    public OfflinePlotPlayer getOfflinePlayer(final UUID uuid)
+    {
         String name = UUIDHandler.getName(uuid);
-        if (name == null) {
-            try {
-                GameProfile profile = SpongeMain.THIS.getResolver().get(uuid).get();
-                if (profile != null) {
+        if (name == null)
+        {
+            try
+            {
+                final GameProfile profile = SpongeMain.THIS.getResolver().get(uuid).get();
+                if (profile != null)
+                {
                     name = profile.getName();
                 }
-            } catch (Exception e) {
+            }
+            catch (final Exception e)
+            {
                 e.printStackTrace();
             }
         }
-        if (name == null) {
-            for (GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles()) {
-                if (getUUID(profile.getName()).equals(uuid)) {
+        if (name == null)
+        {
+            for (final GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles())
+            {
+                if (getUUID(profile.getName()).equals(uuid))
+                {
                     name = profile.getName();
                     break;
                 }
             }
         }
         final String username = name;
-        return new OfflinePlotPlayer() {
+        return new OfflinePlotPlayer()
+        {
             @Override
-            public boolean isOnline() {
+            public boolean isOnline()
+            {
                 return UUIDHandler.getPlayer(uuid) != null;
             }
-            
+
             @Override
-            public UUID getUUID() {
+            public UUID getUUID()
+            {
                 return uuid;
             }
-            
+
             @Override
-            public String getName() {
+            public String getName()
+            {
                 return username;
             }
-            
+
             @Override
-            public long getLastPlayed() {
-             // TODO FIXME
+            public long getLastPlayed()
+            {
+                // TODO FIXME
                 throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
             }
         };
     }
 
-    public Player[] getOnlinePlayers() {
+    public Player[] getOnlinePlayers()
+    {
         return SpongeMain.THIS.getServer().getOnlinePlayers().toArray(new Player[0]);
     }
 
     @Override
-    public UUID getUUID(final String name) {
+    public UUID getUUID(final String name)
+    {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
     }
-    
+
     @Override
-    public OfflinePlotPlayer[] getOfflinePlayers() {
-     // TODO FIXME
+    public OfflinePlotPlayer[] getOfflinePlayers()
+    {
+        // TODO FIXME
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
 }

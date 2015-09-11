@@ -28,19 +28,22 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "debug",
-        category = CommandCategory.DEBUG,
-        description = "Show debug information",
-        usage = "/plot debug [msg]",
-        permission = "plots.admin"
-)
-public class Debug extends SubCommand {
+command = "debug",
+category = CommandCategory.DEBUG,
+description = "Show debug information",
+usage = "/plot debug [msg]",
+permission = "plots.admin")
+public class Debug extends SubCommand
+{
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
-        if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
+        if ((args.length > 0) && args[0].equalsIgnoreCase("msg"))
+        {
             final StringBuilder msg = new StringBuilder();
-            for (final C c : C.values()) {
+            for (final C c : C.values())
+            {
                 msg.append(c.s()).append("\n");
             }
             MainUtil.sendMessage(plr, msg.toString());
@@ -56,7 +59,8 @@ public class Debug extends SubCommand {
         }
         {
             final StringBuilder worlds = new StringBuilder("");
-            for (final String world : PS.get().getPlotWorlds()) {
+            for (final String world : PS.get().getPlotWorlds())
+            {
                 worlds.append(world).append(" ");
             }
             information.append(header);
@@ -77,11 +81,13 @@ public class Debug extends SubCommand {
         return true;
     }
 
-    private String getSection(final String line, final String val) {
+    private String getSection(final String line, final String val)
+    {
         return line.replaceAll("%val%", val) + "\n";
     }
 
-    private String getLine(final String line, final String var, final Object val) {
+    private String getLine(final String line, final String var, final Object val)
+    {
         return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
     }
 }

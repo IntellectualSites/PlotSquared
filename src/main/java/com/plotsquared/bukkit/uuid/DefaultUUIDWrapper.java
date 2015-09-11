@@ -11,32 +11,39 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 
-public class DefaultUUIDWrapper extends UUIDWrapper {
+public class DefaultUUIDWrapper extends UUIDWrapper
+{
     @Override
-    public UUID getUUID(final PlotPlayer player) {
+    public UUID getUUID(final PlotPlayer player)
+    {
         return ((BukkitPlayer) player).player.getUniqueId();
     }
 
     @Override
-    public UUID getUUID(final OfflinePlotPlayer player) {
+    public UUID getUUID(final OfflinePlotPlayer player)
+    {
         return player.getUUID();
     }
 
     @Override
-    public OfflinePlotPlayer getOfflinePlayer(final UUID uuid) {
+    public OfflinePlotPlayer getOfflinePlayer(final UUID uuid)
+    {
         return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
     }
 
     @Override
-    public UUID getUUID(final String name) {
+    public UUID getUUID(final String name)
+    {
         return Bukkit.getOfflinePlayer(name).getUniqueId();
     }
 
     @Override
-    public OfflinePlotPlayer[] getOfflinePlayers() {
-        OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
-        BukkitOfflinePlayer[] toReturn = new BukkitOfflinePlayer[ops.length] ;
-        for (int i = 0; i < ops.length; i++) {
+    public OfflinePlotPlayer[] getOfflinePlayers()
+    {
+        final OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
+        final BukkitOfflinePlayer[] toReturn = new BukkitOfflinePlayer[ops.length];
+        for (int i = 0; i < ops.length; i++)
+        {
             toReturn[i] = new BukkitOfflinePlayer(ops[i]);
         }
         return toReturn;

@@ -1,12 +1,13 @@
 package com.intellectualcrafters.plot.object;
 
+public class CmdInstance
+{
+    public final Runnable command;
+    public final long timestamp;
 
-public class CmdInstance {
-	public final Runnable command;
-	public final long timestamp;
-	
-	public CmdInstance(Runnable command) {
-		this.command = command;
-		this.timestamp = System.currentTimeMillis();
-	}
+    public CmdInstance(final Runnable command)
+    {
+        this.command = command;
+        timestamp = System.currentTimeMillis();
+    }
 }

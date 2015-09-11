@@ -8,7 +8,6 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Carrier;
 import org.spongepowered.api.item.inventory.Inventories;
-import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackBuilder;
 import org.spongepowered.api.item.inventory.custom.CustomInventory;
@@ -22,95 +21,97 @@ import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 
-public class SpongeInventoryUtil extends InventoryUtil {
+public class SpongeInventoryUtil extends InventoryUtil
+{
 
     public ItemStackBuilder builder;
 
-    public SpongeInventoryUtil() {
-        this.builder = SpongeMain.THIS.getGame().getRegistry().createItemBuilder();
+    public SpongeInventoryUtil()
+    {
+        builder = SpongeMain.THIS.getGame().getRegistry().createItemBuilder();
     }
-    
+
     @Override
-    public void open(PlotInventory inv) {
+    public void open(final PlotInventory inv)
+    {
         // TODO Auto-generated method stub
-        SpongePlayer sp = (SpongePlayer) inv.player;
-        Player player = sp.player;
-        
-        CustomInventory inventory = Inventories.customInventoryBuilder().name(SpongeMain.THIS.getTranslation(inv.getTitle())).size(inv.size).build();
-        PlotItemStack[] items = inv.getItems();
-        for (int i = 0; i < inv.size * 9; i++) {
-            PlotItemStack item = items[i];
-            if (item != null) {
+        final SpongePlayer sp = (SpongePlayer) inv.player;
+        final Player player = sp.player;
+
+        final CustomInventory inventory = Inventories.customInventoryBuilder().name(SpongeMain.THIS.getTranslation(inv.getTitle())).size(inv.size).build();
+        final PlotItemStack[] items = inv.getItems();
+        for (int i = 0; i < (inv.size * 9); i++)
+        {
+            final PlotItemStack item = items[i];
+            if (item != null)
+            {
                 inventory.set(new SlotIndex(i), getItem(item));
             }
         }
         inv.player.setMeta("inventory", inv);
         player.openInventory(inventory);
     }
-    
 
-    public ItemStack getItem(PlotItemStack item) {
+    public ItemStack getItem(final PlotItemStack item)
+    {
         // FIXME item type, item data, item name, item lore
         return builder.itemType(ItemTypes.SPONGE).quantity(item.amount).build();
     }
 
-
     @Override
-    public void close(PlotInventory inv) {
-        if (!inv.isOpen()) {
-            return;
-        }
+    public void close(final PlotInventory inv)
+    {
+        if (!inv.isOpen()) { return; }
         inv.player.deleteMeta("inventory");
-        SpongePlayer sp = (SpongePlayer) inv.player;
+        final SpongePlayer sp = (SpongePlayer) inv.player;
         sp.player.closeInventory();
     }
 
     @Override
-    public void setItem(PlotInventory inv, int index, PlotItemStack item) {
-        if (!inv.isOpen()) {
-            return;
-        }
-        SpongePlayer sp = (SpongePlayer) inv.player;
-        Player player = sp.player;
-        Inventory inventory = player.getOpenInventory().get();
+    public void setItem(final PlotInventory inv, final int index, final PlotItemStack item)
+    {
+        if (!inv.isOpen()) { return; }
+        final SpongePlayer sp = (SpongePlayer) inv.player;
+        final Player player = sp.player;
+        player.getOpenInventory().get();
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-        
+
     }
-    
-    public PlotItemStack getItem(ItemStack item) {
-        if (item == null) {
-            return null;
-        }
-        ItemType type = item.getItem();
-        String id = type.getId();
-        int amount = item.getQuantity();
+
+    public PlotItemStack getItem(final ItemStack item)
+    {
+        if (item == null) { return null; }
+        final ItemType type = item.getItem();
+        final String id = type.getId();
+        final int amount = item.getQuantity();
         // TODO name / lore
         return new PlotItemStack(id, amount, null);
     }
 
     @Override
-    public PlotItemStack[] getItems(PlotPlayer player) {
-        SpongePlayer sp = (SpongePlayer) player;
-        CarriedInventory<? extends Carrier> inv = sp.player.getInventory();
-        ArrayList<PlotItemStack> list = new ArrayList<PlotItemStack>();
-        
+    public PlotItemStack[] getItems(final PlotPlayer player)
+    {
+        final SpongePlayer sp = (SpongePlayer) player;
+        sp.player.getInventory();
+        new ArrayList<PlotItemStack>();
+
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-        
-//        return list.toArray();
+
+        //        return list.toArray();
     }
 
     @Override
-    public boolean isOpen(PlotInventory inv) {
-        if (!inv.isOpen()) {
-            return false;
-        }
-        SpongePlayer sp = (SpongePlayer) inv.player;
-        Player player = sp.player;
-        if (player.isViewingInventory()) {
-            CarriedInventory<? extends Carrier> inventory = player.getInventory();
+    public boolean isOpen(final PlotInventory inv)
+    {
+        if (!inv.isOpen()) { return false; }
+        final SpongePlayer sp = (SpongePlayer) inv.player;
+        final Player player = sp.player;
+        if (player.isViewingInventory())
+        {
+            final CarriedInventory<? extends Carrier> inventory = player.getInventory();
             return inv.getTitle().equals(inventory.getName().getTranslation().get(Locale.ENGLISH));
         }
         return false;
     }
-    
+
 }

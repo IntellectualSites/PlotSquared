@@ -30,43 +30,52 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "update",
-        permission = "plots.admin",
-        description = "Update PlotSquared",
-        usage = "/plot update",
-        requiredType = RequiredType.NONE,
-        aliases = {"updateplugin"},
-        category = CommandCategory.DEBUG
-)
-public class Update extends SubCommand {
+command = "update",
+permission = "plots.admin",
+description = "Update PlotSquared",
+usage = "/plot update",
+requiredType = RequiredType.NONE,
+aliases = { "updateplugin" },
+category = CommandCategory.DEBUG)
+public class Update extends SubCommand
+{
 
     public static String version;
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
         URL url;
-        if (args.length == 0) {
+        if (args.length == 0)
+        {
             url = PS.get().update;
         }
-        else if (args.length == 1) {
-            try {
+        else if (args.length == 1)
+        {
+            try
+            {
                 url = new URL(args[0]);
-            } catch (MalformedURLException e) {
+            }
+            catch (final MalformedURLException e)
+            {
                 MainUtil.sendConsoleMessage("&cInvalid url: " + args[0]);
                 MainUtil.sendConsoleMessage(C.COMMAND_SYNTAX, "/plot update [url]");
                 return false;
             }
         }
-        else {
+        else
+        {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, getUsage().replaceAll("\\{label\\}", "plot"));
             return false;
         }
-        if (url == null) {
+        if (url == null)
+        {
             MainUtil.sendMessage(plr, "&cNo update found!");
             MainUtil.sendMessage(plr, "&cTo manually specify an update URL: /plot update <url>");
             return false;
         }
-        if (PS.get().update(null, url) && url == PS.get().update) {
+        if (PS.get().update(null, url) && (url == PS.get().update))
+        {
             PS.get().update = null;
         }
         return true;

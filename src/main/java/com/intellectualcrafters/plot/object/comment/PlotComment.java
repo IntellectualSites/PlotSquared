@@ -22,10 +22,10 @@ package com.intellectualcrafters.plot.object.comment;
 
 import com.intellectualcrafters.plot.object.PlotId;
 
-/**
- * @author Empire92
+/**
  */
-public class PlotComment {
+public class PlotComment
+{
     public final String comment;
     public final String inbox;
     public final String senderName;
@@ -33,9 +33,10 @@ public class PlotComment {
     public final String world;
     public final long timestamp;
 
-    public PlotComment(final String world, final PlotId id, final String comment, final String senderName, final String inbox, final long timestamp) {
+    public PlotComment(final String world, final PlotId id, final String comment, final String senderName, final String inbox, final long timestamp)
+    {
         this.world = world;
-    	this.id = id;
+        this.id = id;
         this.comment = comment;
         this.senderName = senderName;
         this.inbox = inbox;

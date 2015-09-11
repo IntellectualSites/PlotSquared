@@ -48,7 +48,6 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
@@ -57,14 +56,13 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 
 /**
  * PlotSquared API
- *
- * @author Citymonstret
- * @author Empire92
+ *
  * @version API 2.0
  *
  */
 
-public class PlotAPI {
+public class PlotAPI
+{
 
     /**
      * Permission that allows for admin access, this permission node will allow the player to use any part of the
@@ -78,20 +76,26 @@ public class PlotAPI {
      * @deprecated Use new PlotAPI() instead
      */
     @Deprecated
-    public PlotAPI(final JavaPlugin plugin) {
-    }
-    
+    public PlotAPI(final JavaPlugin plugin)
+    {}
+
     /**
      * @param plugin Plugin used to access this method
      *
      * @throws com.intellectualcrafters.plot.util.PlotSquaredException if the program fails to fetch the PlotSquared
      *                                                                 instance
      * @see com.intellectualcrafters.plot.PS
+     *
+     * @deprecated Use this class if you just want to do a few simple things.<br>
+     *  - It will remain stable for future versions of the plugin
+     *  - The PlotPlayer and Plot class should be considered relatively safe
+     *  - For more advanced/intensive tasks you should consider using other classes 
      * 
-     * @deprecated Use new PlotAPI() instead
+     * 
      */
-    public PlotAPI() {
-    }
+    @Deprecated
+    public PlotAPI()
+    {}
 
     /**
      * Get all plots
@@ -100,7 +104,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.PS#getPlots()
      */
-    public Set<Plot> getAllPlots() {
+    public Set<Plot> getAllPlots()
+    {
         return PS.get().getPlots();
     }
 
@@ -111,7 +116,8 @@ public class PlotAPI {
      *
      * @return all plots that a player owns
      */
-    public Set<Plot> getPlayerPlots(final Player player) {
+    public Set<Plot> getPlayerPlots(final Player player)
+    {
         return PS.get().getPlots(BukkitUtil.getPlayer(player));
     }
 
@@ -125,7 +131,8 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.PS#addPlotWorld(String, com.intellectualcrafters.plot.object.PlotWorld,
      * com.intellectualcrafters.plot.object.PlotManager)
      */
-    public void addPlotWorld(final String world, final PlotWorld plotWorld, final PlotManager manager) {
+    public void addPlotWorld(final String world, final PlotWorld plotWorld, final PlotManager manager)
+    {
         PS.get().addPlotWorld(world, plotWorld, manager);
     }
 
@@ -134,7 +141,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.PS#config
      */
-    public YamlConfiguration getConfig() {
+    public YamlConfiguration getConfig()
+    {
         return PS.get().config;
     }
 
@@ -143,7 +151,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.PS#storage
      */
-    public YamlConfiguration getStorage() {
+    public YamlConfiguration getStorage()
+    {
         return PS.get().storage;
     }
 
@@ -155,7 +164,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.PS
      */
-    public PS getMain() {
+    public PS getMain()
+    {
         return PS.get();
     }
 
@@ -171,10 +181,11 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.util.ChunkManager
      */
-    public ChunkManager getChunkManager() {
+    public ChunkManager getChunkManager()
+    {
         return ChunkManager.manager;
     }
-    
+
     /**
      * BlockManager class contains useful methods relating to blocks.
      *
@@ -182,10 +193,11 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.util.BlockManager
      */
-    public BlockManager getBlockManager() {
+    public BlockManager getBlockManager()
+    {
         return BlockManager.manager;
     }
-    
+
     /**
      * BukkitSetBlockManager class contains useful methods relating to bukkit blocks.
      *
@@ -193,7 +205,8 @@ public class PlotAPI {
      *
      * @see com.plotsquared.bukkit.util.BukkitSetBlockManager
      */
-    public BukkitSetBlockManager getBukkitBlockManager() {
+    public BukkitSetBlockManager getBukkitBlockManager()
+    {
         return BukkitSetBlockManager.setBlockManager;
     }
 
@@ -204,7 +217,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.uuid.UUIDWrapper
      */
-    public UUIDWrapper getUUIDWrapper() {
+    public UUIDWrapper getUUIDWrapper()
+    {
         return UUIDHandler.getUUIDWrapper();
     }
 
@@ -217,10 +231,11 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.flag.FlagManager
      */
     @Deprecated
-    public FlagManager getFlagManager() {
+    public FlagManager getFlagManager()
+    {
         return new FlagManager();
     }
-    
+
     /**
      * Do not use this. Instead use ClusterManager.[method] in your code.
      *  - Plot cluster related stuff
@@ -230,10 +245,11 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.util.ClusterManager
      */
     @Deprecated
-    public ClusterManager getClusterManager() {
+    public ClusterManager getClusterManager()
+    {
         return new ClusterManager();
     }
-    
+
     /**
      * Do not use this. Instead use MainUtil.[method] in your code.
      *  - Basic plot management stuff
@@ -243,10 +259,11 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.util.MainUtil
      */
     @Deprecated
-    public MainUtil getMainUtil() {
+    public MainUtil getMainUtil()
+    {
         return new MainUtil();
     }
-    
+
     /**
      * Do not use this. Instead use C.PERMISSION_[method] in your code.
      *  - Basic permission management stuff
@@ -256,10 +273,13 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.util.Permissions
      */
     @Deprecated
-    public String[] getPermissions() {
-        ArrayList<String> perms = new ArrayList<>();
-        for (C c : C.values()) {
-            if (c.getCat().equals("static.permissions")) {
+    public String[] getPermissions()
+    {
+        final ArrayList<String> perms = new ArrayList<>();
+        for (final C c : C.values())
+        {
+            if (c.getCat().equals("static.permissions"))
+            {
                 perms.add(c.s());
             }
         }
@@ -273,7 +293,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.util.SchematicHandler
      */
-    public SchematicHandler getSchematicHandler() {
+    public SchematicHandler getSchematicHandler()
+    {
         return SchematicHandler.manager;
     }
 
@@ -285,7 +306,8 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.config.C
      */
     @Deprecated
-    public C[] getCaptions() {
+    public C[] getCaptions()
+    {
         return C.values();
     }
 
@@ -299,7 +321,8 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.object.PlotManager
      * @see PS#getPlotManager(String)
      */
-    public PlotManager getPlotManager(final World world) {
+    public PlotManager getPlotManager(final World world)
+    {
         return PS.get().getPlotManager(world.getName());
     }
 
@@ -314,7 +337,8 @@ public class PlotAPI {
      * @see PS#getPlotManager(String)
      * @see com.intellectualcrafters.plot.object.PlotManager
      */
-    public PlotManager getPlotManager(final String world) {
+    public PlotManager getPlotManager(final String world)
+    {
         return PS.get().getPlotManager(world);
     }
 
@@ -329,7 +353,8 @@ public class PlotAPI {
      * @see PS#getPlotWorld(String)
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
-    public PlotWorld getWorldSettings(final World world) {
+    public PlotWorld getWorldSettings(final World world)
+    {
         return PS.get().getPlotWorld(world.getName());
     }
 
@@ -343,7 +368,8 @@ public class PlotAPI {
      * @see PS#getPlotWorld(String)
      * @see com.intellectualcrafters.plot.object.PlotWorld
      */
-    public PlotWorld getWorldSettings(final String world) {
+    public PlotWorld getWorldSettings(final String world)
+    {
         return PS.get().getPlotWorld(world);
     }
 
@@ -356,7 +382,8 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, C, String...)
      * com.intellectualcrafters.plot.config.C, String...)
      */
-    public void sendMessage(final Player player, final C c) {
+    public void sendMessage(final Player player, final C c)
+    {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), c);
     }
 
@@ -368,7 +395,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, String)
      */
-    public void sendMessage(final Player player, final String string) {
+    public void sendMessage(final Player player, final String string)
+    {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), string);
     }
 
@@ -379,7 +407,8 @@ public class PlotAPI {
      *
      * @see MainUtil#sendConsoleMessage(String)
      */
-    public void sendConsoleMessage(final String msg) {
+    public void sendConsoleMessage(final String msg)
+    {
         MainUtil.sendConsoleMessage(msg);
     }
 
@@ -391,7 +420,8 @@ public class PlotAPI {
      * @see #sendConsoleMessage(String)
      * @see com.intellectualcrafters.plot.config.C
      */
-    public void sendConsoleMessage(final C c) {
+    public void sendConsoleMessage(final C c)
+    {
         sendConsoleMessage(c.s());
     }
 
@@ -403,7 +433,8 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.flag.FlagManager#addFlag(com.intellectualcrafters.plot.flag.AbstractFlag)
      * @see com.intellectualcrafters.plot.flag.AbstractFlag
      */
-    public void addFlag(final AbstractFlag flag) {
+    public void addFlag(final AbstractFlag flag)
+    {
         FlagManager.addFlag(flag);
     }
 
@@ -415,7 +446,8 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.flag.FlagManager#getFlags()
      * @see com.intellectualcrafters.plot.flag.AbstractFlag
      */
-    public AbstractFlag[] getFlags() {
+    public AbstractFlag[] getFlags()
+    {
         return FlagManager.getFlags().toArray(new AbstractFlag[FlagManager.getFlags().size()]);
     }
 
@@ -431,7 +463,8 @@ public class PlotAPI {
      * @see MainUtil#getPlot(String, com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot getPlot(final World world, final int x, final int z) {
+    public Plot getPlot(final World world, final int x, final int z)
+    {
         return MainUtil.getPlot(world.getName(), new PlotId(x, z));
     }
 
@@ -445,7 +478,8 @@ public class PlotAPI {
      * @see MainUtil#getPlot(com.intellectualcrafters.plot.object.Location)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot getPlot(final Location l) {
+    public Plot getPlot(final Location l)
+    {
         return MainUtil.getPlot(BukkitUtil.getLocation(l));
     }
 
@@ -459,7 +493,8 @@ public class PlotAPI {
      * @see #getPlot(org.bukkit.Location)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot getPlot(final Player player) {
+    public Plot getPlot(final Player player)
+    {
         return this.getPlot(player.getLocation());
     }
 
@@ -472,7 +507,8 @@ public class PlotAPI {
      *
      * @see #getPlots(World, Player, boolean)
      */
-    public boolean hasPlot(final World world, final Player player) {
+    public boolean hasPlot(final World world, final Player player)
+    {
         return (getPlots(world, player, true) != null) && (getPlots(world, player, true).length > 0);
     }
 
@@ -484,15 +520,22 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot[] getPlots(final World world, final Player plr, final boolean just_owner) {
+    public Plot[] getPlots(final World world, final Player plr, final boolean just_owner)
+    {
         final ArrayList<Plot> pPlots = new ArrayList<>();
-        for (final Plot plot : PS.get().getPlotsInWorld(world.getName())) {
-            if (just_owner) {
-                if ((plot.owner != null) && (plot.owner.equals(UUIDHandler.getUUID(BukkitUtil.getPlayer(plr))))) {
+        for (final Plot plot : PS.get().getPlotsInWorld(world.getName()))
+        {
+            if (just_owner)
+            {
+                if ((plot.owner != null) && (plot.owner.equals(UUIDHandler.getUUID(BukkitUtil.getPlayer(plr)))))
+                {
                     pPlots.add(plot);
                 }
-            } else {
-                if (plot.isAdded(UUIDHandler.getUUID(BukkitUtil.getPlayer(plr)))) {
+            }
+            else
+            {
+                if (plot.isAdded(UUIDHandler.getUUID(BukkitUtil.getPlayer(plr))))
+                {
                     pPlots.add(plot);
                 }
             }
@@ -510,8 +553,9 @@ public class PlotAPI {
      * @see PS#getPlots(String)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Plot[] getPlots(final World world) {
-        Collection<Plot> plots = PS.get().getPlotsInWorld(world.getName());
+    public Plot[] getPlots(final World world)
+    {
+        final Collection<Plot> plots = PS.get().getPlotsInWorld(world.getName());
         return plots.toArray(new Plot[plots.size()]);
     }
 
@@ -522,8 +566,9 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.PS#getPlotWorlds()
      */
-    public String[] getPlotWorlds() {
-        Set<String> worlds = PS.get().getPlotWorlds();
+    public String[] getPlotWorlds()
+    {
+        final Set<String> worlds = PS.get().getPlotWorlds();
         return worlds.toArray(new String[worlds.size()]);
     }
 
@@ -536,7 +581,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.PS#isPlotWorld(String)
      */
-    public boolean isPlotWorld(final World world) {
+    public boolean isPlotWorld(final World world)
+    {
         return PS.get().isPlotWorld(world.getName());
     }
 
@@ -555,8 +601,12 @@ public class PlotAPI {
      * com.intellectualcrafters.plot.object.Plot)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Location[] getLocations(final Plot p) {
-        return new Location[]{BukkitUtil.getLocation(MainUtil.getPlotBottomLoc(p.world, p.id)), BukkitUtil.getLocation(MainUtil.getPlotTopLoc(p.world, p.id)), BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.id))};
+    public Location[] getLocations(final Plot p)
+    {
+        return new Location[] {
+        BukkitUtil.getLocation(MainUtil.getPlotBottomLoc(p.world, p.id)),
+        BukkitUtil.getLocation(MainUtil.getPlotTopLoc(p.world, p.id)),
+        BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.id)) };
     }
 
     /**
@@ -570,7 +620,8 @@ public class PlotAPI {
      * com.intellectualcrafters.plot.object.Plot)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Location getHomeLocation(final Plot p) {
+    public Location getHomeLocation(final Plot p)
+    {
         return BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.id));
     }
 
@@ -585,7 +636,8 @@ public class PlotAPI {
      * com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Location getBottomLocation(final Plot p) {
+    public Location getBottomLocation(final Plot p)
+    {
         return BukkitUtil.getLocation(MainUtil.getPlotBottomLoc(p.world, p.id));
     }
 
@@ -599,7 +651,8 @@ public class PlotAPI {
      * @see MainUtil#getPlotTopLoc(String, com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Location getTopLocation(final Plot p) {
+    public Location getTopLocation(final Plot p)
+    {
         return BukkitUtil.getLocation(MainUtil.getPlotTopLoc(p.world, p.id));
     }
 
@@ -612,7 +665,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.util.MainUtil#getPlot(com.intellectualcrafters.plot.object.Location)
      */
-    public boolean isInPlot(final Player player) {
+    public boolean isInPlot(final Player player)
+    {
         return MainUtil.getPlot(BukkitUtil.getLocation(player)) != null;
     }
 
@@ -623,10 +677,14 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.commands.SubCommand
      */
-    public void registerCommand(final SubCommand c) {
-        if (c.getCommand() != null) {
+    public void registerCommand(final SubCommand c)
+    {
+        if (c.getCommand() != null)
+        {
             MainCommand.getInstance().addCommand(c);
-        } else {
+        }
+        else
+        {
             MainCommand.getInstance().createCommand(c);
         }
     }
@@ -638,7 +696,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.PS
      */
-    public PS getPlotSquared() {
+    public PS getPlotSquared()
+    {
         return PS.get();
     }
 
@@ -652,7 +711,8 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.util.MainUtil#getPlayerPlotCount(String, PlotPlayer)
      */
-    public int getPlayerPlotCount(final World world, final Player player) {
+    public int getPlayerPlotCount(final World world, final Player player)
+    {
         return MainUtil.getPlayerPlotCount(world.getName(), BukkitUtil.getPlayer(player));
     }
 
@@ -668,7 +728,8 @@ public class PlotAPI {
      * org.bukkit.entity.Player)
      * @see com.intellectualcrafters.plot.object.Plot
      */
-    public Set<Plot> getPlayerPlots(final World world, final Player player) {
+    public Set<Plot> getPlayerPlots(final World world, final Player player)
+    {
         return PS.get().getPlots(world.getName(), BukkitUtil.getPlayer(player));
     }
 
@@ -680,58 +741,63 @@ public class PlotAPI {
      * @return the number of allowed plots
      *
      */
-    public int getAllowedPlots(final Player player) {
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+    public int getAllowedPlots(final Player player)
+    {
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
         return MainUtil.getAllowedPlots(pp);
     }
-    
+
     /**
      * Get the PlotPlayer for a player<br>
      *  - The PlotPlayer is usually cached and will provide useful functions relating to players
-     * 
+     *
      * @see PlotPlayer.wrap(Player|OfflinePlayer|String|UUID)
-     * 
+     *
      * @param player
      * @return
      */
-    public PlotPlayer wrapPlayer(Player player) {
+    public PlotPlayer wrapPlayer(final Player player)
+    {
         return PlotPlayer.wrap(player);
     }
-    
+
     /**
      * Get the PlotPlayer for a UUID (Please note that PlotSquared can be configured to provide different UUIDs than bukkit)
-     * 
+     *
      * @see PlotPlayer.wrap(UUID uuid)
-     * 
+     *
      * @param player
      * @return
      */
-    public PlotPlayer wrapPlayer(UUID uuid) {
+    public PlotPlayer wrapPlayer(final UUID uuid)
+    {
         return PlotPlayer.wrap(uuid);
     }
-    
+
     /**
      * Get the PlotPlayer for a username
-     * 
+     *
      * @see PlotPlayer.wrap(String name)
-     * 
+     *
      * @param player
      * @return
      */
-    public PlotPlayer wrapPlayer(String player) {
+    public PlotPlayer wrapPlayer(final String player)
+    {
         return PlotPlayer.wrap(player);
     }
-    
+
     /**
      * Get the PlotPlayer for an offline player<br>
      * Note that this will work if the player is offline, however not all functionality will work
-     * 
+     *
      * @see PlotPlayer.wrap(OfflinePlayer op)
-     * 
+     *
      * @param player
      * @return
      */
-    public PlotPlayer wrapPlayer(OfflinePlayer player) {
+    public PlotPlayer wrapPlayer(final OfflinePlayer player)
+    {
         return PlotPlayer.wrap(player);
     }
 }

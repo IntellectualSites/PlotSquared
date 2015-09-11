@@ -38,49 +38,50 @@ import com.plotsquared.general.commands.CommandCaller;
 /**
  * Captions class.
  *
- * @author Citymonstret 
+
  */
-public enum C {
+public enum C
+{
 
     /*
      * Static flags
      */
-    FLAG_USE("use","static.flags"),
-    FLAG_PLACE("place","static.flags"),
-    FLAG_PVP("pvp","static.flags"),
-    FLAG_HANGING_PLACE("hanging-place","static.flags"),
-    FLAG_HANGING_BREAK("hanging-break","static.flags"),
-    FLAG_HOSTILE_INTERACT("hostile-interact","static.flags"),
-    FLAG_ANIMAL_INTERACT("animal-interact","static.flags"),
-    FLAG_VEHICLE_USE("vehicle-use","static.flags"),
-    FLAG_PLAYER_INTERACT("player-interact","static.flags"),
-    FLAG_TAMED_INTERACT("tamed-interact","static.flags"),
-    FLAG_DISABLE_PHYSICS("disable-physics","static.flags"),
+    FLAG_USE("use", "static.flags"),
+    FLAG_PLACE("place", "static.flags"),
+    FLAG_PVP("pvp", "static.flags"),
+    FLAG_HANGING_PLACE("hanging-place", "static.flags"),
+    FLAG_HANGING_BREAK("hanging-break", "static.flags"),
+    FLAG_HOSTILE_INTERACT("hostile-interact", "static.flags"),
+    FLAG_ANIMAL_INTERACT("animal-interact", "static.flags"),
+    FLAG_VEHICLE_USE("vehicle-use", "static.flags"),
+    FLAG_PLAYER_INTERACT("player-interact", "static.flags"),
+    FLAG_TAMED_INTERACT("tamed-interact", "static.flags"),
+    FLAG_DISABLE_PHYSICS("disable-physics", "static.flags"),
     /*
      * Static permission
      */
-    PERMISSION_STAR("*","static.permissions"),
-    PERMISSION_ADMIN("plots.admin","static.permissions"),
-    PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned","static.permissions"),
-    PERMISSION_PROJECTILE_OTHER("plots.projectile.other","static.permissions"),
-    PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS("plots.admin.interact.blockedcommands","static.permissions"),
-    PERMISSION_WORLDEDIT_BYPASS("plots.worldedit.bypass","static.permissions"),
-    PERMISSION_PLOT_TOGGLE_TITLES("plots.toggle.titles","static.permissions"),
-    PERMISSION_PLOT_TOGGLE_CHAT("plots.toggle.chat","static.permissions"),
-    PERMISSION_ADMIN_EXIT_DENIED("plots.admin.exit.denied","static.permissions"),
-    PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied","static.permissions"),
-    PERMISSION_COMMANDS_CHAT("plots.admin.command.chat","static.permissions"),
-    PERMISSION_MERGE_OTHER("plots.merge.other","static.permissions"),
-    PERMISSION_ADMIN_DESTROY_UNOWNED("plots.admin.destroy.unowned","static.permissions"),
-    PERMISSION_ADMIN_DESTROY_OTHER( "plots.admin.destroy.other","static.permissions"),
-    PERMISSION_ADMIN_DESTROY_ROAD("plots.admin.destroy.road","static.permissions"),
-    PERMISSION_ADMIN_BUILD_ROAD("plots.admin.build.road","static.permissions"),
-    PERMISSION_ADMIN_BUILD_UNOWNED("plots.admin.build.unowned","static.permissions"),
-    PERMISSION_ADMIN_BUILD_OTHER("plots.admin.build.other","static.permissions"),
-    PERMISSION_ADMIN_INTERACT_ROAD("plots.admin.interact.road","static.permissions"),
-    PERMISSION_ADMIN_INTERACT_UNOWNED("plots.admin.interact.unowned","static.permissions"),
-    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other","static.permissions"),
-    PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit","static.permissions"),
+    PERMISSION_STAR("*", "static.permissions"),
+    PERMISSION_ADMIN("plots.admin", "static.permissions"),
+    PERMISSION_PROJECTILE_UNOWNED("plots.projectile.unowned", "static.permissions"),
+    PERMISSION_PROJECTILE_OTHER("plots.projectile.other", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS("plots.admin.interact.blockedcommands", "static.permissions"),
+    PERMISSION_WORLDEDIT_BYPASS("plots.worldedit.bypass", "static.permissions"),
+    PERMISSION_PLOT_TOGGLE_TITLES("plots.toggle.titles", "static.permissions"),
+    PERMISSION_PLOT_TOGGLE_CHAT("plots.toggle.chat", "static.permissions"),
+    PERMISSION_ADMIN_EXIT_DENIED("plots.admin.exit.denied", "static.permissions"),
+    PERMISSION_ADMIN_ENTRY_DENIED("plots.admin.entry.denied", "static.permissions"),
+    PERMISSION_COMMANDS_CHAT("plots.admin.command.chat", "static.permissions"),
+    PERMISSION_MERGE_OTHER("plots.merge.other", "static.permissions"),
+    PERMISSION_ADMIN_DESTROY_UNOWNED("plots.admin.destroy.unowned", "static.permissions"),
+    PERMISSION_ADMIN_DESTROY_OTHER("plots.admin.destroy.other", "static.permissions"),
+    PERMISSION_ADMIN_DESTROY_ROAD("plots.admin.destroy.road", "static.permissions"),
+    PERMISSION_ADMIN_BUILD_ROAD("plots.admin.build.road", "static.permissions"),
+    PERMISSION_ADMIN_BUILD_UNOWNED("plots.admin.build.unowned", "static.permissions"),
+    PERMISSION_ADMIN_BUILD_OTHER("plots.admin.build.other", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_ROAD("plots.admin.interact.road", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_UNOWNED("plots.admin.interact.unowned", "static.permissions"),
+    PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
+    PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit", "static.permissions"),
     /*
      * Confirm
      */
@@ -109,7 +110,9 @@ public enum C {
     /*
      * Cluster
      */
-    CLUSTER_AVAILABLE_ARGS("$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2, $4tp$2, $4sethome", "Cluster"),
+    CLUSTER_AVAILABLE_ARGS(
+    "$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2, $4tp$2, $4sethome",
+    "Cluster"),
     CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
     CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster"),
     CLUSTER_INTERSECTION("$2The proposed area overlaps with $1%s$2 existing cluster/s", "Cluster"),
@@ -183,7 +186,7 @@ public enum C {
     COMMENT_REMOVED("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"),
     COMMENT_ADDED("$4A comment has been left", "Comment"),
     COMMENT_HEADER("$2&m---------&r $1Comments $2&m---------&r", "Comment"),
-    INBOX_EMPTY("$2No comments","Comment"),
+    INBOX_EMPTY("$2No comments", "Comment"),
     /*
      * Console
      */
@@ -206,7 +209,7 @@ public enum C {
     NO_CLIPBOARD("$2You don't have a selection in your clipboard", "Clipboard"),
     CLIPBOARD_INFO("$2Current Selection - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2", "Clipboard"),
     /*
-     * 
+     *
      */
     TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"),
     TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
@@ -215,11 +218,11 @@ public enum C {
     /*
      * Done
      */
-    DONE_ALREADY_DONE("$2This plot is already marked as done","Done"),
-    DONE_NOT_DONE("$2This plot is not marked as done.","Done"),
-    DONE_INSUFFICIENT_COMPLEXITY("$2This plot is too simple. Please add more detail before using this command.","Done"),
-    DONE_SUCCESS("$1Successfully marked this plot as done.","Done"),
-    DONE_REMOVED("$1You may now continue building in this plot.","Done"),
+    DONE_ALREADY_DONE("$2This plot is already marked as done", "Done"),
+    DONE_NOT_DONE("$2This plot is not marked as done.", "Done"),
+    DONE_INSUFFICIENT_COMPLEXITY("$2This plot is too simple. Please add more detail before using this command.", "Done"),
+    DONE_SUCCESS("$1Successfully marked this plot as done.", "Done"),
+    DONE_REMOVED("$1You may now continue building in this plot.", "Done"),
     /*
      * Ratings
      */
@@ -252,10 +255,16 @@ public enum C {
     SETUP_STEP("$3[$1Step %s0$3] $1%s1 $2- $1Expecting: $2%s2 $1Default: $2%s3", "Setup"),
     SETUP_INVALID_ARG("$2%s0 is not a valid argument for step %s1. To cancel setup use: $1/plot setup cancel", "Setup"),
     SETUP_VALID_ARG("$2Value $1%s0 $2set to %s1", "Setup"),
-    SETUP_FINISHED("$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or your chosen world management plugin.", "Setup"),
+    SETUP_FINISHED(
+    "$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or your chosen world management plugin.",
+    "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a registered plotworld", "Setup"),
-    SETUP_MISSING_WORLD("$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
-    SETUP_MISSING_GENERATOR("$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
+    SETUP_MISSING_WORLD(
+    "$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel",
+    "Setup"),
+    SETUP_MISSING_GENERATOR(
+    "$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel",
+    "Setup"),
     SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
     /*
      * Schematic Stuff
@@ -441,7 +450,16 @@ public enum C {
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
-    PLOT_INFO("$1ID: $2%id%$1&-" + "$1Alias: $2%alias%$1&-" + "$1Owner: $2%owner%$1&-" + "$1Biome: $2%biome%$1&-" + "$1Can Build: $2%build%$1&-" + "$1Rating: $2%rating%&-" + "$1Trusted: $2%trusted%$1&-" + "$1Members: $2%members%$1&-" + "$1Denied: $2%denied%$1&-" + "$1Flags: $2%flags%", "Info"),
+    PLOT_INFO("$1ID: $2%id%$1&-"
+    + "$1Alias: $2%alias%$1&-"
+    + "$1Owner: $2%owner%$1&-"
+    + "$1Biome: $2%biome%$1&-"
+    + "$1Can Build: $2%build%$1&-"
+    + "$1Rating: $2%rating%&-"
+    + "$1Trusted: $2%trusted%$1&-"
+    + "$1Members: $2%members%$1&-"
+    + "$1Denied: $2%denied%$1&-"
+    + "$1Flags: $2%flags%", "Info"),
     PLOT_INFO_FOOTER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO_TRUSTED("$1Trusted:$2 %trusted%", "Info"),
     PLOT_INFO_MEMBERS("$1Members:$2 %members%", "Info"),
@@ -593,7 +611,8 @@ public enum C {
     /**
      * Constructor for custom strings.
      */
-    C() {
+    C()
+    {
         /*
          * use setCustomString();
          */
@@ -605,10 +624,12 @@ public enum C {
      * @param d default
      * @param prefix use prefix
      */
-    C(final String d, final boolean prefix, String cat) {
+    C(final String d, final boolean prefix, final String cat)
+    {
         this.d = d;
-        if (this.s == null) {
-            this.s = d;
+        if (s == null)
+        {
+            s = d;
         }
         this.prefix = prefix;
         this.cat = cat.toLowerCase();
@@ -619,23 +640,27 @@ public enum C {
      *
      * @param d default
      */
-    C(final String d, String cat) {
+    C(final String d, final String cat)
+    {
         this(d, true, cat.toLowerCase());
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return s;
     }
-    
-    public static String format(String m, Object... args) {
-        if (args.length == 0) {
-            return m;
-        }
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        if (args.length > 0) {
-            for (int i = args.length - 1 ; i >= 0; i--) {
-                if (args[i] == null) {
+
+    public static String format(String m, final Object... args)
+    {
+        if (args.length == 0) { return m; }
+        final Map<String, String> map = new LinkedHashMap<String, String>();
+        if (args.length > 0)
+        {
+            for (int i = args.length - 1; i >= 0; i--)
+            {
+                if (args[i] == null)
+                {
                     args[i] = "";
                 }
                 map.put("%s" + i, args[i].toString());
@@ -647,49 +672,60 @@ public enum C {
         return m;
     }
 
-    public static String format(C c, Object... args) {
+    public static String format(final C c, final Object... args)
+    {
         return format(c.s, args);
     }
 
-    
-    public static String color(String string) {
+    public static String color(final String string)
+    {
         return StringMan.replaceFromMap(string, replacements);
     }
-    
-    public static void load(File file) {
-        try {
-            if (!file.exists()) {
+
+    public static void load(final File file)
+    {
+        try
+        {
+            if (!file.exists())
+            {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
-            YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-            Set<String> keys = yml.getKeys(true);
-            EnumSet<C> all = EnumSet.allOf(C.class);
-            HashSet<String> allNames = new HashSet<>();
-            HashSet<String> allCats = new HashSet<>();
-            HashSet<String> toRemove = new HashSet<>();
-            for (C c: all) {
+            final YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+            final Set<String> keys = yml.getKeys(true);
+            final EnumSet<C> all = EnumSet.allOf(C.class);
+            final HashSet<String> allNames = new HashSet<>();
+            final HashSet<String> allCats = new HashSet<>();
+            final HashSet<String> toRemove = new HashSet<>();
+            for (final C c : all)
+            {
                 allNames.add(c.name());
                 allCats.add(c.cat.toLowerCase());
             }
-            HashSet<C> captions = new HashSet<>();
+            final HashSet<C> captions = new HashSet<>();
             boolean changed = false;
-            for (String key : keys) {
-                if (!yml.isString(key)) {
-                    if (!allCats.contains(key)) {
+            for (final String key : keys)
+            {
+                if (!yml.isString(key))
+                {
+                    if (!allCats.contains(key))
+                    {
                         toRemove.add(key);
                     }
                     continue;
                 }
-                String[] split = key.split("\\.");
-                String node = split[split.length - 1].toUpperCase();
-                C caption = allNames.contains(node) ? valueOf(node) : null;
-                if (caption != null) {
-                    if (caption.cat.startsWith("static")) {
+                final String[] split = key.split("\\.");
+                final String node = split[split.length - 1].toUpperCase();
+                final C caption = allNames.contains(node) ? valueOf(node) : null;
+                if (caption != null)
+                {
+                    if (caption.cat.startsWith("static"))
+                    {
                         continue;
                     }
-                    String value = yml.getString(key);
-                    if (!split[0].equalsIgnoreCase(caption.cat)) {
+                    final String value = yml.getString(key);
+                    if (!split[0].equalsIgnoreCase(caption.cat))
+                    {
                         changed = true;
                         yml.set(key, null);
                         yml.set(caption.cat + "." + caption.name().toLowerCase(), value);
@@ -697,30 +733,37 @@ public enum C {
                     captions.add(caption);
                     caption.s = value;
                 }
-                else {
+                else
+                {
                     toRemove.add(key);
                 }
             }
-            for (String remove : toRemove) {
+            for (final String remove : toRemove)
+            {
                 changed = true;
                 yml.set(remove, null);
             }
-            ConfigurationSection config = PS.get().style.getConfigurationSection("color");
-            Set<String> styles = config.getKeys(false);
+            final ConfigurationSection config = PS.get().style.getConfigurationSection("color");
+            final Set<String> styles = config.getKeys(false);
             // HashMap<String, String> replacements = new HashMap<>();
             replacements.clear();
-            for (String style : styles) {
+            for (final String style : styles)
+            {
                 replacements.put("$" + style, "\u00a7" + config.getString(style));
             }
-            for (char letter : "1234567890abcdefklmnor".toCharArray()) {
+            for (final char letter : "1234567890abcdefklmnor".toCharArray())
+            {
                 replacements.put("&" + letter, "\u00a7" + letter);
             }
             replacements.put("\\\\n", "\n");
             replacements.put("\\n", "\n");
             replacements.put("&-", "\n");
-            for (C caption : all) {
-                if (!captions.contains(caption)) {
-                    if (caption.cat.startsWith("static")) {
+            for (final C caption : all)
+            {
+                if (!captions.contains(caption))
+                {
+                    if (caption.cat.startsWith("static"))
+                    {
                         continue;
                     }
                     changed = true;
@@ -728,36 +771,45 @@ public enum C {
                 }
                 caption.s = StringMan.replaceFromMap(caption.s, replacements);
             }
-            if (changed) {
+            if (changed)
+            {
                 yml.save(file);
             }
         }
-        catch (Exception e) {
+        catch (final Exception e)
+        {
             e.printStackTrace();
         }
     }
-    
-    public String s() {
-        return this.s;
+
+    public String s()
+    {
+        return s;
     }
 
-    public boolean usePrefix() {
-        return this.prefix;
+    public boolean usePrefix()
+    {
+        return prefix;
     }
 
-    public String formatted() {
+    public String formatted()
+    {
         return StringMan.replaceFromMap(s(), replacements);
     }
 
-    public String getCat() {
+    public String getCat()
+    {
         return cat;
     }
-    
-    public void send(CommandCaller plr, String... args) { 
-        if (plr == null) {
+
+    public void send(final CommandCaller plr, final String... args)
+    {
+        if (plr == null)
+        {
             MainUtil.sendConsoleMessage(this, args);
         }
-        else {
+        else
+        {
             plr.sendMessage(this, args);
         }
     }

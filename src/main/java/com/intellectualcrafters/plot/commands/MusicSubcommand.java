@@ -34,53 +34,60 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "music",
-        permission = "plots.music",
-        description = "Player music in a plot",
-        usage = "/plot music",
-        category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.NONE
-)
-public class MusicSubcommand extends SubCommand {
+command = "music",
+permission = "plots.music",
+description = "Player music in a plot",
+usage = "/plot music",
+category = CommandCategory.ACTIONS,
+requiredType = RequiredType.NONE)
+public class MusicSubcommand extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer player, final String[] args) {
+    public boolean onCommand(final PlotPlayer player, final String[] args)
+    {
         final Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) {
-            return !sendMessage(player, C.NOT_IN_PLOT);
-        }
-        if (!plot.isAdded(player.getUUID())) {
+        if (plot == null) { return !sendMessage(player, C.NOT_IN_PLOT); }
+        if (!plot.isAdded(player.getUUID()))
+        {
             sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }
-        PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox") {
-            public boolean onClick(int index) {
-                PlotItemStack item = getItem(index);
+        final PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox")
+        {
+            @Override
+            public boolean onClick(final int index)
+            {
+                final PlotItemStack item = getItem(index);
                 if (item == null) {
-                    return true;
+                return true;
                 }
-                int id = item.id == 7 ? 0 : item.id;
-                if (id == 0) {
+                final int id = item.id == 7 ? 0 : item.id;
+                if (id == 0)
+                {
                     FlagManager.removePlotFlag(plot, "music");
                 }
-                else {
+                else
+                {
                     FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), id));
                 }
                 return false;
             }
         };
         int index = 0;
-        for (int i = 2256; i < 2268; i++) {
-            String name = "&r&6" + BlockManager.manager.getClosestMatchingName(new PlotBlock((short) i, (byte) 0));
-            String[] lore = {"&r&aClick to play!"};
-            PlotItemStack item = new PlotItemStack(i, (byte) 0, 1, name, lore);
+        for (int i = 2256; i < 2268; i++)
+        {
+            final String name = "&r&6" + BlockManager.manager.getClosestMatchingName(new PlotBlock((short) i, (byte) 0));
+            final String[] lore = { "&r&aClick to play!" };
+            final PlotItemStack item = new PlotItemStack(i, (byte) 0, 1, name, lore);
             inv.setItem(index, item);
             index++;
         }
-        if (player.getMeta("music") != null) {
-            String name = "&r&6Cancel music";
-            String[] lore = {"&r&cClick to cancel!"};
+        if (player.getMeta("music") != null)
+        {
+            final String name = "&r&6Cancel music";
+            final String[] lore = { "&r&cClick to cancel!" };
             inv.setItem(index, new PlotItemStack(7, (short) 0, 1, name, lore));
         }
         inv.openInventory();

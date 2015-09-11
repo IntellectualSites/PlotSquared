@@ -12,37 +12,43 @@ import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.SpongeMain;
 
-public class SpongeUUIDHandler extends UUIDHandlerImplementation {
+public class SpongeUUIDHandler extends UUIDHandlerImplementation
+{
 
-    public SpongeUUIDHandler(UUIDWrapper wrapper) {
+    public SpongeUUIDHandler(final UUIDWrapper wrapper)
+    {
         super(wrapper);
     }
-    
+
     @Override
-    public boolean startCaching(Runnable whenDone) {
-        if (!super.startCaching(whenDone)) {
-            return false;
-        }
+    public boolean startCaching(final Runnable whenDone)
+    {
+        if (!super.startCaching(whenDone)) { return false; }
         return cache(whenDone);
     }
 
-    public boolean cache(Runnable whenDone) {
+    public boolean cache(final Runnable whenDone)
+    {
         add(new StringWrapper("*"), DBFunc.everyone);
-        for (GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles()) {
+        for (final GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles())
+        {
             add(new StringWrapper(profile.getName()), profile.getUniqueId());
         }
         return true;
     }
 
     @Override
-    public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
-        TaskManager.runTaskAsync(new Runnable() {
+    public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch)
+    {
+        TaskManager.runTaskAsync(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 ifFetch.value = uuidWrapper.getUUID(name);
                 TaskManager.runTask(ifFetch);
             }
         });
     }
-    
+
 }

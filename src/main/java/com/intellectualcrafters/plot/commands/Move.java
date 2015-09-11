@@ -33,68 +33,79 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "move",
-        description = "Move a plot",
-        aliases = {"debugmove"},
-        permission = "plots.move",
-        category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.NONE
-)
-public class Move extends SubCommand {
+command = "move",
+description = "Move a plot",
+aliases = { "debugmove" },
+permission = "plots.move",
+category = CommandCategory.ACTIONS,
+requiredType = RequiredType.NONE)
+public class Move extends SubCommand
+{
 
-    public Move() {
+    public Move()
+    {
         requiredArguments = new Argument[] {
-                Argument.PlotID
+        Argument.PlotID
         };
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
+
         final Location loc = plr.getLocation();
         final Plot plot1 = MainUtil.getPlot(loc);
-        if (plot1 == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if (!plot1.isAdded(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s()))  {
+        if (plot1 == null) { return !sendMessage(plr, C.NOT_IN_PLOT); }
+        if (!plot1.isAdded(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s()))
+        {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         final String world = loc.getWorld();
         final PlotId plot2id = MainUtil.parseId(args[0]);
-        if ((plot2id == null)) {
+        if ((plot2id == null))
+        {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
             return false;
         }
         String world2;
-        if (args.length == 2) {
-            PlotWorld other = PS.get().getPlotWorld(args[1]);
-            PlotWorld current = PS.get().getPlotWorld(loc.getWorld());
-            if (other == null || current == null || !other.equals(current)) {
+        if (args.length == 2)
+        {
+            final PlotWorld other = PS.get().getPlotWorld(args[1]);
+            final PlotWorld current = PS.get().getPlotWorld(loc.getWorld());
+            if ((other == null) || (current == null) || !other.equals(current))
+            {
                 MainUtil.sendMessage(plr, C.PLOTWORLD_INCOMPATIBLE);
                 return false;
             }
-        	world2 = other.worldname;
+            world2 = other.worldname;
         }
-        else {
-        	world2 = world;
+        else
+        {
+            world2 = world;
         }
-        Plot plot2 = MainUtil.getPlot(world2, plot2id);
-        
-        if (plot1.equals(plot2)) {
+        final Plot plot2 = MainUtil.getPlot(world2, plot2id);
+
+        if (plot1.equals(plot2))
+        {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
             return false;
         }
-        if (MainUtil.move(plot1, plot2, new Runnable() {
+        if (MainUtil.move(plot1, plot2, new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 MainUtil.sendMessage(plr, C.MOVE_SUCCESS);
             }
-        })) {
+        }))
+        {
             return true;
-        } else {
+        }
+        else
+        {
             MainUtil.sendMessage(plr, C.REQUIRES_UNOWNED);
             return false;
         }

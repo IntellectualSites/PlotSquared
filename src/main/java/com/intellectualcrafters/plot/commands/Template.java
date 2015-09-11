@@ -47,35 +47,38 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "template",
-        permission = "plots.admin",
-        description = "Create or use a world template",
-        usage = "/plot template [import|export] <world> <template>",
-        category = CommandCategory.DEBUG
-)
-public class Template extends SubCommand {
+command = "template",
+permission = "plots.admin",
+description = "Create or use a world template",
+usage = "/plot template [import|export] <world> <template>",
+category = CommandCategory.DEBUG)
+public class Template extends SubCommand
+{
 
-    public static boolean extractAllFiles(String world, String template) {
-        byte[] buffer = new byte[2048];
-        try {
-            File folder = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
-            if (!folder.exists()) {
-                return false;
-            }
-            File input = new File(folder + File.separator + template + ".template");
-            File output = PS.get().IMP.getDirectory();
-            if (!output.exists()) {
+    public static boolean extractAllFiles(final String world, final String template)
+    {
+        final byte[] buffer = new byte[2048];
+        try
+        {
+            final File folder = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
+            if (!folder.exists()) { return false; }
+            final File input = new File(folder + File.separator + template + ".template");
+            final File output = PS.get().IMP.getDirectory();
+            if (!output.exists())
+            {
                 output.mkdirs();
             }
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(input));
+            final ZipInputStream zis = new ZipInputStream(new FileInputStream(input));
             ZipEntry ze = zis.getNextEntry();
-            while (ze != null) {
-                String name = ze.getName();
-                File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
+            while (ze != null)
+            {
+                final String name = ze.getName();
+                final File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
                 new File(newFile.getParent()).mkdirs();
-                FileOutputStream fos = new FileOutputStream(newFile);
+                final FileOutputStream fos = new FileOutputStream(newFile);
                 int len;
-                while ((len = zis.read(buffer)) > 0) {
+                while ((len = zis.read(buffer)) > 0)
+                {
                     fos.write(buffer, 0, len);
                 }
                 fos.close();
@@ -84,33 +87,40 @@ public class Template extends SubCommand {
             zis.closeEntry();
             zis.close();
             return true;
-        } catch (Exception e) {
+        }
+        catch (final Exception e)
+        {
             e.printStackTrace();
             return false;
         }
     }
 
-    public static byte[] getBytes(PlotWorld plotworld) {
-        ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + plotworld.worldname);
-        YamlConfiguration config = new YamlConfiguration();
-        String generator = SetupUtils.manager.getGenerator(plotworld);
-        if (generator != null) {
+    public static byte[] getBytes(final PlotWorld plotworld)
+    {
+        final ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + plotworld.worldname);
+        final YamlConfiguration config = new YamlConfiguration();
+        final String generator = SetupUtils.manager.getGenerator(plotworld);
+        if (generator != null)
+        {
             config.set("generator.plugin", generator);
         }
-        for (String key : section.getKeys(true)) {
+        for (final String key : section.getKeys(true))
+        {
             config.set(key, section.get(key));
         }
         return config.saveToString().getBytes();
     }
 
-    public static void zipAll(final String world, Set<FileBytes> files) throws IOException {
-        File output = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
+    public static void zipAll(final String world, final Set<FileBytes> files) throws IOException
+    {
+        final File output = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
         output.mkdirs();
-        FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
-        ZipOutputStream zos = new ZipOutputStream(fos);
+        final FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
+        final ZipOutputStream zos = new ZipOutputStream(fos);
 
-        for (FileBytes file : files) {
-            ZipEntry ze = new ZipEntry(file.path);
+        for (final FileBytes file : files)
+        {
+            final ZipEntry ze = new ZipEntry(file.path);
             zos.putNextEntry(ze);
             zos.write(file.data);
         }
@@ -119,14 +129,19 @@ public class Template extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        if (args.length != 2 && args.length != 3) {
-            if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("export")) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
+        if ((args.length != 2) && (args.length != 3))
+        {
+            if (args.length == 1)
+            {
+                if (args[0].equalsIgnoreCase("export"))
+                {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
                     return true;
                 }
-                else if (args[0].equalsIgnoreCase("import")) {
+                else if (args[0].equalsIgnoreCase("import"))
+                {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
                     return true;
                 }
@@ -135,43 +150,53 @@ public class Template extends SubCommand {
             return true;
         }
         final String world = args[1];
-        switch (args[0].toLowerCase()) {
-            case "import": {
-                if (args.length != 3) {
+        switch (args[0].toLowerCase())
+        {
+            case "import":
+            {
+                if (args.length != 3)
+                {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
                     return false;
                 }
-                if (PS.get().isPlotWorld(world)) {
+                if (PS.get().isPlotWorld(world))
+                {
                     MainUtil.sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
                     return false;
                 }
-                boolean result = extractAllFiles(world, args[2]);
-                if (!result) {
-                    MainUtil.sendMessage(plr, "&cInvalid template file: " + args[2] +".template");
+                final boolean result = extractAllFiles(world, args[2]);
+                if (!result)
+                {
+                    MainUtil.sendMessage(plr, "&cInvalid template file: " + args[2] + ".template");
                     return false;
                 }
-                File worldFile = new File(PS.get().IMP.getDirectory() + File.separator + "templates" + File.separator + "tmp-data.yml");
-                YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
+                final File worldFile = new File(PS.get().IMP.getDirectory() + File.separator + "templates" + File.separator + "tmp-data.yml");
+                final YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
                 PS.get().config.set("worlds." + world, worldConfig.get(""));
-                try {
+                try
+                {
                     PS.get().config.save(PS.get().configFile);
                     PS.get().config.load(PS.get().configFile);
-                } catch (Exception e) {
+                }
+                catch (final Exception e)
+                {
                     e.printStackTrace();
                 }
                 String manager = worldConfig.getString("generator.plugin");
-                if (manager == null) {
+                if (manager == null)
+                {
                     manager = "PlotSquared";
                 }
                 String generator = worldConfig.getString("generator.init");
-                if (generator == null) {
+                if (generator == null)
+                {
                     generator = manager;
                 }
 
-                int type = worldConfig.getInt("generator.type");
-                int terrain = worldConfig.getInt("generator.terrain");
+                final int type = worldConfig.getInt("generator.type");
+                final int terrain = worldConfig.getInt("generator.terrain");
 
-                SetupObject setup = new SetupObject();
+                final SetupObject setup = new SetupObject();
                 setup.plotManager = manager;
                 setup.setupGenerator = generator;
                 setup.type = type;
@@ -179,34 +204,43 @@ public class Template extends SubCommand {
                 setup.step = new ConfigurationNode[0];
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);
-                SetBlockQueue.addNotify(new Runnable() {
+                SetBlockQueue.addNotify(new Runnable()
+                {
                     @Override
-                    public void run() {
+                    public void run()
+                    {
                         MainUtil.sendMessage(plr, "Done!");
                         plr.teleport(BlockManager.manager.getSpawn(world));
                     }
                 });
                 return true;
             }
-            case "export": {
-                if (args.length != 2) {
+            case "export":
+            {
+                if (args.length != 2)
+                {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
                     return false;
                 }
                 final PlotWorld plotworld = PS.get().getPlotWorld(world);
-                if (!BlockManager.manager.isWorld(world) || (plotworld == null)) {
+                if (!BlockManager.manager.isWorld(world) || (plotworld == null))
+                {
                     MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
                     return false;
                 }
                 final PlotManager manager = PS.get().getPlotManager(world);
                 final PlotPlayer finalPlr = plr;
-                TaskManager.runTaskAsync(new Runnable() {
+                TaskManager.runTaskAsync(new Runnable()
+                {
                     @Override
-                    public void run() {
-                        try {
+                    public void run()
+                    {
+                        try
+                        {
                             manager.exportTemplate(plotworld);
                         }
-                        catch (Exception e) {
+                        catch (final Exception e)
+                        {
                             e.printStackTrace();
                             MainUtil.sendMessage(finalPlr, "Failed: " + e.getMessage());
                             return;
@@ -216,8 +250,9 @@ public class Template extends SubCommand {
                 });
                 return true;
             }
-            default: {
-                C.COMMAND_SYNTAX.send(plr, this.getUsage());
+            default:
+            {
+                C.COMMAND_SYNTAX.send(plr, getUsage());
             }
         }
         return false;

@@ -30,53 +30,57 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "done",
-        aliases = {"submit"},
-        description = "Mark a plot as done",
-        permission = "plots.done",
-        category = CommandCategory.ACTIONS,
-        requiredType = RequiredType.NONE
-)
-public class Done extends SubCommand {
+command = "done",
+aliases = { "submit" },
+description = "Mark a plot as done",
+permission = "plots.done",
+category = CommandCategory.ACTIONS,
+requiredType = RequiredType.NONE)
+public class Done extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null || !plot.hasOwner()) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.done")) {
+        if ((plot == null) || !plot.hasOwner()) { return !sendMessage(plr, C.NOT_IN_PLOT); }
+        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.done"))
+        {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (plot.getSettings().flags.containsKey("done")) {
+        if (plot.getSettings().flags.containsKey("done"))
+        {
             MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
             return false;
         }
-        if (MainUtil.runners.containsKey(plot)) {
+        if (MainUtil.runners.containsKey(plot))
+        {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
         MainUtil.runners.put(plot, 1);
         MainUtil.sendMessage(plr, C.GENERATING_LINK);
-        HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+        HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 MainUtil.runners.remove(plot);
-                if (value == null || value.getComplexity() >= Settings.CLEAR_THRESHOLD) {
-                    Flag flag = new Flag(FlagManager.getFlag("done"), (System.currentTimeMillis() / 1000));
+                if ((value == null) || (value.getComplexity() >= Settings.CLEAR_THRESHOLD))
+                {
+                    final Flag flag = new Flag(FlagManager.getFlag("done"), (System.currentTimeMillis() / 1000));
                     FlagManager.addPlotFlag(plot, flag);
                     MainUtil.sendMessage(plr, C.DONE_SUCCESS);
                 }
-                else {
+                else
+                {
                     MainUtil.sendMessage(plr, C.DONE_INSUFFICIENT_COMPLEXITY);
                 }
             }

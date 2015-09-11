@@ -25,11 +25,11 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 
 /**
  * SubCommand class
- *
- * @author Citymonstret
+ *
  */
 @SuppressWarnings({ "deprecation", "unused" })
-public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer> {
+public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer>
+{
 
     /**
      * The category
@@ -45,7 +45,8 @@ public abstract class SubCommand extends com.plotsquared.general.commands.Comman
      *
      * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, C, String...)
      */
-    public boolean sendMessage(PlotPlayer plr, final C c, final String... args) {
+    public boolean sendMessage(final PlotPlayer plr, final C c, final String... args)
+    {
         c.send(plr, args);
         return true;
     }

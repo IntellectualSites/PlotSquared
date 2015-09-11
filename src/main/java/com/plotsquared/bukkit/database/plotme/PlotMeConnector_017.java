@@ -22,177 +22,211 @@ import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
-public class PlotMeConnector_017 extends APlotMeConnector {
+public class PlotMeConnector_017 extends APlotMeConnector
+{
     private String plugin;
 
     @Override
-    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
+    public Connection getPlotMeConnection(final String plugin, final FileConfiguration plotConfig, final String dataFolder)
+    {
         this.plugin = plugin.toLowerCase();
-        try {
-            if (plotConfig.getBoolean("usemySQL")) {
-                String user = plotConfig.getString("mySQLuname");
-                String password = plotConfig.getString("mySQLpass");
-                String con = plotConfig.getString("mySQLconn");
+        try
+        {
+            if (plotConfig.getBoolean("usemySQL"))
+            {
+                final String user = plotConfig.getString("mySQLuname");
+                final String password = plotConfig.getString("mySQLpass");
+                final String con = plotConfig.getString("mySQLconn");
                 return DriverManager.getConnection(con, user, password);
-            } else {
-                File file = new File(dataFolder + File.separator + "plotmecore.db");
-                if (file.exists()) {
-                    return new SQLite(dataFolder + File.separator + "plotmecore.db").openConnection();
-                }
+            }
+            else
+            {
+                final File file = new File(dataFolder + File.separator + "plotmecore.db");
+                if (file.exists()) { return new SQLite(dataFolder + File.separator + "plotmecore.db").openConnection(); }
                 return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
             }
         }
-        catch (SQLException | ClassNotFoundException e) {}
+        catch (SQLException | ClassNotFoundException e)
+        {}
         return null;
     }
 
     @Override
-    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
+    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(final Connection connection) throws SQLException
+    {
         ResultSet r;
         PreparedStatement stmt;
-        HashMap<String, Integer> plotWidth = new HashMap<>();
-        HashMap<String, Integer> roadWidth = new HashMap<>();
+        final HashMap<String, Integer> plotWidth = new HashMap<>();
+        final HashMap<String, Integer> roadWidth = new HashMap<>();
         final HashMap<Integer, Plot> plots = new HashMap<>();
-        HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
+        final HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
         stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_plots`");
         r = stmt.executeQuery();
-        boolean checkUUID = DBFunc.hasColumn(r, "ownerID");
-        boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
-        while (r.next()) {
-            int key = r.getInt("plot_id");
-            PlotId id = new PlotId(r.getInt("plotX"), r.getInt("plotZ"));
-            String name = r.getString("owner");
-            String world = LikePlotMeConverter.getWorld(r.getString("world"));
-            if (!plots.containsKey(world)) {
-                if (merge) {
-                    int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
-                    int path = PS.get().config.getInt("worlds." + world + ".road.width");
+        final boolean checkUUID = DBFunc.hasColumn(r, "ownerID");
+        final boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
+        while (r.next())
+        {
+            final int key = r.getInt("plot_id");
+            final PlotId id = new PlotId(r.getInt("plotX"), r.getInt("plotZ"));
+            final String name = r.getString("owner");
+            final String world = LikePlotMeConverter.getWorld(r.getString("world"));
+            if (!plots.containsKey(world))
+            {
+                if (merge)
+                {
+                    final int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
+                    final int path = PS.get().config.getInt("worlds." + world + ".road.width");
                     plotWidth.put(world, plot);
                     roadWidth.put(world, path);
-                    merges.put(world, new HashMap<PlotId,boolean[]>());
+                    merges.put(world, new HashMap<PlotId, boolean[]>());
                 }
             }
-            if (merge) {
-                int tx = r.getInt("topX");
-                int tz = r.getInt("topZ");
-                int bx = r.getInt("bottomX") - 1;
-                int bz = r.getInt("bottomZ") - 1;
-                int path = roadWidth.get(world);
-                int plot = plotWidth.get(world);
-                Location top = getPlotTopLocAbs(path, plot, id);
-                Location bot = getPlotBottomLocAbs(path, plot, id);
-                if (tx > top.getX()) {
+            if (merge)
+            {
+                final int tx = r.getInt("topX");
+                final int tz = r.getInt("topZ");
+                final int bx = r.getInt("bottomX") - 1;
+                final int bz = r.getInt("bottomZ") - 1;
+                final int path = roadWidth.get(world);
+                final int plot = plotWidth.get(world);
+                final Location top = getPlotTopLocAbs(path, plot, id);
+                final Location bot = getPlotBottomLocAbs(path, plot, id);
+                if (tx > top.getX())
+                {
                     setMerged(merges, world, id, 1);
                 }
-                if (tz > top.getZ()) {
+                if (tz > top.getZ())
+                {
                     setMerged(merges, world, id, 2);
                 }
-                if (bx < bot.getX()) {
+                if (bx < bot.getX())
+                {
                     setMerged(merges, world, id, 3);
                 }
-                if (bz > bot.getZ()) {
+                if (bz > bot.getZ())
+                {
                     setMerged(merges, world, id, 0);
                 }
             }
             UUID owner = UUIDHandler.getUUID(name, null);
-            if (owner == null) {
-                if (name.equals("*")) {
+            if (owner == null)
+            {
+                if (name.equals("*"))
+                {
                     owner = DBFunc.everyone;
                 }
-                else {
-                    if (checkUUID){
-                        try {
-                            byte[] bytes = r.getBytes("ownerid");
-                            if (bytes != null) {
+                else
+                {
+                    if (checkUUID)
+                    {
+                        try
+                        {
+                            final byte[] bytes = r.getBytes("ownerid");
+                            if (bytes != null)
+                            {
                                 owner = UUID.nameUUIDFromBytes(bytes);
-                                if (owner != null) {
+                                if (owner != null)
+                                {
                                     UUIDHandler.add(new StringWrapper(name), owner);
                                 }
                             }
                         }
-                        catch (Exception e) {
+                        catch (final Exception e)
+                        {
                             e.printStackTrace();
                         }
                     }
-                    if (owner == null) {
+                    if (owner == null)
+                    {
                         MainUtil.sendConsoleMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
                         continue;
                     }
                 }
             }
-            else {
+            else
+            {
                 UUIDHandler.add(new StringWrapper(name), owner);
             }
-            Plot plot = new Plot(world, id, owner);
+            final Plot plot = new Plot(world, id, owner);
             plots.put(key, plot);
         }
-        for (Entry<Integer, Plot> entry : plots.entrySet()) {
-            Plot plot = entry.getValue();
-            HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.world);
-            if (mergeMap != null) {
-                if (mergeMap.containsKey(plot.id)) {
+        for (final Entry<Integer, Plot> entry : plots.entrySet())
+        {
+            final Plot plot = entry.getValue();
+            final HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.world);
+            if (mergeMap != null)
+            {
+                if (mergeMap.containsKey(plot.id))
+                {
                     plot.getSettings().setMerged(mergeMap.get(plot.id));
                 }
             }
         }
         r.close();
         stmt.close();
-        try {
+        try
+        {
             MainUtil.sendConsoleMessage(" - " + plugin + "core_denied");
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_denied`");
             r = stmt.executeQuery();
-            
-            while (r.next()) {
-                int key = r.getInt("plot_id");
-                Plot plot = plots.get(key);
-                if (plot == null) {
+
+            while (r.next())
+            {
+                final int key = r.getInt("plot_id");
+                final Plot plot = plots.get(key);
+                if (plot == null)
+                {
                     MainUtil.sendConsoleMessage("&6Denied (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
-                UUID denied = UUID.fromString(r.getString("player"));
+                final UUID denied = UUID.fromString(r.getString("player"));
                 plot.getDenied().add(denied);
             }
-            
+
             MainUtil.sendConsoleMessage(" - " + plugin + "core_allowed");
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_allowed`");
             r = stmt.executeQuery();
-            
-            while (r.next()) {
-                int key = r.getInt("plot_id");
-                Plot plot = plots.get(key);
-                if (plot == null) {
+
+            while (r.next())
+            {
+                final int key = r.getInt("plot_id");
+                final Plot plot = plots.get(key);
+                if (plot == null)
+                {
                     MainUtil.sendConsoleMessage("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
-                UUID allowed = UUID.fromString(r.getString("player"));
+                final UUID allowed = UUID.fromString(r.getString("player"));
                 plot.getTrusted().add(allowed);
             }
             r.close();
             stmt.close();
-        
+
         }
-        catch (Exception e) {
+        catch (final Exception e)
+        {
             e.printStackTrace();
         }
-        HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
-        
-        for (Entry<Integer, Plot> entry : plots.entrySet()) {
-            Plot plot = entry.getValue();
+        final HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
+
+        for (final Entry<Integer, Plot> entry : plots.entrySet())
+        {
+            final Plot plot = entry.getValue();
             HashMap<PlotId, Plot> map = processed.get(plot.world);
-            if (map == null) {
+            if (map == null)
+            {
                 map = new HashMap<>();
                 processed.put(plot.world, map);
             }
             map.put(plot.id, plot);
         }
-        return processed ;
+        return processed;
     }
 
     @Override
-    public boolean accepts(String version) {
-        if (version == null) {
-            return false;
-        }
+    public boolean accepts(final String version)
+    {
+        if (version == null) { return false; }
         return !PS.get().canUpdate(version, "0.17");
     }
 }

@@ -9,7 +9,8 @@ import org.spongepowered.api.world.World;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 
-public class PlotMergeEvent extends AbstractEvent implements Cancellable {
+public class PlotMergeEvent extends AbstractEvent implements Cancellable
+{
     private final ArrayList<PlotId> plots;
     private boolean cancelled;
     private Plot plot;
@@ -22,17 +23,19 @@ public class PlotMergeEvent extends AbstractEvent implements Cancellable {
      * @param plot  Plot that was merged
      * @param plots A list of plots involved in the event
      */
-    public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots) {
+    public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots)
+    {
         this.plots = plots;
     }
-    
+
     /**
      * Get the plots being added;
      *
      * @return Plot
      */
-    public ArrayList<PlotId> getPlots() {
-        return this.plots;
+    public ArrayList<PlotId> getPlots()
+    {
+        return plots;
     }
 
     /**
@@ -40,21 +43,25 @@ public class PlotMergeEvent extends AbstractEvent implements Cancellable {
      *
      * @return Plot
      */
-    public Plot getPlot() {
-        return this.plot;
+    public Plot getPlot()
+    {
+        return plot;
     }
 
-    public World getWorld() {
-        return this.world;
-    }
-
-    @Override
-    public boolean isCancelled() {
-       return cancelled;
+    public World getWorld()
+    {
+        return world;
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
-       cancelled = cancel;
+    public boolean isCancelled()
+    {
+        return cancelled;
     }
- }
+
+    @Override
+    public void setCancelled(final boolean cancel)
+    {
+        cancelled = cancel;
+    }
+}

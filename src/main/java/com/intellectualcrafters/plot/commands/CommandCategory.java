@@ -2,11 +2,10 @@ package com.intellectualcrafters.plot.commands;
 
 /**
  * CommandCategory
- *
- * @author Citymonstret
- * @author Empire92
+ *
  */
-public enum CommandCategory {
+public enum CommandCategory
+{
     /**
      * Claiming Commands
      *
@@ -47,12 +46,14 @@ public enum CommandCategory {
      *
      * @param name readable name
      */
-    CommandCategory(final String name) {
+    CommandCategory(final String name)
+    {
         this.name = name;
     }
 
     @Override
-    public String toString() {
-        return this.name;
+    public String toString()
+    {
+        return name;
     }
 }

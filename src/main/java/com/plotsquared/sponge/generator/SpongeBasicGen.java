@@ -14,22 +14,24 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.plotsquared.sponge.SpongeMain;
 
-public class SpongeBasicGen extends SpongePlotGenerator {
+public class SpongeBasicGen extends SpongePlotGenerator
+{
 
     public final BlockState AIR = BlockTypes.AIR.getDefaultState();
-    
+
     private static HybridPlotManager manager;
     public HybridPlotWorld plotworld;
 
-    public SpongeBasicGen(String world) {
+    public SpongeBasicGen(final String world)
+    {
         super(world);
     }
-    
+
     /**
      * Some generator specific variables (implementation dependent)
-     * 
+     *
      * TODO USE THESE
-     * 
+     *
      */
     public int plotsize;
     public int pathsize;
@@ -40,7 +42,7 @@ public class SpongeBasicGen extends SpongePlotGenerator {
     public short pathWidthLower;
     public short pathWidthUpper;
     public boolean doState = false;
-    
+
     BlockState wall;
     BlockState wallfilling;
     BlockState roadblock;
@@ -48,88 +50,108 @@ public class SpongeBasicGen extends SpongePlotGenerator {
     BlockState[] filling;
 
     @Override
-    public void init(PlotWorld plotworld) {
-        if (plotworld != null) {
+    public void init(final PlotWorld plotworld)
+    {
+        if (plotworld != null)
+        {
             this.plotworld = (HybridPlotWorld) plotworld;
         }
-        this.plotsize = this.plotworld.PLOT_WIDTH;
-        this.pathsize = this.plotworld.ROAD_WIDTH;
-        this.size = this.pathsize + this.plotsize;
-        this.wallheight = this.plotworld.WALL_HEIGHT;
-        this.roadheight = this.plotworld.ROAD_HEIGHT;
-        this.plotheight = this.plotworld.PLOT_HEIGHT;
-        if (this.pathsize == 0) {
-            this.pathWidthLower = (short) -1;
-            this.pathWidthUpper = (short) (this.plotsize + 1);
+        plotsize = this.plotworld.PLOT_WIDTH;
+        pathsize = this.plotworld.ROAD_WIDTH;
+        size = pathsize + plotsize;
+        wallheight = this.plotworld.WALL_HEIGHT;
+        roadheight = this.plotworld.ROAD_HEIGHT;
+        plotheight = this.plotworld.PLOT_HEIGHT;
+        if (pathsize == 0)
+        {
+            pathWidthLower = (short) -1;
+            pathWidthUpper = (short) (plotsize + 1);
         }
-        else {
-            if ((this.pathsize % 2) == 0) {
-                this.pathWidthLower = (short) (Math.floor(this.pathsize / 2) - 1);
-            } else {
-                this.pathWidthLower = (short) (Math.floor(this.pathsize / 2));
+        else
+        {
+            if ((pathsize % 2) == 0)
+            {
+                pathWidthLower = (short) (Math.floor(pathsize / 2) - 1);
             }
-            this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
+            else
+            {
+                pathWidthLower = (short) (Math.floor(pathsize / 2));
+            }
+            pathWidthUpper = (short) (pathWidthLower + plotsize + 1);
         }
-        
-        this.roadblock = SpongeMain.THIS.getBlockState(this.plotworld.ROAD_BLOCK);
-        this.wallfilling = SpongeMain.THIS.getBlockState(this.plotworld.WALL_FILLING);
-        this.wall = SpongeMain.THIS.getBlockState(this.plotworld.WALL_BLOCK);
-        this.plotfloors = new BlockState[this.plotworld.TOP_BLOCK.length];
-        for (int i = 0; i < this.plotworld.TOP_BLOCK.length; i++) {
-            this.plotfloors[i] = SpongeMain.THIS.getBlockState(this.plotworld.TOP_BLOCK[i]);
+
+        roadblock = SpongeMain.THIS.getBlockState(this.plotworld.ROAD_BLOCK);
+        wallfilling = SpongeMain.THIS.getBlockState(this.plotworld.WALL_FILLING);
+        wall = SpongeMain.THIS.getBlockState(this.plotworld.WALL_BLOCK);
+        plotfloors = new BlockState[this.plotworld.TOP_BLOCK.length];
+        for (int i = 0; i < this.plotworld.TOP_BLOCK.length; i++)
+        {
+            plotfloors[i] = SpongeMain.THIS.getBlockState(this.plotworld.TOP_BLOCK[i]);
         }
-        this.filling = new BlockState[this.plotworld.MAIN_BLOCK.length];
-        for (int i = 0; i < this.plotworld.MAIN_BLOCK.length; i++) {
-            this.filling[i] = SpongeMain.THIS.getBlockState(this.plotworld.MAIN_BLOCK[i]);
+        filling = new BlockState[this.plotworld.MAIN_BLOCK.length];
+        for (int i = 0; i < this.plotworld.MAIN_BLOCK.length; i++)
+        {
+            filling[i] = SpongeMain.THIS.getBlockState(this.plotworld.MAIN_BLOCK[i]);
         }
-        if ((this.filling.length > 1) || (this.plotfloors.length > 1)) {
-            this.doState = true;
+        if ((filling.length > 1) || (plotfloors.length > 1))
+        {
+            doState = true;
         }
     }
 
     @Override
-    public PlotWorld getNewPlotWorld(String world) {
-        if (this.plotworld == null) {
-            this.plotworld = (HybridPlotWorld) PS.get().getPlotWorld(world);
-            if (this.plotworld == null) {
-                this.plotworld = new HybridPlotWorld(world);
+    public PlotWorld getNewPlotWorld(final String world)
+    {
+        if (plotworld == null)
+        {
+            plotworld = (HybridPlotWorld) PS.get().getPlotWorld(world);
+            if (plotworld == null)
+            {
+                plotworld = new HybridPlotWorld(world);
             }
         }
-        return this.plotworld;
+        return plotworld;
     }
 
     @Override
-    public PlotManager getPlotManager() {
-        if (SpongeBasicGen.manager == null) {
+    public PlotManager getPlotManager()
+    {
+        if (SpongeBasicGen.manager == null)
+        {
             SpongeBasicGen.manager = new HybridPlotManager();
         }
         return SpongeBasicGen.manager;
     }
 
     @Override
-    public List<SpongePlotPopulator> getPlotPopulators() {
+    public List<SpongePlotPopulator> getPlotPopulators()
+    {
         // TODO Auto-generated method stub
         return new ArrayList<>();
     }
 
     private SpongeBasicPop generator;
-    
+
     @Override
-    public SpongePlotPopulator getGenerator() {
-        if (generator == null) {
+    public SpongePlotPopulator getGenerator()
+    {
+        if (generator == null)
+        {
             generator = new SpongeBasicPop(this);
         }
         return generator;
     }
-    
+
     private BiomeGenerator biome;
 
     @Override
-    public BiomeGenerator getPlotBiomeProvider() {
-        if (biome == null) {
+    public BiomeGenerator getPlotBiomeProvider()
+    {
+        if (biome == null)
+        {
             biome = new SpongeBasicBiomeProvider(plotworld);
         }
         return biome;
     }
-    
+
 }

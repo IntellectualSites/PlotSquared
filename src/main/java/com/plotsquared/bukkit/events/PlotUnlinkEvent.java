@@ -29,10 +29,10 @@ import org.bukkit.event.HandlerList;
 
 import com.intellectualcrafters.plot.object.PlotId;
 
-/**
- * @author Empire92
+/**
  */
-public class PlotUnlinkEvent extends Event implements Cancellable {
+public class PlotUnlinkEvent extends Event implements Cancellable
+{
     private static HandlerList handlers = new HandlerList();
     private final ArrayList<PlotId> plots;
     private final World world;
@@ -44,12 +44,14 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
      * @param world World in which the event occurred
      * @param plots Plots that are involved in the event
      */
-    public PlotUnlinkEvent(final World world, final ArrayList<PlotId> plots) {
+    public PlotUnlinkEvent(final World world, final ArrayList<PlotId> plots)
+    {
         this.plots = plots;
         this.world = world;
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList()
+    {
         return handlers;
     }
 
@@ -58,26 +60,31 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
      *
      * @return PlotId
      */
-    public ArrayList<PlotId> getPlots() {
-        return this.plots;
+    public ArrayList<PlotId> getPlots()
+    {
+        return plots;
     }
 
-    public World getWorld() {
-        return this.world;
+    public World getWorld()
+    {
+        return world;
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
         return handlers;
     }
 
     @Override
-    public boolean isCancelled() {
-        return this.cancelled;
+    public boolean isCancelled()
+    {
+        return cancelled;
     }
 
     @Override
-    public void setCancelled(final boolean b) {
-        this.cancelled = b;
+    public void setCancelled(final boolean b)
+    {
+        cancelled = b;
     }
 }

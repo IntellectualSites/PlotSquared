@@ -30,11 +30,10 @@ import com.intellectualcrafters.plot.object.Plot;
 
 /**
  * Called when a player teleports to a plot
- *
- * @author Citymonstret
- * @author Empire92
+ *
  */
-public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellable {
+public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellable
+{
     private static final HandlerList handlers = new HandlerList();
     private final Location from;
     private final Plot plot;
@@ -47,18 +46,21 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
      * @param from   Start location
      * @param plot   Plot to which the player was teleported
      */
-    public PlayerTeleportToPlotEvent(final Player player, final Location from, final Plot plot) {
+    public PlayerTeleportToPlotEvent(final Player player, final Location from, final Plot plot)
+    {
         super(player);
         this.from = from;
         this.plot = plot;
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList()
+    {
         return handlers;
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
         return handlers;
     }
 
@@ -67,8 +69,9 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
      *
      * @return Location
      */
-    public Location getFrom() {
-        return this.from;
+    public Location getFrom()
+    {
+        return from;
     }
 
     /**
@@ -76,17 +79,20 @@ public class PlayerTeleportToPlotEvent extends PlayerEvent implements Cancellabl
      *
      * @return Plot
      */
-    public Plot getPlot() {
-        return this.plot;
+    public Plot getPlot()
+    {
+        return plot;
     }
 
     @Override
-    public boolean isCancelled() {
-        return this.cancelled;
+    public boolean isCancelled()
+    {
+        return cancelled;
     }
 
     @Override
-    public void setCancelled(final boolean cancelled) {
+    public void setCancelled(final boolean cancelled)
+    {
         this.cancelled = cancelled;
     }
 }

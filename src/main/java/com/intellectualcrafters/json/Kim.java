@@ -5,28 +5,29 @@ package com.intellectualcrafters.json;
  * byte. The last byte of a character never has the MSB reset. Every byte that is not the last byte has the MSB set. Kim
  * stands for "Keep it minimal". A Unicode character is never longer than 3 bytes. Every byte contributes 7 bits to the
  * character. ASCII is unmodified.
- * 
+ *
  * Kim UTF-8 one byte U+007F U+007F two bytes U+3FFF U+07FF three bytes U+10FFF U+FFFF four bytes U+10FFFF
- * 
+ *
  * Characters in the ranges U+0800..U+3FFF and U+10000..U+10FFFF will be one byte smaller when encoded in Kim compared
  * to UTF-8.
- * 
+ *
  * Kim is beneficial when using scripts such as Old South Arabian, Aramaic, Avestan, Balinese, Batak, Bopomofo,
  * Buginese, Buhid, Carian, Cherokee, Coptic, Cyrillic, Deseret, Egyptian Hieroglyphs, Ethiopic, Georgian, Glagolitic,
  * Gothic, Hangul Jamo, Hanunoo, Hiragana, Kanbun, Kaithi, Kannada, Katakana, Kharoshthi, Khmer, Lao, Lepcha, Limbu,
  * Lycian, Lydian, Malayalam, Mandaic, Meroitic, Miao, Mongolian, Myanmar, New Tai Lue, Ol Chiki, Old Turkic, Oriya,
  * Osmanya, Pahlavi, Parthian, Phags-Pa, Phoenician, Samaritan, Sharada, Sinhala, Sora Sompeng, Tagalog, Tagbanwa,
  * Takri, Tai Le, Tai Tham, Tamil, Telugu, Thai, Tibetan, Tifinagh, UCAS.
- * 
+ *
  * A kim object can be constructed from an ordinary UTF-16 string, or from a byte array. A kim object can produce a
  * UTF-16 string.
- * 
+ *
  * As with UTF-8, it is possible to detect character boundaries within a byte sequence. UTF-8 is one of the world's
  * great inventions. While Kim is more efficient, it is not clear that it is worth the expense of transition.
  *
  * @version 2013-04-18
  */
-public class Kim {
+public class Kim
+{
     /**
      * The number of bytes in the kim. The number of bytes can be as much as three times the number of characters.
      */
@@ -51,23 +52,26 @@ public class Kim {
      * @param from  The index of the first byte.
      * @param thru  The index of the last byte plus one.
      */
-    public Kim(final byte[] bytes, final int from, final int thru) {
+    public Kim(final byte[] bytes, final int from, final int thru)
+    {
         // As the bytes are copied into the new kim, a hashcode is computed
         // using a
         // modified Fletcher code.
         int sum = 1;
         int value;
-        this.hashcode = 0;
-        this.length = thru - from;
-        if (this.length > 0) {
-            this.bytes = new byte[this.length];
-            for (int at = 0; at < this.length; at += 1) {
+        hashcode = 0;
+        length = thru - from;
+        if (length > 0)
+        {
+            this.bytes = new byte[length];
+            for (int at = 0; at < length; at += 1)
+            {
                 value = bytes[at + from] & 0xFF;
                 sum += value;
-                this.hashcode += sum;
+                hashcode += sum;
                 this.bytes[at] = (byte) value;
             }
-            this.hashcode += sum << 16;
+            hashcode += sum << 16;
         }
     }
 
@@ -77,7 +81,8 @@ public class Kim {
      * @param bytes  The byte array.
      * @param length The number of bytes.
      */
-    public Kim(final byte[] bytes, final int length) {
+    public Kim(final byte[] bytes, final int length)
+    {
         this(bytes, 0, length);
     }
 
@@ -88,7 +93,8 @@ public class Kim {
      * @param from The point at which to take bytes.
      * @param thru The point at which to stop taking bytes.
      */
-    public Kim(final Kim kim, final int from, final int thru) {
+    public Kim(final Kim kim, final int from, final int thru)
+    {
         this(kim.bytes, from, thru);
     }
 
@@ -99,78 +105,92 @@ public class Kim {
      *
      * @throws JSONException if surrogate pair mismatch.
      */
-    public Kim(final String string) throws JSONException {
+    public Kim(final String string) throws JSONException
+    {
         final int stringLength = string.length();
-        this.hashcode = 0;
-        this.length = 0;
+        hashcode = 0;
+        length = 0;
         // First pass: Determine the length of the kim, allowing for the UTF-16
         // to UTF-32 conversion, and then the UTF-32 to Kim conversion.
-        if (stringLength > 0) {
-            for (int i = 0; i < stringLength; i += 1) {
+        if (stringLength > 0)
+        {
+            for (int i = 0; i < stringLength; i += 1)
+            {
                 final int c = string.charAt(i);
-                if (c <= 0x7F) {
-                    this.length += 1;
-                } else if (c <= 0x3FFF) {
-                    this.length += 2;
-                } else {
-                    if ((c >= 0xD800) && (c <= 0xDFFF)) {
+                if (c <= 0x7F)
+                {
+                    length += 1;
+                }
+                else if (c <= 0x3FFF)
+                {
+                    length += 2;
+                }
+                else
+                {
+                    if ((c >= 0xD800) && (c <= 0xDFFF))
+                    {
                         i += 1;
                         final int d = string.charAt(i);
-                        if ((c > 0xDBFF) || (d < 0xDC00) || (d > 0xDFFF)) {
-                            throw new JSONException("Bad UTF16");
-                        }
+                        if ((c > 0xDBFF) || (d < 0xDC00) || (d > 0xDFFF)) { throw new JSONException("Bad UTF16"); }
                     }
-                    this.length += 3;
+                    length += 3;
                 }
             }
             // Second pass: Allocate a byte array and fill that array with the
             // conversion
             // while computing the hashcode.
-            this.bytes = new byte[this.length];
+            bytes = new byte[length];
             int at = 0;
             int b;
             int sum = 1;
-            for (int i = 0; i < stringLength; i += 1) {
+            for (int i = 0; i < stringLength; i += 1)
+            {
                 int character = string.charAt(i);
-                if (character <= 0x7F) {
-                    this.bytes[at] = (byte) character;
+                if (character <= 0x7F)
+                {
+                    bytes[at] = (byte) character;
                     sum += character;
-                    this.hashcode += sum;
+                    hashcode += sum;
                     at += 1;
-                } else if (character <= 0x3FFF) {
+                }
+                else if (character <= 0x3FFF)
+                {
                     b = 0x80 | (character >>> 7);
-                    this.bytes[at] = (byte) b;
+                    bytes[at] = (byte) b;
                     sum += b;
-                    this.hashcode += sum;
+                    hashcode += sum;
                     at += 1;
                     b = character & 0x7F;
-                    this.bytes[at] = (byte) b;
+                    bytes[at] = (byte) b;
                     sum += b;
-                    this.hashcode += sum;
+                    hashcode += sum;
                     at += 1;
-                } else {
-                    if ((character >= 0xD800) && (character <= 0xDBFF)) {
+                }
+                else
+                {
+                    if ((character >= 0xD800) && (character <= 0xDBFF))
+                    {
                         i += 1;
                         character = (((character & 0x3FF) << 10) | (string.charAt(i) & 0x3FF)) + 65536;
                     }
                     b = 0x80 | (character >>> 14);
-                    this.bytes[at] = (byte) b;
+                    bytes[at] = (byte) b;
                     sum += b;
-                    this.hashcode += sum;
+                    hashcode += sum;
                     at += 1;
                     b = 0x80 | ((character >>> 7) & 0xFF);
-                    this.bytes[at] = (byte) b;
+                    bytes[at] = (byte) b;
                     sum += b;
-                    this.hashcode += sum;
+                    hashcode += sum;
                     at += 1;
                     b = character & 0x7F;
-                    this.bytes[at] = (byte) b;
+                    bytes[at] = (byte) b;
                     sum += b;
-                    this.hashcode += sum;
+                    hashcode += sum;
                     at += 1;
                 }
             }
-            this.hashcode += sum << 16;
+            hashcode += sum << 16;
         }
     }
 
@@ -183,10 +203,9 @@ public class Kim {
      *
      * @throws JSONException if the character is not representable in a kim.
      */
-    public static int characterSize(final int character) throws JSONException {
-        if ((character < 0) || (character > 0x10FFFF)) {
-            throw new JSONException("Bad character " + character);
-        }
+    public static int characterSize(final int character) throws JSONException
+    {
+        if ((character < 0) || (character > 0x10FFFF)) { throw new JSONException("Bad character " + character); }
         return character <= 0x7F ? 1 : character <= 0x3FFF ? 2 : 3;
     }
 
@@ -199,24 +218,22 @@ public class Kim {
      * @throws JSONException if at does not point to a valid character.
      * @return a Unicode character between 0 and 0x10FFFF.
      */
-    public int characterAt(final int at) throws JSONException {
+    public int characterAt(final int at) throws JSONException
+    {
         final int c = get(at);
-        if ((c & 0x80) == 0) {
-            return c;
-        }
+        if ((c & 0x80) == 0) { return c; }
         int character;
         final int c1 = get(at + 1);
-        if ((c1 & 0x80) == 0) {
+        if ((c1 & 0x80) == 0)
+        {
             character = ((c & 0x7F) << 7) | c1;
-            if (character > 0x7F) {
-                return character;
-            }
-        } else {
+            if (character > 0x7F) { return character; }
+        }
+        else
+        {
             final int c2 = get(at + 2);
             character = ((c & 0x7F) << 14) | ((c1 & 0x7F) << 7) | c2;
-            if (((c2 & 0x80) == 0) && (character > 0x3FFF) && (character <= 0x10FFFF) && ((character < 0xD800) || (character > 0xDFFF))) {
-                return character;
-            }
+            if (((c2 & 0x80) == 0) && (character > 0x3FFF) && (character <= 0x10FFFF) && ((character < 0xD800) || (character > 0xDFFF))) { return character; }
         }
         throw new JSONException("Bad character at " + at);
     }
@@ -229,9 +246,10 @@ public class Kim {
      *
      * @return The position immediately after the copy.
      */
-    public int copy(final byte[] bytes, final int at) {
-        System.arraycopy(this.bytes, 0, bytes, at, this.length);
-        return at + this.length;
+    public int copy(final byte[] bytes, final int at)
+    {
+        System.arraycopy(this.bytes, 0, bytes, at, length);
+        return at + length;
     }
 
     /**
@@ -242,18 +260,13 @@ public class Kim {
      * @return true if this and obj are both kim objects containing identical byte sequences.
      */
     @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof Kim)) {
-            return false;
-        }
+    public boolean equals(final Object obj)
+    {
+        if (!(obj instanceof Kim)) { return false; }
         final Kim that = (Kim) obj;
-        if (this == that) {
-            return true;
-        }
-        if (this.hashcode != that.hashcode) {
-            return false;
-        }
-        return java.util.Arrays.equals(this.bytes, that.bytes);
+        if (this == that) { return true; }
+        if (hashcode != that.hashcode) { return false; }
+        return java.util.Arrays.equals(bytes, that.bytes);
     }
 
     /**
@@ -265,19 +278,19 @@ public class Kim {
      *
      * @throws JSONException if there is no byte at that position.
      */
-    public int get(final int at) throws JSONException {
-        if ((at < 0) || (at > this.length)) {
-            throw new JSONException("Bad character at " + at);
-        }
-        return (this.bytes[at]) & 0xFF;
+    public int get(final int at) throws JSONException
+    {
+        if ((at < 0) || (at > length)) { throw new JSONException("Bad character at " + at); }
+        return (bytes[at]) & 0xFF;
     }
 
     /**
      * Returns a hash code value for the kim.
      */
     @Override
-    public int hashCode() {
-        return this.hashcode;
+    public int hashCode()
+    {
+        return hashcode;
     }
 
     /**
@@ -289,25 +302,31 @@ public class Kim {
      * @throws JSONException if the kim is not valid.
      */
     @Override
-    public String toString() throws JSONException {
-        if (this.string == null) {
+    public String toString() throws JSONException
+    {
+        if (string == null)
+        {
             int c;
             int length = 0;
             final char chars[] = new char[this.length];
-            for (int at = 0; at < this.length; at += characterSize(c)) {
-                c = this.characterAt(at);
-                if (c < 0x10000) {
+            for (int at = 0; at < this.length; at += characterSize(c))
+            {
+                c = characterAt(at);
+                if (c < 0x10000)
+                {
                     chars[length] = (char) c;
                     length += 1;
-                } else {
+                }
+                else
+                {
                     chars[length] = (char) (0xD800 | ((c - 0x10000) >>> 10));
                     length += 1;
                     chars[length] = (char) (0xDC00 | (c & 0x03FF));
                     length += 1;
                 }
             }
-            this.string = new String(chars, 0, length);
+            string = new String(chars, 0, length);
         }
-        return this.string;
+        return string;
     }
 }

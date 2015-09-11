@@ -21,34 +21,38 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
-public class StateWrapper {
-    
+public class StateWrapper
+{
+
     public BlockState state = null;
     public CompoundTag tag = null;
-    
-    public StateWrapper(BlockState state) {
+
+    public StateWrapper(final BlockState state)
+    {
         this.state = state;
     }
-    
-    public StateWrapper(CompoundTag tag) {
+
+    public StateWrapper(final CompoundTag tag)
+    {
         this.tag = tag;
     }
-    
-    public boolean restoreTag(short x, short y, short z, Schematic schematic) {
-        if (this.tag == null) {
-            return false;
-        }
-        List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
-        int length = itemsTag.size();
-        short[] ids = new short[length];
-        byte[] datas = new byte[length];
-        byte[] amounts = new byte[length];
-        for (int i = 0; i < length; i++) {
-            Tag itemTag = itemsTag.get(i);
-            CompoundTag itemComp = (CompoundTag) itemTag;
+
+    public boolean restoreTag(final short x, final short y, final short z, final Schematic schematic)
+    {
+        if (tag == null) { return false; }
+        final List<Tag> itemsTag = tag.getListTag("Items").getValue();
+        final int length = itemsTag.size();
+        final short[] ids = new short[length];
+        final byte[] datas = new byte[length];
+        final byte[] amounts = new byte[length];
+        for (int i = 0; i < length; i++)
+        {
+            final Tag itemTag = itemsTag.get(i);
+            final CompoundTag itemComp = (CompoundTag) itemTag;
             short id = itemComp.getShort("id");
             String idStr = itemComp.getString("id");
-            if (idStr != null && !MathMan.isInteger(idStr)) {
+            if ((idStr != null) && !MathMan.isInteger(idStr))
+            {
                 idStr = idStr.split(":")[1].toLowerCase();
                 id = (short) ItemType.getId(idStr);
             }
@@ -56,64 +60,73 @@ public class StateWrapper {
             datas[i] = (byte) itemComp.getShort("Damage");
             amounts[i] = itemComp.getByte("Count");
         }
-        if (length != 0) {
+        if (length != 0)
+        {
             schematic.addItem(new PlotItem(x, y, z, ids, datas, amounts));
         }
         return true;
     }
-    
-    public CompoundTag getTag() {
-        if (this.tag != null) {
-            return this.tag;
-        }
-        if (state instanceof InventoryHolder) {
-            InventoryHolder inv = (InventoryHolder) state;
-            ItemStack[] contents = inv.getInventory().getContents();
-            Map<String, Tag> values = new HashMap<String, Tag>();
+
+    public CompoundTag getTag()
+    {
+        if (tag != null) { return tag; }
+        if (state instanceof InventoryHolder)
+        {
+            final InventoryHolder inv = (InventoryHolder) state;
+            final ItemStack[] contents = inv.getInventory().getContents();
+            final Map<String, Tag> values = new HashMap<String, Tag>();
             values.put("Items", new ListTag("Items", CompoundTag.class, serializeInventory(contents)));
             return new CompoundTag(values);
         }
         return null;
     }
-    
-    public String getId() {
+
+    public String getId()
+    {
         return "Chest";
     }
-    
-    public List<CompoundTag> serializeInventory(ItemStack[] items) {
-        List<CompoundTag> tags = new ArrayList<CompoundTag>();
-        for (int i = 0; i < items.length; ++i) {
-            if (items[i] != null) {
-                Map<String, Tag> tagData = serializeItem(items[i]);
+
+    public List<CompoundTag> serializeInventory(final ItemStack[] items)
+    {
+        final List<CompoundTag> tags = new ArrayList<CompoundTag>();
+        for (int i = 0; i < items.length; ++i)
+        {
+            if (items[i] != null)
+            {
+                final Map<String, Tag> tagData = serializeItem(items[i]);
                 tagData.put("Slot", new ByteTag("Slot", (byte) i));
                 tags.add(new CompoundTag(tagData));
             }
         }
         return tags;
     }
-    
-    public Map<String, Tag> serializeItem(org.spongepowered.api.item.inventory.ItemStack item) {
-        Map<String, Tag> data = new HashMap<String, Tag>();
-        
+
+    public Map<String, Tag> serializeItem(final org.spongepowered.api.item.inventory.ItemStack item)
+    {
+        final Map<String, Tag> data = new HashMap<String, Tag>();
+
         // FIXME serialize sponge item
-        
+
         return data;
     }
-    
-    public Map<String, Tag> serializeItem(ItemStack item) {
-        Map<String, Tag> data = new HashMap<String, Tag>();
+
+    public Map<String, Tag> serializeItem(final ItemStack item)
+    {
+        final Map<String, Tag> data = new HashMap<String, Tag>();
         data.put("id", new ShortTag("id", (short) item.getTypeId()));
         data.put("Damage", new ShortTag("Damage", item.getDurability()));
         data.put("Count", new ByteTag("Count", (byte) item.getAmount()));
-        if (!item.getEnchantments().isEmpty()) {
-            List<CompoundTag> enchantmentList = new ArrayList<CompoundTag>();
-            for(Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
-                Map<String, Tag> enchantment = new HashMap<String, Tag>();
+        if (!item.getEnchantments().isEmpty())
+        {
+            final List<CompoundTag> enchantmentList = new ArrayList<CompoundTag>();
+            for (final Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet())
+            {
+                final Map<String, Tag> enchantment = new HashMap<String, Tag>();
                 enchantment.put("id", new ShortTag("id", (short) entry.getKey().getId()));
                 enchantment.put("lvl", new ShortTag("lvl", entry.getValue().shortValue()));
                 enchantmentList.add(new CompoundTag(enchantment));
             }
-            Map<String, Tag> auxData = new HashMap<String, Tag>();
+            final Map<String, Tag> auxData = new HashMap<String, Tag>();
             auxData.put("ench", new ListTag("ench", CompoundTag.class, enchantmentList));
             data.put("tag", new CompoundTag("tag", auxData));
         }

@@ -41,10 +41,10 @@ import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
  * SetBlockFast class<br> Used to do fast world editing
- *
- * @author Empire92
+ *
  */
-public class SetBlockFast_1_8 extends BukkitSetBlockManager {
+public class SetBlockFast_1_8 extends BukkitSetBlockManager
+{
     private final RefClass classBlock = getRefClass("{nms}.Block");
     private final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
     private final RefClass classIBlockData = getRefClass("{nms}.IBlockData");
@@ -59,44 +59,48 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
     private SendChunk chunksender;
 
     public static HashMap<ChunkLoc, Chunk> toUpdate = new HashMap<>();
-    
+
     /**
      * Constructor
      *
      * @throws NoSuchMethodException
      */
-    public SetBlockFast_1_8() throws NoSuchMethodException {
+    public SetBlockFast_1_8() throws NoSuchMethodException
+    {
         constructorBlockPosition = classBlockPosition.getConstructor(int.class, int.class, int.class);
         methodGetByCombinedId = classBlock.getMethod("getByCombinedId", int.class);
         methodGetHandle = classCraftWorld.getMethod("getHandle");
         methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class, int.class);
         methodA = classChunk.getMethod("a", classBlockPosition, classIBlockData);
-        TaskManager.runTaskRepeat(new Runnable() {
-            
+        TaskManager.runTaskRepeat(new Runnable()
+        {
+
             @Override
-            public void run() {
+            public void run()
+            {
                 if (toUpdate.size() == 0) {
-                    return;
+                return;
                 }
                 int count = 0;
-                ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-                Iterator<Entry<ChunkLoc, Chunk>> i = toUpdate.entrySet().iterator();
-                while (i.hasNext() && count < 128) {
+                final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+                final Iterator<Entry<ChunkLoc, Chunk>> i = toUpdate.entrySet().iterator();
+                while (i.hasNext() && (count < 128))
+                {
                     chunks.add(i.next().getValue());
                     i.remove();
                     count++;
                 }
                 if (count == 0) {
-                    return;
+                return;
                 }
                 update(chunks);
             }
         }, 1);
-        this.chunksender = new SendChunk();
+        chunksender = new SendChunk();
     }
 
-    private ChunkLoc lastLoc = null;
-    
+    private final ChunkLoc lastLoc = null;
+
     /**
      * Set the block at the location
      *
@@ -109,13 +113,16 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
      */
     @SuppressWarnings("deprecation")
     @Override
-    public void set(final World world, final int x, final int y, final int z, final int id, final byte data) {
-        if (id == -1) {
+    public void set(final World world, final int x, final int y, final int z, final int id, final byte data)
+    {
+        if (id == -1)
+        {
             world.getBlockAt(x, y, z).setData(data, false);
             return;
         }
         // Start blockstate workaround //
-        switch (id) {
+        switch (id)
+        {
             case 54:
             case 130:
             case 142:
@@ -152,28 +159,38 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             case 29:
             case 33:
             case 151:
-            case 178: {
+            case 178:
+            {
                 final Block block = world.getBlockAt(x, y, z);
-                if (block.getData() == data) {
-                    if (block.getTypeId() != id) {
+                if (block.getData() == data)
+                {
+                    if (block.getTypeId() != id)
+                    {
                         block.setTypeId(id, false);
                     }
-                } else {
-                    if (block.getTypeId() == id) {
+                }
+                else
+                {
+                    if (block.getTypeId() == id)
+                    {
                         block.setData(data, false);
-                    } else {
+                    }
+                    else
+                    {
                         block.setTypeIdAndData(id, data, false);
                     }
                 }
                 return;
             }
         }
-        
+
         // Start data value shortcut
-        Block block = world.getBlockAt(x, y, z);
-        int currentId = block.getTypeId();
-        if (currentId == id) {
-            switch(id) {
+        final Block block = world.getBlockAt(x, y, z);
+        final int currentId = block.getTypeId();
+        if (currentId == id)
+        {
+            switch (id)
+            {
                 case 0:
                 case 2:
                 case 4:
@@ -255,18 +272,18 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
                 case 189:
                 case 190:
                 case 191:
-                case 192: {
+                case 192:
+                {
                     return;
                 }
             }
-            if (block.getData() == data) {
-                return;
-            }
+            if (block.getData() == data) { return; }
             block.setData(data);
             return;
         }
         // blockstate
-        switch(currentId) {
+        switch (currentId)
+        {
             case 54:
             case 130:
             case 132:
@@ -303,23 +320,29 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             case 29:
             case 33:
             case 151:
-            case 178: {
-                if (block.getData() == data) {
+            case 178:
+            {
+                if (block.getData() == data)
+                {
                     block.setTypeId(id, false);
-                } else {
+                }
+                else
+                {
                     block.setTypeIdAndData(id, data, false);
                 }
                 return;
             }
         }
         // End blockstate workaround //
-        
-        int X = x >> 4;
-        int Z = z >> 4;
-        ChunkLoc loc = new ChunkLoc(X, Z);
-        if (!loc.equals(lastLoc)) {
+
+        final int X = x >> 4;
+        final int Z = z >> 4;
+        final ChunkLoc loc = new ChunkLoc(X, Z);
+        if (!loc.equals(lastLoc))
+        {
             Chunk chunk = toUpdate.get(loc);
-            if (chunk == null) {
+            if (chunk == null)
+            {
                 chunk = world.getChunkAt(X, Z);
                 toUpdate.put(loc, chunk);
             }
@@ -332,23 +355,27 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
         final Object combined = methodGetByCombinedId.of(null).call(id + (data << 12));
         methodA.of(chunk).call(pos, combined);
     }
-    
+
     @Override
-    public void update(final Collection<Chunk> chunks) {
-        if (chunks.size() == 0) {
-            return;
-        }
-        if (!MainUtil.canSendChunk) {
-            for (Chunk chunk : chunks) {
+    public void update(final Collection<Chunk> chunks)
+    {
+        if (chunks.size() == 0) { return; }
+        if (!MainUtil.canSendChunk)
+        {
+            for (final Chunk chunk : chunks)
+            {
                 chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
                 chunk.unload(true, false);
                 chunk.load();
             }
             return;
         }
-        try {
+        try
+        {
             chunksender.sendChunk(chunks);
-        } catch (final Throwable e) {
+        }
+        catch (final Throwable e)
+        {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
         }

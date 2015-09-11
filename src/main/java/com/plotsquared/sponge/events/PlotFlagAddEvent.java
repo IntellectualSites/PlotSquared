@@ -5,7 +5,8 @@ import org.spongepowered.api.event.Cancellable;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
 
-public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
+public class PlotFlagAddEvent extends PlotEvent implements Cancellable
+{
     private final Flag flag;
     private boolean cancelled;
 
@@ -15,27 +16,31 @@ public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
      * @param flag Flag that was added
      * @param plot Plot to which the flag was added
      */
-    public PlotFlagAddEvent(final Flag flag, final Plot plot) {
+    public PlotFlagAddEvent(final Flag flag, final Plot plot)
+    {
         super(plot);
         this.flag = flag;
     }
-    
+
     /**
      * Get the flag involved
      *
      * @return Flag
      */
-    public Flag getFlag() {
-        return this.flag;
+    public Flag getFlag()
+    {
+        return flag;
     }
 
     @Override
-    public boolean isCancelled() {
-       return cancelled;
+    public boolean isCancelled()
+    {
+        return cancelled;
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
-       cancelled = cancel;
+    public void setCancelled(final boolean cancel)
+    {
+        cancelled = cancel;
     }
- }
+}

@@ -31,53 +31,61 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "copy",
-        permission = "plots.copy",
-        aliases = {"copypaste"},
-        category = CommandCategory.ACTIONS,
-        description = "Copy a plot",
-        usage = "/plot copy <X;Z>",
-        requiredType = RequiredType.NONE
-)
-public class Copy extends SubCommand {
+command = "copy",
+permission = "plots.copy",
+aliases = { "copypaste" },
+category = CommandCategory.ACTIONS,
+description = "Copy a plot",
+usage = "/plot copy <X;Z>",
+requiredType = RequiredType.NONE)
+public class Copy extends SubCommand
+{
 
-    public Copy() {
+    public Copy()
+    {
         requiredArguments = new Argument[] {
-                Argument.PlotID
+        Argument.PlotID
         };
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String ... args) {
+    public boolean onCommand(final PlotPlayer plr, final String... args)
+    {
         final Location loc = plr.getLocation();
         final Plot plot1 = MainUtil.getPlot(loc);
-        if (plot1 == null) {
-            return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if (!plot1.isAdded(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s()))  {
+        if (plot1 == null) { return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT); }
+        if (!plot1.isAdded(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s()))
+        {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
         final String world = loc.getWorld();
         final PlotId plot2 = MainUtil.parseId(args[0]);
-        if ((plot2 == null)) {
+        if ((plot2 == null))
+        {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
-        if (plot1.id.equals(plot2)) {
+        if (plot1.id.equals(plot2))
+        {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
-        if (MainUtil.copy(world, plot1.id, plot2, new Runnable() {
+        if (MainUtil.copy(world, plot1.id, plot2, new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 MainUtil.sendMessage(plr, C.COPY_SUCCESS);
             }
-        })) {
+        }))
+        {
             return true;
-        } else {
+        }
+        else
+        {
             MainUtil.sendMessage(plr, C.REQUIRES_UNOWNED);
             return false;
         }

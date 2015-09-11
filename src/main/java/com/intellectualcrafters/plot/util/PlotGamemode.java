@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.util;
 
-public enum PlotGamemode {
+public enum PlotGamemode
+{
     ADVENTURE,
     SURVIVAL,
     CREATIVE,

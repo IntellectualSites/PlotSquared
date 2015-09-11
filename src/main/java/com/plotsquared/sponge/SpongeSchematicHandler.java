@@ -22,16 +22,20 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.sponge.util.SpongeUtil;
 
-public class SpongeSchematicHandler extends SchematicHandler {
-    
+public class SpongeSchematicHandler extends SchematicHandler
+{
+
     @Override
-    public void getCompoundTag(final String world, final Location pos1, final Location pos2, final RunnableVal<CompoundTag> whenDone) {
+    public void getCompoundTag(final String world, final Location pos1, final Location pos2, final RunnableVal<CompoundTag> whenDone)
+    {
 
         // async
-        TaskManager.runTaskAsync(new Runnable() {
+        TaskManager.runTaskAsync(new Runnable()
+        {
 
             @Override
-            public void run() {
+            public void run()
+            {
                 // Main positions
                 final int p1x = pos1.getX();
                 final int p1z = pos1.getZ();
@@ -69,64 +73,79 @@ public class SpongeSchematicHandler extends SchematicHandler {
 
                 // Generate list of chunks
                 final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
-                for (int x = bcx; x <= tcx; x++) {
-                    for (int z = bcz; z <= tcz; z++) {
+                for (int x = bcx; x <= tcx; x++)
+                {
+                    for (int z = bcz; z <= tcz; z++)
+                    {
                         chunks.add(new ChunkLoc(x, z));
                     }
                 }
 
                 final World worldObj = SpongeUtil.getWorld(world);
                 // Main thread
-                TaskManager.runTask(new Runnable() {
+                TaskManager.runTask(new Runnable()
+                {
                     @Override
-                    public void run() {
-                        long start = System.currentTimeMillis();
-                        while (chunks.size() > 0 && System.currentTimeMillis() - start < 20) {
+                    public void run()
+                    {
+                        final long start = System.currentTimeMillis();
+                        while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < 20))
+                        {
                             // save schematics
-                            ChunkLoc chunk = chunks.remove(0);
+                            final ChunkLoc chunk = chunks.remove(0);
 
-                            if (!worldObj.loadChunk(chunk.x << 4, 1, chunk.z << 4, false).isPresent()) {
+                            if (!worldObj.loadChunk(chunk.x << 4, 1, chunk.z << 4, false).isPresent())
+                            {
                                 System.out.println("COULD NOT LOAD CHUNK AT: " + chunk.x + "," + chunk.z);
                                 // TODO continue - right now sponge chunk api seems to be broken :(
                                 // continue;
                             }
 
-                            int X = chunk.x;
-                            int Z = chunk.z;
+                            final int X = chunk.x;
+                            final int Z = chunk.z;
                             int xxb = X << 4;
                             int zzb = Z << 4;
                             int xxt = xxb + 15;
                             int zzt = zzb + 15;
 
-                            if (X == bcx) {
+                            if (X == bcx)
+                            {
                                 xxb = p1x;
                             }
-                            if (X == tcx) {
+                            if (X == tcx)
+                            {
                                 xxt = p2x;
                             }
-                            if (Z == bcz) {
+                            if (Z == bcz)
+                            {
                                 zzb = p1z;
                             }
-                            if (Z == tcz) {
+                            if (Z == tcz)
+                            {
                                 zzt = p2z;
                             }
-                            for (int y = sy; y <= Math.min(255, ey); y++) {
-                                int ry = y - sy;
-                                int i1 = (ry * width * length);
-                                for (int z = zzb; z <= zzt; z++) {
-                                    int rz = z - p1z;
-                                    int i2 = i1 + (rz * width);
-                                    for (int x = xxb; x <= xxt; x++) {
-                                        int rx = x - p1x;
+                            for (int y = sy; y <= Math.min(255, ey); y++)
+                            {
+                                final int ry = y - sy;
+                                final int i1 = (ry * width * length);
+                                for (int z = zzb; z <= zzt; z++)
+                                {
+                                    final int rz = z - p1z;
+                                    final int i2 = i1 + (rz * width);
+                                    for (int x = xxb; x <= xxt; x++)
+                                    {
+                                        final int rx = x - p1x;
                                         final int index = i2 + rx;
-                                        
-                                        BlockState state = worldObj.getBlock(x, y, z);
+
+                                        final BlockState state = worldObj.getBlock(x, y, z);
                                         PlotBlock block = SpongeMain.THIS.getPlotBlock(state);
-                                        if (block == null) {
+                                        if (block == null)
+                                        {
                                             block = SpongeMain.THIS.registerBlock(state);
                                         }
-                                        int id = block.id;
-                                        switch (id) {
+                                        final int id = block.id;
+                                        switch (id)
+                                        {
                                             case 0:
                                             case 2:
                                             case 4:
@@ -197,7 +216,8 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                             case 189:
                                             case 190:
                                             case 191:
-                                            case 192: {
+                                            case 192:
+                                            {
                                                 break;
                                             }
                                             case 54:
@@ -234,11 +254,13 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                             case 29:
                                             case 33:
                                             case 151:
-                                            case 178: {
+                                            case 178:
+                                            {
                                                 // TODO wrap block state...
                                                 // TODO add block state to map
                                             }
-                                            default: {
+                                            default:
+                                            {
                                                 blockData[index] = block.data;
                                             }
                                         }
@@ -248,12 +270,17 @@ public class SpongeSchematicHandler extends SchematicHandler {
                             }
 
                         }
-                        if (chunks.size() != 0) {
+                        if (chunks.size() != 0)
+                        {
                             TaskManager.runTaskLater(this, 1);
-                        } else {
-                            TaskManager.runTaskAsync(new Runnable() {
+                        }
+                        else
+                        {
+                            TaskManager.runTaskAsync(new Runnable()
+                            {
                                 @Override
-                                public void run() {
+                                public void run()
+                                {
                                     schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
                                     schematic.put("Data", new ByteArrayTag("Data", blockData));
                                     schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
@@ -270,5 +297,5 @@ public class SpongeSchematicHandler extends SchematicHandler {
             }
         });
     }
-    
+
 }

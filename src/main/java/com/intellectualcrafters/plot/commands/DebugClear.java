@@ -33,36 +33,34 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "debugclear",
-        aliases = {"fastclear"},
-        description = "Clear a plot using a fast experiment algorithm",
-        category = CommandCategory.DEBUG
-)
-public class DebugClear extends SubCommand {
+command = "debugclear",
+aliases = { "fastclear" },
+description = "Clear a plot using a fast experiment algorithm",
+category = CommandCategory.DEBUG)
+public class DebugClear extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if ((plot == null) || !(PS.get().getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) {
-            return sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
-            return sendMessage(plr, C.UNLINK_REQUIRED);
-        }
-        if ((!plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.debugclear")) {
-            return sendMessage(plr, C.NO_PLOT_PERMS);
-        }
+        if ((plot == null) || !(PS.get().getPlotWorld(loc.getWorld()) instanceof SquarePlotWorld)) { return sendMessage(plr, C.NOT_IN_PLOT); }
+        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) { return sendMessage(plr, C.UNLINK_REQUIRED); }
+        if ((!plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.debugclear")) { return sendMessage(plr, C.NO_PLOT_PERMS); }
         final Location pos1 = MainUtil.getPlotBottomLoc(loc.getWorld(), plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(loc.getWorld(), plot.id);
-        if (MainUtil.runners.containsKey(plot)) {
+        if (MainUtil.runners.containsKey(plot))
+        {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
         MainUtil.runners.put(plot, 1);
-        ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable() {
+        ChunkManager.manager.regenerateRegion(pos1, pos2, new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 MainUtil.runners.remove(plot);
                 MainUtil.sendMessage(plr, "&aDone!");
             }

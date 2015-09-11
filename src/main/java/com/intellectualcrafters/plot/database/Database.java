@@ -30,9 +30,10 @@ import java.sql.SQLException;
  * @author -_Husky_-
  * @author tips48
  */
-public abstract class Database {
-    
-    public abstract Connection forceConnection() throws SQLException, ClassNotFoundException ;
+public abstract class Database
+{
+
+    public abstract Connection forceConnection() throws SQLException, ClassNotFoundException;
 
     /**
      * Opens a connection with the database

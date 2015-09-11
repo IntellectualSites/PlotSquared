@@ -4,38 +4,45 @@ package com.intellectualcrafters.configuration.file;
  * Various settings for controlling the input and output of a {@link
  * YamlConfiguration}
  */
-public class YamlConfigurationOptions extends FileConfigurationOptions {
+public class YamlConfigurationOptions extends FileConfigurationOptions
+{
     private int indent = 2;
 
-    protected YamlConfigurationOptions(YamlConfiguration configuration) {
+    protected YamlConfigurationOptions(final YamlConfiguration configuration)
+    {
         super(configuration);
     }
 
     @Override
-    public YamlConfiguration configuration() {
+    public YamlConfiguration configuration()
+    {
         return (YamlConfiguration) super.configuration();
     }
 
     @Override
-    public YamlConfigurationOptions copyDefaults(boolean value) {
+    public YamlConfigurationOptions copyDefaults(final boolean value)
+    {
         super.copyDefaults(value);
         return this;
     }
 
     @Override
-    public YamlConfigurationOptions pathSeparator(char value) {
+    public YamlConfigurationOptions pathSeparator(final char value)
+    {
         super.pathSeparator(value);
         return this;
     }
 
     @Override
-    public YamlConfigurationOptions header(String value) {
+    public YamlConfigurationOptions header(final String value)
+    {
         super.header(value);
         return this;
     }
 
     @Override
-    public YamlConfigurationOptions copyHeader(boolean value) {
+    public YamlConfigurationOptions copyHeader(final boolean value)
+    {
         super.copyHeader(value);
         return this;
     }
@@ -47,7 +54,8 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
      *
      * @return How much to indent by
      */
-    public int indent() {
+    public int indent()
+    {
         return indent;
     }
 
@@ -59,11 +67,12 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
      * @param value New indent
      * @return This object, for chaining
      */
-    public YamlConfigurationOptions indent(int value) {
-        if (value < 2) throw new IllegalArgumentException("Indent must be at least 2 characters");
-        if (value > 9) throw new IllegalArgumentException("Indent cannot be greater than 9 characters");
+    public YamlConfigurationOptions indent(final int value)
+    {
+        if (value < 2) { throw new IllegalArgumentException("Indent must be at least 2 characters"); }
+        if (value > 9) { throw new IllegalArgumentException("Indent cannot be greater than 9 characters"); }
 
-        this.indent = value;
+        indent = value;
         return this;
     }
 }

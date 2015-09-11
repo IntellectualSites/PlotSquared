@@ -6,12 +6,13 @@ import org.spongepowered.api.entity.player.Player;
 
 import com.intellectualcrafters.plot.object.Plot;
 
-public class PlayerPlotTrustedEvent extends PlotEvent {
+public class PlayerPlotTrustedEvent extends PlotEvent
+{
 
     private final Player initiator;
     private final boolean added;
     private final UUID player;
-    
+
     /**
      * PlayerPlotTrustedEvent: Called when a plot trusted user is added/removed
      *
@@ -20,20 +21,22 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      * @param player    Player that was added/removed from the trusted list
      * @param added     true of the player was added, false if the player was removed
      */
-    public PlayerPlotTrustedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added) {
+    public PlayerPlotTrustedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added)
+    {
         super(plot);
         this.initiator = initiator;
         this.added = added;
         this.player = player;
     }
-    
+
     /**
      * If a user was added
      *
      * @return boolean
      */
-    public boolean wasAdded() {
-        return this.added;
+    public boolean wasAdded()
+    {
+        return added;
     }
 
     /**
@@ -41,8 +44,9 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      *
      * @return UUID
      */
-    public UUID getPlayer() {
-        return this.player;
+    public UUID getPlayer()
+    {
+        return player;
     }
 
     /**
@@ -50,7 +54,8 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      *
      * @return Player
      */
-    public Player getInitiator() {
-        return this.initiator;
+    public Player getInitiator()
+    {
+        return initiator;
     }
- }
+}

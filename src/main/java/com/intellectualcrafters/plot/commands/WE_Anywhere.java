@@ -20,30 +20,25 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.general.commands.CommandDeclaration;
-import com.plotsquared.listener.WEManager;
 
 @CommandDeclaration(
-        command = "weanywhere",
-        permission = "plots.worldedit.bypass",
-        description = "Force bypass of WorldEdit",
-        aliases = {"wea"},
-        usage = "/plot weanywhere",
-        requiredType = RequiredType.NONE,
-        category = CommandCategory.DEBUG
-)
-
+command = "weanywhere",
+permission = "plots.worldedit.bypass",
+description = "Force bypass of WorldEdit",
+aliases = { "wea" },
+usage = "/plot weanywhere",
+requiredType = RequiredType.NONE,
+category = CommandCategory.DEBUG)
 @Deprecated
-public class WE_Anywhere extends SubCommand {
+public class WE_Anywhere extends SubCommand
+{
 
     @Override
-    public boolean onCommand(PlotPlayer player, String[] arguments) {
-        return MainCommand.onCommand(player, "plot", new String[] {"toggle", "worldedit"});
+    public boolean onCommand(final PlotPlayer player, final String[] arguments)
+    {
+        return MainCommand.onCommand(player, "plot", new String[] { "toggle", "worldedit" });
     }
 
 }

@@ -5,7 +5,8 @@ import java.util.Map;
 /**
  * Represents a source of configurable options and settings
  */
-public interface Configuration extends ConfigurationSection {
+public interface Configuration extends ConfigurationSection
+{
     /**
      * Sets the default value of the given path as provided.
      * <p>
@@ -20,7 +21,8 @@ public interface Configuration extends ConfigurationSection {
      * @param value Value to set the default to.
      * @throws IllegalArgumentException Thrown if path is null.
      */
-    public void addDefault(String path, Object value);
+    @Override
+    public void addDefault(final String path, final Object value);
 
     /**
      * Sets the default values of the given paths as provided.
@@ -32,7 +34,7 @@ public interface Configuration extends ConfigurationSection {
      * @param defaults A map of Path->Values to add to defaults.
      * @throws IllegalArgumentException Thrown if defaults is null.
      */
-    public void addDefaults(Map<String, Object> defaults);
+    public void addDefaults(final Map<String, Object> defaults);
 
     /**
      * Sets the default values of the given paths as provided.
@@ -49,7 +51,7 @@ public interface Configuration extends ConfigurationSection {
      * @param defaults A configuration holding a list of defaults to copy.
      * @throws IllegalArgumentException Thrown if defaults is null or this.
      */
-    public void addDefaults(Configuration defaults);
+    public void addDefaults(final Configuration defaults);
 
     /**
      * Sets the source of all default values for this {@link Configuration}.
@@ -60,7 +62,7 @@ public interface Configuration extends ConfigurationSection {
      * @param defaults New source of default values for this configuration.
      * @throws IllegalArgumentException Thrown if defaults is null or this.
      */
-    public void setDefaults(Configuration defaults);
+    public void setDefaults(final Configuration defaults);
 
     /**
      * Gets the source {@link Configuration} for this configuration.

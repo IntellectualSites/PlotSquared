@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.util;
 
-public enum PlotWeather {
+public enum PlotWeather
+{
     RAIN,
     CLEAR,
     RESET;

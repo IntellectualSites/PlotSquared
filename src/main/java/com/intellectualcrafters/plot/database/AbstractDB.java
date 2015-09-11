@@ -37,12 +37,11 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
-/**
- * @author Citymonstret
- * @author Empire92
+/**
  */
-public interface AbstractDB {
-    
+public interface AbstractDB
+{
+
     /**
      * The UUID that will count as everyone
      */
@@ -61,7 +60,7 @@ public interface AbstractDB {
      *
      * @param plots Plots for which the default table entries should be created
      */
-    void createPlotsAndData(final ArrayList<Plot> plots, Runnable whenDone);
+    void createPlotsAndData(final ArrayList<Plot> plots, final Runnable whenDone);
 
     /**
      * Create a plot
@@ -120,11 +119,11 @@ public interface AbstractDB {
      * @return A linked hashmap containing all plots
      */
     ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots();
-    
+
     /**
-     * 
+     *
      */
-    void validateAllPlots(Set<Plot> toValidate);
+    void validateAllPlots(final Set<Plot> toValidate);
 
     /**
      * @return A hashmap containing all plot clusters
@@ -278,14 +277,14 @@ public interface AbstractDB {
      * @return Plot Ratings (pre-calculated)
      */
     HashMap<UUID, Integer> getRatings(final Plot plot);
-    
+
     /**
      * Set a rating for a plot
      * @param plot
      * @param rater
      * @param value
      */
-    void setRating(final Plot plot, UUID rater, int value);
+    void setRating(final Plot plot, final UUID rater, final int value);
 
     /**
      * Remove a plot comment
@@ -295,17 +294,17 @@ public interface AbstractDB {
      * @param comment Comment to remove
      */
     void removeComment(final Plot plot, final PlotComment comment);
-    
+
     /**
      * Clear an inbox
      * @param plot
      * @param inbox
      */
-    void clearInbox(Plot plot, String inbox);
+    void clearInbox(final Plot plot, final String inbox);
 
     /**
      * Set a plot comment
-     * 
+     *
      * @param world   World in which the plot is located
      * @param plot    Plot Object
      * @param comment Comment to add
@@ -321,15 +320,15 @@ public interface AbstractDB {
      *
      * @return Plot Comments within the specified tier
      */
-    void getComments(final Plot plot, final String inbox, RunnableVal whenDone);
+    void getComments(final Plot plot, final String inbox, final RunnableVal whenDone);
 
-    void createPlotAndSettings(Plot plot, Runnable whenDone);
+    void createPlotAndSettings(final Plot plot, final Runnable whenDone);
 
-    void createCluster(PlotCluster cluster);
+    void createCluster(final PlotCluster cluster);
 
-    void resizeCluster(PlotCluster current, PlotClusterId resize);
+    void resizeCluster(final PlotCluster current, final PlotClusterId resize);
 
-    void movePlot(Plot originalPlot, Plot newPlot);
+    void movePlot(final Plot originalPlot, final Plot newPlot);
 
     /**
      * Replace a old uuid with a new one in the database<br>
@@ -338,8 +337,8 @@ public interface AbstractDB {
      * @param old
      * @param now
      */
-    void replaceUUID(UUID old, UUID now);
-    
+    void replaceUUID(final UUID old, final UUID now);
+
     /**
      * Don't fuck with this one, unless you enjoy it rough
      */

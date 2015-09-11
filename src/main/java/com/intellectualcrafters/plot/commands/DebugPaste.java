@@ -15,30 +15,37 @@ import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "debugpaste",
-        aliases = {"dp"},
-        usage = "/plot debugpaste",
-        description = "Upload settings.yml & latest.log to hastebin",
-        permission = "plots.debugpaste",
-        category = CommandCategory.DEBUG
-)
-public class DebugPaste extends SubCommand {
+command = "debugpaste",
+aliases = { "dp" },
+usage = "/plot debugpaste",
+description = "Upload settings.yml & latest.log to hastebin",
+permission = "plots.debugpaste",
+category = CommandCategory.DEBUG)
+public class DebugPaste extends SubCommand
+{
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
-        TaskManager.runTaskAsync(new Runnable() {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
+        TaskManager.runTaskAsync(new Runnable()
+        {
             @Override
-            public void run() {
-                try {
-                    String settingsYML = HastebinUtility.upload(PS.get().configFile);
+            public void run()
+            {
+                try
+                {
+                    final String settingsYML = HastebinUtility.upload(PS.get().configFile);
                     String latestLOG;
-                    try {
+                    try
+                    {
                         latestLOG = HastebinUtility.upload(new File(BukkitMain.THIS.getDirectory(), "../../logs/latest.log"));
-                    } catch(final Exception e) {
+                    }
+                    catch (final Exception e)
+                    {
                         plr.sendMessage("&clatest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }
-                    StringBuilder b = new StringBuilder();
+                    final StringBuilder b = new StringBuilder();
                     b.append("# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your problem\n\n# We will start with some informational files\n");
                     b.append("links.settings_yml: '").append(settingsYML).append("'\n");
                     b.append("links.latest_log: '").append(latestLOG).append("'\n");
@@ -47,11 +54,12 @@ public class DebugPaste extends SubCommand {
                     b.append("version.bukkit: '").append(Bukkit.getBukkitVersion()).append("'\n");
                     b.append("online_mode: ").append(Bukkit.getServer().getOnlineMode()).append("\n");
                     b.append("plugins:");
-                    for (final Plugin p : Bukkit.getPluginManager().getPlugins()) {
+                    for (final Plugin p : Bukkit.getPluginManager().getPlugins())
+                    {
                         b.append("\n  ").append(p.getName()).append(":\n    ").append("version: '").append(p.getDescription().getVersion()).append("'").append("\n    enabled: ").append(p.isEnabled());
                     }
                     b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
-                    Runtime runtime = Runtime.getRuntime();
+                    final Runtime runtime = Runtime.getRuntime();
                     b.append("memory.free: ").append(runtime.freeMemory()).append("\n");
                     b.append("memory.max: ").append(runtime.maxMemory()).append("\n");
                     b.append("java.specification.version: '").append(System.getProperty("java.specification.version")).append("'\n");
@@ -63,9 +71,11 @@ public class DebugPaste extends SubCommand {
                     b.append("# Okay :D Great. You are now ready to create your bug report!");
                     b.append("\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
 
-                    String link = HastebinUtility.upload(b.toString());
+                    final String link = HastebinUtility.upload(b.toString());
                     plr.sendMessage(C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
-                } catch (IOException e) {
+                }
+                catch (final IOException e)
+                {
                     e.printStackTrace();
                 }
             }

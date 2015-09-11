@@ -3,53 +3,64 @@ package com.intellectualcrafters.plot.object;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.util.ChatManager;
 
-public class PlotMessage {
-    
-    private Object builder;
+public class PlotMessage
+{
 
-    public PlotMessage() {
-        this.builder = ChatManager.manager.builder();
+    private final Object builder;
+
+    public PlotMessage()
+    {
+        builder = ChatManager.manager.builder();
     }
-    
-    public <T> T $(ChatManager<T> manager) {
+
+    public <T> T $(final ChatManager<T> manager)
+    {
         return (T) builder;
     }
-    
-    public PlotMessage(String text) {
+
+    public PlotMessage(final String text)
+    {
         this();
         text(text);
     }
-    
-    public PlotMessage text(String text) {
+
+    public PlotMessage text(final String text)
+    {
         ChatManager.manager.text(this, text);
         return this;
     }
-    
-    public PlotMessage tooltip(PlotMessage... tooltip) {
+
+    public PlotMessage tooltip(final PlotMessage... tooltip)
+    {
         ChatManager.manager.tooltip(this, tooltip);
         return this;
     }
-    
-    public PlotMessage tooltip(String tooltip) {
+
+    public PlotMessage tooltip(final String tooltip)
+    {
         return tooltip(new PlotMessage(tooltip));
     }
-    
-    public PlotMessage command(String command) {
+
+    public PlotMessage command(final String command)
+    {
         ChatManager.manager.command(this, command);
         return this;
     }
-    
-    public PlotMessage suggest(String command) {
+
+    public PlotMessage suggest(final String command)
+    {
         ChatManager.manager.suggest(this, command);
         return this;
     }
-    
-    public PlotMessage color(String color) {
+
+    public PlotMessage color(final String color)
+    {
         ChatManager.manager.color(this, C.color(color));
         return this;
     }
-    
-    public void send(PlotPlayer player) {
+
+    public void send(final PlotPlayer player)
+    {
         ChatManager.manager.send(this, player);
     }
 }

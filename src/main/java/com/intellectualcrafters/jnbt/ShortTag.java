@@ -23,7 +23,8 @@ package com.intellectualcrafters.jnbt;
 /**
  * The {@code TAG_Short} tag.
  */
-public final class ShortTag extends Tag {
+public final class ShortTag extends Tag
+{
     private final short value;
 
     /**
@@ -31,7 +32,8 @@ public final class ShortTag extends Tag {
      *
      * @param value the value of the tag
      */
-    public ShortTag(final short value) {
+    public ShortTag(final short value)
+    {
         super();
         this.value = value;
     }
@@ -42,23 +44,27 @@ public final class ShortTag extends Tag {
      * @param name  the name of the tag
      * @param value the value of the tag
      */
-    public ShortTag(final String name, final short value) {
+    public ShortTag(final String name, final short value)
+    {
         super(name);
         this.value = value;
     }
 
     @Override
-    public Short getValue() {
-        return this.value;
+    public Short getValue()
+    {
+        return value;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         final String name = getName();
         String append = "";
-        if ((name != null) && !name.equals("")) {
-            append = "(\"" + this.getName() + "\")";
+        if ((name != null) && !name.equals(""))
+        {
+            append = "(\"" + getName() + "\")";
         }
-        return "TAG_Short" + append + ": " + this.value;
+        return "TAG_Short" + append + ": " + value;
     }
 }

@@ -41,13 +41,13 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
  * The default generator is very messy, as we have decided to try externalize all calculations from within the loop. -
  * You will see a lot of slower implementations have a single for loop. - This is perfectly fine to do, it will just
  * mean world generation may take somewhat longer
- *
- * @author Citymonstret
- * @author Empire92
+ *
  */
-public class HybridGen extends BukkitPlotGenerator {
-    
-    public HybridGen(String world) {
+public class HybridGen extends BukkitPlotGenerator
+{
+
+    public HybridGen(final String world)
+    {
         super(world);
     }
 
@@ -83,64 +83,85 @@ public class HybridGen extends BukkitPlotGenerator {
     /**
      * Initialize variables, and create plotworld object used in calculations
      */
-    public void init(PlotWorld plotworld) {
-        if (plotworld != null) {
+    @Override
+    public void init(final PlotWorld plotworld)
+    {
+        if (plotworld != null)
+        {
             this.plotworld = (HybridPlotWorld) plotworld;
         }
-        this.plotsize = this.plotworld.PLOT_WIDTH;
-        this.pathsize = this.plotworld.ROAD_WIDTH;
-        this.roadblock = this.plotworld.ROAD_BLOCK.id;
-        this.wallfilling = this.plotworld.WALL_FILLING.id;
-        this.size = this.pathsize + this.plotsize;
-        this.wall = this.plotworld.WALL_BLOCK.id;
-        this.plotfloors = new short[this.plotworld.TOP_BLOCK.length];
-        for (int i = 0; i < this.plotworld.TOP_BLOCK.length; i++) {
-            this.plotfloors[i] = this.plotworld.TOP_BLOCK[i].id;
+        plotsize = this.plotworld.PLOT_WIDTH;
+        pathsize = this.plotworld.ROAD_WIDTH;
+        roadblock = this.plotworld.ROAD_BLOCK.id;
+        wallfilling = this.plotworld.WALL_FILLING.id;
+        size = pathsize + plotsize;
+        wall = this.plotworld.WALL_BLOCK.id;
+        plotfloors = new short[this.plotworld.TOP_BLOCK.length];
+        for (int i = 0; i < this.plotworld.TOP_BLOCK.length; i++)
+        {
+            plotfloors[i] = this.plotworld.TOP_BLOCK[i].id;
         }
-        this.filling = new short[this.plotworld.MAIN_BLOCK.length];
-        for (int i = 0; i < this.plotworld.MAIN_BLOCK.length; i++) {
-            this.filling[i] = this.plotworld.MAIN_BLOCK[i].id;
+        filling = new short[this.plotworld.MAIN_BLOCK.length];
+        for (int i = 0; i < this.plotworld.MAIN_BLOCK.length; i++)
+        {
+            filling[i] = this.plotworld.MAIN_BLOCK[i].id;
         }
-        if ((this.filling.length > 1) || (this.plotfloors.length > 1)) {
-            this.doState = true;
+        if ((filling.length > 1) || (plotfloors.length > 1))
+        {
+            doState = true;
         }
-        this.wallheight = this.plotworld.WALL_HEIGHT;
-        this.roadheight = this.plotworld.ROAD_HEIGHT;
-        this.plotheight = this.plotworld.PLOT_HEIGHT;
-        if (this.pathsize == 0) {
-            this.pathWidthLower = (short) -1;
-            this.pathWidthUpper = (short) (this.plotsize + 1);
+        wallheight = this.plotworld.WALL_HEIGHT;
+        roadheight = this.plotworld.ROAD_HEIGHT;
+        plotheight = this.plotworld.PLOT_HEIGHT;
+        if (pathsize == 0)
+        {
+            pathWidthLower = (short) -1;
+            pathWidthUpper = (short) (plotsize + 1);
         }
-        else {
-            if ((this.pathsize % 2) == 0) {
-                this.pathWidthLower = (short) (Math.floor(this.pathsize / 2) - 1);
-            } else {
-                this.pathWidthLower = (short) (Math.floor(this.pathsize / 2));
+        else
+        {
+            if ((pathsize % 2) == 0)
+            {
+                pathWidthLower = (short) (Math.floor(pathsize / 2) - 1);
             }
-            this.pathWidthUpper = (short) (this.pathWidthLower + this.plotsize + 1);
+            else
+            {
+                pathWidthLower = (short) (Math.floor(pathsize / 2));
+            }
+            pathWidthUpper = (short) (pathWidthLower + plotsize + 1);
         }
-        this.biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
-        try {
-            this.maxY = Bukkit.getWorld(plotworld.worldname).getMaxHeight();
-        } catch (final NullPointerException e) {}
-        if (this.maxY == 0) {
-            this.maxY = 256;
+        biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
+        try
+        {
+            maxY = Bukkit.getWorld(plotworld.worldname).getMaxHeight();
         }
-        
+        catch (final NullPointerException e)
+        {}
+        if (maxY == 0)
+        {
+            maxY = 256;
+        }
+
         // create cached chunk (for optimized chunk generation)
-        if (!this.plotworld.PLOT_SCHEMATIC) {
-            this.cached = new short[(plotheight + 16) / 16][];
-            for (int i = 0; i < cached.length; i++) {
+        if (!this.plotworld.PLOT_SCHEMATIC)
+        {
+            cached = new short[(plotheight + 16) / 16][];
+            for (int i = 0; i < cached.length; i++)
+            {
                 cached[i] = new short[4096];
             }
-            PseudoRandom random = new PseudoRandom();
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
+            final PseudoRandom random = new PseudoRandom();
+            for (int x = 0; x < 16; x++)
+            {
+                for (int z = 0; z < 16; z++)
+                {
                     cached[CACHE_I[plotheight][x][z]][CACHE_J[plotheight][x][z]] = plotfloors[random.random(plotfloors.length)];
-                    if (this.plotworld.PLOT_BEDROCK) {
+                    if (this.plotworld.PLOT_BEDROCK)
+                    {
                         cached[CACHE_I[0][x][z]][CACHE_J[0][x][z]] = 7;
                     }
-                    for (int y = 1; y < plotheight; y++) {
+                    for (int y = 1; y < plotheight; y++)
+                    {
                         cached[CACHE_I[y][x][z]][CACHE_J[y][x][z]] = filling[random.random(filling.length)];
                     }
                 }
@@ -152,8 +173,11 @@ public class HybridGen extends BukkitPlotGenerator {
      * Return the plot manager for this type of generator, or create one For square plots you may as well use the
      * default plot manager which comes with PlotSquared
      */
-    public PlotManager getPlotManager() {
-        if (HybridGen.manager == null) {
+    @Override
+    public PlotManager getPlotManager()
+    {
+        if (HybridGen.manager == null)
+        {
             HybridGen.manager = new HybridPlotManager();
         }
         return HybridGen.manager;
@@ -162,74 +186,97 @@ public class HybridGen extends BukkitPlotGenerator {
     /**
      * Get a new plotworld class For square plots you can use the DefaultPlotWorld class which comes with PlotSquared
      */
-    public PlotWorld getNewPlotWorld(final String world) {
-        if (this.plotworld == null) {
-            this.plotworld = new HybridPlotWorld(world); 
+    @Override
+    public PlotWorld getNewPlotWorld(final String world)
+    {
+        if (plotworld == null)
+        {
+            plotworld = new HybridPlotWorld(world);
         }
-        return this.plotworld;
+        return plotworld;
     }
 
     /**
      * Return the block populator
      */
-    public List<BukkitPlotPopulator> getPopulators(final String world) {
+    @Override
+    public List<BukkitPlotPopulator> getPopulators(final String world)
+    {
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator
-        return Arrays.asList((BukkitPlotPopulator) new HybridPop(this.plotworld));
+        return Arrays.asList((BukkitPlotPopulator) new HybridPop(plotworld));
     }
-
 
     /**
      * This part is a fucking mess. - Refer to a proper tutorial if you would like to learn how to make a world
      * generator
      */
-    public void generateChunk(final World world, RegionWrapper region, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes) {
-        int sx = (short) ((this.X - this.plotworld.ROAD_OFFSET_X) % this.size);
-        int sz = (short) ((this.Z - this.plotworld.ROAD_OFFSET_Z) % this.size);
-        if (sx < 0) {
-            sx += this.size;
+    @Override
+    public void generateChunk(final World world, final RegionWrapper region, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes)
+    {
+        int sx = (short) ((X - plotworld.ROAD_OFFSET_X) % size);
+        int sz = (short) ((Z - plotworld.ROAD_OFFSET_Z) % size);
+        if (sx < 0)
+        {
+            sx += size;
         }
-        if (sz < 0) {
-            sz += this.size;
+        if (sz < 0)
+        {
+            sz += size;
         }
-        
-        if (biomes != null) {
-            for (short x = 0; x < 16; x++) {
-                for (short z = 0; z < 16; z++) {
-                    biomes.setBiome(x, z, this.biome);
+
+        if (biomes != null)
+        {
+            for (short x = 0; x < 16; x++)
+            {
+                for (short z = 0; z < 16; z++)
+                {
+                    biomes.setBiome(x, z, biome);
                 }
             }
         }
 
-        if (cached != null) {
-            if (sx > pathWidthLower && sz > pathWidthLower && sx + 15 < pathWidthUpper&& sz + 15 < pathWidthUpper) {
+        if (cached != null)
+        {
+            if ((sx > pathWidthLower) && (sz > pathWidthLower) && ((sx + 15) < pathWidthUpper) && ((sz + 15) < pathWidthUpper))
+            {
                 setResult(cached);
                 return;
             }
         }
-        
-        if (this.plotworld.PLOT_BEDROCK) {
-            for (short x = 0; x < 16; x++) {
-                for (short z = 0; z < 16; z++) {
+
+        if (plotworld.PLOT_BEDROCK)
+        {
+            for (short x = 0; x < 16; x++)
+            {
+                for (short z = 0; z < 16; z++)
+                {
                     setBlock(x, 0, z, (short) 7);
                 }
             }
         }
-        if (region != null) {
-            for (short x = 0; x < 16; x++) {
-                final int absX = ((sx + x) % this.size);
-                for (short z = 0; z < 16; z++) {
-                    if (contains(region, x, z)) {
-                        for (short y = 1; y < this.plotheight; y++) {
-                            setBlock(x, y, z, this.filling);
+        if (region != null)
+        {
+            for (short x = 0; x < 16; x++)
+            {
+                final int absX = ((sx + x) % size);
+                for (short z = 0; z < 16; z++)
+                {
+                    if (contains(region, x, z))
+                    {
+                        for (short y = 1; y < plotheight; y++)
+                        {
+                            setBlock(x, y, z, filling);
                         }
-                        setBlock(x, this.plotheight, z, this.plotfloors);
-                        final int absZ = ((sz + z) % this.size);
+                        setBlock(x, plotheight, z, plotfloors);
+                        final int absZ = ((sz + z) % size);
                         final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
-                        if (blocks != null) {
-                            for (final Entry<Short, Short> entry : blocks.entrySet()) {
-                                setBlock(x, this.plotheight + entry.getKey(), z, entry.getValue());
+                        if (blocks != null)
+                        {
+                            for (final Entry<Short, Short> entry : blocks.entrySet())
+                            {
+                                setBlock(x, plotheight + entry.getKey(), z, entry.getValue());
                             }
                         }
                     }
@@ -237,52 +284,69 @@ public class HybridGen extends BukkitPlotGenerator {
             }
             return;
         }
-        
-        for (short x = 0; x < 16; x++) {
-            final int absX = ((sx + x) % this.size);
-            final boolean gx = absX > this.pathWidthLower;
-            final boolean lx = absX < this.pathWidthUpper;
-            for (short z = 0; z < 16; z++) {
-                final int absZ = ((sz + z) % this.size);
-                final boolean gz = absZ > this.pathWidthLower;
-                final boolean lz = absZ < this.pathWidthUpper;
+
+        for (short x = 0; x < 16; x++)
+        {
+            final int absX = ((sx + x) % size);
+            final boolean gx = absX > pathWidthLower;
+            final boolean lx = absX < pathWidthUpper;
+            for (short z = 0; z < 16; z++)
+            {
+                final int absZ = ((sz + z) % size);
+                final boolean gz = absZ > pathWidthLower;
+                final boolean lz = absZ < pathWidthUpper;
                 // inside plot
-                if (gx && gz && lx && lz) {
-                    for (short y = 1; y < this.plotheight; y++) {
-                        setBlock(x, y, z, this.filling);
+                if (gx && gz && lx && lz)
+                {
+                    for (short y = 1; y < plotheight; y++)
+                    {
+                        setBlock(x, y, z, filling);
                     }
-                    setBlock(x, this.plotheight, z, this.plotfloors);
-                    if (this.plotworld.PLOT_SCHEMATIC) {
+                    setBlock(x, plotheight, z, plotfloors);
+                    if (plotworld.PLOT_SCHEMATIC)
+                    {
                         final PlotLoc loc = new PlotLoc(absX, absZ);
-                        final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
-                        if (blocks != null) {
-                            for (final Entry<Short, Short> entry : blocks.entrySet()) {
-                                setBlock(x, this.plotheight + entry.getKey(), z, entry.getValue());
+                        final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
+                        if (blocks != null)
+                        {
+                            for (final Entry<Short, Short> entry : blocks.entrySet())
+                            {
+                                setBlock(x, plotheight + entry.getKey(), z, entry.getValue());
                             }
                         }
                     }
-                } else if (pathsize != 0) {
+                }
+                else if (pathsize != 0)
+                {
                     // wall
-                    if (((absX >= this.pathWidthLower) && (absX <= this.pathWidthUpper) && (absZ >= this.pathWidthLower) && (absZ <= this.pathWidthUpper))) {
-                        for (short y = 1; y <= this.wallheight; y++) {
-                            setBlock(x, y, z, this.wallfilling);
+                    if (((absX >= pathWidthLower) && (absX <= pathWidthUpper) && (absZ >= pathWidthLower) && (absZ <= pathWidthUpper)))
+                    {
+                        for (short y = 1; y <= wallheight; y++)
+                        {
+                            setBlock(x, y, z, wallfilling);
                         }
-                        if (!this.plotworld.ROAD_SCHEMATIC_ENABLED) {
-                            setBlock(x, this.wallheight + 1, z, this.wall);
+                        if (!plotworld.ROAD_SCHEMATIC_ENABLED)
+                        {
+                            setBlock(x, wallheight + 1, z, wall);
                         }
                     }
                     // road
-                    else {
-                        for (short y = 1; y <= this.roadheight; y++) {
-                            setBlock(x, y, z, this.roadblock);
+                    else
+                    {
+                        for (short y = 1; y <= roadheight; y++)
+                        {
+                            setBlock(x, y, z, roadblock);
                         }
                     }
-                    if (this.plotworld.ROAD_SCHEMATIC_ENABLED) {
+                    if (plotworld.ROAD_SCHEMATIC_ENABLED)
+                    {
                         final PlotLoc loc = new PlotLoc(absX, absZ);
-                        final HashMap<Short, Short> blocks = this.plotworld.G_SCH.get(loc);
-                        if (blocks != null) {
-                            for (final Entry<Short, Short> entry : blocks.entrySet()) {
-                                setBlock(x, this.roadheight + entry.getKey(), z, entry.getValue());
+                        final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
+                        if (blocks != null)
+                        {
+                            for (final Entry<Short, Short> entry : blocks.entrySet())
+                            {
+                                setBlock(x, roadheight + entry.getKey(), z, entry.getValue());
                             }
                         }
                     }

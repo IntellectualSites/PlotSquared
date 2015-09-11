@@ -30,10 +30,10 @@ import org.bukkit.event.HandlerList;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 
-/**
- * @author Empire92
+/**
  */
-public class PlotMergeEvent extends Event implements Cancellable {
+public class PlotMergeEvent extends Event implements Cancellable
+{
     private static HandlerList handlers = new HandlerList();
     private final ArrayList<PlotId> plots;
     private boolean cancelled;
@@ -47,11 +47,13 @@ public class PlotMergeEvent extends Event implements Cancellable {
      * @param plot  Plot that was merged
      * @param plots A list of plots involved in the event
      */
-    public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots) {
+    public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots)
+    {
         this.plots = plots;
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList()
+    {
         return handlers;
     }
 
@@ -60,8 +62,9 @@ public class PlotMergeEvent extends Event implements Cancellable {
      *
      * @return Plot
      */
-    public ArrayList<PlotId> getPlots() {
-        return this.plots;
+    public ArrayList<PlotId> getPlots()
+    {
+        return plots;
     }
 
     /**
@@ -69,26 +72,31 @@ public class PlotMergeEvent extends Event implements Cancellable {
      *
      * @return Plot
      */
-    public Plot getPlot() {
-        return this.plot;
+    public Plot getPlot()
+    {
+        return plot;
     }
 
-    public World getWorld() {
-        return this.world;
+    public World getWorld()
+    {
+        return world;
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
         return handlers;
     }
 
     @Override
-    public boolean isCancelled() {
-        return this.cancelled;
+    public boolean isCancelled()
+    {
+        return cancelled;
     }
 
     @Override
-    public void setCancelled(final boolean b) {
-        this.cancelled = b;
+    public void setCancelled(final boolean b)
+    {
+        cancelled = b;
     }
 }

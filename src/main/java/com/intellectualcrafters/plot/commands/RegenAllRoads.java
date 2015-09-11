@@ -35,30 +35,35 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-        command = "regenallroads",
-        description = "Regenerate all roads in the map using the set road schematic",
-        aliases = {"rgar"},
-        usage = "/plot regenallroads <world>",
-        category = CommandCategory.DEBUG,
-        requiredType = RequiredType.CONSOLE,
-        permission = "plots.regenallroads"
-)
-public class RegenAllRoads extends SubCommand {
+command = "regenallroads",
+description = "Regenerate all roads in the map using the set road schematic",
+aliases = { "rgar" },
+usage = "/plot regenallroads <world>",
+category = CommandCategory.DEBUG,
+requiredType = RequiredType.CONSOLE,
+permission = "plots.regenallroads")
+public class RegenAllRoads extends SubCommand
+{
 
-    public RegenAllRoads() {
+    public RegenAllRoads()
+    {
         requiredArguments = new Argument[] {
-                Argument.String
+        Argument.String
         };
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args)
+    {
         int height = 0;
-        if (args.length == 2) {
-            try {
+        if (args.length == 2)
+        {
+            try
+            {
                 height = Integer.parseInt(args[1]);
             }
-            catch (NumberFormatException e) {
+            catch (final NumberFormatException e)
+            {
                 MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(0, 256)");
                 MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
                 return false;
@@ -66,7 +71,8 @@ public class RegenAllRoads extends SubCommand {
         }
         final String name = args[0];
         final PlotManager manager = PS.get().getPlotManager(name);
-        if ((manager == null) || !(manager instanceof HybridPlotManager)) {
+        if ((manager == null) || !(manager instanceof HybridPlotManager))
+        {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
@@ -76,7 +82,8 @@ public class RegenAllRoads extends SubCommand {
         MainUtil.sendMessage(plr, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
         MainUtil.sendMessage(plr, "&6Estimated time: &7" + (chunks.size()) + " seconds");
         final boolean result = HybridUtils.manager.scheduleRoadUpdate(name, height);
-        if (!result) {
+        if (!result)
+        {
             MainUtil.sendMessage(plr, "&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;
         }

@@ -6,12 +6,13 @@ import org.spongepowered.api.entity.player.Player;
 
 import com.intellectualcrafters.plot.object.Plot;
 
-public class PlayerPlotDeniedEvent extends PlotEvent {
+public class PlayerPlotDeniedEvent extends PlotEvent
+{
 
     private final Player initiator;
     private final boolean added;
     private final UUID player;
-    
+
     /**
      * PlayerPlotDeniedEvent: Called when the denied UUID list is modified for a plot
      *
@@ -20,20 +21,22 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
      * @param player    Player that was denied/un-denied
      * @param added     true of add to deny list, false if removed
      */
-    public PlayerPlotDeniedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added) {
+    public PlayerPlotDeniedEvent(final Player initiator, final Plot plot, final UUID player, final boolean added)
+    {
         super(plot);
         this.initiator = initiator;
         this.added = added;
         this.player = player;
     }
-    
+
     /**
      * If a user was added
      *
      * @return boolean
      */
-    public boolean wasAdded() {
-        return this.added;
+    public boolean wasAdded()
+    {
+        return added;
     }
 
     /**
@@ -41,8 +44,9 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
      *
      * @return UUID
      */
-    public UUID getPlayer() {
-        return this.player;
+    public UUID getPlayer()
+    {
+        return player;
     }
 
     /**
@@ -50,7 +54,8 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
      *
      * @return Player
      */
-    public Player getInitiator() {
-        return this.initiator;
+    public Player getInitiator()
+    {
+        return initiator;
     }
- }
+}

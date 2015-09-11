@@ -5,7 +5,8 @@ import java.util.Collection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-public class LivingEntityStats {
+public class LivingEntityStats
+{
     public boolean loot;
     public String name;
     public boolean visible;
