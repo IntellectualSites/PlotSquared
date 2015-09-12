@@ -66,6 +66,9 @@ public class MainUtil
     public static short[][] y_loc;
     public static short[][] z_loc;
 
+    /**
+     * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
+     */
     public static void initCache()
     {
         if (x_loc == null)
@@ -602,7 +605,7 @@ public class MainUtil
                     }
                     TaskManager.TELEPORT_QUEUE.remove(name);
                     if (!player.isOnline()) {
-                    return;
+                        return;
                     }
                     sendMessage(player, C.TELEPORTED_TO_PLOT);
                     player.teleport(location);
@@ -655,21 +658,21 @@ public class MainUtil
         final Location top = getPlotTopLoc(plot.world, plot.id);
 
         final int bx = bot.getX() >> 4;
-        final int bz = bot.getZ() >> 4;
+            final int bz = bot.getZ() >> 4;
 
-        final int tx = (top.getX() >> 4);
-        final int tz = (top.getZ() >> 4);
+                    final int tx = (top.getX() >> 4);
+                    final int tz = (top.getZ() >> 4);
 
-        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
+                    final ArrayList<ChunkLoc> chunks = new ArrayList<>();
 
-        for (int x = bx; x <= tx; x++)
-        {
-            for (int z = bz; z <= tz; z++)
-            {
-                chunks.add(new ChunkLoc(x, z));
-            }
-        }
-        BlockUpdateUtil.setBlockManager.update(plot.world, chunks);
+                    for (int x = bx; x <= tx; x++)
+                    {
+                        for (int z = bz; z <= tz; z++)
+                        {
+                            chunks.add(new ChunkLoc(x, z));
+                        }
+                    }
+                    BlockUpdateUtil.setBlockManager.update(plot.world, chunks);
     }
 
     public static void createWorld(final String world, final String generator)

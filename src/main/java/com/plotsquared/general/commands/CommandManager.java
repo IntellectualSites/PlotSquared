@@ -79,13 +79,13 @@ public class CommandManager<T extends CommandCaller>
             public int compare(final Command<T> a, final Command<T> b)
             {
                 if (a == b) {
-                return 0;
+                    return 0;
                 }
                 if (a == null) {
-                return -1;
+                    return -1;
                 }
                 if (b == null) {
-                return 1;
+                    return 1;
                 }
                 return a.getCommand().compareTo(b.getCommand());
             }

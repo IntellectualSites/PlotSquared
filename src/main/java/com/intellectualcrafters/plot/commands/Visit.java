@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -114,6 +115,14 @@ public class Visit extends SubCommand
         }
 
         final Plot plot = plots.get(index);
+        final Iterator<Plot> iter = plots.iterator();
+        while (iter.hasNext())
+        {
+            if (!iter.next().isBasePlot())
+            {
+                iter.remove();
+            }
+        }
         if (!plot.hasOwner())
         {
             if (!Permissions.hasPermission(plr, "plots.visit.unowned"))

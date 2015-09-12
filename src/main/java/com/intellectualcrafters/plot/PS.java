@@ -879,7 +879,7 @@ public class PS
                             return -1;
                         }
                         else if (b.getTimestamp() > a.getTimestamp()) {
-                        return 1;
+                            return 1;
                         }
                         return 0;
                     }
@@ -970,7 +970,7 @@ public class PS
                             return -1;
                         }
                         else if (b.getTimestamp() > a.getTimestamp()) {
-                        return 1;
+                            return 1;
                         }
                         return 0;
                     }
@@ -1003,7 +1003,7 @@ public class PS
                         return -1;
                     }
                     else if (b.getTimestamp() > a.getTimestamp()) {
-                    return 1;
+                        return 1;
                     }
                     return 0;
                 }
@@ -1150,7 +1150,7 @@ public class PS
             public int compare(final String a, final String b)
             {
                 if ((priorityWorld != null) && StringMan.isEqual(a, priorityWorld)) {
-                return -1;
+                    return -1;
                 }
                 return a.hashCode() - b.hashCode();
             }

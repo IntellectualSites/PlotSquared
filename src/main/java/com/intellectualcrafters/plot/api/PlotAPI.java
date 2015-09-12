@@ -89,9 +89,9 @@ public class PlotAPI
      * @deprecated Use this class if you just want to do a few simple things.<br>
      *  - It will remain stable for future versions of the plugin
      *  - The PlotPlayer and Plot class should be considered relatively safe
-     *  - For more advanced/intensive tasks you should consider using other classes 
-     * 
-     * 
+     *  - For more advanced/intensive tasks you should consider using other classes
+     *
+     *
      */
     @Deprecated
     public PlotAPI()

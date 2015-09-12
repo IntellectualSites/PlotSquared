@@ -119,7 +119,7 @@ public class MainListener
             public boolean apply(final org.spongepowered.api.world.Location<World> loc)
             {
                 if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(loc)))) {
-                return false;
+                    return false;
                 }
                 return true;
             }
@@ -323,7 +323,7 @@ public class MainListener
                 public boolean apply(final org.spongepowered.api.world.Location loc)
                 {
                     if (MainUtil.isPlotRoad(SpongeUtil.getLocation(worldname, loc))) {
-                    return false;
+                        return false;
                     }
                     return true;
                 }
@@ -427,7 +427,7 @@ public class MainListener
                     public boolean apply(final org.spongepowered.api.world.Location loc)
                     {
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(loc)))) {
-                        return false;
+                            return false;
                         }
                         return true;
                     }
@@ -438,7 +438,7 @@ public class MainListener
                     public boolean apply(final Entity entity)
                     {
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(entity)))) {
-                        return false;
+                            return false;
                         }
                         return true;
                     }
@@ -457,7 +457,7 @@ public class MainListener
                 public boolean apply(final Entity entity)
                 {
                     if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(entity)))) {
-                    return false;
+                        return false;
                     }
                     return true;
                 }
@@ -474,7 +474,7 @@ public class MainListener
                     public boolean apply(final org.spongepowered.api.world.Location loc)
                     {
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(loc)))) {
-                        return false;
+                            return false;
                         }
                         return true;
                     }
@@ -485,7 +485,7 @@ public class MainListener
                     public boolean apply(final Entity entity)
                     {
                         if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(entity)))) {
-                        return false;
+                            return false;
                         }
                         return true;
                     }

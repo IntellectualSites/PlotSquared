@@ -2289,9 +2289,9 @@ public class SQLManager implements AbstractDB
             public PreparedStatement get() throws SQLException
             {
                 if (plot != null) {
-                return connection.prepareStatement("DELETE FROM `"
-                + prefix
-                + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `comment` = ? AND `inbox` = ? AND `sender` = ?");
+                    return connection.prepareStatement("DELETE FROM `"
+                    + prefix
+                    + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `comment` = ? AND `inbox` = ? AND `sender` = ?");
                 }
                 return connection.prepareStatement("DELETE FROM `" + prefix + "plot_comments` WHERE `comment` = ? AND `inbox` = ? AND `sender` = ?");
             }
@@ -2322,7 +2322,7 @@ public class SQLManager implements AbstractDB
             public PreparedStatement get() throws SQLException
             {
                 if (plot != null) {
-                return connection.prepareStatement("DELETE FROM `" + prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `inbox` = ?");
+                    return connection.prepareStatement("DELETE FROM `" + prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `inbox` = ?");
                 }
                 return connection.prepareStatement("DELETE FROM `" + prefix + "plot_comments` `inbox` = ?");
             }
@@ -2353,7 +2353,7 @@ public class SQLManager implements AbstractDB
             public PreparedStatement get() throws SQLException
             {
                 if (plot != null) {
-                return connection.prepareStatement("SELECT * FROM `" + prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `inbox` = ?");
+                    return connection.prepareStatement("SELECT * FROM `" + prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ? AND `inbox` = ?");
                 }
                 return connection.prepareStatement("SELECT * FROM `" + prefix + "plot_comments` WHERE `inbox` = ?");
             }

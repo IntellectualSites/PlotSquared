@@ -315,181 +315,181 @@ public class BukkitChunkManager extends ChunkManager
         final int p2x = pos2.getX();
         final int p2z = pos2.getZ();
         final int bcx = p1x >> 4;
-        final int bcz = p1z >> 4;
-        final int tcx = p2x >> 4;
-        final int tcz = p2z >> 4;
+            final int bcz = p1z >> 4;
+                final int tcx = p2x >> 4;
+                final int tcz = p2z >> 4;
 
-        final boolean canRegen = ((plotworld.TYPE != 0) && (plotworld.TERRAIN == 0));
+                final boolean canRegen = ((plotworld.TYPE != 0) && (plotworld.TERRAIN == 0));
 
-        final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+                final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
 
-        for (int x = bcx; x <= tcx; x++)
-        {
-            for (int z = bcz; z <= tcz; z++)
-            {
-                chunks.add(new ChunkLoc(x, z));
-            }
-        }
-
-        AugmentedPopulator augpop = null;
-        final World worldObj = Bukkit.getWorld(world);
-        final List<BlockPopulator> populators = worldObj.getPopulators();
-        for (final BlockPopulator populator : populators)
-        {
-            if (populator instanceof AugmentedPopulator)
-            {
-                final AugmentedPopulator current = ((AugmentedPopulator) populator);
-                if (current.cluster == null)
+                for (int x = bcx; x <= tcx; x++)
                 {
-                    augpop = current;
-                    break;
-                }
-                else if (ClusterManager.contains(current.cluster, pos1))
-                {
-                    augpop = current;
-                    break;
-                }
-            }
-        }
-        final Random r = new Random(System.currentTimeMillis());
-        final AugmentedPopulator ap = augpop;
-        TaskManager.runTask(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                final long start = System.currentTimeMillis();
-                while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < 5))
-                {
-                    final ChunkLoc chunk = chunks.remove(0);
-                    final int x = chunk.x;
-                    final int z = chunk.z;
-                    final int xxb = x << 4;
-                    final int zzb = z << 4;
-                    final int xxt = xxb + 15;
-                    final int zzt = zzb + 15;
-                    CURRENT_PLOT_CLEAR = null;
-                    final Chunk chunkObj = worldObj.getChunkAt(x, z);
-                    if (!chunkObj.load(false))
+                    for (int z = bcz; z <= tcz; z++)
                     {
-                        continue;
+                        chunks.add(new ChunkLoc(x, z));
                     }
-                    CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-                    if ((xxb >= p1x) && (xxt <= p2x) && (zzb >= p1z) && (zzt <= p2z))
+                }
+
+                AugmentedPopulator augpop = null;
+                final World worldObj = Bukkit.getWorld(world);
+                final List<BlockPopulator> populators = worldObj.getPopulators();
+                for (final BlockPopulator populator : populators)
+                {
+                    if (populator instanceof AugmentedPopulator)
                     {
-                        if (canRegen && (ap != null))
+                        final AugmentedPopulator current = ((AugmentedPopulator) populator);
+                        if (current.cluster == null)
                         {
-                            ap.populate(worldObj, r, chunkObj);
+                            augpop = current;
+                            break;
+                        }
+                        else if (ClusterManager.contains(current.cluster, pos1))
+                        {
+                            augpop = current;
+                            break;
+                        }
+                    }
+                }
+                final Random r = new Random(System.currentTimeMillis());
+                final AugmentedPopulator ap = augpop;
+                TaskManager.runTask(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        final long start = System.currentTimeMillis();
+                        while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < 5))
+                        {
+                            final ChunkLoc chunk = chunks.remove(0);
+                            final int x = chunk.x;
+                            final int z = chunk.z;
+                            final int xxb = x << 4;
+                            final int zzb = z << 4;
+                            final int xxt = xxb + 15;
+                            final int zzt = zzb + 15;
+                            CURRENT_PLOT_CLEAR = null;
+                            final Chunk chunkObj = worldObj.getChunkAt(x, z);
+                            if (!chunkObj.load(false))
+                            {
+                                continue;
+                            }
+                            CURRENT_PLOT_CLEAR = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
+                            if ((xxb >= p1x) && (xxt <= p2x) && (zzb >= p1z) && (zzt <= p2z))
+                            {
+                                if (canRegen && (ap != null))
+                                {
+                                    ap.populate(worldObj, r, chunkObj);
+                                }
+                                else
+                                {
+                                    regenerateChunk(world, chunk);
+                                }
+                                continue;
+                            }
+                            boolean checkX1 = false;
+                            boolean checkX2 = false;
+                            boolean checkZ1 = false;
+                            boolean checkZ2 = false;
+
+                            int xxb2;
+                            int zzb2;
+                            int xxt2;
+                            int zzt2;
+
+                            if (x == bcx)
+                            {
+                                xxb2 = p1x - 1;
+                                checkX1 = true;
+                            }
+                            else
+                            {
+                                xxb2 = xxb;
+                            }
+                            if (x == tcx)
+                            {
+                                xxt2 = p2x + 1;
+                                checkX2 = true;
+                            }
+                            else
+                            {
+                                xxt2 = xxt;
+                            }
+                            if (z == bcz)
+                            {
+                                zzb2 = p1z - 1;
+                                checkZ1 = true;
+                            }
+                            else
+                            {
+                                zzb2 = zzb;
+                            }
+                            if (z == tcz)
+                            {
+                                zzt2 = p2z + 1;
+                                checkZ2 = true;
+                            }
+                            else
+                            {
+                                zzt2 = zzt;
+                            }
+                            initMaps();
+                            if (checkX1)
+                            {
+                                saveRegion(worldObj, xxb, xxb2, zzb2, zzt2); //
+                            }
+                            if (checkX2)
+                            {
+                                saveRegion(worldObj, xxt2, xxt, zzb2, zzt2); //
+                            }
+                            if (checkZ1)
+                            {
+                                saveRegion(worldObj, xxb2, xxt2, zzb, zzb2); //
+                            }
+                            if (checkZ2)
+                            {
+                                saveRegion(worldObj, xxb2, xxt2, zzt2, zzt); //
+                            }
+                            if (checkX1 && checkZ1)
+                            {
+                                saveRegion(worldObj, xxb, xxb2, zzb, zzb2); //
+                            }
+                            if (checkX2 && checkZ1)
+                            {
+                                saveRegion(worldObj, xxt2, xxt, zzb, zzb2); // ?
+                            }
+                            if (checkX1 && checkZ2)
+                            {
+                                saveRegion(worldObj, xxb, xxb2, zzt2, zzt); // ?
+                            }
+                            if (checkX2 && checkZ2)
+                            {
+                                saveRegion(worldObj, xxt2, xxt, zzt2, zzt); //
+                            }
+                            saveEntitiesOut(chunkObj, CURRENT_PLOT_CLEAR);
+                            if (canRegen && (ap != null))
+                            {
+                                ap.populate(worldObj, r, chunkObj);
+                            }
+                            else
+                            {
+                                regenerateChunk(world, chunk);
+                            }
+                            restoreBlocks(worldObj, 0, 0);
+                            restoreEntities(worldObj, 0, 0);
+                        }
+                        CURRENT_PLOT_CLEAR = null;
+                        if (chunks.size() != 0)
+                        {
+                            TaskManager.runTaskLater(this, 1);
                         }
                         else
                         {
-                            regenerateChunk(world, chunk);
+                            TaskManager.runTaskLater(whenDone, 1);
                         }
-                        continue;
                     }
-                    boolean checkX1 = false;
-                    boolean checkX2 = false;
-                    boolean checkZ1 = false;
-                    boolean checkZ2 = false;
-
-                    int xxb2;
-                    int zzb2;
-                    int xxt2;
-                    int zzt2;
-
-                    if (x == bcx)
-                    {
-                        xxb2 = p1x - 1;
-                        checkX1 = true;
-                    }
-                    else
-                    {
-                        xxb2 = xxb;
-                    }
-                    if (x == tcx)
-                    {
-                        xxt2 = p2x + 1;
-                        checkX2 = true;
-                    }
-                    else
-                    {
-                        xxt2 = xxt;
-                    }
-                    if (z == bcz)
-                    {
-                        zzb2 = p1z - 1;
-                        checkZ1 = true;
-                    }
-                    else
-                    {
-                        zzb2 = zzb;
-                    }
-                    if (z == tcz)
-                    {
-                        zzt2 = p2z + 1;
-                        checkZ2 = true;
-                    }
-                    else
-                    {
-                        zzt2 = zzt;
-                    }
-                    initMaps();
-                    if (checkX1)
-                    {
-                        saveRegion(worldObj, xxb, xxb2, zzb2, zzt2); //
-                    }
-                    if (checkX2)
-                    {
-                        saveRegion(worldObj, xxt2, xxt, zzb2, zzt2); //
-                    }
-                    if (checkZ1)
-                    {
-                        saveRegion(worldObj, xxb2, xxt2, zzb, zzb2); //
-                    }
-                    if (checkZ2)
-                    {
-                        saveRegion(worldObj, xxb2, xxt2, zzt2, zzt); //
-                    }
-                    if (checkX1 && checkZ1)
-                    {
-                        saveRegion(worldObj, xxb, xxb2, zzb, zzb2); //
-                    }
-                    if (checkX2 && checkZ1)
-                    {
-                        saveRegion(worldObj, xxt2, xxt, zzb, zzb2); // ?
-                    }
-                    if (checkX1 && checkZ2)
-                    {
-                        saveRegion(worldObj, xxb, xxb2, zzt2, zzt); // ?
-                    }
-                    if (checkX2 && checkZ2)
-                    {
-                        saveRegion(worldObj, xxt2, xxt, zzt2, zzt); //
-                    }
-                    saveEntitiesOut(chunkObj, CURRENT_PLOT_CLEAR);
-                    if (canRegen && (ap != null))
-                    {
-                        ap.populate(worldObj, r, chunkObj);
-                    }
-                    else
-                    {
-                        regenerateChunk(world, chunk);
-                    }
-                    restoreBlocks(worldObj, 0, 0);
-                    restoreEntities(worldObj, 0, 0);
-                }
-                CURRENT_PLOT_CLEAR = null;
-                if (chunks.size() != 0)
-                {
-                    TaskManager.runTaskLater(this, 1);
-                }
-                else
-                {
-                    TaskManager.runTaskLater(whenDone, 1);
-                }
-            }
-        });
-        return true;
+                });
+                return true;
     }
 
     public static void initMaps()
@@ -1293,91 +1293,91 @@ public class BukkitChunkManager extends ChunkManager
         final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
         final int bx = bot.getX() >> 4;
-        final int bz = bot.getZ() >> 4;
+                            final int bz = bot.getZ() >> 4;
 
-        final int tx = top.getX() >> 4;
-        final int tz = top.getZ() >> 4;
+                        final int tx = top.getX() >> 4;
+                        final int tz = top.getZ() >> 4;
 
-        final int size = (tx - bx) << 4;
+                        final int size = (tx - bx) << 4;
 
-        final HashSet<Chunk> chunks = new HashSet<>();
-        for (int X = bx; X <= tx; X++)
-        {
-            for (int Z = bz; Z <= tz; Z++)
-            {
-                chunks.add(world.getChunkAt(X, Z));
-            }
-        }
-
-        boolean doWhole = false;
-        List<Entity> entities = null;
-        if (size > 200)
-        {
-            entities = world.getEntities();
-            if (entities.size() < (16 + ((size * size) / 64)))
-            {
-                doWhole = true;
-            }
-        }
-
-        if (doWhole)
-        {
-            for (final Entity entity : entities)
-            {
-                if (!((entity instanceof Creature) || (entity instanceof Vehicle)))
-                {
-                    continue;
-                }
-                final org.bukkit.Location loc = entity.getLocation();
-                final Chunk chunk = loc.getChunk();
-                if (chunks.contains(chunk))
-                {
-                    final int X = chunk.getX();
-                    final int Z = chunk.getX();
-                    if ((X > bx) && (X < tx) && (Z > bz) && (Z < tz))
-                    {
-                        count(count, entity);
-                    }
-                    else
-                    {
-                        final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(loc));
-                        if (plot.id.equals(id))
+                        final HashSet<Chunk> chunks = new HashSet<>();
+                        for (int X = bx; X <= tx; X++)
                         {
-                            count(count, entity);
+                            for (int Z = bz; Z <= tz; Z++)
+                            {
+                                chunks.add(world.getChunkAt(X, Z));
+                            }
                         }
-                    }
-                }
-            }
-        }
-        else
-        {
-            for (final Chunk chunk : chunks)
-            {
-                final int X = chunk.getX();
-                final int Z = chunk.getX();
-                final Entity[] ents = chunk.getEntities();
-                for (final Entity entity : ents)
-                {
-                    if (!((entity instanceof Creature) || (entity instanceof Vehicle)))
-                    {
-                        continue;
-                    }
-                    if ((X == bx) || (X == tx) || (Z == bz) || (Z == tz))
-                    {
-                        final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
-                        if (plot.id.equals(id))
+
+                        boolean doWhole = false;
+                        List<Entity> entities = null;
+                        if (size > 200)
                         {
-                            count(count, entity);
+                            entities = world.getEntities();
+                            if (entities.size() < (16 + ((size * size) / 64)))
+                            {
+                                doWhole = true;
+                            }
                         }
-                    }
-                    else
-                    {
-                        count(count, entity);
-                    }
-                }
-            }
-        }
-        return count;
+
+                        if (doWhole)
+                        {
+                            for (final Entity entity : entities)
+                            {
+                                if (!((entity instanceof Creature) || (entity instanceof Vehicle)))
+                                {
+                                    continue;
+                                }
+                                final org.bukkit.Location loc = entity.getLocation();
+                                final Chunk chunk = loc.getChunk();
+                                if (chunks.contains(chunk))
+                                {
+                                    final int X = chunk.getX();
+                                    final int Z = chunk.getX();
+                                    if ((X > bx) && (X < tx) && (Z > bz) && (Z < tz))
+                                    {
+                                        count(count, entity);
+                                    }
+                                    else
+                                    {
+                                        final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(loc));
+                                        if (plot.id.equals(id))
+                                        {
+                                            count(count, entity);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (final Chunk chunk : chunks)
+                            {
+                                final int X = chunk.getX();
+                                final int Z = chunk.getX();
+                                final Entity[] ents = chunk.getEntities();
+                                for (final Entity entity : ents)
+                                {
+                                    if (!((entity instanceof Creature) || (entity instanceof Vehicle)))
+                                    {
+                                        continue;
+                                    }
+                                    if ((X == bx) || (X == tx) || (Z == bz) || (Z == tz))
+                                    {
+                                        final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
+                                        if (plot.id.equals(id))
+                                        {
+                                            count(count, entity);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        count(count, entity);
+                                    }
+                                }
+                            }
+                        }
+                        return count;
     }
 
     private void count(final int[] count, final Entity entity)

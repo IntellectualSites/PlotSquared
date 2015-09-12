@@ -21,6 +21,8 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -51,7 +53,16 @@ public class Home extends SubCommand
     @Override
     public boolean onCommand(final PlotPlayer plr, String[] args)
     {
-        final ArrayList<Plot> plots = PS.get().sortPlotsByTemp(PS.get().getPlots(plr));//PS.get().sortPlots(PS.get().getPlots(plr), SortType.CREATION_DATE, null);
+        final Set<Plot> all = PS.get().getPlots(plr);
+        final Iterator<Plot> iter = all.iterator();
+        while (iter.hasNext())
+        {
+            if (!iter.next().isBasePlot())
+            {
+                iter.remove();
+            }
+        }
+        final ArrayList<Plot> plots = PS.get().sortPlotsByTemp(all);
         if (plots.size() == 1)
         {
             MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(0));

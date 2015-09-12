@@ -99,7 +99,7 @@ public class SetBlockQueue
                 public void run()
                 {
                     if (locked) {
-                    return;
+                        return;
                     }
                     if ((blocks == null) || (blocks.size() == 0))
                     {
@@ -125,7 +125,7 @@ public class SetBlockQueue
                     while ((blocks.size() > 0) && ((System.currentTimeMillis() - last) < (50 + allocate)))
                     {
                         if (locked) {
-                        return;
+                            return;
                         }
                         final Iterator<Entry<ChunkWrapper, PlotBlock[][]>> iter = blocks.entrySet().iterator();
                         if (!iter.hasNext())
@@ -232,29 +232,29 @@ public class SetBlockQueue
             init();
         }
         final int X = x >> 4;
-        final int Z = z >> 4;
-        x -= X << 4;
-        z -= Z << 4;
+                                final int Z = z >> 4;
+                            x -= X << 4;
+                            z -= Z << 4;
 
-        final ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
-        PlotBlock[][] result;
-        result = blocks.get(wrap);
-        if (!blocks.containsKey(wrap))
-        {
-            result = new PlotBlock[16][];
-            blocks.put(wrap, result);
-        }
-        if ((y > 255) || (y < 0))
-        {
-            locked = false;
-            return;
-        }
-        if (result[y >> 4] == null)
-        {
-            result[y >> 4] = new PlotBlock[4096];
-        }
-        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = block;
-        locked = false;
+                            final ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
+                            PlotBlock[][] result;
+                            result = blocks.get(wrap);
+                            if (!blocks.containsKey(wrap))
+                            {
+                                result = new PlotBlock[16][];
+                                blocks.put(wrap, result);
+                            }
+                            if ((y > 255) || (y < 0))
+                            {
+                                locked = false;
+                                return;
+                            }
+                            if (result[y >> 4] == null)
+                            {
+                                result[y >> 4] = new PlotBlock[4096];
+                            }
+                            result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = block;
+                            locked = false;
     }
 
     public static void setData(final String world, int x, final int y, int z, final byte data)
@@ -265,32 +265,32 @@ public class SetBlockQueue
             init();
         }
         final int X = x >> 4;
-        final int Z = z >> 4;
-        x -= X << 4;
-        z -= Z << 4;
-        final ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
-        PlotBlock[][] result;
-        result = blocks.get(wrap);
-        if (result == null)
-        {
-            if (blocks == null)
-            {
-                init();
-            }
-            result = new PlotBlock[16][];
-            blocks.put(wrap, result);
-        }
-        if ((y > 255) || (y < 0))
-        {
-            locked = false;
-            return;
-        }
-        if (result[y >> 4] == null)
-        {
-            result[y >> 4] = new PlotBlock[4096];
-        }
-        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = new PlotBlock((short) -1, data);
-        locked = false;
+                            final int Z = z >> 4;
+                            x -= X << 4;
+                            z -= Z << 4;
+                            final ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
+                            PlotBlock[][] result;
+                            result = blocks.get(wrap);
+                            if (result == null)
+                            {
+                                if (blocks == null)
+                                {
+                                    init();
+                                }
+                                result = new PlotBlock[16][];
+                                blocks.put(wrap, result);
+                            }
+                            if ((y > 255) || (y < 0))
+                            {
+                                locked = false;
+                                return;
+                            }
+                            if (result[y >> 4] == null)
+                            {
+                                result[y >> 4] = new PlotBlock[4096];
+                            }
+                            result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = new PlotBlock((short) -1, data);
+                            locked = false;
     }
 
     public static void setBlock(final String world, int x, final int y, int z, final int id)
@@ -301,41 +301,41 @@ public class SetBlockQueue
             init();
         }
         final int X = x >> 4;
-        final int Z = z >> 4;
-        x -= X << 4;
-        z -= Z << 4;
-        final ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
-        PlotBlock[][] result;
-        result = blocks.get(wrap);
-        if (result == null)
-        {
-            if (blocks == null)
-            {
-                init();
-            }
-            result = new PlotBlock[16][];
-            blocks.put(wrap, result);
-        }
-        if ((y > 255) || (y < 0))
-        {
-            locked = false;
-            return;
-        }
-        if (result[y >> 4] == null)
-        {
-            result[y >> 4] = new PlotBlock[4096];
-        }
-        if (id == lastInt)
-        {
-            result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = lastBlock;
-        }
-        else
-        {
-            lastInt = id;
-            lastBlock = new PlotBlock((short) id, (byte) 0);
-        }
-        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = lastBlock;
-        locked = false;
+                            final int Z = z >> 4;
+                            x -= X << 4;
+                            z -= Z << 4;
+                            final ChunkWrapper wrap = new ChunkWrapper(world, X, Z);
+                            PlotBlock[][] result;
+                            result = blocks.get(wrap);
+                            if (result == null)
+                            {
+                                if (blocks == null)
+                                {
+                                    init();
+                                }
+                                result = new PlotBlock[16][];
+                                blocks.put(wrap, result);
+                            }
+                            if ((y > 255) || (y < 0))
+                            {
+                                locked = false;
+                                return;
+                            }
+                            if (result[y >> 4] == null)
+                            {
+                                result[y >> 4] = new PlotBlock[4096];
+                            }
+                            if (id == lastInt)
+                            {
+                                result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = lastBlock;
+                            }
+                            else
+                            {
+                                lastInt = id;
+                                lastBlock = new PlotBlock((short) id, (byte) 0);
+                            }
+                            result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = lastBlock;
+                            locked = false;
     }
 
     public static class ChunkWrapper

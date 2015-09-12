@@ -563,7 +563,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
        return this;
        }
 
-       */
+      */
 
     /**
      * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.

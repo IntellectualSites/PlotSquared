@@ -372,7 +372,7 @@ public class EntityWrapper
             }
             case ARMOR_STAND:
             { // NEW
-              // CHECK positions
+                // CHECK positions
                 final ArmorStand stand = (ArmorStand) entity;
                 inventory = new ItemStack[] { stand.getItemInHand().clone(), stand.getHelmet().clone(), stand.getChestplate().clone(), stand.getLeggings().clone(), stand.getBoots().clone() };
                 storeLiving((LivingEntity) entity);
@@ -665,7 +665,7 @@ public class EntityWrapper
             }
             case ARMOR_STAND:
             { // NEW
-              // CHECK positions
+                // CHECK positions
                 final ArmorStand stand = (ArmorStand) entity;
                 if (inventory[0] != null)
                 {

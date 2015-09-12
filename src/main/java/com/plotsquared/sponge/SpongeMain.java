@@ -293,7 +293,7 @@ public class SpongeMain implements IPlotMain, PluginContainer
         PS.get().loadWorld(world, wrapper);
         switch (plotworld.TYPE)
         {
-        // Normal
+            // Normal
             case 0:
             {
                 modify = new WorldModify(generator, false);

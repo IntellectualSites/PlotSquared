@@ -120,11 +120,11 @@ public abstract class PlotPlayer implements CommandCaller
     }
 
     /**
-     * Get the number of plots the player owns  
-     * 
+     * Get the number of plots the player owns
+     *
      * @see #getPlotCount(String);
      * @see #getPlots()
-     * 
+     *
      * @return number of plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getPlotCount()

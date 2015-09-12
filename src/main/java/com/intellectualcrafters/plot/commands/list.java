@@ -248,7 +248,7 @@ public class list extends SubCommand
                         if (MathMan.isInteger(va))
                         {
                             if (MathMan.isInteger(vb)) {
-                            return Integer.parseInt(vb) - Integer.parseInt(va);
+                                return Integer.parseInt(vb) - Integer.parseInt(va);
                             }
                             return -1;
                         }
@@ -296,7 +296,7 @@ public class list extends SubCommand
                             v2 += p2s;
                         }
                         if ((v2 == v1) && (v2 != 0)) {
-                        return p2s - p1s;
+                            return p2s - p1s;
                         }
                         return (int) Math.signum(v2 - v1);
                     }

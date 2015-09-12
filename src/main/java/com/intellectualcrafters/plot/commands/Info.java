@@ -159,12 +159,12 @@ public class Info extends SubCommand
             final UUID uuid = player.getUUID();
             final String name = MainUtil.getName(plot.owner);
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info", new String[] {
-            "&cID: &6" + plot.getId().toString(),
-            "&cOwner: &6" + name,
-            "&cAlias: &6" + plot.getSettings().getAlias(),
-            "&cBiome: &6" + plot.getBiome().toString().replaceAll("_", "").toLowerCase(),
-            "&cCan Build: &6" + plot.isAdded(uuid),
-            "&cIs Denied: &6" + plot.isDenied(uuid) }));
+                "&cID: &6" + plot.getId().toString(),
+                "&cOwner: &6" + name,
+                "&cAlias: &6" + plot.getSettings().getAlias(),
+                "&cBiome: &6" + plot.getBiome().toString().replaceAll("_", "").toLowerCase(),
+                "&cCan Build: &6" + plot.isAdded(uuid),
+                "&cIs Denied: &6" + plot.isDenied(uuid) }));
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cTrusted", new String[] { "&cAmount: &6" + plot.getTrusted().size(), "&8Click to view a list of the trusted users" }));
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cMembers", new String[] { "&cAmount: &6" + plot.getMembers().size(), "&8Click to view a list of plot members" }));
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cDenied", new String[] { "&cDenied", "&cAmount: &6" + plot.getDenied().size(), "&8Click to view a list of denied players" }));

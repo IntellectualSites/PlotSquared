@@ -148,7 +148,7 @@ public class Configuration
         public String parseString(final String string)
         {
             if (validateValue(string)) {
-            return string.toUpperCase();
+                return string.toUpperCase();
             }
             return "FOREST";
         }
@@ -209,7 +209,7 @@ public class Configuration
                     }
                     final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(block);
                     if ((value == null) || (value.match > 1)) {
-                    return false;
+                        return false;
                     }
                 }
                 return true;

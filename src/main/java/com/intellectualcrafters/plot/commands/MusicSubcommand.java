@@ -61,7 +61,7 @@ public class MusicSubcommand extends SubCommand
             {
                 final PlotItemStack item = getItem(index);
                 if (item == null) {
-                return true;
+                    return true;
                 }
                 final int id = item.id == 7 ? 0 : item.id;
                 if (id == 0)

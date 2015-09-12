@@ -54,7 +54,7 @@ public class BukkitHybridUtils extends HybridUtils
                 final World world = Bukkit.getWorld(plot.world);
                 final ChunkGenerator gen = world.getGenerator();
                 if (gen == null) {
-                return;
+                    return;
                 }
                 final BiomeGrid base = new BiomeGrid()
                 {

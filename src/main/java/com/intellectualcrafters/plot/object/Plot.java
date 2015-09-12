@@ -144,29 +144,31 @@ public class Plot
         this.id = id;
         this.owner = owner;
     }
-    
+
     /**
      * Return a new/cached plot object at a given world/plot id
-     * 
+     *
      * @see MainUtil#getPlotSelectionOwned(String world, PlotId bottom, PlotId top) return a list of owned plots between (inclusive) two plot ids.
-     * 
+     *
      * @param world
      * @param id
      * @return
      */
-    public static Plot getPlot(String world, PlotId id) {
+    public static Plot getPlot(final String world, final PlotId id)
+    {
         return MainUtil.getPlot(world, id);
     }
-    
+
     /**
      * Return a new/cached plot object at a given location
-     * 
+     *
      * @see PlotPlayer#getCurrentPlot() if a player is expected here.
-     * 
+     *
      * @param loc
      * @return
      */
-    public static Plot getPlot(Location loc) {
+    public static Plot getPlot(final Location loc)
+    {
         return MainUtil.getPlot(loc);
     }
 
@@ -192,7 +194,7 @@ public class Plot
 
     /**
      * Constructor for a saved plots (Used by the database manager when plots are fetched)
-     * 
+     *
      * @see MainUtil#getPlot(String, PlotId) for existing plots
      *
      * @param id
@@ -793,7 +795,7 @@ public class Plot
     /**
      * Register a plot and create it in the database<br>
      *  - The plot will not be created if the owner is null<br>
-     *  - Any setting from before plot creation will not be saved until the server is stopped properly. i.e. Set any values/options after plot creation. 
+     *  - Any setting from before plot creation will not be saved until the server is stopped properly. i.e. Set any values/options after plot creation.
      * @return true if plot was created successfully
      */
     public boolean create()

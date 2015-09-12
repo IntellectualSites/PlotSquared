@@ -79,7 +79,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager
             public void run()
             {
                 if (toUpdate.size() == 0) {
-                return;
+                    return;
                 }
                 int count = 0;
                 final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
@@ -91,7 +91,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager
                     count++;
                 }
                 if (count == 0) {
-                return;
+                    return;
                 }
                 update(chunks);
             }
@@ -336,24 +336,24 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager
         // End blockstate workaround //
 
         final int X = x >> 4;
-        final int Z = z >> 4;
-        final ChunkLoc loc = new ChunkLoc(X, Z);
-        if (!loc.equals(lastLoc))
-        {
-            Chunk chunk = toUpdate.get(loc);
-            if (chunk == null)
-            {
-                chunk = world.getChunkAt(X, Z);
-                toUpdate.put(loc, chunk);
-            }
-            chunk.load(false);
-        }
-        // check sign
-        final Object w = methodGetHandle.of(world).call();
-        final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
-        final Object pos = constructorBlockPosition.create(x & 0x0f, y, z & 0x0f);
-        final Object combined = methodGetByCombinedId.of(null).call(id + (data << 12));
-        methodA.of(chunk).call(pos, combined);
+                final int Z = z >> 4;
+                final ChunkLoc loc = new ChunkLoc(X, Z);
+                if (!loc.equals(lastLoc))
+                {
+                    Chunk chunk = toUpdate.get(loc);
+                    if (chunk == null)
+                    {
+                        chunk = world.getChunkAt(X, Z);
+                        toUpdate.put(loc, chunk);
+                    }
+                    chunk.load(false);
+                }
+                // check sign
+                final Object w = methodGetHandle.of(world).call();
+                final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
+                final Object pos = constructorBlockPosition.create(x & 0x0f, y, z & 0x0f);
+                final Object combined = methodGetByCombinedId.of(null).call(id + (data << 12));
+                methodA.of(chunk).call(pos, combined);
     }
 
     @Override

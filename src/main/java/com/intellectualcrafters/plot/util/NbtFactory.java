@@ -381,7 +381,7 @@ public class NbtFactory
 
                 LOAD_COMPOUND = READ_LIMITER_CLASS != null ?
                 new LoadMethodSkinUpdate(STREAM_TOOLS, READ_LIMITER_CLASS) :
-                new LoadMethodWorldUpdate(STREAM_TOOLS);
+                    new LoadMethodWorldUpdate(STREAM_TOOLS);
                 SAVE_COMPOUND = getMethod(Modifier.STATIC, 0, STREAM_TOOLS, null, BASE_CLASS, DataOutput.class);
 
             }
@@ -544,7 +544,7 @@ public class NbtFactory
             output = stream.getOutput();
             data = new DataOutputStream(
             option == StreamOptions.GZIP_COMPRESSION ? new GZIPOutputStream(output) : output
-                   );
+            );
 
             invokeMethod(get().SAVE_COMPOUND, null, source.getHandle(), data);
             suppress = false;

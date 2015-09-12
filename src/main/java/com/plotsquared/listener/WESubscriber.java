@@ -36,7 +36,7 @@ public class WESubscriber
         final WorldEdit worldedit = PS.get().worldedit;
         if (worldedit == null)
         {
-            worldedit.getEventBus().unregister(this);
+            WorldEdit.getInstance().getEventBus().unregister(this);
             return;
         }
         final World worldObj = event.getWorld();

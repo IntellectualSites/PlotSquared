@@ -230,18 +230,18 @@ public class AugmentedPopulator implements Populator
             public void setBlock(final int x, final int y, final int z, final BlockState t)
             {
                 if (check && (((z) < bz) || ((z) > tz) || ((x) < bx) || ((x) > tx))) {
-                return;
+                    return;
                 }
                 if (p)
                 {
                     if (ChunkManager.CURRENT_PLOT_CLEAR != null)
                     {
                         if (ChunkManager.CURRENT_PLOT_CLEAR.isIn(x, z)) {
-                        return;
+                            return;
                         }
                     }
                     else if (manager.getPlotIdAbs(plotworld, x, 0, z) != null) {
-                    return;
+                        return;
                     }
                 }
                 final PlotBlock block = SpongeMain.THIS.getPlotBlock(t);
@@ -315,18 +315,18 @@ public class AugmentedPopulator implements Populator
             public void setBlockType(final int x, final int y, final int z, final BlockType t)
             {
                 if (check && (((z) < bz) || ((z) > tz) || ((x) < bx) || ((x) > tx))) {
-                return;
+                    return;
                 }
                 if (p)
                 {
                     if (ChunkManager.CURRENT_PLOT_CLEAR != null)
                     {
                         if (ChunkManager.CURRENT_PLOT_CLEAR.isIn(x, z)) {
-                        return;
+                            return;
                         }
                     }
                     else if (manager.getPlotIdAbs(plotworld, x, 0, z) != null) {
-                    return;
+                        return;
                     }
                 }
                 final PlotBlock block = SpongeMain.THIS.getPlotBlock(t.getDefaultState());
