@@ -101,74 +101,11 @@ public class Set extends SubCommand
         }
         if (args[0].equalsIgnoreCase("flag"))
         {
-            if (args.length < 2)
-            {
-                final String message = StringMan.replaceFromMap("$2" + (StringMan.join(FlagManager.getFlags(plr), "$1, $2")), C.replacements);
-                // final String message = StringMan.join(FlagManager.getFlags(plr), "&c, &6");
-                MainUtil.sendMessage(plr, C.NEED_KEY.s().replaceAll("%values%", message));
-                return false;
+            List<String> arglist = Arrays.asList("flag", "set");
+            for (String arg : Arrays.copyOfRange(args, 1, args.length)) {
+                arglist.add(arg);
             }
-            AbstractFlag af;
-            try
-            {
-                af = FlagManager.getFlag(args[1].toLowerCase());
-            }
-            catch (final Exception e)
-            {
-                af = new AbstractFlag(args[1].toLowerCase());
-            }
-            if (!FlagManager.getFlags().contains(af) || FlagManager.isReserved(af.getKey()))
-            {
-                MainUtil.sendMessage(plr, C.NOT_VALID_FLAG);
-                return false;
-            }
-            if (!Permissions.hasPermission(plr, "plots.set.flag." + args[1].toLowerCase()))
-            {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
-                return false;
-            }
-            if (args.length == 2)
-            {
-                if (FlagManager.getPlotFlagAbs(plot, args[1].toLowerCase()) == null)
-                {
-                    MainUtil.sendMessage(plr, C.FLAG_NOT_IN_PLOT);
-                    return false;
-                }
-                final boolean result = FlagManager.removePlotFlag(plot, args[1].toLowerCase());
-                if (!result)
-                {
-                    MainUtil.sendMessage(plr, C.FLAG_NOT_REMOVED);
-                    return false;
-                }
-                MainUtil.sendMessage(plr, C.FLAG_REMOVED);
-                PlotListener.plotEntry(plr, plot);
-                return true;
-            }
-            try
-            {
-                final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                final Object parsed_value = af.parseValueRaw(value);
-                if (parsed_value == null)
-                {
-                    MainUtil.sendMessage(plr, af.getValueDesc());
-                    return false;
-                }
-                final Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), parsed_value);
-                final boolean result = FlagManager.addPlotFlag(plot, flag);
-                if (!result)
-                {
-                    MainUtil.sendMessage(plr, C.FLAG_NOT_ADDED);
-                    return false;
-                }
-                MainUtil.sendMessage(plr, C.FLAG_ADDED);
-                PlotListener.plotEntry(plr, plot);
-                return true;
-            }
-            catch (final Exception e)
-            {
-                MainUtil.sendMessage(plr, "&c" + e.getMessage());
-                return false;
-            }
+            return MainCommand.onCommand(plr, "plot", arglist.toArray(new String[0]));
         }
         if (args[0].equalsIgnoreCase("home"))
         {
