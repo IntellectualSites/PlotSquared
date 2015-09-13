@@ -30,11 +30,10 @@ import java.sql.SQLException;
  * @author -_Husky_-
  * @author tips48
  */
-public abstract class Database
-{
-
+public abstract class Database {
+    
     public abstract Connection forceConnection() throws SQLException, ClassNotFoundException;
-
+    
     /**
      * Opens a connection with the database
      *
@@ -44,7 +43,7 @@ public abstract class Database
      * @throws ClassNotFoundException if the driver cannot be found
      */
     public abstract Connection openConnection() throws SQLException, ClassNotFoundException;
-
+    
     /**
      * Checks if a connection is open with the database
      *
@@ -53,14 +52,14 @@ public abstract class Database
      * @throws SQLException if the connection cannot be checked
      */
     public abstract boolean checkConnection() throws SQLException;
-
+    
     /**
      * Gets the connection with the database
      *
      * @return Connection with the database, null if none
      */
     public abstract Connection getConnection();
-
+    
     /**
      * Closes the connection with the database
      *
@@ -69,7 +68,7 @@ public abstract class Database
      * @throws SQLException if the connection cannot be closed
      */
     public abstract boolean closeConnection() throws SQLException;
-
+    
     /**
      * Executes a SQL Query<br> If the connection is closed, it will be opened
      *
@@ -81,7 +80,7 @@ public abstract class Database
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
     public abstract ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException;
-
+    
     /**
      * Executes an Update SQL Query<br> See {@link java.sql.Statement#executeUpdate(String)}<br> If the connection is
      * closed, it will be opened

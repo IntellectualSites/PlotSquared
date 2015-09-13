@@ -10,12 +10,10 @@ usage = "/plot chat [on|off]",
 permission = "plots.chat",
 category = CommandCategory.ACTIONS,
 requiredType = RequiredType.NONE)
-public class Chat extends SubCommand
-{
-
+public class Chat extends SubCommand {
+    
     @Override
-    public boolean onCommand(final PlotPlayer player, final String... args)
-    {
+    public boolean onCommand(final PlotPlayer player, final String... args) {
         return MainCommand.onCommand(player, "plot", new String[] { "toggle", "chat" });
     }
 }

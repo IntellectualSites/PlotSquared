@@ -27,10 +27,9 @@ import java.util.List;
  * Updater and DB settings
  *
  */
-public class Settings
-{
+public class Settings {
     public static boolean USE_SQLUUIDHANDLER = false;
-
+    
     public static boolean ENABLE_CLUSTERS = false;
     public static boolean FAST_CLEAR = false;
     /**
@@ -39,7 +38,7 @@ public class Settings
     public static boolean PERMISSION_CACHING = false;
     public static boolean CACHE_RATINGS = true;
     public static boolean UUID_FROM_DISK = false;
-
+    
     /**
      * Web
      */
@@ -53,7 +52,7 @@ public class Settings
     public static boolean REQUIRE_DONE = false;
     public static boolean DONE_COUNTS_TOWARDS_LIMIT = false;
     public static boolean DONE_RESTRICTS_BUILDING = false;
-
+    
     /**
      * PlotMe settings
      */
@@ -204,20 +203,19 @@ public class Settings
      * Use global plot limit?
      */
     public static boolean GLOBAL_LIMIT = false;
-
+    
     /**
      * Database settings
      *
      */
-    public static class DB
-    {
+    public static class DB {
         /**
          * MongoDB enabled?
          */
         public static boolean USE_MONGO = false; /*
-         * TODO: Implement Mongo
-         * @Brandon
-         */
+                                                 * TODO: Implement Mongo
+                                                 * @Brandon
+                                                 */
         /**
          * SQLite enabled?
          */

@@ -17,8 +17,7 @@ import org.bukkit.entity.Player;
  * @author Maxim Van de Wynckel
  *
  */
-public class DefaultTitleManager_183
-{
+public class DefaultTitleManager_183 {
     /* Title packet */
     private Class<?> packetTitle;
     /* Title packet actions ENUM */
@@ -38,7 +37,7 @@ public class DefaultTitleManager_183
     private int fadeOutTime = -1;
     private boolean ticks = false;
     private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<Class<?>, Class<?>>();
-
+    
     /**
      * Create a new 1.8 title
      *
@@ -46,12 +45,11 @@ public class DefaultTitleManager_183
      *            Title
      * @throws ClassNotFoundException
      */
-    public DefaultTitleManager_183(final String title) throws ClassNotFoundException
-    {
+    public DefaultTitleManager_183(final String title) throws ClassNotFoundException {
         this.title = title;
         loadClasses();
     }
-
+    
     /**
      * Create a new 1.8 title
      *
@@ -61,13 +59,12 @@ public class DefaultTitleManager_183
      *            Subtitle text
      * @throws ClassNotFoundException
      */
-    public DefaultTitleManager_183(final String title, final String subtitle) throws ClassNotFoundException
-    {
+    public DefaultTitleManager_183(final String title, final String subtitle) throws ClassNotFoundException {
         this.title = title;
         this.subtitle = subtitle;
         loadClasses();
     }
-
+    
     /**
      * Copy 1.8 title
      *
@@ -75,8 +72,7 @@ public class DefaultTitleManager_183
      *            Title
      * @throws ClassNotFoundException
      */
-    public DefaultTitleManager_183(final DefaultTitleManager_183 title) throws ClassNotFoundException
-    {
+    public DefaultTitleManager_183(final DefaultTitleManager_183 title) throws ClassNotFoundException {
         // Copy title
         this.title = title.title;
         subtitle = title.subtitle;
@@ -88,7 +84,7 @@ public class DefaultTitleManager_183
         ticks = title.ticks;
         loadClasses();
     }
-
+    
     /**
      * Create a new 1.8 title
      *
@@ -104,8 +100,7 @@ public class DefaultTitleManager_183
      *            Fade out time
      * @throws ClassNotFoundException
      */
-    public DefaultTitleManager_183(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime) throws ClassNotFoundException
-    {
+    public DefaultTitleManager_183(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime) throws ClassNotFoundException {
         this.title = title;
         this.subtitle = subtitle;
         this.fadeInTime = fadeInTime;
@@ -113,133 +108,121 @@ public class DefaultTitleManager_183
         this.fadeOutTime = fadeOutTime;
         loadClasses();
     }
-
+    
     /**
      * Load spigot and NMS classes
      * @throws ClassNotFoundException
      */
-    private void loadClasses() throws ClassNotFoundException
-    {
+    private void loadClasses() throws ClassNotFoundException {
         packetTitle = getNMSClass("PacketPlayOutTitle");
         chatBaseComponent = getNMSClass("IChatBaseComponent");
         packetActions = getNMSClass("PacketPlayOutTitle$EnumTitleAction");
         nmsChatSerializer = getNMSClass("IChatBaseComponent$ChatSerializer");
-
+        
     }
-
+    
     /**
      * Set title text
      *
      * @param title
      *            Title
      */
-    public void setTitle(final String title)
-    {
+    public void setTitle(final String title) {
         this.title = title;
     }
-
+    
     /**
      * Get title text
      *
      * @return Title text
      */
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
-
+    
     /**
      * Set subtitle text
      *
      * @param subtitle
      *            Subtitle text
      */
-    public void setSubtitle(final String subtitle)
-    {
+    public void setSubtitle(final String subtitle) {
         this.subtitle = subtitle;
     }
-
+    
     /**
      * Get subtitle text
      *
      * @return Subtitle text
      */
-    public String getSubtitle()
-    {
+    public String getSubtitle() {
         return subtitle;
     }
-
+    
     /**
      * Set the title color
      *
      * @param color
      *            Chat color
      */
-    public void setTitleColor(final ChatColor color)
-    {
+    public void setTitleColor(final ChatColor color) {
         titleColor = color;
     }
-
+    
     /**
      * Set the subtitle color
      *
      * @param color
      *            Chat color
      */
-    public void setSubtitleColor(final ChatColor color)
-    {
+    public void setSubtitleColor(final ChatColor color) {
         subtitleColor = color;
     }
-
+    
     /**
      * Set title fade in time
      *
      * @param time
      *            Time
      */
-    public void setFadeInTime(final int time)
-    {
+    public void setFadeInTime(final int time) {
         fadeInTime = time;
     }
-
+    
     /**
      * Set title fade out time
      *
      * @param time
      *            Time
      */
-    public void setFadeOutTime(final int time)
-    {
+    public void setFadeOutTime(final int time) {
         fadeOutTime = time;
     }
-
+    
     /**
      * Set title stay time
      *
      * @param time
      *            Time
      */
-    public void setStayTime(final int time)
-    {
+    public void setStayTime(final int time) {
         stayTime = time;
     }
-
+    
     /**
      * Set timings to ticks
      */
-    public void setTimingsToTicks()
-    {
+    public void setTimingsToTicks() {
         ticks = true;
     }
-
+    
     /**
      * Set timings to seconds
      */
-    public void setTimingsToSeconds()
-    {
+    public void setTimingsToSeconds() {
         ticks = false;
     }
-
+    
     /**
      * Send the title to a player
      *
@@ -249,10 +232,8 @@ public class DefaultTitleManager_183
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    public void send(final Player player) throws Exception
-    {
-        if (packetTitle != null)
-        {
+    public void send(final Player player) throws Exception {
+        if (packetTitle != null) {
             // First reset previous settings
             resetTitle(player);
             // Send timings first
@@ -260,11 +241,10 @@ public class DefaultTitleManager_183
             final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
             final Object[] actions = packetActions.getEnumConstants();
             final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-            Object packet = packetTitle.getConstructor(packetActions, chatBaseComponent, Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(actions[2], null,
-            fadeInTime * (ticks ? 1 : 20), stayTime * (ticks ? 1 : 20), fadeOutTime * (ticks ? 1 : 20));
+            Object packet = packetTitle.getConstructor(packetActions, chatBaseComponent, Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(actions[2], null, fadeInTime * (ticks ? 1 : 20),
+            stayTime * (ticks ? 1 : 20), fadeOutTime * (ticks ? 1 : 20));
             // Send if set
-            if ((fadeInTime != -1) && (fadeOutTime != -1) && (stayTime != -1))
-            {
+            if ((fadeInTime != -1) && (fadeOutTime != -1) && (stayTime != -1)) {
                 sendPacket.invoke(connection, packet);
             }
             // Send title
@@ -272,8 +252,7 @@ public class DefaultTitleManager_183
             "{text:\"" + ChatColor.translateAlternateColorCodes('&', title) + "\",color:" + titleColor.name().toLowerCase() + "}");
             packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[0], serialized);
             sendPacket.invoke(connection, packet);
-            if (subtitle != "")
-            {
+            if (subtitle != "") {
                 // Send subtitle if present
                 serialized = getMethod(nmsChatSerializer, "a", String.class).invoke(null,
                 "{text:\"" + ChatColor.translateAlternateColorCodes('&', subtitle) + "\",color:" + subtitleColor.name().toLowerCase() + "}");
@@ -282,19 +261,17 @@ public class DefaultTitleManager_183
             }
         }
     }
-
+    
     /**
      * Broadcast the title to all players
      * @throws Exception
      */
-    public void broadcast() throws Exception
-    {
-        for (final Player p : Bukkit.getOnlinePlayers())
-        {
+    public void broadcast() throws Exception {
+        for (final Player p : Bukkit.getOnlinePlayers()) {
             send(p);
         }
     }
-
+    
     /**
      * Clear the title
      *
@@ -303,8 +280,7 @@ public class DefaultTitleManager_183
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      */
-    public void clearTitle(final Player player) throws Exception
-    {
+    public void clearTitle(final Player player) throws Exception {
         // Send timings first
         final Object handle = getHandle(player);
         final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
@@ -313,7 +289,7 @@ public class DefaultTitleManager_183
         final Object packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[3], null);
         sendPacket.invoke(connection, packet);
     }
-
+    
     /**
      * Reset the title settings
      *
@@ -326,8 +302,7 @@ public class DefaultTitleManager_183
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public void resetTitle(final Player player) throws Exception
-    {
+    public void resetTitle(final Player player) throws Exception {
         // Send timings first
         final Object handle = getHandle(player);
         final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
@@ -336,108 +311,93 @@ public class DefaultTitleManager_183
         final Object packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[4], null);
         sendPacket.invoke(connection, packet);
     }
-
-    private Class<?> getPrimitiveType(final Class<?> clazz)
-    {
+    
+    private Class<?> getPrimitiveType(final Class<?> clazz) {
         return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
     }
-
-    private Class<?>[] toPrimitiveTypeArray(final Class<?>[] classes)
-    {
+    
+    private Class<?>[] toPrimitiveTypeArray(final Class<?>[] classes) {
         final int a = classes != null ? classes.length : 0;
         final Class<?>[] types = new Class<?>[a];
-        for (int i = 0; i < a; i++)
-        {
+        for (int i = 0; i < a; i++) {
             types[i] = getPrimitiveType(classes[i]);
         }
         return types;
     }
-
-    private static boolean equalsTypeArray(final Class<?>[] a, final Class<?>[] o)
-    {
-        if (a.length != o.length) { return false; }
-        for (int i = 0; i < a.length; i++)
-        {
-            if (!a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i])) { return false; }
+    
+    private static boolean equalsTypeArray(final Class<?>[] a, final Class<?>[] o) {
+        if (a.length != o.length) {
+            return false;
+        }
+        for (int i = 0; i < a.length; i++) {
+            if (!a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i])) {
+                return false;
+            }
         }
         return true;
     }
-
-    private Object getHandle(final Object obj)
-    {
-        try
-        {
+    
+    private Object getHandle(final Object obj) {
+        try {
             return getMethod("getHandle", obj.getClass()).invoke(obj);
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-
-    private Method getMethod(final String name, final Class<?> clazz, final Class<?>... paramTypes)
-    {
+    
+    private Method getMethod(final String name, final Class<?> clazz, final Class<?>... paramTypes) {
         final Class<?>[] t = toPrimitiveTypeArray(paramTypes);
-        for (final Method m : clazz.getMethods())
-        {
+        for (final Method m : clazz.getMethods()) {
             final Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
-            if (m.getName().equals(name) && equalsTypeArray(types, t)) { return m; }
+            if (m.getName().equals(name) && equalsTypeArray(types, t)) {
+                return m;
+            }
         }
         return null;
     }
-
-    private String getVersion()
-    {
+    
+    private String getVersion() {
         final String name = Bukkit.getServer().getClass().getPackage().getName();
         final String version = name.substring(name.lastIndexOf('.') + 1) + ".";
         return version;
     }
-
-    private Class<?> getNMSClass(final String className) throws ClassNotFoundException
-    {
+    
+    private Class<?> getNMSClass(final String className) throws ClassNotFoundException {
         final String fullName = "net.minecraft.server." + getVersion() + className;
         Class<?> clazz = null;
         clazz = Class.forName(fullName);
         return clazz;
     }
-
-    private Field getField(final Class<?> clazz, final String name)
-    {
-        try
-        {
+    
+    private Field getField(final Class<?> clazz, final String name) {
+        try {
             final Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
             return field;
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-
-    private Method getMethod(final Class<?> clazz, final String name, final Class<?>... args)
-    {
-        for (final Method m : clazz.getMethods())
-        {
-            if (m.getName().equals(name) && ((args.length == 0) || ClassListEqual(args, m.getParameterTypes())))
-            {
+    
+    private Method getMethod(final Class<?> clazz, final String name, final Class<?>... args) {
+        for (final Method m : clazz.getMethods()) {
+            if (m.getName().equals(name) && ((args.length == 0) || ClassListEqual(args, m.getParameterTypes()))) {
                 m.setAccessible(true);
                 return m;
             }
         }
         return null;
     }
-
-    private boolean ClassListEqual(final Class<?>[] l1, final Class<?>[] l2)
-    {
+    
+    private boolean ClassListEqual(final Class<?>[] l1, final Class<?>[] l2) {
         boolean equal = true;
-        if (l1.length != l2.length) { return false; }
-        for (int i = 0; i < l1.length; i++)
-        {
-            if (l1[i] != l2[i])
-            {
+        if (l1.length != l2.length) {
+            return false;
+        }
+        for (int i = 0; i < l1.length; i++) {
+            if (l1[i] != l2[i]) {
                 equal = false;
                 break;
             }

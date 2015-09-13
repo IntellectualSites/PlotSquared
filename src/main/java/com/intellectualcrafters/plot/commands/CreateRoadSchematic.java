@@ -38,16 +38,18 @@ requiredType = RequiredType.NONE,
 permission = "plots.createroadschematic",
 description = "Add a road schematic to your world using the roads around your current plot",
 usage = "/plot createroadschematic")
-public class CreateRoadSchematic extends SubCommand
-{
-
+public class CreateRoadSchematic extends SubCommand {
+    
     @Override
-    public boolean onCommand(final PlotPlayer player, final String... args)
-    {
+    public boolean onCommand(final PlotPlayer player, final String... args) {
         final Location loc = player.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) { return sendMessage(player, C.NOT_IN_PLOT); }
-        if (!(PS.get().getPlotWorld(loc.getWorld()) instanceof HybridPlotWorld)) { return sendMessage(player, C.NOT_IN_PLOT_WORLD); }
+        if (plot == null) {
+            return sendMessage(player, C.NOT_IN_PLOT);
+        }
+        if (!(PS.get().getPlotWorld(loc.getWorld()) instanceof HybridPlotWorld)) {
+            return sendMessage(player, C.NOT_IN_PLOT_WORLD);
+        }
         HybridUtils.manager.setupRoadSchematic(plot);
         MainUtil.sendMessage(player, "&6Saved new road schematic. To test the road, fly to a few other plots and use /plot debugroadregen");
         return true;

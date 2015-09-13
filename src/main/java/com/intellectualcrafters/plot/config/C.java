@@ -40,9 +40,8 @@ import com.plotsquared.general.commands.CommandCaller;
  *
 
  */
-public enum C
-{
-
+public enum C {
+    
     /*
      * Static flags
      */
@@ -155,7 +154,7 @@ public enum C
     WORLDEDIT_BYPASSED("$2Currently bypassing WorldEdit restriction.", "WorldEdit Masks"),
     WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted.", "WorldEdit Masks"),
     WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted.", "WorldEdit Masks"),
-
+    
     GAMEMODE_WAS_BYPASSED("$1You bypassed the gamemode ($2{gamemode}$1) $1set for $2{plot}", "Gamemode"),
     HEIGHT_LIMIT("$1This plot world has a height limit of $2{limit}", "Height Limit"),
     /*
@@ -192,14 +191,14 @@ public enum C
      */
     NOT_CONSOLE("$2For safety reasons, this command can only be executed by console.", "Console"),
     IS_CONSOLE("$2This command can only be executed by a player.", "Console"),
-
+    
     /*
     Inventory
      */
     INVENTORY_USAGE("&cUsage: &6{usage}", "Inventory"),
     INVENTORY_DESC("&cDescription: &6{desc}", "Inventory"),
     INVENTORY_CATEGORY("&cCategory: &6{category}", "Inventory"),
-
+    
     /*
      * Clipboard
      */
@@ -213,7 +212,7 @@ public enum C
      */
     TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"),
     TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
-
+    
     COMMAND_BLOCKED("$2That command is not allowed in this plot", "Blocked Command"),
     /*
      * Done
@@ -296,10 +295,10 @@ public enum C
      * BarAPI
      */
     BOSSBAR_CLEARING("$2Clearing plot: $1%id%", "Bar API"),
-
+    
     DESC_SET("$2Plot description set", "Desc"),
     MISSING_DESC("$2You need to specify a description", "Desc"),
-
+    
     /*
      * Alias
      */
@@ -404,7 +403,7 @@ public enum C
      * Set Block
      */
     SET_BLOCK_ACTION_FINISHED("$1The last setblock action is now finished.", "Set Block"),
-
+    
     /*
     AllowUnsafe
      */
@@ -579,7 +578,7 @@ public enum C
     HELP_HEADER("$3&m---------&r $1Plot\u00B2 Help $3&m---------", "Help"),
     HELP_PAGE_HEADER("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2", "Help"),
     HELP_FOOTER("$3&m---------&r $1Plot\u00B2 Help $3&m---------", "Help"),
-
+    
     HELP_INFO_ITEM("$1/plots help %category% $3- $2%category_desc%", "Help"),
     HELP_ITEM("$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
     /*
@@ -607,60 +606,53 @@ public enum C
      * Should the string be prefixed?
      */
     private boolean prefix;
-
+    
     /**
      * Constructor for custom strings.
      */
-    C()
-    {
+    C() {
         /*
          * use setCustomString();
          */
     }
-
+    
     /**
      * Constructor
      *
      * @param d default
      * @param prefix use prefix
      */
-    C(final String d, final boolean prefix, final String cat)
-    {
+    C(final String d, final boolean prefix, final String cat) {
         this.d = d;
-        if (s == null)
-        {
+        if (s == null) {
             s = d;
         }
         this.prefix = prefix;
         this.cat = cat.toLowerCase();
     }
-
+    
     /**
      * Constructor
      *
      * @param d default
      */
-    C(final String d, final String cat)
-    {
+    C(final String d, final String cat) {
         this(d, true, cat.toLowerCase());
     }
-
+    
     @Override
-    public String toString()
-    {
+    public String toString() {
         return s;
     }
-
-    public static String format(String m, final Object... args)
-    {
-        if (args.length == 0) { return m; }
+    
+    public static String format(String m, final Object... args) {
+        if (args.length == 0) {
+            return m;
+        }
         final Map<String, String> map = new LinkedHashMap<String, String>();
-        if (args.length > 0)
-        {
-            for (int i = args.length - 1; i >= 0; i--)
-            {
-                if (args[i] == null)
-                {
+        if (args.length > 0) {
+            for (int i = args.length - 1; i >= 0; i--) {
+                if (args[i] == null) {
                     args[i] = "";
                 }
                 map.put("%s" + i, args[i].toString());
@@ -671,23 +663,18 @@ public enum C
         m = StringMan.replaceFromMap(m, map);
         return m;
     }
-
-    public static String format(final C c, final Object... args)
-    {
+    
+    public static String format(final C c, final Object... args) {
         return format(c.s, args);
     }
-
-    public static String color(final String string)
-    {
+    
+    public static String color(final String string) {
         return StringMan.replaceFromMap(string, replacements);
     }
-
-    public static void load(final File file)
-    {
-        try
-        {
-            if (!file.exists())
-            {
+    
+    public static void load(final File file) {
+        try {
+            if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
@@ -697,19 +684,15 @@ public enum C
             final HashSet<String> allNames = new HashSet<>();
             final HashSet<String> allCats = new HashSet<>();
             final HashSet<String> toRemove = new HashSet<>();
-            for (final C c : all)
-            {
+            for (final C c : all) {
                 allNames.add(c.name());
                 allCats.add(c.cat.toLowerCase());
             }
             final HashSet<C> captions = new HashSet<>();
             boolean changed = false;
-            for (final String key : keys)
-            {
-                if (!yml.isString(key))
-                {
-                    if (!allCats.contains(key))
-                    {
+            for (final String key : keys) {
+                if (!yml.isString(key)) {
+                    if (!allCats.contains(key)) {
                         toRemove.add(key);
                     }
                     continue;
@@ -717,29 +700,23 @@ public enum C
                 final String[] split = key.split("\\.");
                 final String node = split[split.length - 1].toUpperCase();
                 final C caption = allNames.contains(node) ? valueOf(node) : null;
-                if (caption != null)
-                {
-                    if (caption.cat.startsWith("static"))
-                    {
+                if (caption != null) {
+                    if (caption.cat.startsWith("static")) {
                         continue;
                     }
                     final String value = yml.getString(key);
-                    if (!split[0].equalsIgnoreCase(caption.cat))
-                    {
+                    if (!split[0].equalsIgnoreCase(caption.cat)) {
                         changed = true;
                         yml.set(key, null);
                         yml.set(caption.cat + "." + caption.name().toLowerCase(), value);
                     }
                     captions.add(caption);
                     caption.s = value;
-                }
-                else
-                {
+                } else {
                     toRemove.add(key);
                 }
             }
-            for (final String remove : toRemove)
-            {
+            for (final String remove : toRemove) {
                 changed = true;
                 yml.set(remove, null);
             }
@@ -747,23 +724,18 @@ public enum C
             final Set<String> styles = config.getKeys(false);
             // HashMap<String, String> replacements = new HashMap<>();
             replacements.clear();
-            for (final String style : styles)
-            {
+            for (final String style : styles) {
                 replacements.put("$" + style, "\u00a7" + config.getString(style));
             }
-            for (final char letter : "1234567890abcdefklmnor".toCharArray())
-            {
+            for (final char letter : "1234567890abcdefklmnor".toCharArray()) {
                 replacements.put("&" + letter, "\u00a7" + letter);
             }
             replacements.put("\\\\n", "\n");
             replacements.put("\\n", "\n");
             replacements.put("&-", "\n");
-            for (final C caption : all)
-            {
-                if (!captions.contains(caption))
-                {
-                    if (caption.cat.startsWith("static"))
-                    {
+            for (final C caption : all) {
+                if (!captions.contains(caption)) {
+                    if (caption.cat.startsWith("static")) {
                         continue;
                     }
                     changed = true;
@@ -771,45 +743,34 @@ public enum C
                 }
                 caption.s = StringMan.replaceFromMap(caption.s, replacements);
             }
-            if (changed)
-            {
+            if (changed) {
                 yml.save(file);
             }
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
-
-    public String s()
-    {
+    
+    public String s() {
         return s;
     }
-
-    public boolean usePrefix()
-    {
+    
+    public boolean usePrefix() {
         return prefix;
     }
-
-    public String formatted()
-    {
+    
+    public String formatted() {
         return StringMan.replaceFromMap(s(), replacements);
     }
-
-    public String getCat()
-    {
+    
+    public String getCat() {
         return cat;
     }
-
-    public void send(final CommandCaller plr, final String... args)
-    {
-        if (plr == null)
-        {
+    
+    public void send(final CommandCaller plr, final String... args) {
+        if (plr == null) {
             MainUtil.sendConsoleMessage(this, args);
-        }
-        else
-        {
+        } else {
             plr.sendMessage(this, args);
         }
     }

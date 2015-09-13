@@ -11,37 +11,27 @@ import com.intellectualcrafters.plot.PS;
 import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 
-public class WorldEvents implements Listener
-{
-
+public class WorldEvents implements Listener {
+    
     public static String lastWorld = null;
-
-    public static String getName(final World world)
-    {
-        if ((lastWorld != null) && !lastWorld.equals("CheckingPlotSquaredGenerator"))
-        {
+    
+    public static String getName(final World world) {
+        if ((lastWorld != null) && !lastWorld.equals("CheckingPlotSquaredGenerator")) {
             return lastWorld;
-        }
-        else
-        {
+        } else {
             return world.getName();
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onWorldInit(final WorldInitEvent event)
-    {
+    public static void onWorldInit(final WorldInitEvent event) {
         final World world = event.getWorld();
         final String name = getName(world);
         final ChunkGenerator gen = world.getGenerator();
-        if (gen instanceof BukkitPlotGenerator)
-        {
+        if (gen instanceof BukkitPlotGenerator) {
             PS.get().loadWorld(name, new BukkitGeneratorWrapper(name, gen));
-        }
-        else
-        {
-            if (PS.get().config.contains("worlds." + name))
-            {
+        } else {
+            if (PS.get().config.contains("worlds." + name)) {
                 PS.get().loadWorld(name, new BukkitGeneratorWrapper(name, null));
             }
         }

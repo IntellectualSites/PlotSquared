@@ -15,44 +15,35 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 
-public class PlayerEvents_1_8_3 implements Listener
-{
+public class PlayerEvents_1_8_3 implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBigBoom(final BlockExplodeEvent event)
-    {
+    public void onBigBoom(final BlockExplodeEvent event) {
         final Block block = event.getBlock();
         final Location loc = BukkitUtil.getLocation(block.getLocation());
         final String world = loc.getWorld();
-        if (!PS.get().isPlotWorld(world)) { return; }
+        if (!PS.get().isPlotWorld(world)) {
+            return;
+        }
         final Plot plot = MainUtil.getPlot(loc);
-        if ((plot != null) && plot.hasOwner())
-        {
-            if (FlagManager.isPlotFlagTrue(plot, "explosion"))
-            {
+        if ((plot != null) && plot.hasOwner()) {
+            if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
                 final Iterator<Block> iter = event.blockList().iterator();
-                while (iter.hasNext())
-                {
+                while (iter.hasNext()) {
                     final Block b = iter.next();
-                    if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(b.getLocation()))))
-                    {
+                    if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(b.getLocation())))) {
                         iter.remove();
                     }
                 }
                 return;
             }
         }
-        if (MainUtil.isPlotArea(loc))
-        {
+        if (MainUtil.isPlotArea(loc)) {
             event.setCancelled(true);
-        }
-        else
-        {
+        } else {
             final Iterator<Block> iter = event.blockList().iterator();
-            while (iter.hasNext())
-            {
+            while (iter.hasNext()) {
                 iter.next();
-                if (MainUtil.isPlotArea(loc))
-                {
+                if (MainUtil.isPlotArea(loc)) {
                     iter.remove();
                 }
             }

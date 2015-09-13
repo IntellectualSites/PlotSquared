@@ -4,8 +4,7 @@ package com.intellectualcrafters.plot.commands;
  * CommandCategory
  *
  */
-public enum CommandCategory
-{
+public enum CommandCategory {
     /**
      * Claiming Commands
      *
@@ -40,20 +39,18 @@ public enum CommandCategory
      * The category name (Readable)
      */
     private final String name;
-
+    
     /**
      * Constructor
      *
      * @param name readable name
      */
-    CommandCategory(final String name)
-    {
+    CommandCategory(final String name) {
         this.name = name;
     }
-
+    
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 }

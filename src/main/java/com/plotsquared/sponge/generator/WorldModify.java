@@ -9,55 +9,43 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 
-public class WorldModify implements WorldGeneratorModifier
-{
-
+public class WorldModify implements WorldGeneratorModifier {
+    
     private final SpongePlotGenerator plotgen;
     private final boolean augment;
-
-    public WorldModify(final SpongePlotGenerator plotgen, final boolean augment)
-    {
+    
+    public WorldModify(final SpongePlotGenerator plotgen, final boolean augment) {
         this.plotgen = plotgen;
         this.augment = augment;
     }
-
+    
     @Override
-    public void modifyWorldGenerator(final WorldCreationSettings world, final DataContainer settings, final WorldGenerator gen)
-    {
-        if (augment)
-        {
+    public void modifyWorldGenerator(final WorldCreationSettings world, final DataContainer settings, final WorldGenerator gen) {
+        if (augment) {
             final String worldname = plotgen.world;
             final PlotWorld plotworld = plotgen.getNewPlotWorld(worldname);
-            if (plotworld.TYPE == 2)
-            {
-                for (final PlotCluster cluster : ClusterManager.getClusters(worldname))
-                {
+            if (plotworld.TYPE == 2) {
+                for (final PlotCluster cluster : ClusterManager.getClusters(worldname)) {
                     new AugmentedPopulator(worldname, gen, plotgen, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
                 }
-            }
-            else
-            {
+            } else {
                 new AugmentedPopulator(worldname, gen, plotgen, null, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
             }
-        }
-        else
-        {
+        } else {
             gen.getGeneratorPopulators().clear();
             gen.getPopulators().clear();
             gen.setBaseGeneratorPopulator(plotgen.getBaseGeneratorPopulator());
             gen.setBiomeGenerator(plotgen.getBiomeGenerator());
         }
     }
-
+    
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "plotsquared";
     }
-
+    
     @Override
-    public String getId()
-    {
+    public String getId() {
         return "plotsquared";
     }
 }

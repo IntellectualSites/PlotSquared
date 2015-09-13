@@ -19,63 +19,50 @@ import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.sponge.SpongeMain;
 
-public class SpongeCommand implements CommandCallable
-{
-
+public class SpongeCommand implements CommandCallable {
+    
     @Override
-    public CommandResult process(final CommandSource cmd, final String string) throws CommandException
-    {
+    public CommandResult process(final CommandSource cmd, final String string) throws CommandException {
         final String id = cmd.getIdentifier();
         PlotPlayer pp;
-        try
-        {
+        try {
             final UUID uuid = UUID.fromString(id);
             final Player player = SpongeMain.THIS.getServer().getPlayer(uuid).get();
             pp = SpongeUtil.getPlayer(player);
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             pp = ConsolePlayer.getConsole();
         }
-        if (MainCommand.onCommand(pp, cmd.getName(), string.length() == 0 ? new String[] {} : string.split(" ")))
-        {
+        if (MainCommand.onCommand(pp, cmd.getName(), string.length() == 0 ? new String[] {} : string.split(" "))) {
             return CommandResult.success();
-        }
-        else
-        {
+        } else {
             return CommandResult.empty();
         }
     }
-
+    
     @Override
-    public List<String> getSuggestions(final CommandSource cmd, final String string) throws CommandException
-    {
+    public List<String> getSuggestions(final CommandSource cmd, final String string) throws CommandException {
         // TODO Auto-generated method stub
         return new ArrayList<>(Arrays.asList("TEST"));
     }
-
+    
     @Override
-    public boolean testPermission(final CommandSource cmd)
-    {
+    public boolean testPermission(final CommandSource cmd) {
         return true;
     }
-
+    
     @Override
-    public Optional<? extends Text> getShortDescription(final CommandSource cmd)
-    {
+    public Optional<? extends Text> getShortDescription(final CommandSource cmd) {
         return Optional.of(Texts.of("Shows plot help"));
     }
-
+    
     @Override
-    public Optional<? extends Text> getHelp(final CommandSource cmd)
-    {
+    public Optional<? extends Text> getHelp(final CommandSource cmd) {
         return Optional.of(Texts.of("/plot help"));
     }
-
+    
     @Override
-    public Text getUsage(final CommandSource cmd)
-    {
+    public Text getUsage(final CommandSource cmd) {
         return Texts.of("/plot <command>");
     }
-
+    
 }

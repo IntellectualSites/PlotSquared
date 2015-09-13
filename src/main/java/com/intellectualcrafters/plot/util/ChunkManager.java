@@ -14,23 +14,21 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
 
-public abstract class ChunkManager
-{
-
+public abstract class ChunkManager {
+    
     public static ChunkManager manager = null;
     public static RegionWrapper CURRENT_PLOT_CLEAR = null;
     public static boolean FORCE_PASTE = false;
-
+    
     public static HashMap<PlotLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
     public static HashMap<PlotLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
-
-    public static ChunkLoc getChunkChunk(final Location loc)
-    {
+    
+    public static ChunkLoc getChunkChunk(final Location loc) {
         final int x = loc.getX() >> 9;
         final int z = loc.getZ() >> 9;
         return new ChunkLoc(x, z);
     }
-
+    
     /**
      * The int[] will be in the form: [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge] and will represent the bottom and top parts of the chunk
      * @param pos1
@@ -38,8 +36,7 @@ public abstract class ChunkManager
      * @param task
      * @param whenDone
      */
-    public static void chunkTask(final Location pos1, final Location pos2, final RunnableVal<int[]> task, final Runnable whenDone, final int allocate)
-    {
+    public static void chunkTask(final Location pos1, final Location pos2, final RunnableVal<int[]> task, final Runnable whenDone, final int allocate) {
         final int p1x = pos1.getX();
         final int p1z = pos1.getZ();
         final int p2x = pos2.getX();
@@ -48,25 +45,20 @@ public abstract class ChunkManager
         final int bcz = p1z >> 4;
         final int tcx = p2x >> 4;
         final int tcz = p2z >> 4;
-
+        
         final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
-
-        for (int x = bcx; x <= tcx; x++)
-        {
-            for (int z = bcz; z <= tcz; z++)
-            {
+        
+        for (int x = bcx; x <= tcx; x++) {
+            for (int z = bcz; z <= tcz; z++) {
                 chunks.add(new ChunkLoc(x, z));
             }
         }
-
-        TaskManager.runTask(new Runnable()
-        {
+        
+        TaskManager.runTask(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 final long start = System.currentTimeMillis();
-                while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < allocate))
-                {
+                while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < allocate)) {
                     final ChunkLoc chunk = chunks.remove(0);
                     task.value = new int[7];
                     task.value[0] = chunk.x;
@@ -75,62 +67,55 @@ public abstract class ChunkManager
                     task.value[3] = task.value[1] << 4;
                     task.value[4] = task.value[2] + 15;
                     task.value[5] = task.value[3] + 15;
-                    if (task.value[0] == bcx)
-                    {
+                    if (task.value[0] == bcx) {
                         task.value[2] = p1x;
                         task.value[6] = 1;
                     }
-                    if (task.value[0] == tcx)
-                    {
+                    if (task.value[0] == tcx) {
                         task.value[4] = p2x;
                         task.value[6] = 1;
                     }
-                    if (task.value[1] == bcz)
-                    {
+                    if (task.value[1] == bcz) {
                         task.value[3] = p1z;
                         task.value[6] = 1;
                     }
-                    if (task.value[1] == tcz)
-                    {
+                    if (task.value[1] == tcz) {
                         task.value[5] = p2z;
                         task.value[6] = 1;
                     }
                     task.run();
                 }
-                if (chunks.size() != 0)
-                {
+                if (chunks.size() != 0) {
                     TaskManager.runTaskLater(this, 1);
-                }
-                else
-                {
+                } else {
                     TaskManager.runTask(whenDone);
                 }
             }
         });
     }
-
+    
     public abstract void setChunk(final ChunkWrapper loc, final PlotBlock[][] result);
-
+    
     public abstract int[] countEntities(final Plot plot);
-
+    
     public abstract boolean loadChunk(final String world, final ChunkLoc loc, final boolean force);
-
+    
     public abstract boolean unloadChunk(final String world, final ChunkLoc loc, final boolean save, final boolean safe);
-
+    
     public abstract List<ChunkLoc> getChunkChunks(final String world);
-
+    
     public abstract void regenerateChunk(final String world, final ChunkLoc loc);
-
+    
     public abstract void deleteRegionFile(final String world, final ChunkLoc loc);
-
+    
     public abstract void deleteRegionFiles(final String world, final List<ChunkLoc> chunks);
-
+    
     public abstract void deleteRegionFiles(final String world, final List<ChunkLoc> chunks, final Runnable whenDone);
-
+    
     public abstract Plot hasPlot(String world, ChunkLoc chunk);
-
+    
     public abstract boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone);
-
+    
     /**
      * Assumptions:<br>
      *  - pos1 and pos2 are in the same plot<br>
@@ -141,10 +126,10 @@ public abstract class ChunkManager
      * @return
      */
     public abstract boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone);
-
+    
     public abstract void clearAllEntities(final Location pos1, final Location pos2);
-
+    
     public abstract void swap(final String world, final PlotId id, final PlotId plotid);
-
+    
     public abstract void swap(final String worldname, final Location bot1, final Location top1, final Location bot2, final Location top2);
 }

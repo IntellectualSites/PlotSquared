@@ -22,170 +22,144 @@ import com.intellectualcrafters.plot.PS;
  * An implementation of {@link Configuration} which saves all files in Yaml.
  * Note that this implementation is not synchronized.
  */
-public class YamlConfiguration extends FileConfiguration
-{
+public class YamlConfiguration extends FileConfiguration {
     protected static final String COMMENT_PREFIX = "# ";
     protected static final String BLANK_CONFIG = "{}\n";
     private final DumperOptions yamlOptions = new DumperOptions();
     private final Representer yamlRepresenter = new YamlRepresenter();
     private final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
-
+    
     @Override
-    public String saveToString()
-    {
+    public String saveToString() {
         yamlOptions.setIndent(options().indent());
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlOptions.setAllowUnicode(SYSTEM_UTF);
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
+        
         final String header = buildHeader();
         String dump = yaml.dump(getValues(false));
-
-        if (dump.equals(BLANK_CONFIG))
-        {
+        
+        if (dump.equals(BLANK_CONFIG)) {
             dump = "";
         }
-
+        
         return header + dump;
     }
-
+    
     @Override
-    public void loadFromString(final String contents) throws InvalidConfigurationException
-    {
-        if (contents == null) { throw new NullPointerException("Contents cannot be null"); }
-
+    public void loadFromString(final String contents) throws InvalidConfigurationException {
+        if (contents == null) {
+            throw new NullPointerException("Contents cannot be null");
+        }
+        
         Map<?, ?> input;
-        try
-        {
+        try {
             input = (Map<?, ?>) yaml.load(contents);
-        }
-        catch (final YAMLException e)
-        {
+        } catch (final YAMLException e) {
             throw new InvalidConfigurationException(e);
-        }
-        catch (final ClassCastException e)
-        {
+        } catch (final ClassCastException e) {
             throw new InvalidConfigurationException("Top level is not a Map.");
         }
-
+        
         final String header = parseHeader(contents);
-        if (header.length() > 0)
-        {
+        if (header.length() > 0) {
             options().header(header);
         }
-
-        if (input != null)
-        {
+        
+        if (input != null) {
             convertMapsToSections(input, this);
         }
     }
-
-    protected void convertMapsToSections(final Map<?, ?> input, final ConfigurationSection section)
-    {
-        for (final Map.Entry<?, ?> entry : input.entrySet())
-        {
+    
+    protected void convertMapsToSections(final Map<?, ?> input, final ConfigurationSection section) {
+        for (final Map.Entry<?, ?> entry : input.entrySet()) {
             final String key = entry.getKey().toString();
             final Object value = entry.getValue();
-
-            if (value instanceof Map)
-            {
+            
+            if (value instanceof Map) {
                 convertMapsToSections((Map<?, ?>) value, section.createSection(key));
-            }
-            else
-            {
+            } else {
                 section.set(key, value);
             }
         }
     }
-
-    protected String parseHeader(final String input)
-    {
+    
+    protected String parseHeader(final String input) {
         final String[] lines = input.split("\r?\n", -1);
         final StringBuilder result = new StringBuilder();
         boolean readingHeader = true;
         boolean foundHeader = false;
-
-        for (int i = 0; (i < lines.length) && (readingHeader); i++)
-        {
+        
+        for (int i = 0; (i < lines.length) && (readingHeader); i++) {
             final String line = lines[i];
-
-            if (line.startsWith(COMMENT_PREFIX))
-            {
-                if (i > 0)
-                {
+            
+            if (line.startsWith(COMMENT_PREFIX)) {
+                if (i > 0) {
                     result.append("\n");
                 }
-
-                if (line.length() > COMMENT_PREFIX.length())
-                {
+                
+                if (line.length() > COMMENT_PREFIX.length()) {
                     result.append(line.substring(COMMENT_PREFIX.length()));
                 }
-
+                
                 foundHeader = true;
-            }
-            else if ((foundHeader) && (line.length() == 0))
-            {
+            } else if ((foundHeader) && (line.length() == 0)) {
                 result.append("\n");
-            }
-            else if (foundHeader)
-            {
+            } else if (foundHeader) {
                 readingHeader = false;
             }
         }
-
+        
         return result.toString();
     }
-
+    
     @Override
-    protected String buildHeader()
-    {
+    protected String buildHeader() {
         final String header = options().header();
-
-        if (options().copyHeader())
-        {
+        
+        if (options().copyHeader()) {
             final Configuration def = getDefaults();
-
-            if ((def != null) && (def instanceof FileConfiguration))
-            {
+            
+            if ((def != null) && (def instanceof FileConfiguration)) {
                 final FileConfiguration filedefaults = (FileConfiguration) def;
                 final String defaultsHeader = filedefaults.buildHeader();
-
-                if ((defaultsHeader != null) && (defaultsHeader.length() > 0)) { return defaultsHeader; }
+                
+                if ((defaultsHeader != null) && (defaultsHeader.length() > 0)) {
+                    return defaultsHeader;
+                }
             }
         }
-
-        if (header == null) { return ""; }
-
+        
+        if (header == null) {
+            return "";
+        }
+        
         final StringBuilder builder = new StringBuilder();
         final String[] lines = header.split("\r?\n", -1);
         boolean startedHeader = false;
-
-        for (int i = lines.length - 1; i >= 0; i--)
-        {
+        
+        for (int i = lines.length - 1; i >= 0; i--) {
             builder.insert(0, "\n");
-
-            if ((startedHeader) || (lines[i].length() != 0))
-            {
+            
+            if ((startedHeader) || (lines[i].length() != 0)) {
                 builder.insert(0, lines[i]);
                 builder.insert(0, COMMENT_PREFIX);
                 startedHeader = true;
             }
         }
-
+        
         return builder.toString();
     }
-
+    
     @Override
-    public YamlConfigurationOptions options()
-    {
-        if (options == null)
-        {
+    public YamlConfigurationOptions options() {
+        if (options == null) {
             options = new YamlConfigurationOptions(this);
         }
-
+        
         return (YamlConfigurationOptions) options;
     }
-
+    
     /**
      * Creates a new {@link YamlConfiguration}, loading from the given file.
      * <p>
@@ -199,25 +173,21 @@ public class YamlConfiguration extends FileConfiguration
      * @return Resulting configuration
      * @throws IllegalArgumentException Thrown if file is null
      */
-    public static YamlConfiguration loadConfiguration(final File file)
-    {
-        if (file == null) { throw new NullPointerException("File cannot be null"); }
-
-        final YamlConfiguration config = new YamlConfiguration();
-
-        try
-        {
-            config.load(file);
+    public static YamlConfiguration loadConfiguration(final File file) {
+        if (file == null) {
+            throw new NullPointerException("File cannot be null");
         }
-        catch (final Exception ex)
-        {
-            try
-            {
+        
+        final YamlConfiguration config = new YamlConfiguration();
+        
+        try {
+            config.load(file);
+        } catch (final Exception ex) {
+            try {
                 file.getAbsolutePath();
                 File dest = new File(file.getAbsolutePath() + "_broken");
                 int i = 0;
-                while (dest.exists())
-                {
+                while (dest.exists()) {
                     dest = new File(file.getAbsolutePath() + "_broken_" + i++);
                 }
                 Files.copy(file.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -226,16 +196,14 @@ public class YamlConfiguration extends FileConfiguration
                 PS.debug("&c============ Full stacktrace ============");
                 ex.printStackTrace();
                 PS.debug("&c=========================================");
-            }
-            catch (final IOException e)
-            {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
-
+        
         return config;
     }
-
+    
     /**
      * Creates a new {@link YamlConfiguration}, loading from the given stream.
      * <p>
@@ -251,30 +219,26 @@ public class YamlConfiguration extends FileConfiguration
      * @see #loadConfiguration(Reader)
      */
     @Deprecated
-    public static YamlConfiguration loadConfiguration(final InputStream stream)
-    {
-        if (stream == null) { throw new NullPointerException("Stream cannot be null"); }
-
+    public static YamlConfiguration loadConfiguration(final InputStream stream) {
+        if (stream == null) {
+            throw new NullPointerException("Stream cannot be null");
+        }
+        
         final YamlConfiguration config = new YamlConfiguration();
-
-        try
-        {
+        
+        try {
             config.load(stream);
-        }
-        catch (final IOException ex)
-        {
+        } catch (final IOException ex) {
             PS.debug("Cannot load configuration from stream");
             ex.printStackTrace();
-        }
-        catch (final InvalidConfigurationException ex)
-        {
+        } catch (final InvalidConfigurationException ex) {
             ex.printStackTrace();
             PS.debug("Cannot load configuration from stream");
         }
-
+        
         return config;
     }
-
+    
     /**
      * Creates a new {@link YamlConfiguration}, loading from the given reader.
      * <p>
@@ -286,27 +250,23 @@ public class YamlConfiguration extends FileConfiguration
      * @return resulting configuration
      * @throws IllegalArgumentException Thrown if stream is null
      */
-    public static YamlConfiguration loadConfiguration(final Reader reader)
-    {
-        if (reader == null) { throw new NullPointerException("Reader cannot be null"); }
-
+    public static YamlConfiguration loadConfiguration(final Reader reader) {
+        if (reader == null) {
+            throw new NullPointerException("Reader cannot be null");
+        }
+        
         final YamlConfiguration config = new YamlConfiguration();
-
-        try
-        {
+        
+        try {
             config.load(reader);
-        }
-        catch (final IOException ex)
-        {
+        } catch (final IOException ex) {
+            PS.debug("Cannot load configuration from stream");
+            ex.printStackTrace();
+        } catch (final InvalidConfigurationException ex) {
             PS.debug("Cannot load configuration from stream");
             ex.printStackTrace();
         }
-        catch (final InvalidConfigurationException ex)
-        {
-            PS.debug("Cannot load configuration from stream");
-            ex.printStackTrace();
-        }
-
+        
         return config;
     }
 }

@@ -9,94 +9,80 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 
-public class BukkitGeneratorWrapper extends PlotGenerator<ChunkGenerator>
-{
-
+public class BukkitGeneratorWrapper extends PlotGenerator<ChunkGenerator> {
+    
     public final boolean full;
-
-    public BukkitGeneratorWrapper(final String world, final ChunkGenerator generator)
-    {
+    
+    public BukkitGeneratorWrapper(final String world, final ChunkGenerator generator) {
         super(world, generator);
         full = (generator instanceof BukkitPlotGenerator);
     }
-
+    
     @Override
-    public void initialize(final PlotWorld plotworld)
-    {
-        if (generator instanceof BukkitPlotGenerator)
-        {
+    public void initialize(final PlotWorld plotworld) {
+        if (generator instanceof BukkitPlotGenerator) {
             ((BukkitPlotGenerator) generator).init(plotworld);
         }
     }
-
+    
     @Override
-    public void augment(final PlotCluster cluster, final PlotWorld plotworld)
-    {
-        if (generator instanceof BukkitPlotGenerator)
-        {
+    public void augment(final PlotCluster cluster, final PlotWorld plotworld) {
+        if (generator instanceof BukkitPlotGenerator) {
             final BukkitPlotGenerator plotgen = (BukkitPlotGenerator) generator;
-            if (cluster != null)
-            {
+            if (cluster != null) {
                 new AugmentedPopulator(world, plotgen, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
-            }
-            else
-            {
+            } else {
                 new AugmentedPopulator(world, plotgen, null, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
             }
         }
     }
-
+    
     @Override
-    public void setGenerator(final String gen_string)
-    {
-        if (gen_string == null)
-        {
+    public void setGenerator(final String gen_string) {
+        if (gen_string == null) {
             generator = new HybridGen(world);
-        }
-        else
-        {
+        } else {
             final PlotGenerator<ChunkGenerator> gen_wrapper = (PlotGenerator<ChunkGenerator>) PS.get().IMP.getGenerator(world, gen_string);
-            if (gen_wrapper != null)
-            {
+            if (gen_wrapper != null) {
                 generator = gen_wrapper.generator;
             }
         }
     }
-
+    
     @Override
-    public PlotWorld getNewPlotWorld(final String world)
-    {
-        if (!(generator instanceof BukkitPlotGenerator)) { return null; }
+    public PlotWorld getNewPlotWorld(final String world) {
+        if (!(generator instanceof BukkitPlotGenerator)) {
+            return null;
+        }
         return ((BukkitPlotGenerator) generator).getNewPlotWorld(world);
     }
-
+    
     @Override
-    public PlotManager getPlotManager()
-    {
-        if (!(generator instanceof BukkitPlotGenerator)) { return null; }
+    public PlotManager getPlotManager() {
+        if (!(generator instanceof BukkitPlotGenerator)) {
+            return null;
+        }
         return ((BukkitPlotGenerator) generator).getPlotManager();
     }
-
+    
     @Override
-    public boolean isFull()
-    {
+    public boolean isFull() {
         return full;
     }
-
+    
     @Override
-    public String getName()
-    {
-        if (generator == null) { return "Null"; }
+    public String getName() {
+        if (generator == null) {
+            return "Null";
+        }
         return generator.getClass().getName();
     }
-
+    
     @Override
-    public void processSetup(final SetupObject object)
-    {
-        if (generator instanceof BukkitPlotGenerator)
-        {
+    public void processSetup(final SetupObject object) {
+        if (generator instanceof BukkitPlotGenerator) {
             ((BukkitPlotGenerator) generator).processSetup(object);
         }
     }
-
+    
 }

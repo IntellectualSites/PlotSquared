@@ -23,54 +23,51 @@ import com.plotsquared.general.commands.Command;
  * Created 2015-02-20 for PlotSquared
  *
  */
-public class BukkitCommand implements CommandExecutor, TabCompleter
-{
-
-    public BukkitCommand()
-    {
+public class BukkitCommand implements CommandExecutor, TabCompleter {
+    
+    public BukkitCommand() {
         MainCommand.getInstance().addCommand(new DebugUUID());
     }
-
+    
     @Override
-    public boolean onCommand(final CommandSender commandSender, final org.bukkit.command.Command command, final String commandLabel, final String[] args)
-    {
-        if (commandSender instanceof Player) { return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), commandLabel, args); }
+    public boolean onCommand(final CommandSender commandSender, final org.bukkit.command.Command command, final String commandLabel, final String[] args) {
+        if (commandSender instanceof Player) {
+            return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), commandLabel, args);
+        }
         return MainCommand.onCommand(ConsolePlayer.getConsole(), commandLabel, args);
     }
-
+    
     @Override
-    public List<String> onTabComplete(final CommandSender commandSender, final org.bukkit.command.Command command, final String s, final String[] strings)
-    {
-        if (!(commandSender instanceof Player)) { return null; }
-        final PlotPlayer player = BukkitUtil.getPlayer((Player) commandSender);
-        if (strings.length < 1)
-        {
-            if ((strings.length == 0) || "plots".startsWith(s)) { return Collections.singletonList("plots"); }
+    public List<String> onTabComplete(final CommandSender commandSender, final org.bukkit.command.Command command, final String s, final String[] strings) {
+        if (!(commandSender instanceof Player)) {
+            return null;
         }
-        if (strings.length > 1) { return null; }
-        if (!command.getLabel().equalsIgnoreCase("plots")) { return null; }
+        final PlotPlayer player = BukkitUtil.getPlayer((Player) commandSender);
+        if (strings.length < 1) {
+            if ((strings.length == 0) || "plots".startsWith(s)) {
+                return Collections.singletonList("plots");
+            }
+        }
+        if (strings.length > 1) {
+            return null;
+        }
+        if (!command.getLabel().equalsIgnoreCase("plots")) {
+            return null;
+        }
         final Set<String> tabOptions = new HashSet<>();
         final ArrayList<Command<PlotPlayer>> commands = MainCommand.getInstance().getCommands();
         final String best = new StringComparison(strings[0], commands).getBestMatch();
         tabOptions.add(best);
         final String arg = strings[0].toLowerCase();
-        for (final Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands())
-        {
+        for (final Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands()) {
             final String label = cmd.getCommand();
-            if (!label.equalsIgnoreCase(best))
-            {
-                if (label.startsWith(arg))
-                {
-                    if (Permissions.hasPermission(player, cmd.getPermission()))
-                    {
+            if (!label.equalsIgnoreCase(best)) {
+                if (label.startsWith(arg)) {
+                    if (Permissions.hasPermission(player, cmd.getPermission())) {
                         tabOptions.add(cmd.getCommand());
-                    }
-                    else if (cmd.getAliases().size() > 0)
-                    {
-                        for (final String alias : cmd.getAliases())
-                        {
-                            if (alias.startsWith(arg))
-                            {
+                    } else if (cmd.getAliases().size() > 0) {
+                        for (final String alias : cmd.getAliases()) {
+                            if (alias.startsWith(arg)) {
                                 tabOptions.add(label);
                                 break;
                             }
@@ -79,7 +76,9 @@ public class BukkitCommand implements CommandExecutor, TabCompleter
                 }
             }
         }
-        if (tabOptions.size() > 0) { return new ArrayList<>(tabOptions); }
+        if (tabOptions.size() > 0) {
+            return new ArrayList<>(tabOptions);
+        }
         return null;
     }
 }

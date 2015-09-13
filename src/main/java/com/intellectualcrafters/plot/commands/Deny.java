@@ -36,69 +36,49 @@ import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-command = "deny",
-aliases = { "d" },
-description = "Deny a user from a plot",
-usage = "/plot deny <player>",
-category = CommandCategory.ACTIONS,
-requiredType = RequiredType.NONE)
-public class Deny extends SubCommand
-{
-
-    public Deny()
-    {
-        requiredArguments = new Argument[] {
-        Argument.PlayerName
-        };
+@CommandDeclaration(command = "deny", aliases = { "d" }, description = "Deny a user from a plot", usage = "/plot deny <player>", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
+public class Deny extends SubCommand {
+    
+    public Deny() {
+        requiredArguments = new Argument[] { Argument.PlayerName };
     }
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args)
-    {
-
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) { return !sendMessage(plr, C.NOT_IN_PLOT); }
-        if ((plot == null) || !plot.hasOwner())
-        {
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
+        if ((plot == null) || !plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.deny"))
-        {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.deny")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         UUID uuid;
-        if (args[0].equalsIgnoreCase("*"))
-        {
+        if (args[0].equalsIgnoreCase("*")) {
             uuid = DBFunc.everyone;
-        }
-        else
-        {
+        } else {
             uuid = UUIDHandler.getUUID(args[0], null);
         }
-        if (uuid == null)
-        {
-            if (UUIDHandler.implementation instanceof SQLUUIDHandler)
-            {
+        if (uuid == null) {
+            if (UUIDHandler.implementation instanceof SQLUUIDHandler) {
                 MainUtil.sendMessage(plr, C.INVALID_PLAYER_WAIT, args[0]);
-            }
-            else
-            {
+            } else {
                 MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             }
             return false;
         }
-        if (plot.isOwner(uuid))
-        {
+        if (plot.isOwner(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_OWNER);
             return false;
         }
-
-        if (plot.getDenied().contains(uuid))
-        {
+        
+        if (plot.getDenied().contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
         }
@@ -107,18 +87,15 @@ public class Deny extends SubCommand
         plot.addDenied(uuid);
         EventUtil.manager.callDenied(plr, plot, uuid, true);
         MainUtil.sendMessage(plr, C.DENIED_ADDED);
-        if (!uuid.equals(DBFunc.everyone))
-        {
+        if (!uuid.equals(DBFunc.everyone)) {
             handleKick(uuid, plot);
         }
         return true;
     }
-
-    private void handleKick(final UUID uuid, final Plot plot)
-    {
+    
+    private void handleKick(final UUID uuid, final Plot plot) {
         final PlotPlayer pp = UUIDHandler.getPlayer(uuid);
-        if ((pp != null) && plot.equals(MainUtil.getPlot(pp.getLocation())))
-        {
+        if ((pp != null) && plot.equals(MainUtil.getPlot(pp.getLocation()))) {
             pp.teleport(BlockManager.manager.getSpawn(pp.getLocation().getWorld()));
             MainUtil.sendMessage(pp, C.YOU_GOT_DENIED);
         }

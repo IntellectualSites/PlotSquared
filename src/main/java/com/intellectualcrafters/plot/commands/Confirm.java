@@ -28,26 +28,18 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-command = "confirm",
-permission = "plots.use",
-description = "Confirm an action",
-category = CommandCategory.ACTIONS)
-public class Confirm extends SubCommand
-{
-
+@CommandDeclaration(command = "confirm", permission = "plots.use", description = "Confirm an action", category = CommandCategory.ACTIONS)
+public class Confirm extends SubCommand {
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args)
-    {
+    public boolean onCommand(final PlotPlayer plr, final String... args) {
         final CmdInstance command = CmdConfirm.getPending(plr);
-        if (command == null)
-        {
+        if (command == null) {
             MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
             return false;
         }
         CmdConfirm.removePending(plr);
-        if ((System.currentTimeMillis() - command.timestamp) > 20000)
-        {
+        if ((System.currentTimeMillis() - command.timestamp) > 20000) {
             MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
             return false;
         }

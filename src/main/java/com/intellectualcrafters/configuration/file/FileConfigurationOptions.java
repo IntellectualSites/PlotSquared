@@ -7,36 +7,31 @@ import com.intellectualcrafters.configuration.MemoryConfigurationOptions;
  * Various settings for controlling the input and output of a {@link
  * FileConfiguration}
  */
-public class FileConfigurationOptions extends MemoryConfigurationOptions
-{
+public class FileConfigurationOptions extends MemoryConfigurationOptions {
     private String header = null;
     private boolean copyHeader = true;
-
-    protected FileConfigurationOptions(final MemoryConfiguration configuration)
-    {
+    
+    protected FileConfigurationOptions(final MemoryConfiguration configuration) {
         super(configuration);
     }
-
+    
     @Override
-    public FileConfiguration configuration()
-    {
+    public FileConfiguration configuration() {
         return (FileConfiguration) super.configuration();
     }
-
+    
     @Override
-    public FileConfigurationOptions copyDefaults(final boolean value)
-    {
+    public FileConfigurationOptions copyDefaults(final boolean value) {
         super.copyDefaults(value);
         return this;
     }
-
+    
     @Override
-    public FileConfigurationOptions pathSeparator(final char value)
-    {
+    public FileConfigurationOptions pathSeparator(final char value) {
         super.pathSeparator(value);
         return this;
     }
-
+    
     /**
      * Gets the header that will be applied to the top of the saved output.
      * <p>
@@ -51,11 +46,10 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions
      *
      * @return Header
      */
-    public String header()
-    {
+    public String header() {
         return header;
     }
-
+    
     /**
      * Sets the header that will be applied to the top of the saved output.
      * <p>
@@ -71,12 +65,11 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions
      * @param value New header
      * @return This object, for chaining
      */
-    public FileConfigurationOptions header(final String value)
-    {
+    public FileConfigurationOptions header(final String value) {
         header = value;
         return this;
     }
-
+    
     /**
      * Gets whether or not the header should be copied from a default source.
      * <p>
@@ -95,11 +88,10 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions
      *
      * @return Whether or not to copy the header
      */
-    public boolean copyHeader()
-    {
+    public boolean copyHeader() {
         return copyHeader;
     }
-
+    
     /**
      * Sets whether or not the header should be copied from a default source.
      * <p>
@@ -119,10 +111,9 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions
      * @param value Whether or not to copy the header
      * @return This object, for chaining
      */
-    public FileConfigurationOptions copyHeader(final boolean value)
-    {
+    public FileConfigurationOptions copyHeader(final boolean value) {
         copyHeader = value;
-
+        
         return this;
     }
 }

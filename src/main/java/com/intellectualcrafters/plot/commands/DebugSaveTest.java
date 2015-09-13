@@ -36,20 +36,16 @@ category = CommandCategory.DEBUG,
 requiredType = RequiredType.CONSOLE,
 usage = "/plot debugsavetest",
 description = "This command will force the recreation of all plots in the DB")
-public class DebugSaveTest extends SubCommand
-{
-
+public class DebugSaveTest extends SubCommand {
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args)
-    {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final ArrayList<Plot> plots = new ArrayList<Plot>();
         plots.addAll(PS.get().getPlots());
         MainUtil.sendMessage(null, "&6Starting `DEBUGSAVETEST`");
-        DBFunc.createPlotsAndData(plots, new Runnable()
-        {
+        DBFunc.createPlotsAndData(plots, new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 MainUtil.sendMessage(null, "&6Database sync finished!");
             }
         });

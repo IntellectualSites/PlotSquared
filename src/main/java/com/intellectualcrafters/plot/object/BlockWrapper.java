@@ -26,8 +26,7 @@ package com.intellectualcrafters.plot.object;
  * Useful for NMS
  *
  */
-public class BlockWrapper
-{
+public class BlockWrapper {
     /**
      * X Coordinate
      */
@@ -48,7 +47,7 @@ public class BlockWrapper
      * Block Data Value
      */
     public final byte data;
-
+    
     /**
      * Constructor
      *
@@ -58,8 +57,7 @@ public class BlockWrapper
      * @param id   Material ID
      * @param data Data Value
      */
-    public BlockWrapper(final int x, final int y, final int z, final short id, final byte data)
-    {
+    public BlockWrapper(final int x, final int y, final int z, final short id, final byte data) {
         this.x = x;
         this.y = y;
         this.z = z;

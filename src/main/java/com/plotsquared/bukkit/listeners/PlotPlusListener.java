@@ -57,56 +57,44 @@ import com.plotsquared.listener.PlotListener;
  *
  */
 @SuppressWarnings({ "deprecation" })
-public class PlotPlusListener extends PlotListener implements Listener
-{
+public class PlotPlusListener extends PlotListener implements Listener {
     private final static HashMap<String, Interval> feedRunnable = new HashMap<>();
     private final static HashMap<String, Interval> healRunnable = new HashMap<>();
-
-    public static void startRunnable(final JavaPlugin plugin)
-    {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
-        {
+    
+    public static void startRunnable(final JavaPlugin plugin) {
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
-            public void run()
-            {
-                for (final Iterator<Entry<String, Interval>> iter = healRunnable.entrySet().iterator(); iter.hasNext();)
-                {
+            public void run() {
+                for (final Iterator<Entry<String, Interval>> iter = healRunnable.entrySet().iterator(); iter.hasNext();) {
                     final Entry<String, Interval> entry = iter.next();
                     final Interval value = entry.getValue();
                     ++value.count;
-                    if (value.count == value.interval)
-                    {
+                    if (value.count == value.interval) {
                         value.count = 0;
                         final Player player = Bukkit.getPlayer(entry.getKey());
-                        if (player == null)
-                        {
+                        if (player == null) {
                             iter.remove();
                             continue;
                         }
                         final double level = player.getHealth();
-                        if (level != value.max)
-                        {
+                        if (level != value.max) {
                             player.setHealth(Math.min(level + value.amount, value.max));
                         }
                     }
                 }
-                for (final Iterator<Entry<String, Interval>> iter = feedRunnable.entrySet().iterator(); iter.hasNext();)
-                {
+                for (final Iterator<Entry<String, Interval>> iter = feedRunnable.entrySet().iterator(); iter.hasNext();) {
                     final Entry<String, Interval> entry = iter.next();
                     final Interval value = entry.getValue();
                     ++value.count;
-                    if (value.count == value.interval)
-                    {
+                    if (value.count == value.interval) {
                         value.count = 0;
                         final Player player = Bukkit.getPlayer(entry.getKey());
-                        if (player == null)
-                        {
+                        if (player == null) {
                             iter.remove();
                             continue;
                         }
                         final int level = player.getFoodLevel();
-                        if (level != value.max)
-                        {
+                        if (level != value.max) {
                             player.setFoodLevel(Math.min(level + value.amount, value.max));
                         }
                     }
@@ -114,153 +102,145 @@ public class PlotPlusListener extends PlotListener implements Listener
             }
         }, 0l, 20l);
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH)
-    public void onInteract(final BlockDamageEvent event)
-    {
+    public void onInteract(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
-        if (player.getGameMode() != GameMode.SURVIVAL) { return; }
+        if (player.getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
         final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
-        if (plot == null) { return; }
-        if (FlagManager.isBooleanFlag(plot, "instabreak", false))
-        {
+        if (plot == null) {
+            return;
+        }
+        if (FlagManager.isBooleanFlag(plot, "instabreak", false)) {
             event.getBlock().breakNaturally();
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH)
-    public void onDamage(final EntityDamageEvent event)
-    {
-        if (event.getEntityType() != EntityType.PLAYER) { return; }
+    public void onDamage(final EntityDamageEvent event) {
+        if (event.getEntityType() != EntityType.PLAYER) {
+            return;
+        }
         final Player player = (Player) event.getEntity();
         final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
-        if (plot == null) { return; }
-        if (FlagManager.isBooleanFlag(plot, "invincible", false))
-        {
+        if (plot == null) {
+            return;
+        }
+        if (FlagManager.isBooleanFlag(plot, "invincible", false)) {
             event.setCancelled(true);
         }
     }
-
+    
     @EventHandler
-    public void onItemPickup(final PlayerPickupItemEvent event)
-    {
+    public void onItemPickup(final PlayerPickupItemEvent event) {
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         final Plot plot = MainUtil.getPlot(pp.getLocation());
-        if (plot == null) { return; }
+        if (plot == null) {
+            return;
+        }
         final UUID uuid = pp.getUUID();
-        if (plot.isAdded(uuid) && FlagManager.isBooleanFlag(plot, "drop-protection", false))
-        {
+        if (plot.isAdded(uuid) && FlagManager.isBooleanFlag(plot, "drop-protection", false)) {
             event.setCancelled(true);
         }
     }
-
+    
     @EventHandler
-    public void onItemDrop(final PlayerDropItemEvent event)
-    {
+    public void onItemDrop(final PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         final Plot plot = MainUtil.getPlot(pp.getLocation());
-        if (plot == null) { return; }
+        if (plot == null) {
+            return;
+        }
         final UUID uuid = pp.getUUID();
-        if (plot.isAdded(uuid) && FlagManager.isBooleanFlag(plot, "item-drop", false))
-        {
+        if (plot.isAdded(uuid) && FlagManager.isBooleanFlag(plot, "item-drop", false)) {
             event.setCancelled(true);
         }
     }
-
+    
     @EventHandler
-    public void onPlotEnter(final PlayerEnterPlotEvent event)
-    {
+    public void onPlotEnter(final PlayerEnterPlotEvent event) {
         final Player player = event.getPlayer();
         final Plot plot = event.getPlot();
         final Flag feed = FlagManager.getPlotFlag(plot, "feed");
-        if (feed != null)
-        {
+        if (feed != null) {
             final Integer[] value = (Integer[]) feed.getValue();
             feedRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
         }
         final Flag heal = FlagManager.getPlotFlag(plot, "heal");
-        if (heal != null)
-        {
+        if (heal != null) {
             final Integer[] value = (Integer[]) heal.getValue();
             healRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
         }
     }
-
+    
     @EventHandler
-    public void onPlayerQuit(final PlayerQuitEvent event)
-    {
+    public void onPlayerQuit(final PlayerQuitEvent event) {
         final Player player = event.getPlayer();
         final String name = player.getName();
         feedRunnable.remove(name);
         healRunnable.remove(name);
     }
-
+    
     @EventHandler
-    public void onPlotLeave(final PlayerLeavePlotEvent event)
-    {
+    public void onPlotLeave(final PlayerLeavePlotEvent event) {
         final Player leaver = event.getPlayer();
         final Plot plot = event.getPlot();
-        if (!plot.hasOwner()) { return; }
+        if (!plot.hasOwner()) {
+            return;
+        }
         BukkitUtil.getPlayer(leaver);
         final String name = leaver.getName();
         feedRunnable.remove(name);
         healRunnable.remove(name);
     }
-
-    public static class Interval
-    {
+    
+    public static class Interval {
         public final int interval;
         public final int amount;
         public final int max;
         public int count = 0;
-
-        public Interval(final int interval, final int amount, final int max)
-        {
+        
+        public Interval(final int interval, final int amount, final int max) {
             this.interval = interval;
             this.amount = amount;
             this.max = max;
         }
     }
-
+    
     /**
      * Record Meta Class
      *
      */
-    public static class RecordMeta
-    {
+    public static class RecordMeta {
         public final static List<RecordMeta> metaList = new ArrayList<>();
-        static
-        {
-            for (int x = 3; x < 12; x++)
-            {
+        static {
+            for (int x = 3; x < 12; x++) {
                 metaList.add(new RecordMeta(x + "", Material.valueOf("RECORD_" + x)));
             }
         }
         private final String name;
         private final Material material;
-
-        public RecordMeta(final String name, final Material material)
-        {
+        
+        public RecordMeta(final String name, final Material material) {
             this.name = name;
             this.material = material;
         }
-
+        
         @Override
-        public String toString()
-        {
+        public String toString() {
             return name;
         }
-
+        
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return name.hashCode();
         }
-
-        public Material getMaterial()
-        {
+        
+        public Material getMaterial() {
             return material;
         }
     }

@@ -28,14 +28,13 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
  *
  */
 @SuppressWarnings({ "deprecation", "unused" })
-public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer>
-{
-
+public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer> {
+    
     /**
      * The category
      */
     public CommandCategory category;
-
+    
     /**
      * Send a message
      *
@@ -45,8 +44,7 @@ public abstract class SubCommand extends com.plotsquared.general.commands.Comman
      *
      * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, C, String...)
      */
-    public boolean sendMessage(final PlotPlayer plr, final C c, final String... args)
-    {
+    public boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
         c.send(plr, args);
         return true;
     }

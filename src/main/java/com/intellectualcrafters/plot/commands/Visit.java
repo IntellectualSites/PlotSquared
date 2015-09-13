@@ -44,113 +44,83 @@ usage = "/plot visit <player|aliases|world|id> [#]",
 aliases = { "v" },
 requiredType = RequiredType.NONE,
 category = CommandCategory.TELEPORT)
-public class Visit extends SubCommand
-{
-
-    public Visit()
-    {
-        requiredArguments = new Argument[] {
-        Argument.String
-        };
+public class Visit extends SubCommand {
+    
+    public Visit() {
+        requiredArguments = new Argument[] { Argument.String };
     }
-
-    public List<Plot> getPlots(final UUID uuid)
-    {
+    
+    public List<Plot> getPlots(final UUID uuid) {
         final List<Plot> plots = new ArrayList<>();
-        for (final Plot p : PS.get().getPlots())
-        {
-            if (p.hasOwner() && p.isOwner(uuid))
-            {
+        for (final Plot p : PS.get().getPlots()) {
+            if (p.hasOwner() && p.isOwner(uuid)) {
                 plots.add(p);
             }
         }
         return plots;
     }
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args)
-    {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         ArrayList<Plot> plots = new ArrayList<>();
         final UUID user = UUIDHandler.getCachedUUID(args[0], null);
-        if (user != null)
-        {
+        if (user != null) {
             // do plots by username
             plots = PS.get().sortPlotsByTemp(PS.get().getPlots(user));
-        }
-        else if (PS.get().isPlotWorld(args[0]))
-        {
+        } else if (PS.get().isPlotWorld(args[0])) {
             // do plots by world
             plots = PS.get().sortPlots(PS.get().getPlotsInWorld(args[0]), SortType.DISTANCE_FROM_ORIGIN, null);
-        }
-        else
-        {
+        } else {
             final Plot plot = MainUtil.getPlotFromString(plr, args[0], true);
-            if (plot == null) { return false; }
+            if (plot == null) {
+                return false;
+            }
             plots.add(plot);
         }
-        if (plots.size() == 0)
-        {
+        if (plots.size() == 0) {
             sendMessage(plr, C.FOUND_NO_PLOTS);
             return false;
         }
         int index = 0;
-        if (args.length == 2)
-        {
-            try
-            {
+        if (args.length == 2) {
+            try {
                 index = Integer.parseInt(args[1]) - 1;
-                if ((index < 0) || (index >= plots.size()))
-                {
+                if ((index < 0) || (index >= plots.size())) {
                     sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + plots.size() + ")");
                     sendMessage(plr, C.COMMAND_SYNTAX, "/plot visit " + args[0] + " [#]");
                     return false;
                 }
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + plots.size() + ")");
                 sendMessage(plr, C.COMMAND_SYNTAX, "/plot visit " + args[0] + " [#]");
                 return false;
             }
         }
-
+        
         final Plot plot = plots.get(index);
         final Iterator<Plot> iter = plots.iterator();
-        while (iter.hasNext())
-        {
-            if (!iter.next().isBasePlot())
-            {
+        while (iter.hasNext()) {
+            if (!iter.next().isBasePlot()) {
                 iter.remove();
             }
         }
-        if (!plot.hasOwner())
-        {
-            if (!Permissions.hasPermission(plr, "plots.visit.unowned"))
-            {
+        if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(plr, "plots.visit.unowned")) {
                 sendMessage(plr, C.NO_PERMISSION, "plots.visit.unowned");
                 return false;
             }
-        }
-        else if (plot.isOwner(plr.getUUID()))
-        {
-            if (!Permissions.hasPermission(plr, "plots.visit.owned") && !Permissions.hasPermission(plr, "plots.home"))
-            {
+        } else if (plot.isOwner(plr.getUUID())) {
+            if (!Permissions.hasPermission(plr, "plots.visit.owned") && !Permissions.hasPermission(plr, "plots.home")) {
                 sendMessage(plr, C.NO_PERMISSION, "plots.visit.owned, plots.home");
                 return false;
             }
-        }
-        else if (plot.isAdded(plr.getUUID()))
-        {
-            if (!Permissions.hasPermission(plr, "plots.visit.shared"))
-            {
+        } else if (plot.isAdded(plr.getUUID())) {
+            if (!Permissions.hasPermission(plr, "plots.visit.shared")) {
                 sendMessage(plr, C.NO_PERMISSION, "plots.visit.shared");
                 return false;
             }
-        }
-        else
-        {
-            if (!Permissions.hasPermission(plr, "plots.visit.other"))
-            {
+        } else {
+            if (!Permissions.hasPermission(plr, "plots.visit.other")) {
                 sendMessage(plr, C.NO_PERMISSION, "plots.visit.other");
                 return false;
             }
@@ -158,5 +128,5 @@ public class Visit extends SubCommand
         MainUtil.teleportPlayer(plr, plr.getLocation(), plots.get(index));
         return true;
     }
-
+    
 }

@@ -28,42 +28,37 @@ import com.intellectualcrafters.plot.object.Plot;
 
 /**
  */
-public class PlayerLeavePlotEvent extends PlayerEvent
-{
-
+public class PlayerLeavePlotEvent extends PlayerEvent {
+    
     private static HandlerList handlers = new HandlerList();
     private final Plot plot;
-
+    
     /**
      * PlayerLeavePlotEvent: Called when a player leaves a plot
      *
      * @param player Player that left the plot
      * @param plot   Plot that was left
      */
-    public PlayerLeavePlotEvent(final Player player, final Plot plot)
-    {
+    public PlayerLeavePlotEvent(final Player player, final Plot plot) {
         super(player);
         this.plot = plot;
     }
-
-    public static HandlerList getHandlerList()
-    {
+    
+    public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     /**
      * Get the plot involved
      *
      * @return Plot
      */
-    public Plot getPlot()
-    {
+    public Plot getPlot() {
         return plot;
     }
-
+    
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlers;
     }
 }

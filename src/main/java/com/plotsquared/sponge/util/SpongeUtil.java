@@ -15,26 +15,24 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 
-public class SpongeUtil
-{
-
-    public static Location getLocation(final Entity player)
-    {
+public class SpongeUtil {
+    
+    public static Location getLocation(final Entity player) {
         final String world = player.getWorld().getName();
         final org.spongepowered.api.world.Location loc = player.getLocation();
         final Vector3i pos = loc.getBlockPosition();
         return new Location(world, pos.getX(), pos.getY(), pos.getZ());
     }
-
-    public static Location getLocation(final org.spongepowered.api.world.Location block)
-    {
+    
+    public static Location getLocation(final org.spongepowered.api.world.Location block) {
         final Extent extent = block.getExtent();
-        if (extent instanceof World) { return getLocation(((World) extent).getName(), block); }
+        if (extent instanceof World) {
+            return getLocation(((World) extent).getName(), block);
+        }
         return null;
     }
-
-    public static Location getLocationFull(final Entity player)
-    {
+    
+    public static Location getLocationFull(final Entity player) {
         final String world = player.getWorld().getName();
         final Vector3d rot = player.getRotation();
         final float[] pitchYaw = MathMan.getPitchAndYaw((float) rot.getX(), (float) rot.getY(), (float) rot.getZ());
@@ -42,68 +40,74 @@ public class SpongeUtil
         final Vector3i pos = loc.getBlockPosition();
         return new Location(world, pos.getX(), pos.getY(), pos.getZ(), pitchYaw[1], pitchYaw[0]);
     }
-
+    
     private static Player lastPlayer = null;
     private static PlotPlayer lastPlotPlayer = null;
-
-    public static PlotPlayer getPlayer(final Player player)
-    {
-        if (player == lastPlayer) { return lastPlotPlayer; }
+    
+    public static PlotPlayer getPlayer(final Player player) {
+        if (player == lastPlayer) {
+            return lastPlotPlayer;
+        }
         final String name = player.getName();
         final PlotPlayer pp = UUIDHandler.getPlayers().get(name);
-        if (pp != null) { return pp; }
+        if (pp != null) {
+            return pp;
+        }
         lastPlotPlayer = new SpongePlayer(player);
         UUIDHandler.getPlayers().put(name, lastPlotPlayer);
         lastPlayer = player;
         return lastPlotPlayer;
     }
-
-    public static Player getPlayer(final PlotPlayer player)
-    {
-        if (player instanceof SpongePlayer) { return ((SpongePlayer) player).player; }
+    
+    public static Player getPlayer(final PlotPlayer player) {
+        if (player instanceof SpongePlayer) {
+            return ((SpongePlayer) player).player;
+        }
         return null;
     }
-
+    
     private static World lastWorld;
     private static String last;
-
-    public static World getWorld(final String world)
-    {
-        if (world == last) { return lastWorld; }
+    
+    public static World getWorld(final String world) {
+        if (world == last) {
+            return lastWorld;
+        }
         final Optional<World> optional = SpongeMain.THIS.getServer().getWorld(world);
-        if (!optional.isPresent()) { return null; }
+        if (!optional.isPresent()) {
+            return null;
+        }
         return optional.get();
     }
-
-    public static void removePlayer(final String player)
-    {
+    
+    public static void removePlayer(final String player) {
         lastPlayer = null;
         lastPlotPlayer = null;
         UUIDHandler.getPlayers().remove(player);
     }
-
-    public static Location getLocation(final String world, final org.spongepowered.api.world.Location spawn)
-    {
+    
+    public static Location getLocation(final String world, final org.spongepowered.api.world.Location spawn) {
         return new Location(world, spawn.getBlockX(), spawn.getBlockY(), spawn.getBlockZ());
     }
-
-    public static String getWorldName(final org.spongepowered.api.world.Location origin)
-    {
+    
+    public static String getWorldName(final org.spongepowered.api.world.Location origin) {
         final Extent extent = origin.getExtent();
-        if (extent == lastWorld) { return last; }
-        if (extent instanceof World)
-        {
+        if (extent == lastWorld) {
+            return last;
+        }
+        if (extent instanceof World) {
             lastWorld = (World) extent;
             last = ((World) extent).getName();
             return last;
         }
         return null;
     }
-
-    public static org.spongepowered.api.world.Location getLocation(final Location loc)
-    {
+    
+    public static org.spongepowered.api.world.Location getLocation(final Location loc) {
         final Optional<World> world = SpongeMain.THIS.getServer().getWorld(loc.getWorld());
-        if (!world.isPresent()) { return null; }
+        if (!world.isPresent()) {
+            return null;
+        }
         return new org.spongepowered.api.world.Location(world.get(), loc.getX(), loc.getY(), loc.getZ());
     }
 }

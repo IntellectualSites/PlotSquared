@@ -29,52 +29,46 @@ import com.intellectualcrafters.plot.object.PlotId;
  * Called when a plot is deleted
  *
  */
-public class PlotDeleteEvent extends Event
-{
+public class PlotDeleteEvent extends Event {
     private static HandlerList handlers = new HandlerList();
     private final PlotId id;
     private final String world;
-
+    
     /**
      * PlotDeleteEvent: Called when a plot is deleted
      *
      * @param world The world in which the plot was deleted
      * @param id    The ID of the plot that was deleted
      */
-    public PlotDeleteEvent(final String world, final PlotId id)
-    {
+    public PlotDeleteEvent(final String world, final PlotId id) {
         this.id = id;
         this.world = world;
     }
-
-    public static HandlerList getHandlerList()
-    {
+    
+    public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     /**
      * Get the PlotId
      *
      * @return PlotId
      */
-    public PlotId getPlotId()
-    {
+    public PlotId getPlotId() {
         return id;
     }
-
+    
     /**
      * Get the world name
      *
      * @return String
      */
-    public String getWorld()
-    {
+    public String getWorld() {
         return world;
     }
-
+    
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlers;
     }
 }

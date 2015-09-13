@@ -6,8 +6,7 @@ import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.StringMan;
 
-public abstract class ClassicPlotWorld extends SquarePlotWorld
-{
+public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public static int ROAD_HEIGHT_DEFAULT = 64;
     public static int PLOT_HEIGHT_DEFAULT = 64;
     public static int WALL_HEIGHT_DEFAULT = 64;
@@ -27,7 +26,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld
     public PlotBlock WALL_FILLING;
     public PlotBlock ROAD_BLOCK;
     public boolean PLOT_BEDROCK;
-
+    
     /**
      * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED FOR INITIAL SETUP
      *
@@ -36,8 +35,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld
      * world generation
      */
     @Override
-    public ConfigurationNode[] getSettingNodes()
-    {
+    public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[] {
         new ConfigurationNode("plot.height", ClassicPlotWorld.PLOT_HEIGHT_DEFAULT, "Plot height", Configuration.INTEGER, true),
         new ConfigurationNode("plot.size", SquarePlotWorld.PLOT_WIDTH_DEFAULT, "Plot width", Configuration.INTEGER, true),
@@ -52,14 +50,13 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld
         new ConfigurationNode("wall.height", ClassicPlotWorld.WALL_HEIGHT_DEFAULT, "Wall height", Configuration.INTEGER, true),
         new ConfigurationNode("plot.bedrock", true, "Plot bedrock generation", Configuration.BOOLEAN, true) };
     }
-
+    
     /**
      * This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.
      */
     @Override
-    public void loadConfiguration(final ConfigurationSection config)
-    {
+    public void loadConfiguration(final ConfigurationSection config) {
         super.loadConfiguration(config);
         PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
@@ -72,9 +69,8 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld
         WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
         CLAIMED_WALL_BLOCK = Configuration.BLOCK.parseString(config.getString("wall.block_claimed"));
     }
-
-    public ClassicPlotWorld(final String worldname)
-    {
+    
+    public ClassicPlotWorld(final String worldname) {
         super(worldname);
     }
 }

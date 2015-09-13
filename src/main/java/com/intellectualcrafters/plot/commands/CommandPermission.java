@@ -27,28 +27,25 @@ import com.intellectualcrafters.plot.util.Permissions;
  * Created by Citymonstret on 2014-08-03.
  *
  */
-public class CommandPermission
-{
+public class CommandPermission {
     /**
      * Permission Node
      */
     public final String permission;
-
+    
     /**
      * @param permission Command Permission
      */
-    public CommandPermission(final String permission)
-    {
+    public CommandPermission(final String permission) {
         this.permission = permission.toLowerCase();
     }
-
+    
     /**
      * @param player Does the player have the permission?
      *
      * @return true of player has the required permission node
      */
-    public boolean hasPermission(final PlotPlayer player)
-    {
+    public boolean hasPermission(final PlotPlayer player) {
         return Permissions.hasPermission(player, permission);
     }
 }

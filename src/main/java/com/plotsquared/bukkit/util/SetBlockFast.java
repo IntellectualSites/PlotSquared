@@ -37,8 +37,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
  * SetBlockFast class<br> Used to do fast world editing
  *
  */
-public class SetBlockFast extends BukkitSetBlockManager
-{
+public class SetBlockFast extends BukkitSetBlockManager {
     private final RefClass classBlock = getRefClass("{nms}.Block");
     private final RefClass classChunk = getRefClass("{nms}.Chunk");
     private final RefClass classWorld = getRefClass("{nms}.World");
@@ -48,26 +47,23 @@ public class SetBlockFast extends BukkitSetBlockManager
     private final RefMethod methodA;
     private final RefMethod methodGetById;
     private final SendChunk chunksender;
-
+    
     public HashMap<ChunkLoc, Chunk> toUpdate = new HashMap<>();
-
+    
     /**
      * Constructor
      *
      * @throws NoSuchMethodException
      */
-    public SetBlockFast() throws NoSuchMethodException
-    {
+    public SetBlockFast() throws NoSuchMethodException {
         methodGetHandle = classCraftWorld.getMethod("getHandle");
         methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class, int.class);
         methodA = classChunk.getMethod("a", int.class, int.class, int.class, classBlock, int.class);
         methodGetById = classBlock.getMethod("getById", int.class);
-        TaskManager.runTaskRepeat(new Runnable()
-        {
-
+        TaskManager.runTaskRepeat(new Runnable() {
+            
             @Override
-            public void run()
-            {
+            public void run() {
                 // TODO Auto-generated method stub
                 update(toUpdate.values());
                 toUpdate = new HashMap<>();
@@ -75,9 +71,9 @@ public class SetBlockFast extends BukkitSetBlockManager
         }, 20);
         chunksender = new SendChunk();
     }
-
+    
     private final ChunkLoc lastLoc = null;
-
+    
     /**
      * Set the block at the location
      *
@@ -90,58 +86,50 @@ public class SetBlockFast extends BukkitSetBlockManager
      *
      */
     @Override
-    public void set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data)
-    {
-        if (blockId == -1)
-        {
+    public void set(final org.bukkit.World world, final int x, final int y, final int z, final int blockId, final byte data) {
+        if (blockId == -1) {
             world.getBlockAt(x, y, z).setData(data, false);
             return;
         }
         final int X = x >> 4;
         final int Z = z >> 4;
         final ChunkLoc loc = new ChunkLoc(X, Z);
-        if (!loc.equals(lastLoc))
-        {
+        if (!loc.equals(lastLoc)) {
             Chunk chunk = toUpdate.get(loc);
-            if (chunk == null)
-            {
+            if (chunk == null) {
                 chunk = world.getChunkAt(X, Z);
                 toUpdate.put(loc, chunk);
             }
             chunk.load(false);
         }
-
+        
         final Object w = methodGetHandle.of(world).call();
         final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);
         final Object block = methodGetById.of(null).call(blockId);
         methodA.of(chunk).call(x & 0x0f, y, z & 0x0f, block, data);
     }
-
+    
     /**
      * Update chunks
      *
      * @param chunks list of chunks to update
      */
     @Override
-    public void update(final Collection<Chunk> chunks)
-    {
-        if (chunks.size() == 0) { return; }
-        if (!MainUtil.canSendChunk)
-        {
-            for (final Chunk chunk : chunks)
-            {
+    public void update(final Collection<Chunk> chunks) {
+        if (chunks.size() == 0) {
+            return;
+        }
+        if (!MainUtil.canSendChunk) {
+            for (final Chunk chunk : chunks) {
                 chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
                 chunk.unload(true, false);
                 chunk.load();
             }
             return;
         }
-        try
-        {
+        try {
             chunksender.sendChunk(chunks);
-        }
-        catch (final Throwable e)
-        {
+        } catch (final Throwable e) {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
         }

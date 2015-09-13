@@ -32,13 +32,11 @@ usage = "/plot weanywhere",
 requiredType = RequiredType.NONE,
 category = CommandCategory.DEBUG)
 @Deprecated
-public class WE_Anywhere extends SubCommand
-{
-
+public class WE_Anywhere extends SubCommand {
+    
     @Override
-    public boolean onCommand(final PlotPlayer player, final String[] arguments)
-    {
+    public boolean onCommand(final PlotPlayer player, final String[] arguments) {
         return MainCommand.onCommand(player, "plot", new String[] { "toggle", "worldedit" });
     }
-
+    
 }

@@ -31,60 +31,52 @@ import com.intellectualcrafters.plot.object.PlotId;
 
 /**
  */
-public class PlotUnlinkEvent extends Event implements Cancellable
-{
+public class PlotUnlinkEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
     private final ArrayList<PlotId> plots;
     private final World world;
     private boolean cancelled;
-
+    
     /**
      * Called when a mega-plot is unlinked.
      *
      * @param world World in which the event occurred
      * @param plots Plots that are involved in the event
      */
-    public PlotUnlinkEvent(final World world, final ArrayList<PlotId> plots)
-    {
+    public PlotUnlinkEvent(final World world, final ArrayList<PlotId> plots) {
         this.plots = plots;
         this.world = world;
     }
-
-    public static HandlerList getHandlerList()
-    {
+    
+    public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     /**
      * Get the plots involved
      *
      * @return PlotId
      */
-    public ArrayList<PlotId> getPlots()
-    {
+    public ArrayList<PlotId> getPlots() {
         return plots;
     }
-
-    public World getWorld()
-    {
+    
+    public World getWorld() {
         return world;
     }
-
+    
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlers;
     }
-
+    
     @Override
-    public boolean isCancelled()
-    {
+    public boolean isCancelled() {
         return cancelled;
     }
-
+    
     @Override
-    public void setCancelled(final boolean b)
-    {
+    public void setCancelled(final boolean b) {
         cancelled = b;
     }
 }

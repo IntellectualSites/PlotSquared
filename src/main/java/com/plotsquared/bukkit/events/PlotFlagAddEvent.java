@@ -30,55 +30,48 @@ import com.intellectualcrafters.plot.object.Plot;
  * Called when a Flag is added to a plot
  *
  */
-public class PlotFlagAddEvent extends PlotEvent implements Cancellable
-{
-
+public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
+    
     private static HandlerList handlers = new HandlerList();
     private final Flag flag;
     private boolean cancelled;
-
+    
     /**
      * PlotFlagAddEvent: Called when a Flag is added to a plot
      *
      * @param flag Flag that was added
      * @param plot Plot to which the flag was added
      */
-    public PlotFlagAddEvent(final Flag flag, final Plot plot)
-    {
+    public PlotFlagAddEvent(final Flag flag, final Plot plot) {
         super(plot);
         this.flag = flag;
     }
-
-    public static HandlerList getHandlerList()
-    {
+    
+    public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     /**
      * Get the flag involved
      *
      * @return Flag
      */
-    public Flag getFlag()
-    {
+    public Flag getFlag() {
         return flag;
     }
-
+    
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlers;
     }
-
+    
     @Override
-    public final boolean isCancelled()
-    {
+    public final boolean isCancelled() {
         return cancelled;
     }
-
+    
     @Override
-    public final void setCancelled(final boolean cancelled)
-    {
+    public final void setCancelled(final boolean cancelled) {
         this.cancelled = cancelled;
     }
 }

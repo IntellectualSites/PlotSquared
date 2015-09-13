@@ -4,27 +4,24 @@ package com.intellectualcrafters.configuration;
  * Various settings for controlling the input and output of a {@link
  * Configuration}
  */
-public class ConfigurationOptions
-{
+public class ConfigurationOptions {
     private char pathSeparator = '.';
     private boolean copyDefaults = false;
     private final Configuration configuration;
-
-    protected ConfigurationOptions(final Configuration configuration)
-    {
+    
+    protected ConfigurationOptions(final Configuration configuration) {
         this.configuration = configuration;
     }
-
+    
     /**
      * Returns the {@link Configuration} that this object is responsible for.
      *
      * @return Parent configuration
      */
-    public Configuration configuration()
-    {
+    public Configuration configuration() {
         return configuration;
     }
-
+    
     /**
      * Gets the char that will be used to separate {@link
      * ConfigurationSection}s
@@ -34,11 +31,10 @@ public class ConfigurationOptions
      *
      * @return Path separator
      */
-    public char pathSeparator()
-    {
+    public char pathSeparator() {
         return pathSeparator;
     }
-
+    
     /**
      * Sets the char that will be used to separate {@link
      * ConfigurationSection}s
@@ -49,12 +45,11 @@ public class ConfigurationOptions
      * @param value Path separator
      * @return This object, for chaining
      */
-    public ConfigurationOptions pathSeparator(final char value)
-    {
+    public ConfigurationOptions pathSeparator(final char value) {
         pathSeparator = value;
         return this;
     }
-
+    
     /**
      * Checks if the {@link Configuration} should copy values from its default
      * {@link Configuration} directly.
@@ -69,11 +64,10 @@ public class ConfigurationOptions
      *
      * @return Whether or not defaults are directly copied
      */
-    public boolean copyDefaults()
-    {
+    public boolean copyDefaults() {
         return copyDefaults;
     }
-
+    
     /**
      * Sets if the {@link Configuration} should copy values from its default
      * {@link Configuration} directly.
@@ -89,8 +83,7 @@ public class ConfigurationOptions
      * @param value Whether or not defaults are directly copied
      * @return This object, for chaining
      */
-    public ConfigurationOptions copyDefaults(final boolean value)
-    {
+    public ConfigurationOptions copyDefaults(final boolean value) {
         copyDefaults = value;
         return this;
     }

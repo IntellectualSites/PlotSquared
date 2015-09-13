@@ -43,71 +43,55 @@ usage = "/plot add <player>",
 category = CommandCategory.ACTIONS,
 permission = "plots.add",
 requiredType = RequiredType.NONE)
-public class Add extends SubCommand
-{
-
-    public Add()
-    {
-        requiredArguments = new Argument[] {
-        Argument.PlayerName
-        };
+public class Add extends SubCommand {
+    
+    public Add() {
+        requiredArguments = new Argument[] { Argument.PlayerName };
     }
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args)
-    {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) { return !sendMessage(plr, C.NOT_IN_PLOT); }
-        if (!plot.hasOwner())
-        {
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
+        if (!plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.add"))
-        {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.add")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         UUID uuid;
-        if (args[0].equalsIgnoreCase("*"))
-        {
+        if (args[0].equalsIgnoreCase("*")) {
             uuid = DBFunc.everyone;
-        }
-        else
-        {
+        } else {
             // TODO have a runnable for fetch
             uuid = UUIDHandler.getUUID(args[0], null);
         }
-        if (uuid == null)
-        {
+        if (uuid == null) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        if (plot.isOwner(uuid))
-        {
+        if (plot.isOwner(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_OWNER);
             return false;
         }
-
-        if (plot.getMembers().contains(uuid))
-        {
+        
+        if (plot.getMembers().contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
         }
-        if (plot.removeTrusted(uuid))
-        {
+        if (plot.removeTrusted(uuid)) {
             plot.addMember(uuid);
-        }
-        else
-        {
-            if ((plot.getMembers().size() + plot.getTrusted().size()) >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS)
-            {
+        } else {
+            if ((plot.getMembers().size() + plot.getTrusted().size()) >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
                 MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
                 return false;
             }
-            if (plot.getDenied().contains(uuid))
-            {
+            if (plot.getDenied().contains(uuid)) {
                 plot.removeDenied(uuid);
             }
             plot.addMember(uuid);

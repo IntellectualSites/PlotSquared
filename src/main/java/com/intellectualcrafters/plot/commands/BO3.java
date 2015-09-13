@@ -29,57 +29,44 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-command = "bo3",
-aliases = { "bo2" },
-description = "Mark a plot as done",
-permission = "plots.bo3",
-category = CommandCategory.ACTIONS,
-requiredType = RequiredType.NONE)
-public class BO3 extends SubCommand
-{
-
-    public void noArgs(final PlotPlayer plr)
-    {
+@CommandDeclaration(command = "bo3", aliases = { "bo2" }, description = "Mark a plot as done", permission = "plots.bo3", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
+public class BO3 extends SubCommand {
+    
+    public void noArgs(final PlotPlayer plr) {
         MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot bo3 export [category] [alias] [-r]");
         MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot bo3 import <file>");
     }
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args)
-    {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if ((plot == null) || !plot.hasOwner()) { return !sendMessage(plr, C.NOT_IN_PLOT); }
-        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.bo3"))
-        {
+        if ((plot == null) || !plot.hasOwner()) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
+        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.bo3")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (args.length == 0)
-        {
+        if (args.length == 0) {
             noArgs(plr);
             return false;
         }
-        switch (args[0].toLowerCase())
-        {
+        switch (args[0].toLowerCase()) {
             case "output":
             case "save":
-            case "export":
-            {
+            case "export": {
                 return BO3Handler.saveBO3(plr, plot);
             }
             case "paste":
             case "load":
             case "import":
-            case "input":
-            {
+            case "input": {
                 // TODO NOT IMPLEMENTED YET
                 MainUtil.sendMessage(plr, "NOT IMPLEMENTED YET!!!");
                 return false;
             }
-            default:
-            {
+            default: {
                 noArgs(plr);
                 return false;
             }

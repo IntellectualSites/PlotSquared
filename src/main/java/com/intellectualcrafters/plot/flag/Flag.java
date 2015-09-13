@@ -22,11 +22,10 @@ package com.intellectualcrafters.plot.flag;
 
 import com.intellectualcrafters.plot.util.StringMan;
 
-public class Flag
-{
+public class Flag {
     private AbstractFlag key;
     private Object value;
-
+    
     /**
      * Flag object used to store basic information for a Plot. Flags are a key/value pair. For a flag to be usable by a
      * player, you need to register it with PlotSquared.
@@ -36,88 +35,91 @@ public class Flag
      *
      * @throws IllegalArgumentException if you provide inadequate inputs
      */
-    public Flag(final AbstractFlag key, final String value)
-    {
-        if (!StringMan.isAsciiPrintable(value)) { throw new IllegalArgumentException("Flag must be ascii"); }
-        if (value.length() > 128) { throw new IllegalArgumentException("Value must be <= 128 characters"); }
+    public Flag(final AbstractFlag key, final String value) {
+        if (!StringMan.isAsciiPrintable(value)) {
+            throw new IllegalArgumentException("Flag must be ascii");
+        }
+        if (value.length() > 128) {
+            throw new IllegalArgumentException("Value must be <= 128 characters");
+        }
         this.key = key;
         this.value = key.parseValueRaw(value);
-        if (this.value == null) { throw new IllegalArgumentException(key.getValueDesc() + " (" + value + ")"); }
+        if (this.value == null) {
+            throw new IllegalArgumentException(key.getValueDesc() + " (" + value + ")");
+        }
     }
-
-    public void setKey(final AbstractFlag key)
-    {
+    
+    public void setKey(final AbstractFlag key) {
         this.key = key;
-        if (value instanceof String)
-        {
+        if (value instanceof String) {
             value = key.parseValueRaw((String) value);
         }
     }
-
+    
     /**
      * Warning: Unchecked
      */
-    public Flag(final AbstractFlag key, final Object value)
-    {
+    public Flag(final AbstractFlag key, final Object value) {
         this.key = key;
         this.value = value;
     }
-
+    
     /**
      * Get the AbstractFlag used in creating the flag
      *
      * @return AbstractFlag
      */
-    public AbstractFlag getAbstractFlag()
-    {
+    public AbstractFlag getAbstractFlag() {
         return key;
     }
-
+    
     /**
      * Get the key for the AbstractFlag
      *
      * @return String
      */
-    public String getKey()
-    {
+    public String getKey() {
         return key.getKey();
     }
-
+    
     /**
      * Get the value
      *
      * @return String
      */
-    public Object getValue()
-    {
+    public Object getValue() {
         return value;
     }
-
-    public String getValueString()
-    {
+    
+    public String getValueString() {
         return key.toString(value);
     }
-
+    
     @Override
-    public String toString()
-    {
-        if (value.equals("")) { return key.getKey(); }
+    public String toString() {
+        if (value.equals("")) {
+            return key.getKey();
+        }
         return key + ":" + getValueString();
     }
-
+    
     @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj) { return true; }
-        if (obj == null) { return false; }
-        if (getClass() != obj.getClass()) { return false; }
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         final Flag other = (Flag) obj;
         return (key.getKey().equals(other.key.getKey()) && value.equals(other.value));
     }
-
+    
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return key.getKey().hashCode();
     }
 }

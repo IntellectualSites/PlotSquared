@@ -15,26 +15,21 @@ usage = "/plot debugallowunsafe",
 category = CommandCategory.DEBUG,
 requiredType = RequiredType.NONE,
 permission = "plots.debugallowunsafe")
-public class DebugAllowUnsafe extends SubCommand
-{
-
+public class DebugAllowUnsafe extends SubCommand {
+    
     public static final List<UUID> unsafeAllowed = new ArrayList<>();
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args)
-    {
-
-        if (unsafeAllowed.contains(plr.getUUID()))
-        {
+    public boolean onCommand(final PlotPlayer plr, final String... args) {
+        
+        if (unsafeAllowed.contains(plr.getUUID())) {
             unsafeAllowed.remove(plr.getUUID());
             sendMessage(plr, C.DEBUGALLOWUNSAFE_OFF);
-        }
-        else
-        {
+        } else {
             unsafeAllowed.add(plr.getUUID());
             sendMessage(plr, C.DEBUGALLOWUNSAFE_ON);
         }
         return true;
     }
-
+    
 }

@@ -24,8 +24,7 @@ import com.intellectualcrafters.configuration.MemoryConfiguration;
  * This is a base class for all File based implementations of {@link
  * Configuration}
  */
-public abstract class FileConfiguration extends MemoryConfiguration
-{
+public abstract class FileConfiguration extends MemoryConfiguration {
     /**
      * This value specified that the system default encoding should be
      * completely ignored, as it cannot handle the ASCII character set, or it
@@ -50,8 +49,7 @@ public abstract class FileConfiguration extends MemoryConfiguration
      */
     @Deprecated
     public static final boolean SYSTEM_UTF;
-    static
-    {
+    static {
         final byte[] testBytes = Base64Coder.decode("ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX4NCg==");
         final String testString = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\r\n";
         final Charset defaultCharset = Charset.defaultCharset();
@@ -61,26 +59,24 @@ public abstract class FileConfiguration extends MemoryConfiguration
         SYSTEM_UTF = trueUTF || UTF8_OVERRIDE;
         UTF_BIG = trueUTF && UTF8_OVERRIDE;
     }
-
+    
     /**
      * Creates an empty {@link FileConfiguration} with no default values.
      */
-    public FileConfiguration()
-    {
+    public FileConfiguration() {
         super();
     }
-
+    
     /**
      * Creates an empty {@link FileConfiguration} using the specified {@link
      * Configuration} as a source for all default values.
      *
      * @param defaults Default value provider
      */
-    public FileConfiguration(final Configuration defaults)
-    {
+    public FileConfiguration(final Configuration defaults) {
         super(defaults);
     }
-
+    
     /**
      * Saves this {@link FileConfiguration} to the specified location.
      * <p>
@@ -96,25 +92,23 @@ public abstract class FileConfiguration extends MemoryConfiguration
      *     any reason.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void save(final File file) throws IOException
-    {
-        if (file == null) { throw new NullPointerException("File cannot be null"); }
-        file.getParentFile().mkdirs();
-
-        final String data = saveToString();
-
-        final Writer writer = new OutputStreamWriter(new FileOutputStream(file), UTF8_OVERRIDE && !UTF_BIG ? StandardCharsets.UTF_8 : Charset.defaultCharset());
-
-        try
-        {
-            writer.write(data);
+    public void save(final File file) throws IOException {
+        if (file == null) {
+            throw new NullPointerException("File cannot be null");
         }
-        finally
-        {
+        file.getParentFile().mkdirs();
+        
+        final String data = saveToString();
+        
+        final Writer writer = new OutputStreamWriter(new FileOutputStream(file), UTF8_OVERRIDE && !UTF_BIG ? StandardCharsets.UTF_8 : Charset.defaultCharset());
+        
+        try {
+            writer.write(data);
+        } finally {
             writer.close();
         }
     }
-
+    
     /**
      * Saves this {@link FileConfiguration} to the specified location.
      * <p>
@@ -130,20 +124,21 @@ public abstract class FileConfiguration extends MemoryConfiguration
      *     any reason.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void save(final String file) throws IOException
-    {
-        if (file == null) { throw new NullPointerException("File cannot be null"); }
-
+    public void save(final String file) throws IOException {
+        if (file == null) {
+            throw new NullPointerException("File cannot be null");
+        }
+        
         save(new File(file));
     }
-
+    
     /**
      * Saves this {@link FileConfiguration} to a string, and returns it.
      *
      * @return String containing this configuration.
      */
     public abstract String saveToString();
-
+    
     /**
      * Loads this {@link FileConfiguration} from the specified location.
      * <p>
@@ -166,15 +161,16 @@ public abstract class FileConfiguration extends MemoryConfiguration
      *     a valid Configuration.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void load(final File file) throws IOException, InvalidConfigurationException
-    {
-        if (file == null) { throw new NullPointerException("File cannot be null"); }
-
+    public void load(final File file) throws IOException, InvalidConfigurationException {
+        if (file == null) {
+            throw new NullPointerException("File cannot be null");
+        }
+        
         final FileInputStream stream = new FileInputStream(file);
-
+        
         load(new InputStreamReader(stream, UTF8_OVERRIDE && !UTF_BIG ? StandardCharsets.UTF_8 : Charset.defaultCharset()));
     }
-
+    
     /**
      * Loads this {@link FileConfiguration} from the specified stream.
      * <p>
@@ -194,13 +190,14 @@ public abstract class FileConfiguration extends MemoryConfiguration
      * @see #load(Reader)
      */
     @Deprecated
-    public void load(final InputStream stream) throws IOException, InvalidConfigurationException
-    {
-        if (stream == null) { throw new NullPointerException("Stream cannot be null"); }
-
+    public void load(final InputStream stream) throws IOException, InvalidConfigurationException {
+        if (stream == null) {
+            throw new NullPointerException("Stream cannot be null");
+        }
+        
         load(new InputStreamReader(stream, UTF8_OVERRIDE ? StandardCharsets.UTF_8 : Charset.defaultCharset()));
     }
-
+    
     /**
      * Loads this {@link FileConfiguration} from the specified reader.
      * <p>
@@ -214,30 +211,25 @@ public abstract class FileConfiguration extends MemoryConfiguration
      *      represent a valid Configuration
      * @throws IllegalArgumentException thrown when reader is null
      */
-    public void load(final Reader reader) throws IOException, InvalidConfigurationException
-    {
+    public void load(final Reader reader) throws IOException, InvalidConfigurationException {
         final BufferedReader input = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
-
+        
         final StringBuilder builder = new StringBuilder();
-
-        try
-        {
+        
+        try {
             String line;
-
-            while ((line = input.readLine()) != null)
-            {
+            
+            while ((line = input.readLine()) != null) {
                 builder.append(line);
                 builder.append('\n');
             }
-        }
-        finally
-        {
+        } finally {
             input.close();
         }
-
+        
         loadFromString(builder.toString());
     }
-
+    
     /**
      * Loads this {@link FileConfiguration} from the specified location.
      * <p>
@@ -256,13 +248,14 @@ public abstract class FileConfiguration extends MemoryConfiguration
      *     a valid Configuration.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void load(final String file) throws IOException, InvalidConfigurationException
-    {
-        if (file == null) { throw new NullPointerException("File cannot be null"); }
-
+    public void load(final String file) throws IOException, InvalidConfigurationException {
+        if (file == null) {
+            throw new NullPointerException("File cannot be null");
+        }
+        
         load(new File(file));
     }
-
+    
     /**
      * Loads this {@link FileConfiguration} from the specified string, as
      * opposed to from file.
@@ -279,7 +272,7 @@ public abstract class FileConfiguration extends MemoryConfiguration
      * @throws IllegalArgumentException Thrown if contents is null.
      */
     public abstract void loadFromString(final String contents) throws InvalidConfigurationException;
-
+    
     /**
      * Compiles the header for this {@link FileConfiguration} and returns the
      * result.
@@ -291,15 +284,13 @@ public abstract class FileConfiguration extends MemoryConfiguration
      * @return Compiled header
      */
     protected abstract String buildHeader();
-
+    
     @Override
-    public FileConfigurationOptions options()
-    {
-        if (options == null)
-        {
+    public FileConfigurationOptions options() {
+        if (options == null) {
             options = new FileConfigurationOptions(this);
         }
-
+        
         return (FileConfigurationOptions) options;
     }
 }

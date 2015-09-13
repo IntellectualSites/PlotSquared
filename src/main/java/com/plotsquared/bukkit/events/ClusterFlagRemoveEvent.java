@@ -31,65 +31,57 @@ import com.intellectualcrafters.plot.object.PlotCluster;
  * Called when a flag is removed from a plot
  *
  */
-public class ClusterFlagRemoveEvent extends Event implements Cancellable
-{
+public class ClusterFlagRemoveEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
     private final PlotCluster cluster;
     private final Flag flag;
     private boolean cancelled;
-
+    
     /**
      * PlotFlagRemoveEvent: Called when a flag is removed from a plot
      *
      * @param flag Flag that was removed
      * @param plot Plot from which the flag was removed
      */
-    public ClusterFlagRemoveEvent(final Flag flag, final PlotCluster cluster)
-    {
+    public ClusterFlagRemoveEvent(final Flag flag, final PlotCluster cluster) {
         this.cluster = cluster;
         this.flag = flag;
     }
-
-    public static HandlerList getHandlerList()
-    {
+    
+    public static HandlerList getHandlerList() {
         return handlers;
     }
-
+    
     /**
      * Get the cluster involved
      *
      * @return PlotCluster
      */
-    public PlotCluster getCluster()
-    {
+    public PlotCluster getCluster() {
         return cluster;
     }
-
+    
     /**
      * Get the flag involved
      *
      * @return Flag
      */
-    public Flag getFlag()
-    {
+    public Flag getFlag() {
         return flag;
     }
-
+    
     @Override
-    public HandlerList getHandlers()
-    {
+    public HandlerList getHandlers() {
         return handlers;
     }
-
+    
     @Override
-    public boolean isCancelled()
-    {
+    public boolean isCancelled() {
         return cancelled;
     }
-
+    
     @Override
-    public void setCancelled(final boolean b)
-    {
+    public void setCancelled(final boolean b) {
         cancelled = b;
     }
 }

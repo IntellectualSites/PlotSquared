@@ -22,20 +22,18 @@ package com.intellectualcrafters.plot.object;
 
 /**
  */
-public class StringWrapper
-{
+public class StringWrapper {
     public final String value;
-
+    
     /**
      * Constructor
      *
      * @param value to wrap
      */
-    public StringWrapper(final String value)
-    {
+    public StringWrapper(final String value) {
         this.value = value;
     }
-
+    
     /**
      * Check if a wrapped string equals another one
      *
@@ -44,41 +42,49 @@ public class StringWrapper
      * @return true if obj equals the stored value
      */
     @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj) { return true; }
-        if (obj == null) { return false; }
-        if (getClass() != obj.getClass()) { return false; }
-        if (obj.hashCode() != hashCode()) { return false; }
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        if (obj.hashCode() != hashCode()) {
+            return false;
+        }
         final StringWrapper other = (StringWrapper) obj;
-        if ((other.value == null) || (value == null)) { return false; }
+        if ((other.value == null) || (value == null)) {
+            return false;
+        }
         return other.value.equalsIgnoreCase(value.toLowerCase());
     }
-
+    
     /**
      * Get the string value
      *
      * @return string value
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return value;
     }
-
+    
     private int hash;
-
+    
     /**
      * Get the hash value
      *
      * @return has value
      */
     @Override
-    public int hashCode()
-    {
-        if (value == null) { return 0; }
-        if (hash == 0)
-        {
+    public int hashCode() {
+        if (value == null) {
+            return 0;
+        }
+        if (hash == 0) {
             hash = value.toLowerCase().hashCode();
         }
         return hash;

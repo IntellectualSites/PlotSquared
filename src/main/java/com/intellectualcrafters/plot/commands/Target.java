@@ -37,38 +37,29 @@ description = "Target a plot with your compass",
 permission = "plots.target",
 requiredType = RequiredType.NONE,
 category = CommandCategory.ACTIONS)
-public class Target extends SubCommand
-{
-
+public class Target extends SubCommand {
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args)
-    {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location ploc = plr.getLocation();
-        if (!PS.get().isPlotWorld(ploc.getWorld()))
-        {
+        if (!PS.get().isPlotWorld(ploc.getWorld())) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         PlotId id = MainUtil.parseId(args[0]);
-        if (id == null)
-        {
-            if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest"))
-            {
+        if (id == null) {
+            if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
                 Plot closest = null;
                 int distance = Integer.MAX_VALUE;
-                for (final Plot plot : PS.get().getPlotsInWorld(ploc.getWorld()))
-                {
+                for (final Plot plot : PS.get().getPlotsInWorld(ploc.getWorld())) {
                     final double current = plot.getBottom().getEuclideanDistanceSquared(ploc);
-                    if (current < distance)
-                    {
+                    if (current < distance) {
                         distance = (int) current;
                         closest = plot;
                     }
                 }
                 id = closest.id;
-            }
-            else
-            {
+            } else {
                 MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 return false;
             }

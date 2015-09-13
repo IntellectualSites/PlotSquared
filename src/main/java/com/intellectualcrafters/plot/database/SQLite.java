@@ -35,38 +35,32 @@ import com.intellectualcrafters.plot.PS;
  *
  * @author tips48
  */
-public class SQLite extends Database
-{
+public class SQLite extends Database {
     private final String dbLocation;
     private Connection connection;
-
+    
     /**
      * Creates a new SQLite instance
      *
      * @param dbLocation Location of the Database (Must end in .db)
      */
-    public SQLite(final String dbLocation)
-    {
+    public SQLite(final String dbLocation) {
         this.dbLocation = dbLocation;
     }
-
+    
     @Override
-    public Connection openConnection() throws SQLException, ClassNotFoundException
-    {
-        if (checkConnection()) { return connection; }
-        if (!PS.get().IMP.getDirectory().exists())
-        {
+    public Connection openConnection() throws SQLException, ClassNotFoundException {
+        if (checkConnection()) {
+            return connection;
+        }
+        if (!PS.get().IMP.getDirectory().exists()) {
             PS.get().IMP.getDirectory().mkdirs();
         }
         final File file = new File(dbLocation);
-        if (!(file.exists()))
-        {
-            try
-            {
+        if (!(file.exists())) {
+            try {
                 file.createNewFile();
-            }
-            catch (final IOException e)
-            {
+            } catch (final IOException e) {
                 PS.debug("&cUnable to create database!");
             }
         }
@@ -74,53 +68,47 @@ public class SQLite extends Database
         connection = DriverManager.getConnection("jdbc:sqlite:" + dbLocation);
         return connection;
     }
-
+    
     @Override
-    public boolean checkConnection() throws SQLException
-    {
+    public boolean checkConnection() throws SQLException {
         return (connection != null) && !connection.isClosed();
     }
-
+    
     @Override
-    public Connection getConnection()
-    {
+    public Connection getConnection() {
         return connection;
     }
-
+    
     @Override
-    public boolean closeConnection() throws SQLException
-    {
-        if (connection == null) { return false; }
+    public boolean closeConnection() throws SQLException {
+        if (connection == null) {
+            return false;
+        }
         connection.close();
         connection = null;
         return true;
     }
-
+    
     @Override
-    public ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException
-    {
-        if (checkConnection())
-        {
+    public ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException {
+        if (checkConnection()) {
             openConnection();
         }
         final Statement statement = connection.createStatement();
         return statement.executeQuery(query);
     }
-
+    
     @Override
-    public int updateSQL(final String query) throws SQLException, ClassNotFoundException
-    {
-        if (checkConnection())
-        {
+    public int updateSQL(final String query) throws SQLException, ClassNotFoundException {
+        if (checkConnection()) {
             openConnection();
         }
         final Statement statement = connection.createStatement();
         return statement.executeUpdate(query);
     }
-
+    
     @Override
-    public Connection forceConnection() throws SQLException, ClassNotFoundException
-    {
+    public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
         connection = DriverManager.getConnection("jdbc:sqlite:" + dbLocation);
         return connection;

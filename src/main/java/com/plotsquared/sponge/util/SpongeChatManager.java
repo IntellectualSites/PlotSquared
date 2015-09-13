@@ -10,30 +10,24 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.plotsquared.sponge.object.SpongePlayer;
 
-public class SpongeChatManager extends ChatManager<TextBuilder>
-{
-
+public class SpongeChatManager extends ChatManager<TextBuilder> {
+    
     @Override
-    public TextBuilder builder()
-    {
+    public TextBuilder builder() {
         return Texts.builder();
     }
-
+    
     @Override
-    public void color(final PlotMessage m, final String color)
-    {
+    public void color(final PlotMessage m, final String color) {
         m.$(this).color(Texts.of(color).getColor());
     }
-
+    
     @Override
-    public void tooltip(final PlotMessage m, final PlotMessage... tooltips)
-    {
+    public void tooltip(final PlotMessage m, final PlotMessage... tooltips) {
         final TextBuilder builder = Texts.builder();
         boolean lb = false;
-        for (final PlotMessage tooltip : tooltips)
-        {
-            if (lb)
-            {
+        for (final PlotMessage tooltip : tooltips) {
+            if (lb) {
                 builder.append(Texts.of("\n"));
             }
             builder.append(tooltip.$(this).build());
@@ -42,36 +36,29 @@ public class SpongeChatManager extends ChatManager<TextBuilder>
         //        AchievementBuilder builder = SpongeMain.THIS.getGame().getRegistry().createAchievementBuilder();
         m.$(this).onHover(TextActions.showText(builder.toText()));
     }
-
+    
     @Override
-    public void command(final PlotMessage m, final String command)
-    {
+    public void command(final PlotMessage m, final String command) {
         m.$(this).onClick(TextActions.runCommand(command));
     }
-
+    
     @Override
-    public void text(final PlotMessage m, final String text)
-    {
+    public void text(final PlotMessage m, final String text) {
         m.$(this).append(Texts.of(text));
     }
-
+    
     @Override
-    public void send(final PlotMessage m, final PlotPlayer player)
-    {
-        if (ConsolePlayer.isConsole(player))
-        {
+    public void send(final PlotMessage m, final PlotPlayer player) {
+        if (ConsolePlayer.isConsole(player)) {
             player.sendMessage(Texts.legacy().to(m.$(this).build()));
-        }
-        else
-        {
+        } else {
             ((SpongePlayer) player).player.sendMessage(m.$(this).build());
         }
     }
-
+    
     @Override
-    public void suggest(final PlotMessage m, final String command)
-    {
+    public void suggest(final PlotMessage m, final String command) {
         m.$(this).onClick(TextActions.suggestCommand(command));
     }
-
+    
 }

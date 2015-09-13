@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-public abstract class GeneratorManager
-{
-
+public abstract class GeneratorManager {
+    
 }

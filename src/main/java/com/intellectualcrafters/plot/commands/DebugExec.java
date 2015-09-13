@@ -74,25 +74,16 @@ import com.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-command = "debugexec",
-permission = "plots.admin",
-description = "Mutli-purpose debug command",
-aliases = { "exec" },
-category = CommandCategory.DEBUG)
-public class DebugExec extends SubCommand
-{
-
+@CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = { "exec" }, category = CommandCategory.DEBUG)
+public class DebugExec extends SubCommand {
+    
     private ScriptEngine engine;
     private Bindings scope;
-
-    public DebugExec()
-    {
-        try
-        {
+    
+    public DebugExec() {
+        try {
             final File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
-            if (file.exists())
-            {
+            if (file.exists()) {
                 init();
                 final String script = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"), StandardCharsets.UTF_8),
                 System.getProperty("line.separator"));
@@ -100,39 +91,35 @@ public class DebugExec extends SubCommand
                 scope.put("PlotPlayer", ConsolePlayer.getConsole());
                 engine.eval(script, scope);
             }
-        }
-        catch (final Exception e)
-        {}
+        } catch (final Exception e) {}
     }
-
-    public ScriptEngine getEngine()
-    {
+    
+    public ScriptEngine getEngine() {
         return engine;
     }
-
-    public Bindings getScope()
-    {
+    
+    public Bindings getScope() {
         return scope;
     }
-
-    public void init()
-    {
-        if (engine != null) { return; }
+    
+    public void init() {
+        if (engine != null) {
+            return;
+        }
         engine = (new ScriptEngineManager(null)).getEngineByName("nashorn");
-        if (engine == null)
-        {
+        if (engine == null) {
             engine = (new ScriptEngineManager(null)).getEngineByName("JavaScript");
         }
         final ScriptContext context = new SimpleScriptContext();
         scope = context.getBindings(ScriptContext.ENGINE_SCOPE);
-
+        
         // stuff
         scope.put("MainUtil", new MainUtil());
         scope.put("Settings", new Settings());
         scope.put("StringMan", new StringMan());
         scope.put("MathMan", new MathMan());
         scope.put("FlagManager", new FlagManager());
-
+        
         // Classes
         scope.put("Location", Location.class);
         scope.put("PlotBlock", PlotBlock.class);
@@ -140,7 +127,7 @@ public class DebugExec extends SubCommand
         scope.put("PlotId", PlotId.class);
         scope.put("Runnable", Runnable.class);
         scope.put("RunnableVal", RunnableVal.class);
-
+        
         // Instances
         scope.put("PS", PS.get());
         scope.put("TaskManager", PS.get().TASK);
@@ -157,143 +144,110 @@ public class DebugExec extends SubCommand
         scope.put("HybridUtils", HybridUtils.manager);
         scope.put("IMP", PS.get().IMP);
         scope.put("MainCommand", MainCommand.getInstance());
-
+        
         // enums
-        for (final Enum<?> value : C.values())
-        {
+        for (final Enum<?> value : C.values()) {
             scope.put("C_" + value.name(), value);
         }
     }
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer player, final String... args)
-    {
+    public boolean onCommand(final PlotPlayer player, final String... args) {
         final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
-        if (args.length > 0)
-        {
+        if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             String script;
             boolean async = false;
-            switch (arg)
-            {
-                case "analyze":
-                {
+            switch (arg) {
+                case "analyze": {
                     final Plot plot = MainUtil.getPlot(player.getLocation());
-                    if (plot == null)
-                    {
+                    if (plot == null) {
                         MainUtil.sendMessage(player, C.NOT_IN_PLOT);
                         return false;
                     }
                     final PlotAnalysis analysis = plot.getComplexity();
-                    if (analysis != null)
-                    {
+                    if (analysis != null) {
                         final int complexity = analysis.getComplexity();
                         MainUtil.sendMessage(player, "Changes: " + analysis.changes);
                         MainUtil.sendMessage(player, "Complexity: " + complexity);
                         return true;
                     }
                     MainUtil.sendMessage(player, "$1Starting task...");
-                    HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>()
-                    {
+                    HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             MainUtil.sendMessage(player, "$1Done: $2use $3/plot debugexec analyze$2 for more information");
                         }
                     });
                     return true;
                 }
-                case "calibrate-analysis":
-                {
-                    if (args.length != 2)
-                    {
+                case "calibrate-analysis": {
+                    if (args.length != 2) {
                         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec analyze <threshold>");
                         MainUtil.sendMessage(player, "$1<threshold> $2= $1The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating it)");
                         return false;
                     }
                     double threshold;
-                    try
-                    {
+                    try {
                         threshold = Integer.parseInt(args[1]) / 100d;
-                    }
-                    catch (final NumberFormatException e)
-                    {
+                    } catch (final NumberFormatException e) {
                         MainUtil.sendMessage(player, "$2Invalid threshold: " + args[1]);
                         MainUtil.sendMessage(player, "$1<threshold> $2= $1The percentage of plots you want to clear as a number between 0 - 100");
                         return false;
                     }
-                    PlotAnalysis.calcOptimalModifiers(new Runnable()
-                    {
+                    PlotAnalysis.calcOptimalModifiers(new Runnable() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             MainUtil.sendMessage(player, "$1Thank you for calibrating PlotSquared plot expiry");
                         }
                     }, threshold);
                     return true;
                 }
-                case "stop-expire":
-                {
-                    if (ExpireManager.task != -1)
-                    {
+                case "stop-expire": {
+                    if (ExpireManager.task != -1) {
                         PS.get().TASK.cancelTask(ExpireManager.task);
-                    }
-                    else
-                    {
+                    } else {
                         return MainUtil.sendMessage(player, "Task already halted");
                     }
                     ExpireManager.task = -1;
                     return MainUtil.sendMessage(player, "Cancelled task.");
                 }
-                case "remove-flag":
-                {
-                    if (args.length != 2)
-                    {
+                case "remove-flag": {
+                    if (args.length != 2) {
                         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec remove-flag <flag>");
                         return false;
                     }
                     final String flag = args[1];
-                    for (final Plot plot : PS.get().getPlots())
-                    {
-                        if (FlagManager.getPlotFlag(plot, flag) != null)
-                        {
+                    for (final Plot plot : PS.get().getPlots()) {
+                        if (FlagManager.getPlotFlag(plot, flag) != null) {
                             FlagManager.removePlotFlag(plot, flag);
                         }
                     }
                     return MainUtil.sendMessage(player, "Cleared flag: " + flag);
                 }
-                case "start-rgar":
-                {
-                    if (args.length != 2)
-                    {
+                case "start-rgar": {
+                    if (args.length != 2) {
                         MainUtil.sendMessage(player, "&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
                     boolean result;
-                    if (!PS.get().isPlotWorld(args[1]))
-                    {
+                    if (!PS.get().isPlotWorld(args[1])) {
                         MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;
                     }
-                    if (HybridUtils.regions != null)
-                    {
+                    if (HybridUtils.regions != null) {
                         result = ((BukkitHybridUtils) (HybridUtils.manager)).scheduleRoadUpdate(args[1], HybridUtils.regions, 0);
-                    }
-                    else
-                    {
+                    } else {
                         result = HybridUtils.manager.scheduleRoadUpdate(args[1], 0);
                     }
-                    if (!result)
-                    {
+                    if (!result) {
                         MainUtil.sendMessage(player, "&cCannot schedule mass schematic update! (Is one already in progress?)");
                         return false;
                     }
                     return true;
                 }
-                case "stop-rgar":
-                {
-                    if (!HybridUtils.UPDATE)
-                    {
+                case "stop-rgar": {
+                    if (!HybridUtils.UPDATE) {
                         MainUtil.sendMessage(player, "&cTASK NOT RUNNING!");
                         return false;
                     }
@@ -301,53 +255,55 @@ public class DebugExec extends SubCommand
                     MainUtil.sendMessage(player, "&cCancelling task... (please wait)");
                     return true;
                 }
-                case "start-expire":
-                {
-                    if (ExpireManager.task == -1)
-                    {
+                case "start-expire": {
+                    if (ExpireManager.task == -1) {
                         ExpireManager.runTask();
-                    }
-                    else
-                    {
+                    } else {
                         return MainUtil.sendMessage(player, "Plot expiry task already started");
                     }
                     return MainUtil.sendMessage(player, "Started plot expiry task");
                 }
-                case "update-expired":
-                {
-                    if (args.length > 1)
-                    {
+                case "update-expired": {
+                    if (args.length > 1) {
                         final String world = args[1];
-                        if (!BlockManager.manager.isWorld(world)) { return MainUtil.sendMessage(player, "Invalid world: " + args[1]); }
+                        if (!BlockManager.manager.isWorld(world)) {
+                            return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
+                        }
                         MainUtil.sendMessage(player, "Updating expired plot list");
                         ExpireManager.updateExpired(args[1]);
                         return true;
                     }
                     return MainUtil.sendMessage(player, "Use /plot debugexec update-expired <world>");
                 }
-                case "show-expired":
-                {
-                    if (args.length > 1)
-                    {
+                case "show-expired": {
+                    if (args.length > 1) {
                         final String world = args[1];
-                        if (!BlockManager.manager.isWorld(world)) { return MainUtil.sendMessage(player, "Invalid world: " + args[1]); }
-                        if (!ExpireManager.expiredPlots.containsKey(args[1])) { return MainUtil.sendMessage(player, "No task for world: " + args[1]); }
+                        if (!BlockManager.manager.isWorld(world)) {
+                            return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
+                        }
+                        if (!ExpireManager.expiredPlots.containsKey(args[1])) {
+                            return MainUtil.sendMessage(player, "No task for world: " + args[1]);
+                        }
                         MainUtil.sendMessage(player, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
-                        for (final Plot plot : ExpireManager.expiredPlots.get(args[1]))
-                        {
+                        for (final Plot plot : ExpireManager.expiredPlots.get(args[1])) {
                             MainUtil.sendMessage(player, " - " + plot.world + ";" + plot.id.x + ";" + plot.id.y + ";" + UUIDHandler.getName(plot.owner) + " : " + ExpireManager.dates.get(plot.owner));
                         }
                         return true;
                     }
                     return MainUtil.sendMessage(player, "Use /plot debugexec show-expired <world>");
                 }
-                case "seen":
-                {
-                    if (args.length != 2) { return MainUtil.sendMessage(player, "Use /plot debugexec seen <player>"); }
+                case "seen": {
+                    if (args.length != 2) {
+                        return MainUtil.sendMessage(player, "Use /plot debugexec seen <player>");
+                    }
                     final UUID uuid = UUIDHandler.getUUID(args[1], null);
-                    if (uuid == null) { return MainUtil.sendMessage(player, "player not found: " + args[1]); }
+                    if (uuid == null) {
+                        return MainUtil.sendMessage(player, "player not found: " + args[1]);
+                    }
                     final OfflinePlotPlayer op = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
-                    if ((op == null) || (op.getLastPlayed() == 0)) { return MainUtil.sendMessage(player, "player hasn't connected before: " + args[1]); }
+                    if ((op == null) || (op.getLastPlayed() == 0)) {
+                        return MainUtil.sendMessage(player, "player hasn't connected before: " + args[1]);
+                    }
                     final Timestamp stamp = new Timestamp(op.getLastPlayed());
                     final Date date = new Date(stamp.getTime());
                     MainUtil.sendMessage(player, "PLAYER: " + args[1]);
@@ -357,40 +313,34 @@ public class DebugExec extends SubCommand
                     MainUtil.sendMessage(player, "Local: " + date.toLocaleString());
                     return true;
                 }
-                case "trim-check":
-                {
-                    if (args.length != 2)
-                    {
+                case "trim-check": {
+                    if (args.length != 2) {
                         MainUtil.sendMessage(player, "Use /plot debugexec trim-check <world>");
                         MainUtil.sendMessage(player, "&7 - Generates a list of regions to trim");
                         return MainUtil.sendMessage(player, "&7 - Run after plot expiry has run");
                     }
                     final String world = args[1];
-                    if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(args[1])) { return MainUtil.sendMessage(player, "Invalid world: " + args[1]); }
+                    if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(args[1])) {
+                        return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
+                    }
                     final ArrayList<ChunkLoc> empty = new ArrayList<>();
-                    final boolean result = Trim.getTrimRegions(empty, world, new Runnable()
-                    {
+                    final boolean result = Trim.getTrimRegions(empty, world, new Runnable() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             Trim.sendMessage("Processing is complete! Here's how many chunks would be deleted:");
                             Trim.sendMessage(" - MCA #: " + empty.size());
                             Trim.sendMessage(" - CHUNKS: " + (empty.size() * 1024) + " (max)");
                             Trim.sendMessage("Exporting log for manual approval...");
                             final File file = new File(PS.get().IMP.getDirectory() + File.separator + "trim.txt");
                             PrintWriter writer;
-                            try
-                            {
+                            try {
                                 writer = new PrintWriter(file);
-                                for (final ChunkLoc loc : empty)
-                                {
+                                for (final ChunkLoc loc : empty) {
                                     writer.println(world + "/region/r." + loc.x + "." + loc.z + ".mca");
                                 }
                                 writer.close();
                                 Trim.sendMessage("File saved to 'plugins/PlotSquared/trim.txt'");
-                            }
-                            catch (final FileNotFoundException e)
-                            {
+                            } catch (final FileNotFoundException e) {
                                 e.printStackTrace();
                                 Trim.sendMessage("File failed to save! :(");
                             }
@@ -400,8 +350,7 @@ public class DebugExec extends SubCommand
                             Trim.sendMessage(" - Add 31 to each number to get the end position");
                         }
                     });
-                    if (!result)
-                    {
+                    if (!result) {
                         MainUtil.sendMessage(player, "Trim task already started!");
                     }
                     return result;
@@ -409,31 +358,23 @@ public class DebugExec extends SubCommand
                 case "h":
                 case "he":
                 case "?":
-                case "help":
-                {
+                case "help": {
                     MainUtil.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, "|") + ">");
                     return false;
                 }
-                case "addcmd":
-                {
-                    try
-                    {
+                case "addcmd": {
+                    try {
                         final String cmd = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8),
                         System.getProperty("line.separator"));
-                        final Command<PlotPlayer> subcommand = new Command<PlotPlayer>(args[1].split("\\.")[0])
-                        {
+                        final Command<PlotPlayer> subcommand = new Command<PlotPlayer>(args[1].split("\\.")[0]) {
                             @Override
-                            public boolean onCommand(final PlotPlayer plr, final String[] args)
-                            {
-                                try
-                                {
+                            public boolean onCommand(final PlotPlayer plr, final String[] args) {
+                                try {
                                     scope.put("PlotPlayer", plr);
                                     scope.put("args", args);
                                     engine.eval(cmd, scope);
                                     return true;
-                                }
-                                catch (final ScriptException e)
-                                {
+                                } catch (final ScriptException e) {
                                     e.printStackTrace();
                                     MainUtil.sendMessage(player, C.COMMAND_WENT_WRONG);
                                     return false;
@@ -442,87 +383,65 @@ public class DebugExec extends SubCommand
                         };
                         MainCommand.getInstance().addCommand(subcommand);
                         return true;
-                    }
-                    catch (final Exception e)
-                    {
+                    } catch (final Exception e) {
                         e.printStackTrace();
                         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec addcmd <file>");
                         return false;
                     }
                 }
-                case "runasync":
-                {
+                case "runasync": {
                     async = true;
                 }
-                case "run":
-                {
-                    try
-                    {
+                case "run": {
+                    try {
                         script = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8),
                         System.getProperty("line.separator"));
-                        if (args.length > 2)
-                        {
+                        if (args.length > 2) {
                             final HashMap<String, String> replacements = new HashMap<>();
-                            for (int i = 2; i < args.length; i++)
-                            {
+                            for (int i = 2; i < args.length; i++) {
                                 replacements.put("%s" + (i - 2), args[i]);
                             }
                             script = StringMan.replaceFromMap(script, replacements);
                         }
-                    }
-                    catch (final IOException e)
-                    {
+                    } catch (final IOException e) {
                         e.printStackTrace();
                         return false;
                     }
                     break;
                 }
-                default:
-                {
+                default: {
                     script = StringMan.join(args, " ");
                 }
             }
-            if (!ConsolePlayer.isConsole(player))
-            {
+            if (!ConsolePlayer.isConsole(player)) {
                 MainUtil.sendMessage(player, C.NOT_CONSOLE);
                 return false;
             }
             init();
             scope.put("PlotPlayer", player);
             PS.debug("> " + script);
-            try
-            {
-                if (async)
-                {
+            try {
+                if (async) {
                     final String toExec = script;
-                    TaskManager.runTaskAsync(new Runnable()
-                    {
+                    TaskManager.runTaskAsync(new Runnable() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             final long start = System.currentTimeMillis();
-                            try
-                            {
+                            try {
                                 engine.eval(toExec, scope);
-                            }
-                            catch (final ScriptException e)
-                            {
+                            } catch (final ScriptException e) {
                                 e.printStackTrace();
                             }
                             PS.log("> " + (System.currentTimeMillis() - start) + "ms");
                         }
                     });
-                }
-                else
-                {
+                } else {
                     final long start = System.currentTimeMillis();
                     engine.eval(script, scope);
                     PS.log("> " + (System.currentTimeMillis() - start) + "ms");
                 }
                 return true;
-            }
-            catch (final ScriptException e)
-            {
+            } catch (final ScriptException e) {
                 e.printStackTrace();
                 return false;
             }

@@ -43,47 +43,40 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 
-public class HybridPlotManager extends ClassicPlotManager
-{
-
+public class HybridPlotManager extends ClassicPlotManager {
+    
     @Override
-    public void exportTemplate(final PlotWorld plotworld) throws IOException
-    {
+    public void exportTemplate(final PlotWorld plotworld) throws IOException {
         final HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
         final String psRoot = PS.get().IMP.getDirectory() + File.separator;
         final String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
         final String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
-        try
-        {
+        try {
             final File sideroad = new File(psRoot + dir + "sideroad.schematic");
-            if (sideroad.exists())
-            {
+            if (sideroad.exists()) {
                 files.add(new FileBytes(newDir + "sideroad.schematic", Files.readAllBytes(sideroad.toPath())));
             }
             final File intersection = new File(psRoot + dir + "intersection.schematic");
-            if (intersection.exists())
-            {
+            if (intersection.exists()) {
                 files.add(new FileBytes(newDir + "intersection.schematic", Files.readAllBytes(intersection.toPath())));
             }
             final File plot = new File(psRoot + dir + "plot.schematic");
-            if (plot.exists())
-            {
+            if (plot.exists()) {
                 files.add(new FileBytes(newDir + "plot.schematic", Files.readAllBytes(plot.toPath())));
             }
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         Template.zipAll(plotworld.worldname, files);
     }
-
+    
     @Override
-    public boolean createRoadEast(final PlotWorld plotworld, final Plot plot)
-    {
+    public boolean createRoadEast(final PlotWorld plotworld, final Plot plot) {
         super.createRoadEast(plotworld, plot);
         final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        if (!hpw.ROAD_SCHEMATIC_ENABLED) { return true; }
+        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
+            return true;
+        }
         final PlotId id = plot.id;
         final PlotId id2 = new PlotId(id.x + 1, id.y);
         final Location bot = getPlotBottomLocAbs(hpw, id2);
@@ -93,50 +86,36 @@ public class HybridPlotManager extends ClassicPlotManager
         createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
         return true;
     }
-
-    public void createSchemAbs(final HybridPlotWorld hpw, final Location pos1, final Location pos2, final int height, final boolean clear)
-    {
+    
+    public void createSchemAbs(final HybridPlotWorld hpw, final Location pos1, final Location pos2, final int height, final boolean clear) {
         final int size = hpw.SIZE;
-        for (int x = pos1.getX(); x <= pos2.getX(); x++)
-        {
+        for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             short absX = (short) ((x - hpw.ROAD_OFFSET_X) % (size));
-            if (absX < 0)
-            {
+            if (absX < 0) {
                 absX += size;
             }
-            for (int z = pos1.getZ(); z <= pos2.getZ(); z++)
-            {
+            for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
                 short absZ = (short) ((z - hpw.ROAD_OFFSET_Z) % (size));
-                if (absZ < 0)
-                {
+                if (absZ < 0) {
                     absZ += size;
                 }
                 final PlotLoc loc = new PlotLoc(absX, absZ);
                 final HashMap<Short, Short> blocks = hpw.G_SCH.get(loc);
-                if (clear)
-                {
-                    for (short y = (short) (height); y <= (height + hpw.SCHEMATIC_HEIGHT); y++)
-                    {
+                if (clear) {
+                    for (short y = (short) (height); y <= (height + hpw.SCHEMATIC_HEIGHT); y++) {
                         SetBlockQueue.setBlock(hpw.worldname, x, y + y, z, 0);
                     }
                 }
-                if (blocks != null)
-                {
+                if (blocks != null) {
                     final HashMap<Short, Byte> datas = hpw.G_SCH_DATA.get(loc);
-                    if (datas == null)
-                    {
-                        for (final Short y : blocks.keySet())
-                        {
+                    if (datas == null) {
+                        for (final Short y : blocks.keySet()) {
                             SetBlockQueue.setBlock(hpw.worldname, x, height + y, z, blocks.get(y));
                         }
-                    }
-                    else
-                    {
-                        for (final Short y : blocks.keySet())
-                        {
+                    } else {
+                        for (final Short y : blocks.keySet()) {
                             Byte data = datas.get(y);
-                            if (data == null)
-                            {
+                            if (data == null) {
                                 data = 0;
                             }
                             SetBlockQueue.setBlock(hpw.worldname, x, height + y, z, new PlotBlock(blocks.get(y), data));
@@ -146,13 +125,14 @@ public class HybridPlotManager extends ClassicPlotManager
             }
         }
     }
-
+    
     @Override
-    public boolean createRoadSouth(final PlotWorld plotworld, final Plot plot)
-    {
+    public boolean createRoadSouth(final PlotWorld plotworld, final Plot plot) {
         super.createRoadSouth(plotworld, plot);
         final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        if (!hpw.ROAD_SCHEMATIC_ENABLED) { return true; }
+        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
+            return true;
+        }
         final PlotId id = plot.id;
         final PlotId id2 = new PlotId(id.x, id.y + 1);
         final Location bot = getPlotBottomLocAbs(hpw, id2);
@@ -162,13 +142,14 @@ public class HybridPlotManager extends ClassicPlotManager
         createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
         return true;
     }
-
+    
     @Override
-    public boolean createRoadSouthEast(final PlotWorld plotworld, final Plot plot)
-    {
+    public boolean createRoadSouthEast(final PlotWorld plotworld, final Plot plot) {
         super.createRoadSouthEast(plotworld, plot);
         final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        if (!hpw.ROAD_SCHEMATIC_ENABLED) { return true; }
+        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
+            return true;
+        }
         final PlotId id = plot.id;
         final PlotId id2 = new PlotId(id.x + 1, id.y + 1);
         final Location pos1 = getPlotTopLocAbs(hpw, id).add(1, 0, 1);
@@ -178,7 +159,7 @@ public class HybridPlotManager extends ClassicPlotManager
         createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
         return true;
     }
-
+    
     /**
      * Clearing the plot needs to only consider removing the blocks - This implementation has used the setCuboidAsync
      * function, as it is fast, and uses NMS code - It also makes use of the fact that deleting chunks is a lot faster
@@ -186,11 +167,10 @@ public class HybridPlotManager extends ClassicPlotManager
      * to have 512x512 sized plots
      */
     @Override
-    public boolean clearPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone)
-    {
+    public boolean clearPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone) {
         final String world = plotworld.worldname;
         final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
-
+        
         final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
         final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
         // If augmented
@@ -200,15 +180,12 @@ public class HybridPlotManager extends ClassicPlotManager
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
         final PlotBlock[] bedrock = (dpw.PLOT_BEDROCK ? new PlotBlock[] { new PlotBlock((short) 7, (byte) 0) } : filling);
         final PlotBlock air = new PlotBlock((short) 0, (byte) 0);
-
-        ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>()
-        {
+        
+        ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
-            public void run()
-            {
+            public void run() {
                 // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
-                if (canRegen && (value[6] == 0))
-                {
+                if (canRegen && (value[6] == 0)) {
                     ChunkManager.CURRENT_PLOT_CLEAR = new RegionWrapper(value[2], value[4], value[3], value[5]);
                     ChunkManager.manager.regenerateChunk(world, new ChunkLoc(value[0], value[1]));
                     ChunkManager.CURRENT_PLOT_CLEAR = null;
@@ -236,22 +213,21 @@ public class HybridPlotManager extends ClassicPlotManager
                 // And finally set the schematic, the y value is unimportant for this function
                 pastePlotSchematic(dpw, bot, top);
             }
-        }, new Runnable()
-        {
+        }, new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 // And notify whatever called this when plot clearing is done
                 SetBlockQueue.addNotify(whenDone);
             }
         }, 5);
         return true;
     }
-
-    public void pastePlotSchematic(final HybridPlotWorld plotworld, final Location l1, final Location l2)
-    {
-        if (!plotworld.PLOT_SCHEMATIC) { return; }
+    
+    public void pastePlotSchematic(final HybridPlotWorld plotworld, final Location l1, final Location l2) {
+        if (!plotworld.PLOT_SCHEMATIC) {
+            return;
+        }
         createSchemAbs(plotworld, l1, l2, plotworld.PLOT_HEIGHT, false);
     }
-
+    
 }

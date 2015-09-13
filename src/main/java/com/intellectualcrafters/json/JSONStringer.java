@@ -33,16 +33,14 @@ import java.io.StringWriter;
  * @author JSON.org
  * @version 2008-09-18
  */
-public class JSONStringer extends JSONWriter
-{
+public class JSONStringer extends JSONWriter {
     /**
      * Make a fresh JSONStringer. It can be used to build one JSON text.
      */
-    public JSONStringer()
-    {
+    public JSONStringer() {
         super(new StringWriter());
     }
-
+    
     /**
      * Return the JSON text. This method is used to obtain the product of the JSONStringer instance. It will return
      * <code>null</code> if there was a problem in the construction of the JSON text (such as the calls to
@@ -51,8 +49,7 @@ public class JSONStringer extends JSONWriter
      * @return The JSON text.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return mode == 'd' ? writer.toString() : null;
     }
 }

@@ -34,8 +34,7 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
  *
  */
 @SuppressWarnings("unused")
-public class PlotSettings
-{
+public class PlotSettings {
     /**
      * Plot
      */
@@ -52,12 +51,12 @@ public class PlotSettings
      * Comments
      */
     private List<PlotComment> comments = null;
-
+    
     /**
      * The ratings for a plot
      */
     public HashMap<UUID, Integer> ratings;
-
+    
     /**
      * Flags
      */
@@ -66,19 +65,18 @@ public class PlotSettings
      * Home Position
      */
     private BlockLoc position;
-
+    
     /**
      * Constructor
      *
      * @param plot object
      */
-    public PlotSettings(final Plot plot)
-    {
+    public PlotSettings(final Plot plot) {
         alias = "";
         this.plot = plot;
         flags = new HashMap<>();
     }
-
+    
     /**
      * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
      *
@@ -86,118 +84,105 @@ public class PlotSettings
      *
      * @return boolean merged
      */
-    public boolean getMerged(final int direction)
-    {
+    public boolean getMerged(final int direction) {
         return merged[direction];
     }
-
+    
     /**
      * Returns true if the plot is merged (i.e. if it's a mega plot)
      */
-    public boolean isMerged()
-    {
+    public boolean isMerged() {
         return (merged[0] || merged[1] || merged[2] || merged[3]);
     }
-
-    public boolean[] getMerged()
-    {
+    
+    public boolean[] getMerged() {
         return merged;
     }
-
-    public void setMerged(final boolean[] merged)
-    {
+    
+    public void setMerged(final boolean[] merged) {
         this.merged = merged;
     }
-
-    public void setMerged(final int direction, final boolean merged)
-    {
+    
+    public void setMerged(final int direction, final boolean merged) {
         this.merged[direction] = merged;
     }
-
-    public BlockLoc getPosition()
-    {
-        if (position == null) { return new BlockLoc(0, 0, 0); }
+    
+    public BlockLoc getPosition() {
+        if (position == null) {
+            return new BlockLoc(0, 0, 0);
+        }
         return position;
     }
-
-    public void setPosition(final BlockLoc position)
-    {
+    
+    public void setPosition(final BlockLoc position) {
         this.position = position;
     }
-
-    public String getAlias()
-    {
+    
+    public String getAlias() {
         return alias;
     }
-
+    
     /**
      * Set the plot alias
      *
      * @param alias alias to be used
      */
-    public void setAlias(final String alias)
-    {
+    public void setAlias(final String alias) {
         this.alias = alias;
     }
-
-    public String getJoinMessage()
-    {
+    
+    public String getJoinMessage() {
         final Flag greeting = FlagManager.getPlotFlag(plot, "greeting");
-        if (greeting != null) { return greeting.getValueString(); }
+        if (greeting != null) {
+            return greeting.getValueString();
+        }
         return "";
     }
-
+    
     /**
      * Get the "farewell" flag value
      *
      * @return Farewell flag
      */
-    public String getLeaveMessage()
-    {
+    public String getLeaveMessage() {
         final Flag farewell = FlagManager.getPlotFlag(plot, "farewell");
-        if (farewell != null) { return farewell.getValueString(); }
+        if (farewell != null) {
+            return farewell.getValueString();
+        }
         return "";
     }
-
-    public ArrayList<PlotComment> getComments(final String inbox)
-    {
+    
+    public ArrayList<PlotComment> getComments(final String inbox) {
         final ArrayList<PlotComment> c = new ArrayList<>();
-        if (comments == null) { return null; }
-        for (final PlotComment comment : comments)
-        {
-            if (comment.inbox.equals(inbox))
-            {
+        if (comments == null) {
+            return null;
+        }
+        for (final PlotComment comment : comments) {
+            if (comment.inbox.equals(inbox)) {
                 c.add(comment);
             }
         }
         return c;
     }
-
-    public void setComments(final List<PlotComment> comments)
-    {
+    
+    public void setComments(final List<PlotComment> comments) {
         this.comments = comments;
     }
-
-    public void removeComment(final PlotComment comment)
-    {
-        if (comments.contains(comment))
-        {
+    
+    public void removeComment(final PlotComment comment) {
+        if (comments.contains(comment)) {
             comments.remove(comment);
         }
     }
-
-    public void removeComments(final List<PlotComment> comments)
-    {
-        for (final PlotComment comment : comments)
-        {
+    
+    public void removeComments(final List<PlotComment> comments) {
+        for (final PlotComment comment : comments) {
             removeComment(comment);
         }
     }
-
-    public void addComment(final PlotComment comment)
-    {
-        if (comments == null)
-        {
+    
+    public void addComment(final PlotComment comment) {
+        if (comments == null) {
             comments = new ArrayList<>();
         }
         comments.add(comment);

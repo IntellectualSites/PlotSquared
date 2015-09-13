@@ -10,20 +10,19 @@ import com.intellectualcrafters.plot.commands.RequiredType;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CommandDeclaration
-{
-
+public @interface CommandDeclaration {
+    
     String command();
-
+    
     String[] aliases() default {};
-
+    
     String permission() default "";
-
+    
     String usage() default "";
-
+    
     String description() default "";
-
+    
     RequiredType requiredType() default RequiredType.NONE;
-
+    
     CommandCategory category();
 }

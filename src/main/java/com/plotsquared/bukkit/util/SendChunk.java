@@ -30,9 +30,8 @@ import com.plotsquared.bukkit.object.BukkitPlayer;
  * An utility that can be used to send chunks, rather than using bukkit code to do so (uses heavy NMS)
  *
  */
-public class SendChunk
-{
-
+public class SendChunk {
+    
     //    // Ref Class
     private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
     private final RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
@@ -47,14 +46,13 @@ public class SendChunk
     private final RefField connection;
     private final RefMethod send;
     private final RefMethod methodInitLighting;
-
+    
     /**
      * Constructor
      *
      * @throws NoSuchMethodException
      */
-    public SendChunk() throws NoSuchMethodException
-    {
+    public SendChunk() throws NoSuchMethodException {
         methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
         methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         methodInitLighting = classChunk.getMethod("initLighting");
@@ -62,18 +60,15 @@ public class SendChunk
         connection = classEntityPlayer.getField("playerConnection");
         send = classConnection.getMethod("sendPacket", classPacket.getRealClass());
     }
-
-    public void sendChunk(final Collection<Chunk> input)
-    {
+    
+    public void sendChunk(final Collection<Chunk> input) {
         final HashSet<Chunk> chunks = new HashSet<Chunk>(input);
         final HashMap<String, ArrayList<Chunk>> map = new HashMap<>();
         final int view = Bukkit.getServer().getViewDistance();
-        for (final Chunk chunk : chunks)
-        {
+        for (final Chunk chunk : chunks) {
             final String world = chunk.getWorld().getName();
             ArrayList<Chunk> list = map.get(world);
-            if (list == null)
-            {
+            if (list == null) {
                 list = new ArrayList<>();
                 map.put(world, list);
             }
@@ -81,40 +76,32 @@ public class SendChunk
             final Object c = methodGetHandleChunk.of(chunk).call();
             methodInitLighting.of(c).call();
         }
-        for (final PlotPlayer pp : UUIDHandler.getPlayers().values())
-        {
+        for (final PlotPlayer pp : UUIDHandler.getPlayers().values()) {
             final Plot plot = pp.getCurrentPlot();
             Location loc = null;
             String world;
-            if (plot != null)
-            {
+            if (plot != null) {
                 world = plot.world;
-            }
-            else
-            {
+            } else {
                 loc = pp.getLocation();
                 world = loc.getWorld();
             }
             final ArrayList<Chunk> list = map.get(world);
-            if (list == null)
-            {
+            if (list == null) {
                 continue;
             }
-            if (loc == null)
-            {
+            if (loc == null) {
                 loc = pp.getLocation();
             }
             final int cx = loc.getX() >> 4;
             final int cz = loc.getZ() >> 4;
             final Player player = ((BukkitPlayer) pp).player;
             final Object entity = methodGetHandlePlayer.of(player).call();
-
-            for (final Chunk chunk : list)
-            {
+            
+            for (final Chunk chunk : list) {
                 final int dx = Math.abs(cx - chunk.getX());
                 final int dz = Math.abs(cz - chunk.getZ());
-                if ((dx > view) || (dz > view))
-                {
+                if ((dx > view) || (dz > view)) {
                     continue;
                 }
                 final Object c = methodGetHandleChunk.of(chunk).call();
@@ -128,19 +115,13 @@ public class SendChunk
                 send.of(con).call(packet);
             }
         }
-        for (final Chunk chunk : chunks)
-        {
-            TaskManager.runTask(new Runnable()
-            {
+        for (final Chunk chunk : chunks) {
+            TaskManager.runTask(new Runnable() {
                 @Override
-                public void run()
-                {
-                    try
-                    {
+                public void run() {
+                    try {
                         chunk.unload(true, false);
-                    }
-                    catch (final Exception e)
-                    {
+                    } catch (final Exception e) {
                         final String worldname = chunk.getWorld().getName();
                         PS.debug("$4Could not save chunk: " + worldname + ";" + chunk.getX() + ";" + chunk.getZ());
                         PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
@@ -198,13 +179,11 @@ public class SendChunk
         //
         //        }
     }
-
-    public void sendChunk(final String worldname, final List<ChunkLoc> locs)
-    {
+    
+    public void sendChunk(final String worldname, final List<ChunkLoc> locs) {
         final World myworld = Bukkit.getWorld(worldname);
         final ArrayList<Chunk> chunks = new ArrayList<>();
-        for (final ChunkLoc loc : locs)
-        {
+        for (final ChunkLoc loc : locs) {
             chunks.add(myworld.getChunkAt(loc.x, loc.z));
         }
         sendChunk(chunks);

@@ -39,8 +39,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 /**
  * @author Jesse Boyd
  */
-public abstract class PlotWorld
-{
+public abstract class PlotWorld {
     public final static boolean AUTO_MERGE_DEFAULT = false;
     public final static boolean ALLOW_SIGNS_DEFAULT = true;
     public final static boolean MOB_SPAWNING_DEFAULT = false;
@@ -69,8 +68,7 @@ public abstract class PlotWorld
     // TODO make this configurable
     // make non static and static_default_valu + add config option
     public static int[] BLOCKS;
-    static
-    {
+    static {
         BLOCKS = new int[] {
         1,
         2,
@@ -168,38 +166,43 @@ public abstract class PlotWorld
     public int MAX_BUILD_HEIGHT;
     public int MIN_BUILD_HEIGHT;
     public PlotGamemode GAMEMODE = PlotGamemode.CREATIVE;
-
-    public PlotWorld(final String worldname)
-    {
+    
+    public PlotWorld(final String worldname) {
         this.worldname = worldname;
     }
-
+    
     @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj) { return true; }
-        if (obj == null) { return false; }
-        if (getClass() != obj.getClass()) { return false; }
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         final PlotWorld plotworld = (PlotWorld) obj;
         final ConfigurationSection section = PS.get().config.getConfigurationSection("worlds");
-        for (final ConfigurationNode setting : plotworld.getSettingNodes())
-        {
+        for (final ConfigurationNode setting : plotworld.getSettingNodes()) {
             final Object constant = section.get(plotworld.worldname + "." + setting.getConstant());
-            if (constant == null) { return false; }
-            if (!constant.equals(section.get(worldname + "." + setting.getConstant()))) { return false; }
+            if (constant == null) {
+                return false;
+            }
+            if (!constant.equals(section.get(worldname + "." + setting.getConstant()))) {
+                return false;
+            }
         }
         return true;
     }
-
+    
     /**
      * When a world is created, the following method will be called for each
      *
      * @param config Configuration Section
      */
-    public void loadDefaultConfiguration(final ConfigurationSection config)
-    {
-        if (config.contains("generator.terrain"))
-        {
+    public void loadDefaultConfiguration(final ConfigurationSection config) {
+        if (config.contains("generator.terrain")) {
             TERRAIN = config.getInt("generator.terrain");
             TYPE = config.getInt("generator.type");
         }
@@ -220,9 +223,8 @@ public abstract class PlotWorld
         WORLD_BORDER = config.getBoolean("world.border");
         MAX_BUILD_HEIGHT = config.getInt("world.max_height");
         MIN_BUILD_HEIGHT = config.getInt("min.max_height");
-
-        switch (config.getString("world.gamemode").toLowerCase())
-        {
+        
+        switch (config.getString("world.gamemode").toLowerCase()) {
             case "survival":
             case "s":
             case "0":
@@ -246,54 +248,39 @@ public abstract class PlotWorld
                 PS.debug("&cInvalid gamemode set for: " + worldname);
                 break;
         }
-
+        
         HOME_ALLOW_NONMEMBER = config.getBoolean("home.allow-nonmembers");
         final String homeDefault = config.getString("home.default");
-        if (homeDefault.equalsIgnoreCase("side"))
-        {
+        if (homeDefault.equalsIgnoreCase("side")) {
             DEFAULT_HOME = null;
-        }
-        else if (homeDefault.equalsIgnoreCase("center"))
-        {
+        } else if (homeDefault.equalsIgnoreCase("center")) {
             DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 final String[] split = homeDefault.split(",");
                 DEFAULT_HOME = new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 DEFAULT_HOME = null;
             }
         }
-
+        
         List<String> flags = config.getStringList("flags.default");
-        if ((flags == null) || (flags.size() == 0))
-        {
+        if ((flags == null) || (flags.size() == 0)) {
             flags = config.getStringList("flags");
-            if ((flags == null) || (flags.size() == 0))
-            {
+            if ((flags == null) || (flags.size() == 0)) {
                 flags = new ArrayList<String>();
                 final ConfigurationSection section = config.getConfigurationSection("flags");
                 final Set<String> keys = section.getKeys(false);
-                for (final String key : keys)
-                {
-                    if (!key.equals("default"))
-                    {
+                for (final String key : keys) {
+                    if (!key.equals("default")) {
                         flags.add(key + ";" + section.get(key));
                     }
                 }
             }
         }
-        try
-        {
+        try {
             DEFAULT_FLAGS = FlagManager.parseFlags(flags);
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             e.printStackTrace();
             PS.debug("&cInvalid default flags for " + worldname + ": " + StringMan.join(flags, ","));
             DEFAULT_FLAGS = new HashMap<>();
@@ -305,16 +292,15 @@ public abstract class PlotWorld
         SPAWN_BREEDING = config.getBoolean("event.spawn.breeding");
         loadConfiguration(config);
     }
-
+    
     public abstract void loadConfiguration(final ConfigurationSection config);
-
+    
     /**
      * Saving core plotworld settings
      *
      * @param config Configuration Section
      */
-    public void saveConfiguration(final ConfigurationSection config)
-    {
+    public void saveConfiguration(final ConfigurationSection config) {
         final HashMap<String, Object> options = new HashMap<>();
         options.put("natural_mob_spawning", PlotWorld.MOB_SPAWNING_DEFAULT);
         options.put("plot.auto_merge", PlotWorld.AUTO_MERGE_DEFAULT);
@@ -342,9 +328,8 @@ public abstract class PlotWorld
         options.put("world.max_height", PlotWorld.MAX_BUILD_HEIGHT_DEFAULT);
         options.put("world.min_height", PlotWorld.MIN_BUILD_HEIGHT_DEFAULT);
         options.put("world.gamemode", PlotWorld.GAMEMODE_DEFAULT.name().toLowerCase());
-
-        if (Settings.ENABLE_CLUSTERS && (TYPE != 0))
-        {
+        
+        if (Settings.ENABLE_CLUSTERS && (TYPE != 0)) {
             options.put("generator.terrain", TERRAIN);
             options.put("generator.type", TYPE);
         }
@@ -352,19 +337,16 @@ public abstract class PlotWorld
         /*
          * Saving generator specific settings
          */
-        for (final ConfigurationNode setting : settings)
-        {
+        for (final ConfigurationNode setting : settings) {
             options.put(setting.getConstant(), setting.getValue());
         }
-        for (final String option : options.keySet())
-        {
-            if (!config.contains(option))
-            {
+        for (final String option : options.keySet()) {
+            if (!config.contains(option)) {
                 config.set(option, options.get(option));
             }
         }
     }
-
+    
     /**
      * Used for the <b>/plot setup</b> command Return null if you do not want to support this feature
      *

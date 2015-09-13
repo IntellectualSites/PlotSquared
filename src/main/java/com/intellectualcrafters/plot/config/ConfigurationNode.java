@@ -32,80 +32,69 @@ import com.intellectualcrafters.plot.util.StringMan;
  * Configuration Node
  *
  */
-public class ConfigurationNode
-{
+public class ConfigurationNode {
     private final String constant;
     private final Object default_value;
     private final String description;
     private final SettingValue type;
     private Object value;
-
-    public ConfigurationNode(final String constant, final Object default_value, final String description, final SettingValue type, final boolean required)
-    {
+    
+    public ConfigurationNode(final String constant, final Object default_value, final String description, final SettingValue type, final boolean required) {
         this.constant = constant;
         this.default_value = default_value;
         this.description = description;
         value = default_value;
         this.type = type;
     }
-
-    public SettingValue getType()
-    {
+    
+    public SettingValue getType() {
         return type;
     }
-
-    public boolean isValid(final String string)
-    {
-        try
-        {
+    
+    public boolean isValid(final String string) {
+        try {
             final Object result = type.parseString(string);
             return result != null;
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             return false;
         }
     }
-
-    public boolean setValue(final String string)
-    {
-        if (!type.validateValue(string)) { return false; }
+    
+    public boolean setValue(final String string) {
+        if (!type.validateValue(string)) {
+            return false;
+        }
         value = type.parseString(string);
         return true;
     }
-
-    public Object getValue()
-    {
-        if (value instanceof String[])
-        {
+    
+    public Object getValue() {
+        if (value instanceof String[]) {
             return Arrays.asList((String[]) value);
-        }
-        else if (value instanceof Object[])
-        {
+        } else if (value instanceof Object[]) {
             final List<String> values = new ArrayList<String>();
-            for (final Object value : (Object[]) this.value)
-            {
+            for (final Object value : (Object[]) this.value) {
                 values.add(value.toString());
             }
             return values;
+        } else if (value instanceof PlotBlock) {
+            return value.toString();
         }
-        else if (value instanceof PlotBlock) { return value.toString(); }
         return value;
     }
-
-    public String getConstant()
-    {
+    
+    public String getConstant() {
         return constant;
     }
-
-    public Object getDefaultValue()
-    {
-        if (default_value instanceof Object[]) { return StringMan.join((Object[]) default_value, ","); }
+    
+    public Object getDefaultValue() {
+        if (default_value instanceof Object[]) {
+            return StringMan.join((Object[]) default_value, ",");
+        }
         return default_value;
     }
-
-    public String getDescription()
-    {
+    
+    public String getDescription() {
         return description;
     }
 }

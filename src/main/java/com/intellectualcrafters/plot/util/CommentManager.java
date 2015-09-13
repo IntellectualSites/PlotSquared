@@ -16,48 +16,39 @@ import com.intellectualcrafters.plot.object.comment.InboxPublic;
 import com.intellectualcrafters.plot.object.comment.InboxReport;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
-public class CommentManager
-{
+public class CommentManager {
     public static HashMap<String, CommentInbox> inboxes = new HashMap<>();
-
-    public static void sendTitle(final PlotPlayer player, final Plot plot)
-    {
-        if (!Settings.COMMENT_NOTIFICATIONS) { return; }
-        if (!plot.isOwner(player.getUUID())) { return; }
-        TaskManager.runTaskLaterAsync(new Runnable()
-        {
+    
+    public static void sendTitle(final PlotPlayer player, final Plot plot) {
+        if (!Settings.COMMENT_NOTIFICATIONS) {
+            return;
+        }
+        if (!plot.isOwner(player.getUUID())) {
+            return;
+        }
+        TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 final Collection<CommentInbox> boxes = CommentManager.inboxes.values();
                 final AtomicInteger count = new AtomicInteger(0);
                 final AtomicInteger size = new AtomicInteger(boxes.size());
-                for (final CommentInbox inbox : inboxes.values())
-                {
-                    inbox.getComments(plot, new RunnableVal()
-                    {
+                for (final CommentInbox inbox : inboxes.values()) {
+                    inbox.getComments(plot, new RunnableVal() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             int total;
-                            if (value != null)
-                            {
+                            if (value != null) {
                                 int num = 0;
-                                for (final PlotComment comment : (ArrayList<PlotComment>) value)
-                                {
-                                    if (comment.timestamp > getTimestamp(player, inbox.toString()))
-                                    {
+                                for (final PlotComment comment : (ArrayList<PlotComment>) value) {
+                                    if (comment.timestamp > getTimestamp(player, inbox.toString())) {
                                         num++;
                                     }
                                 }
                                 total = count.addAndGet(num);
-                            }
-                            else
-                            {
+                            } else {
                                 total = count.get();
                             }
-                            if ((size.decrementAndGet() == 0) && (total > 0))
-                            {
+                            if ((size.decrementAndGet() == 0) && (total > 0)) {
                                 AbstractTitle.sendTitle(player, "", C.INBOX_NOTIFICATION.s().replaceAll("%s", "" + total));
                             }
                         }
@@ -66,21 +57,20 @@ public class CommentManager
             }
         }, 20);
     }
-
-    public static long getTimestamp(final PlotPlayer player, final String inbox)
-    {
+    
+    public static long getTimestamp(final PlotPlayer player, final String inbox) {
         final Object meta = player.getMeta("inbox:" + inbox);
-        if (meta == null) { return player.getPreviousLogin(); }
+        if (meta == null) {
+            return player.getPreviousLogin();
+        }
         return (Long) meta;
     }
-
-    public static void addInbox(final CommentInbox inbox)
-    {
+    
+    public static void addInbox(final CommentInbox inbox) {
         inboxes.put(inbox.toString().toLowerCase(), inbox);
     }
-
-    public static void registerDefaultInboxes()
-    {
+    
+    public static void registerDefaultInboxes() {
         addInbox(new InboxReport());
         addInbox(new InboxPublic());
         addInbox(new InboxOwner());

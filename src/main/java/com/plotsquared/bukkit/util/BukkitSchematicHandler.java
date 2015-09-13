@@ -50,20 +50,16 @@ import com.plotsquared.object.schematic.StateWrapper;
  * Schematic Handler
  *
  */
-public class BukkitSchematicHandler extends SchematicHandler
-{
-
+public class BukkitSchematicHandler extends SchematicHandler {
+    
     @Override
-    public void getCompoundTag(final String world, final Location pos1, final Location pos2, final RunnableVal<CompoundTag> whenDone)
-    {
-
+    public void getCompoundTag(final String world, final Location pos1, final Location pos2, final RunnableVal<CompoundTag> whenDone) {
+        
         // async
-        TaskManager.runTaskAsync(new Runnable()
-        {
-
+        TaskManager.runTaskAsync(new Runnable() {
+            
             @Override
-            public void run()
-            {
+            public void run() {
                 // Main positions
                 final int p1x = pos1.getX();
                 final int p1z = pos1.getZ();
@@ -75,14 +71,14 @@ public class BukkitSchematicHandler extends SchematicHandler
                 final int tcz = p2z >> 4;
                 final int sy = pos1.getY();
                 final int ey = pos2.getY();
-
+                
                 final int width = (pos2.getX() - pos1.getX()) + 1;
                 final int height = (pos2.getY() - pos1.getY()) + 1;
                 final int length = (pos2.getZ() - pos1.getZ()) + 1;
-
+                
                 // Main Schematic tag
                 final HashMap<String, Tag> schematic = new HashMap<>();
-
+                
                 schematic.put("Width", new ShortTag("Width", (short) width));
                 schematic.put("Length", new ShortTag("Length", (short) length));
                 schematic.put("Height", new ShortTag("Height", (short) height));
@@ -93,80 +89,66 @@ public class BukkitSchematicHandler extends SchematicHandler
                 schematic.put("WEOffsetX", new IntTag("WEOffsetX", 0));
                 schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
                 schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
-
+                
                 // Arrays of data types
                 final List<Tag> tileEntities = new ArrayList<Tag>();
                 final byte[] blocks = new byte[width * height * length];
                 final byte[] blockData = new byte[width * height * length];
-
+                
                 // Generate list of chunks
                 final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
-                for (int x = bcx; x <= tcx; x++)
-                {
-                    for (int z = bcz; z <= tcz; z++)
-                    {
+                for (int x = bcx; x <= tcx; x++) {
+                    for (int z = bcz; z <= tcz; z++) {
                         chunks.add(new ChunkLoc(x, z));
                     }
                 }
-
+                
                 final World worldObj = Bukkit.getWorld(world);
                 // Main thread
-                TaskManager.runTask(new Runnable()
-                {
+                TaskManager.runTask(new Runnable() {
                     @Override
-                    public void run()
-                    {
+                    public void run() {
                         final long start = System.currentTimeMillis();
-                        while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < 20))
-                        {
+                        while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < 20)) {
                             // save schematics
                             final ChunkLoc chunk = chunks.remove(0);
-
+                            
                             final Chunk bc = worldObj.getChunkAt(chunk.x, chunk.z);
-                            if (!bc.load(false))
-                            {
+                            if (!bc.load(false)) {
                                 continue;
                             }
-
+                            
                             final int X = chunk.x;
                             final int Z = chunk.z;
                             int xxb = X << 4;
                             int zzb = Z << 4;
                             int xxt = xxb + 15;
                             int zzt = zzb + 15;
-
-                            if (X == bcx)
-                            {
+                            
+                            if (X == bcx) {
                                 xxb = p1x;
                             }
-                            if (X == tcx)
-                            {
+                            if (X == tcx) {
                                 xxt = p2x;
                             }
-                            if (Z == bcz)
-                            {
+                            if (Z == bcz) {
                                 zzb = p1z;
                             }
-                            if (Z == tcz)
-                            {
+                            if (Z == tcz) {
                                 zzt = p2z;
                             }
-                            for (int y = sy; y <= Math.min(255, ey); y++)
-                            {
+                            for (int y = sy; y <= Math.min(255, ey); y++) {
                                 final int ry = y - sy;
                                 final int i1 = (ry * width * length);
-                                for (int z = zzb; z <= zzt; z++)
-                                {
+                                for (int z = zzb; z <= zzt; z++) {
                                     final int rz = z - p1z;
                                     final int i2 = i1 + (rz * width);
-                                    for (int x = xxb; x <= xxt; x++)
-                                    {
+                                    for (int x = xxb; x <= xxt; x++) {
                                         final int rx = x - p1x;
                                         final int index = i2 + rx;
                                         final Block block = worldObj.getBlockAt(x, y, z);
                                         final int id = block.getTypeId();
-                                        switch (id)
-                                        {
+                                        switch (id) {
                                             case 0:
                                             case 2:
                                             case 4:
@@ -237,8 +219,7 @@ public class BukkitSchematicHandler extends SchematicHandler
                                             case 189:
                                             case 190:
                                             case 191:
-                                            case 192:
-                                            {
+                                            case 192: {
                                                 break;
                                             }
                                             case 54:
@@ -275,19 +256,15 @@ public class BukkitSchematicHandler extends SchematicHandler
                                             case 29:
                                             case 33:
                                             case 151:
-                                            case 178:
-                                            {
+                                            case 178: {
                                                 // TODO implement fully
                                                 final BlockState state = block.getState();
-                                                if (state != null)
-                                                {
+                                                if (state != null) {
                                                     final StateWrapper wrapper = new StateWrapper(state);
                                                     final CompoundTag rawTag = wrapper.getTag();
-                                                    if (rawTag != null)
-                                                    {
+                                                    if (rawTag != null) {
                                                         final Map<String, Tag> values = new HashMap<String, Tag>();
-                                                        for (final Entry<String, Tag> entry : rawTag.getValue().entrySet())
-                                                        {
+                                                        for (final Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
                                                             values.put(entry.getKey(), entry.getValue());
                                                         }
                                                         values.put("id", new StringTag("id", wrapper.getId()));
@@ -299,8 +276,7 @@ public class BukkitSchematicHandler extends SchematicHandler
                                                     }
                                                 }
                                             }
-                                            default:
-                                            {
+                                            default: {
                                                 blockData[index] = block.getData();
                                             }
                                         }
@@ -316,19 +292,14 @@ public class BukkitSchematicHandler extends SchematicHandler
                                     }
                                 }
                             }
-
+                            
                         }
-                        if (chunks.size() != 0)
-                        {
+                        if (chunks.size() != 0) {
                             TaskManager.runTaskLater(this, 1);
-                        }
-                        else
-                        {
-                            TaskManager.runTaskAsync(new Runnable()
-                            {
+                        } else {
+                            TaskManager.runTaskAsync(new Runnable() {
                                 @Override
-                                public void run()
-                                {
+                                public void run() {
                                     schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
                                     schematic.put("Data", new ByteArrayTag("Data", blockData));
                                     schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));

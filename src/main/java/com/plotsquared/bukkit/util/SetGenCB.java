@@ -14,21 +14,19 @@ import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.bukkit.generator.AugmentedPopulator;
 
-public class SetGenCB
-{
-    public static void setGenerator(final World world) throws Exception
-    {
+public class SetGenCB {
+    public static void setGenerator(final World world) throws Exception {
         SetupUtils.manager.updateGenerators();
         PS.get().removePlotWorldAbs(world.getName());
         final ChunkGenerator gen = world.getGenerator();
-        if (gen == null) { return; }
+        if (gen == null) {
+            return;
+        }
         final String name = gen.getClass().getCanonicalName();
         boolean set = false;
-        for (final PlotGenerator<?> wrapper : SetupUtils.generators.values())
-        {
+        for (final PlotGenerator<?> wrapper : SetupUtils.generators.values()) {
             final ChunkGenerator newGen = (ChunkGenerator) wrapper.generator;
-            if (newGen.getClass().getCanonicalName().equals(name))
-            {
+            if (newGen.getClass().getCanonicalName().equals(name)) {
                 // set generator
                 final Field generator = world.getClass().getDeclaredField("generator");
                 final Field populators = world.getClass().getDeclaredField("populators");
@@ -46,13 +44,10 @@ public class SetGenCB
                 break;
             }
         }
-        if (!set)
-        {
+        if (!set) {
             final Iterator<BlockPopulator> iter = world.getPopulators().iterator();
-            while (iter.hasNext())
-            {
-                if (iter.next() instanceof AugmentedPopulator)
-                {
+            while (iter.hasNext()) {
+                if (iter.next() instanceof AugmentedPopulator) {
                     iter.remove();
                 }
             }

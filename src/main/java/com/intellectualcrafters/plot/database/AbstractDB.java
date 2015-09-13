@@ -39,14 +39,13 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
  */
-public interface AbstractDB
-{
-
+public interface AbstractDB {
+    
     /**
      * The UUID that will count as everyone
      */
     UUID everyone = UUID.fromString("1-1-3-3-7");
-
+    
     /**
      * Set Plot owner
      *
@@ -54,21 +53,21 @@ public interface AbstractDB
      * @param uuid The uuid of the new owner
      */
     void setOwner(final Plot plot, final UUID uuid);
-
+    
     /**
      * Create all settings, and create default helpers, trusted + denied lists
      *
      * @param plots Plots for which the default table entries should be created
      */
     void createPlotsAndData(final ArrayList<Plot> plots, final Runnable whenDone);
-
+    
     /**
      * Create a plot
      *
      * @param plot That should be created
      */
     void createPlot(final Plot plot);
-
+    
     /**
      * Create tables
      *
@@ -77,16 +76,16 @@ public interface AbstractDB
      * @throws SQLException If the database manager is unable to create the tables
      */
     void createTables() throws Exception;
-
+    
     /**
      * Delete a plot
      *
      * @param plot Plot that should be deleted
      */
     void delete(final Plot plot);
-
+    
     void delete(final PlotCluster cluster);
-
+    
     /**
      * Create plot settings
      *
@@ -94,7 +93,7 @@ public interface AbstractDB
      * @param plot Plot Object
      */
     void createPlotSettings(final int id, final Plot plot);
-
+    
     /**
      * Get the table entry ID
      *
@@ -104,7 +103,7 @@ public interface AbstractDB
      * @return Integer = Plot Entry Id
      */
     int getId(final Plot plot);
-
+    
     /**
      * Get the id of a given plot cluster
      *
@@ -114,22 +113,22 @@ public interface AbstractDB
      * @return Integer = Cluster Entry Id
      */
     int getClusterId(final String world, final PlotClusterId id);
-
+    
     /**
      * @return A linked hashmap containing all plots
      */
     ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots();
-
+    
     /**
      *
      */
     void validateAllPlots(final Set<Plot> toValidate);
-
+    
     /**
      * @return A hashmap containing all plot clusters
      */
     HashMap<String, HashSet<PlotCluster>> getClusters();
-
+    
     /**
      * Set the merged status for a plot
      *
@@ -138,14 +137,14 @@ public interface AbstractDB
      * @param merged boolean[]
      */
     void setMerged(final Plot plot, final boolean[] merged);
-
+    
     /**
      * Swap the settings, helpers etc. of two plots
      * @param p1 Plot1
      * @param p2 Plot2
      */
     void swapPlots(final Plot p1, final Plot p2);
-
+    
     /**
      * Set plot flags
      *
@@ -154,7 +153,7 @@ public interface AbstractDB
      * @param flags flags to set (flag[])
      */
     void setFlags(final Plot plot, final Collection<Flag> flags);
-
+    
     /**
      * Set cluster flags
      *
@@ -162,12 +161,12 @@ public interface AbstractDB
      * @param flags flags to set (flag[])
      */
     void setFlags(final PlotCluster cluster, final Collection<Flag> flags);
-
+    
     /**
      * Rename a cluster
      */
     void setClusterName(final PlotCluster cluster, final String name);
-
+    
     /**
      * Set the plot alias
      *
@@ -175,7 +174,7 @@ public interface AbstractDB
      * @param alias Plot Alias
      */
     void setAlias(final Plot plot, final String alias);
-
+    
     /**
      * Purgle a plot
      *
@@ -183,14 +182,14 @@ public interface AbstractDB
      * @param uniqueIds list of plot id (db) to be purged
      */
     void purgeIds(final String world, final Set<Integer> uniqueIds);
-
+    
     /**
      * Purge a whole world
      *
      * @param world World in which the plots should be purged
      */
     void purge(final String world, final Set<PlotId> plotIds);
-
+    
     /**
      * Set Plot Home Position
      *
@@ -198,57 +197,57 @@ public interface AbstractDB
      * @param position Plot Home Position
      */
     void setPosition(final Plot plot, final String position);
-
+    
     /**
      *
      * @param cluster
      * @param position
      */
     void setPosition(final PlotCluster cluster, final String position);
-
+    
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
     void removeTrusted(final Plot plot, final UUID uuid);
-
+    
     /**
      * @param cluster   PlotCluster Object
      * @param uuid Player that should be removed
      */
     void removeHelper(final PlotCluster cluster, final UUID uuid);
-
+    
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
     void removeMember(final Plot plot, final UUID uuid);
-
+    
     /**
      *
      * @param cluster
      * @param uuid
      */
     void removeInvited(final PlotCluster cluster, final UUID uuid);
-
+    
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
     void setTrusted(final Plot plot, final UUID uuid);
-
+    
     /**
      * @param cluster PlotCluster Object
      * @param uuid Player that should be removed
      */
     void setHelper(final PlotCluster cluster, final UUID uuid);
-
+    
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be added
      */
     void setMember(final Plot plot, final UUID uuid);
-
+    
     /**
      *
      * @param world
@@ -256,19 +255,19 @@ public interface AbstractDB
      * @param uuid
      */
     void setInvited(final PlotCluster cluster, final UUID uuid);
-
+    
     /**
      * @param plot   Plot Object
      * @param uuid   Player uuid
      */
     void removeDenied(final Plot plot, final UUID uuid);
-
+    
     /**
      * @param plot   Plot Object
      * @param uuid Player uuid that should be added
      */
     void setDenied(final Plot plot, final UUID uuid);
-
+    
     /**
      * Get Plots ratings
      *
@@ -277,7 +276,7 @@ public interface AbstractDB
      * @return Plot Ratings (pre-calculated)
      */
     HashMap<UUID, Integer> getRatings(final Plot plot);
-
+    
     /**
      * Set a rating for a plot
      * @param plot
@@ -285,7 +284,7 @@ public interface AbstractDB
      * @param value
      */
     void setRating(final Plot plot, final UUID rater, final int value);
-
+    
     /**
      * Remove a plot comment
      *
@@ -294,14 +293,14 @@ public interface AbstractDB
      * @param comment Comment to remove
      */
     void removeComment(final Plot plot, final PlotComment comment);
-
+    
     /**
      * Clear an inbox
      * @param plot
      * @param inbox
      */
     void clearInbox(final Plot plot, final String inbox);
-
+    
     /**
      * Set a plot comment
      *
@@ -310,7 +309,7 @@ public interface AbstractDB
      * @param comment Comment to add
      */
     void setComment(final Plot plot, final PlotComment comment);
-
+    
     /**
      * Get Plot Comments
      *
@@ -321,15 +320,15 @@ public interface AbstractDB
      * @return Plot Comments within the specified tier
      */
     void getComments(final Plot plot, final String inbox, final RunnableVal whenDone);
-
+    
     void createPlotAndSettings(final Plot plot, final Runnable whenDone);
-
+    
     void createCluster(final PlotCluster cluster);
-
+    
     void resizeCluster(final PlotCluster current, final PlotClusterId resize);
-
+    
     void movePlot(final Plot originalPlot, final Plot newPlot);
-
+    
     /**
      * Replace a old uuid with a new one in the database<br>
      * - Useful for replacing a few uuids (not the entire database)<br>
@@ -338,11 +337,11 @@ public interface AbstractDB
      * @param now
      */
     void replaceUUID(final UUID old, final UUID now);
-
+    
     /**
      * Don't fuck with this one, unless you enjoy it rough
      */
     boolean deleteTables();
-
+    
     void close();
 }

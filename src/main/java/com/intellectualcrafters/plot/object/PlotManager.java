@@ -27,69 +27,67 @@ import java.util.HashSet;
 
 import com.intellectualcrafters.plot.commands.Template;
 
-public abstract class PlotManager
-{
+public abstract class PlotManager {
     /*
      * Plot locations (methods with Abs in them will not need to consider mega
      * plots)
      */
     public abstract PlotId getPlotIdAbs(final PlotWorld plotworld, final int x, final int y, final int z);
-
+    
     public abstract PlotId getPlotId(final PlotWorld plotworld, final int x, final int y, final int z);
-
+    
     // If you have a circular plot, just return the corner if it were a square
     public abstract Location getPlotBottomLocAbs(final PlotWorld plotworld, final PlotId plotid);
-
+    
     // the same applies here
     public abstract Location getPlotTopLocAbs(final PlotWorld plotworld, final PlotId plotid);
-
+    
     /*
      * Plot clearing (return false if you do not support some method)
      */
     public abstract boolean clearPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone);
-
+    
     public abstract boolean claimPlot(final PlotWorld plotworld, final Plot plot);
-
+    
     public abstract boolean unclaimPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone);
-
+    
     public abstract Location getSignLoc(final PlotWorld plotworld, final Plot plot);
-
+    
     /*
      * Plot set functions (return false if you do not support the specific set
      * method)
      */
     public abstract String[] getPlotComponents(final PlotWorld plotworld, final PlotId plotid);
-
+    
     public abstract boolean setComponent(final PlotWorld plotworld, final PlotId plotid, final String component, final PlotBlock[] blocks);
-
+    
     /*
      * PLOT MERGING (return false if your generator does not support plot
      * merging)
      */
     public abstract boolean createRoadEast(final PlotWorld plotworld, final Plot plot);
-
+    
     public abstract boolean createRoadSouth(final PlotWorld plotworld, final Plot plot);
-
+    
     public abstract boolean createRoadSouthEast(final PlotWorld plotworld, final Plot plot);
-
+    
     public abstract boolean removeRoadEast(final PlotWorld plotworld, final Plot plot);
-
+    
     public abstract boolean removeRoadSouth(final PlotWorld plotworld, final Plot plot);
-
+    
     public abstract boolean removeRoadSouthEast(final PlotWorld plotworld, final Plot plot);
-
+    
     public abstract boolean startPlotMerge(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
-
+    
     public abstract boolean startPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
-
+    
     public abstract boolean finishPlotMerge(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
-
+    
     public abstract boolean finishPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
-
-    public void exportTemplate(final PlotWorld plotworld) throws IOException
-    {
+    
+    public void exportTemplate(final PlotWorld plotworld) throws IOException {
         final HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
         Template.zipAll(plotworld.worldname, files);
     }
-
+    
 }

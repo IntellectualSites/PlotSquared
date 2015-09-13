@@ -32,113 +32,97 @@ import com.plotsquared.sponge.events.PlotMergeEvent;
 import com.plotsquared.sponge.events.PlotRateEvent;
 import com.plotsquared.sponge.events.PlotUnlinkEvent;
 
-public class SpongeEventUtil extends EventUtil
-{
-
+public class SpongeEventUtil extends EventUtil {
+    
     public EventManager events;
-
-    public SpongeEventUtil()
-    {
+    
+    public SpongeEventUtil() {
         events = SpongeMain.THIS.getGame().getEventManager();
     }
-
-    public boolean callEvent(final Event event)
-    {
+    
+    public boolean callEvent(final Event event) {
         events.post(event);
-        if (event instanceof Cancellable) { return !((Cancellable) event).isCancelled(); }
+        if (event instanceof Cancellable) {
+            return !((Cancellable) event).isCancelled();
+        }
         return true;
     }
-
+    
     @Override
-    public boolean callClaim(final PlotPlayer player, final Plot plot, final boolean auto)
-    {
+    public boolean callClaim(final PlotPlayer player, final Plot plot, final boolean auto) {
         return callEvent(new PlayerClaimPlotEvent(SpongeUtil.getPlayer(player), plot, auto));
     }
-
+    
     @Override
-    public boolean callTeleport(final PlotPlayer player, final Location from, final Plot plot)
-    {
+    public boolean callTeleport(final PlotPlayer player, final Location from, final Plot plot) {
         return callEvent(new PlayerTeleportToPlotEvent(SpongeUtil.getPlayer(player), from, plot));
     }
-
+    
     @Override
-    public boolean callClear(final String world, final PlotId id)
-    {
+    public boolean callClear(final String world, final PlotId id) {
         return callEvent(new PlotClearEvent(world, id));
     }
-
+    
     @Override
-    public void callDelete(final String world, final PlotId id)
-    {
+    public void callDelete(final String world, final PlotId id) {
         callEvent(new PlotDeleteEvent(world, id));
     }
-
+    
     @Override
-    public boolean callFlagAdd(final Flag flag, final Plot plot)
-    {
+    public boolean callFlagAdd(final Flag flag, final Plot plot) {
         return callEvent(new PlotFlagAddEvent(flag, plot));
     }
-
+    
     @Override
-    public boolean callFlagRemove(final Flag flag, final Plot plot)
-    {
+    public boolean callFlagRemove(final Flag flag, final Plot plot) {
         return callEvent(new PlotFlagRemoveEvent(flag, plot));
     }
-
+    
     @Override
-    public boolean callMerge(final String world, final Plot plot, final ArrayList<PlotId> plots)
-    {
+    public boolean callMerge(final String world, final Plot plot, final ArrayList<PlotId> plots) {
         return callEvent(new PlotMergeEvent(SpongeUtil.getWorld(world), plot, plots));
     }
-
+    
     @Override
-    public boolean callUnlink(final String world, final ArrayList<PlotId> plots)
-    {
+    public boolean callUnlink(final String world, final ArrayList<PlotId> plots) {
         return callEvent(new PlotUnlinkEvent(SpongeUtil.getWorld(world), plots));
     }
-
+    
     @Override
-    public void callEntry(final PlotPlayer player, final Plot plot)
-    {
+    public void callEntry(final PlotPlayer player, final Plot plot) {
         callEvent(new PlayerEnterPlotEvent(SpongeUtil.getPlayer(player), plot));
     }
-
+    
     @Override
-    public void callLeave(final PlotPlayer player, final Plot plot)
-    {
+    public void callLeave(final PlotPlayer player, final Plot plot) {
         callEvent(new PlayerLeavePlotEvent(SpongeUtil.getPlayer(player), plot));
     }
-
+    
     @Override
-    public void callDenied(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added)
-    {
+    public void callDenied(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added) {
         callEvent(new PlayerPlotDeniedEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
-
+    
     @Override
-    public void callTrusted(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added)
-    {
+    public void callTrusted(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added) {
         callEvent(new PlayerPlotHelperEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
-
+    
     @Override
-    public void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added)
-    {
+    public void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added) {
         callEvent(new PlayerPlotTrustedEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
-
+    
     @Override
-    public boolean callFlagRemove(final Flag flag, final PlotCluster cluster)
-    {
+    public boolean callFlagRemove(final Flag flag, final PlotCluster cluster) {
         return callEvent(new ClusterFlagRemoveEvent(flag, cluster));
     }
-
+    
     @Override
-    public Rating callRating(final PlotPlayer player, final Plot plot, final Rating rating)
-    {
+    public Rating callRating(final PlotPlayer player, final Plot plot, final Rating rating) {
         final PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         events.post(event);
         return event.getRating();
     }
-
+    
 }

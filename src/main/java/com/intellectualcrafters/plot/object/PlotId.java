@@ -20,8 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-public class PlotId
-{
+public class PlotId {
     /**
      * x value
      */
@@ -30,19 +29,18 @@ public class PlotId
      * y value
      */
     public Integer y;
-
+    
     /**
      * PlotId class (PlotId x,y values do not correspond to Block locations)
      *
      * @param x The plot x coordinate
      * @param y The plot y coordinate
      */
-    public PlotId(final int x, final int y)
-    {
+    public PlotId(final int x, final int y) {
         this.x = x;
         this.y = y;
     }
-
+    
     /**
      * Get a Plot Id based on a string
      *
@@ -50,54 +48,51 @@ public class PlotId
      *
      * @return null if the string is invalid
      */
-    public static PlotId fromString(final String string)
-    {
+    public static PlotId fromString(final String string) {
         int x, y;
         final String[] parts = string.split(";");
-        if (parts.length < 2) { return null; }
-        try
-        {
+        if (parts.length < 2) {
+            return null;
+        }
+        try {
             x = Integer.parseInt(parts[0]);
             y = Integer.parseInt(parts[1]);
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             return null;
         }
         return new PlotId(x, y);
     }
-
+    
     @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj) { return true; }
-        if (obj == null) { return false; }
-        if (getClass() != obj.getClass()) { return false; }
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         final PlotId other = (PlotId) obj;
         return ((x.equals(other.x)) && (y.equals(other.y)));
     }
-
+    
     @Override
-    public String toString()
-    {
+    public String toString() {
         return x + ";" + y;
     }
-
-    public static PlotId unpair(int hash)
-    {
-        if (hash >= 0)
-        {
-            if ((hash % 2) == 0)
-            {
+    
+    public static PlotId unpair(int hash) {
+        if (hash >= 0) {
+            if ((hash % 2) == 0) {
                 // + +
                 hash /= 2;
                 final int i = (int) (Math.abs(-1 + Math.sqrt(1 + (8 * hash))) / 2);
                 final int idx = hash - ((i * (1 + i)) / 2);
                 final int idy = ((i * (3 + i)) / 2) - hash;
                 return new PlotId(idx, idy);
-            }
-            else
-            {
+            } else {
                 // + -
                 hash -= 1;
                 hash /= 2;
@@ -106,20 +101,15 @@ public class PlotId
                 final int idy = ((i * (3 + i)) / 2) - hash;
                 return new PlotId(idx, -idy);
             }
-        }
-        else
-        {
-            if ((hash % 2) == 0)
-            {
+        } else {
+            if ((hash % 2) == 0) {
                 // - +
                 hash /= -2;
                 final int i = (int) (Math.abs(-1 + Math.sqrt(1 + (8 * hash))) / 2);
                 final int idx = hash - ((i * (1 + i)) / 2);
                 final int idy = ((i * (3 + i)) / 2) - hash;
                 return new PlotId(-idx, idy);
-            }
-            else
-            {
+            } else {
                 // - -
                 hash += 1;
                 hash /= -2;
@@ -130,41 +120,29 @@ public class PlotId
             }
         }
     }
-
+    
     private int hash;
-
-    public void recalculateHash()
-    {
+    
+    public void recalculateHash() {
         hash = 0;
         hashCode();
     }
-
+    
     @Override
-    public int hashCode()
-    {
-        if (hash == 0)
-        {
-            if (x >= 0)
-            {
-                if (y >= 0)
-                {
+    public int hashCode() {
+        if (hash == 0) {
+            if (x >= 0) {
+                if (y >= 0) {
                     hash = (x * x) + (3 * x) + (2 * x * y) + y + (y * y);
-                }
-                else
-                {
+                } else {
                     final int y1 = -y;
                     hash = (x * x) + (3 * x) + (2 * x * y1) + y1 + (y1 * y1) + 1;
                 }
-            }
-            else
-            {
+            } else {
                 final int x1 = -x;
-                if (y >= 0)
-                {
+                if (y >= 0) {
                     hash = -((x1 * x1) + (3 * x1) + (2 * x1 * y) + y + (y * y));
-                }
-                else
-                {
+                } else {
                     final int y1 = -y;
                     hash = -((x1 * x1) + (3 * x1) + (2 * x1 * y1) + y1 + (y1 * y1) + 1);
                 }

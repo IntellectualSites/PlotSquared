@@ -35,52 +35,37 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-command = "condense",
-permission = "plots.admin",
-description = "Condense a plotworld",
-category = CommandCategory.DEBUG,
-requiredType = RequiredType.CONSOLE)
-public class Condense extends SubCommand
-{
-
+@CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.DEBUG, requiredType = RequiredType.CONSOLE)
+public class Condense extends SubCommand {
+    
     public static boolean TASK = false;
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args)
-    {
-        if ((args.length != 2) && (args.length != 3))
-        {
+    public boolean onCommand(final PlotPlayer plr, final String... args) {
+        if ((args.length != 2) && (args.length != 3)) {
             MainUtil.sendMessage(plr, "/plot condense <world> <start|stop|info> [radius]");
             return false;
         }
         final String worldname = args[0];
-        if (!BlockManager.manager.isWorld(worldname) || !PS.get().isPlotWorld(worldname))
-        {
+        if (!BlockManager.manager.isWorld(worldname) || !PS.get().isPlotWorld(worldname)) {
             MainUtil.sendMessage(plr, "INVALID WORLD");
             return false;
         }
-        switch (args[1].toLowerCase())
-        {
-            case "start":
-            {
-                if (args.length == 2)
-                {
+        switch (args[1].toLowerCase()) {
+            case "start": {
+                if (args.length == 2) {
                     MainUtil.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
                     return false;
                 }
-                if (TASK)
-                {
+                if (TASK) {
                     MainUtil.sendMessage(plr, "TASK ALREADY STARTED");
                     return false;
                 }
-                if (args.length == 2)
-                {
+                if (args.length == 2) {
                     MainUtil.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
                     return false;
                 }
-                if (!MathMan.isInteger(args[2]))
-                {
+                if (!MathMan.isInteger(args[2])) {
                     MainUtil.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }
@@ -88,76 +73,61 @@ public class Condense extends SubCommand
                 final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
                 final int size = plots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
-                if (radius < minimum_radius)
-                {
+                if (radius < minimum_radius) {
                     MainUtil.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
                 }
                 final List<PlotId> to_move = new ArrayList<>(getPlots(plots, radius));
                 final List<PlotId> free = new ArrayList<>();
                 PlotId start = new PlotId(0, 0);
-                while ((start.x <= minimum_radius) && (start.y <= minimum_radius))
-                {
+                while ((start.x <= minimum_radius) && (start.y <= minimum_radius)) {
                     final Plot plot = MainUtil.getPlot(worldname, start);
-                    if (!plot.hasOwner())
-                    {
+                    if (!plot.hasOwner()) {
                         free.add(plot.id);
                     }
                     start = Auto.getNextPlot(start, 1);
                 }
-                if ((free.size() == 0) || (to_move.size() == 0))
-                {
+                if ((free.size() == 0) || (to_move.size() == 0)) {
                     MainUtil.sendMessage(plr, "NO FREE PLOTS FOUND");
                     return false;
                 }
-                MainUtil.move(MainUtil.getPlot(worldname, to_move.get(0)), MainUtil.getPlot(worldname, free.get(0)), new Runnable()
-                {
+                MainUtil.move(MainUtil.getPlot(worldname, to_move.get(0)), MainUtil.getPlot(worldname, free.get(0)), new Runnable() {
                     @Override
-                    public void run()
-                    {
-                        if (!TASK)
-                        {
+                    public void run() {
+                        if (!TASK) {
                             MainUtil.sendMessage(plr, "CONDENSE TASK CANCELLED");
                             return;
                         }
                         to_move.remove(0);
                         free.remove(0);
                         int index = 0;
-                        for (final PlotId id : to_move)
-                        {
+                        for (final PlotId id : to_move) {
                             final Plot plot = MainUtil.getPlot(worldname, id);
-                            if (plot.hasOwner())
-                            {
+                            if (plot.hasOwner()) {
                                 break;
                             }
                             index++;
                         }
-                        for (int i = 0; i < index; i++)
-                        {
+                        for (int i = 0; i < index; i++) {
                             to_move.remove(0);
                         }
                         index = 0;
-                        for (final PlotId id : free)
-                        {
+                        for (final PlotId id : free) {
                             final Plot plot = MainUtil.getPlot(worldname, id);
-                            if (!plot.hasOwner())
-                            {
+                            if (!plot.hasOwner()) {
                                 break;
                             }
                             index++;
                         }
-                        for (int i = 0; i < index; i++)
-                        {
+                        for (int i = 0; i < index; i++) {
                             free.remove(0);
                         }
-                        if (to_move.size() == 0)
-                        {
+                        if (to_move.size() == 0) {
                             MainUtil.sendMessage(plr, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
                             TASK = false;
                             return;
                         }
-                        if (free.size() == 0)
-                        {
+                        if (free.size() == 0) {
                             MainUtil.sendMessage(plr, "TASK FAILED. NO FREE PLOTS FOUND!");
                             TASK = false;
                             return;
@@ -170,10 +140,8 @@ public class Condense extends SubCommand
                 MainUtil.sendMessage(plr, "TASK STARTED...");
                 return true;
             }
-            case "stop":
-            {
-                if (!TASK)
-                {
+            case "stop": {
+                if (!TASK) {
                     MainUtil.sendMessage(plr, "TASK ALREADY STOPPED");
                     return false;
                 }
@@ -181,15 +149,12 @@ public class Condense extends SubCommand
                 MainUtil.sendMessage(plr, "TASK STOPPED");
                 return true;
             }
-            case "info":
-            {
-                if (args.length == 2)
-                {
+            case "info": {
+                if (args.length == 2) {
                     MainUtil.sendMessage(plr, "/plot condense " + worldname + " info <radius>");
                     return false;
                 }
-                if (!MathMan.isInteger(args[2]))
-                {
+                if (!MathMan.isInteger(args[2])) {
                     MainUtil.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }
@@ -197,8 +162,7 @@ public class Condense extends SubCommand
                 final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
                 final int size = plots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
-                if (radius < minimum_radius)
-                {
+                if (radius < minimum_radius) {
                     MainUtil.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
                 }
@@ -218,14 +182,11 @@ public class Condense extends SubCommand
         MainUtil.sendMessage(plr, "/plot condense " + worldname + " <start|stop|info> [radius]");
         return false;
     }
-
-    public Set<PlotId> getPlots(final Collection<Plot> plots, final int radius)
-    {
+    
+    public Set<PlotId> getPlots(final Collection<Plot> plots, final int radius) {
         final HashSet<PlotId> outside = new HashSet<>();
-        for (final Plot plot : plots)
-        {
-            if ((plot.id.x > radius) || (plot.id.x < -radius) || (plot.id.y > radius) || (plot.id.y < -radius))
-            {
+        for (final Plot plot : plots) {
+            if ((plot.id.x > radius) || (plot.id.x < -radius) || (plot.id.y > radius) || (plot.id.y < -radius)) {
                 outside.add(plot.id);
             }
         }

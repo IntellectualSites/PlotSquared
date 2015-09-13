@@ -36,34 +36,27 @@ description = "Set or increment player plot claim limits",
 aliases = { "setlimit" },
 usage = "/plot limit <player> <expression>",
 category = CommandCategory.DEBUG)
-public class Limit extends SubCommand
-{
-
-    public Limit()
-    {
-        requiredArguments = new Argument[] {
-        Argument.String,
-        Argument.String
-        };
+public class Limit extends SubCommand {
+    
+    public Limit() {
+        requiredArguments = new Argument[] { Argument.String, Argument.String };
     }
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args)
-    {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final UUID uuid = UUIDHandler.getUUID(args[0], null);
-        if (uuid == null)
-        {
+        if (uuid == null) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
         UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
-
+        
         // get current plot limit
         // increase
-
+        
         //        EconHandler.manager.setPermission(op, perm, value);
         plr.sendMessage("TODO");
-
+        
         return true;
     }
 }

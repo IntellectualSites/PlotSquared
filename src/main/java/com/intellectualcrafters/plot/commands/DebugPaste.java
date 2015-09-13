@@ -21,27 +21,19 @@ usage = "/plot debugpaste",
 description = "Upload settings.yml & latest.log to hastebin",
 permission = "plots.debugpaste",
 category = CommandCategory.DEBUG)
-public class DebugPaste extends SubCommand
-{
-
+public class DebugPaste extends SubCommand {
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args)
-    {
-        TaskManager.runTaskAsync(new Runnable()
-        {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override
-            public void run()
-            {
-                try
-                {
+            public void run() {
+                try {
                     final String settingsYML = HastebinUtility.upload(PS.get().configFile);
                     String latestLOG;
-                    try
-                    {
+                    try {
                         latestLOG = HastebinUtility.upload(new File(BukkitMain.THIS.getDirectory(), "../../logs/latest.log"));
-                    }
-                    catch (final Exception e)
-                    {
+                    } catch (final Exception e) {
                         plr.sendMessage("&clatest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }
@@ -54,8 +46,7 @@ public class DebugPaste extends SubCommand
                     b.append("version.bukkit: '").append(Bukkit.getBukkitVersion()).append("'\n");
                     b.append("online_mode: ").append(Bukkit.getServer().getOnlineMode()).append("\n");
                     b.append("plugins:");
-                    for (final Plugin p : Bukkit.getPluginManager().getPlugins())
-                    {
+                    for (final Plugin p : Bukkit.getPluginManager().getPlugins()) {
                         b.append("\n  ").append(p.getName()).append(":\n    ").append("version: '").append(p.getDescription().getVersion()).append("'").append("\n    enabled: ").append(p.isEnabled());
                     }
                     b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
@@ -70,12 +61,10 @@ public class DebugPaste extends SubCommand
                     b.append("os.version: '").append(System.getProperty("os.version")).append("'\n\n");
                     b.append("# Okay :D Great. You are now ready to create your bug report!");
                     b.append("\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
-
+                    
                     final String link = HastebinUtility.upload(b.toString());
                     plr.sendMessage(C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
-                }
-                catch (final IOException e)
-                {
+                } catch (final IOException e) {
                     e.printStackTrace();
                 }
             }

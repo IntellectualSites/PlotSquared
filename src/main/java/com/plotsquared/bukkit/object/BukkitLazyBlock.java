@@ -5,41 +5,36 @@ import org.bukkit.block.Block;
 import com.intellectualcrafters.plot.object.LazyBlock;
 import com.intellectualcrafters.plot.object.PlotBlock;
 
-public class BukkitLazyBlock extends LazyBlock
-{
-
+public class BukkitLazyBlock extends LazyBlock {
+    
     private int id = -1;
     private Block block;
     private PlotBlock pb;
-
-    public BukkitLazyBlock(final int id, final Block block)
-    {
+    
+    public BukkitLazyBlock(final int id, final Block block) {
         this.id = id;
         this.block = block;
     }
-
-    public BukkitLazyBlock(final PlotBlock pb)
-    {
+    
+    public BukkitLazyBlock(final PlotBlock pb) {
         id = pb.id;
         this.pb = pb;
     }
-
-    public BukkitLazyBlock(final Block block)
-    {
+    
+    public BukkitLazyBlock(final Block block) {
         this.block = block;
     }
-
+    
     @Override
-    public PlotBlock getPlotBlock()
-    {
-        if (pb != null) { return pb; }
-        if (id == -1)
-        {
+    public PlotBlock getPlotBlock() {
+        if (pb != null) {
+            return pb;
+        }
+        if (id == -1) {
             id = block.getTypeId();
         }
         byte data;
-        switch (id)
-        {
+        switch (id) {
             case 0:
             case 2:
             case 4:
@@ -131,17 +126,15 @@ public class BukkitLazyBlock extends LazyBlock
         }
         pb = new PlotBlock((short) id, data);
         return pb;
-
+        
     }
-
+    
     @Override
-    public int getId()
-    {
-        if (id == -1)
-        {
+    public int getId() {
+        if (id == -1) {
             id = block.getTypeId();
         }
         return id;
     }
-
+    
 }

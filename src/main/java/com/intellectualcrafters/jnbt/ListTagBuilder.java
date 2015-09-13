@@ -10,23 +10,21 @@ import java.util.List;
 /**
  * Helps create list tags.
  */
-public class ListTagBuilder
-{
+public class ListTagBuilder {
     private final Class<? extends Tag> type;
     private final List<Tag> entries;
-
+    
     /**
      * Create a new instance.
      *
      * @param type of tag contained in this list
      */
-    ListTagBuilder(final Class<? extends Tag> type)
-    {
+    ListTagBuilder(final Class<? extends Tag> type) {
         checkNotNull(type);
         this.type = type;
         entries = new ArrayList<Tag>();
     }
-
+    
     /**
      * Create a new builder instance.
      *
@@ -34,11 +32,10 @@ public class ListTagBuilder
      *
      * @return a new builder
      */
-    public static ListTagBuilder create(final Class<? extends Tag> type)
-    {
+    public static ListTagBuilder create(final Class<? extends Tag> type) {
         return new ListTagBuilder(type);
     }
-
+    
     /**
      * Create a new builder instance.
      *
@@ -48,20 +45,22 @@ public class ListTagBuilder
      * @return a new builder
      */
     @SafeVarargs
-    public static <T extends Tag> ListTagBuilder createWith(final T... entries)
-    {
+    public static <T extends Tag> ListTagBuilder createWith(final T... entries) {
         checkNotNull(entries);
-        if (entries.length == 0) { throw new IllegalArgumentException("This method needs an array of at least one entry"); }
+        if (entries.length == 0) {
+            throw new IllegalArgumentException("This method needs an array of at least one entry");
+        }
         final Class<? extends Tag> type = entries[0].getClass();
-        for (int i = 1; i < entries.length; i++)
-        {
-            if (!type.isInstance(entries[i])) { throw new IllegalArgumentException("An array of different tag types was provided"); }
+        for (int i = 1; i < entries.length; i++) {
+            if (!type.isInstance(entries[i])) {
+                throw new IllegalArgumentException("An array of different tag types was provided");
+            }
         }
         final ListTagBuilder builder = new ListTagBuilder(type);
         builder.addAll(Arrays.asList(entries));
         return builder;
     }
-
+    
     /**
      * Add the given tag.
      *
@@ -69,14 +68,15 @@ public class ListTagBuilder
      *
      * @return this object
      */
-    public ListTagBuilder add(final Tag value)
-    {
+    public ListTagBuilder add(final Tag value) {
         checkNotNull(value);
-        if (!type.isInstance(value)) { throw new IllegalArgumentException(value.getClass().getCanonicalName() + " is not of expected type " + type.getCanonicalName()); }
+        if (!type.isInstance(value)) {
+            throw new IllegalArgumentException(value.getClass().getCanonicalName() + " is not of expected type " + type.getCanonicalName());
+        }
         entries.add(value);
         return this;
     }
-
+    
     /**
      * Add all the tags in the given list.
      *
@@ -84,26 +84,23 @@ public class ListTagBuilder
      *
      * @return this object
      */
-    public ListTagBuilder addAll(final Collection<? extends Tag> value)
-    {
+    public ListTagBuilder addAll(final Collection<? extends Tag> value) {
         checkNotNull(value);
-        for (final Tag v : value)
-        {
+        for (final Tag v : value) {
             add(v);
         }
         return this;
     }
-
+    
     /**
      * Build an unnamed list tag with this builder's entries.
      *
      * @return the new list tag
      */
-    public ListTag build()
-    {
+    public ListTag build() {
         return new ListTag(type, new ArrayList<Tag>(entries));
     }
-
+    
     /**
      * Build a new list tag with this builder's entries.
      *
@@ -111,8 +108,7 @@ public class ListTagBuilder
      *
      * @return the created list tag
      */
-    public ListTag build(final String name)
-    {
+    public ListTag build(final String name) {
         return new ListTag(name, type, new ArrayList<Tag>(entries));
     }
 }

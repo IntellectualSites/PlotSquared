@@ -31,178 +31,130 @@ import com.intellectualcrafters.plot.util.StringComparison;
  *
  */
 @SuppressWarnings("unused")
-public class Configuration
-{
-
-    public static final SettingValue<String> STRING = new SettingValue<String>("STRING")
-    {
+public class Configuration {
+    
+    public static final SettingValue<String> STRING = new SettingValue<String>("STRING") {
         @Override
-        public boolean validateValue(final String string)
-        {
+        public boolean validateValue(final String string) {
             return true;
         }
-
+        
         @Override
-        public String parseString(final String string)
-        {
+        public String parseString(final String string) {
             return string;
         }
     };
-    public static final SettingValue<String[]> STRINGLIST = new SettingValue<String[]>("STRINGLIST")
-    {
+    public static final SettingValue<String[]> STRINGLIST = new SettingValue<String[]>("STRINGLIST") {
         @Override
-        public boolean validateValue(final String string)
-        {
+        public boolean validateValue(final String string) {
             return true;
         }
-
+        
         @Override
-        public String[] parseString(final String string)
-        {
+        public String[] parseString(final String string) {
             return string.split(",");
         }
     };
-    public static final SettingValue<Integer> INTEGER = new SettingValue<Integer>("INTEGER")
-    {
+    public static final SettingValue<Integer> INTEGER = new SettingValue<Integer>("INTEGER") {
         @Override
-        public boolean validateValue(final String string)
-        {
-            try
-            {
+        public boolean validateValue(final String string) {
+            try {
                 Integer.parseInt(string);
                 return true;
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 return false;
             }
         }
-
+        
         @Override
-        public Integer parseString(final String string)
-        {
+        public Integer parseString(final String string) {
             return Integer.parseInt(string);
         }
     };
-    public static final SettingValue<Boolean> BOOLEAN = new SettingValue<Boolean>("BOOLEAN")
-    {
+    public static final SettingValue<Boolean> BOOLEAN = new SettingValue<Boolean>("BOOLEAN") {
         @Override
-        public boolean validateValue(final String string)
-        {
-            try
-            {
+        public boolean validateValue(final String string) {
+            try {
                 Boolean.parseBoolean(string);
                 return true;
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 return false;
             }
         }
-
+        
         @Override
-        public Boolean parseString(final String string)
-        {
+        public Boolean parseString(final String string) {
             return Boolean.parseBoolean(string);
         }
     };
-    public static final SettingValue<Double> DOUBLE = new SettingValue<Double>("DOUBLE")
-    {
+    public static final SettingValue<Double> DOUBLE = new SettingValue<Double>("DOUBLE") {
         @Override
-        public boolean validateValue(final String string)
-        {
-            try
-            {
+        public boolean validateValue(final String string) {
+            try {
                 Double.parseDouble(string);
                 return true;
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 return false;
             }
         }
-
+        
         @Override
-        public Double parseString(final String string)
-        {
+        public Double parseString(final String string) {
             return Double.parseDouble(string);
         }
     };
-    public static final SettingValue<String> BIOME = new SettingValue<String>("BIOME")
-    {
+    public static final SettingValue<String> BIOME = new SettingValue<String>("BIOME") {
         @Override
-        public boolean validateValue(final String string)
-        {
-            try
-            {
+        public boolean validateValue(final String string) {
+            try {
                 final int biome = BlockManager.manager.getBiomeFromString(string.toUpperCase());
                 return biome != -1;
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 return false;
             }
         }
-
+        
         @Override
-        public String parseString(final String string)
-        {
+        public String parseString(final String string) {
             if (validateValue(string)) {
                 return string.toUpperCase();
             }
             return "FOREST";
         }
     };
-    public static final SettingValue<PlotBlock> BLOCK = new SettingValue<PlotBlock>("BLOCK")
-    {
+    public static final SettingValue<PlotBlock> BLOCK = new SettingValue<PlotBlock>("BLOCK") {
         @Override
-        public boolean validateValue(final String string)
-        {
-            try
-            {
-                if (string.contains(":"))
-                {
+        public boolean validateValue(final String string) {
+            try {
+                if (string.contains(":")) {
                     final String[] split = string.split(":");
                     Short.parseShort(split[0]);
                     Short.parseShort(split[1]);
-                }
-                else
-                {
+                } else {
                     Short.parseShort(string);
                 }
                 return true;
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 return false;
             }
         }
-
+        
         @Override
-        public PlotBlock parseString(final String string)
-        {
-            if (string.contains(":"))
-            {
+        public PlotBlock parseString(final String string) {
+            if (string.contains(":")) {
                 final String[] split = string.split(":");
                 return new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
-            }
-            else
-            {
+            } else {
                 return new PlotBlock(Short.parseShort(string), (byte) 0);
             }
         }
     };
-    public static final SettingValue<PlotBlock[]> BLOCKLIST = new SettingValue<PlotBlock[]>("BLOCKLIST")
-    {
+    public static final SettingValue<PlotBlock[]> BLOCKLIST = new SettingValue<PlotBlock[]>("BLOCKLIST") {
         @Override
-        public boolean validateValue(final String string)
-        {
-            try
-            {
-                for (String block : string.split(","))
-                {
-                    if (block.contains("%"))
-                    {
+        public boolean validateValue(final String string) {
+            try {
+                for (String block : string.split(",")) {
+                    if (block.contains("%")) {
                         final String[] split = block.split("%");
                         Integer.parseInt(split[0]);
                         block = split[1];
@@ -213,101 +165,82 @@ public class Configuration
                     }
                 }
                 return true;
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 return false;
             }
         }
-
+        
         @Override
-        public PlotBlock[] parseString(final String string)
-        {
+        public PlotBlock[] parseString(final String string) {
             final String[] blocks = string.split(",");
             final ArrayList<PlotBlock> parsedvalues = new ArrayList<>();
             final PlotBlock[] values = new PlotBlock[blocks.length];
             final int[] counts = new int[blocks.length];
             int min = 100;
-            for (int i = 0; i < blocks.length; i++)
-            {
-                try
-                {
-                    if (blocks[i].contains("%"))
-                    {
+            for (int i = 0; i < blocks.length; i++) {
+                try {
+                    if (blocks[i].contains("%")) {
                         final String[] split = blocks[i].split("%");
                         blocks[i] = split[1];
                         final int value = Integer.parseInt(split[0]);
                         counts[i] = value;
-                        if (value < min)
-                        {
+                        if (value < min) {
                             min = value;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         counts[i] = 1;
-                        if (1 < min)
-                        {
+                        if (1 < min) {
                             min = 1;
                         }
                     }
                     final StringComparison<PlotBlock>.ComparisonResult result = BlockManager.manager.getClosestBlock(blocks[i]);
-                    if ((result != null) && (result.match < 2))
-                    {
+                    if ((result != null) && (result.match < 2)) {
                         values[i] = result.best;
                     }
-                }
-                catch (final Exception e)
-                {}
+                } catch (final Exception e) {}
             }
             final int gcd = gcd(counts);
-            for (int i = 0; i < counts.length; i++)
-            {
+            for (int i = 0; i < counts.length; i++) {
                 final int num = counts[i];
-                for (int j = 0; j < (num / gcd); j++)
-                {
+                for (int j = 0; j < (num / gcd); j++) {
                     parsedvalues.add(values[i]);
                 }
             }
             return parsedvalues.toArray(new PlotBlock[parsedvalues.size()]);
         }
     };
-
-    public static int gcd(final int a, final int b)
-    {
-        if (b == 0) { return a; }
+    
+    public static int gcd(final int a, final int b) {
+        if (b == 0) {
+            return a;
+        }
         return gcd(b, a % b);
     }
-
-    private static int gcd(final int[] a)
-    {
+    
+    private static int gcd(final int[] a) {
         int result = a[0];
-        for (int i = 1; i < a.length; i++)
-        {
+        for (int i = 1; i < a.length; i++) {
             result = gcd(result, a[i]);
         }
         return result;
     }
-
+    
     /**
      * Create your own SettingValue object to make the management of plotworld configuration easier
      */
-    public static abstract class SettingValue<T>
-    {
+    public static abstract class SettingValue<T> {
         private final String type;
-
-        public SettingValue(final String type)
-        {
+        
+        public SettingValue(final String type) {
             this.type = type;
         }
-
-        public String getType()
-        {
+        
+        public String getType() {
             return this.type;
         }
-
+        
         public abstract T parseString(final String string);
-
+        
         public abstract boolean validateValue(final String string);
     }
 }

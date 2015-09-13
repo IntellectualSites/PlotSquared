@@ -17,8 +17,7 @@ package com.intellectualcrafters.json;
  * @author JSON.org
  * @version 2014-05-03
  */
-public class CDL
-{
+public class CDL {
     /**
      * Get the next value. The value can be wrapped in quotes. The value can be empty.
      *
@@ -28,32 +27,28 @@ public class CDL
      *
      * @throws JSONException if the quoted string is badly formed.
      */
-    private static String getValue(final JSONTokener x) throws JSONException
-    {
+    private static String getValue(final JSONTokener x) throws JSONException {
         char c;
         char q;
         StringBuffer sb;
-        do
-        {
+        do {
             c = x.next();
-        }
-        while ((c == ' ') || (c == '\t'));
-        switch (c)
-        {
+        } while ((c == ' ') || (c == '\t'));
+        switch (c) {
             case 0:
                 return null;
             case '"':
             case '\'':
                 q = c;
                 sb = new StringBuffer();
-                for (;;)
-                {
+                for (;;) {
                     c = x.next();
-                    if (c == q)
-                    {
+                    if (c == q) {
                         break;
                     }
-                    if ((c == 0) || (c == '\n') || (c == '\r')) { throw x.syntaxError("Missing close quote '" + q + "'."); }
+                    if ((c == 0) || (c == '\n') || (c == '\r')) {
+                        throw x.syntaxError("Missing close quote '" + q + "'.");
+                    }
                     sb.append(c);
                 }
                 return sb.toString();
@@ -65,7 +60,7 @@ public class CDL
                 return x.nextTo(',');
         }
     }
-
+    
     /**
      * Produce a JSONArray of strings from a row of comma delimited values.
      *
@@ -75,31 +70,30 @@ public class CDL
      *
      * @throws JSONException
      */
-    public static JSONArray rowToJSONArray(final JSONTokener x) throws JSONException
-    {
+    public static JSONArray rowToJSONArray(final JSONTokener x) throws JSONException {
         final JSONArray ja = new JSONArray();
-        for (;;)
-        {
+        for (;;) {
             final String value = getValue(x);
             char c = x.next();
-            if ((value == null) || ((ja.length() == 0) && (value.length() == 0) && (c != ','))) { return null; }
+            if ((value == null) || ((ja.length() == 0) && (value.length() == 0) && (c != ','))) {
+                return null;
+            }
             ja.put(value);
-            for (;;)
-            {
-                if (c == ',')
-                {
+            for (;;) {
+                if (c == ',') {
                     break;
                 }
-                if (c != ' ')
-                {
-                    if ((c == '\n') || (c == '\r') || (c == 0)) { return ja; }
+                if (c != ' ') {
+                    if ((c == '\n') || (c == '\r') || (c == 0)) {
+                        return ja;
+                    }
                     throw x.syntaxError("Bad character '" + c + "' (" + (int) c + ").");
                 }
                 c = x.next();
             }
         }
     }
-
+    
     /**
      * Produce a JSONObject from a row of comma delimited text, using a parallel JSONArray of strings to provides the
      * names of the elements.
@@ -112,12 +106,11 @@ public class CDL
      *
      * @throws JSONException
      */
-    public static JSONObject rowToJSONObject(final JSONArray names, final JSONTokener x) throws JSONException
-    {
+    public static JSONObject rowToJSONObject(final JSONArray names, final JSONTokener x) throws JSONException {
         final JSONArray ja = rowToJSONArray(x);
         return ja != null ? ja.toJSONObject(names) : null;
     }
-
+    
     /**
      * Produce a comma delimited text row from a JSONArray. Values containing the comma character will be quoted.
      * Troublesome characters may be removed.
@@ -126,35 +119,26 @@ public class CDL
      *
      * @return A string ending in NEWLINE.
      */
-    public static String rowToString(final JSONArray ja)
-    {
+    public static String rowToString(final JSONArray ja) {
         final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < ja.length(); i += 1)
-        {
-            if (i > 0)
-            {
+        for (int i = 0; i < ja.length(); i += 1) {
+            if (i > 0) {
                 sb.append(',');
             }
             final Object object = ja.opt(i);
-            if (object != null)
-            {
+            if (object != null) {
                 final String string = object.toString();
-                if ((string.length() > 0) && ((string.indexOf(',') >= 0) || (string.indexOf('\n') >= 0) || (string.indexOf('\r') >= 0) || (string.indexOf(0) >= 0) || (string.charAt(0) == '"')))
-                {
+                if ((string.length() > 0) && ((string.indexOf(',') >= 0) || (string.indexOf('\n') >= 0) || (string.indexOf('\r') >= 0) || (string.indexOf(0) >= 0) || (string.charAt(0) == '"'))) {
                     sb.append('"');
                     final int length = string.length();
-                    for (int j = 0; j < length; j += 1)
-                    {
+                    for (int j = 0; j < length; j += 1) {
                         final char c = string.charAt(j);
-                        if ((c >= ' ') && (c != '"'))
-                        {
+                        if ((c >= ' ') && (c != '"')) {
                             sb.append(c);
                         }
                     }
                     sb.append('"');
-                }
-                else
-                {
+                } else {
                     sb.append(string);
                 }
             }
@@ -162,7 +146,7 @@ public class CDL
         sb.append('\n');
         return sb.toString();
     }
-
+    
     /**
      * Produce a JSONArray of JSONObjects from a comma delimited text string, using the first row as a source of names.
      *
@@ -172,11 +156,10 @@ public class CDL
      *
      * @throws JSONException
      */
-    public static JSONArray toJSONArray(final String string) throws JSONException
-    {
+    public static JSONArray toJSONArray(final String string) throws JSONException {
         return toJSONArray(new JSONTokener(string));
     }
-
+    
     /**
      * Produce a JSONArray of JSONObjects from a comma delimited text string, using the first row as a source of names.
      *
@@ -186,11 +169,10 @@ public class CDL
      *
      * @throws JSONException
      */
-    public static JSONArray toJSONArray(final JSONTokener x) throws JSONException
-    {
+    public static JSONArray toJSONArray(final JSONTokener x) throws JSONException {
         return toJSONArray(rowToJSONArray(x), x);
     }
-
+    
     /**
      * Produce a JSONArray of JSONObjects from a comma delimited text string using a supplied JSONArray as the source of
      * element names.
@@ -202,11 +184,10 @@ public class CDL
      *
      * @throws JSONException
      */
-    public static JSONArray toJSONArray(final JSONArray names, final String string) throws JSONException
-    {
+    public static JSONArray toJSONArray(final JSONArray names, final String string) throws JSONException {
         return toJSONArray(names, new JSONTokener(string));
     }
-
+    
     /**
      * Produce a JSONArray of JSONObjects from a comma delimited text string using a supplied JSONArray as the source of
      * element names.
@@ -218,23 +199,24 @@ public class CDL
      *
      * @throws JSONException
      */
-    public static JSONArray toJSONArray(final JSONArray names, final JSONTokener x) throws JSONException
-    {
-        if ((names == null) || (names.length() == 0)) { return null; }
+    public static JSONArray toJSONArray(final JSONArray names, final JSONTokener x) throws JSONException {
+        if ((names == null) || (names.length() == 0)) {
+            return null;
+        }
         final JSONArray ja = new JSONArray();
-        for (;;)
-        {
+        for (;;) {
             final JSONObject jo = rowToJSONObject(names, x);
-            if (jo == null)
-            {
+            if (jo == null) {
                 break;
             }
             ja.put(jo);
         }
-        if (ja.length() == 0) { return null; }
+        if (ja.length() == 0) {
+            return null;
+        }
         return ja;
     }
-
+    
     /**
      * Produce a comma delimited text from a JSONArray of JSONObjects. The first row will be a list of names obtained by
      * inspecting the first JSONObject.
@@ -245,17 +227,17 @@ public class CDL
      *
      * @throws JSONException
      */
-    public static String toString(final JSONArray ja) throws JSONException
-    {
+    public static String toString(final JSONArray ja) throws JSONException {
         final JSONObject jo = ja.optJSONObject(0);
-        if (jo != null)
-        {
+        if (jo != null) {
             final JSONArray names = jo.names();
-            if (names != null) { return rowToString(names) + toString(names, ja); }
+            if (names != null) {
+                return rowToString(names) + toString(names, ja);
+            }
         }
         return null;
     }
-
+    
     /**
      * Produce a comma delimited text from a JSONArray of JSONObjects using a provided list of names. The list of names
      * is not included in the output.
@@ -267,15 +249,14 @@ public class CDL
      *
      * @throws JSONException
      */
-    public static String toString(final JSONArray names, final JSONArray ja) throws JSONException
-    {
-        if ((names == null) || (names.length() == 0)) { return null; }
+    public static String toString(final JSONArray names, final JSONArray ja) throws JSONException {
+        if ((names == null) || (names.length() == 0)) {
+            return null;
+        }
         final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < ja.length(); i += 1)
-        {
+        for (int i = 0; i < ja.length(); i += 1) {
             final JSONObject jo = ja.optJSONObject(i);
-            if (jo != null)
-            {
+            if (jo != null) {
                 sb.append(rowToString(jo.toJSONArray(names)));
             }
         }

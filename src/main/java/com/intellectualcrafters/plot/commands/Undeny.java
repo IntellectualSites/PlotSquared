@@ -41,86 +41,68 @@ description = "Remove a denied user from a plot",
 usage = "/plot undeny <player>",
 requiredType = RequiredType.NONE,
 category = CommandCategory.ACTIONS)
-public class Undeny extends SubCommand
-{
-
-    public Undeny()
-    {
-        requiredArguments = new Argument[] {
-        Argument.PlayerName
-        };
+public class Undeny extends SubCommand {
+    
+    public Undeny() {
+        requiredArguments = new Argument[] { Argument.PlayerName };
     }
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args)
-    {
-
+    public boolean onCommand(final PlotPlayer plr, final String... args) {
+        
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) { return !sendMessage(plr, C.NOT_IN_PLOT); }
-        if (!plot.hasOwner())
-        {
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
+        if (!plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.undeny"))
-        {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.undeny")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         int count = 0;
-        switch (args[0])
-        {
+        switch (args[0]) {
             case "unknown":
                 final ArrayList<UUID> toRemove = new ArrayList<>();
-                for (final UUID uuid : plot.getDenied())
-                {
-                    if (UUIDHandler.getName(uuid) == null)
-                    {
+                for (final UUID uuid : plot.getDenied()) {
+                    if (UUIDHandler.getName(uuid) == null) {
                         toRemove.add(uuid);
                     }
                 }
-                for (final UUID uuid : toRemove)
-                {
+                for (final UUID uuid : toRemove) {
                     plot.removeDenied(uuid);
                     count++;
                 }
                 break;
             case "*":
-                for (final UUID uuid : new ArrayList<>(plot.getDenied()))
-                {
+                for (final UUID uuid : new ArrayList<>(plot.getDenied())) {
                     plot.removeDenied(uuid);
                     count++;
                 }
                 break;
             default:
                 final UUID uuid = UUIDHandler.getUUID(args[0], null);
-                if (uuid != null)
-                {
-                    if (plot.removeDenied(uuid))
-                    {
+                if (uuid != null) {
+                    if (plot.removeDenied(uuid)) {
                         count++;
                     }
                 }
                 break;
         }
-        if (count == 0)
-        {
-            if (UUIDHandler.implementation instanceof SQLUUIDHandler)
-            {
+        if (count == 0) {
+            if (UUIDHandler.implementation instanceof SQLUUIDHandler) {
                 MainUtil.sendMessage(plr, C.INVALID_PLAYER_WAIT, args[0]);
-            }
-            else
-            {
+            } else {
                 MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             }
             return false;
-        }
-        else
-        {
+        } else {
             MainUtil.sendMessage(plr, C.REMOVED_PLAYERS, count + "");
         }
         return true;
     }
-
+    
 }

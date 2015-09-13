@@ -43,78 +43,59 @@ requiredType = RequiredType.NONE,
 usage = "/plot trust <player>",
 description = "Allow a player to build in a plot",
 category = CommandCategory.ACTIONS)
-public class Trust extends SubCommand
-{
-
-    public Trust()
-    {
-        requiredArguments = new Argument[] {
-        Argument.PlayerName
-        };
+public class Trust extends SubCommand {
+    
+    public Trust() {
+        requiredArguments = new Argument[] { Argument.PlayerName };
     }
-
+    
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args)
-    {
-
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) { return !sendMessage(plr, C.NOT_IN_PLOT); }
-        if (!plot.hasOwner())
-        {
+        if (plot == null) {
+            return !sendMessage(plr, C.NOT_IN_PLOT);
+        }
+        if (!plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.trust"))
-        {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.trust")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
         UUID uuid;
-        if (args[0].equalsIgnoreCase("*"))
-        {
+        if (args[0].equalsIgnoreCase("*")) {
             uuid = DBFunc.everyone;
-        }
-        else
-        {
+        } else {
             uuid = UUIDHandler.getUUID(args[0], null);
         }
-        if (uuid == null)
-        {
-            if (UUIDHandler.implementation instanceof SQLUUIDHandler)
-            {
+        if (uuid == null) {
+            if (UUIDHandler.implementation instanceof SQLUUIDHandler) {
                 MainUtil.sendMessage(plr, C.INVALID_PLAYER_WAIT, args[0]);
-            }
-            else
-            {
+            } else {
                 MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             }
             return false;
         }
-        if (plot.isOwner(uuid))
-        {
+        if (plot.isOwner(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_OWNER);
             return false;
         }
-
-        if (plot.getTrusted().contains(uuid))
-        {
+        
+        if (plot.getTrusted().contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
         }
-        if (plot.removeMember(uuid))
-        {
+        if (plot.removeMember(uuid)) {
             plot.addTrusted(uuid);
-        }
-        else
-        {
-            if ((plot.getMembers().size() + plot.getTrusted().size()) >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS)
-            {
+        } else {
+            if ((plot.getMembers().size() + plot.getTrusted().size()) >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
                 MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
                 return false;
             }
-            if (plot.getDenied().contains(uuid))
-            {
+            if (plot.getDenied().contains(uuid)) {
                 plot.removeDenied(uuid);
             }
             plot.addTrusted(uuid);

@@ -22,40 +22,43 @@ package com.intellectualcrafters.plot.object;
 
 /**
  */
-public class PlotBlock
-{
-
+public class PlotBlock {
+    
     public static PlotBlock EVERYTHING = new PlotBlock((short) 0, (byte) 0);
-
+    
     public final short id;
     public final byte data;
-
-    public PlotBlock(final short id, final byte data)
-    {
+    
+    public PlotBlock(final short id, final byte data) {
         this.id = id;
         this.data = data;
     }
-
+    
     @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj) { return true; }
-        if (obj == null) { return false; }
-        if (getClass() != obj.getClass()) { return false; }
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         final PlotBlock other = (PlotBlock) obj;
         return ((id == other.id) && ((data == other.data) || (data == -1) || (other.data == -1)));
     }
-
+    
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return id;
     }
-
+    
     @Override
-    public String toString()
-    {
-        if (data == -1) { return id + ""; }
+    public String toString() {
+        if (data == -1) {
+            return id + "";
+        }
         return id + ":" + data;
     }
 }
