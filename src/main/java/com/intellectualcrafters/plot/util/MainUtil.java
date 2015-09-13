@@ -1234,8 +1234,11 @@ public class MainUtil
         return true;
     }
 
-    public static void clear(final Plot plot, final boolean isDelete, final Runnable whenDone)
+    public static boolean clear(final Plot plot, final boolean isDelete, final Runnable whenDone)
     {
+        if (!EventUtil.manager.callClear(plot.world, plot.id)) {
+            return false;
+        }
         final PlotManager manager = PS.get().getPlotManager(plot.world);
         final Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
@@ -1268,9 +1271,10 @@ public class MainUtil
         {
             final Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
             ChunkManager.manager.regenerateRegion(pos1, pos2, run);
-            return;
+            return true;
         }
         manager.clearPlot(plotworld, plot, run);
+        return true;
     }
 
     public static void setCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks)
