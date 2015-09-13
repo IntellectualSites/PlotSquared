@@ -33,6 +33,12 @@ public interface IPlotMain
     File getDirectory();
 
     /**
+     * Get the directory containing all the worlds
+     * @return
+     */
+    File getWorldContainer();
+    
+    /**
      * Wrap a player into a PlotPlayer object
      * @param obj
      * @return

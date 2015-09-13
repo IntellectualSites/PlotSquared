@@ -140,6 +140,11 @@ public class SpongeChunkManager extends ChunkManager
     }
 
     @Override
+    public void deleteRegionFiles(String world, List<ChunkLoc> chunks, Runnable whenDone) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
     public Plot hasPlot(final String world, final ChunkLoc chunk)
     {
         // TODO Auto-generated method stub

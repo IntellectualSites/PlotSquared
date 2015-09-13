@@ -237,6 +237,33 @@ public class PS
                                     }
                                 }
                             }
+                            
+                            // Auto clearing
+                            if (Settings.AUTO_CLEAR)
+                            {
+                                ExpireManager.runTask();
+                            }
+                            
+                            // PlotMe
+                            if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME)
+                            {
+                                TaskManager.runTaskLater(new Runnable()
+                                {
+
+                                    @Override
+                                    public void run()
+                                    {
+                                        if (IMP.initPlotMeConverter())
+                                        {
+                                            log("&c=== IMPORTANT ===");
+                                            log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                                            log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                                            log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                                            log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
+                                        }
+                                    }
+                                }, 20);
+                            }
                         }
                     });
                 }
@@ -277,33 +304,6 @@ public class PS
                     }
                 }
             });
-
-            // PlotMe
-            if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME)
-            {
-                TaskManager.runTaskLater(new Runnable()
-                {
-
-                    @Override
-                    public void run()
-                    {
-                        if (IMP.initPlotMeConverter())
-                        {
-                            log("&c=== IMPORTANT ===");
-                            log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
-                            log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                            log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                            log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
-                        }
-                    }
-                }, 200);
-            }
-
-            // Auto clearing
-            if (Settings.AUTO_CLEAR)
-            {
-                ExpireManager.runTask();
-            }
 
             // World generators:
             final ConfigurationSection section = config.getConfigurationSection("worlds");

@@ -125,7 +125,9 @@ public abstract class ChunkManager
 
     public abstract void deleteRegionFiles(final String world, final List<ChunkLoc> chunks);
 
-    public abstract Plot hasPlot(final String world, final ChunkLoc chunk);
+    public abstract void deleteRegionFiles(final String world, final List<ChunkLoc> chunks, final Runnable whenDone);
+
+    public abstract Plot hasPlot(String world, ChunkLoc chunk);
 
     public abstract boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone);
 
