@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.google.common.base.Charsets;
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
@@ -75,6 +76,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector
             column = "ownerId";
         }
         final boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
+        int missing = 0;
         while (r.next())
         {
             final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
@@ -160,7 +162,11 @@ public class ClassicPlotMeConnector extends APlotMeConnector
                     }
                     if (owner == null)
                     {
+                        if (name.length() > 0) {
+                            owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
+                        }
                         MainUtil.sendConsoleMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
+                        missing++;
                         continue;
                     }
                 }
@@ -171,6 +177,12 @@ public class ClassicPlotMeConnector extends APlotMeConnector
             }
             final Plot plot = new Plot(world, id, owner);
             plots.get(world).put(id, plot);
+        }
+        if (missing > 0) {
+            MainUtil.sendConsoleMessage("&cSome names could not be identified:");
+            MainUtil.sendConsoleMessage("&7 - Empty quotes mean PlotMe just stored an unowned plot in the database");
+            MainUtil.sendConsoleMessage("&7 - Names you have never seen before could be from people mistyping commands");
+            MainUtil.sendConsoleMessage("&7 - Converting from a non-uuid version of PlotMe can't identify owners if the playerdata files are deleted (these plots will remain unknown until the player connects)");
         }
 
         for (final Entry<String, HashMap<PlotId, boolean[]>> entry : merges.entrySet())
