@@ -24,10 +24,12 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class PlotMeConnector_017 extends APlotMeConnector {
     private String plugin;
+    private String prefix;
     
     @Override
     public Connection getPlotMeConnection(final String plugin, final FileConfiguration plotConfig, final String dataFolder) {
         this.plugin = plugin.toLowerCase();
+        prefix = plugin + "core_";
         try {
             if (plotConfig.getBoolean("usemySQL")) {
                 final String user = plotConfig.getString("mySQLuname");

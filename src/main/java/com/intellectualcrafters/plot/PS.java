@@ -559,7 +559,9 @@ public class PS {
         }
         final Set<Plot> result = new HashSet<>(size);
         for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            result.addAll(entry.getValue().values());
+            for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                result.add(entry2.getValue());
+            }
         }
         return result;
     }
@@ -961,13 +963,13 @@ public class PS {
         for (final String world : worlds) {
             switch (type) {
                 case CREATION_DATE:
-                    toReturn.addAll(sortPlotsByTemp(map.get(world)));
+                    toReturn.addAll(sortPlotsByTemp(getPlotsInWorld(world)));
                     break;
                 case CREATION_DATE_TIMESTAMP:
-                    toReturn.addAll(sortPlotsByTimestamp(map.get(world)));
+                    toReturn.addAll(sortPlotsByTimestamp(getPlotsInWorld(world)));
                     break;
                 case DISTANCE_FROM_ORIGIN:
-                    toReturn.addAll(sortPlotsByHash(map.get(world)));
+                    toReturn.addAll(sortPlotsByHash(getPlotsInWorld(world)));
                     break;
                 default:
                     break;

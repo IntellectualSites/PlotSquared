@@ -98,6 +98,24 @@ public class LikePlotMeConverter {
         return plotConfig.getConfigurationSection("worlds").getKeys(false);
     }
     
+    public void mergeWorldYml(final String plugin, FileConfiguration plotConfig) {
+        try {
+            File genConfig = new File("plugins" + File.separator + plugin + File.separator + "PlotMe-DefaultGenerator" + File.separator + "config.yml");
+            if (genConfig.exists()) {
+                YamlConfiguration yml = YamlConfiguration.loadConfiguration(genConfig);
+                for (String key : yml.getKeys(true)) {
+                    if (!plotConfig.contains(key)) {
+                        plotConfig.set(key, yml.get(key));
+                    }
+                }
+                genConfig.delete();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     public void updateWorldYml(final String plugin, final String location) {
         try {
             final Path path = Paths.get(location);
@@ -139,6 +157,9 @@ public class LikePlotMeConverter {
             }
             
             sendMessage(plugin + " conversion has started. To disable this, please set 'plotme-convert.enabled' in the 'settings.yml'");
+            
+            mergeWorldYml(plugin, plotConfig);
+            
             sendMessage("Connecting to " + plugin + " DB");
             
             int plotCount = 0;
@@ -256,6 +277,7 @@ public class LikePlotMeConverter {
                 @Override
                 public void run() {
                     if (done.get()) {
+                        done();
                         sendMessage("&aDatabase conversion is now complete!");
                         PS.debug("&c - Stop the server");
                         PS.debug("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
@@ -325,6 +347,7 @@ public class LikePlotMeConverter {
                         e.printStackTrace();
                     }
                     if (done.get()) {
+                        done();
                         sendMessage("&aDatabase conversion is now complete!");
                         PS.debug("&c - Stop the server");
                         PS.debug("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
@@ -341,5 +364,9 @@ public class LikePlotMeConverter {
             PS.debug("&/end/");
         }
         return true;
+    }
+    
+    public void done() {
+        PS.get().setAllPlotsRaw(DBFunc.getPlots());
     }
 }

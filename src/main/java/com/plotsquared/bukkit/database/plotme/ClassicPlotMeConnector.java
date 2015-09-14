@@ -27,10 +27,15 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 public class ClassicPlotMeConnector extends APlotMeConnector {
     
     private String plugin;
+    private String prefix;
     
     @Override
     public Connection getPlotMeConnection(final String plugin, final FileConfiguration plotConfig, final String dataFolder) {
         this.plugin = plugin.toLowerCase();
+        prefix = plotConfig.getString("mySQLprefix");
+        if (prefix == null) {
+            prefix = plugin;
+        }
         try {
             if (plotConfig.getBoolean("usemySQL")) {
                 final String user = plotConfig.getString("mySQLuname");
@@ -53,7 +58,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         final HashMap<String, Integer> roadWidth = new HashMap<>();
         final HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<>();
         final HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
-        stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Plots`");
+        stmt = connection.prepareStatement("SELECT * FROM `" + prefix + "Plots`");
         r = stmt.executeQuery();
         String column = null;
         final boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
@@ -166,8 +171,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         
         try {
             
-            MainUtil.sendConsoleMessage(" - " + plugin + "Denied");
-            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Denied`");
+            MainUtil.sendConsoleMessage(" - " + prefix + "Denied");
+            stmt = connection.prepareStatement("SELECT * FROM `" + prefix + "Denied`");
             r = stmt.executeQuery();
             
             while (r.next()) {
@@ -267,6 +272,6 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         if (version == null) {
             return true;
         }
-        return PS.get().canUpdate(version, "0.17.0");
+        return PS.get().canUpdate(version, "0.17.0") || PS.get().canUpdate("0.999.999", version);
     }
 }
