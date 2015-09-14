@@ -26,6 +26,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.intellectualcrafters.plot.PS;
+
 /**
  * Connects to and uses a MySQL database
  *
@@ -71,6 +73,7 @@ public class MySQL extends Database {
             return connection;
         }
         Class.forName("com.mysql.jdbc.Driver");
+        PS.debug("jdbc:mysql://" + hostname + ":" + port + "/" + database);
         connection = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, user, password);
         return connection;
     }

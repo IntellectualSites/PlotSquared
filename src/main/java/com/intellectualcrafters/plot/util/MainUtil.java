@@ -487,10 +487,10 @@ public class MainUtil {
         final Location top = getPlotTopLoc(plot.world, plot.id);
         final Location bot = getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final int x = ((top.getX() - bot.getX()) / 2) + bot.getX();
-        final int z = bot.getZ();
+        final int z = bot.getZ() - 1;
         final PlotManager manager = PS.get().getPlotManager(plot.world);
         final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PS.get().getPlotWorld(plot.world), plot).getY());
-        return new Location(plot.world, x, y + 1, z - 1);
+        return new Location(plot.world, x, y + 1, z);
     }
     
     public static boolean teleportPlayer(final PlotPlayer player, final Location from, final Plot plot) {
