@@ -425,16 +425,6 @@ public class MainUtil {
         return myplots;
     }
     
-    public static boolean equals(final Object a, final Object b) {
-        if (a == b) {
-            return true;
-        }
-        if ((a == null) ^ (b == null)) {
-            return false;
-        }
-        return a.equals(b);
-    }
-    
     /**
      * Get the number of plots for a player
      *

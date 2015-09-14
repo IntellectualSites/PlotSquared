@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -935,7 +936,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         for (final Block b : blocks) {
             final Location bloc = BukkitUtil.getLocation(b.getLocation().add(relative));
             final Plot newPlot = MainUtil.getPlot(bloc);
-            if (!MainUtil.equals(plot, newPlot)) {
+            if (!Objects.equals(plot, newPlot)) {
                 event.setCancelled(true);
                 return;
             }
@@ -972,14 +973,13 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if ((block.getType() != Material.PISTON_STICKY_BASE) && (block.getType() != Material.PISTON_BASE) && (block.getType() != Material.PISTON_MOVING_PIECE)) {
             return;
         }
-        
         final Plot plot = MainUtil.getPlot(loc);
         
         if (pistonBlocks) {
             try {
                 for (final Block pulled : event.getBlocks()) {
                     final Plot other = MainUtil.getPlot(BukkitUtil.getLocation(pulled.getLocation()));
-                    if (!MainUtil.equals(plot, other)) {
+                    if (!Objects.equals(plot, other)) {
                         event.setCancelled(true);
                         return;
                     }
@@ -990,9 +990,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
         if (!pistonBlocks && (block.getType() != Material.PISTON_BASE)) {
             final BlockFace dir = event.getDirection();
-            final Location bloc = BukkitUtil.getLocation(block.getLocation().subtract(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
+            final Location bloc = BukkitUtil.getLocation(block.getLocation().add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
             final Plot newPlot = MainUtil.getPlot(bloc);
-            if (!MainUtil.equals(plot, newPlot)) {
+            if (!Objects.equals(plot, newPlot)) {
                 event.setCancelled(true);
             }
         }
@@ -1012,7 +1012,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         for (int i = blocks.size() - 1; i >= 0; i--) {
             final Location loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
             final Plot plot = MainUtil.getPlot(loc);
-            if (!MainUtil.equals(plot, origin)) {
+            if (!Objects.equals(plot, origin)) {
                 e.getBlocks().remove(i);
             }
         }
