@@ -127,8 +127,9 @@ public class Cluster extends SubCommand {
                     }
                 }
                 if ((pos2.x < pos1.x) || (pos2.y < pos1.y)) {
-                    pos1 = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
+                    PlotId tmp = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
                     pos2 = new PlotId(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
+                    pos1 = tmp;
                 }
                 //check if overlap
                 final String world = plr.getLocation().getWorld();
