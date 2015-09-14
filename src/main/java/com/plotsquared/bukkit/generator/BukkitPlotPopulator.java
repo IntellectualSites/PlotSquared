@@ -26,37 +26,42 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
     
     @Override
     public void populate(final World world, final Random rand, final Chunk chunk) {
-        this.world = world;
-        worldname = world.getName();
-        X = chunk.getX() << 4;
-        Z = chunk.getZ() << 4;
-        if (ChunkManager.FORCE_PASTE) {
-            for (short x = 0; x < 16; x++) {
-                for (short z = 0; z < 16; z++) {
-                    final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
-                    final HashMap<Short, Byte> blocks = ChunkManager.GENERATE_DATA.get(loc);
-                    for (final Entry<Short, Byte> entry : blocks.entrySet()) {
-                        setBlock(x, entry.getKey(), z, entry.getValue());
+        try {
+            this.world = world;
+            worldname = world.getName();
+            X = chunk.getX() << 4;
+            Z = chunk.getZ() << 4;
+            if (ChunkManager.FORCE_PASTE) {
+                for (short x = 0; x < 16; x++) {
+                    for (short z = 0; z < 16; z++) {
+                        final PlotLoc loc = new PlotLoc((short) (X + x), (short) (Z + z));
+                        final HashMap<Short, Byte> blocks = ChunkManager.GENERATE_DATA.get(loc);
+                        for (final Entry<Short, Byte> entry : blocks.entrySet()) {
+                            setBlock(x, entry.getKey(), z, entry.getValue());
+                        }
                     }
                 }
+                return;
             }
-            return;
-        }
-        populate(world, ChunkManager.CURRENT_PLOT_CLEAR, random, X, Z);
-        if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
-            PlotLoc loc;
-            for (final Entry<PlotLoc, HashMap<Short, Byte>> entry : ChunkManager.GENERATE_DATA.entrySet()) {
-                for (final Entry<Short, Byte> entry2 : entry.getValue().entrySet()) {
-                    loc = entry.getKey();
-                    final int xx = loc.x - X;
-                    final int zz = loc.z - Z;
-                    if ((xx >= 0) && (xx < 16)) {
-                        if ((zz >= 0) && (zz < 16)) {
-                            setBlock(xx, entry2.getKey(), zz, entry2.getValue());
+            populate(world, ChunkManager.CURRENT_PLOT_CLEAR, random, X, Z);
+            if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
+                PlotLoc loc;
+                for (final Entry<PlotLoc, HashMap<Short, Byte>> entry : ChunkManager.GENERATE_DATA.entrySet()) {
+                    for (final Entry<Short, Byte> entry2 : entry.getValue().entrySet()) {
+                        loc = entry.getKey();
+                        final int xx = loc.x - X;
+                        final int zz = loc.z - Z;
+                        if ((xx >= 0) && (xx < 16)) {
+                            if ((zz >= 0) && (zz < 16)) {
+                                setBlock(xx, entry2.getKey(), zz, entry2.getValue());
+                            }
                         }
                     }
                 }
             }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
