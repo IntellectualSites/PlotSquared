@@ -478,7 +478,8 @@ public class PS {
                     continue;
                 }
             }
-            for (final Plot plot : entry.getValue().values()) {
+            for (Entry<PlotId, Plot> entry2: entry.getValue().entrySet()) {
+                Plot plot = entry2.getValue();
                 for (final PlotFilter filter : filters) {
                     if (!filter.allowsPlot(plot)) {
                         continue;
@@ -1097,7 +1098,15 @@ public class PS {
         if (map == null) {
             return new HashSet<>();
         }
-        return map.values();
+        try {
+            return map.values();
+        }
+        catch (Throwable e) {e.printStackTrace();}
+        HashSet<Plot> toReturn = new HashSet<Plot>(map.entrySet().size());
+        for (Entry<PlotId, Plot> entry : map.entrySet()) {
+            toReturn.add(entry.getValue());
+        }
+        return toReturn;
     }
     
     public Plot getPlot(final String world, final PlotId id) {
