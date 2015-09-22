@@ -33,4 +33,29 @@ public class RegionWrapper {
     public boolean isIn(final int x, final int z) {
         return ((x >= minX) && (x <= maxX) && (z >= minZ) && (z <= maxZ));
     }
+    
+    @Override
+    public int hashCode() {
+        return minX + 13 * maxX + 23 * minZ + 39 * maxZ;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof RegionWrapper) {
+            RegionWrapper other = (RegionWrapper) obj;
+            return minX == other.minX && minZ == other.minZ && minY == other.minY && maxX == other.maxX && maxZ == other.maxZ && maxY == other.maxY;
+        }
+        return false;
+    }
+    
+    @Override
+    public String toString() {
+        return minX + "->" + maxX + "," + minZ + "->" + maxZ;
+    }
 }

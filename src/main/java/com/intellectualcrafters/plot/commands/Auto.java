@@ -161,7 +161,7 @@ public class Auto extends SubCommand {
         final PlotWorld plotworld = PS.get().getPlotWorld(worldname);
         if (plotworld.TYPE == 2) {
             final Location loc = plr.getLocation();
-            final Plot plot = MainUtil.getPlot(new Location(worldname, loc.getX(), loc.getY(), loc.getZ()));
+            final Plot plot = MainUtil.getPlotAbs(new Location(worldname, loc.getX(), loc.getY(), loc.getZ()));
             if (plot == null) {
                 return sendMessage(plr, C.NOT_IN_PLOT);
             }
@@ -180,8 +180,8 @@ public class Auto extends SubCommand {
             //
             for (int i = 0; i <= max; i++) {
                 final PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
-                final Plot current = MainUtil.getPlot(worldname, currentId);
-                if (MainUtil.canClaim(plr, current) && (current.getSettings().isMerged() == false) && cluster.equals(current.getCluster())) {
+                final Plot current = MainUtil.getPlotAbs(worldname, currentId);
+                if (MainUtil.canClaim(plr, current) && (current.isMerged() == false) && cluster.equals(current.getCluster())) {
                     Claim.claimPlot(plr, current, true, true);
                     return true;
                 }
@@ -194,7 +194,7 @@ public class Auto extends SubCommand {
         boolean br = false;
         if ((size_x == 1) && (size_z == 1)) {
             while (!br) {
-                final Plot plot = MainUtil.getPlot(worldname, getLastPlot(worldname));
+                final Plot plot = MainUtil.getPlotAbs(worldname, getLastPlot(worldname));
                 if (MainUtil.canClaim(plr, plot)) {
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
@@ -217,7 +217,7 @@ public class Auto extends SubCommand {
                 if (MainUtil.canClaim(plr, worldname, start, end)) {
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
-                            final Plot plot = MainUtil.getPlot(worldname, new PlotId(i, j));
+                            final Plot plot = MainUtil.getPlotAbs(worldname, new PlotId(i, j));
                             final boolean teleport = ((i == end.x) && (j == end.y));
                             Claim.claimPlot(plr, plot, teleport, true);
                         }

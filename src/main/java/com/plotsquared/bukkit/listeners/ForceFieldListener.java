@@ -31,48 +31,46 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
-import com.plotsquared.bukkit.util.BukkitPlayerFunctions;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 
 /**
  */
 public class ForceFieldListener implements Listener {
-    private Set<Player> getNearbyPlayers(final Player player, final Plot plot) {
-        final Set<Player> players = new HashSet<>();
-        Player oPlayer;
+    private Set<PlotPlayer> getNearbyPlayers(final Player player, final Plot plot) {
+        final Set<PlotPlayer> players = new HashSet<>();
+        PlotPlayer pp;
         for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
-            if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !BukkitPlayerFunctions.isInPlot(oPlayer) || !BukkitPlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
+            if (!(entity instanceof Player) || ((pp = BukkitUtil.getPlayer((Player) entity)) == null) || !plot.equals(pp.getCurrentPlot())) {
                 continue;
             }
-            final UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(oPlayer));
-            if (!plot.isAdded(uuid)) {
-                players.add(oPlayer);
+            if (!plot.isAdded(pp.getUUID())) {
+                players.add(pp);
             }
         }
         return players;
     }
     
-    private Player hasNearbyPermitted(final Player player, final Plot plot) {
-        Player oPlayer;
+    private PlotPlayer hasNearbyPermitted(final Player player, final Plot plot) {
+        PlotPlayer pp;
         for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
-            if (!(entity instanceof Player) || ((oPlayer = (Player) entity) == null) || !BukkitPlayerFunctions.isInPlot(oPlayer) || !BukkitPlayerFunctions.getCurrentPlot(oPlayer).equals(plot)) {
+            if (!(entity instanceof Player) || ((pp = BukkitUtil.getPlayer((Player) entity)) == null) || !plot.equals(pp.getCurrentPlot())) {
                 continue;
             }
-            final UUID uuid = UUIDHandler.getUUID(BukkitUtil.getPlayer(oPlayer));
-            if (plot.isAdded(uuid)) {
-                return oPlayer;
+            if (plot.isAdded(pp.getUUID())) {
+                return pp;
             }
         }
         return null;
     }
     
-    public Vector calculateVelocity(final Player p, final Player e) {
-        final org.bukkit.Location playerLocation = p.getLocation();
-        final org.bukkit.Location oPlayerLocation = e.getLocation();
+    public Vector calculateVelocity(final PlotPlayer pp, final PlotPlayer e) {
+        Location playerLocation = pp.getLocationFull();
+        Location oPlayerLocation = e.getLocation();
         final double playerX = playerLocation.getX(), playerY = playerLocation.getY(), playerZ = playerLocation.getZ(), oPlayerX = oPlayerLocation.getX(), oPlayerY = oPlayerLocation.getY(), oPlayerZ = oPlayerLocation
         .getZ();
         double x = 0d, y = 0d, z = 0d;
@@ -98,7 +96,6 @@ public class ForceFieldListener implements Listener {
     public void onPlotEntry(final PlayerEnterPlotEvent event) {
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        pp.getLocation();
         final Plot plot = event.getPlot();
         if (plot == null) {
             return;
@@ -107,16 +104,16 @@ public class ForceFieldListener implements Listener {
             if (!FlagManager.isBooleanFlag(plot, "forcefield", false)) {
                 final UUID uuid = pp.getUUID();
                 if (plot.isAdded(uuid)) {
-                    final Set<Player> players = getNearbyPlayers(player, plot);
-                    for (final Player oPlayer : players) {
-                        oPlayer.setVelocity(calculateVelocity(player, oPlayer));
+                    final Set<PlotPlayer> players = getNearbyPlayers(player, plot);
+                    for (final PlotPlayer oPlayer : players) {
+                        ((BukkitPlayer) oPlayer).player.setVelocity(calculateVelocity(pp, oPlayer));
                     }
                 } else {
-                    final Player oPlayer = hasNearbyPermitted(player, plot);
+                    final PlotPlayer oPlayer = hasNearbyPermitted(player, plot);
                     if (oPlayer == null) {
                         return;
                     }
-                    player.setVelocity(calculateVelocity(oPlayer, player));
+                    player.setVelocity(calculateVelocity(oPlayer, pp));
                 }
             }
         }

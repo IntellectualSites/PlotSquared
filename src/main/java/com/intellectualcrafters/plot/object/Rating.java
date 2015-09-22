@@ -39,7 +39,7 @@ public class Rating {
     
     public List<String> getCategories() {
         if (ratingMap.size() == 1) {
-            return new ArrayList<>();
+            return new ArrayList<>(0);
         }
         return new ArrayList<>(ratingMap.keySet());
     }

@@ -133,8 +133,8 @@ public class Trim extends SubCommand {
                     }
                     final Plot plot = plots.remove(0);
                     
-                    final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id);
-                    final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
+                    final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.id);
+                    final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.id);
                     
                     final int ccx1 = (pos1.getX() >> 9);
                     final int ccz1 = (pos1.getZ() >> 9);
@@ -204,7 +204,7 @@ public class Trim extends SubCommand {
             sendMessage(C.TRIM_IN_PROGRESS.s());
             return false;
         }
-        sendMessage(C.TRIM_START.s());
+        sendMessage(C.TASK_START.s());
         final ArrayList<ChunkLoc> empty = new ArrayList<>();
         getTrimRegions(empty, world, new Runnable() {
             public void run() {

@@ -129,7 +129,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             final HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.world);
             if (mergeMap != null) {
                 if (mergeMap.containsKey(plot.id)) {
-                    plot.getSettings().setMerged(mergeMap.get(plot.id));
+                    plot.setMerged(mergeMap.get(plot.id));
                 }
             }
         }

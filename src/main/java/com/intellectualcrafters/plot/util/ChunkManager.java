@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -102,7 +103,7 @@ public abstract class ChunkManager {
     
     public abstract boolean unloadChunk(final String world, final ChunkLoc loc, final boolean save, final boolean safe);
     
-    public abstract List<ChunkLoc> getChunkChunks(final String world);
+    public abstract Set<ChunkLoc> getChunkChunks(final String world);
     
     public abstract void regenerateChunk(final String world, final ChunkLoc loc);
     
@@ -114,6 +115,9 @@ public abstract class ChunkManager {
     
     public abstract Plot hasPlot(String world, ChunkLoc chunk);
     
+    /**
+     * Copy a region to a new location (in the same world)
+     */
     public abstract boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone);
     
     /**
@@ -129,7 +133,5 @@ public abstract class ChunkManager {
     
     public abstract void clearAllEntities(final Location pos1, final Location pos2);
     
-    public abstract void swap(final String world, final PlotId id, final PlotId plotid);
-    
-    public abstract void swap(final String worldname, final Location bot1, final Location top1, final Location bot2, final Location top2);
+    public abstract void swap(final Location bot1, final Location top1, final Location bot2, final Location top2, Runnable whenDone);
 }

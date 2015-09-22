@@ -47,7 +47,7 @@ public class Deny extends SubCommand {
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -95,7 +95,7 @@ public class Deny extends SubCommand {
     
     private void handleKick(final UUID uuid, final Plot plot) {
         final PlotPlayer pp = UUIDHandler.getPlayer(uuid);
-        if ((pp != null) && plot.equals(MainUtil.getPlot(pp.getLocation()))) {
+        if ((pp != null) && plot.equals(MainUtil.getPlotAbs(pp.getLocation()))) {
             pp.teleport(BlockManager.manager.getSpawn(pp.getLocation().getWorld()));
             MainUtil.sendMessage(pp, C.YOU_GOT_DENIED);
         }

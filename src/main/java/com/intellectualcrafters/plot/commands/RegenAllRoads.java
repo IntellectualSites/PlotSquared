@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.List;
+import java.util.Set;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -66,7 +67,7 @@ public class RegenAllRoads extends SubCommand {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
-        final List<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
+        final Set<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
         MainUtil.sendMessage(plr, "&cIf no schematic is set, the following will not do anything");
         MainUtil.sendMessage(plr, "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
         MainUtil.sendMessage(plr, "&6Potential chunks to update: &7" + (chunks.size() * 1024));

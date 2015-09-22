@@ -37,7 +37,7 @@ public class Kick extends SubCommand {
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -55,7 +55,7 @@ public class Kick extends SubCommand {
             return false;
         }
         final Location otherLoc = player.getLocation();
-        if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(MainUtil.getPlot(otherLoc))) {
+        if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(MainUtil.getPlotAbs(otherLoc))) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }

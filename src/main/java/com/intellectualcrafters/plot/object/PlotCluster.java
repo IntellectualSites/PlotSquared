@@ -35,7 +35,7 @@ public class PlotCluster {
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.owner = owner;
-        settings = new PlotSettings(null);
+        settings = new PlotSettings();
     }
     
     public boolean isAdded(final UUID uuid) {

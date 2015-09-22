@@ -72,13 +72,11 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Update());
         createCommand(new Template());
         createCommand(new Setup());
-        createCommand(new DebugFill());
         createCommand(new DebugSaveTest());
         createCommand(new DebugLoadTest());
         createCommand(new CreateRoadSchematic());
         createCommand(new DebugAllowUnsafe());
         createCommand(new RegenAllRoads());
-        createCommand(new DebugClear());
         createCommand(new Claim());
         createCommand(new Auto());
         createCommand(new Home());
@@ -294,9 +292,9 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 world = null;
             }
             if ((id != null) && PS.get().isPlotWorld(world)) {
-                final Plot plot = MainUtil.getPlot(world, id);
+                final Plot plot = MainUtil.getPlotAbs(world, id);
                 if (plot != null) {
-                    player.teleport(MainUtil.getPlotCenter(plot));
+                    player.teleport(plot.getBottomAbs());
                     args = Arrays.copyOfRange(args, 1, args.length);
                 }
             }

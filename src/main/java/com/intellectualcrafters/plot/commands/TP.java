@@ -63,7 +63,7 @@ public class TP extends SubCommand {
         }
         try {
             plotid = new PlotId(Integer.parseInt(id.split(";")[0]), Integer.parseInt(id.split(";")[1]));
-            MainUtil.teleportPlayer(plr, plr.getLocation(), MainUtil.getPlot(world, plotid));
+            MainUtil.teleportPlayer(plr, plr.getLocation(), MainUtil.getPlotAbs(world, plotid));
             return true;
         } catch (final Exception e) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
@@ -90,7 +90,7 @@ public class TP extends SubCommand {
             return null;
         }
         for (final Plot p : PS.get().getPlotsInWorld(world)) {
-            if ((p.getSettings().getAlias().length() > 0) && p.getSettings().getAlias().equalsIgnoreCase(a)) {
+            if ((p.getAlias().length() > 0) && p.getAlias().equalsIgnoreCase(a)) {
                 return p;
             }
         }

@@ -82,7 +82,7 @@ public class Rate extends SubCommand {
                 });
                 final UUID uuid = player.getUUID();
                 for (final Plot p : plots) {
-                    if ((!Settings.REQUIRE_DONE || p.getSettings().flags.containsKey("done"))
+                    if ((!Settings.REQUIRE_DONE || p.getFlags().containsKey("done"))
                     && p.isBasePlot()
                     && ((p.getSettings().ratings == null) || !p.getSettings().ratings.containsKey(uuid))
                     && !p.isAdded(uuid)) {
@@ -96,7 +96,7 @@ public class Rate extends SubCommand {
             }
         }
         final Location loc = player.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }
@@ -108,7 +108,7 @@ public class Rate extends SubCommand {
             sendMessage(player, C.RATING_NOT_YOUR_OWN);
             return false;
         }
-        if (Settings.REQUIRE_DONE && !plot.getSettings().flags.containsKey("done")) {
+        if (Settings.REQUIRE_DONE && !plot.getFlags().containsKey("done")) {
             sendMessage(player, C.RATING_NOT_DONE);
             return false;
         }

@@ -30,7 +30,7 @@ public class Download extends SubCommand {
         if (!PS.get().isPlotWorld(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = MainUtil.getPlot(plr.getLocation());
+        final Plot plot = MainUtil.getPlotAbs(plr.getLocation());
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -42,7 +42,7 @@ public class Download extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (MainUtil.runners.containsKey(plot)) {
+        if (plot.getRunning() > 0) {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }

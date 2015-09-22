@@ -31,32 +31,24 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "unclaim", usage = "/plot unclaim", requiredType = RequiredType.NONE, description = "Unclaim a plot", category = CommandCategory.ACTIONS)
+/**
+ * Unclaiming a plot makes no changes to the terrain or plot border and only removes the owner and should be regarded as an admin command. 
+ */
+@CommandDeclaration(command = "unclaim", usage = "/plot unclaim", requiredType = RequiredType.NONE, description = "Unclaim a plot (admin command)", category = CommandCategory.ACTIONS)
 public class Unclaim extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
             return !sendMessage(plr, C.PLOT_NOT_CLAIMED);
         }
-        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
-            return !sendMessage(plr, C.UNLINK_REQUIRED);
-        }
         if (((!plot.hasOwner() || !plot.isOwner(plr.getUUID()))) && !Permissions.hasPermission(plr, "plots.admin.command.unclaim")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
-        }
-        final PlotWorld pWorld = PS.get().getPlotWorld(plot.world);
-        if ((EconHandler.manager != null) && pWorld.USE_ECONOMY) {
-            final double c = pWorld.SELL_PRICE;
-            if (c > 0d) {
-                EconHandler.manager.depositMoney(plr, c);
-                sendMessage(plr, C.ADDED_BALANCE, c + "");
-            }
         }
         if (plot.unclaim()) {
             MainUtil.sendMessage(plr, C.UNCLAIM_SUCCESS);

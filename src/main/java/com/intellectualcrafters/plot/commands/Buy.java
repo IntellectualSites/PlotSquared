@@ -20,6 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -58,64 +61,54 @@ public class Buy extends SubCommand {
         if (!PS.get().isPlotWorld(world)) {
             return sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
+        Set<Plot> plots;
         Plot plot;
         if (args.length > 0) {
             try {
                 final String[] split = args[0].split(";");
                 final PlotId id = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                plot = MainUtil.getPlot(world, id);
+                plot = MainUtil.getPlotAbs(world, id);
+                plots = MainUtil.getConnectedPlots(plot);
             } catch (final Exception e) {
                 return sendMessage(plr, C.NOT_VALID_PLOT_ID);
             }
         } else {
-            plot = MainUtil.getPlot(loc);
+            plot = MainUtil.getPlotAbs(loc);
+            plots = MainUtil.getConnectedPlots(plot);
         }
-        if (plot == null) {
+        if (plots == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(world, plr);
-        if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
-            return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_UNOWNED);
         }
-        if (PlotHandler.isOwner(plot, plr.getUUID())) {
-            return sendMessage(plr, C.CANNOT_BUY_OWN);
+        final int currentPlots = MainUtil.getPlayerPlotCount(plr) + plots.size();
+        if (currentPlots > MainUtil.getAllowedPlots(plr)) {
+            return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
         final Flag flag = FlagManager.getPlotFlag(plot, "price");
         if (flag == null) {
             return sendMessage(plr, C.NOT_FOR_SALE);
         }
-        double initPrice = (double) flag.getValue();
-        double price = initPrice;
-        final PlotId id = plot.id;
-        final PlotId id2 = MainUtil.getTopPlot(plot).id;
-        final int size = MainUtil.getPlotSelectionIds(id, id2).size();
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
-        if (plotworld.USE_ECONOMY) {
-            price += plotworld.PLOT_PRICE * size;
-            initPrice += plotworld.SELL_PRICE * size;
+        if (plot.isOwner(plr.getUUID())) {
+            return sendMessage(plr, C.CANNOT_BUY_OWN);
         }
+        double price = (double) flag.getValue();
         if ((EconHandler.manager != null) && (price > 0d)) {
             if (EconHandler.manager.getMoney(plr) < price) {
                 return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + price);
             }
             EconHandler.manager.withdrawMoney(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
-            EconHandler.manager.depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), initPrice);
+            EconHandler.manager.depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), price);
             final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
             if (owner != null) {
-                sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), initPrice + "");
+                sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), price + "");
             }
             FlagManager.removePlotFlag(plot, "price");
         }
-        final Plot top = MainUtil.getTopPlot(plot);
-        
-        for (final PlotId myId : MainUtil.getPlotSelectionIds(plot.id, top.id)) {
-            final Plot myPlot = MainUtil.getPlot(plot.world, myId);
-            myPlot.owner = plr.getUUID();
-            DBFunc.setOwner(plot, myPlot.owner);
+        for (final Plot current : plots) {
+            plot.setOwner(plr.getUUID());
         }
         MainUtil.sendMessage(plr, C.CLAIMED);
         return true;

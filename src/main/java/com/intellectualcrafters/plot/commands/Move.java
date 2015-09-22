@@ -41,40 +41,26 @@ public class Move extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
         final Location loc = plr.getLocation();
-        final Plot plot1 = MainUtil.getPlot(loc);
+        final Plot plot1 = MainUtil.getPlotAbs(loc);
         if (plot1 == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!plot1.isAdded(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s())) {
+        if (!plot1.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s())) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        final String world = loc.getWorld();
-        final PlotId plot2id = MainUtil.parseId(args[0]);
-        if ((plot2id == null)) {
-            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
+        final Plot plot2 = MainUtil.getPlotFromString(plr, args[0], true);
+        if ((plot2 == null)) {
             return false;
         }
-        String world2;
-        if (args.length == 2) {
-            final PlotWorld other = PS.get().getPlotWorld(args[1]);
-            final PlotWorld current = PS.get().getPlotWorld(loc.getWorld());
-            if ((other == null) || (current == null) || !other.equals(current)) {
-                MainUtil.sendMessage(plr, C.PLOTWORLD_INCOMPATIBLE);
-                return false;
-            }
-            world2 = other.worldname;
-        } else {
-            world2 = world;
-        }
-        final Plot plot2 = MainUtil.getPlot(world2, plot2id);
-        
         if (plot1.equals(plot2)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot move <X;Z>");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
+            return false;
+        }
+        if (!plot1.getWorld().equals(plot2.getWorld())) {
+            C.PLOTWORLD_INCOMPATIBLE.send(plr);
             return false;
         }
         if (MainUtil.move(plot1, plot2, new Runnable() {
@@ -82,11 +68,12 @@ public class Move extends SubCommand {
             public void run() {
                 MainUtil.sendMessage(plr, C.MOVE_SUCCESS);
             }
-        })) {
+        }, false)) {
             return true;
         } else {
             MainUtil.sendMessage(plr, C.REQUIRES_UNOWNED);
             return false;
         }
     }
+    
 }

@@ -38,20 +38,23 @@ public class Unlink extends SubCommand {
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
+        if (!plot.hasOwner()) {
+            return !sendMessage(plr, C.PLOT_UNOWNED);
+        }
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.unlink")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
-        if (MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
+        if (!plot.isMerged()) {
             return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if (!MainUtil.unlinkPlot(plot, true)) {
+                if (!MainUtil.unlinkPlot(plot, true, true)) {
                     MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
                     return;
                 }

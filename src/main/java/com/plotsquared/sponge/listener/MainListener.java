@@ -93,6 +93,7 @@ public class MainListener {
      *  - HangingBreakEvent
      *  - Liquid flow
      *  - PVP
+     *  - block dispense
      *  - PVE
      *  - VehicleDestroy
      *  - Projectile
@@ -164,7 +165,7 @@ public class MainListener {
                     return;
                 }
                 if (mobs == null) {
-                    mobs = ChunkManager.manager.countEntities(plot);
+                    mobs = MainUtil.countEntities(plot);
                 }
                 if (mobs[3] >= cap) {
                     event.setCancelled(true);
@@ -180,7 +181,7 @@ public class MainListener {
                         return;
                     }
                     if (mobs == null) {
-                        mobs = ChunkManager.manager.countEntities(plot);
+                        mobs = MainUtil.countEntities(plot);
                     }
                     if (mobs[1] >= cap) {
                         event.setCancelled(true);
@@ -197,7 +198,7 @@ public class MainListener {
                         return;
                     }
                     if (mobs == null) {
-                        mobs = ChunkManager.manager.countEntities(plot);
+                        mobs = MainUtil.countEntities(plot);
                     }
                     if (mobs[2] >= cap) {
                         event.setCancelled(true);
@@ -216,7 +217,7 @@ public class MainListener {
                     return;
                 }
                 if (mobs == null) {
-                    mobs = ChunkManager.manager.countEntities(plot);
+                    mobs = MainUtil.countEntities(plot);
                 }
                 if (mobs[4] >= cap) {
                     event.setCancelled(true);
@@ -232,7 +233,7 @@ public class MainListener {
                 return;
             }
             if (mobs == null) {
-                mobs = ChunkManager.manager.countEntities(plot);
+                mobs = MainUtil.countEntities(plot);
             }
             if (mobs[0] >= cap) {
                 event.setCancelled(true);
@@ -266,7 +267,6 @@ public class MainListener {
                 event.setCancelled(true);
             }
         }
-        // TODO
     }
     
     @Subscribe
@@ -519,7 +519,7 @@ public class MainListener {
                 }
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
-            } else if (Settings.DONE_RESTRICTS_BUILDING && plot.getSettings().flags.containsKey("done")) {
+            } else if (Settings.DONE_RESTRICTS_BUILDING && plot.getFlags().containsKey("done")) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
@@ -570,7 +570,7 @@ public class MainListener {
                 }
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
-            } else if (Settings.DONE_RESTRICTS_BUILDING && plot.getSettings().flags.containsKey("done")) {
+            } else if (Settings.DONE_RESTRICTS_BUILDING && plot.getFlags().containsKey("done")) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
@@ -658,9 +658,6 @@ public class MainListener {
         final UUID uuid = pp.getUUID();
         UUIDHandler.add(name, uuid);
         ExpireManager.dates.put(uuid, System.currentTimeMillis());
-        
-        // TODO worldedit bypass
-        
         if ((PS.get().update != null) && pp.hasPermission("plots.admin")) {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
@@ -740,7 +737,7 @@ public class MainListener {
                 final Plot plot = MainUtil.getPlot(worldname, id);
                 if (!PlotListener.plotEntry(pp, plot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
-                    if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
+                    if (!plot.getBasePlot(false).equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
                         event.setNewLocation(from);
                     } else {
                         event.setNewLocation(world.getSpawnLocation());
@@ -964,9 +961,6 @@ public class MainListener {
         
         player.deleteMeta("location");
         player.deleteMeta("lastplot");
-        
-        // TODO worldedit mask
-        
         if (Settings.PERMISSION_CACHING) {
             ((SpongePlayer) player).hasPerm = new HashSet<>();
             ((SpongePlayer) player).noPerm = new HashSet<>();

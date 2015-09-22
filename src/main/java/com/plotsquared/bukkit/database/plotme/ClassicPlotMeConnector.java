@@ -161,7 +161,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 final HashMap<PlotId, Plot> newplots = plots.get(world);
                 final Plot plot = newplots.get(entry2.getKey());
                 if (plot != null) {
-                    plot.getSettings().setMerged(entry2.getValue());
+                    plot.setMerged(entry2.getValue());
                 }
             }
         }

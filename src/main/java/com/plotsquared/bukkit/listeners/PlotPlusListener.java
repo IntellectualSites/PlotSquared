@@ -109,7 +109,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
         }
-        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        final Plot plot = MainUtil.getPlotAbs(BukkitUtil.getLocation(player));
         if (plot == null) {
             return;
         }
@@ -124,7 +124,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         final Player player = (Player) event.getEntity();
-        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        final Plot plot = MainUtil.getPlotAbs(BukkitUtil.getLocation(player));
         if (plot == null) {
             return;
         }
@@ -137,7 +137,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public void onItemPickup(final PlayerPickupItemEvent event) {
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        final Plot plot = MainUtil.getPlot(pp.getLocation());
+        final Plot plot = MainUtil.getPlotAbs(pp.getLocation());
         if (plot == null) {
             return;
         }
@@ -151,7 +151,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public void onItemDrop(final PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        final Plot plot = MainUtil.getPlot(pp.getLocation());
+        final Plot plot = MainUtil.getPlotAbs(pp.getLocation());
         if (plot == null) {
             return;
         }

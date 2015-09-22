@@ -59,10 +59,10 @@ public class Comment extends SubCommand {
                 return false;
             }
             index = 2;
-            plot = MainUtil.getPlot(loc.getWorld(), id);
+            plot = MainUtil.getPlotAbs(loc.getWorld(), id);
         } else {
             index = 1;
-            plot = MainUtil.getPlot(loc);
+            plot = MainUtil.getPlotAbs(loc);
         }
         if (!inbox.canWrite(plot, player)) {
             sendMessage(player, C.NO_PERM_INBOX, "");

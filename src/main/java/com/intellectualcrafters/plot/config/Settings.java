@@ -212,10 +212,7 @@ public class Settings {
         /**
          * MongoDB enabled?
          */
-        public static boolean USE_MONGO = false; /*
-                                                 * TODO: Implement Mongo
-                                                 * @Brandon
-                                                 */
+        public static boolean USE_MONGO = false;
         /**
          * SQLite enabled?
          */

@@ -23,7 +23,6 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -45,29 +44,30 @@ public class Copy extends SubCommand {
     }
     
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
-        final Plot plot1 = MainUtil.getPlot(loc);
+        final Plot plot1 = MainUtil.getPlotAbs(loc);
         if (plot1 == null) {
             return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if (!plot1.isAdded(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s())) {
+        if (!plot1.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s())) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        final String world = loc.getWorld();
-        final PlotId plot2 = MainUtil.parseId(args[0]);
+        final Plot plot2 = MainUtil.getPlotFromString(plr, args[0], true);
         if ((plot2 == null)) {
+            return false;
+        }
+        if (plot1.equals(plot2)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
-        if (plot1.id.equals(plot2)) {
-            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
+        if (!plot1.getWorld().equals(plot2.getWorld())) {
+            C.PLOTWORLD_INCOMPATIBLE.send(plr);
             return false;
         }
-        if (MainUtil.copy(world, plot1.id, plot2, new Runnable() {
+        if (MainUtil.copy(plot1, plot2, new Runnable() {
             @Override
             public void run() {
                 MainUtil.sendMessage(plr, C.COPY_SUCCESS);

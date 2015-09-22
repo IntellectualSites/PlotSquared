@@ -399,6 +399,9 @@ public class PS {
             plots.put(world, new ConcurrentHashMap<PlotId, Plot>());
         }
         plots.get(world).put(plot.id, plot);
+        for (PlotPlayer pp : plot.getPlayersInPlot()) {
+            pp.setMeta("lastplot", plot);
+        }
     }
     
     /**
@@ -1090,13 +1093,13 @@ public class PS {
             }
             return new HashMap<>(myplots);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
     
     public Collection<Plot> getPlotsInWorld(final String world) {
         final ConcurrentHashMap<PlotId, Plot> map = plots.get(world);
         if (map == null) {
-            return new HashSet<>();
+            return new HashSet<>(0);
         }
         try {
             return map.values();
@@ -1776,24 +1779,25 @@ public class PS {
         // Clearing + Expiry
         options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
         options.put("clear.on.ban", false);
-        options.put("clear.auto.enabled", false);
-        options.put("clear.auto.days", 365);
+        options.put("clear.auto.enabled", true);
+        options.put("clear.auto.days", 7);
         options.put("clear.auto.clear-interval-seconds", Settings.CLEAR_INTERVAL);
         options.put("clear.auto.calibration.changes", 1);
-        options.put("clear.auto.calibration.faces", 2);
-        options.put("clear.auto.calibration.data", 32);
+        options.put("clear.auto.calibration.faces", 0);
+        options.put("clear.auto.calibration.data", 0);
         options.put("clear.auto.calibration.air", 0);
-        options.put("clear.auto.calibration.variety", 1);
-        options.put("clear.auto.calibration.changes_sd", 64);
-        options.put("clear.auto.calibration.faces_sd", 32);
-        options.put("clear.auto.calibration.data_sd", 1);
+        options.put("clear.auto.calibration.variety", 0);
+        options.put("clear.auto.calibration.changes_sd", 1);
+        options.put("clear.auto.calibration.faces_sd", 0);
+        options.put("clear.auto.calibration.data_sd", 0);
         options.put("clear.auto.calibration.air_sd", 0);
-        options.put("clear.auto.calibration.variety_sd", 1);
+        options.put("clear.auto.calibration.variety_sd", 0);
         
         final int keep = config.getInt("clear.keep-if-modified");
         final int ignore = config.getInt("clear.ignore-if-modified");
         if ((keep > 0) || (ignore > 0)) {
             options.put("clear.auto.threshold", 1);
+            options.put("clear.auto.enabled", false);
             log("&cIMPORTANT MESSAGE ABOUT THIS UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             log("&cSorry for all the exclamation marks, but this could be important.");
             log("&cPlot clearing has changed to a new system that requires calibration.");

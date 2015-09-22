@@ -429,11 +429,11 @@ public class PlotAPI {
      *
      * @return plot, null if ID is wrong
      *
-     * @see MainUtil#getPlot(String, com.intellectualcrafters.plot.object.PlotId)
+     * @see MainUtil#getPlotAbs(String, com.intellectualcrafters.plot.object.PlotId)
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Plot getPlot(final World world, final int x, final int z) {
-        return MainUtil.getPlot(world.getName(), new PlotId(x, z));
+        return MainUtil.getPlotAbs(world.getName(), new PlotId(x, z));
     }
     
     /**
@@ -443,11 +443,11 @@ public class PlotAPI {
      *
      * @return plot if found, otherwise it creates a temporary plot-
      *
-     * @see MainUtil#getPlot(com.intellectualcrafters.plot.object.Location)
+     * @see MainUtil#getPlotAbs(com.intellectualcrafters.plot.object.Location)
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Plot getPlot(final Location l) {
-        return MainUtil.getPlot(BukkitUtil.getLocation(l));
+        return MainUtil.getPlotAbs(BukkitUtil.getLocation(l));
     }
     
     /**
@@ -558,8 +558,8 @@ public class PlotAPI {
      */
     public Location[] getLocations(final Plot p) {
         return new Location[] {
-        BukkitUtil.getLocation(MainUtil.getPlotBottomLoc(p.world, p.id)),
-        BukkitUtil.getLocation(MainUtil.getPlotTopLoc(p.world, p.id)),
+        BukkitUtil.getLocation(MainUtil.getPlotBottomLocAbs(p.world, p.id).subtract(1, 0, 1)),
+        BukkitUtil.getLocation(MainUtil.getPlotTopLocAbs(p.world, p.id)),
         BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.id)) };
     }
     
@@ -590,7 +590,7 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Location getBottomLocation(final Plot p) {
-        return BukkitUtil.getLocation(MainUtil.getPlotBottomLoc(p.world, p.id));
+        return BukkitUtil.getLocation(MainUtil.getPlotBottomLocAbs(p.world, p.id).subtract(1, 0, 1));
     }
     
     /**
@@ -604,7 +604,7 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.object.Plot
      */
     public Location getTopLocation(final Plot p) {
-        return BukkitUtil.getLocation(MainUtil.getPlotTopLoc(p.world, p.id));
+        return BukkitUtil.getLocation(MainUtil.getPlotTopLocAbs(p.world, p.id));
     }
     
     /**
@@ -614,10 +614,10 @@ public class PlotAPI {
      *
      * @return true if the player is in a plot, false if not-
      *
-     * @see com.intellectualcrafters.plot.util.MainUtil#getPlot(com.intellectualcrafters.plot.object.Location)
+     * @see com.intellectualcrafters.plot.util.MainUtil#getPlotAbs(com.intellectualcrafters.plot.object.Location)
      */
     public boolean isInPlot(final Player player) {
-        return MainUtil.getPlot(BukkitUtil.getLocation(player)) != null;
+        return MainUtil.getPlotAbs(BukkitUtil.getLocation(player)) != null;
     }
     
     /**

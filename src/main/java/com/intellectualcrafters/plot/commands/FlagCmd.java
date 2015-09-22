@@ -68,7 +68,7 @@ public class FlagCmd extends SubCommand {
             return false;
         }
         final Location loc = player.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
             MainUtil.sendMessage(player, C.NOT_IN_PLOT);
             return false;
@@ -172,7 +172,7 @@ public class FlagCmd extends SubCommand {
                 if ((args.length == 3) && flag.getAbstractFlag().isList()) {
                     final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                     ((FlagValue.ListValue) flag.getAbstractFlag().value).remove(flag.getValue(), value);
-                    DBFunc.setFlags(plot, plot.getSettings().flags.values());
+                    DBFunc.setFlags(plot, plot.getFlags().values());
                 } else {
                     final boolean result = FlagManager.removePlotFlag(plot, flag.getKey());
                     if (!result) {
@@ -222,7 +222,7 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.FLAG_NOT_ADDED);
                     return false;
                 }
-                DBFunc.setFlags(plot, plot.getSettings().flags.values());
+                DBFunc.setFlags(plot, plot.getFlags().values());
                 MainUtil.sendMessage(player, C.FLAG_ADDED);
                 return true;
             }

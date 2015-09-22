@@ -1,14 +1,21 @@
 package com.intellectualcrafters.plot.generator;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -18,6 +25,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -29,12 +37,78 @@ public abstract class HybridUtils {
     
     public static HybridUtils manager;
     
-    public abstract void analyzePlot(final Plot plot, final RunnableVal<PlotAnalysis> whenDone);
+    public abstract void analyzeRegion(final String world, final RegionWrapper region, final RunnableVal<PlotAnalysis> whenDone);
+    
+    public void analyzePlot(final Plot origin, final RunnableVal<PlotAnalysis> whenDone) {
+        final ArrayDeque<RegionWrapper> zones = new ArrayDeque<>(MainUtil.getRegions(origin));
+        final ArrayList<PlotAnalysis> analysis = new ArrayList<>();
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                if (zones.size() == 0) {
+                    if (analysis.size() > 0) {
+                        whenDone.value = new PlotAnalysis();
+                        for (PlotAnalysis data : analysis) {
+                            whenDone.value.air += data.air;
+                            whenDone.value.air_sd += data.air_sd;
+                            whenDone.value.changes += data.changes;
+                            whenDone.value.changes_sd += data.changes_sd;
+                            whenDone.value.data += data.data;
+                            whenDone.value.data_sd += data.data_sd;
+                            whenDone.value.faces += data.faces;
+                            whenDone.value.faces_sd += data.faces_sd;
+                            whenDone.value.variety += data.variety;
+                            whenDone.value.variety_sd += data.variety_sd;
+                        }
+                        whenDone.value.air /= analysis.size();
+                        whenDone.value.air_sd /= analysis.size();
+                        whenDone.value.changes /= analysis.size();
+                        whenDone.value.changes_sd /= analysis.size();
+                        whenDone.value.data /= analysis.size();
+                        whenDone.value.data_sd /= analysis.size();
+                        whenDone.value.faces /= analysis.size();
+                        whenDone.value.faces_sd /= analysis.size();
+                        whenDone.value.variety /= analysis.size();
+                        whenDone.value.variety_sd /= analysis.size();
+                    }
+                    else {
+                        whenDone.value = analysis.get(0);
+                    }
+                    final List<Integer> result = new ArrayList<>();
+                    result.add(whenDone.value.changes);
+                    result.add(whenDone.value.faces);
+                    result.add(whenDone.value.data);
+                    result.add(whenDone.value.air);
+                    result.add(whenDone.value.variety);
+                    
+                    result.add(whenDone.value.changes_sd);
+                    result.add(whenDone.value.faces_sd);
+                    result.add(whenDone.value.data_sd);
+                    result.add(whenDone.value.air_sd);
+                    result.add(whenDone.value.variety_sd);
+                    final Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
+                    FlagManager.addPlotFlag(origin, flag);
+                    TaskManager.runTask(whenDone);
+                    return;
+                }
+                RegionWrapper region = zones.poll();
+                final Runnable task = this;
+                analyzeRegion(origin.world, region, new RunnableVal<PlotAnalysis>() {
+                    @Override
+                    public void run() {
+                        analysis.add(value);
+                        TaskManager.runTaskLater(task, 1);
+                    }
+                });
+            }
+        };
+        run.run();
+    }
     
     public abstract int checkModified(final String world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks);
     
-    public static List<ChunkLoc> regions;
-    public static List<ChunkLoc> chunks = new ArrayList<>();
+    public static Set<ChunkLoc> regions;
+    public static Set<ChunkLoc> chunks = new HashSet<>();
     public static String world;
     public static boolean UPDATE = false;
     
@@ -50,12 +124,15 @@ public abstract class HybridUtils {
         return chunks;
     }
     
+    /**
+     * Checks all connected plots
+     * @param plot
+     * @param whenDone
+     */
     public void checkModified(final Plot plot, final RunnableVal<Integer> whenDone) {
         if (whenDone == null) {
             return;
         }
-        final Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-        final Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (!(plotworld instanceof ClassicPlotWorld)) {
             whenDone.value = -1;
@@ -64,25 +141,36 @@ public abstract class HybridUtils {
         }
         whenDone.value = 0;
         final ClassicPlotWorld cpw = (ClassicPlotWorld) plotworld;
-        ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
+        final ArrayDeque<RegionWrapper> zones = new ArrayDeque<>(MainUtil.getRegions(plot));
+        Runnable run = new Runnable() {
             @Override
             public void run() {
-                final ChunkLoc loc = new ChunkLoc(value[0], value[1]);
-                ChunkManager.manager.loadChunk(plot.world, loc, false);
-                final int bx = value[2];
-                final int bz = value[3];
-                final int ex = value[4];
-                final int ez = value[5];
-                whenDone.value += checkModified(plot.world, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez, cpw.MAIN_BLOCK);
-                whenDone.value += checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK);
-                whenDone.value += checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez, new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) });
+                if (zones.size() == 0) {
+                    
+                    TaskManager.runTask(whenDone);
+                    return;
+                }
+                RegionWrapper region = zones.poll();
+                Location pos1 = new Location(plot.world, region.minX, region.minY, region.minZ);
+                Location pos2 = new Location(plot.world, region.maxX, region.maxY, region.maxZ);
+                ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
+                    @Override
+                    public void run() {
+                        final ChunkLoc loc = new ChunkLoc(value[0], value[1]);
+                        ChunkManager.manager.loadChunk(plot.world, loc, false);
+                        final int bx = value[2];
+                        final int bz = value[3];
+                        final int ex = value[4];
+                        final int ez = value[5];
+                        whenDone.value += checkModified(plot.world, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez, cpw.MAIN_BLOCK);
+                        whenDone.value += checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK);
+                        whenDone.value += checkModified(plot.world, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez, new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) });
+                    }
+                }, this, 5);
+                
             }
-        }, new Runnable() {
-            @Override
-            public void run() {
-                TaskManager.runTask(whenDone);
-            }
-        }, 5);
+        };
+        run.run();
     }
     
     public boolean scheduleRoadUpdate(final String world, final int extend) {
@@ -90,14 +178,14 @@ public abstract class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        final List<ChunkLoc> regions = ChunkManager.manager.getChunkChunks(world);
+        final Set<ChunkLoc> regions = ChunkManager.manager.getChunkChunks(world);
         return scheduleRoadUpdate(world, regions, extend);
     }
     
-    public boolean scheduleRoadUpdate(final String world, final List<ChunkLoc> rgs, final int extend) {
+    public boolean scheduleRoadUpdate(final String world, final Set<ChunkLoc> rgs, final int extend) {
         HybridUtils.regions = rgs;
         HybridUtils.world = world;
-        chunks = new ArrayList<ChunkLoc>();
+        chunks = new HashSet<ChunkLoc>();
         final AtomicInteger count = new AtomicInteger(0);
         final long baseTime = System.currentTimeMillis();
         final AtomicInteger last = new AtomicInteger();
@@ -106,9 +194,10 @@ public abstract class HybridUtils {
             public void run() {
                 if (UPDATE == false) {
                     last.set(0);
-                    while (chunks.size() > 0) {
-                        final ChunkLoc chunk = chunks.get(0);
-                        chunks.remove(0);
+                    Iterator<ChunkLoc> iter = chunks.iterator();
+                    while (iter.hasNext()) {
+                        final ChunkLoc chunk = iter.next();
+                        iter.remove();
                         regenerateRoad(world, chunk, extend);
                         ChunkManager.manager.unloadChunk(world, chunk, true, true);
                     }
@@ -135,11 +224,12 @@ public abstract class HybridUtils {
                                 }
                                 if (chunks.size() < 1024) {
                                     if (regions.size() > 0) {
-                                        final ChunkLoc loc = regions.get(0);
+                                        Iterator<ChunkLoc> iter = regions.iterator();
+                                        final ChunkLoc loc = iter.next();
+                                        iter.remove();
                                         PS.debug("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
                                         PS.debug(" - Remaining: " + regions.size());
                                         chunks.addAll(getChunks(loc));
-                                        regions.remove(0);
                                         System.gc();
                                     }
                                 }
@@ -148,8 +238,9 @@ public abstract class HybridUtils {
                                     if (((System.currentTimeMillis() - baseTime - last.get()) > 2000) && (last.get() != 0)) {
                                         last.set(0);
                                         PS.debug(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
-                                        final ChunkLoc chunk = chunks.get(0);
-                                        chunks.remove(0);
+                                        Iterator<ChunkLoc> iter = chunks.iterator();
+                                        final ChunkLoc chunk = iter.next();
+                                        iter.remove();
                                         TaskManager.runTask(new Runnable() {
                                             @Override
                                             public void run() {
@@ -162,8 +253,9 @@ public abstract class HybridUtils {
                                     }
                                     if ((((System.currentTimeMillis() - baseTime) - last.get()) < 1500) && (last.get() != 0)) {
                                         while ((System.currentTimeMillis() < diff) && (chunks.size() > 0)) {
-                                            final ChunkLoc chunk = chunks.get(0);
-                                            chunks.remove(0);
+                                            Iterator<ChunkLoc> iter = chunks.iterator();
+                                            final ChunkLoc chunk = iter.next();
+                                            iter.remove();
                                             TaskManager.runTask(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -176,7 +268,9 @@ public abstract class HybridUtils {
                                 }
                             } catch (final Exception e) {
                                 e.printStackTrace();
-                                final ChunkLoc loc = regions.get(0);
+                                Iterator<ChunkLoc> iter = regions.iterator();
+                                final ChunkLoc loc = iter.next();
+                                iter.remove();
                                 PS.debug("&c[ERROR]&7 Could not update '" + world + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
                                 final int sx = loc.x << 5;
                                 final int sz = loc.z << 5;
@@ -204,8 +298,8 @@ public abstract class HybridUtils {
     
     public boolean setupRoadSchematic(final Plot plot) {
         final String world = plot.world;
-        final Location bot = MainUtil.getPlotBottomLoc(world, plot.id);
-        final Location top = MainUtil.getPlotTopLoc(world, plot.id);
+        final Location bot = MainUtil.getPlotBottomLocAbs(world, plot.id).subtract(1, 0, 1);
+        final Location top = MainUtil.getPlotTopLocAbs(world, plot.id);
         final HybridPlotWorld plotworld = (HybridPlotWorld) PS.get().getPlotWorld(world);
         final int sx = (bot.getX() - plotworld.ROAD_WIDTH) + 1;
         final int sz = bot.getZ() + 1;
@@ -221,14 +315,18 @@ public abstract class HybridUtils {
         final int tx = ex;
         final int tz = sz - 1;
         final int ty = get_ey(world, bx, tx, bz, tz, by);
+        
+        final Set<RegionWrapper> sideroad = new HashSet<>(Arrays.asList(new RegionWrapper(sx, ex, sz, ez)));
+        final Set<RegionWrapper> intersection = new HashSet<>(Arrays.asList(new RegionWrapper(bx, tx, bz, tz)));
+        
         final Location pos3 = new Location(world, bx, by, bz);
         final Location pos4 = new Location(world, tx, ty, tz);
         final String dir = PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
-        SchematicHandler.manager.getCompoundTag(world, pos1, pos2, new RunnableVal<CompoundTag>() {
+        SchematicHandler.manager.getCompoundTag(world, sideroad, new RunnableVal<CompoundTag>() {
             @Override
             public void run() {
                 SchematicHandler.manager.save(value, dir + "sideroad.schematic");
-                SchematicHandler.manager.getCompoundTag(world, pos3, pos4, new RunnableVal<CompoundTag>() {
+                SchematicHandler.manager.getCompoundTag(world, intersection, new RunnableVal<CompoundTag>() {
                     @Override
                     public void run() {
                         SchematicHandler.manager.save(value, dir + "intersection.schematic");
@@ -272,14 +370,14 @@ public abstract class HybridUtils {
             final boolean result = ChunkManager.manager.loadChunk(world, chunk, false);
             if (result) {
                 if (id1 != null) {
-                    final Plot p1 = MainUtil.getPlot(world, id1);
-                    if ((p1 != null) && p1.hasOwner() && p1.getSettings().isMerged()) {
+                    final Plot p1 = MainUtil.getPlotAbs(world, id1);
+                    if ((p1 != null) && p1.hasOwner() && p1.isMerged()) {
                         toCheck = true;
                     }
                 }
                 if ((id2 != null) && !toCheck) {
-                    final Plot p2 = MainUtil.getPlot(world, id2);
-                    if ((p2 != null) && p2.hasOwner() && p2.getSettings().isMerged()) {
+                    final Plot p2 = MainUtil.getPlotAbs(world, id2);
+                    if ((p2 != null) && p2.hasOwner() && p2.isMerged()) {
                         toCheck = true;
                     }
                 }

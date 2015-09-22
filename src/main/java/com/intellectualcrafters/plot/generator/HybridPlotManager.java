@@ -171,8 +171,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         final String world = plotworld.worldname;
         final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
         
-        final Location pos1 = MainUtil.getPlotBottomLoc(world, plot.id).add(1, 0, 1);
-        final Location pos2 = MainUtil.getPlotTopLoc(world, plot.id);
+        final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.id);
+        final Location pos2 = MainUtil.getPlotTopLoc_(plot);
         // If augmented
         final boolean canRegen = (plotworld.TYPE == 0) && (plotworld.TERRAIN == 0);
         // The component blocks
@@ -198,7 +198,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 MainUtil.setBiome(world, value[2], value[3], value[4], value[5], dpw.PLOT_BIOME);
                 // These two locations are for each component (e.g. bedrock, main block, floor, air)
                 final Location bot = new Location(world, value[2], 0, value[3]);
-                final Location top = new Location(world, value[4] + 1, 1, value[5] + 1);
+                final Location top = new Location(world, value[4], 1, value[5]);
                 MainUtil.setCuboidAsync(world, bot, top, bedrock);
                 // Each component has a different layer
                 bot.setY(1);

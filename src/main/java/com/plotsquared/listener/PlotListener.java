@@ -60,7 +60,7 @@ public class PlotListener {
         if ((last != null) && !last.id.equals(plot.id)) {
             plotExit(pp, last);
         }
-        pp.setMeta("lastplot", plot);
+        pp.setMeta("lastplot", MainUtil.getPlot(plot));
         EventUtil.manager.callEntry(pp, plot);
         if (plot.hasOwner()) {
             final HashMap<String, Flag> flags = FlagManager.getPlotFlags(plot);

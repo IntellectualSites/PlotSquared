@@ -32,4 +32,9 @@ public class ChunkLoc {
         final ChunkLoc other = (ChunkLoc) obj;
         return ((x == other.x) && (z == other.z));
     }
+    
+    @Override
+    public String toString() {
+        return x + "," + z;
+    }
 }

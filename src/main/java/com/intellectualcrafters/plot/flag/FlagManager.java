@@ -45,10 +45,6 @@ import com.intellectualcrafters.plot.util.Permissions;
  */
 @SuppressWarnings("unused")
 public class FlagManager {
-    // TODO add some flags
-    // - Plot clear interval
-    // - Mob cap
-    // - customized plot composition
     
     private final static HashSet<String> reserved = new HashSet<>();
     
@@ -108,7 +104,7 @@ public class FlagManager {
         }
         if (PS.get().getAllPlotsRaw() != null) {
             for (final Plot plot : PS.get().getPlotsRaw()) {
-                final Flag flag = plot.getSettings().flags.get(af.getKey());
+                final Flag flag = plot.getFlags().get(af.getKey());
                 if (flag != null) {
                     flag.setKey(af);
                 }
@@ -204,14 +200,16 @@ public class FlagManager {
      * @param plot
      * @param flag
      */
-    public static boolean addPlotFlag(final Plot plot, final Flag flag) {
-        final boolean result = EventUtil.manager.callFlagAdd(flag, plot);
+    public static boolean addPlotFlag(final Plot origin, final Flag flag) {
+        final boolean result = EventUtil.manager.callFlagAdd(flag, origin);
         if (!result) {
             return false;
         }
-        plot.getSettings().flags.put(flag.getKey(), flag);
-        MainUtil.reEnterPlot(plot);
-        DBFunc.setFlags(plot, plot.getSettings().flags.values());
+        for (Plot plot : MainUtil.getConnectedPlots(origin)) {
+            plot.getFlags().put(flag.getKey(), flag);
+            MainUtil.reEnterPlot(plot);
+            DBFunc.setFlags(plot, plot.getFlags().values());
+        }
         return true;
     }
     
@@ -220,7 +218,7 @@ public class FlagManager {
         if (!result) {
             return false;
         }
-        plot.getSettings().flags.put(flag.getKey(), flag);
+        plot.getFlags().put(flag.getKey(), flag);
         return true;
     }
     
@@ -270,17 +268,17 @@ public class FlagManager {
     }
     
     public static boolean removePlotFlag(final Plot plot, final String id) {
-        final Flag flag = plot.getSettings().flags.remove(id);
+        final Flag flag = plot.getFlags().remove(id);
         if (flag == null) {
             return false;
         }
         final boolean result = EventUtil.manager.callFlagRemove(flag, plot);
         if (!result) {
-            plot.getSettings().flags.put(id, flag);
+            plot.getFlags().put(id, flag);
             return false;
         }
         MainUtil.reEnterPlot(plot);
-        DBFunc.setFlags(plot, plot.getSettings().flags.values());
+        DBFunc.setFlags(plot, plot.getFlags().values());
         return true;
     }
     
@@ -298,19 +296,21 @@ public class FlagManager {
         return true;
     }
     
-    public static void setPlotFlags(final Plot plot, final Set<Flag> flags) {
-        if ((flags != null) && (flags.size() != 0)) {
-            plot.getSettings().flags.clear();
-            for (final Flag flag : flags) {
-                plot.getSettings().flags.put(flag.getKey(), flag);
+    public static void setPlotFlags(final Plot origin, final Set<Flag> flags) {
+        for (Plot plot : origin.getConnectedPlots()) {
+            if ((flags != null) && (flags.size() != 0)) {
+                plot.getFlags().clear();
+                for (final Flag flag : flags) {
+                    plot.getFlags().put(flag.getKey(), flag);
+                }
+            } else if (plot.getFlags().size() == 0) {
+                return;
+            } else {
+                plot.getFlags().clear();
             }
-        } else if (plot.getSettings().flags.size() == 0) {
-            return;
-        } else {
-            plot.getSettings().flags.clear();
+            MainUtil.reEnterPlot(plot);
+            DBFunc.setFlags(plot, plot.getFlags().values());
         }
-        MainUtil.reEnterPlot(plot);
-        DBFunc.setFlags(plot, plot.getSettings().flags.values());
     }
     
     public static void setClusterFlags(final PlotCluster cluster, final Set<Flag> flags) {

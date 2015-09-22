@@ -151,6 +151,7 @@ public class DBFunc {
             return;
         }
         dbManager.delete(plot);
+        plot.temp = -1;
     }
     
     public static void delete(final PlotCluster toDelete) {
@@ -399,7 +400,7 @@ public class DBFunc {
     
     public static HashMap<UUID, Integer> getRatings(final Plot plot) {
         if (plot.temp == -1) {
-            return new HashMap<>();
+            return new HashMap<>(0);
         }
         return dbManager.getRatings(plot);
     }

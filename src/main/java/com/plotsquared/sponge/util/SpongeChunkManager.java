@@ -1,7 +1,9 @@
 package com.plotsquared.sponge.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
@@ -32,8 +34,8 @@ public class SpongeChunkManager extends ChunkManager {
     
     @Override
     public int[] countEntities(final Plot plot) {
-        final Location pos1 = plot.getBottom();
-        final Location pos2 = plot.getTop();
+        final Location pos1 = plot.getBottomAbs();
+        final Location pos2 = plot.getTopAbs();
         
         final String worldname = pos1.getWorld();
         final World world = SpongeUtil.getWorld(worldname);
@@ -87,8 +89,8 @@ public class SpongeChunkManager extends ChunkManager {
     }
     
     @Override
-    public List<ChunkLoc> getChunkChunks(final String world) {
-        final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+    public Set<ChunkLoc> getChunkChunks(final String world) {
+        final HashSet<ChunkLoc> chunks = new HashSet<ChunkLoc>();
         final World worldObj = SpongeUtil.getWorld(world);
         final ChunkDataStream storage = worldObj.getWorldStorage().getGeneratedChunks();
         while (storage.hasNext()) {

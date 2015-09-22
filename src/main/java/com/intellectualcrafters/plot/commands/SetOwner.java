@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
@@ -58,7 +59,7 @@ public class SetOwner extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if ((plot == null) || ((plot.owner == null) && !Permissions.hasPermission(plr, "plots.admin.command.setowner"))) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
             return false;
@@ -67,14 +68,11 @@ public class SetOwner extends SubCommand {
             MainUtil.sendMessage(plr, C.NEED_USER);
             return false;
         }
-        
-        final PlotId bot = MainUtil.getBottomPlot(plot).id;
-        final PlotId top = MainUtil.getTopPlot(plot).id;
-        final ArrayList<PlotId> plots = MainUtil.getPlotSelectionIds(bot, top);
-        
+        HashSet<Plot> plots = MainUtil.getConnectedPlots(plot);
+        UUID uuid = UUIDHandler.getUUID(args[0], null);
         final PlotPlayer other = UUIDHandler.getPlayer(args[0]);
         if (other == null) {
-            if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
+            if (uuid == null || !Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
                 MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
                 return false;
             }
@@ -88,32 +86,13 @@ public class SetOwner extends SubCommand {
                 }
             }
         }
-        
         if (!plot.isOwner(plr.getUUID())) {
             if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
                 MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.setowner");
                 return false;
             }
         }
-        
-        final String world = loc.getWorld();
-        final UUID uuid = getUUID(args[0]);
-        if (uuid == null) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
-            return false;
-        }
-        for (final PlotId id : plots) {
-            Plot current = PS.get().getPlot(world, id);
-            if (current == null) {
-                current = MainUtil.getPlot(world, id);
-                current.owner = uuid;
-                current.create();
-            } else {
-                current.owner = uuid;
-                DBFunc.setOwner(current, current.owner);
-            }
-            PS.get().updatePlot(current);
-        }
+        plot.setOwner(uuid);
         MainUtil.setSign(args[0], plot);
         MainUtil.sendMessage(plr, C.SET_OWNER);
         if (other != null) {

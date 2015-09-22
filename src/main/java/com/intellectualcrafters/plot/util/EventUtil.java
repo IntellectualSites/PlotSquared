@@ -62,7 +62,7 @@ public abstract class EventUtil {
     public abstract void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
     
     public boolean checkPlayerBlockEvent(final PlotPlayer pp, final PlayerBlockEventType type, final Location loc, final LazyBlock block, final boolean notifyPerms) {
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         final UUID uuid = pp.getUUID();
         if (plot == null) {
             if (!MainUtil.isPlotAreaAbs(loc)) {

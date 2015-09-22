@@ -33,24 +33,19 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
  * plot settings
  *
  */
-@SuppressWarnings("unused")
 public class PlotSettings {
-    /**
-     * Plot
-     */
-    private final Plot plot;
     /**
      * merged plots
      */
-    private boolean[] merged = new boolean[] { false, false, false, false };
+    public boolean[] merged = new boolean[] { false, false, false, false };
     /**
      * plot alias
      */
-    private String alias;
+    public String alias = "";
     /**
      * Comments
      */
-    private List<PlotComment> comments = null;
+    public List<PlotComment> comments = null;
     
     /**
      * The ratings for a plot
@@ -71,9 +66,7 @@ public class PlotSettings {
      *
      * @param plot object
      */
-    public PlotSettings(final Plot plot) {
-        alias = "";
-        this.plot = plot;
+    public PlotSettings() {
         flags = new HashMap<>();
     }
     
@@ -103,8 +96,12 @@ public class PlotSettings {
         this.merged = merged;
     }
     
-    public void setMerged(final int direction, final boolean merged) {
-        this.merged[direction] = merged;
+    public boolean setMerged(final int direction, final boolean merged) {
+        if (this.merged[direction] != merged) {
+            this.merged[direction] = merged;
+            return true;
+        }
+        return false;
     }
     
     public BlockLoc getPosition() {
@@ -131,8 +128,8 @@ public class PlotSettings {
         this.alias = alias;
     }
     
-    public String getJoinMessage() {
-        final Flag greeting = FlagManager.getPlotFlag(plot, "greeting");
+    public String getJoinMessage(String world) {
+        final Flag greeting = FlagManager.getSettingFlag(world, this, "greeting");
         if (greeting != null) {
             return greeting.getValueString();
         }
@@ -144,8 +141,8 @@ public class PlotSettings {
      *
      * @return Farewell flag
      */
-    public String getLeaveMessage() {
-        final Flag farewell = FlagManager.getPlotFlag(plot, "farewell");
+    public String getLeaveMessage(String world) {
+        final Flag farewell = FlagManager.getSettingFlag(world, this, "farewell");
         if (farewell != null) {
             return farewell.getValueString();
         }

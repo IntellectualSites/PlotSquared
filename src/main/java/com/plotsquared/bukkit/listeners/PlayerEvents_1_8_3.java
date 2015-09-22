@@ -24,13 +24,13 @@ public class PlayerEvents_1_8_3 implements Listener {
         if (!PS.get().isPlotWorld(world)) {
             return;
         }
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if ((plot != null) && plot.hasOwner()) {
             if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
                 final Iterator<Block> iter = event.blockList().iterator();
                 while (iter.hasNext()) {
                     final Block b = iter.next();
-                    if (!plot.equals(MainUtil.getPlot(BukkitUtil.getLocation(b.getLocation())))) {
+                    if (!plot.equals(MainUtil.getPlotAbs(BukkitUtil.getLocation(b.getLocation())))) {
                         iter.remove();
                     }
                 }

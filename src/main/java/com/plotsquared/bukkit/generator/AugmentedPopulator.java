@@ -51,7 +51,7 @@ public class AugmentedPopulator extends BlockPopulator {
         o = (plotworld.TERRAIN == 1) || (plotworld.TERRAIN == 2);
         final World bukkitWorld = Bukkit.getWorld(world);
         if (cluster != null) {
-            final Location bl = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
+            final Location bl = manager.getPlotBottomLocAbs(plotworld, cluster.getP1()).subtract(1, 0, 1);
             final Location tl = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1, 0, 1);
             bx = bl.getX();
             bz = bl.getZ();

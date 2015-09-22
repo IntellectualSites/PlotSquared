@@ -93,7 +93,7 @@ public class Purge extends SubCommand {
         final PlotId id = getId(arg);
         if (id != null) {
             final HashSet<Integer> ids = new HashSet<Integer>();
-            final int DBid = DBFunc.getId(MainUtil.getPlot(worldname, id));
+            final int DBid = DBFunc.getId(MainUtil.getPlotAbs(worldname, id));
             if (DBid != Integer.MAX_VALUE) {
                 ids.add(DBid);
             }

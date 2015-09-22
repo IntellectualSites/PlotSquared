@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -46,6 +47,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.plotsquared.object.schematic.StateWrapper;
@@ -92,15 +94,6 @@ public abstract class SchematicHandler {
                 } else {
                     directory = outputDir.getPath();
                 }
-                final Location top = plot.getTop();
-                final Location bot = plot.getBottom();
-                final int area = ((1 + top.getX()) - bot.getX()) * ((1 + top.getZ()) - bot.getZ());
-                if (area > 4096) {
-                    PS.debug("The plot is > 64 x 64 - Fast lossy schematic saving will be used");
-                }
-                //                if (area <= 4096 && PS.get().worldEdit != null) {
-                //                    new WorldEditSchematic().saveSchematic(directory + File.separator + name + ".schematic", plot.world, plot.id);
-                //                }
                 final Runnable THIS = this;
                 SchematicHandler.manager.getCompoundTag(plot.world, plot.id, new RunnableVal<CompoundTag>() {
                     @Override
@@ -162,9 +155,8 @@ public abstract class SchematicHandler {
                     final int LENGTH = demensions.getZ();
                     final int HEIGHT = demensions.getY();
                     // Validate dimensions
-                    final Location bottom = plot.getBottom();
-                    final Location top = plot.getTop();
-                    if ((((top.getX() - bottom.getX()) + 1) < WIDTH) || (((top.getZ() - bottom.getZ()) + 1) < LENGTH) || (HEIGHT > 256)) {
+                    RegionWrapper region = MainUtil.getLargestRegion(plot);
+                    if ((((region.maxX - region.minX + x_offset) + 1) < WIDTH) || (((region.maxZ - region.minZ + z_offset) + 1) < LENGTH) || (HEIGHT > 256)) {
                         PS.debug("Schematic is too large");
                         TaskManager.runTask(whenDone);
                         return;
@@ -177,9 +169,10 @@ public abstract class SchematicHandler {
                     if (HEIGHT >= 256) {
                         y_offset = 0;
                     } else {
-                        y_offset = MainUtil.getHeighestBlock(plot.world, bottom.getX() + 1, bottom.getZ() + 1);
+                        y_offset = MainUtil.getHeighestBlock(plot.world, region.minX + 1, region.minZ + 1);
                     }
-                    final Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1 + x_offset, y_offset - 1, 1 + z_offset);
+                    final Location pos1 = new Location(plot.world, region.minX + x_offset, y_offset, region.minZ + z_offset);
+//                    Location pos2 = new Location(plot.world, region.maxX, region.maxY, region.maxZ);
                     final Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                     // TODO switch to ChunkManager.chunkTask(pos1, pos2, task, whenDone, allocate);
                     final int p1x = pos1.getX();
@@ -369,14 +362,14 @@ public abstract class SchematicHandler {
         if (items == null) {
             return false;
         }
-        Location l1 = MainUtil.getPlotBottomLoc(plot.world, plot.getId());
+        RegionWrapper region = MainUtil.getLargestRegion(plot);
+        Location l1 = new Location(plot.world, region.minX + x_offset, 1, region.minZ + z_offset);
+//        Location l1 = MainUtil.getPlotBottomLoc(plot.world, plot.getId());
         final int sy = MainUtil.getHeighestBlock(plot.world, l1.getX() + 1, l1.getZ() + 1);
         final Dimension demensions = schematic.getSchematicDimension();
         final int HEIGHT = demensions.getY();
         if ((HEIGHT < 255)) {
-            l1 = l1.add(1, sy - 1, 1);
-        } else {
-            l1 = l1.add(1, 0, 1);
+            l1 = l1.add(0, sy - 1, 0);
         }
         final int X = l1.getX() + x_offset;
         final int Y = l1.getY();
@@ -675,25 +668,11 @@ public abstract class SchematicHandler {
         return new CompoundTag("Schematic", schematic);
     }
     
-    /**
-     * Gets the schematic of a plot
-     *
-     * @param world to check
-     * @param id    plot
-     *
-     * @return tag
-     */
-    public void getCompoundTag(final String world, final PlotId id, final RunnableVal<CompoundTag> whenDone) {
-        if (PS.get().getPlot(world, id) == null) {
-            whenDone.run();
-            return;
-        }
-        final Location pos1 = MainUtil.getPlotBottomLoc(world, id).add(1, -1, 1);
-        final Location pos2 = MainUtil.getPlotTopLoc(world, id);
-        getCompoundTag(world, pos1, pos2, whenDone);
-    }
+    public abstract void getCompoundTag(final String world, Set<RegionWrapper> regions, final RunnableVal<CompoundTag> whenDone);
     
-    public abstract void getCompoundTag(final String world, final Location pos1, final Location pos2, final RunnableVal<CompoundTag> whenDone);
+    public void getCompoundTag(final String world, PlotId id, final RunnableVal<CompoundTag> whenDone) {
+        getCompoundTag(world, MainUtil.getRegions(MainUtil.getPlotAbs(world, id)), whenDone);
+    }
     
     public boolean pastePart(final String world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
         int length = 0;

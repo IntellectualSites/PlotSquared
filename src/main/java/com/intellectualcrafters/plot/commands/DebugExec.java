@@ -160,7 +160,7 @@ public class DebugExec extends SubCommand {
             boolean async = false;
             switch (arg) {
                 case "analyze": {
-                    final Plot plot = MainUtil.getPlot(player.getLocation());
+                    final Plot plot = MainUtil.getPlotAbs(player.getLocation());
                     if (plot == null) {
                         MainUtil.sendMessage(player, C.NOT_IN_PLOT);
                         return false;
@@ -168,7 +168,7 @@ public class DebugExec extends SubCommand {
                     final PlotAnalysis analysis = plot.getComplexity();
                     if (analysis != null) {
                         final int complexity = analysis.getComplexity();
-                        MainUtil.sendMessage(player, "Changes: " + analysis.changes);
+                        MainUtil.sendMessage(player, "Changes/column: " + (analysis.changes / 1.0));
                         MainUtil.sendMessage(player, "Complexity: " + complexity);
                         return true;
                     }

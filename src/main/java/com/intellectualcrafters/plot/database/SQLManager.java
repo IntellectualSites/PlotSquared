@@ -763,11 +763,8 @@ public class SQLManager implements AbstractDB {
                     stmt.setString((i * 10) + 8, flag_string.toString());
                 }
                 final boolean[] merged = pair.settings.getMerged();
-                int n = 0;
-                for (int j = 0; j < 4; ++j) {
-                    n = (n << 1) + (merged[j] ? 1 : 0);
-                }
-                stmt.setInt((i * 10) + 9, n);
+                int hash = MainUtil.hash(merged);
+                stmt.setInt((i * 10) + 9, hash);
                 final BlockLoc loc = pair.settings.getPosition();
                 String position;
                 if (loc.y == 0) {
@@ -1311,9 +1308,6 @@ public class SQLManager implements AbstractDB {
     }
     
     public void updateTables() {
-        
-        // TODO task
-        
         if (PS.get().getVersion().equals(PS.get().getLastVersion()) || (PS.get().getLastVersion() == null)) {
             return;
         }
@@ -1646,11 +1640,8 @@ public class SQLManager implements AbstractDB {
         addPlotTask(plot, new UniqueStatement("setMerged") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                int n = 0;
-                for (int i = 0; i < 4; ++i) {
-                    n = (n << 1) + (merged[i] ? 1 : 0);
-                }
-                stmt.setInt(1, n);
+                int hash = MainUtil.hash(merged);
+                stmt.setInt(1, hash);
                 stmt.setInt(2, getId(plot));
             }
             
@@ -1702,12 +1693,13 @@ public class SQLManager implements AbstractDB {
             public void set(final PreparedStatement stmt) throws SQLException {
                 stmt.setInt(1, newPlot.id.x);
                 stmt.setInt(2, newPlot.id.y);
-                stmt.setInt(3, getId(original));
+                stmt.setString(3, newPlot.world);
+                stmt.setInt(4, getId(original));
             }
             
             @Override
             public PreparedStatement get() throws SQLException {
-                return connection.prepareStatement("UPDATE `" + prefix + "plot` SET `plot_id_x` = ?, `plot_id_z` = ? WHERE `id` = ?");
+                return connection.prepareStatement("UPDATE `" + prefix + "plot` SET `plot_id_x` = ?, `plot_id_z` = ?, `world` = ? WHERE `id` = ?");
             }
         });
         addPlotTask(newPlot, null);

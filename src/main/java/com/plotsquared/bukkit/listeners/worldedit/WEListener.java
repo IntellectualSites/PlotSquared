@@ -305,7 +305,7 @@ public class WEListener implements Listener {
             }
         }
         if (restricted.contains(reduced)) {
-            final Plot plot = MainUtil.getPlot(pp.getLocation());
+            final Plot plot = MainUtil.getPlotAbs(pp.getLocation());
             if ((plot != null) && plot.isAdded(pp.getUUID())) {
                 if (delay(p, message, false)) {
                     e.setCancelled(true);

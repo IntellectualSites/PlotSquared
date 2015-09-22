@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -67,11 +68,11 @@ import com.plotsquared.bukkit.object.entity.EntityWrapper;
 
 public class BukkitChunkManager extends ChunkManager {
     @Override
-    public ArrayList<ChunkLoc> getChunkChunks(final String world) {
+    public Set<ChunkLoc> getChunkChunks(final String world) {
         final String directory = Bukkit.getWorldContainer() + File.separator + world + File.separator + "region";
         final File folder = new File(directory);
         final File[] regionFiles = folder.listFiles();
-        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
+        final HashSet<ChunkLoc> chunks = new HashSet<>();
         if (regionFiles == null) {
             throw new RuntimeException("Could not find worlds folder.");
         }
@@ -107,7 +108,7 @@ public class BukkitChunkManager extends ChunkManager {
         for (final Player player : worldObj.getPlayers()) {
             final org.bukkit.Location locObj = player.getLocation();
             if (((locObj.getBlockX() >> 4) == loc.x) && ((locObj.getBlockZ() >> 4) == loc.z) && !locObj.getBlock().isEmpty()) {
-                final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(locObj));
+                final Plot plot = MainUtil.getPlotAbs(BukkitUtil.getLocation(locObj));
                 if (plot != null) {
                     final PlotPlayer pp = BukkitUtil.getPlayer(player);
                     pp.teleport(MainUtil.getDefaultHome(plot));
@@ -167,12 +168,12 @@ public class BukkitChunkManager extends ChunkManager {
         final int z2 = z1 + 15;
         final Location bot = new Location(world, x1, 0, z1);
         Plot plot;
-        plot = MainUtil.getPlot(bot);
+        plot = MainUtil.getPlotAbs(bot);
         if ((plot != null) && (plot.owner != null)) {
             return plot;
         }
         final Location top = new Location(world, x2, 0, z2);
-        plot = MainUtil.getPlot(top);
+        plot = MainUtil.getPlotAbs(top);
         if ((plot != null) && (plot.owner != null)) {
             return plot;
         }
@@ -198,9 +199,6 @@ public class BukkitChunkManager extends ChunkManager {
     private static HashMap<BlockLoc, Byte> bannerBase;
     private static HashSet<EntityWrapper> entities;
     
-    /**
-     * Copy a region to a new location (in the same world)
-     */
     @Override
     public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
@@ -254,7 +252,6 @@ public class BukkitChunkManager extends ChunkManager {
         }, new Runnable() {
             @Override
             public void run() {
-                // TODO whenDone
                 TaskManager.runTask(whenDone);
             }
         }, 5);
@@ -947,7 +944,7 @@ public class BukkitChunkManager extends ChunkManager {
         return BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe);
     }
     
-    public static void swapChunk(final World world, final Chunk pos1, final Chunk pos2, final RegionWrapper r1, final RegionWrapper r2) {
+    public static void swapChunk(final World world1, final World world2, final Chunk pos1, final Chunk pos2, final RegionWrapper r1, final RegionWrapper r2) {
         initMaps();
         final int relX = (r2.minX - r1.minX);
         final int relZ = (r2.minZ - r1.minZ);
@@ -958,29 +955,27 @@ public class BukkitChunkManager extends ChunkManager {
         final int sx = pos1.getX() << 4;
         final int sz = pos1.getZ() << 4;
         
-        final int maxY = world.getMaxHeight();
-        
         for (int x = Math.max(r1.minX, sx); x <= Math.min(r1.maxX, sx + 15); x++) {
             for (int z = Math.max(r1.minZ, sz); z <= Math.min(r1.maxZ, sz + 15); z++) {
-                saveBlocks(world, maxY, sx, sz, relX, relZ);
-                for (int y = 0; y < maxY; y++) {
-                    final Block block1 = world.getBlockAt(x, y, z);
+                saveBlocks(world1, 256, sx, sz, relX, relZ);
+                for (int y = 0; y < 256; y++) {
+                    final Block block1 = world1.getBlockAt(x, y, z);
                     final int id1 = block1.getTypeId();
                     final byte data1 = block1.getData();
                     final int xx = x + relX;
                     final int zz = z + relZ;
-                    final Block block2 = world.getBlockAt(xx, y, zz);
+                    final Block block2 = world2.getBlockAt(xx, y, zz);
                     final int id2 = block2.getTypeId();
                     final byte data2 = block2.getData();
                     if (id1 == 0) {
                         if (id2 != 0) {
-                            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id2, data2);
-                            BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, 0, (byte) 0);
+                            BukkitSetBlockManager.setBlockManager.set(world1, x, y, z, id2, data2);
+                            BukkitSetBlockManager.setBlockManager.set(world2, xx, y, zz, 0, (byte) 0);
                         }
                     } else if (id2 == 0) {
                         if (id1 != 0) {
-                            BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, id1, data1);
-                            BukkitSetBlockManager.setBlockManager.set(world, x, y, z, 0, (byte) 0);
+                            BukkitSetBlockManager.setBlockManager.set(world1, x, y, z, 0, (byte) 0);
+                            BukkitSetBlockManager.setBlockManager.set(world2, xx, y, zz, id1, data1);
                         }
                     } else if (id1 == id2) {
                         if (data1 != data2) {
@@ -988,52 +983,35 @@ public class BukkitChunkManager extends ChunkManager {
                             block2.setData(data1);
                         }
                     } else {
-                        BukkitSetBlockManager.setBlockManager.set(world, x, y, z, id2, data2);
-                        BukkitSetBlockManager.setBlockManager.set(world, xx, y, zz, id1, data1);
+                        BukkitSetBlockManager.setBlockManager.set(world1, x, y, z, id2, data2);
+                        BukkitSetBlockManager.setBlockManager.set(world2, xx, y, zz, id1, data1);
                     }
                     
                 }
             }
         }
-        restoreBlocks(world, 0, 0);
-        restoreEntities(world, 0, 0);
+        restoreBlocks(world1, 0, 0);
+        restoreEntities(world1, 0, 0);
     }
     
     @Override
-    public void swap(final String worldname, final PlotId pos1, final PlotId pos2) {
-        final Location bot1 = MainUtil.getPlotBottomLoc(worldname, pos1).add(1, 0, 1);
-        final Location top1 = MainUtil.getPlotTopLoc(worldname, pos1);
-        
-        final Location bot2 = MainUtil.getPlotBottomLoc(worldname, pos2).add(1, 0, 1);
-        final Location top2 = MainUtil.getPlotTopLoc(worldname, pos2);
-        swap(worldname, bot1, top1, bot2, top2);
-        
-        final Plot plot1 = MainUtil.getPlot(worldname, pos1);
-        final Plot plot2 = MainUtil.getPlot(worldname, pos2);
-        
-        // TODO clear all entities
-        
-        clearAllEntities(plot1.getBottom(), plot1.getTop());
-        clearAllEntities(plot2.getBottom(), plot2.getTop());
-    }
-    
-    @Override
-    public void swap(final String worldname, final Location bot1, final Location top1, final Location bot2, final Location top2) {
+    public void swap(final Location bot1, final Location top1, final Location bot2, final Location top2, final Runnable whenDone) {
         final RegionWrapper region1 = new RegionWrapper(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
         final RegionWrapper region2 = new RegionWrapper(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
-        final World world = Bukkit.getWorld(bot1.getWorld());
+        final World world1 = Bukkit.getWorld(bot1.getWorld());
+        final World world2 = Bukkit.getWorld(bot2.getWorld());
         
         final int relX = bot2.getX() - bot1.getX();
         final int relZ = bot2.getZ() - bot1.getZ();
         
         for (int x = bot1.getX() >> 4; x <= (top1.getX() >> 4); x++) {
             for (int z = bot1.getZ() >> 4; z <= (top1.getZ() >> 4); z++) {
-                final Chunk chunk1 = world.getChunkAt(x, z);
-                final Chunk chunk2 = world.getChunkAt(x + (relX >> 4), z + (relZ >> 4));
-                swapChunk(world, chunk1, chunk2, region1, region2);
+                final Chunk chunk1 = world1.getChunkAt(x, z);
+                final Chunk chunk2 = world2.getChunkAt(x + (relX >> 4), z + (relZ >> 4));
+                swapChunk(world1, world2, chunk1, chunk2, region1, region2);
             }
         }
-        // FIXME swap plots
+        TaskManager.runTaskLater(whenDone, 1);
     }
     
     @Override
@@ -1041,8 +1019,8 @@ public class BukkitChunkManager extends ChunkManager {
         final int[] count = new int[5];
         final World world = BukkitUtil.getWorld(plot.world);
         
-        final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-        final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+        final Location bot = MainUtil.getPlotBottomLocAbs(plot.world, plot.id);
+        final Location top = MainUtil.getPlotTopLocAbs(plot.world, plot.id);
         final int bx = bot.getX() >> 4;
         final int bz = bot.getZ() >> 4;
         

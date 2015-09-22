@@ -23,8 +23,10 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
@@ -33,6 +35,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.DEBUG, requiredType = RequiredType.CONSOLE)
@@ -70,18 +73,53 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 final int radius = Integer.parseInt(args[2]);
-                final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
-                final int size = plots.size();
+                ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlotsInWorld(worldname));
+                // remove non base plots
+                Iterator<Plot> iter = plots.iterator();
+                int maxSize = 0;
+                ArrayList<Integer> sizes = new ArrayList<>();
+                while (iter.hasNext()) {
+                    Plot plot = iter.next();
+                    if (!plot.isBasePlot()) {
+                        iter.remove();
+                        continue;
+                    }
+                    int size = plot.getConnectedPlots().size();
+                    if (size > maxSize) {
+                        maxSize = size;
+                    }
+                    sizes.add(size - 1);
+                }
+                // Sort plots by size (buckets?)]
+                ArrayList<Plot>[] buckets = new ArrayList[maxSize];
+                for (int i = 0; i < plots.size(); i++) {
+                    Plot plot = plots.get(i);
+                    int size = sizes.get(i);
+                    ArrayList<Plot> array = buckets[size];
+                    if (array == null) {
+                        array = new ArrayList<Plot>();
+                        buckets[size] = array;
+                    }
+                    array.add(plot);
+                }
+                final ArrayList<Plot> allPlots = new ArrayList<Plot>(plots.size());
+                for (int i = buckets.length - 1; i >= 0; i--) {
+                    ArrayList<Plot> array = buckets[i];
+                    if (array != null) {
+                        allPlots.addAll(array);
+                    }
+                }
+                final int size = allPlots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {
                     MainUtil.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
                 }
-                final List<PlotId> to_move = new ArrayList<>(getPlots(plots, radius));
+                final List<PlotId> to_move = new ArrayList<>(getPlots(allPlots, radius));
                 final List<PlotId> free = new ArrayList<>();
                 PlotId start = new PlotId(0, 0);
                 while ((start.x <= minimum_radius) && (start.y <= minimum_radius)) {
-                    final Plot plot = MainUtil.getPlot(worldname, start);
+                    final Plot plot = MainUtil.getPlotAbs(worldname, start);
                     if (!plot.hasOwner()) {
                         free.add(plot.id);
                     }
@@ -91,53 +129,54 @@ public class Condense extends SubCommand {
                     MainUtil.sendMessage(plr, "NO FREE PLOTS FOUND");
                     return false;
                 }
-                MainUtil.move(MainUtil.getPlot(worldname, to_move.get(0)), MainUtil.getPlot(worldname, free.get(0)), new Runnable() {
+                MainUtil.sendMessage(plr, "TASK STARTED...");
+                Runnable run = new Runnable() {
                     @Override
                     public void run() {
                         if (!TASK) {
-                            MainUtil.sendMessage(plr, "CONDENSE TASK CANCELLED");
-                            return;
+                            MainUtil.sendMessage(plr, "TASK CANCELLED.");
                         }
-                        to_move.remove(0);
-                        free.remove(0);
-                        int index = 0;
-                        for (final PlotId id : to_move) {
-                            final Plot plot = MainUtil.getPlot(worldname, id);
-                            if (plot.hasOwner()) {
-                                break;
-                            }
-                            index++;
-                        }
-                        for (int i = 0; i < index; i++) {
-                            to_move.remove(0);
-                        }
-                        index = 0;
-                        for (final PlotId id : free) {
-                            final Plot plot = MainUtil.getPlot(worldname, id);
-                            if (!plot.hasOwner()) {
-                                break;
-                            }
-                            index++;
-                        }
-                        for (int i = 0; i < index; i++) {
-                            free.remove(0);
-                        }
-                        if (to_move.size() == 0) {
-                            MainUtil.sendMessage(plr, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
+                        if (allPlots.size() == 0) {
                             TASK = false;
+                            MainUtil.sendMessage(plr, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
                             return;
+                        }
+                        final Runnable task = this;
+                        final Plot origin = allPlots.remove(0);
+                        int i = 0;
+                        while (free.size() > i) {
+                            final Plot possible = MainUtil.getPlotAbs(origin.world, free.get(i));
+                            if (possible.owner != null) {
+                                free.remove(i);
+                                continue;
+                            }
+                            i++;
+                            final AtomicBoolean result = new AtomicBoolean(false);
+                            result.set(MainUtil.move(origin, possible, new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (result.get()) {
+                                        MainUtil.sendMessage(plr, "Moving: " + origin + " -> " + possible);
+                                        TaskManager.runTaskLater(task, 1);
+                                    }
+                                }
+                            }, false));
+                            if (result.get()) {
+                                break;
+                            }
                         }
                         if (free.size() == 0) {
-                            MainUtil.sendMessage(plr, "TASK FAILED. NO FREE PLOTS FOUND!");
                             TASK = false;
+                            MainUtil.sendMessage(plr, "TASK FAILED. NO FREE PLOTS FOUND!");
                             return;
                         }
-                        MainUtil.sendMessage(plr, "MOVING " + to_move.get(0) + " to " + free.get(0));
-                        MainUtil.move(MainUtil.getPlot(worldname, to_move.get(0)), MainUtil.getPlot(worldname, free.get(0)), this);
+                        if (i >= free.size()) {
+                            MainUtil.sendMessage(plr, "SKIPPING COMPLEX PLOT: " + origin);
+                        }
                     }
-                });
+                };
                 TASK = true;
-                MainUtil.sendMessage(plr, "TASK STARTED...");
+                TaskManager.runTaskAsync(run);
                 return true;
             }
             case "stop": {

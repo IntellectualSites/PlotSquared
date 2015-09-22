@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -17,8 +18,10 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 
 public class BO3Handler {
     
@@ -54,54 +57,60 @@ public class BO3Handler {
             return false;
         }
         final String alias = plot.toString();
-        final Location pos1 = plot.getBottom();
-        final Location pos2 = plot.getTop();
+        Location[] corners = MainUtil.getCorners(plot);
+        Location bot = corners[0];
+        Location top = corners[1];
         final ClassicPlotWorld cpw = (ClassicPlotWorld) plotworld;
         final int height = cpw.PLOT_HEIGHT;
         
-        final int cx = (pos1.getX() + pos2.getX()) / 2;
-        final int cz = (pos1.getZ() + pos2.getZ()) / 2;
+        final int cx = (bot.getX() + top.getX()) / 2;
+        final int cz = (bot.getZ() + top.getZ()) / 2;
         
         final HashMap<ChunkLoc, BO3> map = new HashMap<>();
         
+        HashSet<RegionWrapper> regions = MainUtil.getRegions(plot);
         boolean content = false;
-        for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-            final int X = ((x + 7) - cx) >> 4;
-            final int xx = (x - cx) % 16;
-            for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                final int Z = ((z + 7) - cz) >> 4;
-                final int zz = (z - cz) % 16;
-                final ChunkLoc loc = new ChunkLoc(X, Z);
-                BO3 bo3 = map.get(loc);
-                for (int y = 1; y < height; y++) {
-                    final PlotBlock block = BlockManager.manager.getBlock(new Location(plot.world, x, y, z));
-                    if ((block != null) && !contains(cpw.MAIN_BLOCK, block)) {
+        for (RegionWrapper region : regions) {
+            Location pos1 = new Location(plot.world, region.minX, region.minY, region.minZ);
+            Location pos2 = new Location(plot.world, region.maxX, region.maxY, region.maxZ);
+            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+                final int X = ((x + 7) - cx) >> 4;
+                final int xx = (x - cx) % 16;
+                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
+                    final int Z = ((z + 7) - cz) >> 4;
+                    final int zz = (z - cz) % 16;
+                    final ChunkLoc loc = new ChunkLoc(X, Z);
+                    BO3 bo3 = map.get(loc);
+                    for (int y = 1; y < height; y++) {
+                        final PlotBlock block = BlockManager.manager.getBlock(new Location(plot.world, x, y, z));
+                        if ((block != null) && !contains(cpw.MAIN_BLOCK, block)) {
+                            if (bo3 == null) {
+                                bo3 = new BO3(alias, loc);
+                                map.put(loc, bo3);
+                                content = true;
+                            }
+                            bo3.addBlock(xx, y - height - 1, zz, block);
+                        }
+                    }
+                    final PlotBlock floor = BlockManager.manager.getBlock(new Location(plot.world, x, height, z));
+                    if ((floor != null) && !contains(cpw.TOP_BLOCK, floor)) {
                         if (bo3 == null) {
                             bo3 = new BO3(alias, loc);
                             map.put(loc, bo3);
                             content = true;
                         }
-                        bo3.addBlock(xx, y - height - 1, zz, block);
+                        bo3.addBlock(xx, -1, zz, floor);
                     }
-                }
-                final PlotBlock floor = BlockManager.manager.getBlock(new Location(plot.world, x, height, z));
-                if ((floor != null) && !contains(cpw.TOP_BLOCK, floor)) {
-                    if (bo3 == null) {
-                        bo3 = new BO3(alias, loc);
-                        map.put(loc, bo3);
-                        content = true;
-                    }
-                    bo3.addBlock(xx, -1, zz, floor);
-                }
-                for (int y = height + 1; y < 256; y++) {
-                    final PlotBlock block = BlockManager.manager.getBlock(new Location(plot.world, x, y, z));
-                    if ((block != null) && (block.id != 0)) {
-                        if (bo3 == null) {
-                            bo3 = new BO3(alias, loc);
-                            map.put(loc, bo3);
-                            content = true;
+                    for (int y = height + 1; y < 256; y++) {
+                        final PlotBlock block = BlockManager.manager.getBlock(new Location(plot.world, x, y, z));
+                        if ((block != null) && (block.id != 0)) {
+                            if (bo3 == null) {
+                                bo3 = new BO3(alias, loc);
+                                map.put(loc, bo3);
+                                content = true;
+                            }
+                            bo3.addBlock(xx, y - height - 1, zz, block);
                         }
-                        bo3.addBlock(xx, y - height - 1, zz, block);
                     }
                 }
             }

@@ -78,7 +78,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             return;
         }
         final Location l = BukkitUtil.getLocation(state.getLocation());
-        final Plot plot = MainUtil.getPlot(l);
+        final Plot plot = MainUtil.getPlotAbs(l);
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         boolean cancelled = false;
         if (plot == null) {
@@ -126,7 +126,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         if (!PS.get().isPlotWorld(world)) {
             return;
         }
-        final Plot plot = MainUtil.getPlot(l);
+        final Plot plot = MainUtil.getPlotAbs(l);
         final PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
             if (!MainUtil.isPlotArea(l)) {

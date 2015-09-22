@@ -63,80 +63,7 @@ public abstract class PlotWorld {
     public final static int MAX_BUILD_HEIGHT_DEFAULT = 256;
     public final static int MIN_BUILD_HEIGHT_DEFAULT = 1;
     public final static PlotGamemode GAMEMODE_DEFAULT = PlotGamemode.CREATIVE;
-    // are plot clusters enabled
-    // require claim in cluster
-    // TODO make this configurable
-    // make non static and static_default_valu + add config option
-    public static int[] BLOCKS;
-    static {
-        BLOCKS = new int[] {
-        1,
-        2,
-        3,
-        4,
-        5,
-        7,
-        14,
-        15,
-        16,
-        17,
-        19,
-        21,
-        22,
-        23,
-        24,
-        25,
-        35,
-        41,
-        42,
-        43,
-        45,
-        47,
-        48,
-        49,
-        52,
-        56,
-        57,
-        58,
-        61,
-        62,
-        73,
-        74,
-        80,
-        82,
-        84,
-        86,
-        87,
-        88,
-        91,
-        97,
-        98,
-        99,
-        100,
-        103,
-        110,
-        112,
-        120,
-        121,
-        123,
-        124,
-        125,
-        129,
-        133,
-        153,
-        155,
-        159,
-        162,
-        165,
-        166,
-        168,
-        170,
-        172,
-        173,
-        174,
-        179,
-        181 };
-    }
+
     public final String worldname;
     public int MAX_PLOT_MEMBERS;
     public boolean AUTO_MERGE;
@@ -183,6 +110,9 @@ public abstract class PlotWorld {
             return false;
         }
         final PlotWorld plotworld = (PlotWorld) obj;
+        if (this.worldname.equals(plotworld.worldname)) {
+            return true;
+        }
         final ConfigurationSection section = PS.get().config.getConfigurationSection("worlds");
         for (final ConfigurationNode setting : plotworld.getSettingNodes()) {
             final Object constant = section.get(plotworld.worldname + "." + setting.getConstant());

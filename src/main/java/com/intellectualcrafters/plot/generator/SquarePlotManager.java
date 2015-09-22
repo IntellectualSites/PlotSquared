@@ -1,12 +1,17 @@
 package com.intellectualcrafters.plot.generator;
 
+import java.util.HashSet;
+import java.util.Iterator;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * A plot manager with a square grid layout, with square shaped plots
@@ -14,9 +19,23 @@ import com.intellectualcrafters.plot.util.MainUtil;
 public abstract class SquarePlotManager extends GridPlotManager {
     @Override
     public boolean clearPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone) {
-        final Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-        final Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
-        ChunkManager.manager.regenerateRegion(pos1, pos2, whenDone);
+        final HashSet<RegionWrapper> regions = MainUtil.getRegions(plot);
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                if (regions.size() == 0) {
+                    whenDone.run();
+                    return;
+                }
+                Iterator<RegionWrapper> iter = regions.iterator();
+                RegionWrapper region = iter.next();
+                iter.remove();
+                Location pos1 = new Location(plot.world, region.minX, region.minY, region.minZ);
+                Location pos2 = new Location(plot.world, region.maxX, region.maxY, region.maxZ);
+                ChunkManager.manager.regenerateRegion(pos1, pos2, this);
+            }
+        };
+        run.run();
         return true;
     }
     
@@ -33,8 +52,12 @@ public abstract class SquarePlotManager extends GridPlotManager {
     @Override
     public PlotId getPlotIdAbs(final PlotWorld plotworld, int x, final int y, int z) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
-        x -= dpw.ROAD_OFFSET_X;
-        z -= dpw.ROAD_OFFSET_Z;
+        if (dpw.ROAD_OFFSET_X != 0) {
+            x -= dpw.ROAD_OFFSET_X;
+        }
+        if (dpw.ROAD_OFFSET_Z != 0) {
+            z -= dpw.ROAD_OFFSET_Z;
+        }
         int pathWidthLower;
         int end;
         if (dpw.ROAD_WIDTH == 0) {
@@ -65,12 +88,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             idz = (z / size) + 1;
             z = (z % size);
         }
-        final boolean northSouth = (z <= pathWidthLower) || (z > end);
-        final boolean eastWest = (x <= pathWidthLower) || (x > end);
-        if (northSouth || eastWest) {
-            return null;
-        }
-        return new PlotId(idx, idz);
+        return ((z <= pathWidthLower) || (z > end) || (x <= pathWidthLower) || (x > end)) ? null : new PlotId(idx, idz);
     }
     
     @Override
@@ -113,53 +131,46 @@ public abstract class SquarePlotManager extends GridPlotManager {
             dz = (z / size) + 1;
             rz = (z % size);
         }
-        final boolean northSouth = (rz <= pathWidthLower) || (rz > end);
-        final boolean eastWest = (rx <= pathWidthLower) || (rx > end);
-        if (northSouth && eastWest) {
-            // This means you are in the intersection
-            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH + dpw.ROAD_OFFSET_X, 0, z + dpw.ROAD_WIDTH + dpw.ROAD_OFFSET_Z);
-            final PlotId id = MainUtil.getPlotAbs(loc);
-            final Plot plot = PS.get().getPlot(plotworld.worldname, id);
-            if (plot == null) {
-                return null;
-            }
-            if ((plot.getMerged(0) && plot.getMerged(3))) {
-                return MainUtil.getBottomPlot(plot).id;
-            }
-            return null;
-        }
-        if (northSouth) {
-            // You are on a road running West to East (yeah, I named the var poorly)
-            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_OFFSET_X, 0, z + dpw.ROAD_WIDTH + dpw.ROAD_OFFSET_Z);
-            final PlotId id = MainUtil.getPlotAbs(loc);
-            final Plot plot = PS.get().getPlot(plotworld.worldname, id);
-            if (plot == null) {
-                return null;
-            }
-            if (plot.getMerged(0)) {
-                return MainUtil.getBottomPlot(plot).id;
-            }
-            return null;
-        }
-        if (eastWest) {
-            // This is the road separating an Eastern and Western plot
-            final Location loc = new Location(plotworld.worldname, x + dpw.ROAD_WIDTH + dpw.ROAD_OFFSET_X, 0, z + dpw.ROAD_OFFSET_Z);
-            final PlotId id = MainUtil.getPlotAbs(loc);
-            final Plot plot = PS.get().getPlot(plotworld.worldname, id);
-            if (plot == null) {
-                return null;
-            }
-            if (plot.getMerged(3)) {
-                return MainUtil.getBottomPlot(plot).id;
-            }
-            return null;
-        }
-        final PlotId id = new PlotId(dx, dz);
-        final Plot plot = PS.get().getPlot(plotworld.worldname, id);
-        if (plot == null) {
+        PlotId id = new PlotId(dx, dz);
+        boolean[] merged = new boolean[] {(rz <= pathWidthLower), (rx > end), (rz > end), (rx <= pathWidthLower)};
+        int hash = MainUtil.hash(merged);
+        // Not merged, and no need to check if it is
+        if (hash == 0) {
             return id;
         }
-        return MainUtil.getBottomPlot(plot).id;
+        Plot plot = PS.get().getPlot(plotworld.worldname, id);
+        // Not merged, and standing on road
+        if (plot == null) {
+            return null;
+        }
+        switch (hash) {
+            case 8:
+                // north
+                return plot.getMerged(0) ? id : null;
+            case 4:
+                // east
+                return plot.getMerged(1) ? id : null;
+            case 2:
+                // south
+                return plot.getMerged(2) ? id : null;
+            case 1:
+                // west
+                return plot.getMerged(3) ? id : null;
+            case 12:
+                // northest
+                return plot.getMerged(4) ? id : null;
+            case 6:
+                // southeast
+                return plot.getMerged(5) ? id : null;
+            case 3:
+                // southwest
+                return plot.getMerged(6) ? id : null;
+            case 9:
+                // northwest
+                return plot.getMerged(7) ? id : null;
+        }
+        PS.debug("invalid location: " + merged);
+        return null;
     }
     
     /**
@@ -170,8 +181,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
         final int px = plotid.x;
         final int pz = plotid.y;
-        final int x = (dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
-        final int z = (dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2)) - 1;
+        final int x = (dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2));
+        final int z = (dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - ((int) Math.floor(dpw.ROAD_WIDTH / 2));
         return new Location(plotworld.worldname, x, plotworld.MIN_BUILD_HEIGHT, z);
     }
 }

@@ -59,7 +59,6 @@ import com.plotsquared.bukkit.listeners.PlayerEvents;
 import com.plotsquared.bukkit.listeners.PlayerEvents_1_8;
 import com.plotsquared.bukkit.listeners.PlayerEvents_1_8_3;
 import com.plotsquared.bukkit.listeners.PlotPlusListener;
-import com.plotsquared.bukkit.listeners.TNTListener;
 import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
 import com.plotsquared.bukkit.titles.DefaultTitle;
@@ -520,7 +519,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void registerTNTListener() {
-        getServer().getPluginManager().registerEvents(new TNTListener(), this);
+        // No longer here
     }
     
     @Override

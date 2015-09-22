@@ -29,6 +29,6 @@ public class SetBlockSlow extends BukkitSetBlockManager {
     
     @Override
     public void update(final Collection<Chunk> chunks) {
-        // TODO nothing
+        // nothing
     }
 }

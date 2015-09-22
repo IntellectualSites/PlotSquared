@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -170,7 +171,7 @@ public class list extends SubCommand {
                     match = null;
                 }
                 for (final Plot plot : PS.get().getPlots()) {
-                    final Flag flag = plot.getSettings().flags.get("done");
+                    final Flag flag = plot.getFlags().get("done");
                     if (flag == null) {
                         continue;
                     }
@@ -189,8 +190,8 @@ public class list extends SubCommand {
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
                     public int compare(final Plot a, final Plot b) {
-                        final String va = a.getSettings().flags.get("done").getValueString();
-                        final String vb = b.getSettings().flags.get("done").getValueString();
+                        final String va = a.getFlags().get("done").getValueString();
+                        final String vb = b.getFlags().get("done").getValueString();
                         if (MathMan.isInteger(va)) {
                             if (MathMan.isInteger(vb)) {
                                 return Integer.parseInt(vb) - Integer.parseInt(va);
@@ -332,6 +333,13 @@ public class list extends SubCommand {
     }
     
     public void displayPlots(final PlotPlayer player, List<Plot> plots, final int pageSize, int page, final String world, final String[] args, final boolean sort) {
+        int rawSize = plots.size();
+        Iterator<Plot> iter = plots.iterator();
+        while (iter.hasNext()) {
+            if (!iter.next().isBasePlot()) {
+                iter.remove();
+            }
+        }
         if (sort) {
             plots = PS.get().sortPlots(plots, SortType.DISTANCE_FROM_ORIGIN, world);
         }
@@ -351,17 +359,12 @@ public class list extends SubCommand {
         final List<Plot> subList = plots.subList(page * pageSize, max);
         
         // Header
-        final String header = C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%amount%", plots.size() + "")
+        final String header = C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%amount%", plots.size() + "/" + rawSize)
         .replaceAll("%word%", "all");
         MainUtil.sendMessage(player, header);
         
         int i = page * pageSize;
         for (final Plot plot : subList) {
-            if (plot.getSettings().isMerged()) {
-                if (!MainUtil.getBottomPlot(plot).equals(plot)) {
-                    continue;
-                }
-            }
             i++;
             String color;
             if (plot.owner == null) {
@@ -379,7 +382,7 @@ public class list extends SubCommand {
             
             final PlotMessage members = new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", Info.getPlayerList(plot.getMembers())))).color("$1");
             
-            String strFlags = StringMan.join(plot.getSettings().flags.values(), ",");
+            String strFlags = StringMan.join(plot.getFlags().values(), ",");
             if (strFlags.length() == 0) {
                 strFlags = C.NONE.s();
             }

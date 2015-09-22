@@ -51,7 +51,7 @@ public class Claim extends SubCommand {
     }
     
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
-        if (plot.hasOwner() || plot.getSettings().isMerged()) {
+        if (plot.hasOwner() || plot.isMerged()) {
             return false;
         }
         final boolean result = EventUtil.manager.callClaim(player, plot, false);
@@ -94,13 +94,12 @@ public class Claim extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String... args) {
-        
         String schematic = "";
         if (args.length >= 1) {
             schematic = args[0];
         }
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }

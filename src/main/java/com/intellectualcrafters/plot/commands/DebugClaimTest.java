@@ -95,7 +95,7 @@ public class DebugClaimTest extends SubCommand {
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
         final ArrayList<Plot> plots = new ArrayList<>();
         for (final PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
-            final Plot plot = MainUtil.getPlot(world, id);
+            final Plot plot = MainUtil.getPlotAbs(world, id);
             if (PS.get().getPlot(world, plot.id) != null) {
                 MainUtil.sendMessage(null, " - &cDB Already contains: " + plot.id);
                 continue;

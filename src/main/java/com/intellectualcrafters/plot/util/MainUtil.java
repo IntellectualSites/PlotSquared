@@ -20,20 +20,26 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -45,6 +51,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.plotsquared.listener.PlotListener;
 
@@ -86,6 +93,166 @@ public class MainUtil {
                 }
             }
         }
+    }
+    
+    /**
+     * Attempt to find the largest rectangular region in a plot (as plots can form non rectangular shapes) 
+     * @param plot
+     * @return
+     */
+    public static RegionWrapper getLargestRegion(Plot plot) {
+        HashSet<RegionWrapper> regions = getRegions(plot);
+        RegionWrapper max = null;
+        int area = 0;
+        for (RegionWrapper region : regions) {
+            int current = (region.maxX - region.minX + 1) * (region.maxZ - region.minZ + 1);
+            if (current > area) {
+                max = region;
+                area = current;
+            }
+        }
+        return max;
+    }
+    
+    /**
+     * This will combine each plot into effective rectangular regions
+     * @param plot
+     * @return
+     */
+    public static HashSet<RegionWrapper> getRegions(Plot origin) {
+        if (regions_cache != null && connected_cache != null && connected_cache.contains(origin)) {
+            return regions_cache;
+        }
+        if (!origin.isMerged()) {
+            final Location pos1 = MainUtil.getPlotBottomLocAbs(origin.world, origin.id);  
+            final Location pos2 = MainUtil.getPlotTopLocAbs(origin.world, origin.id);
+            connected_cache = new HashSet<>(Arrays.asList(origin));
+            regions_cache = new HashSet<>(1);
+            regions_cache.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getY(), pos2.getY(), pos1.getZ(), pos2.getZ()));
+            return regions_cache;
+        }
+        
+//        Create a list of ALL edges from your rectangles. One rectangle has 4 edges.
+//        Let the Edge be a class with properly defined compareTo() and equals().
+//        Sort the edges list (uses comapreTo).
+//        Iterate through the list. If the same edge is present in the list TWICE, remove them both from the list.
+//        The remaining edges are the edges of your polygon.
+        
+        
+        HashSet<Plot> plots = getConnectedPlots(origin);
+        regions_cache = new HashSet<>();
+        HashSet<PlotId> visited = new HashSet<>();
+        ArrayList<PlotId> ids;
+        for (Plot current : plots) {
+            if (visited.contains(current.id)) {
+                continue;
+            }
+            boolean merge = true;
+            boolean tmp = true;
+            PlotId bot = new PlotId(current.id.x, current.id.y);
+            PlotId top = new PlotId(current.id.x, current.id.y);
+            while (merge) {
+                merge = false;
+                ids = getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, bot.y - 1));
+                tmp = true;
+                for (PlotId id : ids) {
+                    Plot plot = MainUtil.getPlotAbs(origin.world, id);
+                    if (plot == null || !plot.getMerged(2) || (visited.contains(plot.id))) {
+                        tmp = false;
+                    }
+                }
+                if (tmp) {
+                    merge = true;
+                    bot.y--;
+                }
+                ids = getPlotSelectionIds(new PlotId(top.x + 1, bot.y), new PlotId(top.x + 1, top.y));
+                tmp = true;
+                for (PlotId id : ids) {
+                    Plot plot = MainUtil.getPlotAbs(origin.world, id);
+                    if (plot == null || !plot.getMerged(3) || (visited.contains(plot.id))) {
+                        tmp = false;
+                    }
+                }
+                if (tmp) {
+                    merge = true;
+                    top.x++;
+                }
+                ids = getPlotSelectionIds(new PlotId(bot.x, top.y + 1), new PlotId(top.x, top.y + 1));
+                tmp = true;
+                for (PlotId id : ids) {
+                    Plot plot = MainUtil.getPlotAbs(origin.world, id);
+                    if (plot == null || !plot.getMerged(0) || (visited.contains(plot.id))) {
+                        tmp = false;
+                    }
+                }
+                if (tmp) {
+                    merge = true;
+                    top.y++;
+                }
+                ids = getPlotSelectionIds(new PlotId(bot.x - 1, bot.y), new PlotId(bot.x - 1, top.y));
+                tmp = true;
+                for (PlotId id : ids) {
+                    Plot plot = MainUtil.getPlotAbs(origin.world, id);
+                    if (plot == null || !plot.getMerged(1) || (visited.contains(plot.id))) {
+                        tmp = false;
+                    }
+                }
+                if (tmp) {
+                    merge = true;
+                    bot.x--;
+                }
+            }
+            Location gtopabs = getPlotAbs(origin.world, top).getTopAbs();
+            Location gbotabs = getPlotAbs(origin.world, bot).getBottomAbs();
+            for (PlotId id : getPlotSelectionIds(bot, top)) {
+                visited.add(id);
+            }
+            for (int x = bot.x; x <= top.x; x++) {
+                Plot plot = getPlotAbs(current.world, new PlotId(x, top.y));
+                if (plot.getMerged(2)) {
+                    // south wedge
+                    Location toploc = getPlotTopLoc_(plot);
+                    Location botabs = plot.getBottomAbs();
+                    Location topabs = plot.getTopAbs();
+                    regions_cache.add(new RegionWrapper(botabs.getX(), topabs.getX(), topabs.getZ() + 1, toploc.getZ()));
+                    if (plot.getMerged(5)) {
+                        regions_cache.add(new RegionWrapper(topabs.getX() + 1, toploc.getX(), topabs.getZ() + 1, toploc.getZ()));
+                        // intersection
+                    }
+                }
+            }
+            
+            for (int y = bot.y; y <= top.y; y++) {
+                Plot plot = getPlotAbs(current.world, new PlotId(top.x, y));
+                if (plot.getMerged(1)) {
+                    // east wedge
+                    Location toploc = getPlotTopLoc_(plot);
+                    Location botabs = plot.getBottomAbs();
+                    Location topabs = plot.getTopAbs();
+                    regions_cache.add(new RegionWrapper(topabs.getX() + 1, toploc.getX(), botabs.getZ(), topabs.getZ()));
+                    if (plot.getMerged(5)) {
+                        regions_cache.add(new RegionWrapper(topabs.getX() + 1, toploc.getX(), topabs.getZ() + 1, toploc.getZ()));
+                        // intersection
+                    }
+                }
+            }
+            regions_cache.add(new RegionWrapper(gbotabs.getX(), gtopabs.getX(), gbotabs.getZ(), gtopabs.getZ()));
+        }
+        return regions_cache;
+    }
+    
+    public static int hash(boolean[] array) {
+        if (array.length == 4) {
+            if (!array[0] && !array[1] && !array[2] && !array[3]) {
+                return 0;
+            }
+            return ((array[0] ? 1 : 0) << 3) + ((array[1] ? 1 : 0) << 2) + ((array[2] ? 1 : 0) << 1) + (array[3] ? 1 : 0);
+        }
+        int n = 0;
+        for (int j = 0; j < array.length; ++j) {
+            n = (n << 1) + (array[j] ? 1 : 0);
+        }
+        return n;
     }
     
     public static boolean isPlotArea(final Location location) {
@@ -132,10 +299,19 @@ public class MainUtil {
         }, 1);
     }
     
-    public static Location getPlotCenter(final Plot plot) {
-        final Location bot = getPlotBottomLoc(plot.world, plot.id);
-        final Location top = getPlotTopLoc(plot.world, plot.id).add(1, 0, 1);
-        return new Location(plot.world, bot.getX() + ((top.getX() - bot.getX()) / 2), 0, bot.getZ() + ((top.getZ() - bot.getZ()) / 2));
+    public static void plotTask(Plot plot, RunnableVal<Plot> run) {
+        if (!plot.isMerged()) {
+            run.value = plot;
+            run.run();
+            return;
+        }
+        for (Plot current : getConnectedPlots(plot)) {
+            run.value = current;
+            run.run();
+            if (run.value == null) {
+                break;
+            }
+        }
     }
     
     public static List<Plot> getPlotsBySearch(final String search) {
@@ -198,7 +374,7 @@ public class MainUtil {
             if ((world != null) && plot.world.equals(world)) {
                 count++;
             }
-            if ((alias != null) && alias.equals(plot.getSettings().getAlias())) {
+            if ((alias != null) && alias.equals(plot.getAlias())) {
                 count += 2;
             }
             if (count != 0) {
@@ -223,7 +399,7 @@ public class MainUtil {
                 }
                 return null;
             }
-            return getPlot(player.getLocation());
+            return getPlotAbs(player.getLocation());
         }
         String worldname = null;
         PlotId id = null;
@@ -247,7 +423,7 @@ public class MainUtil {
                 worldname = PS.get().getPlotWorlds().iterator().next();
             }
             for (final Plot p : PS.get().getPlotsInWorld(worldname)) {
-                final String name = p.getSettings().getAlias();
+                final String name = p.getAlias();
                 if ((name.length() != 0) && name.equalsIgnoreCase(arg)) {
                     return p;
                 }
@@ -255,7 +431,7 @@ public class MainUtil {
             for (final String world : PS.get().getPlotWorlds()) {
                 if (!world.endsWith(worldname)) {
                     for (final Plot p : PS.get().getPlotsInWorld(world)) {
-                        final String name = p.getSettings().getAlias();
+                        final String name = p.getAlias();
                         if ((name.length() != 0) && name.equalsIgnoreCase(arg)) {
                             return p;
                         }
@@ -275,7 +451,7 @@ public class MainUtil {
             }
             return null;
         }
-        return getPlot(worldname, id);
+        return getPlotAbs(worldname, id);
     }
     
     /**
@@ -302,61 +478,54 @@ public class MainUtil {
         return MainUtil.mergePlots(world, plotIds, true, true);
     }
     
-    public static boolean unlinkPlot(final Plot plot, final boolean createRoad) {
-        final String world = plot.world;
-        final PlotId pos1 = MainUtil.getBottomPlot(plot).id;
-        final PlotId pos2 = MainUtil.getTopPlot(plot).id;
-        final ArrayList<PlotId> ids = MainUtil.getPlotSelectionIds(pos1, pos2);
-        final boolean result = EventUtil.manager.callUnlink(world, ids);
+    /**
+     * Unlink the plot and all connected plots
+     * @param plot
+     * @param createRoad
+     * @return
+     */
+    public static boolean unlinkPlot(final Plot plot, final boolean createRoad, boolean createSign) {
+        if (!plot.isMerged()) {
+            return false;
+        }
+        HashSet<Plot> plots = getConnectedPlots(plot);
+        ArrayList<PlotId> ids = new ArrayList<>(plots.size());
+        for (Plot current : plots) {
+            current.setHome(null);
+            ids.add(current.id);
+        }
+        final boolean result = EventUtil.manager.callUnlink(plot.world, ids);
         if (!result) {
             return false;
         }
-        final PlotManager manager = PS.get().getPlotManager(world);
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        plot.removeSign();
+        final PlotManager manager = PS.get().getPlotManager(plot.world);
+        final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         manager.startPlotUnlink(plotworld, ids);
-        for (final PlotId id : ids) {
-            final Plot myplot = PS.get().getPlot(world, id);
-            if (plot == null) {
-                continue;
-            }
-            if (plot.trusted != null) {
-                myplot.trusted = plot.trusted;
-            }
-            if (plot.denied != null) {
-                myplot.denied = plot.denied;
-            }
-            myplot.getSettings().setMerged(new boolean[] { false, false, false, false });
-            DBFunc.setMerged(myplot, myplot.getSettings().getMerged());
-        }
         if ((plotworld.TERRAIN != 3) && createRoad) {
-            for (int x = pos1.x; x <= pos2.x; x++) {
-                for (int y = pos1.y; y <= pos2.y; y++) {
-                    final boolean lx = x < pos2.x;
-                    final boolean ly = y < pos2.y;
-                    final Plot p = MainUtil.getPlot(world, new PlotId(x, y));
-                    if (lx) {
-                        manager.createRoadEast(plotworld, p);
-                        if (ly) {
-                            manager.createRoadSouthEast(plotworld, p);
+            for (Plot current : plots) {
+                if (current.getMerged(1)) {
+                    manager.createRoadEast(plotworld, current);
+                    if (current.getMerged(2)) {
+                        manager.createRoadSouth(plotworld, current);
+                        if (current.getMerged(5)) {
+                            manager.createRoadSouthEast(plotworld, current);
                         }
                     }
-                    if (ly) {
-                        manager.createRoadSouth(plotworld, p);
-                    }
-                    MainUtil.setSign(UUIDHandler.getName(plot.owner), plot);
                 }
+                else if (current.getMerged(2)) {
+                    manager.createRoadSouth(plotworld, current);
+                }
+            }
+        }
+        for (Plot current : plots) {
+            boolean[] merged = new boolean[] { false, false, false, false };
+            current.setMerged(merged);
+            if (createSign) {
+                MainUtil.setSign(getName(current.owner), current);
             }
         }
         manager.finishPlotUnlink(plotworld, ids);
-        for (final PlotId id : ids) {
-            final Plot myPlot = MainUtil.getPlot(world, id);
-            if (plot.hasOwner()) {
-                final String name = UUIDHandler.getName(myPlot.owner);
-                if (name != null) {
-                    MainUtil.setSign(name, myPlot);
-                }
-            }
-        }
         return true;
     }
     
@@ -403,28 +572,6 @@ public class MainUtil {
         return (p1 != null) && ((p2 == null) || !p1.equals(p2));
     }
     
-    public static ArrayList<PlotId> getMaxPlotSelectionIds(final String world, PlotId pos1, PlotId pos2) {
-        
-        final Plot plot1 = PS.get().getPlot(world, pos1);
-        final Plot plot2 = PS.get().getPlot(world, pos2);
-        
-        if (plot1 != null) {
-            pos1 = getBottomPlot(plot1).id;
-        }
-        
-        if (plot2 != null) {
-            pos2 = getTopPlot(plot2).id;
-        }
-        
-        final ArrayList<PlotId> myplots = new ArrayList<>();
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                myplots.add(new PlotId(x, y));
-            }
-        }
-        return myplots;
-    }
-    
     /**
      * Get the number of plots for a player
      *
@@ -436,7 +583,7 @@ public class MainUtil {
         final UUID uuid = plr.getUUID();
         int count = 0;
         for (final Plot plot : PS.get().getPlotsInWorld(world)) {
-            if (plot.hasOwner() && plot.owner.equals(uuid) && (!Settings.DONE_COUNTS_TOWARDS_LIMIT || !plot.getSettings().flags.containsKey("done"))) {
+            if (plot.hasOwner() && plot.owner.equals(uuid) && (!Settings.DONE_COUNTS_TOWARDS_LIMIT || !plot.getFlags().containsKey("done"))) {
                 count++;
             }
         }
@@ -449,6 +596,9 @@ public class MainUtil {
      * @return
      */
     public static int getPlayerPlotCount(final PlotPlayer plr) {
+        if (!Settings.GLOBAL_LIMIT) {
+            return getPlayerPlotCount(plr.getLocation().getWorld(), plr);
+        }
         int count = 0;
         for (final String world : PS.get().getPlotWorldsString()) {
             count += getPlayerPlotCount(world, plr);
@@ -456,15 +606,34 @@ public class MainUtil {
         return count;
     }
     
-    public static Location getDefaultHome(final Plot plot) {
+    public static Plot getPlot(Plot plot) {
+        if (plot == null) {
+            return null;
+        }
+        return plot.getBasePlot(false);
+    }
+    
+    public static Plot getPlot(Location loc) {
+        return getPlot(getPlotAbs(loc));
+    }
+    
+    public static Plot getPlot(String world, PlotId id) {
+        if (id == null) {
+            return null;
+        }
+        return getPlot(getPlotAbs(world, id));
+    }
+    
+    public static Location getDefaultHome(Plot plot) {
+        plot = plot.getBasePlot(false);
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.DEFAULT_HOME != null) {
-            final Location bot = getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
             final PlotManager manager = PS.get().getPlotManager(plot.world);
             final int x;
             final int z;
+            Location bot = plot.getBottomAbs();
             if ((plotworld.DEFAULT_HOME.x == Integer.MAX_VALUE) && (plotworld.DEFAULT_HOME.z == Integer.MAX_VALUE)) {
-                final Location top = getPlotTopLoc(plot.world, plot.id);
+                Location top = plot.getTopAbs();
                 x = ((top.getX() - bot.getX()) / 2) + bot.getX();
                 z = ((top.getZ() - bot.getZ()) / 2) + bot.getZ();
             } else {
@@ -474,8 +643,8 @@ public class MainUtil {
             final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PS.get().getPlotWorld(plot.world), plot).getY());
             return new Location(plot.world, x, y + 1, z);
         }
-        final Location top = getPlotTopLoc(plot.world, plot.id);
-        final Location bot = getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+        Location bot = plot.getBottomAbs();
+        Location top = plot.getTopAbs();
         final int x = ((top.getX() - bot.getX()) / 2) + bot.getX();
         final int z = bot.getZ() - 1;
         final PlotManager manager = PS.get().getPlotManager(plot.world);
@@ -483,14 +652,14 @@ public class MainUtil {
         return new Location(plot.world, x, y + 1, z);
     }
     
-    public static boolean teleportPlayer(final PlotPlayer player, final Location from, final Plot plot) {
-        final Plot bot = MainUtil.getBottomPlot(plot);
+    public static boolean teleportPlayer(final PlotPlayer player, final Location from, Plot plot) {
+        plot = plot.getBasePlot(false);
         final boolean result = EventUtil.manager.callTeleport(player, from, plot);
         
         if (result) {
             final Location location;
             if (PS.get().getPlotWorld(plot.world).HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
-                location = MainUtil.getPlotHome(bot);
+                location = MainUtil.getPlotHome(plot);
             } else {
                 location = getDefaultHome(plot);
             }
@@ -552,23 +721,20 @@ public class MainUtil {
     }
     
     public static void update(final Plot plot) {
-        final Location bot = getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-        final Location top = getPlotTopLoc(plot.world, plot.id);
-        
-        final int bx = bot.getX() >> 4;
-        final int bz = bot.getZ() >> 4;
-        
-        final int tx = (top.getX() >> 4);
-        final int tz = (top.getZ() >> 4);
-        
-        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
-        
-        for (int x = bx; x <= tx; x++) {
-            for (int z = bz; z <= tz; z++) {
-                chunks.add(new ChunkLoc(x, z));
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                final HashSet<ChunkLoc> chunks = new HashSet<>();
+                for (RegionWrapper region : getRegions(plot)) {
+                    for (int x = region.minX >> 4; x <= region.maxX >> 4; x++) {
+                        for (int z = region.minZ >> 4; z <= region.maxZ >> 4; z++) {
+                            chunks.add(new ChunkLoc(x, z));
+                        }
+                    }
+                }
+                BlockUpdateUtil.setBlockManager.update(plot.world, chunks);
             }
-        }
-        BlockUpdateUtil.setBlockManager.update(plot.world, chunks);
+        });
     }
     
     public static void createWorld(final String world, final String generator) {}
@@ -631,9 +797,9 @@ public class MainUtil {
         final int size = ((1 + pos2.x) - pos1.x) * ((1 + pos2.y) - pos1.y);
         final HashSet<Plot> result = new HashSet<>();
         if (PS.get().isPlotWorld(world)) {
-            if (size < PS.get().getAllPlotsRaw().get(world).size()) {
+            if (size < 16 || size < PS.get().getAllPlotsRaw().get(world).size()) {
                 for (final PlotId pid : MainUtil.getPlotSelectionIds(pos1, pos2)) {
-                    final Plot plot = MainUtil.getPlot(world, pid);
+                    final Plot plot = MainUtil.getPlotAbs(world, pid);
                     if (plot.hasOwner()) {
                         if ((plot.id.x > pos1.x) || (plot.id.y > pos1.y) || (plot.id.x < pos2.x) || (plot.id.y < pos2.y)) {
                             result.add(plot);
@@ -666,15 +832,12 @@ public class MainUtil {
         if (plotIds.size() < 2) {
             return false;
         }
-        
-        //        merged plots set db before finished merging
-        
         final PlotId pos1 = plotIds.get(0);
         final PlotId pos2 = plotIds.get(plotIds.size() - 1);
         final PlotManager manager = PS.get().getPlotManager(world);
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
         
-        final boolean result = EventUtil.manager.callMerge(world, getPlot(world, pos1), plotIds);
+        final boolean result = EventUtil.manager.callMerge(world, getPlotAbs(world, pos1), plotIds);
         if (!result) {
             return false;
         }
@@ -711,39 +874,26 @@ public class MainUtil {
                 Plot plot2 = null;
                 if (lx) {
                     if (ly) {
-                        if (!plot.getSettings().getMerged(1) || !plot.getSettings().getMerged(2)) {
+                        if (!plot.getMerged(1) || !plot.getMerged(2)) {
                             if (removeRoads) {
                                 MainUtil.removeRoadSouthEast(plotworld, plot);
                             }
                         }
                     }
-                    if (!plot.getSettings().getMerged(1)) {
+                    if (!plot.getMerged(1)) {
                         plot2 = PS.get().getPlot(world, new PlotId(x + 1, y));
                         mergePlot(world, plot, plot2, removeRoads);
-                        plot.getSettings().setMerged(1, true);
-                        plot2.getSettings().setMerged(3, true);
                     }
                 }
                 if (ly) {
-                    if (!plot.getSettings().getMerged(2)) {
+                    if (!plot.getMerged(2)) {
                         plot2 = PS.get().getPlot(world, new PlotId(x, y + 1));
                         mergePlot(world, plot, plot2, removeRoads);
-                        plot.getSettings().setMerged(2, true);
-                        plot2.getSettings().setMerged(0, true);
                     }
                 }
             }
         }
         manager.finishPlotMerge(plotworld, plotIds);
-        if (updateDatabase) {
-            for (int x = pos1.x; x <= pos2.x; x++) {
-                for (int y = pos1.y; y <= pos2.y; y++) {
-                    final PlotId id = new PlotId(x, y);
-                    final Plot plot = PS.get().getPlot(world, id);
-                    DBFunc.setMerged(plot, plot.getSettings().getMerged());
-                }
-            }
-        }
         return true;
     }
     
@@ -755,7 +905,7 @@ public class MainUtil {
             final PlotId id = plot.id;
             final PlotId id2 = new PlotId(id.x + 1, id.y + 1);
             final Location pos1 = getPlotTopLocAbs(plot.world, id).add(1, 0, 1);
-            final Location pos2 = getPlotBottomLocAbs(plot.world, id2);
+            final Location pos2 = getPlotBottomLocAbs(plot.world, id2).subtract(1, 0, 1);
             pos1.setY(0);
             pos2.setY(256);
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
@@ -773,7 +923,7 @@ public class MainUtil {
             final PlotId id2 = new PlotId(id.x + 1, id.y);
             final Location bot = getPlotBottomLocAbs(plot.world, id2);
             final Location top = getPlotTopLocAbs(plot.world, id);
-            final Location pos1 = new Location(plot.world, top.getX() + 1, 0, bot.getZ() + 1);
+            final Location pos1 = new Location(plot.world, top.getX(), 0, bot.getZ());
             final Location pos2 = new Location(plot.world, bot.getX(), 256, top.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         } else {
@@ -790,7 +940,7 @@ public class MainUtil {
             final PlotId id2 = new PlotId(id.x, id.y + 1);
             final Location bot = getPlotBottomLocAbs(plot.world, id2);
             final Location top = getPlotTopLocAbs(plot.world, id);
-            final Location pos1 = new Location(plot.world, bot.getX() + 1, 0, top.getZ() + 1);
+            final Location pos1 = new Location(plot.world, bot.getX(), 0, top.getZ());
             final Location pos2 = new Location(plot.world, top.getX(), 256, bot.getZ());
             ChunkManager.manager.regenerateRegion(pos1, pos2, null);
         } else {
@@ -799,31 +949,95 @@ public class MainUtil {
     }
     
     /**
-     * Merges 2 plots Removes the road inbetween <br> - Assumes the first plot parameter is lower <br> - Assumes neither
-     * are a Mega-plot <br> - Assumes plots are directly next to each other <br> - Does not save to DB
+     * Merges 2 plots Removes the road inbetween <br>- Assumes plots are directly next to each other <br> - saves to DB
      *
      * @param world
      * @param lesserPlot
      * @param greaterPlot
      */
-    public static void mergePlot(final String world, final Plot lesserPlot, final Plot greaterPlot, final boolean removeRoads) {
+    public static void mergePlot(final String world, Plot lesserPlot, Plot greaterPlot, final boolean removeRoads) {
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
         if (lesserPlot.id.x.equals(greaterPlot.id.x)) {
-            if (!lesserPlot.getSettings().getMerged(2)) {
-                lesserPlot.getSettings().setMerged(2, true);
-                greaterPlot.getSettings().setMerged(0, true);
+            if (lesserPlot.id.y > greaterPlot.id.y) {
+                Plot tmp = lesserPlot;
+                lesserPlot = greaterPlot;
+                greaterPlot = tmp;
+            }
+            if (!lesserPlot.getMerged(2)) {
+                lesserPlot.setMerged(2, true);
+                greaterPlot.setMerged(0, true);
+                mergeData(lesserPlot, greaterPlot);
                 if (removeRoads) {
+                    if (lesserPlot.getMerged(5)) {
+                        removeRoadSouthEast(plotworld, lesserPlot);
+                    }
                     MainUtil.removeRoadSouth(plotworld, lesserPlot);
+                    Plot other = getPlotAbs(world, getPlotIdRelative(lesserPlot.id, 3));
+                    if (other.getMerged(2) && other.getMerged(1)) {
+                        MainUtil.removeRoadSouthEast(plotworld, other);
+                        mergePlot(world, greaterPlot, getPlotAbs(world, getPlotIdRelative(greaterPlot.id, 3)), removeRoads);
+                    }
                 }
             }
         } else {
-            if (!lesserPlot.getSettings().getMerged(1)) {
-                lesserPlot.getSettings().setMerged(1, true);
-                greaterPlot.getSettings().setMerged(3, true);
+            if (lesserPlot.id.x > greaterPlot.id.x) {
+                Plot tmp = lesserPlot;
+                lesserPlot = greaterPlot;
+                greaterPlot = tmp;
+            }
+            if (!lesserPlot.getMerged(1)) {
+                lesserPlot.setMerged(1, true);
+                greaterPlot.setMerged(3, true);
+                mergeData(lesserPlot, greaterPlot);
                 if (removeRoads) {
                     MainUtil.removeRoadEast(plotworld, lesserPlot);
+                    if (lesserPlot.getMerged(5)) {
+                        removeRoadSouthEast(plotworld, lesserPlot);
+                    }
+                    Plot other = getPlotAbs(world, getPlotIdRelative(lesserPlot.id, 0));
+                    if (other.getMerged(2) && other.getMerged(1)) {
+                        MainUtil.removeRoadSouthEast(plotworld, other);
+                        mergePlot(world, greaterPlot, getPlotAbs(world, getPlotIdRelative(greaterPlot.id, 0)), removeRoads);
+                    }
                 }
             }
+        }
+    }
+    
+    public static void mergeData(Plot a, Plot b) {
+        HashMap<String, Flag> flags1 = a.getFlags();
+        HashMap<String, Flag> flags2 = b.getFlags();
+        if ((flags1.size() != 0 || flags2.size() != 0) && !flags1.equals(flags2)) {
+            boolean greater = flags1.size() > flags2.size();
+            if (greater) {
+                flags1.putAll(flags2);
+            }
+            else {
+                flags2.putAll(flags1);
+            }
+            HashSet<Flag> net = new HashSet<>((greater ? flags1 : flags2).values());
+            a.setFlags(net);
+            b.setFlags(net);
+        }
+        for (UUID uuid : a.getTrusted()) {
+            b.addTrusted(uuid);
+        }
+        for (UUID uuid : b.getTrusted()) {
+            a.addTrusted(uuid);
+        }
+        
+        for (UUID uuid : a.getMembers()) {
+            b.addMember(uuid);
+        }
+        for (UUID uuid : b.getMembers()) {
+            a.addMember(uuid);
+        }
+        
+        for (UUID uuid : a.getDenied()) {
+            b.addDenied(uuid);
+        }
+        for (UUID uuid : b.getDenied()) {
+            a.addDenied(uuid);
         }
     }
     
@@ -880,96 +1094,161 @@ public class MainUtil {
         }
     }
     
-    public static String getStringSized(final int max, final String string) {
-        if (string.length() > max) {
-            return string.substring(0, max);
-        }
-        return string;
+    public static Location[] getCorners(String world, RegionWrapper region) {
+        Location pos1 = new Location(world, region.minX, region.minY, region.minZ);
+        Location pos2 = new Location(world, region.maxX, region.maxY, region.maxZ);
+        return new Location[] { pos1, pos2 };
     }
     
-    public static void autoMerge(final Plot plot, final UUID uuid, final boolean removeRoads) {
+    /**
+     * Returns the top and bottom connected plot.<br>
+     *  - If the plot is not connected, it will return itself for the top/bottom<br>
+     *  - the returned IDs will not necessarily correspond to claimed plots if the connected plots do not form a rectangular shape 
+     * @param plot
+     * @return new PlotId[] { bottom, top }
+     */
+    public static Location[] getCorners(Plot plot) {
+        if (!plot.isMerged()) {
+            return new Location[] { plot.getBottomAbs(), plot.getTopAbs() };
+        }
+        return getCorners(plot.world, getRegions(plot));
+    }
+    
+    public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
+        Location min = null;
+        Location max = null;
+        for (RegionWrapper region : regions) {
+            Location[] corners = getCorners(world, region);
+            if (min == null) {
+                min = corners[0];
+                max = corners[1];
+                continue;
+            }
+            Location pos1 = corners[0];
+            Location pos2 = corners[1];
+            if (pos2.getX() > max.getX()) {
+                max.setX(pos2.getX());
+            }
+            if (pos1.getX() < min.getX()) {
+                min.setX(pos1.getX());
+            }
+            if (pos2.getZ() > max.getZ()) {
+                max.setZ(pos2.getZ());
+            }
+            if (pos1.getZ() < min.getZ()) {
+                min.setZ(pos1.getZ());
+            }
+        }
+        return new Location[] { min, max };
+    }
+    
+    public static PlotId[] getCornerIds(Plot plot) {
+        if (!plot.isMerged()) {
+            return new PlotId[] { plot.id, plot.id };
+        }
+        PlotId min = new PlotId(plot.id.x, plot.id.y);
+        PlotId max = new PlotId(plot.id.x, plot.id.y);
+        for (Plot current : getConnectedPlots(plot)) {
+            if (current.id.x < min.x) {
+                min.x = current.id.x;
+            }
+            else if (current.id.x > max.x) {
+                max.x = current.id.x;
+            }
+            if (current.id.y < min.y) {
+                min.y = current.id.y;
+            }
+            else if (current.id.y > max.y) {
+                max.y = current.id.y;
+            }
+        }
+        return new PlotId[] { min, max };
+    }
+    
+    public static boolean autoMerge(final Plot plot, int dir, int max, final UUID uuid, final boolean removeRoads) {
         if (plot == null) {
-            return;
+            return false;
         }
         if (plot.owner == null) {
-            return;
+            return false;
         }
         if (!plot.owner.equals(uuid)) {
-            return;
+            return false;
         }
-        ArrayList<PlotId> plots;
-        boolean merge = true;
-        int count = 0;
-        final ArrayList<PlotId> toUpdate = new ArrayList<>();
-        while (merge) {
-            if (count > 16) {
-                break;
+        HashSet<Plot> visited = new HashSet<>();
+        ArrayDeque<Plot> frontier = new ArrayDeque<>(getConnectedPlots(plot));
+        Plot current;
+        boolean toReturn = false;
+        while ((current = frontier.poll()) != null && max > 0) {
+            if (visited.contains(current)) {
+                continue;
             }
-            merge = false;
-            count++;
-            final PlotId bot = getBottomPlot(plot).id;
-            final PlotId top = getTopPlot(plot).id;
-            plots = getPlotSelectionIds(new PlotId(bot.x, bot.y - 1), new PlotId(top.x, top.y));
-            if (ownsPlots(plot.world, plots, uuid, 0)) {
-                final boolean result = mergePlots(plot.world, plots, removeRoads, false);
-                if (result) {
-                    toUpdate.addAll(plots);
-                    merge = true;
-                    continue;
+            visited.add(current);
+            if (max > 0 && (dir == -1 || dir == 0) && !current.getMerged(0)) {
+                Plot other = getPlotAbs(current.world, getPlotIdRelative(current.id, 0));
+                if (other.isOwner(uuid)) {
+                    frontier.addAll(other.getConnectedPlots());
+                    mergePlot(current.world, current, other, removeRoads);
+                    toReturn = true;
+                    max--;
                 }
             }
-            plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x + 1, top.y));
-            if (ownsPlots(plot.world, plots, uuid, 1)) {
-                final boolean result = mergePlots(plot.world, plots, removeRoads, false);
-                if (result) {
-                    toUpdate.addAll(plots);
-                    merge = true;
-                    continue;
+            if (max > 0 && (dir == -1 || dir == 1) && !current.getMerged(1)) {
+                Plot other = getPlotAbs(current.world, getPlotIdRelative(current.id, 1));
+                if (other.isOwner(uuid)) {
+                    frontier.addAll(other.getConnectedPlots());
+                    mergePlot(current.world, current, other, removeRoads);
+                    toReturn = true;
+                    max--;
                 }
             }
-            plots = getPlotSelectionIds(new PlotId(bot.x, bot.y), new PlotId(top.x, top.y + 1));
-            if (ownsPlots(plot.world, plots, uuid, 2)) {
-                final boolean result = mergePlots(plot.world, plots, removeRoads, false);
-                if (result) {
-                    toUpdate.addAll(plots);
-                    merge = true;
-                    continue;
+            if (max > 0 && (dir == -1 || dir == 2) && !current.getMerged(2)) {
+                Plot other = getPlotAbs(current.world, getPlotIdRelative(current.id, 2));
+                if (other.isOwner(uuid)) {
+                    frontier.addAll(other.getConnectedPlots());
+                    mergePlot(current.world, current, other, removeRoads);
+                    toReturn = true;
+                    max--;
                 }
             }
-            plots = getPlotSelectionIds(new PlotId(bot.x - 1, bot.y), new PlotId(top.x, top.y));
-            if (ownsPlots(plot.world, plots, uuid, 3)) {
-                final boolean result = mergePlots(plot.world, plots, removeRoads, false);
-                if (result) {
-                    toUpdate.addAll(plots);
-                    merge = true;
-                    continue;
+            if (max > 0 && (dir == -1 || dir == 3) && !current.getMerged(3)) {
+                Plot other = getPlotAbs(current.world, getPlotIdRelative(current.id, 3));
+                if (other.isOwner(uuid)) {
+                    frontier.addAll(other.getConnectedPlots());
+                    mergePlot(current.world, current, other, removeRoads);
+                    toReturn = true;
+                    max--;
                 }
             }
+            PlotManager manager = PS.get().getPlotManager(plot.world);
+            ArrayList<PlotId> ids = new ArrayList<>(visited.size());
+            for (Plot visit : visited) {
+                ids.add(visit.id);
+            }
+            manager.finishPlotMerge(PS.get().getPlotWorld(plot.world), ids);
         }
-        for (final PlotId id : toUpdate) {
-            DBFunc.setMerged(plot, plot.getSettings().getMerged());
-        }
+        return toReturn;
     }
     
-    private static boolean ownsPlots(final String world, final ArrayList<PlotId> plots, final UUID uuid, final int dir) {
-        final PlotId id_min = plots.get(0);
-        final PlotId id_max = plots.get(plots.size() - 1);
-        for (final PlotId myid : plots) {
-            final Plot myplot = PS.get().getPlot(world, myid);
-            if ((myplot == null) || (myplot.owner == null) || !(myplot.owner.equals(uuid))) {
-                return false;
-            }
-            final PlotId top = getTopPlot(myplot).id;
-            if (((top.x > id_max.x) && (dir != 1)) || ((top.y > id_max.y) && (dir != 2))) {
-                return false;
-            }
-            final PlotId bot = getBottomPlot(myplot).id;
-            if (((bot.x < id_min.x) && (dir != 3)) || ((bot.y < id_min.y) && (dir != 0))) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    private static boolean ownsPlots(final String world, final ArrayList<PlotId> plots, final UUID uuid, final int dir) {
+//        final PlotId id_min = plots.get(0);
+//        final PlotId id_max = plots.get(plots.size() - 1);
+//        for (final PlotId myid : plots) {
+//            final Plot myplot = PS.get().getPlot(world, myid);
+//            if ((myplot == null) || (myplot.owner == null) || !(myplot.owner.equals(uuid))) {
+//                return false;
+//            }
+//            final PlotId top = getTopPlot(myplot).id;
+//            if (((top.x > id_max.x) && (dir != 1)) || ((top.y > id_max.y) && (dir != 2))) {
+//                return false;
+//            }
+//            final PlotId bot = getBottomPlot(myplot).id;
+//            if (((bot.x < id_min.x) && (dir != 3)) || ((bot.y < id_min.y) && (dir != 0))) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
     
     public static void updateWorldBorder(final Plot plot) {
         if (!worldBorder.containsKey(plot.world)) {
@@ -1011,7 +1290,7 @@ public class MainUtil {
             public void run() {
                 final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
                 if (plotworld.AUTO_MERGE) {
-                    autoMerge(p, uuid, true);
+                    autoMerge(p, -1, Integer.MAX_VALUE, uuid, true);
                 }
             }
         });
@@ -1060,15 +1339,41 @@ public class MainUtil {
      * @param whenDone
      */
     public static boolean clearAsPlayer(final Plot plot, final boolean isDelete, final Runnable whenDone) {
-        if (runners.containsKey(plot)) {
+        if (plot.getRunning() != 0) {
             return false;
         }
-        System.currentTimeMillis();
-        ChunkManager.manager.clearAllEntities(plot.getBottom(), plot.getTop());
-        if (isDelete) {
-            removeSign(plot);
-        }
         clear(plot, isDelete, whenDone);
+        return true;
+    }
+    
+    public static int[] countEntities(Plot plot) {
+        int[] count = new int[5];
+        for (Plot current : getConnectedPlots(plot)) {
+            int[] result = ChunkManager.manager.countEntities(current);
+            count[0] += result[0];
+            count[1] += result[1];
+            count[2] += result[2];
+            count[3] += result[3];
+            count[4] += result[4];
+        }
+        return count;
+    }
+    
+    public static boolean delete(final Plot plot, final Runnable whenDone) {
+        // Plot is not claimed
+        if (!plot.hasOwner()) {
+            return false;
+        }
+        final HashSet<Plot> plots = getConnectedPlots(plot);
+        clear(plot, true, new Runnable() {
+            @Override
+            public void run() {
+                for (Plot current : plots) {
+                    current.unclaim();
+                }
+                TaskManager.runTask(whenDone);
+            }
+        });
         return true;
     }
     
@@ -1076,33 +1381,47 @@ public class MainUtil {
         if (!EventUtil.manager.callClear(plot.world, plot.id)) {
             return false;
         }
+        final HashSet<Plot> plots = getConnectedPlots(plot);
+        final ArrayDeque<Plot> queue = new ArrayDeque<>(plots);
+        removeSign(plot);
+        MainUtil.unlinkPlot(plot, true, !isDelete);
         final PlotManager manager = PS.get().getPlotManager(plot.world);
-        final Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
-        runners.put(plot, 1);
-        final Runnable run = new Runnable() {
+        Runnable run = new Runnable() {
             @Override
             public void run() {
-                if (isDelete) {
-                    manager.unclaimPlot(plotworld, plot, new Runnable() {
+                if (queue.size() == 0) {
+                    final AtomicInteger finished = new AtomicInteger(0);
+                    final Runnable run = new Runnable() {
                         @Override
                         public void run() {
-                            runners.remove(plot);
-                            TaskManager.runTask(whenDone);
+                            if (finished.incrementAndGet() >= plots.size()) {
+                                TaskManager.runTask(whenDone);
+                            }
                         }
-                    });
-                } else {
-                    runners.remove(plot);
-                    TaskManager.runTask(whenDone);
+                    };
+                    if (isDelete) {
+                        for (Plot current : plots) {
+                            manager.unclaimPlot(plotworld, current, run);
+                        }
+                    }
+                    else {
+                        for (Plot current : plots) {
+                            manager.claimPlot(plotworld, current);
+                            SetBlockQueue.addNotify(run);
+                        }
+                    }
+                    return;
                 }
+                Plot current = queue.poll();
+                if ((plotworld.TERRAIN != 0) || Settings.FAST_CLEAR) {
+                    ChunkManager.manager.regenerateRegion(current.getBottomAbs(), current.getTopAbs(), this);
+                    return;
+                }
+                manager.clearPlot(plotworld, current, this);
             }
         };
-        if ((plotworld.TERRAIN != 0) || Settings.FAST_CLEAR) {
-            final Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
-            ChunkManager.manager.regenerateRegion(pos1, pos2, run);
-            return true;
-        }
-        manager.clearPlot(plotworld, plot, run);
+        run.run();
         return true;
     }
     
@@ -1118,9 +1437,9 @@ public class MainUtil {
         final int[] ids = new int[length];
         final byte[] data = new byte[length];
         int index = 0;
-        for (int y = pos1.getY(); y < pos2.getY(); y++) {
-            for (int x = pos1.getX(); x < pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
+        for (int y = pos1.getY(); y <= pos2.getY(); y++) {
+            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
                     final int i = random.random(blocks.length);
                     xl[index] = x;
                     yl[index] = y;
@@ -1140,9 +1459,9 @@ public class MainUtil {
             setSimpleCuboidAsync(world, pos1, pos2, blocks[0]);
             return;
         }
-        for (int y = pos1.getY(); y < Math.min(256, pos2.getY()); y++) {
-            for (int x = pos1.getX(); x < pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
+        for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
+            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
                     final int i = random.random(blocks.length);
                     final PlotBlock block = blocks[i];
                     SetBlockQueue.setBlock(world, x, y, z, block);
@@ -1159,9 +1478,9 @@ public class MainUtil {
         final int[] ids = new int[length];
         final byte[] data = new byte[length];
         int index = 0;
-        for (int y = pos1.getY(); y < pos2.getY(); y++) {
-            for (int x = pos1.getX(); x < pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
+        for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
+            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
                     xl[index] = x;
                     yl[index] = y;
                     zl[index] = z;
@@ -1175,9 +1494,9 @@ public class MainUtil {
     }
     
     public static void setSimpleCuboidAsync(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
-        for (int y = pos1.getY(); y < Math.min(256, pos2.getY()); y++) {
-            for (int x = pos1.getX(); x < pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z < pos2.getZ(); z++) {
+        for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
+            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
                     SetBlockQueue.setBlock(world, x, y, z, newblock);
                 }
             }
@@ -1185,23 +1504,31 @@ public class MainUtil {
     }
     
     public static void setBiome(final Plot plot, final String biome, final Runnable whenDone) {
-        final Location pos1 = plot.getBottom();
-        final Location pos2 = plot.getTop();
-        ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
+        final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(getRegions(plot));
+        Runnable run = new Runnable() {
             @Override
             public void run() {
-                final ChunkLoc loc = new ChunkLoc(value[0], value[1]);
-                ChunkManager.manager.loadChunk(plot.world, loc, false);
-                setBiome(plot.world, value[2], value[3], value[4], value[5], biome);
-                ChunkManager.manager.unloadChunk(plot.world, loc, true, true);
+                if (regions.size() == 0) {
+                    update(plot);
+                    TaskManager.runTask(whenDone);
+                    return;
+                }
+                RegionWrapper region = regions.poll();
+                Location pos1 = new Location(plot.world, region.minX, region.minY, region.minZ);
+                Location pos2 = new Location(plot.world, region.maxX, region.maxY, region.maxZ);
+                ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
+                    @Override
+                    public void run() {
+                        final ChunkLoc loc = new ChunkLoc(value[0], value[1]);
+                        ChunkManager.manager.loadChunk(plot.world, loc, false);
+                        setBiome(plot.world, value[2], value[3], value[4], value[5], biome);
+                        ChunkManager.manager.unloadChunk(plot.world, loc, true, true);
+                    }
+                }, this, 5);
+                
             }
-        }, new Runnable() {
-            @Override
-            public void run() {
-                update(plot);
-                TaskManager.runTask(whenDone);
-            }
-        }, 5);
+        };
+        run.run();
     }
     
     public static void setBiome(final String world, final int p1x, final int p1z, final int p2x, final int p2z, final String biome) {
@@ -1236,16 +1563,15 @@ public class MainUtil {
      * @return Home Location
      */
     public static Location getPlotHome(final String w, final PlotId plotid) {
-        final Plot plot = getPlot(w, plotid);
-        final BlockLoc home = plot.getSettings().getPosition();
-        final Location bot = getPlotBottomLoc(w, plotid);
+        final Plot plot = getPlotAbs(w, plotid).getBasePlot(false);
+        final BlockLoc home = plot.getPosition();
         PS.get().getPlotManager(w);
         if ((home == null) || ((home.x == 0) && (home.z == 0))) {
             return getDefaultHome(plot);
         } else {
+            Location bot = plot.getBottomAbs();
             final Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z);
             if (BlockManager.manager.getBlock(loc).id != 0) {
-                // sendConsoleMessage("ID was " + BukkitUtil.getBlock(loc).id);
                 loc.setY(Math.max(getHeighestBlock(w, loc.getX(), loc.getZ()), bot.getY()));
             }
             return loc;
@@ -1295,18 +1621,6 @@ public class MainUtil {
     }
     
     /**
-     * Obtains the width of a plot (x width)
-     *
-     * @param world
-     * @param id
-     *
-     * @return int width of plot
-     */
-    public static int getPlotWidth(final String world, final PlotId id) {
-        return getPlotTopLoc(world, id).getX() - getPlotBottomLoc(world, id).getX();
-    }
-    
-    /**
      * Gets the top loc of a plot (if mega, returns top loc of that mega plot) - If you would like each plot treated as
      * a small plot use getPlotTopLocAbs(...)
      *
@@ -1315,44 +1629,45 @@ public class MainUtil {
      *
      * @return Location top of mega plot
      */
-    public static Location getPlotTopLoc(final String world, PlotId id) {
-        final Plot plot = PS.get().getPlot(world, id);
-        if (plot != null) {
-            id = getTopPlot(plot).id;
+    public static Location getPlotTopLoc_(Plot plot) {
+        Location top = getPlotTopLocAbs(plot.world, plot.id);
+        if (!plot.isMerged()) {
+            return top;
         }
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
-        final PlotManager manager = PS.get().getPlotManager(world);
-        return manager.getPlotTopLocAbs(plotworld, id);
+        PlotId id;
+        if (plot.getMerged(2)) {
+            id = getPlotIdRelative(plot.id, 2);
+            top.setZ(getPlotBottomLocAbs(plot.world, id).getZ() - 1);
+        }
+        if (plot.getMerged(1)) {
+            id = getPlotIdRelative(plot.id, 1);
+            top.setX(getPlotBottomLocAbs(plot.world, id).getX() - 1);
+        }
+        return top;
     }
     
-    /**
-     * Gets the bottom loc of a plot (if mega, returns bottom loc of that mega plot) - If you would like each plot
-     * treated as a small plot use getPlotBottomLocAbs(...)
-     *
-     * @param world
-     * @param id
-     *
-     * @return Location bottom of mega plot
-     *
-     * @deprecated Incorrect offset / legacy / use plot.getBottom()
-     *
-     */
-    @Deprecated
-    public static Location getPlotBottomLoc(final String world, PlotId id) {
-        final Plot plot = PS.get().getPlot(world, id);
-        if (plot != null) {
-            id = getBottomPlot(plot).id;
+    public static Location getPlotBottomLoc_(Plot plot) {
+        Location bot = getPlotBottomLocAbs(plot.world, plot.id);
+        if (!plot.isMerged()) {
+            return bot;
         }
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
-        final PlotManager manager = PS.get().getPlotManager(world);
-        return manager.getPlotBottomLocAbs(plotworld, id);
+        PlotId id;
+        if (plot.getMerged(0)) {
+            id = getPlotIdRelative(plot.id, 0);
+            bot.setZ(getPlotTopLocAbs(plot.world, id).getZ() + 1);
+        }
+        if (plot.getMerged(3)) {
+            id = getPlotIdRelative(plot.id, 3);
+            bot.setX(getPlotTopLocAbs(plot.world, id).getX() + 1);
+        }
+        return bot;
     }
     
     public static boolean canClaim(final PlotPlayer player, final String world, final PlotId pos1, final PlotId pos2) {
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final PlotId id = new PlotId(x, y);
-                final Plot plot = getPlot(world, id);
+                final Plot plot = getPlotAbs(world, id);
                 if (!canClaim(player, plot)) {
                     return false;
                 }
@@ -1390,45 +1705,17 @@ public class MainUtil {
         return true;
     }
     
-    public static boolean swap(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
-        final Plot p1 = PS.get().getPlot(world, current);
-        final Plot p2 = PS.get().getPlot(world, newPlot);
-        if ((p1 == null) || (p2 == null) || (p1.owner == null) || !p1.owner.equals(p2.owner)) {
-            return false;
-        }
-        // Swap blocks
-        ChunkManager.manager.swap(world, current, newPlot);
-        // Swap cached
-        final PlotId temp = new PlotId(p1.id.x.intValue(), p1.id.y.intValue());
-        p1.id.x = p2.id.x.intValue();
-        p1.id.y = p2.id.y.intValue();
-        p2.id.x = temp.x;
-        p2.id.y = temp.y;
-        final Map<String, ConcurrentHashMap<PlotId, Plot>> raw = PS.get().getAllPlotsRaw();
-        raw.get(world).remove(p1.id);
-        raw.get(world).remove(p2.id);
-        p1.id.recalculateHash();
-        p2.id.recalculateHash();
-        raw.get(world).put(p1.id, p1);
-        raw.get(world).put(p2.id, p2);
-        // Swap database
-        DBFunc.dbManager.swapPlots(p2, p1);
-        return true;
-    }
-    
-    public static boolean swapData(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
-        final Plot p1 = PS.get().getPlot(world, current);
-        final Plot p2 = PS.get().getPlot(world, newPlot);
+    public static boolean swapData(Plot p1, Plot p2, final Runnable whenDone) {
         if ((p1 == null) || (p1.owner == null)) {
             if ((p2 != null) && (p2.owner != null)) {
-                moveData(p2, getPlot(world, current), whenDone);
+                moveData(p2, p1, whenDone);
                 return true;
             }
             return false;
         }
         if ((p2 == null) || (p2.owner == null)) {
             if ((p1 != null) && (p1.owner != null)) {
-                moveData(p1, getPlot(world, newPlot), whenDone);
+                moveData(p1, p2, whenDone);
                 return true;
             }
             return false;
@@ -1440,146 +1727,227 @@ public class MainUtil {
         p2.id.x = temp.x;
         p2.id.y = temp.y;
         final Map<String, ConcurrentHashMap<PlotId, Plot>> raw = PS.get().getAllPlotsRaw();
-        raw.get(world).remove(p1.id);
-        raw.get(world).remove(p2.id);
+        raw.get(p1.world).remove(p1.id);
+        raw.get(p2.world).remove(p2.id);
         p1.id.recalculateHash();
         p2.id.recalculateHash();
-        raw.get(world).put(p1.id, p1);
-        raw.get(world).put(p2.id, p2);
+        raw.get(p1.world).put(p1.id, p1);
+        raw.get(p2.world).put(p2.id, p2);
         // Swap database
         DBFunc.dbManager.swapPlots(p2, p1);
-        TaskManager.runTask(whenDone);
-        return true;
-    }
-    
-    public static boolean moveData(final Plot plot1, final Plot plot2, final Runnable whenDone) {
-        if (plot1.owner == null) {
-            PS.debug(plot2 + " is unowned (single)");
-            TaskManager.runTask(whenDone);
-            return false;
-        }
-        final Plot pos1 = getBottomPlot(plot1);
-        final Plot pos2 = getTopPlot(plot1);
-        final PlotId size = MainUtil.getSize(plot1);
-        if (!MainUtil.isUnowned(plot2.world, plot2.id, new PlotId((plot2.id.x + size.x) - 1, (plot2.id.y + size.y) - 1))) {
-            PS.debug(plot2 + " is unowned (multi)");
-            TaskManager.runTask(whenDone);
-            return false;
-        }
-        final int offset_x = plot2.id.x - pos1.id.x;
-        final int offset_y = plot2.id.y - pos1.id.y;
-        final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
-        for (final PlotId id : selection) {
-            final String worldOriginal = plot1.world;
-            final PlotId idOriginal = new PlotId(id.x, id.y);
-            final Plot plot = PS.get().getPlot(plot1.world, id);
-            final Map<String, ConcurrentHashMap<PlotId, Plot>> raw = PS.get().getAllPlotsRaw();
-            raw.get(plot1.world).remove(id);
-            plot.id.x += offset_x;
-            plot.id.y += offset_y;
-            plot.id.recalculateHash();
-            raw.get(plot2.world).put(plot.id, plot);
-            DBFunc.movePlot(getPlot(worldOriginal, idOriginal), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
-        }
         TaskManager.runTaskLater(whenDone, 1);
         return true;
     }
     
-    public static boolean move(final Plot plot1, final Plot plot2, final Runnable whenDone) {
-        final com.intellectualcrafters.plot.object.Location bot1 = MainUtil.getPlotBottomLoc(plot1.world, plot1.id);
-        final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(plot2.world, plot2.id);
-        final Location top = MainUtil.getPlotTopLoc(plot1.world, plot1.id);
-        if (plot1.owner == null) {
-            PS.debug(plot2 + " is unowned (single)");
+    public static boolean moveData(final Plot pos1, final Plot pos2, final Runnable whenDone) {
+        if (pos1.owner == null) {
+            PS.debug(pos2 + " is unowned (single)");
             TaskManager.runTask(whenDone);
             return false;
         }
-        final Plot pos1 = getBottomPlot(plot1);
-        final Plot pos2 = getTopPlot(plot1);
-        final PlotId size = MainUtil.getSize(plot1);
-        if (!MainUtil.isUnowned(plot2.world, plot2.id, new PlotId((plot2.id.x + size.x) - 1, (plot2.id.y + size.y) - 1))) {
-            PS.debug(plot2 + " is unowned (multi)");
+        if (pos2.hasOwner()) {
+            PS.debug(pos2 + " is unowned (multi)");
             TaskManager.runTask(whenDone);
             return false;
         }
-        final int offset_x = plot2.id.x - pos1.id.x;
-        final int offset_y = plot2.id.y - pos1.id.y;
-        final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
-        for (final PlotId id : selection) {
-            final String worldOriginal = plot1.world;
-            final PlotId idOriginal = new PlotId(id.x, id.y);
-            final Plot plot = PS.get().getPlot(plot1.world, id);
-            final Map<String, ConcurrentHashMap<PlotId, Plot>> raw = PS.get().getAllPlotsRaw();
-            raw.get(plot1.world).remove(id);
-            plot.id.x += offset_x;
-            plot.id.y += offset_y;
-            plot.id.recalculateHash();
-            raw.get(plot2.world).put(plot.id, plot);
-            DBFunc.movePlot(getPlot(worldOriginal, idOriginal), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
-        }
-        ChunkManager.manager.copyRegion(bot1, top, bot2, new Runnable() {
-            @Override
-            public void run() {
-                final Location bot = bot1.clone().add(1, 0, 1);
-                ChunkManager.manager.regenerateRegion(bot, top, null);
-                TaskManager.runTaskLater(whenDone, 1);
-            }
-        });
+        final Map<String, ConcurrentHashMap<PlotId, Plot>> raw = PS.get().getAllPlotsRaw();
+        raw.get(pos1.world).remove(pos1.id);
+        pos1.id.x = (int) pos2.id.x;
+        pos1.id.y = (int) pos2.id.y;
+        pos1.id.recalculateHash();
+        raw.get(pos2.world).put(pos1.id, pos1);
+        DBFunc.movePlot(pos1, pos2);
+        TaskManager.runTaskLater(whenDone, 1);
         return true;
     }
+
+    public static boolean move(final Plot origin, final Plot destination, final Runnable whenDone, boolean allowSwap) {
+        PlotId offset = new PlotId(destination.id.x - origin.id.x, destination.id.y - origin.id.y);
+        Location db = destination.getBottomAbs();
+        Location ob = origin.getBottomAbs();
+        final int offsetX = db.getX() - ob.getX();
+        final int offsetZ = db.getZ() - ob.getZ();
+        if (origin.owner == null) {
+            TaskManager.runTaskLater(whenDone, 1);
+            return false;
+        }
+        boolean occupied = false;
+        HashSet<Plot> plots = MainUtil.getConnectedPlots(origin);
+        for (Plot plot : plots) {
+            Plot other = MainUtil.getPlotAbs(destination.world, new PlotId(plot.id.x + offset.x, plot.id.y + offset.y));
+            if (other.owner != null) {
+                if (!allowSwap) {
+                    TaskManager.runTaskLater(whenDone, 1);
+                    return false;
+                }
+                occupied = true;
+            }
+        }
+        final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(getRegions(origin));
+        // move / swap data
+        for (Plot plot : plots) {
+            Plot other = MainUtil.getPlotAbs(destination.world, new PlotId(plot.id.x + offset.x, plot.id.y + offset.y));
+            swapData(plot, other, null);
+        }
+        // copy terrain
+        Runnable move = new Runnable() {
+            @Override
+            public void run() {
+                if (regions.size() == 0) {
+                    TaskManager.runTask(whenDone);
+                    return;
+                }
+                final Runnable task = this;
+                RegionWrapper region = regions.poll();
+                Location[] corners = getCorners(origin.world, region);
+                final Location pos1 = corners[0];
+                final Location pos2 = corners[1];
+                Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
+                newPos.setWorld(destination.world);
+                ChunkManager.manager.copyRegion(pos1, pos2, newPos, new Runnable() {
+                    @Override
+                    public void run() {
+                        ChunkManager.manager.regenerateRegion(pos1, pos2, task);
+                    }
+                });
+            }
+        };
+        Runnable swap = new Runnable() {
+            @Override
+            public void run() {
+                if (regions.size() == 0) {
+                    TaskManager.runTask(whenDone);
+                    return;
+                }
+                RegionWrapper region = regions.poll();
+                Location[] corners = getCorners(origin.world, region);
+                Location pos1 = corners[0];
+                Location pos2 = corners[1];
+                Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
+                Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
+                pos3.setWorld(destination.world);
+                pos4.setWorld(destination.world);
+                ChunkManager.manager.swap(pos1, pos2, pos3, pos4, this);
+            }
+        };
+        if (occupied) {
+            swap.run();
+        }
+        else {
+            move.run();
+        }
+        return true;
+    }
+//        final com.intellectualcrafters.plot.object.Location bot1 = MainUtil.getPlotBottomLoc(plot1.world, plot1.id);
+//        final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(plot2.world, plot2.id);
+//        final Location top = MainUtil.getPlotTopLoc(plot1.world, plot1.id);
+//        if (plot1.owner == null) {
+//            PS.debug(plot2 + " is unowned (single)");
+//            TaskManager.runTask(whenDone);
+//            return false;
+//        }
+//        final Plot pos1 = getBottomPlot(plot1);
+//        final Plot pos2 = getTopPlot(plot1);
+//        final PlotId size = MainUtil.getSize(plot1);
+//        if (!MainUtil.isUnowned(plot2.world, plot2.id, new PlotId((plot2.id.x + size.x) - 1, (plot2.id.y + size.y) - 1))) {
+//            PS.debug(plot2 + " is unowned (multi)");
+//            TaskManager.runTask(whenDone);
+//            return false;
+//        }
+//        final int offset_x = plot2.id.x - pos1.id.x;
+//        final int offset_y = plot2.id.y - pos1.id.y;
+//        final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
+//        for (final PlotId id : selection) {
+//            final String worldOriginal = plot1.world;
+//            final PlotId idOriginal = new PlotId(id.x, id.y);
+//            final Plot plot = PS.get().getPlot(plot1.world, id);
+//            final Map<String, ConcurrentHashMap<PlotId, Plot>> raw = PS.get().getAllPlotsRaw();
+//            raw.get(plot1.world).remove(id);
+//            plot.id.x += offset_x;
+//            plot.id.y += offset_y;
+//            plot.id.recalculateHash();
+//            raw.get(plot2.world).put(plot.id, plot);
+//            DBFunc.movePlot(getPlot(worldOriginal, idOriginal), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
+//        }
+//        ChunkManager.manager.copyRegion(bot1, top, bot2, new Runnable() {
+//            @Override
+//            public void run() {
+//                final Location bot = bot1.clone().add(1, 0, 1);
+//                ChunkManager.manager.regenerateRegion(bot, top, null);
+//                TaskManager.runTaskLater(whenDone, 1);
+//            }
+//        });
+//        return true;
+//    }
     
-    public static boolean copy(final String world, final PlotId current, final PlotId newPlot, final Runnable whenDone) {
-        final com.intellectualcrafters.plot.object.Location bot1 = MainUtil.getPlotBottomLoc(world, current);
-        final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(world, newPlot);
-        final Location top = MainUtil.getPlotTopLoc(world, current);
-        final Plot currentPlot = MainUtil.getPlot(world, current);
-        if (currentPlot.owner == null) {
+    public static boolean copy(final Plot origin, final Plot destination, final Runnable whenDone) {
+        PlotId offset = new PlotId(destination.id.x - origin.id.x, destination.id.y - origin.id.y);
+        Location db = destination.getBottomAbs();
+        Location ob = origin.getBottomAbs();
+        final int offsetX = db.getX() - ob.getX();
+        final int offsetZ = db.getZ() - ob.getZ();
+        if (origin.owner == null) {
             TaskManager.runTaskLater(whenDone, 1);
             return false;
         }
-        final Plot pos1 = getBottomPlot(currentPlot);
-        final Plot pos2 = getTopPlot(currentPlot);
-        final PlotId size = MainUtil.getSize(currentPlot);
-        if (!MainUtil.isUnowned(world, newPlot, new PlotId((newPlot.x + size.x) - 1, (newPlot.y + size.y) - 1))) {
-            TaskManager.runTaskLater(whenDone, 1);
-            return false;
+        HashSet<Plot> plots = MainUtil.getConnectedPlots(origin);
+        for (Plot plot : plots) {
+            Plot other = MainUtil.getPlotAbs(destination.world, new PlotId(plot.id.x + offset.x, plot.id.y + offset.y));
+            if (other.owner != null) {
+                TaskManager.runTaskLater(whenDone, 1);
+                return false;
+            }
         }
-        final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
-        final int offset_x = newPlot.x - pos1.id.x;
-        final int offset_y = newPlot.y - pos1.id.y;
-        for (final PlotId id : selection) {
-            final int x = id.x + offset_x;
-            final int y = id.y + offset_y;
-            final Plot plot = createPlotAbs(currentPlot.owner, getPlot(world, new PlotId(x, y)));
-            if ((currentPlot.getSettings().flags != null) && (currentPlot.getSettings().flags.size() > 0)) {
-                plot.getSettings().flags = currentPlot.getSettings().flags;
-                DBFunc.setFlags(plot, currentPlot.getSettings().flags.values());
+        // copy data
+        for (Plot plot : plots) {
+            Plot other = MainUtil.getPlotAbs(destination.world , new PlotId(plot.id.x + offset.x, plot.id.y + offset.y));
+            other = createPlotAbs(plot.owner, other);
+            if ((plot.getFlags() != null) && (plot.getFlags().size() > 0)) {
+                other.getSettings().flags = plot.getFlags();
+                DBFunc.setFlags(other, plot.getFlags().values());
             }
-            if (currentPlot.isMerged()) {
-                plot.getSettings().setMerged(currentPlot.getSettings().getMerged());
-                DBFunc.setMerged(plot, currentPlot.getSettings().getMerged());
+            if (plot.isMerged()) {
+                other.setMerged(plot.getMerged());
             }
-            if ((currentPlot.members != null) && (currentPlot.members.size() > 0)) {
-                plot.members = currentPlot.members;
-                for (final UUID member : plot.members) {
-                    DBFunc.setMember(plot, member);
+            if ((plot.members != null) && (plot.members.size() > 0)) {
+                other.members = plot.members;
+                for (final UUID member : other.members) {
+                    DBFunc.setMember(other, member);
                 }
             }
-            if ((currentPlot.trusted != null) && (currentPlot.trusted.size() > 0)) {
-                plot.trusted = currentPlot.trusted;
-                for (final UUID trusted : plot.trusted) {
-                    DBFunc.setTrusted(plot, trusted);
+            if ((plot.trusted != null) && (plot.trusted.size() > 0)) {
+                other.trusted = plot.trusted;
+                for (final UUID trusted : other.trusted) {
+                    DBFunc.setTrusted(other, trusted);
                 }
             }
-            if ((currentPlot.denied != null) && (currentPlot.denied.size() > 0)) {
-                plot.denied = currentPlot.denied;
-                for (final UUID denied : plot.denied) {
-                    DBFunc.setDenied(plot, denied);
+            if ((plot.denied != null) && (plot.denied.size() > 0)) {
+                other.denied = plot.denied;
+                for (final UUID denied : other.denied) {
+                    DBFunc.setDenied(other, denied);
                 }
             }
-            PS.get().updatePlot(plot);
+            PS.get().updatePlot(other);
         }
-        ChunkManager.manager.copyRegion(bot1, top, bot2, whenDone);
+        // copy terrain
+        final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(getRegions(origin));
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                if (regions.size() == 0) {
+                    TaskManager.runTask(whenDone);
+                    return;
+                }
+                RegionWrapper region = regions.poll();
+                Location[] corners = getCorners(origin.world, region);
+                Location pos1 = corners[0];
+                Location pos2 = corners[1];
+                Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
+                newPos.setWorld(destination.world);
+                ChunkManager.manager.copyRegion(pos1, pos2, newPos, this);
+            }
+        };
+        run.run();
         return true;
     }
     
@@ -1727,56 +2095,124 @@ public class MainUtil {
         return true;
     }
     
-    public static Plot getBottomPlot(final Plot plot) {
-        if (plot.getSettings().getMerged(0)) {
-            final Plot p = PS.get().getPlot(plot.world, new PlotId(plot.id.x, plot.id.y - 1));
-            if (p == null) {
-                return plot;
-            }
-            return getBottomPlot(p);
-        }
-        if (plot.getSettings().getMerged(3)) {
-            final Plot p = PS.get().getPlot(plot.world, new PlotId(plot.id.x - 1, plot.id.y));
-            if (p == null) {
-                return plot;
-            }
-            return getBottomPlot(p);
-        }
-        return plot;
-    }
+    /**
+     * @deprecated raw access is deprecated
+     */
+    public static HashSet<Plot> connected_cache;
+    public static HashSet<RegionWrapper> regions_cache;
     
-    public static Plot getTopPlot(final Plot plot) {
-        if (plot.getSettings().getMerged(2)) {
-            final Plot p = PS.get().getPlot(plot.world, new PlotId(plot.id.x, plot.id.y + 1));
-            if (p == null) {
-                return plot;
+    public static HashSet<Plot> getConnectedPlots(Plot plot) {
+        if (plot == null) {
+            return null;
+        }
+        if (plot.settings == null) {
+            return new HashSet<>(Arrays.asList(plot));
+        }
+        boolean[] merged = plot.getMerged();
+        int hash = hash(merged);
+        if (hash == 0) {
+            return new HashSet<>(Arrays.asList(plot));
+        }
+        if (connected_cache != null && connected_cache.contains(plot)) {
+            return connected_cache;
+        }
+        regions_cache = null;
+        connected_cache = new HashSet<Plot>();
+        ArrayDeque<Plot> frontier = new ArrayDeque<>();
+        HashSet<Object> queuecache = new HashSet<>();
+        connected_cache.add(plot);
+        Plot tmp;
+        if (merged[0]) {
+            tmp = getPlotAbs(plot.world, getPlotIdRelative(plot.id, 0));
+            if (!tmp.getMerged(2)) {
+                // invalid merge
+                PS.debug("Fixing invalid merge: " + plot);
+                tmp.settings.setMerged(2, true);
+                DBFunc.setMerged(tmp, tmp.settings.getMerged());
             }
-            return getTopPlot(p);
+            queuecache.add(tmp);
+            frontier.add(tmp);
         }
-        if (plot.getSettings().getMerged(1)) {
-            final Plot p = PS.get().getPlot(plot.world, new PlotId(plot.id.x + 1, plot.id.y));
-            if (p == null) {
-                return plot;
+        if (merged[1]) {
+            tmp = getPlotAbs(plot.world, getPlotIdRelative(plot.id, 1));
+            if (!tmp.getMerged(3)) {
+                // invalid merge
+                PS.debug("Fixing invalid merge: " + plot);
+                tmp.settings.setMerged(3, true);
+                DBFunc.setMerged(tmp, tmp.settings.getMerged());
             }
-            return getTopPlot(p);
+            queuecache.add(tmp);
+            frontier.add(tmp);
         }
-        return plot;
-        
-    }
-    
-    public static PlotId getSize(final Plot plot) {
-        if (!plot.isMerged()) {
-            return new PlotId(1, 1);
+        if (merged[2]) {
+            tmp = getPlotAbs(plot.world, getPlotIdRelative(plot.id, 2));
+            if (!tmp.getMerged(0)) {
+                // invalid merge
+                PS.debug("Fixing invalid merge: " + plot);
+                tmp.settings.setMerged(0, true);
+                DBFunc.setMerged(tmp, tmp.settings.getMerged());
+            }
+            queuecache.add(tmp);
+            frontier.add(tmp);
         }
-        final Plot top = getTopPlot(plot);
-        final Plot bot = getBottomPlot(plot);
-        return new PlotId((top.id.x - bot.id.x) + 1, (top.id.y - bot.id.y) + 1);
+        if (merged[3]) {
+            tmp = getPlotAbs(plot.world, getPlotIdRelative(plot.id, 3));
+            if (!tmp.getMerged(1)) {
+                // invalid merge
+                PS.debug("Fixing invalid merge: " + plot);
+                tmp.settings.setMerged(1, true);
+                DBFunc.setMerged(tmp, tmp.settings.getMerged());
+            }
+            queuecache.add(tmp);
+            frontier.add(tmp);
+        }
+        Plot current;
+        while ((current = frontier.poll()) != null) {
+            if (current.settings == null) {
+                // Invalid plot
+                // merged onto unclaimed plot
+                PS.debug("Ignoring invalid merged plot: " + current + " | " + current.owner);
+                continue;
+            }
+            connected_cache.add(current);
+            queuecache.remove(current);
+            merged = current.getMerged();
+            if (merged[0]) {
+                tmp = getPlotAbs(current.world, getPlotIdRelative(current.id, 0));
+                if (!queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
+                    queuecache.add(tmp);
+                    frontier.add(tmp);
+                }
+            }
+            if (merged[1]) {
+                tmp = getPlotAbs(current.world, getPlotIdRelative(current.id, 1));
+                if (!queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
+                    queuecache.add(tmp);
+                    frontier.add(tmp);
+                }
+            }
+            if (merged[2]) {
+                tmp = getPlotAbs(current.world, getPlotIdRelative(current.id, 2));
+                if (!queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
+                    queuecache.add(tmp);
+                    frontier.add(tmp);
+                }
+            }
+            if (merged[3]) {
+                tmp = getPlotAbs(current.world, getPlotIdRelative(current.id, 3));
+                if (!queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
+                    queuecache.add(tmp);
+                    frontier.add(tmp);
+                }
+            }
+        }
+        return connected_cache;
     }
     
     /**
      * Fetches the plot from the main class
      */
-    public static Plot getPlot(final String world, final PlotId id) {
+    public static Plot getPlotAbs(final String world, final PlotId id) {
         if (id == null) {
             return null;
         }
@@ -1788,18 +2224,17 @@ public class MainUtil {
     }
     
     /**
-     * Returns the plot at a location (mega plots are not considered, all plots are treated as small plots)
-     * @param loc
-     * @return PlotId underlying plot id of loc
+     * Gets all the connected plots
      */
-    public static PlotId getPlotAbs(final Location loc) {
-        final String world = loc.getWorld();
-        final PlotManager manager = PS.get().getPlotManager(world);
-        if (manager == null) {
+    public static HashSet<Plot> getPlots(final String world, final PlotId id) {
+        if (id == null) {
             return null;
         }
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
-        return manager.getPlotIdAbs(plotworld, loc.getX(), loc.getY(), loc.getZ());
+        final Plot plot = PS.get().getPlot(world, id);
+        if (plot != null) {
+            return getConnectedPlots(plot);
+        }
+        return new HashSet<>(Arrays.asList(new Plot(world, id, null)));
     }
     
     /**
@@ -1833,12 +2268,20 @@ public class MainUtil {
         return Permissions.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
     }
     
-    public static Plot getPlot(final Location loc) {
+    public static Plot getPlotAbs(final Location loc) {
         final PlotId id = getPlotId(loc);
         if (id == null) {
             return null;
         }
-        return getPlot(loc.getWorld(), id);
+        return getPlotAbs(loc.getWorld(), id);
+    }
+    
+    public static Set<Plot> getPlots(final Location loc) {
+        final PlotId id = getPlotId(loc);
+        if (id == null) {
+            return null;
+        }
+        return getPlots(loc.getWorld(), id);
     }
     
     public static double getAverageRating(final Plot plot) {
@@ -1905,7 +2348,7 @@ public class MainUtil {
         return ratings;
     }
     
-    public static void setComponent(final Plot plot, final String component, final PlotBlock[] blocks) {
-        PS.get().getPlotManager(plot.world).setComponent(PS.get().getPlotWorld(plot.world), plot.id, component, blocks);
+    public static boolean setComponent(final Plot plot, final String component, final PlotBlock[] blocks) {
+        return PS.get().getPlotManager(plot.world).setComponent(PS.get().getPlotWorld(plot.world), plot.id, component, blocks);
     }
 }

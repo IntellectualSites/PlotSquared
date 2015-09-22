@@ -33,6 +33,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -59,10 +60,10 @@ public class Clear extends SubCommand {
                     return false;
                 }
             } else {
-                plot = MainUtil.getPlot(loc.getWorld(), id);
+                plot = MainUtil.getPlotAbs(loc.getWorld(), id);
             }
         } else {
-            plot = MainUtil.getPlot(loc);
+            plot = MainUtil.getPlotAbs(loc);
         }
         if (plot == null) {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
@@ -71,11 +72,10 @@ public class Clear extends SubCommand {
         //        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
         //            return sendMessage(plr, C.UNLINK_REQUIRED);
         //        }
-        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(UUIDHandler.getUUID(plr))) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
+        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
-        assert plot != null;
-        if (MainUtil.runners.containsKey(plot)) {
+        if (plot.getRunning() != 0) {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
@@ -91,18 +91,28 @@ public class Clear extends SubCommand {
                 final boolean result = MainUtil.clearAsPlayer(plot, plot.owner == null, new Runnable() {
                     @Override
                     public void run() {
-                        // If the state changes, then mark it as no longer done
-                        if (FlagManager.getPlotFlag(plot, "done") != null) {
-                            FlagManager.removePlotFlag(plot, "done");
-                        }
-                        if (FlagManager.getPlotFlag(plot, "analysis") != null) {
-                            FlagManager.removePlotFlag(plot, "analysis");
-                        }
-                        MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                        plot.unlink();
+                        SetBlockQueue.addNotify(new Runnable() {
+                            @Override
+                            public void run() {
+                                plot.removeRunning();
+                                // If the state changes, then mark it as no longer done
+                                if (FlagManager.getPlotFlag(plot, "done") != null) {
+                                    FlagManager.removePlotFlag(plot, "done");
+                                }
+                                if (FlagManager.getPlotFlag(plot, "analysis") != null) {
+                                    FlagManager.removePlotFlag(plot, "analysis");
+                                }
+                                MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                            }
+                        });
                     }
                 });
                 if (!result) {
                     MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+                }
+                else {
+                    plot.addRunning();
                 }
             }
         };

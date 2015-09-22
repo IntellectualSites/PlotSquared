@@ -64,7 +64,6 @@ public class SetBlockFast extends BukkitSetBlockManager {
             
             @Override
             public void run() {
-                // TODO Auto-generated method stub
                 update(toUpdate.values());
                 toUpdate = new HashMap<>();
             }

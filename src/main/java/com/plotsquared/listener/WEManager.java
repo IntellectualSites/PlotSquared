@@ -47,9 +47,7 @@ public class WEManager {
                 continue;
             }
             if (Settings.WE_ALLOW_HELPER ? plot.isAdded(uuid) : (plot.isOwner(uuid) || plot.getTrusted().contains(uuid))) {
-                final Location pos1 = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-                final Location pos2 = MainUtil.getPlotTopLoc(plot.world, plot.id);
-                regions.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getY(), pos2.getY(), pos1.getZ(), pos2.getZ()));
+                regions.addAll(MainUtil.getRegions(plot));
             }
         }
         return regions;

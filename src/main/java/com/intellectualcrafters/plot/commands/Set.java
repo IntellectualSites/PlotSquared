@@ -47,7 +47,6 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-// TODO Make sub-subcommands
 @CommandDeclaration(
 command = "set",
 description = "Set a plot value",
@@ -62,9 +61,8 @@ public class Set extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String... args) {
-        
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -93,7 +91,7 @@ public class Set extends SubCommand {
             }
         }
         if (args[0].equalsIgnoreCase("flag")) {
-            List<String> arglist = Arrays.asList("flag", "set");
+            List<String> arglist = new ArrayList<>(Arrays.asList("flag", "set"));
             for (String arg : Arrays.copyOfRange(args, 1, args.length)) {
                 arglist.add(arg);
             }
@@ -113,7 +111,7 @@ public class Set extends SubCommand {
             }
             //set to current location
             final String world = plr.getLocation().getWorld();
-            final Location base = MainUtil.getPlotBottomLoc(world, plot.id);
+            final Location base = MainUtil.getPlotBottomLocAbs(world, plot.id).subtract(1, 0, 1);
             base.setY(0);
             final Location relative = plr.getLocation().subtract(base.getX(), base.getY(), base.getZ());
             final BlockLoc blockloc = new BlockLoc(relative.getX(), relative.getY(), relative.getZ(), relative.getYaw(), relative.getPitch());
@@ -159,7 +157,7 @@ public class Set extends SubCommand {
                 return false;
             }
             for (final Plot p : PS.get().getPlotsInWorld(plr.getLocation().getWorld())) {
-                if (p.getSettings().getAlias().equalsIgnoreCase(alias)) {
+                if (p.getAlias().equalsIgnoreCase(alias)) {
                     MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
                 }
@@ -179,26 +177,26 @@ public class Set extends SubCommand {
             }
             if (args.length < 2) {
                 MainUtil.sendMessage(plr, C.NEED_BIOME);
-                return true;
+                return false;
             }
             if (args[1].length() < 2) {
                 sendMessage(plr, C.NAME_LITTLE, "Biome", args[1].length() + "", "2");
-                return true;
+                return false;
             }
             final int biome = BlockManager.manager.getBiomeFromString(args[1]);
             if (biome == -1) {
                 MainUtil.sendMessage(plr, getBiomeList(BlockManager.manager.getBiomeList()));
-                return true;
+                return false;
             }
-            if (MainUtil.runners.containsKey(plot)) {
+            if (plot.getRunning() > 0) {
                 MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
                 return false;
             }
-            MainUtil.runners.put(plot, 1);
+            plot.addRunning();
             plot.setBiome(args[1].toUpperCase(), new Runnable() {
                 @Override
                 public void run() {
-                    MainUtil.runners.remove(plot);
+                    plot.removeRunning();
                     MainUtil.sendMessage(plr, C.BIOME_SET_TO.s() + args[1].toLowerCase());
                 }
             });
@@ -265,17 +263,19 @@ public class Set extends SubCommand {
                     MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, args[1]);
                     return false;
                 }
-                if (MainUtil.runners.containsKey(plot)) {
+                if (plot.getRunning() > 0) {
                     MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
                     return false;
                 }
-                MainUtil.runners.put(plot, 1);
-                manager.setComponent(plotworld, plot.id, component, blocks);
+                plot.addRunning();
+                for (Plot current : MainUtil.getConnectedPlots(plot)) {
+                    manager.setComponent(plotworld, current.id, component, blocks);
+                }
                 MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
                 SetBlockQueue.addNotify(new Runnable() {
                     @Override
                     public void run() {
-                        MainUtil.runners.remove(plot);
+                        plot.removeRunning();
                     }
                 });
                 return true;

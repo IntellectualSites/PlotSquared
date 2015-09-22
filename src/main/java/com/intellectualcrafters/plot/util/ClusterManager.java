@@ -42,7 +42,7 @@ public class ClusterManager {
         if (clusters.containsKey(world)) {
             return clusters.get(world);
         }
-        return new HashSet<>();
+        return new HashSet<>(0);
     }
     
     public static int getPlayerClusterCount(final String world, final PlotPlayer player) {
@@ -74,7 +74,7 @@ public class ClusterManager {
             if (toReturn.getY() == 0) {
                 final PlotManager manager = PS.get().getPlotManager(cluster.world);
                 final PlotWorld plotworld = PS.get().getPlotWorld(cluster.world);
-                final Location loc = manager.getSignLoc(plotworld, MainUtil.getPlot(cluster.world, center));
+                final Location loc = manager.getSignLoc(plotworld, MainUtil.getPlotAbs(cluster.world, center));
                 toReturn.setY(loc.getY());
             }
         } else {
@@ -124,13 +124,13 @@ public class ClusterManager {
         final PlotManager manager = PS.get().getPlotManager(world);
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
         final Location bot = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
-        final Location top = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1, 0, 1);
-        return (bot.getX() < loc.getX()) && (bot.getZ() < loc.getZ()) && (top.getX() > loc.getX()) && (top.getZ() > loc.getZ());
+        final Location top = manager.getPlotTopLocAbs(plotworld, cluster.getP2());
+        return (bot.getX() <= loc.getX()) && (bot.getZ() <= loc.getZ()) && (top.getX() >= loc.getX()) && (top.getZ() >= loc.getZ());
     }
     
     public static HashSet<PlotCluster> getIntersects(final String world, final PlotClusterId id) {
         if (!clusters.containsKey(world)) {
-            return new HashSet<>();
+            return new HashSet<>(0);
         }
         final HashSet<PlotCluster> list = new HashSet<PlotCluster>();
         for (final PlotCluster cluster : clusters.get(world)) {
@@ -236,7 +236,7 @@ public class ClusterManager {
     }
     
     public static PlotId estimatePlotId(final Location loc) {
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot != null) {
             return plot.id;
         }

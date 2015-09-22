@@ -283,6 +283,7 @@ public enum C {
     /*
      * Core Stuff
      */
+    TASK_START("Starting task...", "Core"),
     PREFIX("$3[$1P2$3] $2", "Core"),
     ENABLED("$1PlotSquared is now enabled", "Core"),
     EXAMPLE_MESSAGE("$2This is an example message &k!!!", "Core"),
@@ -328,16 +329,20 @@ public enum C {
     CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user", "Permission"),
     CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once", "Permission"),
     YOU_BE_DENIED("$2You are not allowed to enter this plot", "Permission"),
-    NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%", "Permission"),
-    UNLINK_REQUIRED("$2An unlink is required to do this.", "Permission"),
-    UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Permission"),
-    UNLINK_SUCCESS("$2Successfully unlinked plots.", "Permission"),
-    NO_MERGE_TO_MEGA("$2Mega plots cannot be merged into. Please merge from the desired mega plot.", "Permission"),
-    MERGE_NOT_VALID("$2This merge request is no longer valid.", "Permission"),
-    MERGE_ACCEPTED("$2The merge request has been accepted", "Permission"),
-    SUCCESS_MERGE("$2Plots have been merged!", "Permission"),
-    MERGE_REQUESTED("$2Successfully sent a merge request", "Permission"),
+    
+    /*
+     * Merge
+     */
+    MERGE_NOT_VALID("$2This merge request is no longer valid.", "Merge"),
+    MERGE_ACCEPTED("$2The merge request has been accepted", "Merge"),
+    SUCCESS_MERGE("$2Plots have been merged!", "Merge"),
+    MERGE_REQUESTED("$2Successfully sent a merge request", "Merge"),
     MERGE_REQUEST_CONFIRM("merge request from %s", "Permission"),
+    NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%", "Merge"),
+    NO_AVAILABLE_AUTOMERGE("$2You do not own any adjacent plots in the specified direction.", "Merge"),
+    UNLINK_REQUIRED("$2An unlink is required to do this.", "Merge"),
+    UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Merge"),
+    UNLINK_SUCCESS("$2Successfully unlinked plots.", "Merge"),
     /*
      * Commands
      */
@@ -368,7 +373,6 @@ public enum C {
      * trim
      */
     TRIM_SYNTAX("Use /plot trim <all|x;y> <world>", "Trim"),
-    TRIM_START("Starting a world trim task...", "Trim"),
     TRIM_IN_PROGRESS("A world trim task is already in progress!", "Trim"),
     NOT_VALID_HYBRID_PLOT_WORLD("The hybrid plot manager is required to perform this action", "Trim"),
     /*

@@ -27,9 +27,6 @@ public class SpongeBasicGen extends SpongePlotGenerator {
     
     /**
      * Some generator specific variables (implementation dependent)
-     *
-     * TODO USE THESE
-     *
      */
     public int plotsize;
     public int pathsize;

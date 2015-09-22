@@ -83,7 +83,7 @@ public class Inbox extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] args) {
         
-        final Plot plot = MainUtil.getPlot(player.getLocation());
+        final Plot plot = MainUtil.getPlotAbs(player.getLocation());
         if (args.length == 0) {
             sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {

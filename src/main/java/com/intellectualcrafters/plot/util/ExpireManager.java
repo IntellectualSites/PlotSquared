@@ -129,7 +129,7 @@ public class ExpireManager {
                                     }
                                 }
                                 if (plot.isMerged()) {
-                                    MainUtil.unlinkPlot(plot, true);
+                                    MainUtil.unlinkPlot(plot, true, false);
                                 }
                                 plot.deletePlot(null);
                                 expiredPlots.get(world).remove(plot);
@@ -144,7 +144,7 @@ public class ExpireManager {
                                 }
                             }
                         };
-                        if (MainUtil.runners.containsKey(plot)) {
+                        if (plot.getRunning() > 0) {
                             PS.debug("$2[&5Expire&dManager$2] &bSkipping plot in use: " + plot);
                             expiredPlots.get(world).remove(plot);
                             run();

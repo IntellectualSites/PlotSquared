@@ -39,7 +39,7 @@ public class MusicSubcommand extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] args) {
         final Location loc = player.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }

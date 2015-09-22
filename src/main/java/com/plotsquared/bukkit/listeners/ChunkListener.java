@@ -143,23 +143,23 @@ public class ChunkListener implements Listener {
         final int x2 = x + 15;
         final int z2 = z + 15;
         Plot plot;
-        plot = MainUtil.getPlot(new Location(world, x, 1, z));
+        plot = MainUtil.getPlotAbs(new Location(world, x, 1, z));
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }
-        plot = MainUtil.getPlot(new Location(world, x2, 1, z2));
+        plot = MainUtil.getPlotAbs(new Location(world, x2, 1, z2));
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }
-        plot = MainUtil.getPlot(new Location(world, x2, 1, z));
+        plot = MainUtil.getPlotAbs(new Location(world, x2, 1, z));
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }
-        plot = MainUtil.getPlot(new Location(world, x, 1, z2));
+        plot = MainUtil.getPlotAbs(new Location(world, x, 1, z2));
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }
-        plot = MainUtil.getPlot(new Location(world, x + 7, 1, z + 7));
+        plot = MainUtil.getPlotAbs(new Location(world, x + 7, 1, z + 7));
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }

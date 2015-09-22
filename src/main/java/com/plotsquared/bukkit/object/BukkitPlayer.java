@@ -177,9 +177,14 @@ public class BukkitPlayer extends PlotPlayer {
         }
         Permission perm = Bukkit.getServer().getPluginManager().getPermission(key);
         if (perm == null) {
-            perm = new Permission(key, PermissionDefault.FALSE);
-            Bukkit.getServer().getPluginManager().addPermission(perm);
-            Bukkit.getServer().getPluginManager().recalculatePermissionDefaults(perm);
+            try {
+                perm = new Permission(key, PermissionDefault.FALSE);
+                Bukkit.getServer().getPluginManager().addPermission(perm);
+                Bukkit.getServer().getPluginManager().recalculatePermissionDefaults(perm);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return player.hasPermission(key);
     }

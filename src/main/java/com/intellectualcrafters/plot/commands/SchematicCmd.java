@@ -40,8 +40,6 @@ import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-// TODO Add sub-subcommands
-
 @CommandDeclaration(
 command = "schematic",
 permission = "plots.schematic",
@@ -73,7 +71,7 @@ public class SchematicCmd extends SubCommand {
                     break;
                 }
                 final Location loc = plr.getLocation();
-                final Plot plot = MainUtil.getPlot(loc);
+                final Plot plot = MainUtil.getPlotAbs(loc);
                 if (plot == null) {
                     return !sendMessage(plr, C.NOT_IN_PLOT);
                 }
@@ -130,37 +128,38 @@ public class SchematicCmd extends SubCommand {
                 });
                 break;
             }
-            case "test": {
-                if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
-                    return false;
-                }
-                if (args.length < 2) {
-                    sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
-                    return false;
-                }
-                final Location loc = plr.getLocation();
-                final Plot plot = MainUtil.getPlot(loc);
-                if (plot == null) {
-                    sendMessage(plr, C.NOT_IN_PLOT);
-                    return false;
-                }
-                file = args[1];
-                schematic = SchematicHandler.manager.getSchematic(file);
-                if (schematic == null) {
-                    sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
-                    return false;
-                }
-                final int l1 = schematic.getSchematicDimension().getX();
-                final int l2 = schematic.getSchematicDimension().getZ();
-                final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.id);
-                if ((l1 < length) || (l2 < length)) {
-                    sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
-                    break;
-                }
-                sendMessage(plr, C.SCHEMATIC_VALID);
-                break;
-            }
+//            TODO test
+//            case "test": {
+//                if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
+//                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
+//                    return false;
+//                }
+//                if (args.length < 2) {
+//                    sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
+//                    return false;
+//                }
+//                final Location loc = plr.getLocation();
+//                final Plot plot = MainUtil.getPlot(loc);
+//                if (plot == null) {
+//                    sendMessage(plr, C.NOT_IN_PLOT);
+//                    return false;
+//                }
+//                file = args[1];
+//                schematic = SchematicHandler.manager.getSchematic(file);
+//                if (schematic == null) {
+//                    sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
+//                    return false;
+//                }
+//                final int l1 = schematic.getSchematicDimension().getX();
+//                final int l2 = schematic.getSchematicDimension().getZ();
+//                final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.id);
+//                if ((l1 < length) || (l2 < length)) {
+//                    sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
+//                    break;
+//                }
+//                sendMessage(plr, C.SCHEMATIC_VALID);
+//                break;
+//            }
             case "saveall":
             case "exportall": {
                 if (!ConsolePlayer.isConsole(plr)) {
@@ -203,7 +202,7 @@ public class SchematicCmd extends SubCommand {
                 }
                 final Plot p2;
                 final Location loc = plr.getLocation();
-                final Plot plot = MainUtil.getPlot(loc);
+                final Plot plot = MainUtil.getPlotAbs(loc);
                 if (plot == null) {
                     return !sendMessage(plr, C.NOT_IN_PLOT);
                 }

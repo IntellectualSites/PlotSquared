@@ -22,6 +22,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -31,7 +32,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 public class BukkitHybridUtils extends HybridUtils {
     
     @Override
-    public void analyzePlot(final Plot plot, final RunnableVal<PlotAnalysis> whenDone) {
+    public void analyzeRegion(final String world, final RegionWrapper region, final RunnableVal<PlotAnalysis> whenDone) {
         // int diff, int variety, int verticies, int rotation, int height_sd
         /*
          * diff: compare to base by looping through all blocks
@@ -47,12 +48,12 @@ public class BukkitHybridUtils extends HybridUtils {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                final World world = Bukkit.getWorld(plot.world);
-                final ChunkGenerator gen = world.getGenerator();
+                final World worldObj = Bukkit.getWorld(world);
+                final ChunkGenerator gen = worldObj.getGenerator();
                 if (gen == null) {
                     return;
                 }
-                final BiomeGrid base = new BiomeGrid() {
+                final BiomeGrid nullBiomeGrid = new BiomeGrid() {
                     @Override
                     public void setBiome(final int a, final int b, final Biome c) {}
                     
@@ -61,8 +62,13 @@ public class BukkitHybridUtils extends HybridUtils {
                         return null;
                     }
                 };
-                final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-                final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+                
+                final Location bot = new Location(world, region.minX, region.minY, region.minZ);
+                final Location top = new Location(world, region.maxX, region.maxY, region.maxZ);
+                
+//                final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
+//                final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
+                
                 final int bx = bot.getX();
                 final int bz = bot.getZ();
                 final int tx = top.getX();
@@ -87,10 +93,10 @@ public class BukkitHybridUtils extends HybridUtils {
                         ChunkManager.chunkTask(bot, top, new RunnableVal<int[]>() {
                             @Override
                             public void run() {
-                                // TODO [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge]
+                                // [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge]
                                 final int X = value[0];
                                 final int Z = value[1];
-                                final short[][] result = gen.generateExtBlockSections(world, r, X, Z, base);
+                                final short[][] result = gen.generateExtBlockSections(worldObj, r, X, Z, nullBiomeGrid);
                                 final int xb = ((X) << 4) - bx;
                                 final int zb = ((Z) << 4) - bz;
                                 for (int i = 0; i < result.length; i++) {
@@ -202,21 +208,6 @@ public class BukkitHybridUtils extends HybridUtils {
                                         analysis.data_sd = (int) (MathMan.getSD(data, analysis.data));
                                         analysis.air_sd = (int) (MathMan.getSD(air, analysis.air));
                                         analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety));
-                                        
-                                        final List<Integer> result = new ArrayList<>();
-                                        result.add(analysis.changes);
-                                        result.add(analysis.faces);
-                                        result.add(analysis.data);
-                                        result.add(analysis.air);
-                                        result.add(analysis.variety);
-                                        
-                                        result.add(analysis.changes_sd);
-                                        result.add(analysis.faces_sd);
-                                        result.add(analysis.data_sd);
-                                        result.add(analysis.air_sd);
-                                        result.add(analysis.variety_sd);
-                                        final Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
-                                        FlagManager.addPlotFlag(plot, flag);
                                         System.gc();
                                         System.gc();
                                         whenDone.value = analysis;
@@ -236,7 +227,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     public void run() {
                         final int X = value[0];
                         final int Z = value[1];
-                        world.loadChunk(X, Z);
+                        worldObj.loadChunk(X, Z);
                         int minX;
                         int minZ;
                         int maxX;
@@ -272,14 +263,14 @@ public class BukkitHybridUtils extends HybridUtils {
                             for (int z = minZ; z <= maxZ; z++) {
                                 final int zz = cbz + z;
                                 for (int y = 0; y < 256; y++) {
-                                    final Block block = world.getBlockAt(xx, y, zz);
+                                    final Block block = worldObj.getBlockAt(xx, y, zz);
                                     final int xr = xb + x;
                                     final int zr = zb + z;
                                     newblocks[y][xr][zr] = (short) block.getTypeId();
                                 }
                             }
                         }
-                        world.unloadChunkRequest(X, Z, true);
+                        worldObj.unloadChunkRequest(X, Z, true);
                     }
                 }, new Runnable() {
                     @Override

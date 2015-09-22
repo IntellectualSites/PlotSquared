@@ -61,7 +61,7 @@ public class AugmentedPopulator implements Populator {
         this.b = b;
         o = (plotworld.TERRAIN == 1) || (plotworld.TERRAIN == 2);
         if (cluster != null) {
-            final Location bl = manager.getPlotBottomLocAbs(plotworld, cluster.getP1());
+            final Location bl = manager.getPlotBottomLocAbs(plotworld, cluster.getP1()).subtract(1, 0, 1);
             final Location tl = manager.getPlotTopLocAbs(plotworld, cluster.getP2()).add(1, 0, 1);
             bx = bl.getX();
             bz = bl.getZ();

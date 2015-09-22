@@ -52,7 +52,7 @@ public class Target extends SubCommand {
                 Plot closest = null;
                 int distance = Integer.MAX_VALUE;
                 for (final Plot plot : PS.get().getPlotsInWorld(ploc.getWorld())) {
-                    final double current = plot.getBottom().getEuclideanDistanceSquared(ploc);
+                    final double current = plot.getBottomAbs().getEuclideanDistanceSquared(ploc);
                     if (current < distance) {
                         distance = (int) current;
                         closest = plot;
