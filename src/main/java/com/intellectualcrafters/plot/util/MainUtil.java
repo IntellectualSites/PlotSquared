@@ -2127,7 +2127,7 @@ public class MainUtil {
             if (!tmp.getMerged(2)) {
                 // invalid merge
                 PS.debug("Fixing invalid merge: " + plot);
-                tmp.settings.setMerged(2, true);
+                tmp.getSettings().setMerged(2, true);
                 DBFunc.setMerged(tmp, tmp.settings.getMerged());
             }
             queuecache.add(tmp);
@@ -2138,7 +2138,7 @@ public class MainUtil {
             if (!tmp.getMerged(3)) {
                 // invalid merge
                 PS.debug("Fixing invalid merge: " + plot);
-                tmp.settings.setMerged(3, true);
+                tmp.getSettings().setMerged(3, true);
                 DBFunc.setMerged(tmp, tmp.settings.getMerged());
             }
             queuecache.add(tmp);
@@ -2149,7 +2149,7 @@ public class MainUtil {
             if (!tmp.getMerged(0)) {
                 // invalid merge
                 PS.debug("Fixing invalid merge: " + plot);
-                tmp.settings.setMerged(0, true);
+                tmp.getSettings().setMerged(0, true);
                 DBFunc.setMerged(tmp, tmp.settings.getMerged());
             }
             queuecache.add(tmp);
@@ -2160,7 +2160,7 @@ public class MainUtil {
             if (!tmp.getMerged(1)) {
                 // invalid merge
                 PS.debug("Fixing invalid merge: " + plot);
-                tmp.settings.setMerged(1, true);
+                tmp.getSettings().setMerged(1, true);
                 DBFunc.setMerged(tmp, tmp.settings.getMerged());
             }
             queuecache.add(tmp);

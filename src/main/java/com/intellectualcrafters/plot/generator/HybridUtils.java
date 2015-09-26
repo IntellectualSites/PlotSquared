@@ -316,8 +316,8 @@ public abstract class HybridUtils {
         final int tz = sz - 1;
         final int ty = get_ey(world, bx, tx, bz, tz, by);
         
-        final Set<RegionWrapper> sideroad = new HashSet<>(Arrays.asList(new RegionWrapper(sx, ex, sz, ez)));
-        final Set<RegionWrapper> intersection = new HashSet<>(Arrays.asList(new RegionWrapper(bx, tx, bz, tz)));
+        final Set<RegionWrapper> sideroad = new HashSet<>(Arrays.asList(new RegionWrapper(sx, ex, sy, ey, sz, ez)));
+        final Set<RegionWrapper> intersection = new HashSet<>(Arrays.asList(new RegionWrapper(bx, tx, by, ty, bz, tz)));
         
         final Location pos3 = new Location(world, bx, by, bz);
         final Location pos4 = new Location(world, tx, ty, tz);

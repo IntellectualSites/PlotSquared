@@ -100,7 +100,7 @@ public class Merge extends SubCommand {
         final int size = plot.getConnectedPlots().size();
         final int maxSize = Permissions.hasPermissionRange(plr, "plots.merge", Settings.MAX_PLOTS); 
         if (size >= maxSize) {
-            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.merge." + size);
+            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.merge." + (size + 1));
             return false;
         }
         if (args.length == 0) {

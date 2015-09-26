@@ -1120,6 +1120,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                         break;
                     }
                     default: {
+                        if (blockId > 197) {
+                            eventType = PlayerBlockEventType.INTERACT_BLOCK;
+                        }
                         break;
                     }
                 }

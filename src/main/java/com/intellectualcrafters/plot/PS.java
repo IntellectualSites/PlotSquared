@@ -1277,7 +1277,7 @@ public class PS {
                     e.printStackTrace();
                 }
                 if (((plotWorld.TYPE == 2) && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
-                    log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'!");
+                    log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'! (https://github.com/IntellectualSites/PlotSquared/wiki/Manual-generator-setting)");
                     return;
                 }
                 log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
