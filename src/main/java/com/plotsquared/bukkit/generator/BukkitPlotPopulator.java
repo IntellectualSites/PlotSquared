@@ -22,15 +22,15 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
     public int X;
     public int Z;
     public String worldname;
-    private World world;
+    private Chunk chunk;
     
     @Override
     public void populate(final World world, final Random rand, final Chunk chunk) {
         try {
-            this.world = world;
+            this.chunk = chunk;
             worldname = world.getName();
-            X = chunk.getX() << 4;
-            Z = chunk.getZ() << 4;
+            X = this.chunk.getX() << 4;
+            Z = this.chunk.getZ() << 4;
             if (ChunkManager.FORCE_PASTE) {
                 for (short x = 0; x < 16; x++) {
                     for (short z = 0; z < 16; z++) {
@@ -92,7 +92,7 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
      */
     public void setBlock(final int x, final int y, final int z, final byte data) {
         if (data != 0) {
-            world.getBlockAt(X + x, y, Z + z).setData(data);
+            chunk.getBlock(x, y, z).setData(data);
         }
     }
     
@@ -104,7 +104,7 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
      * @param data
      */
     public void setBlockAbs(final int x, final int y, final int z, final byte data) {
-        world.getBlockAt(X + x, y, Z + z).setData(data);
+        chunk.getBlock(x, y, z).setData(data);
     }
     
     /**

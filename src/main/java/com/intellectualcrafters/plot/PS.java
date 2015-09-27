@@ -291,8 +291,8 @@ public class PS {
                             }
                             if (!BlockManager.manager.isWorld(world) || (BlockManager.manager.isWorld(world) && !isPlotWorld(world))) {
                                 PS.debug("&c`" + world + "` was not properly loaded - PlotSquared will now try to load it properly: ");
-                                PS.debug("&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml as well");
-                                PS.debug("&8 - &7Your world management plugin may be faulty. Consider using an up to date plugin.");
+                                PS.debug("&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
+                                PS.debug("&8 - &7Your world management plugin may be faulty (or non existant)");
                                 IMP.setGenerator(world);
                             }
                         }

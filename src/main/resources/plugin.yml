@@ -123,6 +123,7 @@ permissions:
       plots.set.home: true
       plots.merge: true
       plots.merge.other: true
+      plots.merge.4: true
       plots.unlink: true
       plots.denied: true
       plots.add: true

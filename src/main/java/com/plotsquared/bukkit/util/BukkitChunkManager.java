@@ -940,8 +940,18 @@ public class BukkitChunkManager extends ChunkManager {
     }
     
     @Override
-    public boolean unloadChunk(final String world, final ChunkLoc loc, final boolean save, final boolean safe) {
-        return BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe);
+    public void unloadChunk(final String world, final ChunkLoc loc, final boolean save, final boolean safe) {
+        if (!PS.get().isMainThread(Thread.currentThread())) {
+            TaskManager.runTask(new Runnable() {
+                @Override
+                public void run() {
+                    BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe);
+                }
+            });
+        }
+        else {
+            BukkitUtil.getWorld(world).unloadChunk(loc.x, loc.z, save, safe);
+        }
     }
     
     public static void swapChunk(final World world1, final World world2, final Chunk pos1, final Chunk pos2, final RegionWrapper r1, final RegionWrapper r2) {

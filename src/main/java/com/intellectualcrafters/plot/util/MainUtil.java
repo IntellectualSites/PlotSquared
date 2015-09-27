@@ -1172,10 +1172,8 @@ public class MainUtil {
         if (plot.owner == null) {
             return false;
         }
-        if (!plot.owner.equals(uuid)) {
-            return false;
-        }
         HashSet<Plot> visited = new HashSet<>();
+        HashSet<PlotId> merged = new HashSet<>();
         ArrayDeque<Plot> frontier = new ArrayDeque<>(getConnectedPlots(plot));
         Plot current;
         boolean toReturn = false;
@@ -1189,6 +1187,8 @@ public class MainUtil {
                 if (other.isOwner(uuid)) {
                     frontier.addAll(other.getConnectedPlots());
                     mergePlot(current.world, current, other, removeRoads);
+                    merged.add(current.id);
+                    merged.add(other.id);
                     toReturn = true;
                     max--;
                 }
@@ -1198,6 +1198,8 @@ public class MainUtil {
                 if (other.isOwner(uuid)) {
                     frontier.addAll(other.getConnectedPlots());
                     mergePlot(current.world, current, other, removeRoads);
+                    merged.add(current.id);
+                    merged.add(other.id);
                     toReturn = true;
                     max--;
                 }
@@ -1207,6 +1209,8 @@ public class MainUtil {
                 if (other.isOwner(uuid)) {
                     frontier.addAll(other.getConnectedPlots());
                     mergePlot(current.world, current, other, removeRoads);
+                    merged.add(current.id);
+                    merged.add(other.id);
                     toReturn = true;
                     max--;
                 }
@@ -1216,39 +1220,20 @@ public class MainUtil {
                 if (other.isOwner(uuid)) {
                     frontier.addAll(other.getConnectedPlots());
                     mergePlot(current.world, current, other, removeRoads);
+                    merged.add(current.id);
+                    merged.add(other.id);
                     toReturn = true;
                     max--;
                 }
             }
-            PlotManager manager = PS.get().getPlotManager(plot.world);
-            ArrayList<PlotId> ids = new ArrayList<>(visited.size());
-            for (Plot visit : visited) {
-                ids.add(visit.id);
-            }
-            manager.finishPlotMerge(PS.get().getPlotWorld(plot.world), ids);
+        }
+        PlotManager manager = PS.get().getPlotManager(plot.world);
+        ArrayList<PlotId> ids = new ArrayList<>(merged);
+        if (removeRoads) {
+            manager.finishPlotMerge(plot.getWorld(), ids);
         }
         return toReturn;
     }
-    
-//    private static boolean ownsPlots(final String world, final ArrayList<PlotId> plots, final UUID uuid, final int dir) {
-//        final PlotId id_min = plots.get(0);
-//        final PlotId id_max = plots.get(plots.size() - 1);
-//        for (final PlotId myid : plots) {
-//            final Plot myplot = PS.get().getPlot(world, myid);
-//            if ((myplot == null) || (myplot.owner == null) || !(myplot.owner.equals(uuid))) {
-//                return false;
-//            }
-//            final PlotId top = getTopPlot(myplot).id;
-//            if (((top.x > id_max.x) && (dir != 1)) || ((top.y > id_max.y) && (dir != 2))) {
-//                return false;
-//            }
-//            final PlotId bot = getBottomPlot(myplot).id;
-//            if (((bot.x < id_min.x) && (dir != 3)) || ((bot.y < id_min.y) && (dir != 0))) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
     
     public static void updateWorldBorder(final Plot plot) {
         if (!worldBorder.containsKey(plot.world)) {

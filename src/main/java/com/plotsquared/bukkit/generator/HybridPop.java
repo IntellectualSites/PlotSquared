@@ -107,7 +107,6 @@ public class HybridPop extends BukkitPlotPopulator {
     @Override
     public void populate(final World world, final RegionWrapper requiredRegion, final PseudoRandom random, final int cx, final int cz) {
         PS.get().getPlotManager(world.getName());
-        
         int sx = (short) ((X - plotworld.ROAD_OFFSET_X) % size);
         int sz = (short) ((Z - plotworld.ROAD_OFFSET_Z) % size);
         if (sx < 0) {

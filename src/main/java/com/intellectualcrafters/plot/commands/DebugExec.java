@@ -427,18 +427,19 @@ public class DebugExec extends SubCommand {
                         @Override
                         public void run() {
                             final long start = System.currentTimeMillis();
+                            Object result = null;
                             try {
-                                engine.eval(toExec, scope);
+                                result = engine.eval(toExec, scope);
                             } catch (final ScriptException e) {
                                 e.printStackTrace();
                             }
-                            PS.log("> " + (System.currentTimeMillis() - start) + "ms");
+                            PS.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                         }
                     });
                 } else {
                     final long start = System.currentTimeMillis();
-                    engine.eval(script, scope);
-                    PS.log("> " + (System.currentTimeMillis() - start) + "ms");
+                    Object result = engine.eval(script, scope);
+                    PS.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                 }
                 return true;
             } catch (final ScriptException e) {

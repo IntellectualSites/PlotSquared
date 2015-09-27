@@ -101,7 +101,7 @@ public abstract class ChunkManager {
     
     public abstract boolean loadChunk(final String world, final ChunkLoc loc, final boolean force);
     
-    public abstract boolean unloadChunk(final String world, final ChunkLoc loc, final boolean save, final boolean safe);
+    public abstract void unloadChunk(final String world, final ChunkLoc loc, final boolean save, final boolean safe);
     
     public abstract Set<ChunkLoc> getChunkChunks(final String world);
     
