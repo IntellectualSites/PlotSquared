@@ -967,13 +967,13 @@ public class PS {
         for (final String world : worlds) {
             switch (type) {
                 case CREATION_DATE:
-                    toReturn.addAll(sortPlotsByTemp(getPlotsInWorld(world)));
+                    toReturn.addAll(sortPlotsByTemp(map.get(world)));
                     break;
                 case CREATION_DATE_TIMESTAMP:
-                    toReturn.addAll(sortPlotsByTimestamp(getPlotsInWorld(world)));
+                    toReturn.addAll(sortPlotsByTimestamp(map.get(world)));
                     break;
                 case DISTANCE_FROM_ORIGIN:
-                    toReturn.addAll(sortPlotsByHash(getPlotsInWorld(world)));
+                    toReturn.addAll(sortPlotsByHash(map.get(world)));
                     break;
                 default:
                     break;

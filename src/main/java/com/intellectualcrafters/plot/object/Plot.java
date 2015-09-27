@@ -1134,6 +1134,7 @@ public class Plot {
         DBFunc.setMerged(this, merged);
         MainUtil.connected_cache = null;
         MainUtil.regions_cache = null;
+        origin = null;
     }
 
     /**
@@ -1147,6 +1148,7 @@ public class Plot {
             DBFunc.setMerged(this, getSettings().getMerged());
             MainUtil.connected_cache = null;
             MainUtil.regions_cache = null;
+            origin = null;
         }
     }
 
