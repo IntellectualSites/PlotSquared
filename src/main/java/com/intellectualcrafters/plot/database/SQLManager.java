@@ -1464,7 +1464,7 @@ public class SQLManager implements AbstractDB {
                             }
                             plot.getSettings().ratings.put(user, r.getInt("rating"));
                         } else {
-                            PS.debug("&cPLOT " + id + " in plot_helpers does not exist. Please create the plot or remove this entry.");
+                            PS.debug("&cPLOT " + id + " in plot_rating does not exist. Please create the plot or remove this entry.");
                         }
                     }
                 }
@@ -1617,6 +1617,16 @@ public class SQLManager implements AbstractDB {
             }
             if (plots.entrySet().size() > 0) {
                 createEmptySettings(new ArrayList<Integer>(plots.keySet()), null);
+                for (Entry<Integer, Plot> entry : plots.entrySet()) {
+                    Plot plot = entry.getValue();
+                    plot.getSettings();
+                    ConcurrentHashMap<PlotId, Plot> map = newplots.get(plot.world);
+                    if (map == null) {
+                        map = new ConcurrentHashMap<PlotId, Plot>();
+                        newplots.put(plot.world, map);
+                    }
+                    newplots.get(plot.world).put(plot.id, plot);
+                }
             }
             boolean invalidPlot = false;
             for (final Entry<String, Integer> entry : noExist.entrySet()) {
