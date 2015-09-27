@@ -45,7 +45,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     
     @Override
     public boolean unclaimPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone) {
-        final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
+        final ClassicPlotWorld dpw = ((ClassicPlotWorld) plotworld);
         setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
         if ((dpw.WALL_BLOCK.id != 0) || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
             setWall(dpw, plot.id, new PlotBlock[] { dpw.WALL_BLOCK });
