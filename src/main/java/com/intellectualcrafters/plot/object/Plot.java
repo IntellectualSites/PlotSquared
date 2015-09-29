@@ -429,25 +429,21 @@ public class Plot {
      */
     public Plot getBasePlot(boolean recalculate) {
         if ((origin != null && !recalculate)) {
-            return origin;
+            if (this.equals(origin)) {
+                return this;
+            }
+            return origin.getBasePlot(false);
         }
         if (!isMerged()) {
             origin = this;
             return origin;
         }
-        int min = Integer.MAX_VALUE;
+        origin = this;
+        PlotId min = id;
         for (Plot plot : MainUtil.getConnectedPlots(this)) {
-            if (plot.temp != -1) {
-                if (plot.temp < min) {
-                    min = plot.temp;
-                    origin = plot;
-                }
-            }
-            else {
-                if (plot.hashCode() < min) {
-                    origin = plot;
-                    min = plot.hashCode();
-                }
+            if (plot.id.y < min.y || (plot.id.y == min.y && plot.id.x < min.x)) {
+                origin = plot;
+                min = plot.id;
             }
         }
         for (Plot plot : MainUtil.getConnectedPlots(this)) {
@@ -772,15 +768,17 @@ public class Plot {
      * @param alias
      */
     public void setAlias(String alias) {
-        final String name = getSettings().getAlias();
-        if (alias == null) {
-            alias = "";
+        for (Plot current : getConnectedPlots()) {
+            final String name = getSettings().getAlias();
+            if (alias == null) {
+                alias = "";
+            }
+            if (name.equals(alias)) {
+                return;
+            }
+            current.getSettings().setAlias(alias);
+            DBFunc.setAlias(current, alias);
         }
-        if (name.equals(alias)) {
-            return;
-        }
-        getSettings().setAlias(alias);
-        DBFunc.setAlias(this, alias);
     }
     
     /**
@@ -1120,6 +1118,9 @@ public class Plot {
     }
 
     public String getAlias() {
+        if (settings == null) {
+            return "";
+        }
         return getSettings().getAlias();
     }
 
@@ -1134,7 +1135,10 @@ public class Plot {
         DBFunc.setMerged(this, merged);
         MainUtil.connected_cache = null;
         MainUtil.regions_cache = null;
-        origin = null;
+        if (origin != null) {
+            origin.origin = null;
+            origin = null;
+        }
     }
 
     /**
@@ -1145,10 +1149,25 @@ public class Plot {
      */
     public void setMerged(int direction, boolean value) {
         if (getSettings().setMerged(direction, value)) {
+            if (value) {
+                Plot other = MainUtil.getPlotRelative(this, direction).getBasePlot(false);
+                if (!other.equals(getBasePlot(false))) {
+                    Plot base = ((other.id.y < id.y) || ((other.id.y == id.y) && (other.id.x < id.x))) ? other : origin;
+                    origin.origin = base;
+                    other.origin = base;
+                    origin = base;
+                    MainUtil.connected_cache = null;
+                }
+            }
+            else {
+                if (origin != null) {
+                    origin.origin = null;
+                    origin = null;
+                }
+                MainUtil.connected_cache = null;
+            }
             DBFunc.setMerged(this, getSettings().getMerged());
-            MainUtil.connected_cache = null;
             MainUtil.regions_cache = null;
-            origin = null;
         }
     }
 

@@ -4,12 +4,16 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.Command;
 
@@ -91,10 +95,35 @@ public class GenerateDocs {
     }
     
     public static List<String> getPerms(final String cmd, final List<String> lines) {
-        final ArrayList<String> perms = new ArrayList<String>();
+        final HashSet<String> perms = new HashSet<String>();
         final Pattern p = Pattern.compile("\"([^\"]*)\"");
+        final Pattern p2 = Pattern.compile("C.PERMISSION_\\s*(\\w+)");
+        String last = null;
         for (final String line : lines) {
+            
+            Matcher m2 = p2.matcher(line);
+            while (m2.find()) {
+                perms.add(C.valueOf("PERMISSION_" + m2.group(1)).s());
+            }
+            
             if (line.contains("Permissions.hasPermission(")) {
+                String[] split = line.split("Permissions.hasPermission");
+                split = Arrays.copyOfRange(split, 1, split.length);
+                for (String method : split) {
+                    String perm = method.split("[,|)]")[1].trim();
+                    if (!perm.toLowerCase().equals(perm)) {
+                        if (perm.startsWith("C.")) {
+                            perm = C.valueOf(perm.split("\\.")[1]).s();
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    else {
+                        perm = perm.substring(1, perm.length() - 1);
+                    }
+                    perms.add(perm);
+                }
                 final Matcher m = p.matcher(line);
                 while (m.find()) {
                     String perm = m.group(1);
@@ -102,21 +131,42 @@ public class GenerateDocs {
                         perm += "<arg>";
                     }
                     if (perm.startsWith(".")) {
-                        perms.set(perms.size() - 1, perms.get(perms.size() - 1) + perm);
+                        perms.remove(last);
+                        perms.add(last + perm);
                     } else if (perm.contains(".")) {
+                        last = perm;
                         perms.add(perm);
                     }
+                }
+            }
+            else if (line.contains("Permissions.hasPermissionRange")) {
+                String[] split = line.split("Permissions.hasPermissionRange");
+                split = Arrays.copyOfRange(split, 1, split.length);
+                for (String method : split) {
+                    String perm = method.split("[,|)]")[1].trim();
+                    if (!perm.toLowerCase().equals(perm)) {
+                        if (perm.startsWith("C.")) {
+                            perm = C.valueOf(perm.split("\\.")[1]).s();
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    else {
+                        perm = perm.substring(1, perm.length() - 1);
+                    }
+                    perms.add(perm + ".<#>");
                 }
             }
         }
         switch (cmd.toLowerCase()) {
             case "auto":
             case "claim": {
-                perms.add("plots.plot.#");
+                perms.add("plots.plot.<#>");
                 break;
             }
         }
-        return perms;
+        return new ArrayList<>(perms);
     }
     
     public static String getComments(final List<String> lines) {

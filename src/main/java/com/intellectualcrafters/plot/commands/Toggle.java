@@ -97,7 +97,7 @@ public class Toggle extends SubCommand {
                 return true;
             }
         });
-        if (PS.get().worldedit != null) {
+        if (PS.get() != null && PS.get().worldedit != null) {
             toggles.put("worldedit", new Command<PlotPlayer>("worldedit", "/plot toggle worldedit", "Toggle worldedit bypass", C.PERMISSION_WORLDEDIT_BYPASS.s()) {
                 
                 @Override

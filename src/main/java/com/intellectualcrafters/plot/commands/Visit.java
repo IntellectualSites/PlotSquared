@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 command = "visit",
 permission = "plots.visit",
 description = "Visit someones plot",
-usage = "/plot visit <player|aliases|world|id> [#]",
+usage = "/plot visit <player|alias|world|id> [#]",
 aliases = { "v" },
 requiredType = RequiredType.NONE,
 category = CommandCategory.TELEPORT)
@@ -94,8 +95,7 @@ public class Visit extends SubCommand {
                 } else {
                     final Plot plot = MainUtil.getPlotFromString(player, args[0], true);
                     if (plot != null) {
-                        unsorted = new HashSet<>();
-                        unsorted.add(plot);
+                        unsorted = new HashSet<>(Arrays.asList(plot.getBasePlot(false)));
                     }
                 }
                 break;

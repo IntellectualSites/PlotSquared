@@ -111,7 +111,10 @@ public class PlotSettings {
         return position;
     }
     
-    public void setPosition(final BlockLoc position) {
+    public void setPosition(BlockLoc position) {
+        if (position != null && position.x == 0 && position.y == 0 && position.z == 0) {
+            position = null;
+        }
         this.position = position;
     }
     
