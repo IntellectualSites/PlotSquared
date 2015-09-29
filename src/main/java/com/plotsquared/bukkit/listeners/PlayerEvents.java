@@ -926,10 +926,12 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (PS.get().isPlotWorld(loc.getWorld())) {
             if (MainUtil.isPlotRoad(loc)) {
                 e.setCancelled(true);
+                return;
             } else {
                 final Plot plot = MainUtil.getPlot(loc);
                 if ((plot != null) && FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
                     e.setCancelled(true);
+                    return;
                 }
             }
         }
@@ -942,6 +944,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (PS.get().isPlotWorld(loc.getWorld())) {
             if (MainUtil.isPlotRoad(loc)) {
                 e.setCancelled(true);
+                return;
             }
         }
     }
@@ -1028,7 +1031,10 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return;
         }
         final Plot origin = MainUtil.getPlot(BukkitUtil.getLocation(blocks.get(0).getLocation()));
-        blocks.get(0);
+            if (origin == null) {
+            e.setCancelled(true);
+            return;
+        }
         for (int i = blocks.size() - 1; i >= 0; i--) {
             final Location loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
             final Plot plot = MainUtil.getPlot(loc);
