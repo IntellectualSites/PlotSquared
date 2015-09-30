@@ -7,7 +7,9 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.BlockUpdateUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 public abstract class BukkitSetBlockManager extends BlockUpdateUtil {
     public static BukkitSetBlockManager setBlockManager = null;
@@ -18,11 +20,20 @@ public abstract class BukkitSetBlockManager extends BlockUpdateUtil {
     
     @Override
     public void update(final String worldname, final Collection<ChunkLoc> chunkLocs) {
+        final ArrayList<Chunk> chunks = new ArrayList<>();
         final World world = BukkitUtil.getWorld(worldname);
-        final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-        for (final ChunkLoc loc : chunkLocs) {
-            chunks.add(world.getChunkAt(loc.x, loc.z));
-        }
-        setBlockManager.update(chunks);
+        MainUtil.objectTask(chunkLocs, new RunnableVal<ChunkLoc>() {
+            
+            @Override
+            public void run() {
+                chunks.add(world.getChunkAt(value.x, value.z));
+            }
+        }, new Runnable() {
+            
+            @Override
+            public void run() {
+                setBlockManager.update(chunks);
+            }
+        });
     }
 }

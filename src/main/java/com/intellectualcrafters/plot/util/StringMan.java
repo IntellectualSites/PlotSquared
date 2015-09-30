@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class StringMan {
     public static String replaceFromMap(final String string, final Map<String, String> replacements) {
@@ -29,6 +30,16 @@ public class StringMan {
         return sb.toString();
     }
     
+    public static int intersection(Set<String> options, String[] toCheck) {
+        int count = 0;
+        for (String check : toCheck) {
+            if (options.contains(check)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public static String getString(final Object obj) {
         if (obj == null) {
             return "null";

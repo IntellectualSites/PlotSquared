@@ -58,7 +58,7 @@ public class Database extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {
-            MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql>");
+            MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql|import>");
             return false;
         }
         ArrayList<Plot> plots;
@@ -82,8 +82,13 @@ public class Database extends SubCommand {
                         MainUtil.sendMessage(player, "/plot database import [sqlite file] [prefix]");
                         return false;
                     }
+                    File file = new File(PS.get().IMP.getDirectory() + File.separator + args[1] + ".db");
+                    if (!file.exists()) {
+                        MainUtil.sendMessage(player, "&6Database does not exist: " + file);
+                        return false;
+                    }
                     MainUtil.sendMessage(player, "&6Starting...");
-                    implementation = new SQLite(PS.get().IMP.getDirectory() + File.separator + args[1] + ".db");
+                    implementation = new SQLite(file.getPath());
                     final SQLManager manager = new SQLManager(implementation, (args.length == 3) ? args[2] : "", true);
                     final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<Plot>();

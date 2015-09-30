@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -297,6 +297,26 @@ public class MainUtil {
                 }
             }
         }, 1);
+    }
+    
+    public static <T> void objectTask(Collection<T> objects, final RunnableVal<T> task, final Runnable whenDone) {
+        final Iterator<T> iter = objects.iterator();
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                boolean hasNext;
+                while ((hasNext = iter.hasNext()) && System.currentTimeMillis() - start < 5) {
+                    task.value = iter.next();
+                    task.run();
+                }
+                if (!hasNext) {
+                    TaskManager.runTaskLater(whenDone, 1);
+                } else {
+                    TaskManager.runTaskLater(this, 1);
+                }
+            }
+        });
     }
     
     public static void plotTask(Plot plot, RunnableVal<Plot> run) {
@@ -723,7 +743,7 @@ public class MainUtil {
     }
     
     public static void update(final Plot plot) {
-        TaskManager.runTaskAsync(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 final HashSet<ChunkLoc> chunks = new HashSet<>();
@@ -2098,6 +2118,7 @@ public class MainUtil {
     /**
      * @deprecated raw access is deprecated
      */
+    @Deprecated
     public static HashSet<Plot> connected_cache;
     public static HashSet<RegionWrapper> regions_cache;
     

@@ -316,6 +316,42 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         return true;
     }
     
+    public int getMatch(String[] args, Command<PlotPlayer> cmd) {
+        int count = 0;
+        String perm = cmd.getPermission();
+        HashSet<String> desc = new HashSet<String>();
+        for (String word : cmd.getDescription().split(" ")) {
+            desc.add(word);
+        }
+        for (String arg : args) {
+            if (perm.startsWith(arg)) {
+                count++;
+            }
+            if (desc.contains(arg)) {
+                count++;
+            }
+        }
+        String[] usage = cmd.getUsage().split(" ");
+        for (int i = 0; i < Math.min(4 , usage.length); i++) {
+            int require;
+            if (usage[i].startsWith("<")) {
+                require = 1;
+            } else {
+                require = 0;
+            }
+            String[] split = usage[i].split("\\|| |\\>|\\<|\\[|\\]|\\{|\\}|\\_|\\/");
+            for (int j = 0; j < split.length; j++) {
+                for (String arg : args) {
+                    if (StringMan.isEqualIgnoreCase(arg, split[j])) {
+                        count += 5 - i + require;
+                    }
+                }
+            }
+        }
+        count += StringMan.intersection(desc, args);
+        return count;
+    }
+    
     @Override
     public int handle(final PlotPlayer plr, final String input) {
         final String[] parts = input.split(" ");
@@ -346,46 +382,16 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                     for (final String arg : args) {
                         setargs.add(arg.toLowerCase());
                     }
-                    setargs.add(label.toLowerCase());
+                    setargs.add(label);
                     final String[] allargs = setargs.toArray(new String[setargs.size()]);
                     int best = 0;
                     for (final Command<PlotPlayer> current : cmds) {
-                        if (current.getUsage() != null) {
-                            int count = 0;
-                            for (final String word : new HashSet<String>(Arrays.asList((current.getUsage() + " " + current.getPermission() + " " + current.getCategory().name()).toLowerCase()
-                            .replaceAll("\\||\\>|\\<|\\[|\\]|\\{|\\}|\\_|\\/", " ").trim().replaceAll("\\s+", " ").split(" ")))) {
-                                for (int i = 0; i < allargs.length; i++) {
-                                    final String arg = allargs[i];
-                                    if ((best - count - ((allargs.length - i) * 3)) >= 0) {
-                                        continue;
-                                    }
-                                    if (StringMan.isEqual(arg, word)) {
-                                        count += 3;
-                                    } else if ((word.length() > arg.length()) && word.contains(arg)) {
-                                        count += 2;
-                                    }
-                                }
-                            }
-                            for (final String word : new HashSet<String>(Arrays.asList((current.getDescription()).toLowerCase().replaceAll("\\||\\>|\\<|\\[|\\]|\\{|\\}|\\_|\\/", " ").trim()
-                            .replaceAll("\\s+", " ").split(" ")))) {
-                                for (int i = 0; i < allargs.length; i++) {
-                                    final String arg = allargs[i];
-                                    if ((best - count - ((allargs.length - i) * 2)) >= 0) {
-                                        continue;
-                                    }
-                                    if (StringMan.isEqual(arg, word)) {
-                                        count += 2;
-                                    } else if ((word.length() > arg.length()) && word.contains(arg)) {
-                                        count++;
-                                    }
-                                }
-                            }
-                            if (count > best) {
-                                best = count;
-                                cmd = current;
-                            }
+                        int match = getMatch(allargs, current);
+                        if (match > best) {
+                            cmd = current;
                         }
                     }
+                    System.out.print(StringMan.getString(allargs) + " | " + cmd + " | " + best);
                     if (cmd == null) {
                         cmd = new StringComparison<>(label, getCommandAndAliases(null, plr)).getMatchObject();
                     }
