@@ -1401,6 +1401,7 @@ public class MainUtil {
         if (!EventUtil.manager.callClear(plot.world, plot.id)) {
             return false;
         }
+        final HashSet<RegionWrapper> regions = getRegions(plot);
         final HashSet<Plot> plots = getConnectedPlots(plot);
         final ArrayDeque<Plot> queue = new ArrayDeque<>(plots);
         removeSign(plot);
@@ -1416,6 +1417,10 @@ public class MainUtil {
                         @Override
                         public void run() {
                             if (finished.incrementAndGet() >= plots.size()) {
+                                for (RegionWrapper region : regions) {
+                                    Location[] corners = getCorners(plot.world, region);
+                                    ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
+                                }
                                 TaskManager.runTask(whenDone);
                             }
                         }
