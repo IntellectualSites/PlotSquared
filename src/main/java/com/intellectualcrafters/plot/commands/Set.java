@@ -22,29 +22,25 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -59,228 +55,125 @@ public class Set extends SubCommand {
     public final static String[] values = new String[] { "biome", "alias", "home", "flag" };
     public final static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "fl" };
     
-    @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
-        final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
-        if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
-        }
-        if (!plot.hasOwner()) {
-            sendMessage(plr, C.PLOT_NOT_CLAIMED);
-            return false;
-        }
-        if (!plot.isOwner(plr.getUUID())) {
-            if (!Permissions.hasPermission(plr, "plots.set.other")) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.other");
-                return false;
-            }
-        }
-        if (args.length < 1) {
-            final PlotManager manager = PS.get().getPlotManager(loc.getWorld());
-            final ArrayList<String> newValues = new ArrayList<String>();
-            newValues.addAll(Arrays.asList(values));
-            newValues.addAll(Arrays.asList(manager.getPlotComponents(PS.get().getPlotWorld(loc.getWorld()), plot.id)));
-            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
-            return false;
-        }
-        for (int i = 0; i < aliases.length; i++) {
-            if (aliases[i].equalsIgnoreCase(args[0])) {
-                args[0] = values[i];
-                break;
-            }
-        }
-        if (args[0].equalsIgnoreCase("flag")) {
-            List<String> arglist = new ArrayList<>(Arrays.asList("flag", "set"));
-            for (String arg : Arrays.copyOfRange(args, 1, args.length)) {
-                arglist.add(arg);
-            }
-            return MainCommand.onCommand(plr, "plot", arglist.toArray(new String[0]));
-        }
-        if (args[0].equalsIgnoreCase("home")) {
-            if (!Permissions.hasPermission(plr, "plots.set.home")) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.home");
-                return false;
-            }
-            if (args.length > 1) {
-                if (args[1].equalsIgnoreCase("none")) {
-                    plot.setHome(null);
-                    return true;
-                }
-                return MainUtil.sendMessage(plr, C.HOME_ARGUMENT);
-            }
-            //set to current location
-            final String world = plr.getLocation().getWorld();
-            final Location base = MainUtil.getPlotBottomLocAbs(world, plot.id).subtract(1, 0, 1);
-            base.setY(0);
-            final Location relative = plr.getLocation().subtract(base.getX(), base.getY(), base.getZ());
-            final BlockLoc blockloc = new BlockLoc(relative.getX(), relative.getY(), relative.getZ(), relative.getYaw(), relative.getPitch());
-            plot.setHome(blockloc);
-            return MainUtil.sendMessage(plr, C.POSITION_SET);
-        }
-        if (args[0].equalsIgnoreCase("desc")) {
-            if (!Permissions.hasPermission(plr, "plots.set.desc")) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.desc");
-                return false;
-            }
-            if (args.length < 2) {
-                MainUtil.sendMessage(plr, C.MISSING_DESC);
-                return false;
-            }
-            final StringBuilder desc = new StringBuilder();
-            for (int i = 1; i < args.length; i++) {
-                desc.append(args[i]).append(" ");
-            }
-            final String descValue = desc.substring(0, desc.length() - 1);
-            
-            final Flag flag = new Flag(FlagManager.getFlag("description"), descValue);
-            final boolean result = FlagManager.addPlotFlag(plot, flag);
-            if (!result) {
-                MainUtil.sendMessage(plr, C.FLAG_NOT_ADDED);
-                return false;
-            }
-            MainUtil.sendMessage(plr, C.DESC_SET);
-            return true;
-        }
-        if (args[0].equalsIgnoreCase("alias")) {
-            if (!Permissions.hasPermission(plr, "plots.set.alias")) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.alias");
-                return false;
-            }
-            if (args.length < 2) {
-                MainUtil.sendMessage(plr, C.MISSING_ALIAS);
-                return false;
-            }
-            final String alias = args[1];
-            if (alias.length() >= 50) {
-                MainUtil.sendMessage(plr, C.ALIAS_TOO_LONG);
-                return false;
-            }
-            for (final Plot p : PS.get().getPlotsInWorld(plr.getLocation().getWorld())) {
-                if (p.getAlias().equalsIgnoreCase(alias)) {
-                    MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
-                    return false;
-                }
-                if (UUIDHandler.nameExists(new StringWrapper(alias))) {
-                    MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
-                    return false;
-                }
-            }
-            plot.setAlias(alias);
-            MainUtil.sendMessage(plr, C.ALIAS_SET_TO.s().replaceAll("%alias%", alias));
-            return true;
-        }
-        if (args[0].equalsIgnoreCase("biome")) {
-            if (!Permissions.hasPermission(plr, "plots.set.biome")) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set.biome");
-                return false;
-            }
-            if (args.length < 2) {
-                MainUtil.sendMessage(plr, C.NEED_BIOME);
-                return false;
-            }
-            if (args[1].length() < 2) {
-                sendMessage(plr, C.NAME_LITTLE, "Biome", args[1].length() + "", "2");
-                return false;
-            }
-            final int biome = BlockManager.manager.getBiomeFromString(args[1]);
-            if (biome == -1) {
-                MainUtil.sendMessage(plr, getBiomeList(BlockManager.manager.getBiomeList()));
-                return false;
-            }
-            if (plot.getRunning() > 0) {
-                MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
-                return false;
-            }
-            plot.addRunning();
-            plot.setBiome(args[1].toUpperCase(), new Runnable() {
-                @Override
-                public void run() {
-                    plot.removeRunning();
-                    MainUtil.sendMessage(plr, C.BIOME_SET_TO.s() + args[1].toLowerCase());
-                }
-            });
-            return true;
-        }
-        if (args[0].equalsIgnoreCase("limit")) {
-            // /plot set limit Empire92 +1
-            return true;
-        }
-        // Get components
-        final String world = plr.getLocation().getWorld();
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
-        final PlotManager manager = PS.get().getPlotManager(world);
-        final String[] components = manager.getPlotComponents(plotworld, plot.id);
-        
-        final boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(plr.getUUID());
-        
-        for (final String component : components) {
-            if (component.equalsIgnoreCase(args[0])) {
-                if (!Permissions.hasPermission(plr, "plots.set." + component)) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + component);
-                    return false;
-                }
-                PlotBlock[] blocks;
-                try {
-                    if (args.length < 2) {
-                        MainUtil.sendMessage(plr, C.NEED_BLOCK);
-                        return true;
-                    }
-                    final String[] split = args[1].split(",");
-                    blocks = Configuration.BLOCKLIST.parseString(args[1]);
-                    for (int i = 0; i < blocks.length; i++) {
-                        final PlotBlock block = blocks[i];
-                        if (block == null) {
-                            MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, split[i]);
-                            String name;
-                            if (split[i].contains("%")) {
-                                name = split[i].split("%")[1];
-                            } else {
-                                name = split[i];
+    private final SetCommand component;
+
+    public Set() {
+        component = new SetCommand() {
+            @Override
+            public boolean set(PlotPlayer plr, final Plot plot, String value) {
+                final String world = plr.getLocation().getWorld();
+                final PlotWorld plotworld = PS.get().getPlotWorld(world);
+                final PlotManager manager = PS.get().getPlotManager(world);
+                final String[] components = manager.getPlotComponents(plotworld, plot.id);
+                final boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(plr.getUUID());
+                
+                String[] args = value.split(" ");
+                String material = StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
+
+                for (final String component : components) {
+                    if (component.equalsIgnoreCase(args[0])) {
+                        if (!Permissions.hasPermission(plr, "plots.set." + component)) {
+                            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + component);
+                            return false;
+                        }
+                        PlotBlock[] blocks;
+                        try {
+                            if (args.length < 2) {
+                                MainUtil.sendMessage(plr, C.NEED_BLOCK);
+                                return true;
                             }
-                            final StringComparison<PlotBlock>.ComparisonResult match = BlockManager.manager.getClosestBlock(name);
-                            if (match != null) {
-                                name = BlockManager.manager.getClosestMatchingName(match.best);
-                                if (name != null) {
-                                    MainUtil.sendMessage(plr, C.DID_YOU_MEAN, name.toLowerCase());
+                            final String[] split = material.split(",");
+                            blocks = Configuration.BLOCKLIST.parseString(material);
+                            for (int i = 0; i < blocks.length; i++) {
+                                final PlotBlock block = blocks[i];
+                                if (block == null) {
+                                    MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, split[i]);
+                                    String name;
+                                    if (split[i].contains("%")) {
+                                        name = split[i].split("%")[1];
+                                    } else {
+                                        name = split[i];
+                                    }
+                                    final StringComparison<PlotBlock>.ComparisonResult match = BlockManager.manager.getClosestBlock(name);
+                                    if (match != null) {
+                                        name = BlockManager.manager.getClosestMatchingName(match.best);
+                                        if (name != null) {
+                                            MainUtil.sendMessage(plr, C.DID_YOU_MEAN, name.toLowerCase());
+                                        }
+                                    }
+                                    return false;
+                                } else if (!allowUnsafe && !BlockManager.manager.isBlockSolid(block)) {
+                                    MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
+                                    return false;
                                 }
                             }
-                            return false;
-                        } else if (!allowUnsafe && !BlockManager.manager.isBlockSolid(block)) {
-                            MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
-                            return false;
-                        }
-                    }
-                    if (!allowUnsafe) {
-                        for (final PlotBlock block : blocks) {
-                            if (!BlockManager.manager.isBlockSolid(block)) {
-                                MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
-                                return false;
+                            if (!allowUnsafe) {
+                                for (final PlotBlock block : blocks) {
+                                    if (!BlockManager.manager.isBlockSolid(block)) {
+                                        MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
+                                        return false;
+                                    }
+                                }
                             }
+                        } catch (final Exception e2) {
+                            MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, material);
+                            return false;
                         }
+                        if (plot.getRunning() > 0) {
+                            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+                            return false;
+                        }
+                        plot.addRunning();
+                        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+                            manager.setComponent(plotworld, current.id, component, blocks);
+                        }
+                        MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
+                        SetBlockQueue.addNotify(new Runnable() {
+                            @Override
+                            public void run() {
+                                plot.removeRunning();
+                            }
+                        });
+                        return true;
                     }
-                } catch (final Exception e2) {
-                    MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, args[1]);
-                    return false;
                 }
-                if (plot.getRunning() > 0) {
-                    MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
-                    return false;
-                }
-                plot.addRunning();
-                for (Plot current : MainUtil.getConnectedPlots(plot)) {
-                    manager.setComponent(plotworld, current.id, component, blocks);
-                }
-                MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
-                SetBlockQueue.addNotify(new Runnable() {
-                    @Override
-                    public void run() {
-                        plot.removeRunning();
-                    }
-                });
-                return true;
+                return false;
             }
+        };
+    }
+
+    public boolean noArgs(PlotPlayer plr) {
+        final ArrayList<String> newValues = new ArrayList<String>();
+        newValues.addAll(Arrays.asList("biome", "alias", "home", "flag"));
+        Plot plot = plr.getCurrentPlot();
+        if (plot != null) {
+            newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.id)));
         }
+        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(newValues, C.BLOCK_LIST_SEPARATER.formatted()));
+        return false;
+    }
+
+    @Override
+    public boolean onCommand(final PlotPlayer plr, final String... args) {
+        if (args.length == 0) {
+            return noArgs(plr);
+        }
+        Command<PlotPlayer> cmd = MainCommand.getInstance().getCommand("set" + args[0]);
+        if (cmd != null) {
+            return cmd.onCommand(plr, Arrays.copyOfRange(args, 1, args.length));
+        }
+        // Additional checks
+        Plot plot = plr.getCurrentPlot();
+        if (plot == null) {
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
+            return false;
+        }
+        // components
+        HashSet<String> components = new HashSet<String>(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.id)));
+        if (components.contains(args[0].toLowerCase())) {
+            return component.set(plr, plot, StringMan.join(args, " "));
+        }
+        // flag
         {
             AbstractFlag af;
             try {
@@ -299,31 +192,6 @@ public class Set extends SubCommand {
                 return true;
             }
         }
-        final ArrayList<String> newValues = new ArrayList<String>();
-        newValues.addAll(Arrays.asList(values));
-        newValues.addAll(Arrays.asList(manager.getPlotComponents(PS.get().getPlotWorld(loc.getWorld()), plot.id)));
-        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(newValues));
-        return false;
-    }
-    
-    private String getString(final String s) {
-        return StringMan.replaceAll(C.BLOCK_LIST_ITEM.s(), "%mat%", s);
-    }
-    
-    private String getArgumentList(final List<String> newValues) {
-        final StringBuilder builder = new StringBuilder();
-        for (final String s : newValues) {
-            builder.append(getString(s));
-        }
-        return builder.toString().substring(1, builder.toString().length() - 1);
-    }
-    
-    private String getBiomeList(final String[] biomes) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(C.NEED_BIOME.s());
-        for (final String b : biomes) {
-            builder.append(getString(b));
-        }
-        return builder.toString().substring(1, builder.toString().length() - 1);
+        return noArgs(plr);
     }
 }

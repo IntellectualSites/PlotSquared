@@ -22,6 +22,7 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +52,7 @@ import com.plotsquared.general.commands.CommandManager;
 public class MainCommand extends CommandManager<PlotPlayer> {
     
     private static MainCommand instance;
+    private HashMap<String, Command<PlotPlayer>> setCommands;
     
     public static MainCommand getInstance() {
         if (instance == null) {
@@ -86,7 +88,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Toggle());
         createCommand(new Clear());
         createCommand(new Delete());
-        createCommand(new SetOwner());
         createCommand(new Trust());
         createCommand(new Add());
         createCommand(new Deny());
@@ -127,11 +128,17 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Done());
         createCommand(new Continue());
         createCommand(new BO3());
+        // set commands
+        createCommand(new Owner());
+        createCommand(new Desc());
+        createCommand(new Biome());
+        createCommand(new Alias());
+        createCommand(new SetHome());
         if (Settings.ENABLE_CLUSTERS) {
             MainCommand.getInstance().addCommand(new Cluster());
         }
     }
-    
+
     public static boolean no_permission(final PlotPlayer player, final String permission) {
         MainUtil.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
@@ -391,7 +398,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                             cmd = current;
                         }
                     }
-                    System.out.print(StringMan.getString(allargs) + " | " + cmd + " | " + best);
                     if (cmd == null) {
                         cmd = new StringComparison<>(label, getCommandAndAliases(null, plr)).getMatchObject();
                     }

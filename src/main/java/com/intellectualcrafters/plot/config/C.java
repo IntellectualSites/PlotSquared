@@ -298,6 +298,7 @@ public enum C {
     BOSSBAR_CLEARING("$2Clearing plot: $1%id%", "Bar API"),
     
     DESC_SET("$2Plot description set", "Desc"),
+    DESC_UNSET("$2Plot description unset", "Desc"),
     MISSING_DESC("$2You need to specify a description", "Desc"),
     
     /*
@@ -312,6 +313,7 @@ public enum C {
      */
     MISSING_POSITION("$2You need to specify a position. Possible values: $1none", "Position"),
     POSITION_SET("$1Home position set to your current location", "Position"),
+    POSITION_UNSET("$1Home position reset to the default location", "Position"),
     HOME_ARGUMENT("$2Use /plot set home [none]", "Position"),
     INVALID_POSITION("$2That is not a valid position value", "Position"),
     /*
@@ -389,7 +391,6 @@ public enum C {
     /*
      * Block List
      */
-    BLOCK_LIST_ITEM(" $1%mat%$2,", "Block List"),
     BLOCK_LIST_SEPARATER("$1,$2 ", "Block List"),
     /*
      * Biome
@@ -539,7 +540,6 @@ public enum C {
     FLAG_KEY("$2Key: %s", "Flag"),
     FLAG_TYPE("$2Type: %s", "Flag"),
     FLAG_DESC("$2Desc: %s", "Flag"),
-    NEED_KEY("$2Possible values: $1%values%", "Flag"),
     NOT_VALID_FLAG("$2That is not a valid flag", "Flag"),
     NOT_VALID_VALUE("$2Flag values must be alphanumerical", "Flag"),
     FLAG_NOT_IN_PLOT("$2The plot does not have that flag", "Flag"),

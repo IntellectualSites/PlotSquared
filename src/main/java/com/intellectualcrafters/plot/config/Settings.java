@@ -30,6 +30,11 @@ import java.util.List;
 public class Settings {
     public static boolean USE_SQLUUIDHANDLER = false;
     
+    /**
+     * 
+     */
+    public static boolean UPDATE_NOTIFICATIONS = true;
+
     public static boolean ENABLE_CLUSTERS = false;
     public static boolean FAST_CLEAR = false;
     /**

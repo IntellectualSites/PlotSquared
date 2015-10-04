@@ -13,8 +13,8 @@ import com.intellectualcrafters.plot.util.Permissions;
 @SuppressWarnings("unused")
 public class CommandManager<T extends CommandCaller> {
     
-    protected final ConcurrentHashMap<String, Command<T>> commands;
-    protected final Character initialCharacter;
+    final public ConcurrentHashMap<String, Command<T>> commands;
+    final private Character initialCharacter;
     
     public CommandManager() {
         this('/', new ArrayList<Command<T>>());

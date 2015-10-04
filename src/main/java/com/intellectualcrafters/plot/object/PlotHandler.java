@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -66,6 +65,11 @@ public class PlotHandler {
     }
     
     public static void setOwner(Plot plot, UUID owner) {
+        if (!plot.hasOwner()) {
+            plot.owner = owner;
+            plot.create();
+            return;
+        }
         if (!plot.isMerged()) {
             if (!plot.owner.equals(owner)) {
                 plot.owner = owner;

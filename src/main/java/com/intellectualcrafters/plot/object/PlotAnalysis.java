@@ -172,7 +172,9 @@ public class PlotAnalysis {
                                 @Override
                                 public void run() {
                                     try {
-                                        wait(10000);
+                                        synchronized (this) {
+                                            wait(10000);
+                                        }
                                     } catch (final InterruptedException e) {
                                         e.printStackTrace();
                                     }

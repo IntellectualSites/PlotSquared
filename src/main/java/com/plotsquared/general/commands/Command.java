@@ -74,7 +74,7 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
         return this.requiredType;
     }
     
-    final protected void create() {
+    final public void create() {
         final Annotation annotation = getClass().getAnnotation(CommandDeclaration.class);
         if (annotation == null) {
             throw new RuntimeException("Command does not have a CommandDeclaration");

@@ -1803,6 +1803,8 @@ public class MainUtil {
                 occupied = true;
             }
         }
+        // world border
+        updateWorldBorder(destination);
         final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(getRegions(origin));
         // move / swap data
         for (Plot plot : plots) {
@@ -1918,6 +1920,8 @@ public class MainUtil {
                 return false;
             }
         }
+        // world border
+        updateWorldBorder(destination);
         // copy data
         for (Plot plot : plots) {
             Plot other = MainUtil.getPlotAbs(destination.world , new PlotId(plot.id.x + offset.x, plot.id.y + offset.y));

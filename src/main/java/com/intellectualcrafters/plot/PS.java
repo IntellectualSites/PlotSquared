@@ -1994,6 +1994,7 @@ public class PS {
             Settings.FANCY_CHAT = false;
         }
         Settings.METRICS = config.getBoolean("metrics");
+        Settings.UPDATE_NOTIFICATIONS = config.getBoolean("update-notifications");
     }
     
     /**

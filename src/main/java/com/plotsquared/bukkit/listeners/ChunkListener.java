@@ -2,6 +2,7 @@ package com.plotsquared.bukkit.listeners;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -40,10 +41,11 @@ public class ChunkListener implements Listener {
     
     private Chunk lastChunk = null;
     
-    final RefClass classChunk = getRefClass("{nms}.Chunk");
-    final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-    final RefMethod methodGetHandleChunk;
-    final RefField mustSave = classChunk.getField("mustSave");
+    private final RefClass classChunk = getRefClass("{nms}.Chunk");
+    private final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
+    private RefMethod methodGetHandleChunk;
+    private final RefField mustSave = classChunk.getField("mustSave");
+    
     
     public ChunkListener() {
         RefMethod method;
@@ -58,10 +60,11 @@ public class ChunkListener implements Listener {
         if (!Settings.CHUNK_PROCESSOR_GC) {
             return;
         }
-        TaskManager.runTaskRepeat(new Runnable() {
+        TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
-                final int distance = Bukkit.getViewDistance() + 1;
+                int time = 300;
+                final int distance = Bukkit.getViewDistance() + 2;
                 final HashMap<String, HashMap<ChunkLoc, Integer>> players = new HashMap<>();
                 for (final Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
                     final PlotPlayer pp = entry.getValue();
@@ -101,38 +104,53 @@ public class ChunkListener implements Listener {
                             if ((val == null) || (val < weight)) {
                                 map.put(chunk, weight);
                             }
-                            
+
                         }
                     }
                 }
                 for (final World world : Bukkit.getWorlds()) {
                     final String name = world.getName();
-                    final boolean autosave = world.isAutoSave();
                     if (!PS.get().isPlotWorld(name)) {
                         continue;
                     }
-                    if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autosave) {
+                    final boolean autosave = world.isAutoSave();
+                    if (autosave) {
                         world.setAutoSave(false);
                     }
                     final HashMap<ChunkLoc, Integer> map = players.get(name);
                     if ((map == null) || (map.size() == 0)) {
                         continue;
                     }
-                    for (final Chunk chunk : world.getLoadedChunks()) {
+                    Chunk[] chunks = world.getLoadedChunks();
+                    ArrayDeque<Chunk> toUnload = new ArrayDeque<Chunk>();
+                    for (final Chunk chunk : chunks) {
                         final int x = chunk.getX();
                         final int z = chunk.getZ();
                         if (!map.containsKey(new ChunkLoc(x, z))) {
+                            toUnload.add(chunk);
+                        }
+                    }
+                    if (toUnload.size() > 0) {
+                        long start = System.currentTimeMillis();
+                        Chunk chunk;
+                        while ((chunk = toUnload.poll()) != null && (System.currentTimeMillis() - start < 5)) {
                             if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE || !unloadChunk(name, chunk)) {
-                                chunk.unload(true, false);
+                                if (chunk.isLoaded()) {
+                                    chunk.unload(true, false);
+                                }
                             }
+                        }
+                        if (toUnload.size() > 0) {
+                            time = 1;
                         }
                     }
                     if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autosave) {
                         world.setAutoSave(true);
                     }
                 }
+                TaskManager.runTaskLater(this, time);
             }
-        }, 300);
+        });
     }
     
     public boolean unloadChunk(final String world, final Chunk chunk) {
@@ -165,7 +183,9 @@ public class ChunkListener implements Listener {
         }
         final Object c = methodGetHandleChunk.of(chunk).call();
         mustSave.of(c).set(false);
-        chunk.unload(false, false);
+        if (chunk.isLoaded()) {
+            chunk.unload(false, false);
+        }
         return true;
     }
     

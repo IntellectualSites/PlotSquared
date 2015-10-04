@@ -39,10 +39,10 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-command = "flag",
-aliases = { "f" },
+command = "setflag",
+aliases = { "f", "flag", "setf", "setflag" },
 usage = "/plot flag <set|remove|add|list|info> <flag> <value>",
-description = "Manage plot flags",
+description = "Set plot flags",
 category = CommandCategory.ACTIONS,
 requiredType = RequiredType.NONE,
 permission = "plots.flag")
