@@ -34,7 +34,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         this.plugin = plugin.toLowerCase();
         prefix = plotConfig.getString("mySQLprefix");
         if (prefix == null) {
-            prefix = plugin;
+            prefix = plugin.toLowerCase();
         }
         try {
             if (plotConfig.getBoolean("usemySQL")) {
@@ -68,7 +68,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         } else if (checkUUID2) {
             column = "ownerId";
         }
-        final boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
+        final boolean merge = !plugin.equalsIgnoreCase("plotme") && Settings.CONVERT_PLOTME;
         int missing = 0;
         while (r.next()) {
             final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
