@@ -85,6 +85,15 @@ permissions:
       plots.inbox.read.owner: true
       plots.comment: true
       plots.inbox: true
+  plots.permpack.wilderness:
+    default: op
+    children:
+      plots.admin.interact.unowned: true
+      plots.admin.destroy.unowned: true
+      plots.admin.build.unowned: true
+      plots.projectile.unowned: true
+      plots.admin.vehicle.break.unowned: true
+      plots.admin.pve.unowned: true
   plots.permpack.basic:
     default: op
     children:

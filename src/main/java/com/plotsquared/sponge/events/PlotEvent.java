@@ -1,6 +1,6 @@
 package com.plotsquared.sponge.events;
 
-import org.spongepowered.api.event.AbstractEvent;
+import org.spongepowered.api.event.impl.AbstractEvent;
 
 import com.intellectualcrafters.plot.object.Plot;
 

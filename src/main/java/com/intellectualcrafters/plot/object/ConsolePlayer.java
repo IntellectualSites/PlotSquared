@@ -157,4 +157,9 @@ public class ConsolePlayer extends PlotPlayer {
     @Override
     public void kick(final String message) {}
     
+    @Override
+    public boolean isBanned() {
+        return false;
+    }
+    
 }

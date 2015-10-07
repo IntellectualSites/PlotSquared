@@ -3,7 +3,6 @@ package com.plotsquared.sponge.util;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.service.event.EventManager;
 
@@ -41,11 +40,7 @@ public class SpongeEventUtil extends EventUtil {
     }
     
     public boolean callEvent(final Event event) {
-        events.post(event);
-        if (event instanceof Cancellable) {
-            return !((Cancellable) event).isCancelled();
-        }
-        return true;
+        return !events.post(event);
     }
     
     @Override

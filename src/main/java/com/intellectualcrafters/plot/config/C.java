@@ -451,6 +451,7 @@ public enum C {
      */
     NONE("None", "Info"),
     UNKNOWN("Unknown", "Info"),
+    EVERYONE("Everyone", "Info"),
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),

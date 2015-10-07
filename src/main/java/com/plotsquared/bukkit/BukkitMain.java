@@ -301,7 +301,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     if (MainUtil.isPlotRoad(BukkitUtil.getLocation(loc))) {
                                         final Entity passenger = entity.getPassenger();
                                         if (!(passenger instanceof Player)) {
-                                            entity.remove();
+                                            if (entity.getMetadata("keep").size() == 0) {
+                                                entity.remove();
+                                            }
                                         }
                                     }
                                     break;

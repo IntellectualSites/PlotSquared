@@ -223,7 +223,7 @@ public class ExpireManager {
         final Iterator<Plot> iter = plots.iterator();
         while (iter.hasNext()) {
             final Plot plot = iter.next();
-            final Flag keepFlag = FlagManager.getPlotFlag(plot, "keep");
+            final Flag keepFlag = FlagManager.getPlotFlagRaw(plot, "keep");
             if ((keepFlag != null) && (Boolean) keepFlag.getValue()) {
                 continue;
             }

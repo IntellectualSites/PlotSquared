@@ -36,7 +36,7 @@ public class PlotAnalysis {
     public static PlotAnalysis MODIFIERS = new PlotAnalysis();
     
     public static PlotAnalysis getAnalysis(final Plot plot) {
-        final Flag flag = FlagManager.getPlotFlag(plot, "analysis");
+        final Flag flag = FlagManager.getPlotFlagRaw(plot, "analysis");
         if (flag != null) {
             final PlotAnalysis analysis = new PlotAnalysis();
             final List<Integer> values = (List<Integer>) flag.getValue();

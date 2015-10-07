@@ -6,22 +6,13 @@ import org.spongepowered.api.world.World;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.plotsquared.sponge.util.SpongeUtil;
 
 public class SpongeHybridUtils extends HybridUtils {
-    
-    @Override
-    public void analyzePlot(final Plot plot, final RunnableVal<PlotAnalysis> whenDone) {
-        // TODO Auto-generated method stub
-        PS.debug("analyzePlot is not implemented");
-        if (whenDone != null) {
-            whenDone.run();
-        }
-    }
     
     @Override
     public int checkModified(final String worldname, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks) {
@@ -66,6 +57,12 @@ public class SpongeHybridUtils extends HybridUtils {
             }
         }
         return ey;
+    }
+    
+    @Override
+    public void analyzeRegion(String world, RegionWrapper region, RunnableVal<PlotAnalysis> whenDone) {
+        // TODO Auto-generated method stub
+        whenDone.run();
     }
     
 }

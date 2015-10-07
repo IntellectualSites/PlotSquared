@@ -219,7 +219,7 @@ public class DebugExec extends SubCommand {
                     }
                     final String flag = args[1];
                     for (final Plot plot : PS.get().getPlots()) {
-                        if (FlagManager.getPlotFlag(plot, flag) != null) {
+                        if (FlagManager.getPlotFlagRaw(plot, flag) != null) {
                             FlagManager.removePlotFlag(plot, flag);
                         }
                     }

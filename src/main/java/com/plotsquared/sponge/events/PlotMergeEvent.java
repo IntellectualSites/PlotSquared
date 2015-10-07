@@ -2,7 +2,7 @@ package com.plotsquared.sponge.events;
 
 import java.util.ArrayList;
 
-import org.spongepowered.api.event.AbstractEvent;
+import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.world.World;
 

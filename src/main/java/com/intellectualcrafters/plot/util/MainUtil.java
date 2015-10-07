@@ -34,12 +34,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -269,6 +271,8 @@ public class MainUtil {
     public static String getName(final UUID owner) {
         if (owner == null) {
             return C.NONE.s();
+        } else if (owner.equals(DBFunc.everyone)) {
+            return C.EVERYONE.s();
         }
         final String name = UUIDHandler.getName(owner);
         if (name == null) {
@@ -518,10 +522,14 @@ public class MainUtil {
         if (!result) {
             return false;
         }
-        plot.removeSign();
+        if (createSign) {
+            plot.removeSign();
+        }
         final PlotManager manager = PS.get().getPlotManager(plot.world);
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
-        manager.startPlotUnlink(plotworld, ids);
+        if (createRoad) {
+            manager.startPlotUnlink(plotworld, ids);
+        }
         if ((plotworld.TERRAIN != 3) && createRoad) {
             for (Plot current : plots) {
                 if (current.getMerged(1)) {
@@ -545,7 +553,9 @@ public class MainUtil {
                 MainUtil.setSign(getName(current.owner), current);
             }
         }
-        manager.finishPlotUnlink(plotworld, ids);
+        if (createRoad) {
+            manager.finishPlotUnlink(plotworld, ids);
+        }
         return true;
     }
     
@@ -2157,8 +2167,13 @@ public class MainUtil {
             if (!tmp.getMerged(2)) {
                 // invalid merge
                 PS.debug("Fixing invalid merge: " + plot);
-                tmp.getSettings().setMerged(2, true);
-                DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                if (tmp.hasOwner()) {
+                    tmp.getSettings().setMerged(2, true);
+                    DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                } else {
+                    plot.getSettings().setMerged(0, false);
+                    DBFunc.setMerged(plot, plot.settings.getMerged());
+                }
             }
             queuecache.add(tmp);
             frontier.add(tmp);
@@ -2168,8 +2183,13 @@ public class MainUtil {
             if (!tmp.getMerged(3)) {
                 // invalid merge
                 PS.debug("Fixing invalid merge: " + plot);
-                tmp.getSettings().setMerged(3, true);
-                DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                if (tmp.hasOwner()) {
+                    tmp.getSettings().setMerged(3, true);
+                    DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                } else {
+                    plot.getSettings().setMerged(1, false);
+                    DBFunc.setMerged(plot, plot.settings.getMerged());
+                }
             }
             queuecache.add(tmp);
             frontier.add(tmp);
@@ -2179,8 +2199,13 @@ public class MainUtil {
             if (!tmp.getMerged(0)) {
                 // invalid merge
                 PS.debug("Fixing invalid merge: " + plot);
-                tmp.getSettings().setMerged(0, true);
-                DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                if (tmp.hasOwner()) {
+                    tmp.getSettings().setMerged(0, true);
+                    DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                } else {
+                    plot.getSettings().setMerged(2, false);
+                    DBFunc.setMerged(plot, plot.settings.getMerged());
+                }
             }
             queuecache.add(tmp);
             frontier.add(tmp);
@@ -2190,8 +2215,13 @@ public class MainUtil {
             if (!tmp.getMerged(1)) {
                 // invalid merge
                 PS.debug("Fixing invalid merge: " + plot);
-                tmp.getSettings().setMerged(1, true);
-                DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                if (tmp.hasOwner()) {
+                    tmp.getSettings().setMerged(1, true);
+                    DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                } else {
+                    plot.getSettings().setMerged(3, false);
+                    DBFunc.setMerged(plot, plot.settings.getMerged());
+                }
             }
             queuecache.add(tmp);
             frontier.add(tmp);
@@ -2380,5 +2410,85 @@ public class MainUtil {
     
     public static boolean setComponent(final Plot plot, final String component, final PlotBlock[] blocks) {
         return PS.get().getPlotManager(plot.world).setComponent(PS.get().getPlotWorld(plot.world), plot.id, component, blocks);
+    }
+    
+    public static void format(String info, final Plot plot, final PlotPlayer player, final boolean full, final RunnableVal<String> whenDone) {
+        final int num = MainUtil.getConnectedPlots(plot).size();
+        final String alias = plot.getAlias().length() > 0 ? plot.getAlias() : C.NONE.s();
+        final Location bot = plot.getBottom();
+        final String biome = BlockManager.manager.getBiome(plot.world, bot.getX(), bot.getZ());
+        final String trusted = getPlayerList(plot.getTrusted());
+        final String members = getPlayerList(plot.getMembers());
+        final String denied = getPlayerList(plot.getDenied());
+        
+        final Flag descriptionFlag = FlagManager.getPlotFlagRaw(plot, "description");
+        final String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
+        
+        final String flags = StringMan.replaceFromMap(
+        "$2"
+        + (StringMan.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "").length() > 0 ? StringMan.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true)
+        .values(), "$1, $2") : C.NONE.s()), C.replacements);
+        final boolean build = plot.isAdded(player.getUUID());
+        
+        final String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());
+        
+        info = info.replaceAll("%id%", plot.id.toString());
+        info = info.replaceAll("%alias%", alias);
+        info = info.replaceAll("%num%", num + "");
+        info = info.replaceAll("%desc%", description);
+        info = info.replaceAll("%biome%", biome);
+        info = info.replaceAll("%owner%", owner);
+        info = info.replaceAll("%members%", members);
+        info = info.replaceAll("%trusted%", trusted);
+        info = info.replaceAll("%helpers%", members);
+        info = info.replaceAll("%denied%", denied);
+        info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
+        info = info.replaceAll("%build%", build + "");
+        info = info.replaceAll("%desc%", "No description set.");
+        if (info.contains("%rating%")) {
+            final String newInfo = info;
+            TaskManager.runTaskAsync(new Runnable() {
+                @Override
+                public void run() {
+                    int max = 10;
+                    if ((Settings.RATING_CATEGORIES != null) && (Settings.RATING_CATEGORIES.size() > 0)) {
+                        max = 8;
+                    }
+                    String info;
+                    if (full && (Settings.RATING_CATEGORIES != null) && (Settings.RATING_CATEGORIES.size() > 1)) {
+                        String rating = "";
+                        String prefix = "";
+                        final double[] ratings = MainUtil.getAverageRatings(plot);
+                        for (int i = 0; i < ratings.length; i++) {
+                            rating += prefix + Settings.RATING_CATEGORIES.get(i) + "=" + String.format("%.1f", ratings[i]);
+                            prefix = ",";
+                        }
+                        info = newInfo.replaceAll("%rating%", rating);
+                    } else {
+                        info = newInfo.replaceAll("%rating%", String.format("%.1f", MainUtil.getAverageRating(plot)) + "/" + max);
+                    }
+                    whenDone.run(info);
+                }
+            });
+            return;
+        }
+        whenDone.run(info);
+    }
+    
+    public static String getPlayerList(final Collection<UUID> uuids) {
+        final ArrayList<UUID> l = new ArrayList<>(uuids);
+        if ((l == null) || (l.size() < 1)) {
+            return C.NONE.s();
+        }
+        final String c = C.PLOT_USER_LIST.s();
+        final StringBuilder list = new StringBuilder();
+        for (int x = 0; x < l.size(); x++) {
+            if ((x + 1) == l.size()) {
+                list.append(c.replace("%user%", getName(l.get(x))).replace(",", ""));
+            } else {
+                list.append(c.replace("%user%", getName(l.get(x))));
+            }
+        }
+        return list.toString();
     }
 }

@@ -279,4 +279,9 @@ public class BukkitPlayer extends PlotPlayer {
     public void kick(final String message) {
         player.kickPlayer(message);
     }
+    
+    @Override
+    public boolean isBanned() {
+        return player.isBanned();
+    }
 }

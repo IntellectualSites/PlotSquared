@@ -44,9 +44,8 @@ public class BukkitUtil extends BlockManager {
     public static void removePlayer(final String plr) {
         lastPlayer = null;
         lastPlotPlayer = null;
-        UUIDHandler.getPlayers().remove(plr);
     }
-    
+
     // These weren't being used, but they might be useful later, so I'm just commenting them out
     //    private static int getMaxHeight(final String world) {
     //        return getWorld(world).getMaxHeight();

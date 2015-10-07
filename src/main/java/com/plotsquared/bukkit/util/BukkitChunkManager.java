@@ -1,6 +1,5 @@
 package com.plotsquared.bukkit.util;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,25 +68,7 @@ import com.plotsquared.bukkit.object.entity.EntityWrapper;
 public class BukkitChunkManager extends ChunkManager {
     @Override
     public Set<ChunkLoc> getChunkChunks(final String world) {
-        final String directory = Bukkit.getWorldContainer() + File.separator + world + File.separator + "region";
-        final File folder = new File(directory);
-        final File[] regionFiles = folder.listFiles();
-        final HashSet<ChunkLoc> chunks = new HashSet<>();
-        if (regionFiles == null) {
-            throw new RuntimeException("Could not find worlds folder.");
-        }
-        for (final File file : regionFiles) {
-            final String name = file.getName();
-            if (name.endsWith("mca")) {
-                final String[] split = name.split("\\.");
-                try {
-                    final int x = Integer.parseInt(split[1]);
-                    final int z = Integer.parseInt(split[2]);
-                    final ChunkLoc loc = new ChunkLoc(x, z);
-                    chunks.add(loc);
-                } catch (final Exception e) {}
-            }
-        }
+        Set<ChunkLoc> chunks = super.getChunkChunks(world);
         for (final Chunk chunk : Bukkit.getWorld(world).getLoadedChunks()) {
             final ChunkLoc loc = new ChunkLoc(chunk.getX() >> 5, chunk.getZ() >> 5);
             if (!chunks.contains(loc)) {
@@ -115,69 +96,6 @@ public class BukkitChunkManager extends ChunkManager {
                 }
             }
         }
-    }
-    
-    @Override
-    public void deleteRegionFile(final String world, final ChunkLoc loc) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
-                final File file = new File(PS.get().IMP.getWorldContainer(), directory);
-                PS.log("&6 - Deleting region: " + file.getName() + " (approx 1024 chunks)");
-                if (file.exists()) {
-                    file.delete();
-                }
-                try {
-                    Thread.sleep(100);
-                } catch (final InterruptedException e) {}
-            }
-        });
-    }
-    
-    @Override
-    public void deleteRegionFiles(String world, List<ChunkLoc> chunks) {
-        deleteRegionFiles(world, chunks, null);
-    }
-    
-    @Override
-    public void deleteRegionFiles(final String world, final List<ChunkLoc> chunks, final Runnable whenDone) {
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                for (final ChunkLoc loc : chunks) {
-                    final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
-                    final File file = new File(PS.get().IMP.getWorldContainer(), directory);
-                    PS.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
-                    if (file.exists()) {
-                        file.delete();
-                    }
-                }
-                if (whenDone != null) {
-                    whenDone.run();
-                }
-            }
-        });
-    }
-    
-    @Override
-    public Plot hasPlot(final String world, final ChunkLoc chunk) {
-        final int x1 = chunk.x << 4;
-        final int z1 = chunk.z << 4;
-        final int x2 = x1 + 15;
-        final int z2 = z1 + 15;
-        final Location bot = new Location(world, x1, 0, z1);
-        Plot plot;
-        plot = MainUtil.getPlotAbs(bot);
-        if ((plot != null) && (plot.owner != null)) {
-            return plot;
-        }
-        final Location top = new Location(world, x2, 0, z2);
-        plot = MainUtil.getPlotAbs(top);
-        if ((plot != null) && (plot.owner != null)) {
-            return plot;
-        }
-        return null;
     }
     
     private static HashMap<BlockLoc, ItemStack[]> chestContents;

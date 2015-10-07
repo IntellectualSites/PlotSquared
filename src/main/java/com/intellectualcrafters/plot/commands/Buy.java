@@ -80,7 +80,7 @@ public class Buy extends SubCommand {
         if (currentPlots > MainUtil.getAllowedPlots(plr)) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
-        final Flag flag = FlagManager.getPlotFlag(plot, "price");
+        final Flag flag = FlagManager.getPlotFlagRaw(plot, "price");
         if (flag == null) {
             return sendMessage(plr, C.NOT_FOR_SALE);
         }

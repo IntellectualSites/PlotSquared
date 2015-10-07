@@ -1,7 +1,7 @@
 package com.plotsquared.sponge.events;
 
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.AbstractEvent;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.impl.AbstractEvent;
 
 public abstract class PlayerEvent extends AbstractEvent {
     

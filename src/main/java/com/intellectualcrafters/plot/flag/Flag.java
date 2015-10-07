@@ -20,9 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
+import java.lang.reflect.Method;
+
 import com.intellectualcrafters.plot.util.StringMan;
 
-public class Flag {
+public class Flag implements Cloneable {
     private AbstractFlag key;
     private Object value;
     
@@ -121,5 +123,25 @@ public class Flag {
     @Override
     public int hashCode() {
         return key.getKey().hashCode();
+    }
+    
+    @Override
+    protected Object clone() {
+        try {
+            if (value == null) {
+                return super.clone();
+            }
+            if (value instanceof Cloneable) {
+                Method method = value.getClass().getDeclaredMethod("clone");
+                if (!method.isAccessible()) {
+                    method.setAccessible(true);
+                }
+                return new Flag(key, method.invoke(value));
+            }
+            return new Flag(key, key.parseValueRaw(value.toString()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return this;
+        }
     }
 }

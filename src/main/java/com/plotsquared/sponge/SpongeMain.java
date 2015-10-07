@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -20,12 +21,11 @@ import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.Subscribe;
-import org.spongepowered.api.event.entity.player.PlayerChatEvent;
-import org.spongepowered.api.event.state.InitializationEvent;
-import org.spongepowered.api.event.state.PreInitializationEvent;
-import org.spongepowered.api.event.state.ServerAboutToStartEvent;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.profile.GameProfileResolver;
@@ -37,7 +37,6 @@ import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
 import org.spongepowered.api.world.World;
 
-import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
@@ -71,6 +70,7 @@ import com.plotsquared.sponge.util.SpongeBlockManager;
 import com.plotsquared.sponge.util.SpongeChatManager;
 import com.plotsquared.sponge.util.SpongeChunkManager;
 import com.plotsquared.sponge.util.SpongeCommand;
+import com.plotsquared.sponge.util.SpongeEconHandler;
 import com.plotsquared.sponge.util.SpongeEventUtil;
 import com.plotsquared.sponge.util.SpongeInventoryUtil;
 import com.plotsquared.sponge.util.SpongeMetrics;
@@ -215,19 +215,19 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     ///////////////////////////////////////////////////////////////////////
     
     ///////////////////// ON ENABLE /////////////////////
-    @Subscribe
-    public void init(final InitializationEvent event) {
-        log("INIT");
+    @Listener
+    public void init(final GameInitializationEvent event) {
+        log("P^2 INIT");
     }
     
-    @Subscribe
-    public void onInit(final PreInitializationEvent event) {
-        log("PRE INIT");
+    @Listener
+    public void onInit(final GamePreInitializationEvent event) {
+        log("P^2  PRE INIT");
     }
     
-    @Subscribe
-    public void onServerAboutToStart(final ServerAboutToStartEvent event) {
-        log("ABOUT START");
+    @Listener
+    public void onServerAboutToStart(final GameAboutToStartServerEvent event) {
+        log("P^2 ABOUT START");
         THIS = this;
         
         //
@@ -381,13 +381,6 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         }
     }
     
-    @Subscribe
-    public void onPlayerChat(final PlayerChatEvent event) {
-        // This is how events sort of work?
-        final Player player = event.getUser();
-        log(player.getWorld().getName());
-    }
-    
     @Override
     public void log(String message) {
         message = C.format(message, C.replacements);
@@ -455,8 +448,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     public EconHandler getEconomyHandler() {
         // TODO Auto-generated method stub
         // Nothing like Vault exists yet
-        PS.log("getEconomyHandler NOT IMPLEMENTED YET");
-        return null;
+        return new SpongeEconHandler();
     }
     
     @Override
@@ -506,7 +498,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     
     @Override
     public void registerPlayerEvents() {
-        game.getEventManager().register(this, new MainListener());
+        game.getEventManager().registerListeners(this, new MainListener());
     }
     
     @Override

@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -37,6 +35,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.CommentManager;
 import com.intellectualcrafters.plot.util.EventUtil;
@@ -76,7 +75,12 @@ public class PlotListener {
                 final Flag greetingFlag = flags.get("greeting");
                 if (greetingFlag != null) {
                     greeting = (String) greetingFlag.getValue();
-                    pp.sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_GREETING.s().replaceAll("%id%", plot.id + "") + greeting));
+                    MainUtil.format(C.PREFIX_GREETING.s() + greeting, plot, pp, false, new RunnableVal<String>() {
+                        @Override
+                        public void run() {
+                            MainUtil.sendMessage(pp, value);
+                        }
+                    });
                 } else {
                     greeting = "";
                 }
@@ -189,7 +193,7 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
-            if (FlagManager.getPlotFlag(plot, "gamemode") != null) {
+            if (FlagManager.getPlotFlagRaw(plot, "gamemode") != null) {
                 if (pp.getGamemode() != pw.GAMEMODE) {
                     if (!Permissions.hasPermission(pp, "plots.gamemode.bypass")) {
                         pp.setGamemode(pw.GAMEMODE);
@@ -198,11 +202,16 @@ public class PlotListener {
                     }
                 }
             }
-            final Flag farewell = FlagManager.getPlotFlag(plot, "farewell");
+            final Flag farewell = FlagManager.getPlotFlagRaw(plot, "farewell");
             if (farewell != null) {
-                pp.sendMessage(ChatColor.translateAlternateColorCodes('&', C.PREFIX_FAREWELL.s().replaceAll("%id%", plot.id + "") + farewell.getValueString()));
+                MainUtil.format(C.PREFIX_FAREWELL.s() + farewell.getValueString(), plot, pp, false, new RunnableVal<String>() {
+                    @Override
+                    public void run() {
+                        MainUtil.sendMessage(pp, value);
+                    }
+                });
             }
-            final Flag leave = FlagManager.getPlotFlag(plot, "notify-leave");
+            final Flag leave = FlagManager.getPlotFlagRaw(plot, "notify-leave");
             if ((leave != null) && ((Boolean) leave.getValue())) {
                 if (!Permissions.hasPermission(pp, "plots.flag.notify-enter.bypass")) {
                     for (final UUID uuid : PlotHandler.getOwners(plot)) {
@@ -213,16 +222,16 @@ public class PlotListener {
                     }
                 }
             }
-            if (FlagManager.getPlotFlag(plot, "fly") != null) {
+            if (FlagManager.getPlotFlagRaw(plot, "fly") != null) {
                 final PlotGamemode gamemode = pp.getGamemode();
                 if ((gamemode == PlotGamemode.SURVIVAL) || (gamemode == PlotGamemode.ADVENTURE)) {
                     pp.setFlight(false);
                 }
             }
-            if (FlagManager.getPlotFlag(plot, "time") != null) {
+            if (FlagManager.getPlotFlagRaw(plot, "time") != null) {
                 pp.setTime(Long.MAX_VALUE);
             }
-            if (FlagManager.getPlotFlag(plot, "weather") != null) {
+            if (FlagManager.getPlotFlagRaw(plot, "weather") != null) {
                 pp.setWeather(PlotWeather.RESET);
             }
             final Location lastLoc = (Location) pp.getMeta("music");

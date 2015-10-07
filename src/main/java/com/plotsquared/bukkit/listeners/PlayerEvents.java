@@ -198,7 +198,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 if ((plot == null) || !plot.hasOwner()) {
                     return;
                 }
-                final Flag redstone = FlagManager.getPlotFlag(plot, "redstone");
+                final Flag redstone = FlagManager.getPlotFlagRaw(plot, "redstone");
                 if (redstone != null) {
                     if ((Boolean) redstone.getValue()) {
                         return;
@@ -343,7 +343,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
         
         Flag flag;
-        if (((flag = FlagManager.getPlotFlag(plot, "blocked-cmds")) != null) && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
+        if (((flag = FlagManager.getPlotFlagRaw(plot, "blocked-cmds")) != null) && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
             final List<String> v = (List<String>) flag.getValue();
             
             String msg = event.getMessage().toLowerCase().replaceFirst("/", "");
@@ -648,7 +648,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 event.setCancelled(true);
                 return;
             } else if (!plot.isAdded(pp.getUUID())) {
-                final Flag destroy = FlagManager.getPlotFlag(plot, "break");
+                final Flag destroy = FlagManager.getPlotFlagRaw(plot, "break");
                 final Block block = event.getBlock();
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                     return;
@@ -871,7 +871,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
             final PlotPlayer pp = BukkitUtil.getPlayer(player);
             if (!plot.isAdded(pp.getUUID())) {
-                final Flag destroy = FlagManager.getPlotFlag(plot, "break");
+                final Flag destroy = FlagManager.getPlotFlagRaw(plot, "break");
                 final Block block = event.getBlock();
                 if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                     return;
@@ -1267,6 +1267,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final Location loc = BukkitUtil.getLocation(block.getLocation());
         final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
+            if (MainUtil.isPlotAreaAbs(loc)) {
+                event.setCancelled(true);
+            }
             return;
         }
         if (FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
@@ -1299,7 +1302,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     
     public boolean checkEntity(final Entity entity, final Plot plot) {
         if ((plot != null) && (plot.owner != null)) {
-            final Flag entityFlag = FlagManager.getPlotFlag(plot, "entity-cap");
+            final Flag entityFlag = FlagManager.getPlotFlagRaw(plot, "entity-cap");
             int[] mobs = null;
             if (entityFlag != null) {
                 final int cap = ((Integer) entityFlag.getValue());
@@ -1312,7 +1315,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             }
             if (entity instanceof Creature) {
-                final Flag mobFlag = FlagManager.getPlotFlag(plot, "mob-cap");
+                final Flag mobFlag = FlagManager.getPlotFlagRaw(plot, "mob-cap");
                 if (mobFlag != null) {
                     final int cap = ((Integer) mobFlag.getValue());
                     if (cap == 0) {
@@ -1326,7 +1329,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     }
                 }
                 if (entity instanceof Animals) {
-                    final Flag animalFlag = FlagManager.getPlotFlag(plot, "animal-cap");
+                    final Flag animalFlag = FlagManager.getPlotFlagRaw(plot, "animal-cap");
                     if (animalFlag != null) {
                         final int cap = ((Integer) animalFlag.getValue());
                         if (cap == 0) {
@@ -1340,7 +1343,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                         }
                     }
                 } else if (entity instanceof Monster) {
-                    final Flag monsterFlag = FlagManager.getPlotFlag(plot, "hostile-cap");
+                    final Flag monsterFlag = FlagManager.getPlotFlagRaw(plot, "hostile-cap");
                     if (monsterFlag != null) {
                         final int cap = ((Integer) monsterFlag.getValue());
                         if (cap == 0) {
@@ -1355,7 +1358,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     }
                 }
             } else if (entity instanceof Vehicle) {
-                final Flag vehicleFlag = FlagManager.getPlotFlag(plot, "vehicle-cap");
+                final Flag vehicleFlag = FlagManager.getPlotFlagRaw(plot, "vehicle-cap");
                 if (vehicleFlag != null) {
                     final int cap = ((Integer) vehicleFlag.getValue());
                     if (cap == 0) {
@@ -1609,7 +1612,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
                     e.setCancelled(true);
                 } else if (!plot.isAdded(pp.getUUID())) {
-                    final Flag use = FlagManager.getPlotFlag(plot, C.FLAG_USE.s());
+                    final Flag use = FlagManager.getPlotFlagRaw(plot, C.FLAG_USE.s());
                     if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) e.getBucket().getId(), (byte) 0))) {
                         return;
                     }
@@ -1655,19 +1658,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     @EventHandler(priority = EventPriority.MONITOR)
     public void onLeave(final PlayerQuitEvent event) {
         final PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
-        final Plot plot = pp.getCurrentPlot();
-        if (plot != null) {
-            plotExit(pp, plot);
-        }
-        ExpireManager.dates.put(pp.getUUID(), System.currentTimeMillis());
-        EventUtil.unregisterPlayer(pp);
-        if (Settings.DELETE_PLOTS_ON_BAN && event.getPlayer().isBanned()) {
-            for (final Plot owned : PS.get().getPlotsInWorld(pp.getName())) {
-                owned.deletePlot(null);
-                PS.debug(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), event.getPlayer().getName()));
-            }
-        }
-        BukkitUtil.removePlayer(pp.getName());
+        pp.unregister();
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -1694,7 +1685,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
                     e.setCancelled(true);
                 } else if (!plot.isAdded(pp.getUUID())) {
-                    final Flag use = FlagManager.getPlotFlag(plot, C.FLAG_USE.s());
+                    final Flag use = FlagManager.getPlotFlagRaw(plot, C.FLAG_USE.s());
                     final Block block = e.getBlockClicked();
                     if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                         return;
@@ -1983,16 +1974,16 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 if ((plot != null) && ((FlagManager.isPlotFlagTrue(plot, "hanging-break") || plot.isAdded(pp.getUUID())))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.break." + stub)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.break." + stub);
+                if (!Permissions.hasPermission(pp, "plots.admin.destroy." + stub)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.destroy." + stub);
                     return false;
                 }
             } else if (victim.getEntityId() == 30) {
                 if ((plot != null) && ((FlagManager.isPlotFlagTrue(plot, "misc-break") || plot.isAdded(pp.getUUID())))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.break." + stub)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.break." + stub);
+                if (!Permissions.hasPermission(pp, "plots.admin.destroy." + stub)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.destroy." + stub);
                     return false;
                 }
             } else if ((victim instanceof Monster) || (victim instanceof EnderDragon)) { // victim is monster
@@ -2013,7 +2004,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             } else if (victim instanceof Player) {
                 if (plot != null) {
-                    final Flag pvp = FlagManager.getPlotFlag(plot, C.FLAG_PVP.s());
+                    final Flag pvp = FlagManager.getPlotFlagRaw(plot, C.FLAG_PVP.s());
                     if (pvp == null) {
                         return true;
                     } else {
@@ -2108,7 +2099,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return;
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
-                final Flag place = FlagManager.getPlotFlag(plot, C.FLAG_PLACE.s());
+                final Flag place = FlagManager.getPlotFlagRaw(plot, C.FLAG_PLACE.s());
                 final Block block = event.getBlock();
                 if (((place == null) || !((HashSet<PlotBlock>) place.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData())))
                 && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {

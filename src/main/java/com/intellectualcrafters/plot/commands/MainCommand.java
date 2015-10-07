@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import com.intellectualcrafters.plot.PS;
@@ -311,15 +310,11 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             displayHelp(player, category, help_index, cmd);
             return true;
         }
-        final StringBuilder builder = new StringBuilder(cmd).append(" ");
-        final Iterator<String> iterator = Arrays.asList(args).iterator();
-        while (iterator.hasNext()) {
-            builder.append(iterator.next());
-            if (iterator.hasNext()) {
-                builder.append(" ");
-            }
+        if (args[0].contains(":")) {
+            args[0] = args[0].replaceFirst(":", " ");
         }
-        getInstance().handle(player, builder.toString());
+        String fullCmd = StringMan.join(args, " ");
+        getInstance().handle(player, cmd + " " + fullCmd);
         return true;
     }
     

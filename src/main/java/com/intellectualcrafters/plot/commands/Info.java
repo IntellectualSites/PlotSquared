@@ -20,64 +20,20 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.UUID;
-import java.util.regex.Matcher;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "info", aliases = { "i" }, description = "Display plot info", usage = "/plot info <id>", category = CommandCategory.INFO)
 public class Info extends SubCommand {
-    
-    public static String getPlayerList(final Collection<UUID> uuids) {
-        final ArrayList<UUID> l = new ArrayList<>(uuids);
-        if ((l == null) || (l.size() < 1)) {
-            return C.NONE.s();
-        }
-        final String c = C.PLOT_USER_LIST.s();
-        final StringBuilder list = new StringBuilder();
-        for (int x = 0; x < l.size(); x++) {
-            if ((x + 1) == l.size()) {
-                list.append(c.replace("%user%", getPlayerName(l.get(x))).replace(",", ""));
-            } else {
-                list.append(c.replace("%user%", getPlayerName(l.get(x))));
-            }
-        }
-        return list.toString();
-    }
-    
-    public static String getPlayerName(final UUID uuid) {
-        if (uuid == null) {
-            return C.UNKNOWN.s();
-        }
-        if (uuid.equals(DBFunc.everyone) || uuid.toString().equalsIgnoreCase(DBFunc.everyone.toString())) {
-            return "everyone";
-        }
-        final String name = UUIDHandler.getName(uuid);
-        if (name == null) {
-            return "unknown";
-        }
-        return name;
-    }
     
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
@@ -166,16 +122,26 @@ public class Info extends SubCommand {
             return true;
         }
         String info = C.PLOT_INFO.s();
+        boolean full;
         if (arg != null) {
             info = getCaption(arg);
             if (info == null) {
                 MainUtil.sendMessage(player, "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, &arating");
                 return false;
             }
-            formatAndSend(info, plot.world, plot, player, true);
+            full = true;
         } else {
-            formatAndSend(info, plot.world, plot, player, false);
+            full = false;
         }
+        MainUtil.format(info, plot, player, full, new RunnableVal<String>() {
+            
+            @Override
+            public void run() {
+                MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
+                MainUtil.sendMessage(player, value, false);
+                MainUtil.sendMessage(player, C.PLOT_INFO_FOOTER);
+            }
+        });
         return true;
     }
     
@@ -204,72 +170,5 @@ public class Info extends SubCommand {
             default:
                 return null;
         }
-    }
-    
-    private void formatAndSend(String info, final String world, final Plot plot, final PlotPlayer player, final boolean full) {
-        final int num = MainUtil.getConnectedPlots(plot).size();
-        final String alias = plot.getAlias().length() > 0 ? plot.getAlias() : C.NONE.s();
-        final Location top = MainUtil.getPlotTopLocAbs(world, plot.id);
-        final Location bot = MainUtil.getPlotBottomLocAbs(world, plot.id);
-        final String biome = BlockManager.manager.getBiome(plot.world, bot.getX() + ((top.getX() - bot.getX()) / 2), bot.getZ() + ((top.getZ() - bot.getZ()) / 2));
-        final String trusted = getPlayerList(plot.getTrusted());
-        final String members = getPlayerList(plot.getMembers());
-        final String denied = getPlayerList(plot.getDenied());
-        
-        final Flag descriptionFlag = FlagManager.getPlotFlag(plot, "description");
-        final String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
-        
-        final String flags = StringMan.replaceFromMap(
-        "$2"
-        + (StringMan.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true).values(), "").length() > 0 ? StringMan.join(FlagManager.getPlotFlags(plot.world, plot.getSettings(), true)
-        .values(), "$1, $2") : C.NONE.s()), C.replacements);
-        final boolean build = plot.isAdded(player.getUUID());
-        
-        final String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());
-        
-        info = info.replaceAll("%id%", plot.id.toString());
-        info = info.replaceAll("%alias%", alias);
-        info = info.replaceAll("%num%", num + "");
-        info = info.replaceAll("%desc%", description);
-        info = info.replaceAll("%biome%", biome);
-        info = info.replaceAll("%owner%", owner);
-        info = info.replaceAll("%members%", members);
-        info = info.replaceAll("%trusted%", trusted);
-        info = info.replaceAll("%helpers%", members);
-        info = info.replaceAll("%denied%", denied);
-        info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
-        info = info.replaceAll("%build%", build + "");
-        info = info.replaceAll("%desc%", "No description set.");
-        if (info.contains("%rating%")) {
-            final String newInfo = info;
-            TaskManager.runTaskAsync(new Runnable() {
-                @Override
-                public void run() {
-                    int max = 10;
-                    if ((Settings.RATING_CATEGORIES != null) && (Settings.RATING_CATEGORIES.size() > 0)) {
-                        max = 8;
-                    }
-                    String info;
-                    if (full && (Settings.RATING_CATEGORIES != null) && (Settings.RATING_CATEGORIES.size() > 1)) {
-                        String rating = "";
-                        String prefix = "";
-                        final double[] ratings = MainUtil.getAverageRatings(plot);
-                        for (int i = 0; i < ratings.length; i++) {
-                            rating += prefix + Settings.RATING_CATEGORIES.get(i) + "=" + String.format("%.1f", ratings[i]);
-                            prefix = ",";
-                        }
-                        info = newInfo.replaceAll("%rating%", rating);
-                    } else {
-                        info = newInfo.replaceAll("%rating%", String.format("%.1f", MainUtil.getAverageRating(plot)) + "/" + max);
-                    }
-                    MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
-                    MainUtil.sendMessage(player, info, false);
-                    MainUtil.sendMessage(player, C.PLOT_INFO_FOOTER);
-                }
-            });
-            return;
-        }
-        MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
-        MainUtil.sendMessage(player, info, false);
     }
 }

@@ -165,12 +165,12 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public void onPlotEnter(final PlayerEnterPlotEvent event) {
         final Player player = event.getPlayer();
         final Plot plot = event.getPlot();
-        final Flag feed = FlagManager.getPlotFlag(plot, "feed");
+        final Flag feed = FlagManager.getPlotFlagRaw(plot, "feed");
         if (feed != null) {
             final Integer[] value = (Integer[]) feed.getValue();
             feedRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
         }
-        final Flag heal = FlagManager.getPlotFlag(plot, "heal");
+        final Flag heal = FlagManager.getPlotFlagRaw(plot, "heal");
         if (heal != null) {
             final Integer[] value = (Integer[]) heal.getValue();
             healRunnable.put(player.getName(), new Interval(value[0], value[1], 20));

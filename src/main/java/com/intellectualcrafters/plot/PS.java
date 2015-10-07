@@ -100,6 +100,7 @@ public class PS {
     private final HashMap<String, PlotManager> plotmanagers = new HashMap<>();
     
     // public:
+    public File styleFile;
     public File configFile;
     public File translationFile;
     public YamlConfiguration style;
@@ -111,7 +112,6 @@ public class PS {
     public URL update;
     
     // private:
-    private File styleFile;
     private File storageFile;
     private File FILE = null; // This file
     private int[] VERSION = null;

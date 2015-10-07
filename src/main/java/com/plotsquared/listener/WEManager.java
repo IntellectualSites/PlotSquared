@@ -43,7 +43,7 @@ public class WEManager {
             return regions;
         }
         for (final Plot plot : PS.get().getPlotsInWorld(player.getLocation().getWorld())) {
-            if (!plot.isBasePlot() || (Settings.DONE_RESTRICTS_BUILDING && (FlagManager.getPlotFlag(plot, "done") != null))) {
+            if (!plot.isBasePlot() || (Settings.DONE_RESTRICTS_BUILDING && (FlagManager.getPlotFlagRaw(plot, "done") != null))) {
                 continue;
             }
             if (Settings.WE_ALLOW_HELPER ? plot.isAdded(uuid) : (plot.isOwner(uuid) || plot.getTrusted().contains(uuid))) {

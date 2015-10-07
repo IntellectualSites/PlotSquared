@@ -3,7 +3,7 @@ package com.plotsquared.sponge.util;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Carrier;

@@ -1,13 +1,14 @@
 package com.plotsquared.sponge.util;
 
+import java.util.Optional;
+
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
-import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MathMan;
@@ -24,12 +25,8 @@ public class SpongeUtil {
         return new Location(world, pos.getX(), pos.getY(), pos.getZ());
     }
     
-    public static Location getLocation(final org.spongepowered.api.world.Location block) {
-        final Extent extent = block.getExtent();
-        if (extent instanceof World) {
-            return getLocation(((World) extent).getName(), block);
-        }
-        return null;
+    public static Location getLocation(final org.spongepowered.api.world.Location<World> block) {
+        return getLocation(block.getExtent().getName(), block);
     }
     
     public static Location getLocationFull(final Entity player) {
@@ -83,7 +80,6 @@ public class SpongeUtil {
     public static void removePlayer(final String player) {
         lastPlayer = null;
         lastPlotPlayer = null;
-        UUIDHandler.getPlayers().remove(player);
     }
     
     public static Location getLocation(final String world, final org.spongepowered.api.world.Location spawn) {
@@ -109,5 +105,13 @@ public class SpongeUtil {
             return null;
         }
         return new org.spongepowered.api.world.Location(world.get(), loc.getX(), loc.getY(), loc.getZ());
+    }
+    
+    public static Location getLocation(String world, Vector3i position) {
+        return new Location(world, position.getX(), position.getY(), position.getZ());
+    }
+    
+    public static Location getLocation(String world, Vector3d position) {
+        return new Location(world, MathMan.roundInt(position.getX()), MathMan.roundInt(position.getY()), MathMan.roundInt(position.getZ()));
     }
 }

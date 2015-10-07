@@ -79,7 +79,7 @@ public class Clear extends SubCommand {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
-        if ((FlagManager.getPlotFlag(plot, "done") != null)
+        if ((FlagManager.getPlotFlagRaw(plot, "done") != null)
         && (!Permissions.hasPermission(plr, "plots.continue") || (Settings.DONE_COUNTS_TOWARDS_LIMIT && (MainUtil.getAllowedPlots(plr) >= MainUtil.getPlayerPlotCount(plr))))) {
             MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
             return false;
@@ -97,10 +97,10 @@ public class Clear extends SubCommand {
                             public void run() {
                                 plot.removeRunning();
                                 // If the state changes, then mark it as no longer done
-                                if (FlagManager.getPlotFlag(plot, "done") != null) {
+                                if (FlagManager.getPlotFlagRaw(plot, "done") != null) {
                                     FlagManager.removePlotFlag(plot, "done");
                                 }
-                                if (FlagManager.getPlotFlag(plot, "analysis") != null) {
+                                if (FlagManager.getPlotFlagRaw(plot, "analysis") != null) {
                                     FlagManager.removePlotFlag(plot, "analysis");
                                 }
                                 MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));

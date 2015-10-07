@@ -100,7 +100,7 @@ public class ForceFieldListener implements Listener {
         if (plot == null) {
             return;
         }
-        if ((FlagManager.getPlotFlag(plot, "forcefield") != null) && FlagManager.getPlotFlag(plot, "forcefield").getValue().equals("true")) {
+        if ((FlagManager.getPlotFlagRaw(plot, "forcefield") != null) && FlagManager.getPlotFlagRaw(plot, "forcefield").getValue().equals("true")) {
             if (!FlagManager.isBooleanFlag(plot, "forcefield", false)) {
                 final UUID uuid = pp.getUUID();
                 if (plot.isAdded(uuid)) {

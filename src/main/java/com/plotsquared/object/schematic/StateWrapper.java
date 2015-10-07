@@ -49,7 +49,7 @@ public class StateWrapper {
             short id = itemComp.getShort("id");
             String idStr = itemComp.getString("id");
             if ((idStr != null) && !MathMan.isInteger(idStr)) {
-                idStr = idStr.split(":")[1].toLowerCase();
+                idStr = idStr.split(":")[0].toLowerCase();
                 id = (short) ItemType.getId(idStr);
             }
             ids[i] = id;

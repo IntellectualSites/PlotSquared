@@ -286,7 +286,7 @@ public class Plot {
         if (owner == null) {
             return ClusterManager.getCluster(this);
         }
-        Flag flag = FlagManager.getPlotFlag(this, "cluster");
+        Flag flag = FlagManager.getPlotFlagRaw(this, "cluster");
         if (flag != null) {
             PlotCluster cluster = (PlotCluster) flag.getValue();
             cluster = ClusterManager.getCluster(cluster.world, cluster.getName());
@@ -650,7 +650,7 @@ public class Plot {
      * @param flag
      */
     public Flag getFlag(final String key) {
-        return FlagManager.getPlotFlag(this, key);
+        return FlagManager.getPlotFlagRaw(this, key);
     }
     
     /**

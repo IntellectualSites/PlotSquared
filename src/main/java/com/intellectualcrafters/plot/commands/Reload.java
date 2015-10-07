@@ -36,6 +36,7 @@ public class Reload extends SubCommand {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
+            PS.get().style.load(PS.get().styleFile);
             PS.get().config.load(PS.get().configFile);
             PS.get().setupConfig();
             C.load(PS.get().translationFile);

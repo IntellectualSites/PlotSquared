@@ -261,7 +261,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
             if (block.getData() == data) {
                 return;
             }
-            block.setData(data);
+            block.setData(data, false);
             return;
         }
         // blockstate

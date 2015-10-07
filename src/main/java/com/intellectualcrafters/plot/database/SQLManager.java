@@ -1297,7 +1297,7 @@ public class SQLManager implements AbstractDB {
                 if (plot.temp > 0) {
                     return plot.temp;
                 }
-                id = 1 / 0;
+                throw new SQLException("Plot does not exist in database");
             }
             plot.temp = id;
             return id;

@@ -129,13 +129,13 @@ public class FlagManager {
             if (plotworld.DEFAULT_FLAGS.size() == 0) {
                 return null;
             }
-            return ((HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone()).get(id);
+            return plotworld.DEFAULT_FLAGS.get(id);
         }
         return flag;
     }
     
     public static boolean isBooleanFlag(final Plot plot, final String key, final boolean defaultValue) {
-        final Flag flag = FlagManager.getPlotFlag(plot, key);
+        final Flag flag = FlagManager.getPlotFlagRaw(plot, key);
         if (flag == null) {
             return defaultValue;
         }
@@ -153,6 +153,11 @@ public class FlagManager {
      * @return Flag
      */
     public static Flag getPlotFlag(final Plot plot, final String flag) {
+        Flag result = getPlotFlagRaw(plot, flag);
+        return result == null ? null : (Flag) result.clone();
+    }
+
+    public static Flag getPlotFlagRaw(final Plot plot, final String flag) {
         if (!plot.hasOwner()) {
             return null;
         }
@@ -163,7 +168,7 @@ public class FlagManager {
         if (plot.owner == null) {
             return false;
         }
-        final Flag flag = getPlotFlag(plot, strFlag);
+        final Flag flag = getPlotFlagRaw(plot, strFlag);
         return !((flag == null) || !((Boolean) flag.getValue()));
     }
     
@@ -171,7 +176,7 @@ public class FlagManager {
         if (plot.owner == null) {
             return false;
         }
-        final Flag flag = getPlotFlag(plot, strFlag);
+        final Flag flag = getPlotFlagRaw(plot, strFlag);
         if ((flag == null) || ((Boolean) flag.getValue())) {
             return false;
         }

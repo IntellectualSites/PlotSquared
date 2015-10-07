@@ -1,15 +1,17 @@
 package com.intellectualcrafters.plot.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
@@ -103,17 +105,72 @@ public abstract class ChunkManager {
     
     public abstract void unloadChunk(final String world, final ChunkLoc loc, final boolean save, final boolean safe);
     
-    public abstract Set<ChunkLoc> getChunkChunks(final String world);
+    public Set<ChunkLoc> getChunkChunks(final String world) {
+        final String directory = PS.get().IMP.getWorldContainer() + File.separator + world + File.separator + "region";
+        final File folder = new File(directory);
+        final File[] regionFiles = folder.listFiles();
+        final HashSet<ChunkLoc> chunks = new HashSet<>();
+        if (regionFiles == null) {
+            throw new RuntimeException("Could not find worlds folder.");
+        }
+        for (final File file : regionFiles) {
+            final String name = file.getName();
+            if (name.endsWith("mca")) {
+                final String[] split = name.split("\\.");
+                try {
+                    final int x = Integer.parseInt(split[1]);
+                    final int z = Integer.parseInt(split[2]);
+                    final ChunkLoc loc = new ChunkLoc(x, z);
+                    chunks.add(loc);
+                } catch (final Exception e) {}
+            }
+        }
+        return chunks;
+    }
     
     public abstract void regenerateChunk(final String world, final ChunkLoc loc);
     
-    public abstract void deleteRegionFile(final String world, final ChunkLoc loc);
+    public void deleteRegionFiles(String world, List<ChunkLoc> chunks) {
+        deleteRegionFiles(world, chunks, null);
+    }
     
-    public abstract void deleteRegionFiles(final String world, final List<ChunkLoc> chunks);
+    public void deleteRegionFiles(final String world, final List<ChunkLoc> chunks, final Runnable whenDone) {
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                for (final ChunkLoc loc : chunks) {
+                    final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
+                    final File file = new File(PS.get().IMP.getWorldContainer(), directory);
+                    PS.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                }
+                if (whenDone != null) {
+                    whenDone.run();
+                }
+            }
+        });
+    }
     
-    public abstract void deleteRegionFiles(final String world, final List<ChunkLoc> chunks, final Runnable whenDone);
-    
-    public abstract Plot hasPlot(String world, ChunkLoc chunk);
+    public Plot hasPlot(String world, ChunkLoc chunk) {
+        final int x1 = chunk.x << 4;
+        final int z1 = chunk.z << 4;
+        final int x2 = x1 + 15;
+        final int z2 = z1 + 15;
+        final Location bot = new Location(world, x1, 0, z1);
+        Plot plot;
+        plot = MainUtil.getPlotAbs(bot);
+        if ((plot != null) && (plot.owner != null)) {
+            return plot;
+        }
+        final Location top = new Location(world, x2, 0, z2);
+        plot = MainUtil.getPlotAbs(top);
+        if ((plot != null) && (plot.owner != null)) {
+            return plot;
+        }
+        return null;
+    }
     
     /**
      * Copy a region to a new location (in the same world)

@@ -4,6 +4,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.util.MainUtil;
+
 /**
  * Created 2015-02-11 for PlotSquared
  *
@@ -70,6 +73,18 @@ public class Location implements Cloneable, Comparable<Location> {
         return world;
     }
     
+    public PlotWorld getPlotWorld() {
+        return PS.get().getPlotWorld(world);
+    }
+    
+    public PlotManager getPlotManager() {
+        return PS.get().getPlotManager(world);
+    }
+    
+    public Plot getPlot() {
+        return MainUtil.getPlot(this);
+    }
+
     public void setWorld(final String world) {
         this.world = world;
         built = false;
@@ -184,7 +199,7 @@ public class Location implements Cloneable, Comparable<Location> {
     
     private Object getBukkitWorld() {
         try {
-            final Class clazz = Class.forName("org.bukkit.Bukkit");
+            final Class<?> clazz = Class.forName("org.bukkit.Bukkit");
             return clazz.getMethod("getWorld", String.class).invoke(null, world);
         } catch (final Exception e) {
             return null;
@@ -196,7 +211,8 @@ public class Location implements Cloneable, Comparable<Location> {
             return o;
         }
         try {
-            final Constructor constructor = Class.forName("org.bukkit.Location").getConstructor(Class.forName("org.bukkit.World"), double.class, double.class, double.class, float.class, float.class);
+            final Constructor<?> constructor = Class.forName("org.bukkit.Location").getConstructor(Class.forName("org.bukkit.World"), double.class, double.class, double.class, float.class,
+            float.class);
             built = true;
             return (o = constructor.newInstance(Class.forName("org.bukkit.World").cast(getBukkitWorld()), x, y, z, yaw, pitch));
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {

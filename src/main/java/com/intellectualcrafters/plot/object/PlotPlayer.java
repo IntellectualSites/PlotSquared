@@ -6,11 +6,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandCaller;
+import com.plotsquared.listener.PlotListener;
 
 /**
  * Created 2015-02-20 for PlotSquared
@@ -302,8 +306,34 @@ public abstract class PlotPlayer implements CommandCaller {
     public abstract void playMusic(final Location loc, final int id);
     
     /**
+     * Check if the player is banned
+     * @return
+     */
+    public abstract boolean isBanned();
+    
+    /**
      * Kick the player from the game
      * @param message
      */
     public abstract void kick(final String message);
+    
+    /**
+     * Called when the player quits
+     */
+    public void unregister() {
+        final Plot plot = getCurrentPlot();
+        if (plot != null) {
+            PlotListener.plotExit(this, plot);
+        }
+        ExpireManager.dates.put(getUUID(), System.currentTimeMillis());
+        EventUtil.unregisterPlayer(this);
+        if (Settings.DELETE_PLOTS_ON_BAN && isBanned()) {
+            for (final Plot owned : PS.get().getPlotsInWorld(getName())) {
+                owned.deletePlot(null);
+                PS.debug(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), getName()));
+            }
+        }
+        UUIDHandler.getPlayers().remove(getName());
+        PS.get().IMP.unregister(this);
+    }
 }

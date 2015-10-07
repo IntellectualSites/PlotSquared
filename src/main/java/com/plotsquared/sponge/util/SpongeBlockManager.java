@@ -2,6 +2,7 @@ package com.plotsquared.sponge.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
@@ -15,7 +16,6 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
-import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
@@ -30,7 +30,8 @@ public class SpongeBlockManager extends BlockManager {
     public boolean isBlockSolid(final PlotBlock block) {
         final BlockState state = SpongeMain.THIS.getBlockState(block);
         final BlockType type = state.getType();
-        return type.isSolidCube() && !type.isAffectedByGravity();
+        // TODO check if solid;
+        return true;
     }
     
     @Override
@@ -220,7 +221,6 @@ public class SpongeBlockManager extends BlockManager {
         if (block != state) {
             world.setBlock(x, y, z, state);
         }
-        
     }
     
     @Override

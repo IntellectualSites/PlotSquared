@@ -252,7 +252,7 @@ public class list extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (final Plot plot : PS.get().getPlots()) {
-                    final Flag price = FlagManager.getPlotFlag(plot, "price");
+                    final Flag price = FlagManager.getPlotFlagRaw(plot, "price");
                     if (price != null) {
                         plots.add(plot);
                     }
@@ -378,9 +378,9 @@ public class list extends SubCommand {
             } else {
                 color = "$1";
             }
-            final PlotMessage trusted = new PlotMessage().text(C.color(C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", Info.getPlayerList(plot.getTrusted())))).color("$1");
+            final PlotMessage trusted = new PlotMessage().text(C.color(C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted())))).color("$1");
             
-            final PlotMessage members = new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", Info.getPlayerList(plot.getMembers())))).color("$1");
+            final PlotMessage members = new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers())))).color("$1");
             
             String strFlags = StringMan.join(plot.getFlags().values(), ",");
             if (strFlags.length() == 0) {

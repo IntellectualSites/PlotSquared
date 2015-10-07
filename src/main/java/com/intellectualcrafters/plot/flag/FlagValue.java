@@ -286,7 +286,7 @@ public abstract class FlagValue<T> {
         }
     }
     
-    public interface ListValue {
+    public interface ListValue extends Cloneable {
         void add(final Object t, final String value);
         
         void remove(final Object t, final String value);
