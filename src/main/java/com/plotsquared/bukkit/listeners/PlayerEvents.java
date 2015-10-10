@@ -431,10 +431,10 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        BukkitUtil.removePlayer(player.getName());
         if (!player.hasPlayedBefore()) {
             player.saveData();
         }
+        BukkitUtil.getPlayer(event.getPlayer()).unregister();;
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         
         // Set last location
@@ -668,10 +668,10 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return;
         }
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
-            return;
-        }
         if (MainUtil.isPlotAreaAbs(loc)) {
+            if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
+                return;
+            }
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_ROAD);
             event.setCancelled(true);
         }

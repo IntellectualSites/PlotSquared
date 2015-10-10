@@ -164,28 +164,12 @@ public class list extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>();
-                String match;
-                if (args.length == 2) {
-                    match = args[1];
-                } else {
-                    match = null;
-                }
                 for (final Plot plot : PS.get().getPlots()) {
                     final Flag flag = plot.getFlags().get("done");
                     if (flag == null) {
                         continue;
                     }
-                    if (match != null) {
-                        try {
-                            if (flag.getValueString().matches(match)) {
-                                plots.add(plot);
-                            }
-                        } catch (final Exception e) {
-                            break;
-                        }
-                    } else {
-                        plots.add(plot);
-                    }
+                    plots.add(plot);
                 }
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override

@@ -79,10 +79,6 @@ public class Settings {
     public static int CHUNK_PROCESSOR_MAX_ENTITIES = 512;
     public static boolean CHUNK_PROCESSOR_DISABLE_PHYSICS = false;
     /**
-     * TNT listener
-     */
-    public static boolean TNT_LISTENER = false;
-    /**
      * Redstone disabler
      */
     public static boolean REDSTONE_DISABLER = false;

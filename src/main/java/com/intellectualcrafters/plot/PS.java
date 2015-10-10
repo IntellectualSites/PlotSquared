@@ -191,9 +191,6 @@ public class PS {
                 log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
             }
             IMP.startMetrics();
-            if (Settings.TNT_LISTENER) {
-                IMP.registerTNTListener();
-            }
             if (Settings.CHUNK_PROCESSOR) {
                 IMP.registerChunkProcessor();
             }
@@ -1754,7 +1751,6 @@ public class PS {
         // Protection
         options.put("protection.redstone.disable-offline", Settings.REDSTONE_DISABLER);
         options.put("protection.redstone.disable-unoccupied", Settings.REDSTONE_DISABLER_UNOCCUPIED);
-        options.put("protection.tnt-listener.enabled", Settings.TNT_LISTENER);
         options.put("protection.piston.falling-blocks", Settings.PISTON_FALLING_BLOCK_CHECK);
         
         // Clusters
@@ -1885,7 +1881,6 @@ public class PS {
         Settings.REDSTONE_DISABLER = config.getBoolean("protection.redstone.disable-offline");
         Settings.REDSTONE_DISABLER_UNOCCUPIED = config.getBoolean("protection.redstone.disable-unoccupied");
         
-        Settings.TNT_LISTENER = config.getBoolean("protection.tnt-listener.enabled");
         Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
         
         // Clusters

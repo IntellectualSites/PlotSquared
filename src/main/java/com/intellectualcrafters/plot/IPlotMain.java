@@ -123,11 +123,6 @@ public interface IPlotMain {
     boolean initWorldEdit();
     
     /**
-     * Register TNT related events (if TNT protection is enabled)
-     */
-    void registerTNTListener();
-    
-    /**
      * Get the economy provider
      * @return
      */

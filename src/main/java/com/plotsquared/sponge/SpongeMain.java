@@ -531,12 +531,6 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     }
     
     @Override
-    public void registerTNTListener() {
-        // TODO Auto-generated method stub
-        log("registerTNTListener is not implemented!");
-    }
-    
-    @Override
     public UUIDHandlerImplementation initUUIDHandler() {
         UUIDWrapper wrapper;
         if (Settings.OFFLINE_MODE || !PS.get().checkVersion(getServerVersion(), 1, 7, 6)) {

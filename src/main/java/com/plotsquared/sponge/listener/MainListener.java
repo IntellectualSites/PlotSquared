@@ -3,11 +3,9 @@ package com.plotsquared.sponge.listener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import org.spongepowered.api.GameProfile;
@@ -29,14 +27,10 @@ import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.action.LightningEvent;
 import org.spongepowered.api.event.action.MessageEvent;
-import org.spongepowered.api.event.block.BreakBlockEvent;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.GrowBlockEvent;
-import org.spongepowered.api.event.block.HarvestBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.block.MoveBlockEvent;
-import org.spongepowered.api.event.block.NotifyNeighborBlockEvent;
-import org.spongepowered.api.event.block.PlaceBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.command.SendCommandEvent;
 import org.spongepowered.api.event.entity.BreedEntityEvent;
@@ -46,7 +40,6 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.ExplosionEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
 
@@ -104,56 +97,56 @@ public class MainListener {
      *  - enderman harvest
      */
     
-    @Listener
-    public void onFluidSpread(final NotifyNeighborBlockEvent.Spread event) {
-        onPhysics(event);
-    }
-    
-    @Listener
-    public void onFluidSpread(final NotifyNeighborBlockEvent.Burn event) {
-        onPhysics(event);
-    }
-    
-    @Listener
-    public void onFluidSpread(final NotifyNeighborBlockEvent.Ignite event) {
-        onPhysics(event);
-    }
-    
-    @Listener
-    public void onFluidSpread(final NotifyNeighborBlockEvent.Power event) {
-        // TODO redstone
-    }
-
-    public void onPhysics(final NotifyNeighborBlockEvent event) {
-        final AtomicBoolean cancelled = new AtomicBoolean(false);
-        final Map<Direction, org.spongepowered.api.world.Location<World>> relatives = event.getRelatives();
-        event.filterDirections(new Predicate<Direction>() {
-            
-            @Override
-            public boolean test(Direction dir) {
-                if (cancelled.get()) {
-                    return true;
-                }
-                org.spongepowered.api.world.Location<World> loc = relatives.get(dir);
-                com.intellectualcrafters.plot.object.Location plotloc = SpongeUtil.getLocation(loc.getExtent().getName(), loc);
-                Plot plot = MainUtil.getPlot(plotloc);
-                if (plot == null) {
-                    if (MainUtil.isPlotAreaAbs(plotloc)) {
-                        cancelled.set(true);
-                        return false;
-                    }
-                    cancelled.set(true);
-                    return true;
-                }
-                org.spongepowered.api.world.Location<World> relative = loc.getRelative(dir);
-                com.intellectualcrafters.plot.object.Location relLoc = SpongeUtil.getLocation(relative.getExtent().getName(), relative);
-                if (plot.equals(MainUtil.getPlot(relLoc))) {
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
+    //    @Listener
+    //    public void onFluidSpread(final NotifyNeighborBlockEvent event) {
+    //        onPhysics(event);
+    //    }
+    //    
+    //    @Listener
+    //    public void onFluidSpread(final NotifyNeighborBlockEvent.Burn event) {
+    //        onPhysics(event);
+    //    }
+    //    
+    //    @Listener
+    //    public void onFluidSpread(final NotifyNeighborBlockEvent.Ignite event) {
+    //        onPhysics(event);
+    //    }
+    //    
+    //    @Listener
+    //    public void onFluidSpread(final NotifyNeighborBlockEvent.Power event) {
+    //        // TODO redstone
+    //    }
+    //
+    //    public void onPhysics(final NotifyNeighborBlockEvent event) {
+    //        final AtomicBoolean cancelled = new AtomicBoolean(false);
+    //        final Map<Direction, org.spongepowered.api.world.Location<World>> relatives = event.getRelatives();
+    //        event.filterDirections(new Predicate<Direction>() {
+    //            
+    //            @Override
+    //            public boolean test(Direction dir) {
+    //                if (cancelled.get()) {
+    //                    return true;
+    //                }
+    //                org.spongepowered.api.world.Location<World> loc = relatives.get(dir);
+    //                com.intellectualcrafters.plot.object.Location plotloc = SpongeUtil.getLocation(loc.getExtent().getName(), loc);
+    //                Plot plot = MainUtil.getPlot(plotloc);
+    //                if (plot == null) {
+    //                    if (MainUtil.isPlotAreaAbs(plotloc)) {
+    //                        cancelled.set(true);
+    //                        return false;
+    //                    }
+    //                    cancelled.set(true);
+    //                    return true;
+    //                }
+    //                org.spongepowered.api.world.Location<World> relative = loc.getRelative(dir);
+    //                com.intellectualcrafters.plot.object.Location relLoc = SpongeUtil.getLocation(relative.getExtent().getName(), relative);
+    //                if (plot.equals(MainUtil.getPlot(relLoc))) {
+    //                    return true;
+    //                }
+    //                return false;
+    //            }
+    //        });
+    //    }
     
     public <T> T getCause(Cause cause, Class<T> clazz) {
         Optional<?> root = cause.root();
@@ -502,12 +495,27 @@ public class MainListener {
     //    }
     
     @Listener
-    public void onBlockBreak(final HarvestBlockEvent event) {
-        
+    public void onBlockBreak(final ChangeBlockEvent.Decay event) {
+        onBlockChange(event);
     }
     
     @Listener
-    public void onBlockBreak(final BreakBlockEvent event) {
+    public void onBlockBreak(final ChangeBlockEvent.Fluid event) {
+        onBlockChange(event);
+    }
+    
+    @Listener
+    public void onBlockBreak(final ChangeBlockEvent.Grow event) {
+        onBlockChange(event);
+    }
+    
+    @Listener
+    public void onBlockBreak(final ChangeBlockEvent.Modify event) {
+        onBlockChange(event);
+    }
+    
+    @Listener
+    public void onBlockBreak(final ChangeBlockEvent.Break event) {
         Player player = this.<Player> getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);
@@ -591,7 +599,7 @@ public class MainListener {
     }
     
     @Listener
-    public void onBlockPlace(final PlaceBlockEvent event) {
+    public void onBlockPlace(final ChangeBlockEvent.Place event) {
         Player player = this.<Player> getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);

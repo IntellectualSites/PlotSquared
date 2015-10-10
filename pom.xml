@@ -8,7 +8,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <artifactId>PlotSquared</artifactId>
-    <version>3.2.9</version>
+    <version>3.2.10</version>
     <name>PlotSquared</name>
     <packaging>jar</packaging>
     <build>
@@ -147,6 +147,11 @@
             <artifactId>javax.websocket-api</artifactId>
             <version>1.1</version>
         </dependency>
+        <!--<dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>sponge</artifactId>
+            <version>1.8-1519-2.1DEV-693</version>
+        </dependency>-->
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>spongeapi</artifactId>

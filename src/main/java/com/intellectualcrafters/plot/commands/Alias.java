@@ -50,7 +50,7 @@ public class Alias extends SetCommand {
             MainUtil.sendMessage(plr, C.ALIAS_TOO_LONG);
             return false;
         }
-        if (!StringMan.isAlphanumericUnd(alias)) {
+        if (alias.contains(" ") || !StringMan.isAsciiPrintable(alias)) {
             C.NOT_VALID_VALUE.send(plr);
             return false;
         }

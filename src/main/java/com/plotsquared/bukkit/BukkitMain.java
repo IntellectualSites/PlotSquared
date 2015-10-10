@@ -520,11 +520,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public void registerTNTListener() {
-        // No longer here
-    }
-    
-    @Override
     public void unregister(final PlotPlayer player) {
         BukkitUtil.removePlayer(player.getName());
     }

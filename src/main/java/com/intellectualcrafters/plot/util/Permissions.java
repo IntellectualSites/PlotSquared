@@ -14,9 +14,6 @@ public class Permissions {
     }
     
     public static boolean hasPermission(final CommandCaller player, String perm) {
-        if ((player == null) || player.hasPermission(C.PERMISSION_ADMIN.s()) || player.hasPermission(C.PERMISSION_STAR.s())) {
-            return true;
-        }
         if (player.hasPermission(perm)) {
             return true;
         }
@@ -45,8 +42,15 @@ public class Permissions {
     }
     
     public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range) {
-        if ((player == null) || player.hasPermission(C.PERMISSION_ADMIN.s()) || player.hasPermission(C.PERMISSION_STAR.s())) {
-            return Integer.MAX_VALUE;
+        final String[] nodes = stub.split("\\.");
+        final StringBuilder n = new StringBuilder();
+        for (int i = 0; i < (nodes.length - 1); i++) {
+            n.append(nodes[i] + ("."));
+            if (!stub.equals(n + C.PERMISSION_STAR.s())) {
+                if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
+                    return Integer.MAX_VALUE;
+                }
+            }
         }
         if (player.hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
