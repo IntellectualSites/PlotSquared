@@ -94,7 +94,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
         chunksender = new SendChunk();
     }
     
-    private final ChunkLoc lastLoc = null;
+    private ChunkLoc lastLoc = null;
     
     /**
      * Set the block at the location
@@ -109,6 +109,18 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
     @SuppressWarnings("deprecation")
     @Override
     public void set(final World world, final int x, final int y, final int z, final int id, final byte data) {
+        final int X = x >> 4;
+        final int Z = z >> 4;
+        final ChunkLoc loc = new ChunkLoc(X, Z);
+        if (lastLoc == null || loc.x != lastLoc.x || loc.z != lastLoc.z) {
+            lastLoc = loc;
+            Chunk chunk = toUpdate.get(loc);
+            if (chunk == null) {
+                chunk = world.getChunkAt(X, Z);
+                toUpdate.put(loc, chunk);
+            }
+            chunk.load(true);
+        }
         if (id == -1) {
             world.getBlockAt(x, y, z).setData(data, false);
             return;
@@ -313,17 +325,7 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
         }
         // End blockstate workaround //
         
-        final int X = x >> 4;
-        final int Z = z >> 4;
-        final ChunkLoc loc = new ChunkLoc(X, Z);
-        if (!loc.equals(lastLoc)) {
-            Chunk chunk = toUpdate.get(loc);
-            if (chunk == null) {
-                chunk = world.getChunkAt(X, Z);
-                toUpdate.put(loc, chunk);
-            }
-            chunk.load(false);
-        }
+
         // check sign
         final Object w = methodGetHandle.of(world).call();
         final Object chunk = methodGetChunkAt.of(w).call(x >> 4, z >> 4);

@@ -14,6 +14,8 @@ public class PlotCluster {
     private PlotId pos1;
     private PlotId pos2;
     
+    public int temp;
+
     public PlotId getP1() {
         return pos1;
     }
@@ -36,8 +38,18 @@ public class PlotCluster {
         this.pos2 = pos2;
         this.owner = owner;
         settings = new PlotSettings();
+        this.temp = -1;
     }
     
+    public PlotCluster(final String world, final PlotId pos1, final PlotId pos2, final UUID owner, int temp) {
+        this.world = world;
+        this.pos1 = pos1;
+        this.pos2 = pos2;
+        this.owner = owner;
+        settings = new PlotSettings();
+        this.temp = temp;
+    }
+
     public boolean isAdded(final UUID uuid) {
         return (owner.equals(uuid) || invited.contains(uuid) || invited.contains(DBFunc.everyone) || helpers.contains(uuid) || helpers.contains(DBFunc.everyone));
     }

@@ -112,7 +112,7 @@ public interface AbstractDB {
      *
      * @return Integer = Cluster Entry Id
      */
-    int getClusterId(final String world, final PlotClusterId id);
+    int getClusterId(final PlotCluster cluster);
     
     /**
      * @return A linked hashmap containing all plots

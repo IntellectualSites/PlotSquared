@@ -75,7 +75,7 @@ public class Inbox extends SubCommand {
             } else {
                 color = "&7";
             }
-            string.append("&8[&7#" + x + "&8][&7" + c.world + ";" + c.id + "&8][&6" + c.senderName + "&8]" + color + c.comment + "\n");
+            string.append("&8[&7#" + (x + 1) + "&8][&7" + c.world + ";" + c.id + "&8][&6" + c.senderName + "&8]" + color + c.comment + "\n");
         }
         MainUtil.sendMessage(player, string.toString());
     }
@@ -155,6 +155,7 @@ public class Inbox extends SubCommand {
                             final List<PlotComment> comments = (List<PlotComment>) value;
                             if (index > comments.size()) {
                                 sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
+                                return;
                             }
                             final PlotComment comment = comments.get(index - 1);
                             inbox.removeComment(plot, comment);

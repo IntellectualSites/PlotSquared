@@ -121,11 +121,11 @@ public class SendChunk {
                 public void run() {
                     try {
                         chunk.unload(true, false);
-                    } catch (final Exception e) {
+                    } catch (final Throwable e) {
                         final String worldname = chunk.getWorld().getName();
                         PS.debug("$4Could not save chunk: " + worldname + ";" + chunk.getX() + ";" + chunk.getZ());
                         PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
-                        PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname + "level_old.dat may be corrupt (try repairing or removing these)");
+                        PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname + "/level_old.dat may be corrupt (try repairing or removing these)");
                     }
                 }
             });

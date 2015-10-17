@@ -44,15 +44,12 @@ import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
-import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.generator.SquarePlotManager;
-import com.intellectualcrafters.plot.generator.SquarePlotWorld;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
-import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotFilter;
 import com.intellectualcrafters.plot.object.PlotHandler;
@@ -1314,13 +1311,6 @@ public class PS {
             // save configuration
             final String[] split = args.split(",");
             final HybridPlotWorld plotworld = new HybridPlotWorld(world);
-            final int width = SquarePlotWorld.PLOT_WIDTH_DEFAULT;
-            final int gap = SquarePlotWorld.ROAD_WIDTH_DEFAULT;
-            final int height = ClassicPlotWorld.PLOT_HEIGHT_DEFAULT;
-            final PlotBlock[] floor = ClassicPlotWorld.TOP_BLOCK_DEFAULT;
-            final PlotBlock[] main = ClassicPlotWorld.MAIN_BLOCK_DEFAULT;
-            final PlotBlock wall = ClassicPlotWorld.WALL_FILLING_DEFAULT;
-            final PlotBlock border = ClassicPlotWorld.WALL_BLOCK_DEFAULT;
             for (final String element : split) {
                 final String[] pair = element.split("=");
                 if (pair.length != 2) {
@@ -1329,43 +1319,44 @@ public class PS {
                 }
                 final String key = pair[0].toLowerCase();
                 final String value = pair[1];
+                final String base = "worlds." + world + ".";
                 try {
                     switch (key) {
                         case "s":
                         case "size": {
-                            SquarePlotWorld.PLOT_WIDTH_DEFAULT = Configuration.INTEGER.parseString(value).shortValue();
+                            config.set(base + "plot.size", Configuration.INTEGER.parseString(value).shortValue());
                             break;
                         }
                         case "g":
                         case "gap": {
-                            SquarePlotWorld.ROAD_WIDTH_DEFAULT = Configuration.INTEGER.parseString(value).shortValue();
+                            config.set(base + "road.width", Configuration.INTEGER.parseString(value).shortValue());
                             break;
                         }
                         case "h":
                         case "height": {
-                            ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
-                            ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
-                            ClassicPlotWorld.WALL_HEIGHT_DEFAULT = Configuration.INTEGER.parseString(value);
+                            config.set(base + "road.height", Configuration.INTEGER.parseString(value).shortValue());
+                            config.set(base + "plot.height", Configuration.INTEGER.parseString(value).shortValue());
+                            config.set(base + "wall.height", Configuration.INTEGER.parseString(value).shortValue());
                             break;
                         }
                         case "f":
                         case "floor": {
-                            ClassicPlotWorld.TOP_BLOCK_DEFAULT = Configuration.BLOCKLIST.parseString(value);
+                            config.set(base + "plot.floor", Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(",")));
                             break;
                         }
                         case "m":
                         case "main": {
-                            ClassicPlotWorld.MAIN_BLOCK_DEFAULT = Configuration.BLOCKLIST.parseString(value);
+                            config.set(base + "plot.filling", Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(",")));
                             break;
                         }
                         case "w":
                         case "wall": {
-                            ClassicPlotWorld.WALL_FILLING_DEFAULT = Configuration.BLOCK.parseString(value);
+                            config.set(base + "wall.filling", Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(",")));
                             break;
                         }
                         case "b":
                         case "border": {
-                            ClassicPlotWorld.WALL_BLOCK_DEFAULT = Configuration.BLOCK.parseString(value);
+                            config.set(base + "wall.block", Configuration.BLOCK.parseString(value).toString());
                             break;
                         }
                         default: {
@@ -1380,20 +1371,8 @@ public class PS {
                 }
             }
             try {
-                final String root = "worlds." + world;
-                if (!config.contains(root)) {
-                    config.createSection(root);
-                }
-                plotworld.saveConfiguration(config.getConfigurationSection(root));
-                ClassicPlotWorld.PLOT_HEIGHT_DEFAULT = height;
-                ClassicPlotWorld.ROAD_HEIGHT_DEFAULT = height;
-                ClassicPlotWorld.WALL_HEIGHT_DEFAULT = height;
-                ClassicPlotWorld.TOP_BLOCK_DEFAULT = floor;
-                ClassicPlotWorld.MAIN_BLOCK_DEFAULT = main;
-                ClassicPlotWorld.WALL_BLOCK_DEFAULT = border;
-                ClassicPlotWorld.WALL_FILLING_DEFAULT = wall;
-                SquarePlotWorld.PLOT_WIDTH_DEFAULT = width;
-                SquarePlotWorld.ROAD_WIDTH_DEFAULT = gap;
+                plotworld.loadConfiguration(config);
+                config.save(configFile);
             } catch (final Exception e) {
                 e.printStackTrace();
             }

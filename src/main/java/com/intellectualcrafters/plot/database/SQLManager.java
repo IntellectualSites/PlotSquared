@@ -53,7 +53,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
-import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -145,11 +144,30 @@ public class SQLManager implements AbstractDB {
         tasks.add(task);
     }
     
-    public synchronized void addClusterTask(final PlotCluster cluster, final UniqueStatement task) {
+    public synchronized void addClusterTask(final PlotCluster cluster, UniqueStatement task) {
         Queue<UniqueStatement> tasks = clusterTasks.get(cluster);
         if (tasks == null) {
             tasks = new ConcurrentLinkedQueue<>();
             clusterTasks.put(cluster, tasks);
+        }
+        if (task == null) {
+            task = new UniqueStatement(cluster.hashCode() + "") {
+                
+                @Override
+                public PreparedStatement get() throws SQLException {
+                    return null;
+                }
+                
+                @Override
+                public void set(final PreparedStatement stmt) throws SQLException {}
+                
+                @Override
+                public void addBatch(final PreparedStatement stmt) throws SQLException {}
+                
+                @Override
+                public void execute(final PreparedStatement stmt) throws SQLException {}
+                
+            };
         }
         tasks.add(task);
     }
@@ -1272,6 +1290,46 @@ public class SQLManager implements AbstractDB {
     }
     
     @Override
+    public int getClusterId(final PlotCluster cluster) {
+        if (cluster.temp > 0) {
+            return cluster.temp;
+        }
+        PreparedStatement stmt = null;
+        try {
+            commit();
+            if (cluster.temp > 0) {
+                return cluster.temp;
+            }
+            stmt = connection.prepareStatement("SELECT `id` FROM `"
+            + prefix
+            + "cluster` WHERE `pos1_x` = ? AND `pos1_z` = ? AND `pos2_x` = ? AND `pos2_z` = ? AND `world` = ? ORDER BY `timestamp` ASC");
+            stmt.setInt(1, cluster.getP1().x);
+            stmt.setInt(2, cluster.getP1().y);
+            stmt.setInt(3, cluster.getP2().x);
+            stmt.setInt(4, cluster.getP2().y);
+            stmt.setString(5, cluster.world);
+            final ResultSet r = stmt.executeQuery();
+            int c_id = Integer.MAX_VALUE;
+            while (r.next()) {
+                c_id = r.getInt("id");
+            }
+            stmt.close();
+            r.close();
+            if ((c_id == Integer.MAX_VALUE) || (c_id == 0)) {
+                if (cluster.temp > 0) {
+                    return cluster.temp;
+                }
+                throw new SQLException("Cluster does not exist in database");
+            }
+            cluster.temp = c_id;
+            return c_id;
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
     public int getId(final Plot plot) {
         if (plot.temp > 0) {
             return plot.temp;
@@ -2114,7 +2172,7 @@ public class SQLManager implements AbstractDB {
     
     @Override
     public void delete(final PlotCluster cluster) {
-        final int id = getClusterId(cluster.world, ClusterManager.getClusterId(cluster));
+        final int id = getClusterId(cluster);
         addClusterTask(cluster, new UniqueStatement("delete_cluster_settings") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
@@ -2162,32 +2220,6 @@ public class SQLManager implements AbstractDB {
     }
     
     @Override
-    public int getClusterId(final String world, final PlotClusterId id) {
-        PreparedStatement stmt = null;
-        try {
-            stmt = connection.prepareStatement("SELECT `id` FROM `"
-            + prefix
-            + "cluster` WHERE `pos1_x` = ? AND `pos1_z` = ? AND `pos2_x` = ? AND `pos2_z` = ? AND `world` = ? ORDER BY `timestamp` ASC");
-            stmt.setInt(1, id.pos1.x);
-            stmt.setInt(2, id.pos1.y);
-            stmt.setInt(3, id.pos2.x);
-            stmt.setInt(4, id.pos2.y);
-            stmt.setString(5, world);
-            final ResultSet r = stmt.executeQuery();
-            int c_id = Integer.MAX_VALUE;
-            while (r.next()) {
-                c_id = r.getInt("id");
-            }
-            stmt.close();
-            r.close();
-            return c_id;
-        } catch (final SQLException e) {
-            e.printStackTrace();
-        }
-        return Integer.MAX_VALUE;
-    }
-    
-    @Override
     public HashMap<String, HashSet<PlotCluster>> getClusters() {
         final LinkedHashMap<String, HashSet<PlotCluster>> newClusters = new LinkedHashMap<>();
         final HashMap<Integer, PlotCluster> clusters = new HashMap<>();
@@ -2229,7 +2261,7 @@ public class SQLManager implements AbstractDB {
                     user = UUID.fromString(owner);
                     uuids.put(owner, user);
                 }
-                cluster = new PlotCluster(worldname, pos1, pos2, user);
+                cluster = new PlotCluster(worldname, pos1, pos2, user, id);
                 clusters.put(id, cluster);
             }
             /*
@@ -2381,7 +2413,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
                 stmt.setString(1, flag_string.toString());
-                stmt.setInt(2, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                stmt.setInt(2, getClusterId(cluster));
             }
             
             @Override
@@ -2397,7 +2429,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
                 stmt.setString(1, name);
-                stmt.setInt(2, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                stmt.setInt(2, getClusterId(cluster));
             }
             
             @Override
@@ -2413,7 +2445,7 @@ public class SQLManager implements AbstractDB {
         addClusterTask(cluster, new UniqueStatement("removeHelper") {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
-                statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                statement.setInt(1, getClusterId(cluster));
                 statement.setString(2, uuid.toString());
             }
             
@@ -2429,7 +2461,7 @@ public class SQLManager implements AbstractDB {
         addClusterTask(cluster, new UniqueStatement("setHelper") {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
-                statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                statement.setInt(1, getClusterId(cluster));
                 statement.setString(2, uuid.toString());
             }
             
@@ -2442,7 +2474,7 @@ public class SQLManager implements AbstractDB {
     
     @Override
     public void createCluster(final PlotCluster cluster) {
-        addClusterTask(cluster, new UniqueStatement("createCluster") {
+        addClusterTask(cluster, new UniqueStatement("createCluster_" + cluster.hashCode()) {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
                 stmt.setInt(1, cluster.getP1().x);
@@ -2451,22 +2483,32 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(4, cluster.getP2().y);
                 stmt.setString(5, cluster.owner.toString());
                 stmt.setString(6, cluster.world);
-                // TODO resultset getId
             }
             
             @Override
             public PreparedStatement get() throws SQLException {
-                return connection.prepareStatement(CREATE_CLUSTER);
+                return connection.prepareStatement(CREATE_CLUSTER, Statement.RETURN_GENERATED_KEYS);
+            }
+            
+            @Override
+            public void execute(final PreparedStatement stmt) throws SQLException {
+                
+            }
+            
+            @Override
+            public void addBatch(final PreparedStatement stmt) throws SQLException {
+                stmt.executeUpdate();
+                final ResultSet keys = stmt.getGeneratedKeys();
+                if (keys.next()) {
+                    cluster.temp = keys.getInt(1);
+                }
             }
         });
-        addClusterTask(cluster, new UniqueStatement("createClusterSettings") {
+        addClusterTask(cluster, new UniqueStatement("createCluster_settings_" + cluster.hashCode()) {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                final int id = getClusterId(cluster.world, ClusterManager.getClusterId(cluster));
-                stmt.setInt(1, id);
+                stmt.setInt(1, getClusterId(cluster));
                 stmt.setString(2, cluster.settings.getAlias());
-                stmt.executeUpdate();
-                stmt.close();
             }
             
             @Override
@@ -2490,7 +2532,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(2, pos1.y);
                 stmt.setInt(3, pos2.x);
                 stmt.setInt(4, pos2.y);
-                stmt.setInt(5, getClusterId(current.world, ClusterManager.getClusterId(current)));
+                stmt.setInt(5, getClusterId(current));
             }
             
             @Override
@@ -2506,7 +2548,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
                 stmt.setString(1, position);
-                stmt.setInt(2, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                stmt.setInt(2, getClusterId(cluster));
             }
             
             @Override
@@ -2521,7 +2563,7 @@ public class SQLManager implements AbstractDB {
         addClusterTask(cluster, new UniqueStatement("removeInvited") {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
-                statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                statement.setInt(1, getClusterId(cluster));
                 statement.setString(2, uuid.toString());
             }
             
@@ -2537,7 +2579,7 @@ public class SQLManager implements AbstractDB {
         addClusterTask(cluster, new UniqueStatement("setInvited") {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
-                statement.setInt(1, getClusterId(cluster.world, ClusterManager.getClusterId(cluster)));
+                statement.setInt(1, getClusterId(cluster));
                 statement.setString(2, uuid.toString());
             }
             

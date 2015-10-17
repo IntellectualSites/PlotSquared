@@ -130,21 +130,22 @@ public class BukkitChunkManager extends ChunkManager {
         final World newWorld = Bukkit.getWorld(newPos.getWorld());
         final ArrayList<Chunk> chunks = new ArrayList<>();
         
-        initMaps();
-        
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
             public void run() {
+                initMaps();
+
                 final int bx = value[2];
                 final int bz = value[3];
                 
                 final int tx = value[4];
                 final int tz = value[5];
+
                 // Load chunks
                 final ChunkLoc loc1 = new ChunkLoc(value[0], value[1]);
                 final ChunkLoc loc2 = new ChunkLoc(loc1.x + relCX, loc1.z + relCZ);
                 final Chunk c1 = oldWorld.getChunkAt(loc1.x, loc1.z);
-                final Chunk c2 = oldWorld.getChunkAt(loc2.x, loc2.z);
+                final Chunk c2 = newWorld.getChunkAt(loc2.x, loc2.z);
                 c1.load(true);
                 c2.load(true);
                 chunks.add(c2);
@@ -165,11 +166,11 @@ public class BukkitChunkManager extends ChunkManager {
                 // restore chunk
                 restoreBlocks(newWorld, relX, relZ);
                 restoreEntities(newWorld, relX, relZ);
-                BukkitSetBlockManager.setBlockManager.update(chunks);
             }
         }, new Runnable() {
             @Override
             public void run() {
+                BukkitSetBlockManager.setBlockManager.update(chunks);
                 TaskManager.runTask(whenDone);
             }
         }, 5);
@@ -854,7 +855,8 @@ public class BukkitChunkManager extends ChunkManager {
     
     @Override
     public boolean loadChunk(final String world, final ChunkLoc loc, final boolean force) {
-        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(force);
+        boolean result = BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(force);
+        return result;
     }
     
     @Override

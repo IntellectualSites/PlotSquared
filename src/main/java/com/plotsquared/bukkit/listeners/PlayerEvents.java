@@ -310,7 +310,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
     
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {
         final String message = event.getMessage().toLowerCase().replaceAll("/", "").trim();
         if (message.length() == 0) {
