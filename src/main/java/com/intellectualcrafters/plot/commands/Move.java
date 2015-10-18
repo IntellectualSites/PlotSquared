@@ -20,19 +20,23 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "move", description = "Move a plot", aliases = { "debugmove" }, permission = "plots.move", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
+@CommandDeclaration(
+usage = "/plot move <X;Z>",
+command = "move",
+description = "Move a plot",
+aliases = { "debugmove" },
+permission = "plots.move",
+category = CommandCategory.ACTIONS,
+requiredType = RequiredType.NONE)
 public class Move extends SubCommand {
     
     public Move() {
@@ -48,6 +52,10 @@ public class Move extends SubCommand {
         }
         if (!plot1.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s())) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+            return false;
+        }
+        if (args.length != 1) {
+            C.COMMAND_SYNTAX.send(plr, getUsage());
             return false;
         }
         final Plot plot2 = MainUtil.getPlotFromString(plr, args[0], true);

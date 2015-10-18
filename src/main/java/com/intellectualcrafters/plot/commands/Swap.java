@@ -20,22 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotClusterId;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "swap", description = "Swap two plots", aliases = { "switch" }, category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
+@CommandDeclaration(usage = "/plot swap <X;Z>", command = "swap", description = "Swap two plots", aliases = { "switch" }, category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
 public class Swap extends SubCommand {
     
     @Override
@@ -47,6 +40,10 @@ public class Swap extends SubCommand {
         }
         if (!plot1.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, C.PERMISSION_ADMIN.s())) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+            return false;
+        }
+        if (args.length != 1) {
+            C.COMMAND_SYNTAX.send(plr, getUsage());
             return false;
         }
         final Plot plot2 = MainUtil.getPlotFromString(plr, args[0], true);

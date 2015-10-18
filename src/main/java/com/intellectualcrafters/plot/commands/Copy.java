@@ -54,13 +54,17 @@ public class Copy extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
+        if (args.length != 1) {
+            C.COMMAND_SYNTAX.send(plr, getUsage());
+            return false;
+        }
         final Plot plot2 = MainUtil.getPlotFromString(plr, args[0], true);
         if ((plot2 == null)) {
             return false;
         }
         if (plot1.equals(plot2)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
+            C.COMMAND_SYNTAX.send(plr, getUsage());
             return false;
         }
         if (!plot1.getWorld().equals(plot2.getWorld())) {
