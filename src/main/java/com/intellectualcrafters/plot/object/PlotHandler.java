@@ -198,6 +198,39 @@ public class PlotHandler {
             }
         }
     }
+    
+    public static boolean removeDenied(Plot plot, UUID uuid) {
+        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+            if (current.getDenied().remove(uuid)) {
+                DBFunc.removeDenied(current, uuid);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static boolean removeMember(Plot plot, UUID uuid) {
+        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+            if (current.getMembers().remove(uuid)) {
+                DBFunc.removeMember(current, uuid);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static boolean removeTrusted(Plot plot, UUID uuid) {
+        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+            if (current.getTrusted().remove(uuid)) {
+                DBFunc.removeTrusted(current, uuid);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static boolean unclaim(Plot plot) {
         if (plot.owner == null) {

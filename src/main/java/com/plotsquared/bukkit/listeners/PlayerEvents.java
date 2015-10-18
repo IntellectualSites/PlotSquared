@@ -625,7 +625,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         event.setFormat(format);
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void BlockDestroy(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
@@ -1040,7 +1040,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInteract(final PlayerInteractEvent event) {
         final Action action = event.getAction();
         final Block block = event.getClickedBlock();

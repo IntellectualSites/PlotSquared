@@ -243,7 +243,6 @@ public abstract class SchematicHandler {
                                                 case 20:
                                                 case 21:
                                                 case 22:
-                                                case 24:
                                                 case 30:
                                                 case 32:
                                                 case 37:

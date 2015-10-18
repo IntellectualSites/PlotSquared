@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 
@@ -215,10 +216,15 @@ public class BukkitUtil extends BlockManager {
         block.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
         final BlockState blockstate = block.getState();
         if ((blockstate instanceof Sign)) {
-            for (int i = 0; i < lines.length; i++) {
-                ((Sign) blockstate).setLine(i, lines[i]);
-            }
-            ((Sign) blockstate).update(true);
+            TaskManager.runTaskLater(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < lines.length; i++) {
+                        ((Sign) blockstate).setLine(i, lines[i]);
+                    }
+                    ((Sign) blockstate).update(true);
+                }
+            }, 1);
         }
     }
     

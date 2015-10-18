@@ -22,7 +22,6 @@ package com.intellectualcrafters.plot.object;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +38,6 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.BO3Handler;
 import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -982,11 +980,7 @@ public class Plot {
      * @param uuid
      */
     public boolean removeDenied(final UUID uuid) {
-        if (getDenied().remove(uuid)) {
-            DBFunc.removeDenied(this, uuid);
-            return true;
-        }
-        return false;
+        return PlotHandler.removeDenied(this, uuid);
     }
     
     /**
@@ -995,11 +989,7 @@ public class Plot {
      * @param uuid
      */
     public boolean removeTrusted(final UUID uuid) {
-        if (getTrusted().remove(uuid)) {
-            DBFunc.removeTrusted(this, uuid);
-            return true;
-        }
-        return false;
+        return PlotHandler.removeTrusted(this, uuid);
     }
     
     /**
@@ -1008,11 +998,7 @@ public class Plot {
      * @param uuid
      */
     public boolean removeMember(final UUID uuid) {
-        if (getMembers().remove(uuid)) {
-            DBFunc.removeMember(this, uuid);
-            return true;
-        }
-        return false;
+        return PlotHandler.removeMember(this, uuid);
     }
     
     /**

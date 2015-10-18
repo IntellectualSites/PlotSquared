@@ -194,7 +194,6 @@ public class SetBlockFast_1_8 extends BukkitSetBlockManager {
                 case 20:
                 case 21:
                 case 22:
-                case 24:
                 case 25:
                 case 30:
                 case 32:

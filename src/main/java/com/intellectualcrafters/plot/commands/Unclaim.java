@@ -20,13 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -34,7 +31,12 @@ import com.plotsquared.general.commands.CommandDeclaration;
 /**
  * Unclaiming a plot makes no changes to the terrain or plot border and only removes the owner and should be regarded as an admin command. 
  */
-@CommandDeclaration(command = "unclaim", usage = "/plot unclaim", requiredType = RequiredType.NONE, description = "Unclaim a plot (admin command)", category = CommandCategory.ACTIONS)
+@CommandDeclaration(
+command = "unclaim",
+usage = "/plot unclaim",
+requiredType = RequiredType.NONE,
+description = "Unclaim a plot (admin command/does not clear plot)",
+category = CommandCategory.ACTIONS)
 public class Unclaim extends SubCommand {
     
     @Override
