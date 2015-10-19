@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -76,7 +77,8 @@ public class SendChunk {
             final Object c = methodGetHandleChunk.of(chunk).call();
             methodInitLighting.of(c).call();
         }
-        for (final PlotPlayer pp : UUIDHandler.getPlayers().values()) {
+        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+            PlotPlayer pp = entry.getValue();
             final Plot plot = pp.getCurrentPlot();
             Location loc = null;
             String world;

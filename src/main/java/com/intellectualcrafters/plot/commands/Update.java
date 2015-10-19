@@ -50,8 +50,8 @@ public class Update extends SubCommand {
             try {
                 url = new URL(args[0]);
             } catch (final MalformedURLException e) {
-                MainUtil.sendConsoleMessage("&cInvalid url: " + args[0]);
-                MainUtil.sendConsoleMessage(C.COMMAND_SYNTAX, "/plot update [url]");
+                MainUtil.sendMessage(plr, "&cInvalid url: " + args[0]);
+                MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot update [url]");
                 return false;
             }
         } else {

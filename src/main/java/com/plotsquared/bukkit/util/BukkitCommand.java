@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -34,7 +35,33 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (commandSender instanceof Player) {
             return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), commandLabel, args);
         }
-        return MainCommand.onCommand(ConsolePlayer.getConsole(), commandLabel, args);
+        if (commandSender == null || commandSender.getClass() == Bukkit.getConsoleSender().getClass()) {
+            return MainCommand.onCommand(ConsolePlayer.getConsole(), commandLabel, args);
+        }
+        @SuppressWarnings("deprecation")
+        ConsolePlayer sender = new ConsolePlayer() {
+            @Override
+            public void sendMessage(String message) {
+                commandSender.sendMessage(commandLabel);
+            }
+            
+            @Override
+            public boolean hasPermission(String perm) {
+                return commandSender.hasPermission(commandLabel);
+            }
+            
+            @Override
+            public String getName() {
+                if (commandSender.getName().equals("CONSOLE")) {
+                    return "*";
+                }
+                return commandSender.getName();
+            }
+        };
+        sender.teleport(ConsolePlayer.getConsole().getLocationFull());
+        boolean result = MainCommand.onCommand(sender, commandLabel, args);
+        ConsolePlayer.getConsole().teleport(sender.getLocationFull());
+        return result;
     }
     
     @Override

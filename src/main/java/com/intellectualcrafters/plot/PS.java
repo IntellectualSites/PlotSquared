@@ -1371,7 +1371,9 @@ public class PS {
                 }
             }
             try {
-                plotworld.loadConfiguration(config.getConfigurationSection("worlds." + world));
+                ConfigurationSection section = config.getConfigurationSection("worlds." + world);
+                plotworld.saveConfiguration(section);
+                plotworld.loadConfiguration(section);
                 config.save(configFile);
             } catch (final Exception e) {
                 e.printStackTrace();

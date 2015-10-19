@@ -77,7 +77,7 @@ public class DebugClaimTest extends SubCommand {
         }
         final String world = args[0];
         if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(world)) {
-            return !MainUtil.sendMessage(null, "&cInvalid plot world!");
+            return !MainUtil.sendMessage(plr, "&cInvalid plot world!");
         }
         PlotId min, max;
         try {
@@ -86,18 +86,18 @@ public class DebugClaimTest extends SubCommand {
             min = PlotId.fromString(args[1]);
             max = PlotId.fromString(args[2]);
         } catch (final Exception e) {
-            return !MainUtil.sendMessage(null,
+            return !MainUtil.sendMessage(plr,
             "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X;Y are the plot coords\nThe conversion will only check the plots in the selected area.");
         }
-        MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
-        MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
+        MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
+        MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
         final PlotManager manager = PS.get().getPlotManager(world);
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
         final ArrayList<Plot> plots = new ArrayList<>();
         for (final PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
             final Plot plot = MainUtil.getPlotAbs(world, id);
             if (PS.get().getPlot(world, plot.id) != null) {
-                MainUtil.sendMessage(null, " - &cDB Already contains: " + plot.id);
+                MainUtil.sendMessage(plr, " - &cDB Already contains: " + plot.id);
                 continue;
             }
             final Location loc = manager.getSignLoc(plotworld, plot);
@@ -125,29 +125,29 @@ public class DebugClaimTest extends SubCommand {
                         uuid = UUIDHandler.getUUID(line, null);
                     }
                     if (uuid != null) {
-                        MainUtil.sendMessage(null, " - &aFound plot: " + plot.id + " : " + line);
+                        MainUtil.sendMessage(plr, " - &aFound plot: " + plot.id + " : " + line);
                         plot.owner = uuid;
                         plots.add(plot);
                     } else {
-                        MainUtil.sendMessage(null, " - &cInvalid playername: " + plot.id + " : " + line);
+                        MainUtil.sendMessage(plr, " - &cInvalid playername: " + plot.id + " : " + line);
                     }
                 }
             }
         }
         if (plots.size() > 0) {
-            MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
+            MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
             DBFunc.createPlotsAndData(plots, new Runnable() {
                 @Override
                 public void run() {
-                    MainUtil.sendMessage(null, "&6Database update finished!");
+                    MainUtil.sendMessage(plr, "&6Database update finished!");
                 }
             });
             for (final Plot plot : plots) {
                 PS.get().updatePlot(plot);
             }
-            MainUtil.sendMessage(null, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
+            MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
         } else {
-            MainUtil.sendMessage(null, "No plots were found for the given search.");
+            MainUtil.sendMessage(plr, "No plots were found for the given search.");
         }
         return true;
     }

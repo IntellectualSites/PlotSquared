@@ -67,9 +67,7 @@ public class DebugUUID extends SubCommand {
     }
     
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final PlotPlayer player = null;
-        
+    public boolean onCommand(final PlotPlayer player, final String[] args) {
         final UUIDWrapper currentUUIDWrapper = UUIDHandler.getUUIDWrapper();
         final UUIDWrapper newWrapper;
         
@@ -113,18 +111,18 @@ public class DebugUUID extends SubCommand {
             MainUtil.sendMessage(player, "&cUUID mode already in use!");
             return false;
         }
-        MainUtil.sendConsoleMessage("&6Beginning UUID mode conversion");
-        MainUtil.sendConsoleMessage("&7 - Disconnecting players");
-        for (final PlotPlayer pp : UUIDHandler.getPlayers().values()) {
-            pp.kick("PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
+        MainUtil.sendMessage(player, "&6Beginning UUID mode conversion");
+        MainUtil.sendMessage(player, "&7 - Disconnecting players");
+        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+            entry.getValue().kick("PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
         }
         
-        MainUtil.sendConsoleMessage("&7 - Initializing map");
+        MainUtil.sendMessage(player, "&7 - Initializing map");
         
         final HashMap<UUID, UUID> uCMap = new HashMap<UUID, UUID>();
         final HashMap<UUID, UUID> uCReverse = new HashMap<UUID, UUID>();
         
-        MainUtil.sendConsoleMessage("&7 - Collecting playerdata");
+        MainUtil.sendMessage(player, "&7 - Collecting playerdata");
         
         final HashSet<String> worlds = new HashSet<>();
         worlds.add(Bukkit.getWorlds().get(0).getName());
@@ -146,7 +144,7 @@ public class DebugUUID extends SubCommand {
                         final UUID uuid = UUID.fromString(s);
                         uuids.add(uuid);
                     } catch (final Exception e) {
-                        MainUtil.sendMessage(plr, C.PREFIX.s() + "Invalid playerdata: " + current);
+                        MainUtil.sendMessage(player, C.PREFIX.s() + "Invalid playerdata: " + current);
                     }
                 }
             }
@@ -164,7 +162,7 @@ public class DebugUUID extends SubCommand {
             }
         }
         
-        MainUtil.sendConsoleMessage("&7 - Populating map");
+        MainUtil.sendMessage(player, "&7 - Populating map");
         UUID uuid2;
         final UUIDWrapper wrapper = new DefaultUUIDWrapper();
         for (UUID uuid : uuids) {
@@ -177,7 +175,7 @@ public class DebugUUID extends SubCommand {
                     uCReverse.put(uuid2, uuid);
                 }
             } catch (final Throwable e) {
-                MainUtil.sendMessage(plr, C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+                MainUtil.sendMessage(player, C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
             }
         }
         for (final String name : names) {
@@ -189,7 +187,7 @@ public class DebugUUID extends SubCommand {
             }
         }
         if (uCMap.size() == 0) {
-            MainUtil.sendConsoleMessage("&c - Error! Attempting to repopulate");
+            MainUtil.sendMessage(player, "&c - Error! Attempting to repopulate");
             for (final OfflinePlotPlayer op : currentUUIDWrapper.getOfflinePlayers()) {
                 if (op.getLastPlayed() != 0) {
                     //                    String name = op.getName();
@@ -203,14 +201,14 @@ public class DebugUUID extends SubCommand {
                 }
             }
             if (uCMap.size() == 0) {
-                MainUtil.sendConsoleMessage("&cError. Failed to collect UUIDs!");
+                MainUtil.sendMessage(player, "&cError. Failed to collect UUIDs!");
                 return false;
             } else {
-                MainUtil.sendConsoleMessage("&a - Successfully repopulated");
+                MainUtil.sendMessage(player, "&a - Successfully repopulated");
             }
         }
         
-        MainUtil.sendConsoleMessage("&7 - Replacing cache");
+        MainUtil.sendMessage(player, "&7 - Replacing cache");
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -221,7 +219,7 @@ public class DebugUUID extends SubCommand {
                     }
                 }
                 
-                MainUtil.sendConsoleMessage("&7 - Scanning for applicable files (uuids.txt)");
+                MainUtil.sendMessage(player, "&7 - Scanning for applicable files (uuids.txt)");
                 
                 final File file = new File(PS.get().IMP.getDirectory(), "uuids.txt");
                 if (file.exists()) {
@@ -256,10 +254,10 @@ public class DebugUUID extends SubCommand {
                     }
                 }
                 
-                MainUtil.sendConsoleMessage("&7 - Replacing wrapper");
+                MainUtil.sendMessage(player, "&7 - Replacing wrapper");
                 UUIDHandler.setUUIDWrapper(newWrapper);
                 
-                MainUtil.sendConsoleMessage("&7 - Updating plot objects");
+                MainUtil.sendMessage(player, "&7 - Updating plot objects");
                 
                 for (final Plot plot : PS.get().getPlotsRaw()) {
                     final UUID value = uCMap.get(plot.owner);
@@ -271,16 +269,16 @@ public class DebugUUID extends SubCommand {
                     plot.getDenied().clear();
                 }
                 
-                MainUtil.sendConsoleMessage("&7 - Deleting database");
+                MainUtil.sendMessage(player, "&7 - Deleting database");
                 final AbstractDB database = DBFunc.dbManager;
                 final boolean result = database.deleteTables();
                 
-                MainUtil.sendConsoleMessage("&7 - Creating tables");
+                MainUtil.sendMessage(player, "&7 - Creating tables");
                 
                 try {
                     database.createTables();
                     if (!result) {
-                        MainUtil.sendConsoleMessage("&cConversion failed! Attempting recovery");
+                        MainUtil.sendMessage(player, "&cConversion failed! Attempting recovery");
                         for (final Plot plot : PS.get().getPlots()) {
                             final UUID value = uCReverse.get(plot.owner);
                             if (value != null) {
@@ -290,7 +288,7 @@ public class DebugUUID extends SubCommand {
                         database.createPlotsAndData(new ArrayList<>(PS.get().getPlots()), new Runnable() {
                             @Override
                             public void run() {
-                                MainUtil.sendMessage(null, "&6Recovery was successful!");
+                                MainUtil.sendMessage(player, "&6Recovery was successful!");
                             }
                         });
                         return;
@@ -313,10 +311,10 @@ public class DebugUUID extends SubCommand {
                 try {
                     PS.get().config.save(PS.get().configFile);
                 } catch (final Exception e) {
-                    MainUtil.sendConsoleMessage("Could not save configuration. It will need to be manuall set!");
+                    MainUtil.sendMessage(player, "Could not save configuration. It will need to be manuall set!");
                 }
                 
-                MainUtil.sendConsoleMessage("&7 - Populating tables");
+                MainUtil.sendMessage(player, "&7 - Populating tables");
                 
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
@@ -325,14 +323,14 @@ public class DebugUUID extends SubCommand {
                         database.createPlotsAndData(plots, new Runnable() {
                             @Override
                             public void run() {
-                                MainUtil.sendConsoleMessage("&aConversion complete!");
+                                MainUtil.sendMessage(player, "&aConversion complete!");
                             }
                         });
                     }
                 });
                 
-                MainUtil.sendConsoleMessage("&aIt is now safe for players to join");
-                MainUtil.sendConsoleMessage("&cConversion is still in progress, you will be notified when it is complete");
+                MainUtil.sendMessage(player, "&aIt is now safe for players to join");
+                MainUtil.sendMessage(player, "&cConversion is still in progress, you will be notified when it is complete");
             }
         });
         return true;

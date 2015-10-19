@@ -167,7 +167,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(null, "&cNeed world arg. Use &7/plots sch exportall <world>");
+                    MainUtil.sendMessage(plr, "&cNeed world arg. Use &7/plots sch exportall <world>");
                     return false;
                 }
                 final Collection<Plot> plots = PS.get().getPlotsInWorld(args[1]);

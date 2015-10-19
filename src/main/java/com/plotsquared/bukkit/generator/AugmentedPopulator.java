@@ -41,7 +41,6 @@ public class AugmentedPopulator extends BlockPopulator {
     
     public AugmentedPopulator(final String world, final BukkitPlotGenerator generator, final PlotCluster cluster, final boolean p, final boolean b) {
         MainUtil.initCache();
-        PS.log("== NEW AUGMENTED POPULATOR FOR: " + world);
         this.cluster = cluster;
         this.generator = generator;
         plotworld = PS.get().getPlotWorld(world);

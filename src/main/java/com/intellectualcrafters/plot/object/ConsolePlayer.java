@@ -25,8 +25,12 @@ public class ConsolePlayer extends PlotPlayer {
         }
         return instance;
     }
-    
-    private ConsolePlayer() {
+
+    /**
+     * Direct access is deprecated
+     */
+    @Deprecated
+    public ConsolePlayer() {
         String world;
         final Set<String> plotworlds = PS.get().getPlotWorlds();
         if (plotworlds.size() > 0) {
@@ -39,7 +43,7 @@ public class ConsolePlayer extends PlotPlayer {
     }
     
     public static boolean isConsole(final PlotPlayer plr) {
-        return instance == plr;
+        return plr instanceof ConsolePlayer;
     }
     
     @Override

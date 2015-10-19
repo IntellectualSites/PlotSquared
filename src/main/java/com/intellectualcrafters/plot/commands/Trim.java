@@ -31,6 +31,7 @@ import java.util.HashSet;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -158,7 +159,7 @@ public class Trim extends SubCommand {
     }
     
     public static void sendMessage(final String message) {
-        PS.log("&3PlotSquared -> World trim&8: &7" + message);
+        ConsolePlayer.getConsole().sendMessage("&3PlotSquared -> World trim&8: &7" + message);
     }
     
     public PlotId getId(final String id) {
@@ -207,11 +208,12 @@ public class Trim extends SubCommand {
         sendMessage(C.TASK_START.s());
         final ArrayList<ChunkLoc> empty = new ArrayList<>();
         getTrimRegions(empty, world, new Runnable() {
+            @Override
             public void run() {
                 deleteChunks(world, empty, new Runnable() {
                     @Override
                     public void run() {
-                        PS.log("$1Trim task complete!");
+                        ConsolePlayer.getConsole().sendMessage("$1Trim task complete!");
                     }
                 });
             }

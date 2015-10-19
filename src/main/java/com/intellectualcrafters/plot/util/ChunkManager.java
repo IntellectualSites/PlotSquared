@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -141,7 +142,7 @@ public abstract class ChunkManager {
                 for (final ChunkLoc loc : chunks) {
                     final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
                     final File file = new File(PS.get().IMP.getWorldContainer(), directory);
-                    PS.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                    ConsolePlayer.getConsole().sendMessage("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                     if (file.exists()) {
                         file.delete();
                     }

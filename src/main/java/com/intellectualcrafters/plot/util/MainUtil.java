@@ -44,6 +44,7 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -283,7 +284,8 @@ public class MainUtil {
     
     public static List<PlotPlayer> getPlayersInPlot(final Plot plot) {
         final ArrayList<PlotPlayer> players = new ArrayList<>();
-        for (final PlotPlayer pp : UUIDHandler.getPlayers().values()) {
+        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+            PlotPlayer pp = entry.getValue();
             if (plot.equals(pp.getCurrentPlot())) {
                 players.add(pp);
             }
@@ -2013,7 +2015,7 @@ public class MainUtil {
     public static boolean sendMessage(final PlotPlayer plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
-                PS.log((prefix ? C.PREFIX.s() : "") + msg);
+                ConsolePlayer.getConsole().sendMessage((prefix ? C.PREFIX.s() : "") + msg);
             } else {
                 plr.sendMessage((prefix ? C.PREFIX.s() : "") + C.color(msg));
             }
@@ -2103,7 +2105,7 @@ public class MainUtil {
                 msg = C.format(c, args);
             }
             if (plr == null) {
-                PS.log(msg);
+                ConsolePlayer.getConsole().sendMessage(msg);
             } else {
                 sendMessage(plr, msg, c.usePrefix());
             }
@@ -2126,7 +2128,7 @@ public class MainUtil {
                 msg = C.format(c, args);
             }
             if (plr == null) {
-                PS.log(msg);
+                ConsolePlayer.getConsole().sendMessage(msg);
             } else {
                 sendMessage(plr, msg, c.usePrefix());
             }

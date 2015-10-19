@@ -3,6 +3,7 @@ package com.plotsquared.sponge.listener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -408,7 +409,8 @@ public class MainListener {
         final String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
         final Text forcedMessage = event.getMessage();
         //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
-        for (final PlotPlayer user : UUIDHandler.getPlayers().values()) {
+        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+            PlotPlayer user = entry.getValue();
             String toSend;
             if (plot.equals(MainUtil.getPlot(user.getLocation()))) {
                 toSend = newMessage;

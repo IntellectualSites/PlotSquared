@@ -104,7 +104,7 @@ public class Purge extends SubCommand {
             final Set<PlotId> ids = PS.get().getPlots(worldname).keySet();
             final int length = ids.size();
             if (length == 0) {
-                return MainUtil.sendMessage(null, "&cNo plots found");
+                return MainUtil.sendMessage(plr, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(length);
@@ -122,7 +122,7 @@ public class Purge extends SubCommand {
             }
             final int length = ids.size();
             if (length == 0) {
-                return MainUtil.sendMessage(null, "&cNo plots found");
+                return MainUtil.sendMessage(plr, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(length);
@@ -137,7 +137,7 @@ public class Purge extends SubCommand {
             }
             final int length = ids.size();
             if (length == 0) {
-                return MainUtil.sendMessage(null, "&cNo plots found");
+                return MainUtil.sendMessage(plr, "&cNo plots found");
             }
             DBFunc.purge(worldname, ids);
             return finishPurge(length);

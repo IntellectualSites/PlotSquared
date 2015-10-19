@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
@@ -13,6 +14,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -25,11 +27,11 @@ public abstract class UUIDHandlerImplementation {
     private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
     public boolean CACHED = false;
     public UUIDWrapper uuidWrapper = null;
-    public final HashMap<String, PlotPlayer> players;
+    public final ConcurrentHashMap<String, PlotPlayer> players;
     
     public UUIDHandlerImplementation(final UUIDWrapper wrapper) {
         uuidWrapper = wrapper;
-        players = new HashMap<>();
+        players = new ConcurrentHashMap<>();
     }
     
     /**
@@ -96,7 +98,7 @@ public abstract class UUIDHandlerImplementation {
             try {
                 unknown.add(uuid);
             } catch (final Exception e) {
-                PS.log("&c(minor) Invalid UUID mapping: " + uuid);
+                ConsolePlayer.getConsole().sendMessage("&c(minor) Invalid UUID mapping: " + uuid);
                 e.printStackTrace();
             }
             return false;
@@ -178,11 +180,11 @@ public abstract class UUIDHandlerImplementation {
         if (uuid == null) {
             return null;
         }
-        // check online
-        final PlotPlayer player = getPlayer(uuid);
-        if (player != null) {
-            return player.getName();
-        }
+        //        // check online
+        //        final PlotPlayer player = getPlayer(uuid);
+        //        if (player != null) {
+        //            return player.getName();
+        //        }
         // check cache
         final StringWrapper name = uuidMap.inverse().get(uuid);
         if (name != null) {
@@ -228,10 +230,9 @@ public abstract class UUIDHandlerImplementation {
     }
     
     public PlotPlayer getPlayer(final UUID uuid) {
-        for (final PlotPlayer player : players.values()) {
-            if (player.getUUID().equals(uuid)) {
-                return player;
-            }
+        String name = getName(uuid);
+        if (name != null) {
+            return getPlayer(name);
         }
         return null;
     }

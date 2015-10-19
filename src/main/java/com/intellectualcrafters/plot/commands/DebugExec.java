@@ -433,13 +433,13 @@ public class DebugExec extends SubCommand {
                             } catch (final ScriptException e) {
                                 e.printStackTrace();
                             }
-                            PS.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                            ConsolePlayer.getConsole().sendMessage("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                         }
                     });
                 } else {
                     final long start = System.currentTimeMillis();
                     Object result = engine.eval(script, scope);
-                    PS.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                    ConsolePlayer.getConsole().sendMessage("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                 }
                 return true;
             } catch (final ScriptException e) {

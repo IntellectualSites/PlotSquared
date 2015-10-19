@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -140,7 +141,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 final int x = bloc.getBlockX();
                 final int z = bloc.getBlockZ();
                 final int distance = Bukkit.getViewDistance() * 16;
-                for (final PlotPlayer player : UUIDHandler.getPlayers().values()) {
+                for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+                    PlotPlayer player = entry.getValue();
                     final Location loc = player.getLocation();
                     if (loc.getWorld().equals(world)) {
                         if ((16 * (Math.abs(loc.getX() - x) / 16)) > distance) {
@@ -223,8 +225,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     }
                 }
                 if (Settings.REDSTONE_DISABLER_UNOCCUPIED) {
-                    for (final PlotPlayer pp : UUIDHandler.getPlayers().values()) {
-                        if (plot.equals(pp.getCurrentPlot())) {
+                    for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+                        if (plot.equals(entry.getValue().getCurrentPlot())) {
                             return;
                         }
                     }

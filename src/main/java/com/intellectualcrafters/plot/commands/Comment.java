@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.Arrays;
+import java.util.Map.Entry;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
@@ -76,7 +77,8 @@ public class Comment extends SubCommand {
             sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
-        for (final PlotPlayer pp : UUIDHandler.getPlayers().values()) {
+        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+            PlotPlayer pp = entry.getValue();
             if (pp.getAttribute("chatspy")) {
                 MainUtil.sendMessage(pp, "/plot comment " + StringMan.join(args, " "));
             }
