@@ -14,7 +14,7 @@ public class Permissions {
     }
     
     public static boolean hasPermission(final CommandCaller player, String perm) {
-        if (player.hasPermission(perm)) {
+        if (player.hasPermission(perm) || player.hasPermission(C.PERMISSION_ADMIN.s())) {
             return true;
         }
         perm = perm.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
@@ -42,6 +42,9 @@ public class Permissions {
     }
     
     public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range) {
+        if (player.hasPermission(C.PERMISSION_ADMIN.s())) {
+            return Integer.MAX_VALUE;
+        }
         final String[] nodes = stub.split("\\.");
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
