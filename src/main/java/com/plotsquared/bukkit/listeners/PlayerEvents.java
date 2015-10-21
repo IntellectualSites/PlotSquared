@@ -1135,9 +1135,15 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 if ((eventType != null) && !player.isSneaking()) {
                     break;
                 }
-                if ((hand == null) || (hand.getType() == Material.AIR) || hand.getType().isBlock()) {
+                Material type = hand == null ? null : hand.getType();
+                int id = type == null ? 0 : type.getId();
+                if (id == 0) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                    lb = new BukkitLazyBlock(block);
+                    lb = new BukkitLazyBlock(id, block);
+                    break;
+                } else if (id < 198) {
+                    eventType = PlayerBlockEventType.PLACE_BLOCK;
+                    lb = new BukkitLazyBlock(id, block);
                     break;
                 }
                 lb = new BukkitLazyBlock(new PlotBlock((short) hand.getTypeId(), (byte) hand.getDurability()));

@@ -46,16 +46,25 @@ public enum C {
      * Static flags
      */
     FLAG_USE("use", "static.flags"),
+    FLAG_BREAK("break", "static.flags"),
     FLAG_PLACE("place", "static.flags"),
     FLAG_PVP("pvp", "static.flags"),
     FLAG_HANGING_PLACE("hanging-place", "static.flags"),
     FLAG_HANGING_BREAK("hanging-break", "static.flags"),
+    FLAG_HANGING_INTERACT("hanging-interact", "static.flags"),
+    FLAG_MISC_INTERACT("misc-interact", "static.flags"),
+    FLAG_MISC_BREAK("misc-break", "static.flags"),
+    FLAG_MISC_PLACE("misc-place", "static.flags"),
+    FLAG_VEHICLE_BREAK("vehicle-break", "static.flags"),
     FLAG_HOSTILE_INTERACT("hostile-interact", "static.flags"),
+    FLAG_DEVICE_INTERACT("device-interact", "static.flags"),
     FLAG_ANIMAL_INTERACT("animal-interact", "static.flags"),
     FLAG_VEHICLE_USE("vehicle-use", "static.flags"),
+    FLAG_VEHICLE_PLACE("vehicle-place", "static.flags"),
     FLAG_PLAYER_INTERACT("player-interact", "static.flags"),
     FLAG_TAMED_INTERACT("tamed-interact", "static.flags"),
     FLAG_DISABLE_PHYSICS("disable-physics", "static.flags"),
+    FLAG_MOB_PLACE("mob-place", "static.flags"),
     /*
      * Static permission
      */
@@ -548,6 +557,7 @@ public enum C {
     FLAG_NOT_ADDED("$2The flag could not be added", "Flag"),
     FLAG_REMOVED("$4Successfully removed flag", "Flag"),
     FLAG_ADDED("$4Successfully added flag", "Flag"),
+    FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "Commands"),
     /*
      * Trusted
      */
