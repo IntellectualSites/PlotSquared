@@ -716,7 +716,7 @@ public class Plot {
     }
     
     /**
-     * Get the average rating of the plot
+     * Get the average rating of the plot. This is the value displayed in /plot info
      * @return average rating as double
      */
     public double getAverageRating() {

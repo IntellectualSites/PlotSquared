@@ -158,6 +158,7 @@ public abstract class SchematicHandler {
                     RegionWrapper region = MainUtil.getLargestRegion(plot);
                     if ((((region.maxX - region.minX + x_offset) + 1) < WIDTH) || (((region.maxZ - region.minZ + z_offset) + 1) < LENGTH) || (HEIGHT > 256)) {
                         PS.debug("Schematic is too large");
+                        PS.debug("(" + WIDTH + "," + LENGTH + "," + HEIGHT + ") is bigger than (" + (region.maxX - region.minX) + "," + (region.maxZ - region.minZ) + ",256)");
                         TaskManager.runTask(whenDone);
                         return;
                     }
@@ -465,7 +466,7 @@ public abstract class SchematicHandler {
                 }
             }
         }
-        final File file = new File(PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + ".schematic");
+        final File file = new File(PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + (name.endsWith(name) ? "" : ".schematic"));
         return getSchematic(file);
     }
     

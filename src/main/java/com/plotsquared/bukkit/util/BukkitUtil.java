@@ -212,19 +212,21 @@ public class BukkitUtil extends BlockManager {
     public void functionSetSign(final String worldname, final int x, final int y, final int z, final String[] lines) {
         final World world = getWorld(worldname);
         final Block block = world.getBlockAt(x, y, z);
-        block.setType(Material.AIR);
+        //        block.setType(Material.AIR);
         block.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
         final BlockState blockstate = block.getState();
         if ((blockstate instanceof Sign)) {
+            final Sign sign = (Sign) blockstate;
+            for (int i = 0; i < lines.length; i++) {
+                sign.setLine(i, lines[i]);
+            }
+            sign.update(true);
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < lines.length; i++) {
-                        ((Sign) blockstate).setLine(i, lines[i]);
-                    }
-                    ((Sign) blockstate).update(true);
+                    sign.update(true);
                 }
-            }, 1);
+            }, 20);
         }
     }
     

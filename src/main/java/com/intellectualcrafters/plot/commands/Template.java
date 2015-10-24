@@ -70,7 +70,7 @@ public class Template extends SubCommand {
             ZipEntry ze = zis.getNextEntry();
             while (ze != null) {
                 final String name = ze.getName();
-                final File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
+                final File newFile = new File((output + File.separator + name.replaceAll("[\\\\|\\|/]", File.separator)).replaceAll("__TEMP_DIR__", world));
                 new File(newFile.getParent()).mkdirs();
                 final FileOutputStream fos = new FileOutputStream(newFile);
                 int len;
