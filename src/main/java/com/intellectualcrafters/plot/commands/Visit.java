@@ -26,11 +26,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.PS.SortType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -45,7 +43,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 command = "visit",
 permission = "plots.visit",
 description = "Visit someones plot",
-usage = "/plot visit <player|alias|world|id> [#]",
+usage = "/plot visit [player|alias|world|id] [#]",
 aliases = { "v" },
 requiredType = RequiredType.NONE,
 category = CommandCategory.TELEPORT)

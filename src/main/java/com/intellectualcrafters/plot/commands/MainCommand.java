@@ -80,8 +80,8 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new RegenAllRoads());
         createCommand(new Claim());
         createCommand(new Auto());
-        createCommand(new Home());
         createCommand(new Visit());
+        createCommand(new Home());
         createCommand(new TP());
         createCommand(new Set());
         createCommand(new Toggle());
@@ -171,47 +171,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         return commands;
     }
     
-    ////    public static List<String> helpMenu(final PlotPlayer player, final CommandCategory category, int page) {
-    //        List<Command<PlotPlayer>> commands;
-    //       //  commands = getCommands(category, player);
-    //        // final int totalPages = ((int) Math.ceil(12 * (commands.size()) /
-    //        // 100));
-    //        final int perPage = 5;
-    //        // final int totalPages = (commands.size() / perPage) + (commands.size() % perPage == 0 ? 0 : 1);
-    //        // if (page > totalPages) {
-    //        //     page = totalPages;
-    //        // }
-    //        int max = (page * perPage) + perPage;
-    //        // if (max > commands.size()) {
-    //        //    max = commands.size();
-    //        // }
-    //        final List<String> help = new ArrayList<>();
-    //        help.add(C.HELP_HEADER.s());
-    //        // HELP_PAGE_HEADER("&cCategory: &6%category%&c, Page: %current%&c/&6%max%&c, Displaying: &6%dis%&c/&6%total%"),
-    //        // help.add(C.HELP_PAGE_HEADER.s().replace("%category%", category == null ? "All" : category.toString()).replace("%current%", "" + (page + 1)).replace("%max%", "" + (totalPages)).replace("%dis%", "" + perPage).replace("%total%", "" + commands.size()));
-    //        Command cmd;
-    //        // HELP_CATEGORY("&cCategory: &6%category%&c, Page: %current%&c/&6%max%&c, Displaying: &6%dis%&c/&6%total%"),
-    //        // help.add(C.HELP_CATEGORY.s().replace("%category%", category == null ? "All" : category.toString()).replace("%current%", "" + (page + 1)).replace("%max%", "" + (totalPages)).replace("%dis%", "" + perPage).replace("%total%", "" + commands.size()));
-    //        // Command<PlotPlayer> cmd;
-    //        final int start = page * perPage;
-    //        for (int x = start; x < max; x++) {
-    //            // cmd = commands.get(x);
-    //            String s = C.HELP_ITEM.s();
-    //            if (cmd.getAliases().size() > 0) {
-    //                s = s.replace("%alias%", StringMan.join(cmd.getAliases(), "|"));
-    //            }
-    //            else {
-    //                s = s.replace("%alias%", "");
-    //            }
-    //            s = s.replace("%usage%", cmd.getUsage().contains("plot") ? cmd.getUsage() : "/plot " + cmd.getUsage()).replace("%cmd%", cmd.getCommand()).replace("%desc%", cmd.getDescription()).replace("[]", "");
-    //            help.add(s);
-    //        }
-    //        if (help.size() < 2) {
-    //            help.add(C.NO_COMMANDS.s());
-    //        }
-    //        return help;
-    //    }
-    //
     public static void displayHelp(final PlotPlayer player, String cat, int page, final String label) {
         CommandCategory catEnum = null;
         if (cat != null) {
@@ -322,6 +281,11 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         int count = 0;
         String perm = cmd.getPermission();
         HashSet<String> desc = new HashSet<String>();
+        for (String alias : cmd.getAliases()) {
+            if (alias.startsWith(args[0])) {
+                count += 5;
+            }
+        }
         for (String word : cmd.getDescription().split(" ")) {
             desc.add(word);
         }

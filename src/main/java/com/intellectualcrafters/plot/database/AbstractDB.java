@@ -84,6 +84,18 @@ public interface AbstractDB {
      */
     void delete(final Plot plot);
     
+    void deleteSettings(Plot plot);
+    
+    void deleteHelpers(Plot plot);
+    
+    void deleteTrusted(Plot plot);
+    
+    void deleteDenied(Plot plot);
+    
+    void deleteComments(Plot plot);
+    
+    void deleteRatings(Plot plot);
+
     void delete(final PlotCluster cluster);
     
     /**

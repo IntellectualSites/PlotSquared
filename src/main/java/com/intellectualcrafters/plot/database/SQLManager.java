@@ -1191,14 +1191,8 @@ public class SQLManager implements AbstractDB {
         stmt.close();
     }
     
-    /**
-     * Delete a plot
-     *
-     * @param plot
-     */
     @Override
-    public void delete(final Plot plot) {
-        PS.get().removePlot(plot.world, plot.id, false);
+    public void deleteSettings(final Plot plot) {
         addPlotTask(plot, new UniqueStatement("delete_plot_settings") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
@@ -1210,6 +1204,13 @@ public class SQLManager implements AbstractDB {
                 return connection.prepareStatement("DELETE FROM `" + prefix + "plot_settings` WHERE `plot_plot_id` = ?");
             }
         });
+    }
+    
+    @Override
+    public void deleteHelpers(final Plot plot) {
+        if (plot.getTrusted().size() == 0) {
+            return;
+        }
         addPlotTask(plot, new UniqueStatement("delete_plot_helpers") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
@@ -1221,6 +1222,13 @@ public class SQLManager implements AbstractDB {
                 return connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = ?");
             }
         });
+    }
+    
+    @Override
+    public void deleteTrusted(final Plot plot) {
+        if (plot.getMembers().size() == 0) {
+            return;
+        }
         addPlotTask(plot, new UniqueStatement("delete_plot_trusted") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
@@ -1232,6 +1240,13 @@ public class SQLManager implements AbstractDB {
                 return connection.prepareStatement("DELETE FROM `" + prefix + "plot_trusted` WHERE `plot_plot_id` = ?");
             }
         });
+    }
+    
+    @Override
+    public void deleteDenied(final Plot plot) {
+        if (plot.getDenied().size() == 0) {
+            return;
+        }
         addPlotTask(plot, new UniqueStatement("delete_plot_denied") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
@@ -1243,6 +1258,10 @@ public class SQLManager implements AbstractDB {
                 return connection.prepareStatement("DELETE FROM `" + prefix + "plot_denied` WHERE `plot_plot_id` = ?");
             }
         });
+    }
+    
+    @Override
+    public void deleteComments(final Plot plot) {
         addPlotTask(plot, new UniqueStatement("delete_plot_comments") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
@@ -1255,6 +1274,40 @@ public class SQLManager implements AbstractDB {
                 return connection.prepareStatement("DELETE FROM `" + prefix + "plot_comments` WHERE `world` = ? AND `hashcode` = ?");
             }
         });
+    }
+    
+    @Override
+    public void deleteRatings(final Plot plot) {
+        if (Settings.CACHE_RATINGS && plot.getSettings().getRatings().size() == 0) {
+            return;
+        }
+        addPlotTask(plot, new UniqueStatement("delete_plot_ratings") {
+            @Override
+            public void set(final PreparedStatement stmt) throws SQLException {
+                stmt.setInt(1, getId(plot));
+            }
+            
+            @Override
+            public PreparedStatement get() throws SQLException {
+                return connection.prepareStatement("DELETE FROM `" + prefix + "plot_rating` WHERE `plot_plot_id` = ?");
+            }
+        });
+    }
+
+    /**
+     * Delete a plot
+     *
+     * @param plot
+     */
+    @Override
+    public void delete(final Plot plot) {
+        PS.get().removePlot(plot.world, plot.id, false);
+        deleteSettings(plot);
+        deleteDenied(plot);
+        deleteHelpers(plot);
+        deleteTrusted(plot);
+        deleteComments(plot);
+        deleteRatings(plot);
         addPlotTask(plot, new UniqueStatement("delete_plot") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {

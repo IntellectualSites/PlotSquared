@@ -92,6 +92,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+import org.spongepowered.api.entity.living.animal.Animal;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -1304,76 +1305,154 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         lastRadius = event.getRadius() + 1;
     }
     
-    public boolean checkEntity(final Entity entity, final Plot plot) {
-        if ((plot != null) && (plot.owner != null)) {
-            final Flag entityFlag = FlagManager.getPlotFlagRaw(plot, "entity-cap");
-            int[] mobs = null;
-            if (entityFlag != null) {
-                final int cap = ((Integer) entityFlag.getValue());
-                if (cap == 0) {
-                    return true;
-                }
-                mobs = MainUtil.countEntities(plot);
-                if (mobs[0] >= cap) {
-                    return true;
+    public boolean checkEntity(Plot plot, String... flags) {
+        int[] mobs = null;
+        for (String flag : flags) {
+            int i;
+            switch (flag) {
+                case "entity-cap":
+                    i = 0;
+                    break;
+                case "mob-cap":
+                    i = 3;
+                    break;
+                case "hostile-cap":
+                    i = 2;
+                    break;
+                case "animal-cap":
+                    i = 1;
+                    break;
+                case "vehicle-cap":
+                    i = 4;
+                    break;
+                case "misc-cap":
+                    i = 5;
+                    break;
+                default: {
+                    i = 0;
                 }
             }
-            if (entity instanceof Creature) {
-                final Flag mobFlag = FlagManager.getPlotFlagRaw(plot, "mob-cap");
-                if (mobFlag != null) {
-                    final int cap = ((Integer) mobFlag.getValue());
-                    if (cap == 0) {
-                        return true;
-                    }
-                    if (mobs == null) {
-                        mobs = MainUtil.countEntities(plot);
-                    }
-                    if (mobs[3] >= cap) {
-                        return true;
-                    }
+            final Flag plotFlag = FlagManager.getPlotFlagRaw(plot, flag);
+            if (plotFlag == null) {
+                continue;
+            }
+            if (mobs == null) {
+                mobs = MainUtil.countEntities(plot);
+            }
+            if (mobs[i] >= ((Integer) plotFlag.getValue())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkEntity(final Entity entity, final Plot plot) {
+        if ((plot != null) && (plot.owner != null)) {
+            switch (entity.getType()) {
+                case PLAYER: {
+                    return false;
                 }
-                if (entity instanceof Animals) {
-                    final Flag animalFlag = FlagManager.getPlotFlagRaw(plot, "animal-cap");
-                    if (animalFlag != null) {
-                        final int cap = ((Integer) animalFlag.getValue());
-                        if (cap == 0) {
-                            return true;
-                        }
-                        if (mobs == null) {
-                            mobs = MainUtil.countEntities(plot);
-                        }
-                        if (mobs[1] >= cap) {
-                            return true;
-                        }
-                    }
-                } else if (entity instanceof Monster) {
-                    final Flag monsterFlag = FlagManager.getPlotFlagRaw(plot, "hostile-cap");
-                    if (monsterFlag != null) {
-                        final int cap = ((Integer) monsterFlag.getValue());
-                        if (cap == 0) {
-                            return true;
-                        }
-                        if (mobs == null) {
-                            mobs = MainUtil.countEntities(plot);
-                        }
-                        if (mobs[2] >= cap) {
-                            return true;
-                        }
-                    }
+                case SMALL_FIREBALL:
+                case FIREBALL:
+                case DROPPED_ITEM:
+                case EGG:
+                case THROWN_EXP_BOTTLE:
+                case SPLASH_POTION:
+                case SNOWBALL:
+                case ENDER_PEARL:
+                case ARROW: {
+                    // projectile
                 }
-            } else if (entity instanceof Vehicle) {
-                final Flag vehicleFlag = FlagManager.getPlotFlagRaw(plot, "vehicle-cap");
-                if (vehicleFlag != null) {
-                    final int cap = ((Integer) vehicleFlag.getValue());
-                    if (cap == 0) {
-                        return true;
+                case PRIMED_TNT:
+                case FALLING_BLOCK: {
+                    // Block entities 
+                }
+                case ENDER_CRYSTAL:
+                case COMPLEX_PART:
+                case FISHING_HOOK:
+                case ENDER_SIGNAL:
+                case EXPERIENCE_ORB:
+                case LEASH_HITCH:
+                case FIREWORK:
+                case WEATHER:
+                case LIGHTNING:
+                case WITHER_SKULL:
+                case UNKNOWN: {
+                    // non moving / unremovable
+                    return checkEntity(plot, "entity-cap");
+                }
+                case ITEM_FRAME:
+                case PAINTING:
+                case ARMOR_STAND: {
+                    return checkEntity(plot, "entity-cap", "misc-cap");
+                    // misc
+                }
+                case MINECART:
+                case MINECART_CHEST:
+                case MINECART_COMMAND:
+                case MINECART_FURNACE:
+                case MINECART_HOPPER:
+                case MINECART_MOB_SPAWNER:
+                case MINECART_TNT:
+                case BOAT: {
+                    return checkEntity(plot, "entity-cap", "vehicle-cap");
+                }
+                case RABBIT:
+                case SHEEP:
+                case MUSHROOM_COW:
+                case OCELOT:
+                case PIG:
+                case HORSE:
+                case SQUID:
+                case VILLAGER:
+                case IRON_GOLEM:
+                case WOLF:
+                case CHICKEN:
+                case COW:
+                case SNOWMAN:
+                case BAT: {
+                    // animal
+                    return checkEntity(plot, "entity-cap", "mob-cap", "animal-cap");
+                }
+                case BLAZE:
+                case CAVE_SPIDER:
+                case CREEPER:
+                case ENDERMAN:
+                case ENDERMITE:
+                case ENDER_DRAGON:
+                case GHAST:
+                case GIANT:
+                case GUARDIAN:
+                case MAGMA_CUBE:
+                case PIG_ZOMBIE:
+                case SILVERFISH:
+                case SKELETON:
+                case SLIME:
+                case SPIDER:
+                case WITCH:
+                case WITHER:
+                case ZOMBIE: {
+                    // monster
+                    return checkEntity(plot, "entity-cap", "mob-cap", "hostile-cap");
+                }
+                default: {
+                    String[] types;
+                    if (entity instanceof LivingEntity) {
+                        if (entity instanceof Animal) {
+                            types = new String[] { "entity-cap", "mob-cap", "animal-cap" };
+                        } else if (entity instanceof Monster) {
+                            types = new String[] { "entity-cap", "mob-cap", "hostile-cap" };
+                        } else {
+                            types = new String[] { "entity-cap", "mob-cap" };
+                        }
+                    } else if (entity instanceof Vehicle) {
+                        types = new String[] { "entity-cap", "vehicle-cap" };
+                    } else if (entity instanceof Hanging) {
+                        types = new String[] { "entity-cap", "misc-cap" };
+                    } else {
+                        types = new String[] { "entity-cap" };
                     }
-                    if (mobs == null) {
-                        mobs = MainUtil.countEntities(plot);
-                    }
-                    if (mobs[4] >= cap) {
-                        return true;
-                    }
+                    return checkEntity(plot, types);
                 }
             }
         }

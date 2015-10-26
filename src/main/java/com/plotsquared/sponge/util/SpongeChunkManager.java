@@ -37,7 +37,7 @@ public class SpongeChunkManager extends ChunkManager {
         final int bz = pos1.getZ();
         final int tx = pos2.getX();
         final int tz = pos2.getZ();
-        final int[] count = new int[5];
+        final int[] count = new int[6];
         world.getEntities(new Predicate<Entity>() {
             @Override
             public boolean test(final Entity entity) {

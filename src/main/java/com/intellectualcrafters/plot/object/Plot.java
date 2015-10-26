@@ -721,7 +721,7 @@ public class Plot {
      */
     public double getAverageRating() {
         double sum = 0;
-        final Collection<Rating> ratings = getRatings().values();
+        final Collection<Rating> ratings = getBasePlot(false).getRatings().values();
         for (final Rating rating : ratings) {
             sum += rating.getAverageRating();
         }
@@ -729,16 +729,47 @@ public class Plot {
     }
     
     /**
+     * Set a rating for a user<br>
+     *  - If the user has already rated, the following will return false
+     * @param uuid
+     * @param rating
+     * @return
+     */
+    public boolean addRating(UUID uuid, Rating rating) {
+        Plot base = getBasePlot(false);
+        PlotSettings baseSettings = base.getSettings();
+        if (baseSettings.getRatings().containsKey(uuid)) {
+            return false;
+        }
+        baseSettings.getRatings().put(uuid, rating.getAggregate());
+        DBFunc.setRating(base, uuid, temp);
+        return true;
+    }
+    
+    /**
+     * Clear the ratings for this plot
+     */
+    public void clearRatings() {
+        Plot base = getBasePlot(false);
+        PlotSettings baseSettings = base.getSettings();
+        if (baseSettings.ratings != null && baseSettings.ratings.size() > 0) {
+            DBFunc.deleteRatings(base);
+            baseSettings.ratings = null;
+        }
+    }
+
+    /**
      * Get the ratings associated with a plot<br>
      *  - The rating object may contain multiple categories
      * @return Map of user who rated to the rating
      */
     public HashMap<UUID, Rating> getRatings() {
+        Plot base = getBasePlot(false);
         final HashMap<UUID, Rating> map = new HashMap<UUID, Rating>();
-        if (getSettings().ratings == null) {
+        if (base.getSettings().ratings == null) {
             return map;
         }
-        for (final Entry<UUID, Integer> entry : getSettings().ratings.entrySet()) {
+        for (final Entry<UUID, Integer> entry : base.getSettings().ratings.entrySet()) {
             map.put(entry.getKey(), new Rating(entry.getValue()));
         }
         return map;
@@ -980,6 +1011,13 @@ public class Plot {
      * @param uuid
      */
     public boolean removeDenied(final UUID uuid) {
+        if (uuid == DBFunc.everyone) {
+            boolean result = false;
+            for (UUID other : getDenied()) {
+                result = result || PlotHandler.removeDenied(this, other);
+            }
+            return result;
+        }
         return PlotHandler.removeDenied(this, uuid);
     }
     
@@ -989,6 +1027,13 @@ public class Plot {
      * @param uuid
      */
     public boolean removeTrusted(final UUID uuid) {
+        if (uuid == DBFunc.everyone) {
+            boolean result = false;
+            for (UUID other : getTrusted()) {
+                result = result || PlotHandler.removeTrusted(this, other);
+            }
+            return result;
+        }
         return PlotHandler.removeTrusted(this, uuid);
     }
     
@@ -998,6 +1043,13 @@ public class Plot {
      * @param uuid
      */
     public boolean removeMember(final UUID uuid) {
+        if (uuid == DBFunc.everyone) {
+            boolean result = false;
+            for (UUID other : getMembers()) {
+                result = result || PlotHandler.removeMember(this, other);
+            }
+            return result;
+        }
         return PlotHandler.removeMember(this, uuid);
     }
     

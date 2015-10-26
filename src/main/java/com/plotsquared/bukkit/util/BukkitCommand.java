@@ -78,31 +78,26 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (strings.length > 1) {
             return null;
         }
-        if (!command.getLabel().equalsIgnoreCase("plots")) {
-            return null;
-        }
         final Set<String> tabOptions = new HashSet<>();
-        final ArrayList<Command<PlotPlayer>> commands = MainCommand.getInstance().getCommands();
-        final String best = new StringComparison(strings[0], commands).getBestMatch();
-        tabOptions.add(best);
         final String arg = strings[0].toLowerCase();
+        ArrayList<String> labels = new ArrayList<>();
         for (final Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands()) {
             final String label = cmd.getCommand();
-            if (!label.equalsIgnoreCase(best)) {
-                if (label.startsWith(arg)) {
+            HashSet<String> aliases = new HashSet<>(cmd.getAliases());
+            aliases.add(label);
+            for (String alias : aliases) {
+                labels.add(alias);
+                if (alias.startsWith(arg)) {
                     if (Permissions.hasPermission(player, cmd.getPermission())) {
-                        tabOptions.add(cmd.getCommand());
-                    } else if (cmd.getAliases().size() > 0) {
-                        for (final String alias : cmd.getAliases()) {
-                            if (alias.startsWith(arg)) {
-                                tabOptions.add(label);
-                                break;
-                            }
-                        }
+                        tabOptions.add(label);
+                    } else {
+                        break;
                     }
                 }
             }
         }
+        String best = new StringComparison<>(arg, labels).getBestMatch();
+        tabOptions.add(best);
         if (tabOptions.size() > 0) {
             return new ArrayList<>(tabOptions);
         }

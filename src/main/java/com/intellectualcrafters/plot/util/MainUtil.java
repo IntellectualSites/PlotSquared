@@ -524,6 +524,7 @@ public class MainUtil {
         if (!result) {
             return false;
         }
+        plot.clearRatings();
         if (createSign) {
             plot.removeSign();
         }
@@ -1010,6 +1011,8 @@ public class MainUtil {
                 greaterPlot = tmp;
             }
             if (!lesserPlot.getMerged(2)) {
+                lesserPlot.clearRatings();
+                greaterPlot.clearRatings();
                 lesserPlot.setMerged(2, true);
                 greaterPlot.setMerged(0, true);
                 mergeData(lesserPlot, greaterPlot);
@@ -1032,6 +1035,8 @@ public class MainUtil {
                 greaterPlot = tmp;
             }
             if (!lesserPlot.getMerged(1)) {
+                lesserPlot.clearRatings();
+                greaterPlot.clearRatings();
                 lesserPlot.setMerged(1, true);
                 greaterPlot.setMerged(3, true);
                 mergeData(lesserPlot, greaterPlot);
@@ -1379,7 +1384,7 @@ public class MainUtil {
     }
     
     public static int[] countEntities(Plot plot) {
-        int[] count = new int[5];
+        int[] count = new int[6];
         for (Plot current : getConnectedPlots(plot)) {
             int[] result = ChunkManager.manager.countEntities(current);
             count[0] += result[0];
@@ -1387,6 +1392,7 @@ public class MainUtil {
             count[2] += result[2];
             count[3] += result[3];
             count[4] += result[4];
+            count[5] += result[5];
         }
         return count;
     }

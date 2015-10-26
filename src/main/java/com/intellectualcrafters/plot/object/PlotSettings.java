@@ -23,6 +23,7 @@ package com.intellectualcrafters.plot.object;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.flag.Flag;
@@ -30,35 +31,48 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
- * plot settings
- *
+ * Generic settings class
+ * - Does not keep a reference to a parent class
+ * - Direct changes here will not occur in the db (Use the parent plot object for that)
  */
 public class PlotSettings {
     /**
      * merged plots
+     * @deprecated Raw access
      */
+    @Deprecated
     public boolean[] merged = new boolean[] { false, false, false, false };
     /**
      * plot alias
+     * @deprecated Raw access
      */
+    @Deprecated
     public String alias = "";
     /**
      * Comments
+     * @deprecated Raw access
      */
+    @Deprecated
     public List<PlotComment> comments = null;
     
     /**
      * The ratings for a plot
+     * @deprecated Raw access
      */
+    @Deprecated
     public HashMap<UUID, Integer> ratings;
     
     /**
      * Flags
+     * @deprecated Raw access
      */
+    @Deprecated
     public HashMap<String, Flag> flags;
     /**
      * Home Position
+     * @deprecated Raw access
      */
+    @Deprecated
     private BlockLoc position;
     
     /**
@@ -96,6 +110,10 @@ public class PlotSettings {
         this.merged = merged;
     }
     
+    public Map<UUID, Integer> getRatings() {
+        return ratings == null ? new HashMap<UUID, Integer>() : ratings;
+    }
+
     public boolean setMerged(final int direction, final boolean merged) {
         if (this.merged[direction] != merged) {
             this.merged[direction] = merged;

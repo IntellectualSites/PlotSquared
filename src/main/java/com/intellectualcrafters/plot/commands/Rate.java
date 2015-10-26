@@ -61,7 +61,7 @@ public class Rate extends SubCommand {
     public boolean onCommand(final PlotPlayer player, final String[] args) {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("next")) {
-                final ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
+                final ArrayList<Plot> plots = new ArrayList<>(PS.get().getBasePlots());
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
                     public int compare(final Plot p1, final Plot p2) {
@@ -96,7 +96,7 @@ public class Rate extends SubCommand {
             }
         }
         final Location loc = player.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = MainUtil.getPlot(loc);
         if (plot == null) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }

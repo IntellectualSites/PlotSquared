@@ -40,8 +40,8 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
- * DB Functions
- *
+ * Database Functions
+ *  - These functions do not update the local plot objects and only make changes to the DB
  */
 public class DBFunc {
     /**
@@ -154,6 +154,76 @@ public class DBFunc {
         plot.temp = -1;
     }
     
+    /**
+     * Delete the ratings for a plot
+     * @param plot
+     */
+    public static void deleteRatings(final Plot plot) {
+        if (plot.temp == -1) {
+            return;
+        }
+        dbManager.deleteRatings(plot);
+    }
+    
+    /**
+     * Delete the trusted list for a plot
+     * @param plot
+     */
+    public static void deleteTrusted(final Plot plot) {
+        if (plot.temp == -1) {
+            return;
+        }
+        dbManager.deleteHelpers(plot);
+    }
+    
+    /**
+     * Delete the members list for a plot
+     * @param plot
+     */
+    public static void deleteMembers(final Plot plot) {
+        if (plot.temp == -1) {
+            return;
+        }
+        dbManager.deleteTrusted(plot);
+    }
+    
+    /**
+     * Delete the denied list for a plot
+     * @param plot
+     */
+    public static void deleteDenied(final Plot plot) {
+        if (plot.temp == -1) {
+            return;
+        }
+        dbManager.deleteDenied(plot);
+    }
+    
+    /**
+     * Delete the comments in a plot
+     * @param plot
+     */
+    public static void deleteComments(final Plot plot) {
+        if (plot.temp == -1) {
+            return;
+        }
+        dbManager.deleteComments(plot);
+    }
+    
+    /**
+     * Deleting settings will 
+     * 1) Delete any settings (flags and such) associated with the plot
+     * 2) Prevent any local changes to the plot from saving properly to the db
+     * 
+     * This shouldn't ever be needed
+     * @param plot
+     */
+    public static void deleteSettings(final Plot plot) {
+        if (plot.temp == -1) {
+            return;
+        }
+        dbManager.deleteSettings(plot);
+    }
+
     public static void delete(final PlotCluster toDelete) {
         dbManager.delete(toDelete);
     }

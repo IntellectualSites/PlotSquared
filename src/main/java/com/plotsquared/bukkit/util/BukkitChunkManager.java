@@ -39,7 +39,6 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -946,7 +945,7 @@ public class BukkitChunkManager extends ChunkManager {
     
     @Override
     public int[] countEntities(final Plot plot) {
-        final int[] count = new int[5];
+        final int[] count = new int[6];
         final World world = BukkitUtil.getWorld(plot.world);
         
         final Location bot = MainUtil.getPlotBottomLocAbs(plot.world, plot.id);
@@ -977,9 +976,6 @@ public class BukkitChunkManager extends ChunkManager {
         
         if (doWhole) {
             for (final Entity entity : entities) {
-                if (!((entity instanceof Creature) || (entity instanceof Vehicle))) {
-                    continue;
-                }
                 final org.bukkit.Location loc = entity.getLocation();
                 final Chunk chunk = loc.getChunk();
                 if (chunks.contains(chunk)) {
@@ -1001,9 +997,6 @@ public class BukkitChunkManager extends ChunkManager {
                 final int Z = chunk.getX();
                 final Entity[] ents = chunk.getEntities();
                 for (final Entity entity : ents) {
-                    if (!((entity instanceof Creature) || (entity instanceof Vehicle))) {
-                        continue;
-                    }
                     if ((X == bx) || (X == tx) || (Z == bz) || (Z == tz)) {
                         final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
                         if (plot.id.equals(id)) {
@@ -1020,15 +1013,110 @@ public class BukkitChunkManager extends ChunkManager {
     
     private void count(final int[] count, final Entity entity) {
         count[0]++;
-        if (entity instanceof Creature) {
-            count[3]++;
-            if (entity instanceof Animals) {
-                count[1]++;
-            } else {
-                count[2]++;
+        switch (entity.getType()) {
+            case PLAYER: {
+                // not valid
             }
-        } else {
-            count[4]++;
+            case SMALL_FIREBALL:
+            case FIREBALL:
+            case DROPPED_ITEM:
+            case EGG:
+            case THROWN_EXP_BOTTLE:
+            case SPLASH_POTION:
+            case SNOWBALL:
+            case ENDER_PEARL:
+            case ARROW: {
+                // projectile
+            }
+            case PRIMED_TNT:
+            case FALLING_BLOCK: {
+                // Block entities 
+            }
+            case ENDER_CRYSTAL:
+            case COMPLEX_PART:
+            case FISHING_HOOK:
+            case ENDER_SIGNAL:
+            case EXPERIENCE_ORB:
+            case LEASH_HITCH:
+            case FIREWORK:
+            case WEATHER:
+            case LIGHTNING:
+            case WITHER_SKULL:
+            case UNKNOWN: {
+                // non moving / unremovable
+                break;
+            }
+            case ITEM_FRAME:
+            case PAINTING:
+            case ARMOR_STAND: {
+                count[5]++;
+                // misc
+            }
+            case MINECART:
+            case MINECART_CHEST:
+            case MINECART_COMMAND:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_MOB_SPAWNER:
+            case MINECART_TNT:
+            case BOAT: {
+                count[4]++;
+                break;
+            }
+            case RABBIT:
+            case SHEEP:
+            case MUSHROOM_COW:
+            case OCELOT:
+            case PIG:
+            case HORSE:
+            case SQUID:
+            case VILLAGER:
+            case IRON_GOLEM:
+            case WOLF:
+            case CHICKEN:
+            case COW:
+            case SNOWMAN:
+            case BAT: {
+                // animal
+                count[3]++;
+                count[1]++;
+                break;
+            }
+            case BLAZE:
+            case CAVE_SPIDER:
+            case CREEPER:
+            case ENDERMAN:
+            case ENDERMITE:
+            case ENDER_DRAGON:
+            case GHAST:
+            case GIANT:
+            case GUARDIAN:
+            case MAGMA_CUBE:
+            case PIG_ZOMBIE:
+            case SILVERFISH:
+            case SKELETON:
+            case SLIME:
+            case SPIDER:
+            case WITCH:
+            case WITHER:
+            case ZOMBIE: {
+                // monster
+                count[3]++;
+                count[2]++;
+                break;
+            }
+            default: {
+                if (entity instanceof Creature) {
+                    count[3]++;
+                    if (entity instanceof Animals) {
+                        count[1]++;
+                    } else {
+                        count[2]++;
+                    }
+                } else {
+                    count[4]++;
+                }
+            }
         }
     }
     

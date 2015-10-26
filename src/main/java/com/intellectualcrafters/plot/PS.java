@@ -1607,7 +1607,7 @@ public class PS {
         "no-worldedit", "redstone", "keep");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
         final List<String> stringFlags = Arrays.asList("greeting", "farewell");
-        final List<String> intFlags = Arrays.asList("entity-cap", "mob-cap", "animal-cap", "hostile-cap", "vehicle-cap", "music");
+        final List<String> intFlags = Arrays.asList("misc-cap", "entity-cap", "mob-cap", "animal-cap", "hostile-cap", "vehicle-cap", "music");
         for (final String flag : stringFlags) {
             FlagManager.addFlag(new AbstractFlag(flag));
         }

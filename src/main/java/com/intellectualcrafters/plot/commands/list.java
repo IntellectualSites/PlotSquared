@@ -46,7 +46,13 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "list", aliases = { "l" }, description = "List plots", permission = "plots.list", category = CommandCategory.INFO)
+@CommandDeclaration(
+command = "list",
+aliases = { "l" },
+description = "List plots",
+permission = "plots.list",
+category = CommandCategory.INFO,
+usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done> [#]")
 public class list extends SubCommand {
     
     private String[] getArgumentList(final PlotPlayer player) {
