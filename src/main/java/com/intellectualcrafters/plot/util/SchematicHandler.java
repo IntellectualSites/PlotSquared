@@ -466,7 +466,7 @@ public abstract class SchematicHandler {
                 }
             }
         }
-        final File file = new File(PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + (name.endsWith(name) ? "" : ".schematic"));
+        final File file = new File(PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + (name.endsWith(".schematic") ? "" : ".schematic"));
         return getSchematic(file);
     }
     

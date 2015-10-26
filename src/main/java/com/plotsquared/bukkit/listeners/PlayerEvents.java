@@ -837,7 +837,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBD(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
-        
         final String world;
         if (player == null) {
             final Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
@@ -867,7 +866,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
@@ -881,7 +879,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
                 return;
             }
@@ -892,7 +889,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return;
         }
         if (MainUtil.isPlotArea(loc)) {
-            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_ROAD);
             event.setCancelled(true);
         }
     }
