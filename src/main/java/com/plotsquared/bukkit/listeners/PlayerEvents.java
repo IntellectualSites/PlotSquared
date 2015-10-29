@@ -1789,9 +1789,22 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     public void onVehicleCreate(final VehicleCreateEvent event) {
         final Vehicle entity = event.getVehicle();
         final Location loc = BukkitUtil.getLocation(entity);
-        final Plot plot = MainUtil.getPlot(loc);
+        if (loc.getPlotWorld() == null) {
+            return;
+        }
+        Plot plot = loc.getPlot();
+        if (plot == null) {
+            if (MainUtil.isPlotArea(loc)) {
+                entity.remove();
+            }
+            return;
+        }
         if (checkEntity(entity, plot)) {
             entity.remove();
+            return;
+        }
+        if (Settings.KILL_ROAD_VEHICLES) {
+            entity.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, plot));
         }
     }
     

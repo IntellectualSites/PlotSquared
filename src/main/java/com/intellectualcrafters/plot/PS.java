@@ -146,14 +146,12 @@ public class PS {
             PLATFORM = platform;
             EconHandler.manager = IMP.getEconomyHandler();
             if (getJavaVersion() < 1.7) {
-                log(C.PREFIX.s() + "&cYour java version is outdated. Please update to at least 1.7.");
-                // Didn't know of any other link :D
-                log(C.PREFIX.s() + "&cURL: &6https://java.com/en/download/index.jsp");
+                log(C.CONSOLE_JAVA_OUTDATED_1_7);
                 IMP.disable();
                 return;
             }
             if (getJavaVersion() < 1.8) {
-                log(C.PREFIX.s() + "&cIt's really recommended to run Java 1.8, as it increases performance");
+                log(C.CONSOLE_JAVA_OUTDATED_1_8);
             }
             TASK = IMP.getTaskManager();
             if (C.ENABLED.s().length() > 0) {
@@ -185,7 +183,7 @@ public class PS {
             if (Settings.METRICS) {
                 IMP.startMetrics();
             } else {
-                log("&dUsing metrics will allow us to improve the plugin, please consider it :)");
+                log(C.CONSOLE_PLEASE_ENABLE_METRICS);
             }
             IMP.startMetrics();
             if (Settings.CHUNK_PROCESSOR) {

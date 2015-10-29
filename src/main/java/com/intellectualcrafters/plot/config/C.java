@@ -91,6 +91,12 @@ public enum C {
     PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
     PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit", "static.permissions"),
     /*
+     * Static console
+     */
+    CONSOLE_JAVA_OUTDATED_1_7("&cYour java version is outdated. Please update to at least 1.7.\n&cURL: &6https://java.com/en/download/index.jsp","static.console"),
+    CONSOLE_JAVA_OUTDATED_1_8("&cIt's really recommended to run Java 1.8, as it increases performance","static.console"),
+    CONSOLE_PLEASE_ENABLE_METRICS("&dUsing metrics will allow us to improve the plugin, please consider it :)","static.console"),
+    /*
      * Confirm
      */
     FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),

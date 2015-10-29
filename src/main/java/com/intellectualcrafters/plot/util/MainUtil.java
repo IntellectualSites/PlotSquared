@@ -661,7 +661,6 @@ public class MainUtil {
         plot = plot.getBasePlot(false);
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.DEFAULT_HOME != null) {
-            final PlotManager manager = PS.get().getPlotManager(plot.world);
             final int x;
             final int z;
             if ((plotworld.DEFAULT_HOME.x == Integer.MAX_VALUE) && (plotworld.DEFAULT_HOME.z == Integer.MAX_VALUE)) {
@@ -675,7 +674,7 @@ public class MainUtil {
                 x = bot.getX() + plotworld.DEFAULT_HOME.x;
                 z = bot.getZ() + plotworld.DEFAULT_HOME.z;
             }
-            final int y = Math.max(getHeighestBlock(plot.world, x, z), manager.getSignLoc(PS.get().getPlotWorld(plot.world), plot).getY());
+            final int y = getHeighestBlock(plot.world, x, z);
             return new Location(plot.world, x, y + 1, z);
         }
         // Side

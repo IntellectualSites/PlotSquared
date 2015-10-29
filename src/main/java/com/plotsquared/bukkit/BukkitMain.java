@@ -3,6 +3,7 @@ package com.plotsquared.bukkit;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,6 +29,7 @@ import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
@@ -244,8 +247,20 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     if (!Settings.KILL_ROAD_VEHICLES) {
                                         continue;
                                     }
-                                    final Location loc = entity.getLocation();
-                                    if (MainUtil.isPlotRoad(BukkitUtil.getLocation(loc))) {
+                                    com.intellectualcrafters.plot.object.Location loc = BukkitUtil.getLocation(entity.getLocation());
+                                    Plot plot = loc.getPlot();
+                                    if (plot == null) {
+                                        if (MainUtil.isPlotAreaAbs(loc)) {
+                                            entity.remove();
+                                        }
+                                        return;
+                                    }
+                                    List<MetadataValue> meta = entity.getMetadata("plot");
+                                    if (meta.size() == 0) {
+                                        return;
+                                    }
+                                    Plot origin = (Plot) meta.get(0).value();
+                                    if (!plot.equals(origin.getBasePlot(false))) {
                                         entity.remove();
                                     }
                                     break;
