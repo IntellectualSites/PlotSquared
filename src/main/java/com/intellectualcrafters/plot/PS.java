@@ -1843,7 +1843,7 @@ public class PS {
         options.put("chat.fancy", Settings.FANCY_CHAT);
         options.put("metrics", true);
         options.put("debug", true);
-        options.put("update-notifications", true);
+        options.put("update-notifications", Settings.UPDATE_NOTIFICATIONS);
         
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {

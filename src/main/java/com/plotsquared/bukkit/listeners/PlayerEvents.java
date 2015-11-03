@@ -1830,16 +1830,21 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                         e.setCancelled(true);
                     }
                 } else if (!plot.isAdded(pp.getUUID())) {
-                    if (FlagManager.isPlotFlagTrue(plot, C.FLAG_HANGING_PLACE.s())) {
+                    if (!FlagManager.isPlotFlagTrue(plot, C.FLAG_HANGING_PLACE.s())) {
+                        if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                            if (MainUtil.isPlotArea(loc)) {
+                                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                                e.setCancelled(true);
+                            }
+                        }
                         return;
                     }
-                    if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
-                        if (MainUtil.isPlotArea(loc)) {
-                            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
-                            e.setCancelled(true);
-                        }
-                    }
                 }
+                if (checkEntity(e.getEntity(), plot)) {
+                    e.setCancelled(true);
+                    return;
+                }
+
             }
         }
     }

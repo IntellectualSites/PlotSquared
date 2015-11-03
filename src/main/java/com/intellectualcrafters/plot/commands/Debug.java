@@ -23,7 +23,6 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.Lag;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -55,9 +54,6 @@ public class Debug extends SubCommand {
             }
             information.append(header);
             information.append(getSection(section, "Lag / TPS"));
-            information.append(getLine(line, "Ticks Per Second", Lag.getTPS()));
-            information.append(getLine(line, "Lag Percentage", (int) Lag.getPercentage() + "%"));
-            information.append(getLine(line, "TPS Percentage", (int) Lag.getFullPercentage() + "%"));
             information.append(getSection(section, "PlotWorld"));
             information.append(getLine(line, "Plot Worlds", worlds));
             information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
