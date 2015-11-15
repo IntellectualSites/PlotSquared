@@ -81,7 +81,7 @@ public abstract class PlotPlayer implements CommandCaller {
      * @param key
      */
     public Object deleteMeta(final String key) {
-        return meta.remove(key);
+        return meta == null ? null : meta.remove(key);
     }
     
     /**
