@@ -275,6 +275,9 @@ public abstract class PlotWorld {
                 config.set(option, options.get(option));
             }
         }
+        if (!config.contains("flags")) {
+            config.set("flags.use", "63,64,68,69,71,77,96,143,167,193,194,195,196,197,77,143,69,70,72,147,148,107,183,184,185,186,187,132");
+        }
     }
     
     /**

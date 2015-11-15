@@ -128,7 +128,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
  * Player Events involving plots
  *
  */
-@SuppressWarnings({ "unused", "deprecation", "unchecked" })
+@SuppressWarnings({ "deprecation", "unchecked" })
 public class PlayerEvents extends com.plotsquared.listener.PlotListener implements Listener {
     
     private boolean pistonBlocks = true;
@@ -315,11 +315,11 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {
-        final String message = event.getMessage().toLowerCase().replaceAll("/", "").trim();
-        if (message.length() == 0) {
+        String msg = event.getMessage().toLowerCase().replaceAll("/", "").trim();
+        if (msg.length() == 0) {
             return;
         }
-        final String[] split = message.split(" ");
+        final String[] split = msg.split(" ");
         final PluginCommand cmd = Bukkit.getServer().getPluginCommand(split[0]);
         if (cmd == null) {
             if (split[0].equals("plotme") || split[0].equals("ap")) {
@@ -330,78 +330,65 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
                 }
                 event.setCancelled(true);
+                return;
             }
         }
-        
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        pp.getLocation();
-        if (!PS.get().isPlotWorld(BukkitUtil.getWorld(player))) {
-            return;
-        }
-        
-        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        Plot plot = pp.getCurrentPlot();
         if (plot == null) {
             return;
         }
-        
-        Flag flag;
-        if (((flag = FlagManager.getPlotFlagRaw(plot, "blocked-cmds")) != null) && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
-            final List<String> v = (List<String>) flag.getValue();
-            
-            String msg = event.getMessage().toLowerCase().replaceFirst("/", "");
-            
-            final String[] parts = msg.split(" ");
-            String c = parts[0];
-            if (parts[0].contains(":")) {
-                c = parts[0].split(":")[1];
-                msg = msg.replace(parts[0].split(":")[0] + ":", "");
+        Flag flag = FlagManager.getPlotFlagRaw(plot, "blocked-cmds");
+        if (flag == null || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
+            return;
+        }
+        final List<String> v = (List<String>) flag.getValue();
+        final String[] parts = msg.split(" ");
+        String c = parts[0];
+        if (parts[0].contains(":")) {
+            c = parts[0].split(":")[1];
+            msg = msg.replace(parts[0].split(":")[0] + ":", "");
+        }
+        final String l = c;
+        final List<String> aliases = new ArrayList<>();
+        for (final HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
+            if (c.equals(cmdLabel.getName())) {
+                break;
             }
-            
-            final String l = c;
-            
-            final List<String> aliases = new ArrayList<>();
-            
-            for (final HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
-                if (c.equals(cmdLabel.getName())) {
-                    break;
-                }
-                PluginCommand p;
-                final String label = cmdLabel.getName().replaceFirst("/", "");
-                if (aliases.contains(label)) {
-                    continue;
-                }
-                if ((p = Bukkit.getPluginCommand(label)) != null) {
-                    for (String a : p.getAliases()) {
-                        if (aliases.contains(a)) {
-                            continue;
-                        }
-                        aliases.add(a);
-                        a = a.replaceFirst("/", "");
-                        if (!a.equals(label) && a.equals(c)) {
-                            c = label;
-                            break;
-                        }
+            PluginCommand p;
+            final String label = cmdLabel.getName().replaceFirst("/", "");
+            if (aliases.contains(label)) {
+                continue;
+            }
+            if ((p = Bukkit.getPluginCommand(label)) != null) {
+                for (String a : p.getAliases()) {
+                    if (aliases.contains(a)) {
+                        continue;
+                    }
+                    aliases.add(a);
+                    a = a.replaceFirst("/", "");
+                    if (!a.equals(label) && a.equals(c)) {
+                        c = label;
+                        break;
                     }
                 }
             }
-            
-            if (!l.equals(c)) {
-                msg = msg.replace(l, c);
+        }
+        if (!l.equals(c)) {
+            msg = msg.replace(l, c);
+        }
+        for (final String s : v) {
+            Pattern pattern;
+            if (!RegExUtil.compiledPatterns.containsKey(s)) {
+                RegExUtil.compiledPatterns.put(s, ((pattern = Pattern.compile(s))));
+            } else {
+                pattern = RegExUtil.compiledPatterns.get(s);
             }
-            
-            for (final String s : v) {
-                Pattern pattern;
-                if (!RegExUtil.compiledPatterns.containsKey(s)) {
-                    RegExUtil.compiledPatterns.put(s, ((pattern = Pattern.compile(s))));
-                } else {
-                    pattern = RegExUtil.compiledPatterns.get(s);
-                }
-                if (pattern.matcher(msg).matches()) {
-                    MainUtil.sendMessage(pp, C.COMMAND_BLOCKED);
-                    event.setCancelled(true);
-                    return;
-                }
+            if (pattern.matcher(msg).matches()) {
+                MainUtil.sendMessage(pp, C.COMMAND_BLOCKED);
+                event.setCancelled(true);
+                return;
             }
         }
     }

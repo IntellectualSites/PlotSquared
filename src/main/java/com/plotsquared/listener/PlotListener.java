@@ -227,9 +227,7 @@ public class PlotListener {
                     pp.setFlight(false);
                 }
             }
-            System.out.print("CHECKING TIME");
             if (FlagManager.getPlotFlagRaw(plot, "time") != null) {
-                System.out.print("RESETTING TIEM");
                 pp.setTime(Long.MAX_VALUE);
             }
             if (FlagManager.getPlotFlagRaw(plot, "weather") != null) {
