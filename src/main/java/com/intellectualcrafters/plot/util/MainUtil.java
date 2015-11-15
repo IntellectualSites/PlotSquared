@@ -563,6 +563,9 @@ public class MainUtil {
     }
     
     public static boolean isPlotAreaAbs(final Location location) {
+        if (!Settings.ENABLE_CLUSTERS) {
+            return true;
+        }
         final PlotWorld plotworld = PS.get().getPlotWorld(location.getWorld());
         if (plotworld == null) {
             return false;
@@ -586,6 +589,9 @@ public class MainUtil {
     }
     
     public static boolean isPlotArea(final Plot plot) {
+        if (!Settings.ENABLE_CLUSTERS) {
+            return true;
+        }
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.TYPE == 2) {
             return plot.getCluster() != null;

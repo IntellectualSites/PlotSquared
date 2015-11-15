@@ -1,7 +1,6 @@
 package com.plotsquared.sponge.util;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
@@ -105,7 +104,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
         final Player player = sp.player;
         if (player.isViewingInventory()) {
             final CarriedInventory<? extends Carrier> inventory = player.getInventory();
-            return inv.getTitle().equals(inventory.getName().getTranslation().get(Locale.ENGLISH));
+            return inv.getTitle().equals(inventory.getName().getId()); // TODO getId()
         }
         return false;
     }

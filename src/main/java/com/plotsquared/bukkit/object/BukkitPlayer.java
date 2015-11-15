@@ -262,7 +262,11 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public void setTime(final long time) {
-        player.setPlayerTime(time, false);
+        if (time != Long.MAX_VALUE) {
+            player.setPlayerTime(time, false);
+        } else {
+            player.resetPlayerTime();
+        }
     }
     
     @Override

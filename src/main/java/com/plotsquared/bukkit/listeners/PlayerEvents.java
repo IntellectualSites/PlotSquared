@@ -92,7 +92,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-import org.spongepowered.api.entity.living.animal.Animal;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -284,18 +283,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (!MainUtil.isPlotArea(loc)) {
             return;
         }
+        // 
         final ProjectileSource shooter = entity.getShooter();
-        if (shooter instanceof BlockProjectileSource) {
-            if (plot == null) {
-                entity.remove();
-                return;
-            }
-            final Location sLoc = BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
-            final Plot sPlot = MainUtil.getPlot(sLoc);
-            if ((sPlot == null) || !PlotHandler.sameOwners(plot, sPlot)) {
-                entity.remove();
-            }
-        } else if ((shooter instanceof Player)) {
+        if ((shooter instanceof Player)) {
             final PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_PROJECTILE_UNOWNED)) {
@@ -310,6 +300,16 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return;
             }
             entity.remove();
+        } else if (!(shooter instanceof Entity) && shooter != null) {
+            if (plot == null) {
+                entity.remove();
+                return;
+            }
+            final Location sLoc = BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
+            final Plot sPlot = MainUtil.getPlot(sLoc);
+            if ((sPlot == null) || !PlotHandler.sameOwners(plot, sPlot)) {
+                entity.remove();
+            }
         }
     }
     
@@ -453,7 +453,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASSED);
             }
         }
-        if ((PS.get().update != null) && Permissions.hasPermission(pp, C.PERMISSION_ADMIN) && Settings.UPDATE_NOTIFICATIONS) {
+        if ((PS.get().update != null) && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
@@ -737,9 +737,13 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         
+
         // Delete last location
         pp.deleteMeta("location");
-        pp.deleteMeta("lastplot");
+        Plot plot = (Plot) pp.deleteMeta("lastplot");
+        if (plot != null) {
+            plotExit(pp, plot);
+        }
         
         if (BukkitMain.worldEdit != null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_WORLDEDIT_BYPASS)) {
@@ -1025,13 +1029,16 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (blocks.size() == 0) {
             return;
         }
-        final Plot origin = MainUtil.getPlot(BukkitUtil.getLocation(blocks.get(0).getLocation()));
-            if (origin == null) {
-            e.setCancelled(true);
-            return;
+        Location loc = BukkitUtil.getLocation(blocks.get(0).getLocation());
+        final Plot origin = MainUtil.getPlot(loc);
+        if (origin == null) {
+            if (MainUtil.isPlotAreaAbs(null)) {
+                e.setCancelled(true);
+                return;
+            }
         }
         for (int i = blocks.size() - 1; i >= 0; i--) {
-            final Location loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
+            loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
             final Plot plot = MainUtil.getPlot(loc);
             if (!Objects.equals(plot, origin)) {
                 e.getBlocks().remove(i);
@@ -1438,7 +1445,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 default: {
                     String[] types;
                     if (entity instanceof LivingEntity) {
-                        if (entity instanceof Animal) {
+                        if (entity instanceof Animals) {
                             types = new String[] { "entity-cap", "mob-cap", "animal-cap" };
                         } else if (entity instanceof Monster) {
                             types = new String[] { "entity-cap", "mob-cap", "hostile-cap" };

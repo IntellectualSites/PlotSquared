@@ -225,6 +225,7 @@ public class SpongePlayer extends PlotPlayer {
     @Override
     public void setTime(final long time) {
         // TODO Auto-generated method stub
+        if (time != Long.MAX_VALUE) {} else {}
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     

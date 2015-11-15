@@ -185,7 +185,7 @@ public class SpongeMetrics {
             
             // Begin hitting the server with glorious data
             final TaskBuilder builder = game.getScheduler().createTaskBuilder();
-            builder.async().interval(TimeUnit.MINUTES.toMillis(PING_INTERVAL)).execute(new Runnable() {
+            builder.async().interval(PING_INTERVAL, TimeUnit.MINUTES).execute(new Runnable() {
                 
                 private boolean firstPost = true;
                 

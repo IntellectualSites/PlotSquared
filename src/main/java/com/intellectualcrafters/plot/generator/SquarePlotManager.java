@@ -11,7 +11,6 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * A plot manager with a square grid layout, with square shaped plots
@@ -93,83 +92,87 @@ public abstract class SquarePlotManager extends GridPlotManager {
     
     @Override
     public PlotId getPlotId(final PlotWorld plotworld, int x, final int y, int z) {
-        final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
-        if (plotworld == null) {
-            return null;
-        }
-        x -= dpw.ROAD_OFFSET_X;
-        z -= dpw.ROAD_OFFSET_Z;
-        final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
-        int pathWidthLower;
-        final int end;
-        if (dpw.ROAD_WIDTH == 0) {
-            pathWidthLower = -1;
-            end = dpw.PLOT_WIDTH;
-        } else {
-            if ((dpw.ROAD_WIDTH % 2) == 0) {
-                pathWidthLower = (dpw.ROAD_WIDTH / 2) - 1;
-            } else {
-                pathWidthLower = dpw.ROAD_WIDTH / 2;
+        try {
+            final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
+            if (plotworld == null) {
+                return null;
             }
-            end = pathWidthLower + dpw.PLOT_WIDTH;
+            x -= dpw.ROAD_OFFSET_X;
+            z -= dpw.ROAD_OFFSET_Z;
+            final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
+            int pathWidthLower;
+            final int end;
+            if (dpw.ROAD_WIDTH == 0) {
+                pathWidthLower = -1;
+                end = dpw.PLOT_WIDTH;
+            } else {
+                if ((dpw.ROAD_WIDTH % 2) == 0) {
+                    pathWidthLower = (dpw.ROAD_WIDTH / 2) - 1;
+                } else {
+                    pathWidthLower = dpw.ROAD_WIDTH / 2;
+                }
+                end = pathWidthLower + dpw.PLOT_WIDTH;
+            }
+            int dx;
+            int dz;
+            int rx;
+            int rz;
+            if (x < 0) {
+                dx = (x / size);
+                rx = size + (x % size);
+            } else {
+                dx = (x / size) + 1;
+                rx = (x % size);
+            }
+            if (z < 0) {
+                dz = (z / size);
+                rz = size + (z % size);
+            } else {
+                dz = (z / size) + 1;
+                rz = (z % size);
+            }
+            PlotId id = new PlotId(dx, dz);
+            boolean[] merged = new boolean[] { (rz <= pathWidthLower), (rx > end), (rz > end), (rx <= pathWidthLower) };
+            int hash = MainUtil.hash(merged);
+            // Not merged, and no need to check if it is
+            if (hash == 0) {
+                return id;
+            }
+            Plot plot = PS.get().getPlot(plotworld.worldname, id);
+            // Not merged, and standing on road
+            if (plot == null) {
+                return null;
+            }
+            switch (hash) {
+                case 8:
+                    // north
+                    return plot.getMerged(0) ? id : null;
+                case 4:
+                    // east
+                    return plot.getMerged(1) ? id : null;
+                case 2:
+                    // south
+                    return plot.getMerged(2) ? id : null;
+                case 1:
+                    // west
+                    return plot.getMerged(3) ? id : null;
+                case 12:
+                    // northest
+                    return plot.getMerged(4) ? id : null;
+                case 6:
+                    // southeast
+                    return plot.getMerged(5) ? id : null;
+                case 3:
+                    // southwest
+                    return plot.getMerged(6) ? id : null;
+                case 9:
+                    // northwest
+                    return plot.getMerged(7) ? id : null;
+            }
+            PS.debug("invalid location: " + merged);
+        } catch (Exception e) {
+            PS.debug("Invalid plot / road width in settings.yml for world: " + plotworld.worldname);
         }
-        int dx;
-        int dz;
-        int rx;
-        int rz;
-        if (x < 0) {
-            dx = (x / size);
-            rx = size + (x % size);
-        } else {
-            dx = (x / size) + 1;
-            rx = (x % size);
-        }
-        if (z < 0) {
-            dz = (z / size);
-            rz = size + (z % size);
-        } else {
-            dz = (z / size) + 1;
-            rz = (z % size);
-        }
-        PlotId id = new PlotId(dx, dz);
-        boolean[] merged = new boolean[] {(rz <= pathWidthLower), (rx > end), (rz > end), (rx <= pathWidthLower)};
-        int hash = MainUtil.hash(merged);
-        // Not merged, and no need to check if it is
-        if (hash == 0) {
-            return id;
-        }
-        Plot plot = PS.get().getPlot(plotworld.worldname, id);
-        // Not merged, and standing on road
-        if (plot == null) {
-            return null;
-        }
-        switch (hash) {
-            case 8:
-                // north
-                return plot.getMerged(0) ? id : null;
-            case 4:
-                // east
-                return plot.getMerged(1) ? id : null;
-            case 2:
-                // south
-                return plot.getMerged(2) ? id : null;
-            case 1:
-                // west
-                return plot.getMerged(3) ? id : null;
-            case 12:
-                // northest
-                return plot.getMerged(4) ? id : null;
-            case 6:
-                // southeast
-                return plot.getMerged(5) ? id : null;
-            case 3:
-                // southwest
-                return plot.getMerged(6) ? id : null;
-            case 9:
-                // northwest
-                return plot.getMerged(7) ? id : null;
-        }
-        PS.debug("invalid location: " + merged);
         return null;
     }
     

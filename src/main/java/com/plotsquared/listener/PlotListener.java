@@ -20,7 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.listener;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -228,7 +227,9 @@ public class PlotListener {
                     pp.setFlight(false);
                 }
             }
+            System.out.print("CHECKING TIME");
             if (FlagManager.getPlotFlagRaw(plot, "time") != null) {
+                System.out.print("RESETTING TIEM");
                 pp.setTime(Long.MAX_VALUE);
             }
             if (FlagManager.getPlotFlagRaw(plot, "weather") != null) {
@@ -241,9 +242,5 @@ public class PlotListener {
             }
         }
         return true;
-    }
-    
-    public boolean getFlagValue(final String value) {
-        return Arrays.asList("true", "on", "enabled", "yes").contains(value.toLowerCase());
     }
 }

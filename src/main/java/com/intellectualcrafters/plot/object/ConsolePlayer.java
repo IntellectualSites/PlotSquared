@@ -129,8 +129,8 @@ public class ConsolePlayer extends PlotPlayer {
     }
     
     @Override
-    public void deleteMeta(final String key) {
-        meta.remove(key);
+    public Object deleteMeta(final String key) {
+        return meta.remove(key);
     }
     
     @Override

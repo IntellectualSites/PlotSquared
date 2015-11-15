@@ -90,6 +90,7 @@ public enum C {
     PERMISSION_ADMIN_INTERACT_UNOWNED("plots.admin.interact.unowned", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
     PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit", "static.permissions"),
+    PERMISSION_ADMIN_UPDATE("plots.admin.command.update", "static.permissions"),
     /*
      * Static console
      */

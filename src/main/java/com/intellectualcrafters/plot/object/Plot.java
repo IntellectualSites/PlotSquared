@@ -1013,7 +1013,7 @@ public class Plot {
     public boolean removeDenied(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : getDenied()) {
+            for (UUID other : new HashSet<>(getDenied())) {
                 result = result || PlotHandler.removeDenied(this, other);
             }
             return result;
@@ -1029,7 +1029,7 @@ public class Plot {
     public boolean removeTrusted(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : getTrusted()) {
+            for (UUID other : new HashSet<>(getTrusted())) {
                 result = result || PlotHandler.removeTrusted(this, other);
             }
             return result;
@@ -1045,7 +1045,7 @@ public class Plot {
     public boolean removeMember(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : getMembers()) {
+            for (UUID other : new HashSet<>(getMembers())) {
                 result = result || PlotHandler.removeMember(this, other);
             }
             return result;

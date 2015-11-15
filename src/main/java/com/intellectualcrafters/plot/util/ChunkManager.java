@@ -107,12 +107,11 @@ public abstract class ChunkManager {
     public abstract void unloadChunk(final String world, final ChunkLoc loc, final boolean save, final boolean safe);
     
     public Set<ChunkLoc> getChunkChunks(final String world) {
-        final String directory = PS.get().IMP.getWorldContainer() + File.separator + world + File.separator + "region";
-        final File folder = new File(directory);
+        final File folder = new File(PS.get().IMP.getWorldContainer(), world + File.separator + "region");
         final File[] regionFiles = folder.listFiles();
         final HashSet<ChunkLoc> chunks = new HashSet<>();
         if (regionFiles == null) {
-            throw new RuntimeException("Could not find worlds folder.");
+            throw new RuntimeException("Could not find worlds folder: " + folder + " ? (no read access?)");
         }
         for (final File file : regionFiles) {
             final String name = file.getName();

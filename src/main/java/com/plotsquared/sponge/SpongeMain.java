@@ -236,7 +236,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         server = game.getServer();
         //
         
-        PS.instance = new PS(this, "Sponge");
+        new PS(this, "Sponge");
         
         registerBlocks();
         

@@ -19,7 +19,7 @@ public class SpongeTaskManager extends TaskManager {
     public int taskRepeat(final Runnable r, final int interval) {
         final int val = i.incrementAndGet();
         final TaskBuilder builder = SpongeMain.THIS.getGame().getScheduler().createTaskBuilder();
-        final TaskBuilder built = builder.delay(interval).interval(interval).execute(r);
+        final TaskBuilder built = builder.delayTicks(interval).intervalTicks(interval).execute(r);
         final Task task = built.submit(SpongeMain.THIS.getPlugin());
         tasks.put(val, task);
         return val;
@@ -29,7 +29,7 @@ public class SpongeTaskManager extends TaskManager {
     public int taskRepeatAsync(final Runnable r, final int interval) {
         final int val = i.incrementAndGet();
         final TaskBuilder builder = SpongeMain.THIS.getGame().getScheduler().createTaskBuilder();
-        final TaskBuilder built = builder.delay(interval).async().interval(interval).execute(r);
+        final TaskBuilder built = builder.delayTicks(interval).async().intervalTicks(interval).execute(r);
         final Task task = built.submit(SpongeMain.THIS.getPlugin());
         tasks.put(val, task);
         return val;
@@ -50,13 +50,13 @@ public class SpongeTaskManager extends TaskManager {
     @Override
     public void taskLater(final Runnable r, final int delay) {
         final TaskBuilder builder = SpongeMain.THIS.getGame().getScheduler().createTaskBuilder();
-        builder.delay(delay).execute(r).submit(SpongeMain.THIS.getPlugin());
+        builder.delayTicks(delay).execute(r).submit(SpongeMain.THIS.getPlugin());
     }
     
     @Override
     public void taskLaterAsync(final Runnable r, final int delay) {
         final TaskBuilder builder = SpongeMain.THIS.getGame().getScheduler().createTaskBuilder();
-        builder.async().delay(delay).execute(r).submit(SpongeMain.THIS.getPlugin());
+        builder.async().delayTicks(delay).execute(r).submit(SpongeMain.THIS.getPlugin());
     }
     
     @Override

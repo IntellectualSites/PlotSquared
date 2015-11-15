@@ -90,7 +90,7 @@ import com.sk89q.worldedit.WorldEdit;
 public class PS {
     
     // protected static:
-    public static PS instance;
+    private static PS instance;
     
     // private final:
     private final HashMap<String, PlotWorld> plotworlds = new HashMap<>();

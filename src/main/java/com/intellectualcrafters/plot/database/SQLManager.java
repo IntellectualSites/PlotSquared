@@ -575,9 +575,9 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt((i * 5) + 1, plot.id.x);
                 stmt.setInt((i * 5) + 2, plot.id.y);
                 try {
-                    stmt.setString((i * 4) + 3, plot.owner.toString());
+                    stmt.setString((i * 5) + 3, plot.owner.toString());
                 } catch (final Exception e) {
-                    stmt.setString((i * 4) + 3, everyone.toString());
+                    stmt.setString((i * 5) + 3, everyone.toString());
                 }
                 stmt.setString((i * 5) + 4, plot.world);
                 stmt.setTimestamp((i * 5) + 5, new Timestamp(plot.getTimestamp()));

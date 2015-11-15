@@ -31,7 +31,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
 command = "update",
-permission = "plots.admin",
+permission = "plots.admin.command.update",
 description = "Update PlotSquared",
 usage = "/plot update",
 requiredType = RequiredType.NONE,
