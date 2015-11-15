@@ -77,6 +77,9 @@ public class Rate extends SubCommand {
                                 v2 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
+                        if (v1 == v2) {
+                            return -0;
+                        }
                         return v2 > v1 ? 1 : -1;
                     }
                 });

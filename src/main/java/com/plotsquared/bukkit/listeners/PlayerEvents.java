@@ -1032,7 +1032,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         Location loc = BukkitUtil.getLocation(blocks.get(0).getLocation());
         final Plot origin = MainUtil.getPlot(loc);
         if (origin == null) {
-            if (MainUtil.isPlotAreaAbs(null)) {
+            if (MainUtil.isPlotAreaAbs(loc)) {
                 e.setCancelled(true);
                 return;
             }
