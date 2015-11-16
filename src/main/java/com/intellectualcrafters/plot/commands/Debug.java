@@ -53,7 +53,6 @@ public class Debug extends SubCommand {
                 worlds.append(world).append(" ");
             }
             information.append(header);
-            information.append(getSection(section, "Lag / TPS"));
             information.append(getSection(section, "PlotWorld"));
             information.append(getLine(line, "Plot Worlds", worlds));
             information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
