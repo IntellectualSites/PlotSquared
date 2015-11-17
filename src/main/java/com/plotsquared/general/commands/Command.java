@@ -70,11 +70,11 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
         this.requiredType = requiredType;
     }
     
-    final public RequiredType getRequiredType() {
+    public RequiredType getRequiredType() {
         return this.requiredType;
     }
     
-    final public void create() {
+    public void create() {
         final Annotation annotation = getClass().getAnnotation(CommandDeclaration.class);
         if (annotation == null) {
             throw new RuntimeException("Command does not have a CommandDeclaration");
@@ -91,13 +91,13 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
     }
     
     @Override
-    final public String toString() {
+    public String toString() {
         return this.command;
     }
     
     public abstract boolean onCommand(final E plr, final String[] arguments);
     
-    final public int handle(final E plr, final String[] args) {
+    public int handle(final E plr, final String[] args) {
         if (args.length == 0) {
             return super.handle(plr, "");
         }
@@ -109,7 +109,7 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
         return super.handle(plr, s);
     }
     
-    final public String getCommand() {
+    public String getCommand() {
         return this.command;
     }
     
@@ -120,7 +120,7 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
         return this.usage;
     }
     
-    final public String getPermission() {
+    public String getPermission() {
         if ((this.permission == null) || (this.permission.length() == 0)) {
             this.permission = "plots." + command.toLowerCase();
         }
@@ -131,18 +131,18 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
         return this.description;
     }
     
-    final public Set<String> getAliases() {
+    public Set<String> getAliases() {
         return this.aliases;
     }
     
-    final public Argument<?>[] getRequiredArguments() {
+    public Argument<?>[] getRequiredArguments() {
         if (this.requiredArguments == null) {
             return new Argument<?>[0];
         }
         return this.requiredArguments;
     }
     
-    final public CommandCategory getCategory() {
+    public CommandCategory getCategory() {
         if (category == null) {
             return CommandCategory.DEBUG;
         }
