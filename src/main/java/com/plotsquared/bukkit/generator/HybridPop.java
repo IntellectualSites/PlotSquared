@@ -38,9 +38,9 @@ public class HybridPop extends BukkitPlotPopulator {
     final short pathWidthUpper;
     private final HybridPlotWorld plotworld;
     Biome biome;
-    private long state;
     private boolean doFilling = false;
     private boolean doFloor = false;
+    private boolean cached;
     
     public HybridPop(final PlotWorld pw) {
         plotworld = (HybridPlotWorld) pw;
@@ -84,24 +84,10 @@ public class HybridPop extends BukkitPlotPopulator {
             }
             pathWidthUpper = (short) (pathWidthLower + plotsize + 1);
         }
-    }
-    
-    public final long nextLong() {
-        final long a = state;
-        state = xorShift64(a);
-        return a;
-    }
-    
-    public final long xorShift64(long a) {
-        a ^= (a << 21);
-        a ^= (a >>> 35);
-        a ^= (a << 4);
-        return a;
-    }
-    
-    public final int random(final int n) {
-        final long result = ((nextLong() >>> 32) * n) >> 32;
-        return (int) result;
+        
+        if (!this.plotworld.PLOT_SCHEMATIC) {
+            this.cached = true;
+        }
     }
     
     @Override
@@ -116,17 +102,24 @@ public class HybridPop extends BukkitPlotPopulator {
             sz += size;
         }
         
+        if (cached) {
+            if ((sx > pathWidthLower) && (sz > pathWidthLower) && ((sx + 15) < pathWidthUpper) && ((sz + 15) < pathWidthUpper)) {
+                random.state = 7919;
+            }
+        }
+
         if (requiredRegion != null) {
+            if (!doFloor && !doFilling && plotworld.G_SCH_STATE == null) {
+                return;
+            }
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
                     if (contains(requiredRegion, x, z)) {
+                        setBlock(x, (short) plotheight, z, plotfloors);
                         if (doFilling) {
                             for (short y = 1; y < plotheight; y++) {
                                 setBlock(x, y, z, filling);
                             }
-                        }
-                        if (doFloor) {
-                            setBlock(x, (short) plotheight, z, plotfloors);
                         }
                         if (plotworld.PLOT_SCHEMATIC) {
                             final int absX = ((sx + x) % size);
@@ -154,19 +147,19 @@ public class HybridPop extends BukkitPlotPopulator {
         }
         
         for (short x = 0; x < 16; x++) {
+            final int absX = ((sx + x) % size);
+            final boolean gx = absX > pathWidthLower;
+            final boolean lx = absX < pathWidthUpper;
             for (short z = 0; z < 16; z++) {
-                final int absX = ((sx + x) % size);
                 final int absZ = ((sz + z) % size);
-                final boolean gx = absX > pathWidthLower;
                 final boolean gz = absZ > pathWidthLower;
-                final boolean lx = absX < pathWidthUpper;
                 final boolean lz = absZ < pathWidthUpper;
                 // inside plot
                 if (gx && gz && lx && lz) {
+                    setBlock(x, (short) plotheight, z, plotfloors);
                     for (short y = 1; y < plotheight; y++) {
                         setBlock(x, y, z, filling);
                     }
-                    setBlock(x, (short) plotheight, z, plotfloors);
                     if (plotworld.PLOT_SCHEMATIC) {
                         final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Byte> blocks = plotworld.G_SCH_DATA.get(loc);
@@ -213,15 +206,6 @@ public class HybridPop extends BukkitPlotPopulator {
                     }
                 }
             }
-        }
-    }
-    
-    private void setBlock(final short x, final short y, final short z, final byte[] blkids) {
-        if (blkids.length == 1) {
-            setBlock(x, y, z, blkids[0]);
-        } else {
-            final int i = random(blkids.length);
-            setBlock(x, y, z, blkids[i]);
         }
     }
 }
