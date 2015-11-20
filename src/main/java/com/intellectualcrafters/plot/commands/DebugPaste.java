@@ -34,7 +34,7 @@ public class DebugPaste extends SubCommand {
                     try {
                         latestLOG = HastebinUtility.upload(new File(BukkitMain.THIS.getDirectory(), "../../logs/latest.log"));
                     } catch (final Exception e) {
-                        plr.sendMessage("&clatest.log is too big to be pasted, will ignore");
+                        plr.sendMessage(ChatColor.GOLD + "latest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }
                     final StringBuilder b = new StringBuilder();
