@@ -177,7 +177,7 @@ public class Set extends SubCommand {
         // components
         HashSet<String> components = new HashSet<String>(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.id)));
         if (components.contains(args[0].toLowerCase())) {
-            return component.onCommand(plr, Arrays.copyOfRange(args, 1, args.length));
+            return component.onCommand(plr, Arrays.copyOfRange(args, 0, args.length));
         }
         // flag
         {

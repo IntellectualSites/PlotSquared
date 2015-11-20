@@ -227,7 +227,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         final int sz = pos1.getZ() - 2;
         final int ez = pos2.getZ() + 2;
         MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(plotworld.worldname, ex, 255, ez - 1), new PlotBlock((short) 0, (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz + 1), new Location(plotworld.worldname, ex, dpw.PLOT_HEIGHT, ez - 1), new PlotBlock((short) 7,
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 0, sz + 1), new Location(plotworld.worldname, ex, 0, ez - 1), new PlotBlock((short) 7,
         (byte) 0));
         MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz + 1), new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
         MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, sz + 1), new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, ez - 1),

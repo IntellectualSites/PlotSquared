@@ -46,18 +46,29 @@ public class Owner extends SetCommand {
     public boolean set(PlotPlayer plr, Plot plot, String value) {
         HashSet<Plot> plots = MainUtil.getConnectedPlots(plot);
         final PlotPlayer other = UUIDHandler.getPlayer(value);
-        UUID uuid;
-        uuid = other == null ? (Permissions.hasPermission(plr, "plots.admin.command.setowner") ? UUIDHandler.getUUID(value, null) : null) : other.getUUID();
+        UUID uuid = null;
+        if (other == null) {
+            if (Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
+                if ((uuid = UUIDHandler.getUUID(value, null)) == null) {
+                    try {
+                        uuid = UUID.fromString(value);
+                    } catch (Exception e) {}
+                }
+            }
+        }
+        else {
+            other.getUUID();
+        }
         if (uuid == null) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, value);
             return false;
         }
-        String name = other == null ? UUIDHandler.getName(uuid) : other.getName();
+        String name = other == null ? MainUtil.getName(uuid) : other.getName();
         if (plot.isOwner(uuid)) {
             C.ALREADY_OWNER.send(plr);
             return false;
         }
-        if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
+        if (other != null && !Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
             final int size = plots.size();
             final int currentPlots = (Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(other) : MainUtil.getPlayerPlotCount(plot.world, other)) + size;
             if (currentPlots > MainUtil.getAllowedPlots(other)) {
