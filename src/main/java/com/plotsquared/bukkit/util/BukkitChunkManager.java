@@ -968,7 +968,11 @@ public class BukkitChunkManager extends ChunkManager {
         boolean doWhole = false;
         List<Entity> entities = null;
         if (size > 200) {
-            entities = world.getEntities();
+            for (Entity worldEntity : world.getEntities()) {
+                if (!(worldEntity instanceof Player)) {
+                    entities.add(worldEntity);
+                }
+            }
             if (entities.size() < (16 + ((size * size) / 64))) {
                 doWhole = true;
             }
