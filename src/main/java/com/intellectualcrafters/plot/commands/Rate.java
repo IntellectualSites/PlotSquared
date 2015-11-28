@@ -187,7 +187,7 @@ public class Rate extends SubCommand {
         final int rating;
         if (MathMan.isInteger(arg) && (arg.length() < 3) && (arg.length() > 0)) {
             rating = Integer.parseInt(arg);
-            if (rating > 10) {
+            if (rating > 10 || rating < 1) {
                 sendMessage(player, C.RATING_NOT_VALID);
                 return false;
             }
