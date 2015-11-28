@@ -55,7 +55,7 @@ public class Swap extends SubCommand {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
-        if (!plot1.getWorld().equals(plot2.getWorld())) {
+        if (!plot1.getWorld().isCompatible(plot2.getWorld())) {
             C.PLOTWORLD_INCOMPATIBLE.send(plr);
             return false;
         }

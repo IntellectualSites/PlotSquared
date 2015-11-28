@@ -67,7 +67,7 @@ public class Copy extends SubCommand {
             C.COMMAND_SYNTAX.send(plr, getUsage());
             return false;
         }
-        if (!plot1.getWorld().equals(plot2.getWorld())) {
+        if (!plot1.getWorld().isCompatible(plot2.getWorld())) {
             C.PLOTWORLD_INCOMPATIBLE.send(plr);
             return false;
         }

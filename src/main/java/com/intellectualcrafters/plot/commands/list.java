@@ -331,7 +331,7 @@ public class list extends SubCommand {
             }
         }
         if (sort) {
-            plots = PS.get().sortPlots(plots, SortType.DISTANCE_FROM_ORIGIN, world);
+            plots = PS.get().sortPlots(plots, SortType.CREATION_DATE_TIMESTAMP, world);
         }
         if (page < 0) {
             page = 0;

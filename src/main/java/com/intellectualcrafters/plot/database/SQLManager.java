@@ -1193,6 +1193,9 @@ public class SQLManager implements AbstractDB {
     
     @Override
     public void deleteSettings(final Plot plot) {
+        if (plot.settings == null) {
+            return;
+        }
         addPlotTask(plot, new UniqueStatement("delete_plot_settings") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
@@ -1301,7 +1304,6 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void delete(final Plot plot) {
-        PS.get().removePlot(plot.world, plot.id, false);
         deleteSettings(plot);
         deleteDenied(plot);
         deleteHelpers(plot);
@@ -1736,7 +1738,7 @@ public class SQLManager implements AbstractDB {
                         map = new ConcurrentHashMap<PlotId, Plot>();
                         newplots.put(plot.world, map);
                     }
-                    newplots.get(plot.world).put(plot.id, plot);
+                    map.put(plot.id, plot);
                 }
             }
             boolean invalidPlot = false;

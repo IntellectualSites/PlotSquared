@@ -416,7 +416,6 @@ public class Plot {
      */
     private Plot origin;
     
-    
     /**
      * The base plot is an arbitrary but specific connected plot. It is useful for the following:<br>
      *  - Merged plots need to be treated as a single plot for most purposes<br>
@@ -721,7 +720,7 @@ public class Plot {
      */
     public double getAverageRating() {
         double sum = 0;
-        final Collection<Rating> ratings = getBasePlot(false).getRatings().values();
+        final Collection<Rating> ratings = getRatings().values();
         for (final Rating rating : ratings) {
             sum += rating.getAverageRating();
         }

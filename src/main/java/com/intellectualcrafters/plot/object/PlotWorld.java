@@ -126,6 +126,10 @@ public abstract class PlotWorld {
         return true;
     }
     
+    public boolean isCompatible(PlotWorld plotworld) {
+        return equals(plotworld);
+    }
+
     /**
      * When a world is created, the following method will be called for each
      *

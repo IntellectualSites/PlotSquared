@@ -45,30 +45,32 @@ public class Owner extends SetCommand {
     @Override
     public boolean set(PlotPlayer plr, Plot plot, String value) {
         HashSet<Plot> plots = MainUtil.getConnectedPlots(plot);
-        final PlotPlayer other = UUIDHandler.getPlayer(value);
         UUID uuid = null;
-        if (other == null) {
-            if (Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
-                if ((uuid = UUIDHandler.getUUID(value, null)) == null) {
-                    try {
-                        uuid = UUID.fromString(value);
-                    } catch (Exception e) {}
-                }
-            }
-        }
-        else {
-            other.getUUID();
+        String name = null;
+        if (value.length() == 36) {
+            try {
+                uuid = UUID.fromString(value);
+                name = MainUtil.getName(uuid);
+            } catch (Exception e) {}
+        } else {
+            uuid = UUIDHandler.getUUID(value, null);
+            name = UUIDHandler.getName(uuid);
+            name = name == null ? value : name;
         }
         if (uuid == null) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER, value);
+            C.INVALID_PLAYER.send(plr, value);
             return false;
         }
-        String name = other == null ? MainUtil.getName(uuid) : other.getName();
         if (plot.isOwner(uuid)) {
             C.ALREADY_OWNER.send(plr);
             return false;
         }
-        if (other != null && !Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
+        PlotPlayer other = UUIDHandler.getPlayer(uuid);
+        if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
+            if (other == null) {
+                C.INVALID_PLAYER_OFFLINE.send(plr, value);
+                return false;
+            }
             final int size = plots.size();
             final int currentPlots = (Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(other) : MainUtil.getPlayerPlotCount(plot.world, other)) + size;
             if (currentPlots > MainUtil.getAllowedPlots(other)) {
@@ -76,6 +78,7 @@ public class Owner extends SetCommand {
                 return false;
             }
         }
+        
         plot.setOwner(uuid);
         MainUtil.setSign(name, plot);
         MainUtil.sendMessage(plr, C.SET_OWNER);
