@@ -120,19 +120,15 @@ public class FlagManager {
     }
     
     public static Flag getSettingFlag(final String world, final PlotSettings settings, final String id) {
-        System.out.print("GETTIGN FLAG!! " + (settings.flags.size() == 0) + " | " + ((settings.flags.get(id)) == null));
         Flag flag;
         if ((settings.flags.size() == 0) || ((flag = settings.flags.get(id)) == null)) {
             final PlotWorld plotworld = PS.get().getPlotWorld(world);
             if (plotworld == null) {
-                System.out.print("pw is nykl");
                 return null;
             }
             if (plotworld.DEFAULT_FLAGS.size() == 0) {
-                System.out.print("no default flags");
                 return null;
             }
-            System.out.print("DEFAULT_FLAGS: " + plotworld.DEFAULT_FLAGS + " | " + plotworld.DEFAULT_FLAGS.get(id));
             return plotworld.DEFAULT_FLAGS.get(id);
         }
         return flag;

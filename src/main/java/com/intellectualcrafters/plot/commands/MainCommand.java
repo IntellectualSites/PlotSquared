@@ -333,7 +333,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         }
         Command<PlotPlayer> cmd;
         if (label != null) {
-            cmd = getInstance().commands.get(label);
+            cmd = getInstance().commands.get(label.toLowerCase());
         } else {
             cmd = null;
         }
