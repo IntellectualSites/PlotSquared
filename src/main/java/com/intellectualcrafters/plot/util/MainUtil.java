@@ -1765,45 +1765,48 @@ public class MainUtil {
         if (!pw.ALLOW_SIGNS) {
             return null;
         }
-        Location loc = plot.getManager().getSignLoc(pw, plot);
-        ChunkManager.manager.loadChunk(loc.getWorld(), loc.getChunkLoc(), false);
-        String[] lines = BlockManager.manager.getSign(loc);
-        if (lines == null) {
-            return null;
-        }
-        loop:
-        for (int i = 4; i > 0; i--) {
-            String caption = C.valueOf("OWNER_SIGN_LINE_" + i).s();
-            int index = caption.indexOf("%plr%");
-            if (index == -1) {
-                continue;
-            }
-            String name = lines[i - 1].substring(index);
-            if (name.length() == 0) {
+        try {
+            Location loc = plot.getManager().getSignLoc(pw, plot);
+            ChunkManager.manager.loadChunk(loc.getWorld(), loc.getChunkLoc(), false);
+            String[] lines = BlockManager.manager.getSign(loc);
+            if (lines == null) {
                 return null;
             }
-            UUID owner = UUIDHandler.getUUID(name, null);
-            if (owner != null) {
-                plot.owner = owner;
-                break;
-            }
-            if (lines[i - 1].length() == 15) {
-                BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
-                for (Entry<StringWrapper, UUID> entry : map.entrySet()) {
-                    String key = entry.getKey().value;
-                    if (key.length() > name.length() && key.startsWith(name)) {
-                        plot.owner = entry.getValue();
-                        break loop;
+            loop: for (int i = 4; i > 0; i--) {
+                String caption = C.valueOf("OWNER_SIGN_LINE_" + i).s();
+                int index = caption.indexOf("%plr%");
+                if (index == -1) {
+                    continue;
+                }
+                String name = lines[i - 1].substring(index);
+                if (name.length() == 0) {
+                    return null;
+                }
+                UUID owner = UUIDHandler.getUUID(name, null);
+                if (owner != null) {
+                    plot.owner = owner;
+                    break;
+                }
+                if (lines[i - 1].length() == 15) {
+                    BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
+                    for (Entry<StringWrapper, UUID> entry : map.entrySet()) {
+                        String key = entry.getKey().value;
+                        if (key.length() > name.length() && key.startsWith(name)) {
+                            plot.owner = entry.getValue();
+                            break loop;
+                        }
                     }
                 }
+                plot.owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
+                break;
             }
-            plot.owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
-            break;
+            if (plot.owner != null) {
+                plot.create();
+            }
+            return plot.owner;
+        } catch (Exception e) {
+            return null;
         }
-        if (plot.owner != null) {
-            plot.create();
-        }
-        return plot.owner;
     }
     
     public static boolean isUnowned(final String world, final PlotId pos1, final PlotId pos2) {
