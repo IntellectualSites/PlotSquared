@@ -320,6 +320,9 @@ public class MainCommand extends CommandManager<PlotPlayer> {
     
     @Override
     public int handle(final PlotPlayer plr, final String input) {
+        // Clear perm caching //
+        plr.deleteMeta("perm");
+        ////////////////////////
         final String[] parts = input.split(" ");
         String[] args;
         String label;
@@ -333,7 +336,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         }
         Command<PlotPlayer> cmd;
         if (label != null) {
-            cmd = getInstance().commands.get(label);
+            cmd = getInstance().commands.get(label.toLowerCase());
         } else {
             cmd = null;
         }

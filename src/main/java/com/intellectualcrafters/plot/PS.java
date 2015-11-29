@@ -90,7 +90,7 @@ import com.sk89q.worldedit.WorldEdit;
 public class PS {
     
     // protected static:
-    public static PS instance;
+    private static PS instance;
     
     // private final:
     private final HashMap<String, PlotWorld> plotworlds = new HashMap<>();
@@ -699,7 +699,7 @@ public class PS {
         try {
             final ArrayList<Plot> overflow = new ArrayList<>();
             if ((range > limit) && (size > 1024)) {
-                plots = new Plot[Math.min((int) range, limit)];
+                plots = new Plot[limit];
                 final int factor = (int) ((range / limit));
                 for (int i = 0; i < size; i++) {
                     Plot plot = list.get(i);
@@ -846,7 +846,7 @@ public class PS {
      */
     @Deprecated
     public void sortPlotsByHash(final Plot[] input) {
-        final List<Plot>[] bucket = new ArrayList[64];
+        final List<Plot>[] bucket = new ArrayList[32];
         for (int i = 0; i < bucket.length; i++) {
             bucket[i] = new ArrayList<Plot>();
         }
@@ -856,19 +856,19 @@ public class PS {
             maxLength = true;
             for (final Plot i : input) {
                 tmp = MathMan.getPositiveId(i.hashCode()) / placement;
-                bucket[tmp & 63].add(i);
+                bucket[tmp & 31].add(i);
                 if (maxLength && (tmp > 0)) {
                     maxLength = false;
                 }
             }
             int a = 0;
-            for (int b = 0; b < 64; b++) {
+            for (int b = 0; b < 32; b++) {
                 for (final Plot i : bucket[b]) {
                     input[a++] = i;
                 }
                 bucket[b].clear();
             }
-            placement *= 64;
+            placement *= 32;
         }
     }
     
@@ -1068,8 +1068,8 @@ public class PS {
         return strings.toArray(new String[strings.size()]);
     }
     
-    private String lastWorld;
-    private Map<PlotId, Plot> lastMap;
+    private volatile String lastWorld;
+    private volatile Map<PlotId, Plot> lastMap;
     
     /**
      * Get a map of the plots for a world
@@ -1112,12 +1112,9 @@ public class PS {
             return null;
         }
         lastWorld = world;
-        if (plots.containsKey(world)) {
-            lastMap = plots.get(world);
-            if (lastMap != null) {
-                return lastMap.get(id);
-            }
-            return null;
+        lastMap = plots.get(world);
+        if (lastMap != null) {
+            return lastMap.get(id);
         }
         return null;
     }

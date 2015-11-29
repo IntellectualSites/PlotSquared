@@ -92,7 +92,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-import org.spongepowered.api.entity.living.animal.Animal;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -129,7 +128,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
  * Player Events involving plots
  *
  */
-@SuppressWarnings({ "unused", "deprecation", "unchecked" })
+@SuppressWarnings({ "deprecation", "unchecked" })
 public class PlayerEvents extends com.plotsquared.listener.PlotListener implements Listener {
     
     private boolean pistonBlocks = true;
@@ -284,18 +283,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (!MainUtil.isPlotArea(loc)) {
             return;
         }
+        // 
         final ProjectileSource shooter = entity.getShooter();
-        if (shooter instanceof BlockProjectileSource) {
-            if (plot == null) {
-                entity.remove();
-                return;
-            }
-            final Location sLoc = BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
-            final Plot sPlot = MainUtil.getPlot(sLoc);
-            if ((sPlot == null) || !PlotHandler.sameOwners(plot, sPlot)) {
-                entity.remove();
-            }
-        } else if ((shooter instanceof Player)) {
+        if ((shooter instanceof Player)) {
             final PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_PROJECTILE_UNOWNED)) {
@@ -310,16 +300,26 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return;
             }
             entity.remove();
+        } else if (!(shooter instanceof Entity) && shooter != null) {
+            if (plot == null) {
+                entity.remove();
+                return;
+            }
+            final Location sLoc = BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
+            final Plot sPlot = MainUtil.getPlot(sLoc);
+            if ((sPlot == null) || !PlotHandler.sameOwners(plot, sPlot)) {
+                entity.remove();
+            }
         }
     }
     
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {
-        final String message = event.getMessage().toLowerCase().replaceAll("/", "").trim();
-        if (message.length() == 0) {
+        String msg = event.getMessage().toLowerCase().replaceAll("/", "").trim();
+        if (msg.length() == 0) {
             return;
         }
-        final String[] split = message.split(" ");
+        final String[] split = msg.split(" ");
         final PluginCommand cmd = Bukkit.getServer().getPluginCommand(split[0]);
         if (cmd == null) {
             if (split[0].equals("plotme") || split[0].equals("ap")) {
@@ -330,78 +330,65 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.NOT_USING_PLOTME);
                 }
                 event.setCancelled(true);
+                return;
             }
         }
-        
         final Player player = event.getPlayer();
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        pp.getLocation();
-        if (!PS.get().isPlotWorld(BukkitUtil.getWorld(player))) {
-            return;
-        }
-        
-        final Plot plot = MainUtil.getPlot(BukkitUtil.getLocation(player));
+        final BukkitPlayer pp = (BukkitPlayer) BukkitUtil.getPlayer(player);
+        Plot plot = pp.getCurrentPlot();
         if (plot == null) {
             return;
         }
-        
-        Flag flag;
-        if (((flag = FlagManager.getPlotFlagRaw(plot, "blocked-cmds")) != null) && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
-            final List<String> v = (List<String>) flag.getValue();
-            
-            String msg = event.getMessage().toLowerCase().replaceFirst("/", "");
-            
-            final String[] parts = msg.split(" ");
-            String c = parts[0];
-            if (parts[0].contains(":")) {
-                c = parts[0].split(":")[1];
-                msg = msg.replace(parts[0].split(":")[0] + ":", "");
+        Flag flag = FlagManager.getPlotFlagRaw(plot, "blocked-cmds");
+        if (flag == null || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
+            return;
+        }
+        final List<String> v = (List<String>) flag.getValue();
+        final String[] parts = msg.split(" ");
+        String c = parts[0];
+        if (parts[0].contains(":")) {
+            c = parts[0].split(":")[1];
+            msg = msg.replace(parts[0].split(":")[0] + ":", "");
+        }
+        final String l = c;
+        final List<String> aliases = new ArrayList<>();
+        for (final HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
+            if (c.equals(cmdLabel.getName())) {
+                break;
             }
-            
-            final String l = c;
-            
-            final List<String> aliases = new ArrayList<>();
-            
-            for (final HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()) {
-                if (c.equals(cmdLabel.getName())) {
-                    break;
-                }
-                PluginCommand p;
-                final String label = cmdLabel.getName().replaceFirst("/", "");
-                if (aliases.contains(label)) {
-                    continue;
-                }
-                if ((p = Bukkit.getPluginCommand(label)) != null) {
-                    for (String a : p.getAliases()) {
-                        if (aliases.contains(a)) {
-                            continue;
-                        }
-                        aliases.add(a);
-                        a = a.replaceFirst("/", "");
-                        if (!a.equals(label) && a.equals(c)) {
-                            c = label;
-                            break;
-                        }
+            PluginCommand p;
+            final String label = cmdLabel.getName().replaceFirst("/", "");
+            if (aliases.contains(label)) {
+                continue;
+            }
+            if ((p = Bukkit.getPluginCommand(label)) != null) {
+                for (String a : p.getAliases()) {
+                    if (aliases.contains(a)) {
+                        continue;
+                    }
+                    aliases.add(a);
+                    a = a.replaceFirst("/", "");
+                    if (!a.equals(label) && a.equals(c)) {
+                        c = label;
+                        break;
                     }
                 }
             }
-            
-            if (!l.equals(c)) {
-                msg = msg.replace(l, c);
+        }
+        if (!l.equals(c)) {
+            msg = msg.replace(l, c);
+        }
+        for (final String s : v) {
+            Pattern pattern;
+            if (!RegExUtil.compiledPatterns.containsKey(s)) {
+                RegExUtil.compiledPatterns.put(s, ((pattern = Pattern.compile(s))));
+            } else {
+                pattern = RegExUtil.compiledPatterns.get(s);
             }
-            
-            for (final String s : v) {
-                Pattern pattern;
-                if (!RegExUtil.compiledPatterns.containsKey(s)) {
-                    RegExUtil.compiledPatterns.put(s, ((pattern = Pattern.compile(s))));
-                } else {
-                    pattern = RegExUtil.compiledPatterns.get(s);
-                }
-                if (pattern.matcher(msg).matches()) {
-                    MainUtil.sendMessage(pp, C.COMMAND_BLOCKED);
-                    event.setCancelled(true);
-                    return;
-                }
+            if (pattern.matcher(msg).matches()) {
+                MainUtil.sendMessage(pp, C.COMMAND_BLOCKED);
+                event.setCancelled(true);
+                return;
             }
         }
     }
@@ -453,7 +440,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASSED);
             }
         }
-        if ((PS.get().update != null) && Permissions.hasPermission(pp, C.PERMISSION_ADMIN) && Settings.UPDATE_NOTIFICATIONS) {
+        if ((PS.get().update != null) && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
@@ -737,9 +724,13 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         
+
         // Delete last location
         pp.deleteMeta("location");
-        pp.deleteMeta("lastplot");
+        Plot plot = (Plot) pp.deleteMeta("lastplot");
+        if (plot != null) {
+            plotExit(pp, plot);
+        }
         
         if (BukkitMain.worldEdit != null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_WORLDEDIT_BYPASS)) {
@@ -1025,13 +1016,16 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (blocks.size() == 0) {
             return;
         }
-        final Plot origin = MainUtil.getPlot(BukkitUtil.getLocation(blocks.get(0).getLocation()));
-            if (origin == null) {
-            e.setCancelled(true);
-            return;
+        Location loc = BukkitUtil.getLocation(blocks.get(0).getLocation());
+        final Plot origin = MainUtil.getPlot(loc);
+        if (origin == null) {
+            if (MainUtil.isPlotAreaAbs(loc)) {
+                e.setCancelled(true);
+                return;
+            }
         }
         for (int i = blocks.size() - 1; i >= 0; i--) {
-            final Location loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
+            loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
             final Plot plot = MainUtil.getPlot(loc);
             if (!Objects.equals(plot, origin)) {
                 e.getBlocks().remove(i);
@@ -1041,27 +1035,26 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInteract(final PlayerInteractEvent event) {
-        final Action action = event.getAction();
-        final Block block = event.getClickedBlock();
-        if (block == null) {
-            return;
-        }
         final Player player = event.getPlayer();
-        final String world = player.getWorld().getName();
-        if (!PS.get().isPlotWorld(world)) {
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        if (pp.getPlotWorld() == null) {
             return;
         }
-        final Location loc = BukkitUtil.getLocation(block.getLocation());
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
         PlayerBlockEventType eventType = null;
         BukkitLazyBlock lb;
+        Location loc;
+        final Action action = event.getAction();
         switch (action) {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
+                Block block = event.getClickedBlock();
                 lb = new BukkitLazyBlock(block);
+                loc = BukkitUtil.getLocation(block.getLocation());
                 break;
             }
             case RIGHT_CLICK_BLOCK: {
+                Block block = event.getClickedBlock();
+                loc = BukkitUtil.getLocation(block.getLocation());
                 final Material blockType = block.getType();
                 final int blockId = blockType.getId();
                 switch (blockType) {
@@ -1143,8 +1136,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     lb = new BukkitLazyBlock(id, block);
                     break;
                 }
-                lb = new BukkitLazyBlock(new PlotBlock((short) hand.getTypeId(), (byte) hand.getDurability()));
-                switch (hand.getType()) {
+                Material handType = hand.getType();
+                lb = new BukkitLazyBlock(new PlotBlock((short) handType.getId(), (byte) 0));
+                switch (handType) {
                     case MONSTER_EGG:
                     case MONSTER_EGGS: {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
@@ -1187,7 +1181,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                         eventType = PlayerBlockEventType.EAT;
                         break;
                     }
-                    
                     case MINECART:
                     case STORAGE_MINECART:
                     case POWERED_MINECART:
@@ -1211,6 +1204,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 break;
             }
             case LEFT_CLICK_BLOCK: {
+                Block block = event.getClickedBlock();
+                loc = BukkitUtil.getLocation(block.getLocation());
                 eventType = PlayerBlockEventType.BREAK_BLOCK;
                 lb = new BukkitLazyBlock(block);
                 break;
@@ -1438,7 +1433,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 default: {
                     String[] types;
                     if (entity instanceof LivingEntity) {
-                        if (entity instanceof Animal) {
+                        if (entity instanceof Animals) {
                             types = new String[] { "entity-cap", "mob-cap", "animal-cap" };
                         } else if (entity instanceof Monster) {
                             types = new String[] { "entity-cap", "mob-cap", "hostile-cap" };

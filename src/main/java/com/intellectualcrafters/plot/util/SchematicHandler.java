@@ -519,6 +519,7 @@ public abstract class SchematicHandler {
     }
     
     public List<String> getSaves(final UUID uuid) {
+        final StringBuilder rawJSON = new StringBuilder();
         try {
             final String website = Settings.WEB_URL + "list.php?" + uuid.toString();
             final URL url = new URL(website);
@@ -526,7 +527,6 @@ public abstract class SchematicHandler {
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
             final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String line;
-            final StringBuilder rawJSON = new StringBuilder();
             while ((line = reader.readLine()) != null) {
                 rawJSON.append(line);
             }
@@ -540,6 +540,7 @@ public abstract class SchematicHandler {
             return Lists.reverse(schematics);
         } catch (final Exception e) {
             e.printStackTrace();
+            PS.debug("ERROR PARSING: " + rawJSON);
         }
         return null;
     }

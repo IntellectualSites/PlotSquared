@@ -1012,10 +1012,10 @@ public class BukkitChunkManager extends ChunkManager {
     }
     
     private void count(final int[] count, final Entity entity) {
-        count[0]++;
         switch (entity.getType()) {
             case PLAYER: {
                 // not valid
+                return;
             }
             case SMALL_FIREBALL:
             case FIREBALL:
@@ -1118,6 +1118,7 @@ public class BukkitChunkManager extends ChunkManager {
                 }
             }
         }
+        count[0]++;
     }
     
     @Override

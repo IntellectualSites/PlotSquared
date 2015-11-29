@@ -237,9 +237,9 @@ public class PlotHandler {
             return false;
         }
         for (Plot current : MainUtil.getConnectedPlots(plot)) {
-            current.settings = null;
             PS.get().removePlot(current.world, current.id, true);
             DBFunc.delete(current);
+            current.settings = null;
         }
         return true;
     }

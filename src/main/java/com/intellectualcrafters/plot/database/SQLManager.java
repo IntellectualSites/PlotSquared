@@ -575,9 +575,9 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt((i * 5) + 1, plot.id.x);
                 stmt.setInt((i * 5) + 2, plot.id.y);
                 try {
-                    stmt.setString((i * 4) + 3, plot.owner.toString());
+                    stmt.setString((i * 5) + 3, plot.owner.toString());
                 } catch (final Exception e) {
-                    stmt.setString((i * 4) + 3, everyone.toString());
+                    stmt.setString((i * 5) + 3, everyone.toString());
                 }
                 stmt.setString((i * 5) + 4, plot.world);
                 stmt.setTimestamp((i * 5) + 5, new Timestamp(plot.getTimestamp()));
@@ -1193,6 +1193,9 @@ public class SQLManager implements AbstractDB {
     
     @Override
     public void deleteSettings(final Plot plot) {
+        if (plot.settings == null) {
+            return;
+        }
         addPlotTask(plot, new UniqueStatement("delete_plot_settings") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
@@ -1301,7 +1304,6 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void delete(final Plot plot) {
-        PS.get().removePlot(plot.world, plot.id, false);
         deleteSettings(plot);
         deleteDenied(plot);
         deleteHelpers(plot);
@@ -1736,7 +1738,7 @@ public class SQLManager implements AbstractDB {
                         map = new ConcurrentHashMap<PlotId, Plot>();
                         newplots.put(plot.world, map);
                     }
-                    newplots.get(plot.world).put(plot.id, plot);
+                    map.put(plot.id, plot);
                 }
             }
             boolean invalidPlot = false;
@@ -2817,7 +2819,7 @@ public class SQLManager implements AbstractDB {
             final ConcurrentHashMap<PlotId, Plot> map = entry.getValue();
             if (map.size() > 0) {
                 for (final Entry<PlotId, Plot> entry2 : map.entrySet()) {
-                    PS.debug("$1Plot was deleted: " + entry.getValue() + "// TODO implement this when sure safe");
+                    PS.debug("$1Plot was deleted: " + entry2.getValue() + "// TODO implement this when sure safe");
                 }
             }
         }

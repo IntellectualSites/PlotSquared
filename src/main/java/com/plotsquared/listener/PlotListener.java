@@ -20,7 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.listener;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -241,9 +240,5 @@ public class PlotListener {
             }
         }
         return true;
-    }
-    
-    public boolean getFlagValue(final String value) {
-        return Arrays.asList("true", "on", "enabled", "yes").contains(value.toLowerCase());
     }
 }

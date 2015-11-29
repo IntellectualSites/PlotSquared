@@ -84,6 +84,10 @@ public class Location implements Cloneable, Comparable<Location> {
     public Plot getPlot() {
         return MainUtil.getPlot(this);
     }
+    
+    public ChunkLoc getChunkLoc() {
+        return new ChunkLoc(x >> 4, z >> 4);
+    }
 
     public void setWorld(final String world) {
         this.world = world;

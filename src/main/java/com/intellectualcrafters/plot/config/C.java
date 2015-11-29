@@ -90,6 +90,7 @@ public enum C {
     PERMISSION_ADMIN_INTERACT_UNOWNED("plots.admin.interact.unowned", "static.permissions"),
     PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other", "static.permissions"),
     PERMISSION_ADMIN_BUILD_HEIGHTLIMIT("plots.admin.build.heightlimit", "static.permissions"),
+    PERMISSION_ADMIN_UPDATE("plots.admin.command.update", "static.permissions"),
     /*
      * Static console
      */
@@ -373,7 +374,8 @@ public enum C {
      * Player not found
      */
     INVALID_PLAYER_WAIT("$2Player not found: $1%s$2, fetching it. Try again soon.", "Errors"),
-    INVALID_PLAYER("$2Player not found: $1%s.", "Errors"),
+    INVALID_PLAYER("$2Player not found: $1%s$2.", "Errors"),
+    INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors"),
     // SETTINGS_PASTE_UPLOADED("$2settings.yml was uploaded to: $1%url%", "Paste"),
     // LATEST_LOG_UPLOADED("$2latest.log was uploaded to: $1%url%", "Paste"),
     DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"),
@@ -673,14 +675,18 @@ public enum C {
         final Map<String, String> map = new LinkedHashMap<String, String>();
         if (args.length > 0) {
             for (int i = args.length - 1; i >= 0; i--) {
-                if (args[i] == null) {
-                    args[i] = "";
+                String arg = args[i].toString();
+                if (arg == null || arg.length() == 0) {
+                    map.put("%s" + i, "");
+                } else {
+                    arg = C.color(arg);
+                    map.put("%s" + i, arg);
                 }
-                map.put("%s" + i, args[i].toString());
+                if (i == 0) {
+                    map.put("%s", arg);
+                }
             }
-            map.put("%s", args[0].toString());
         }
-        map.putAll(replacements);
         m = StringMan.replaceFromMap(m, map);
         return m;
     }

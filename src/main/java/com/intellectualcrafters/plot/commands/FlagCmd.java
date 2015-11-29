@@ -158,6 +158,10 @@ public class FlagCmd extends SubCommand {
                 }
                 final Flag flag = FlagManager.getPlotFlagAbs(plot, args[1].toLowerCase());
                 if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
+                    if (args.length != 2) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
+                        return false;
+                    }
                     for (final String entry : args[2].split(",")) {
                         if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + "." + entry)) {
                             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase() + "." + entry);

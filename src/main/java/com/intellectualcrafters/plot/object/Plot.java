@@ -416,7 +416,6 @@ public class Plot {
      */
     private Plot origin;
     
-    
     /**
      * The base plot is an arbitrary but specific connected plot. It is useful for the following:<br>
      *  - Merged plots need to be treated as a single plot for most purposes<br>
@@ -721,7 +720,7 @@ public class Plot {
      */
     public double getAverageRating() {
         double sum = 0;
-        final Collection<Rating> ratings = getBasePlot(false).getRatings().values();
+        final Collection<Rating> ratings = getRatings().values();
         for (final Rating rating : ratings) {
             sum += rating.getAverageRating();
         }
@@ -1013,7 +1012,7 @@ public class Plot {
     public boolean removeDenied(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : getDenied()) {
+            for (UUID other : new HashSet<>(getDenied())) {
                 result = result || PlotHandler.removeDenied(this, other);
             }
             return result;
@@ -1029,7 +1028,7 @@ public class Plot {
     public boolean removeTrusted(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : getTrusted()) {
+            for (UUID other : new HashSet<>(getTrusted())) {
                 result = result || PlotHandler.removeTrusted(this, other);
             }
             return result;
@@ -1045,7 +1044,7 @@ public class Plot {
     public boolean removeMember(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : getMembers()) {
+            for (UUID other : new HashSet<>(getMembers())) {
                 result = result || PlotHandler.removeMember(this, other);
             }
             return result;

@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 
+import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -56,6 +58,7 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.StringWrapper;
 import com.plotsquared.listener.PlotListener;
 
 /**
@@ -563,6 +566,9 @@ public class MainUtil {
     }
     
     public static boolean isPlotAreaAbs(final Location location) {
+        if (!Settings.ENABLE_CLUSTERS) {
+            return true;
+        }
         final PlotWorld plotworld = PS.get().getPlotWorld(location.getWorld());
         if (plotworld == null) {
             return false;
@@ -586,6 +592,9 @@ public class MainUtil {
     }
     
     public static boolean isPlotArea(final Plot plot) {
+        if (!Settings.ENABLE_CLUSTERS) {
+            return true;
+        }
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
         if (plotworld.TYPE == 2) {
             return plot.getCluster() != null;
@@ -1421,7 +1430,9 @@ public class MainUtil {
         final HashSet<RegionWrapper> regions = getRegions(plot);
         final HashSet<Plot> plots = getConnectedPlots(plot);
         final ArrayDeque<Plot> queue = new ArrayDeque<>(plots);
-        removeSign(plot);
+        if (isDelete) {
+            removeSign(plot);
+        }
         MainUtil.unlinkPlot(plot, true, !isDelete);
         final PlotManager manager = PS.get().getPlotManager(plot.world);
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
@@ -1718,6 +1729,12 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Check if a plot can be claimed
+     * @param player
+     * @param plot
+     * @return
+     */
     public static boolean canClaim(final PlotPlayer player, final Plot plot) {
         if (plot == null) {
             return false;
@@ -1730,7 +1747,66 @@ public class MainUtil {
                 }
             }
         }
-        return plot.owner == null;
+        return guessOwner(plot) == null;
+    }
+    
+    /**
+     * Try to guess who the plot owner is:
+     *  - Checks cache
+     *  - Checks sign text
+     * @param plot
+     * @return
+     */
+    public static UUID guessOwner(Plot plot) {
+        if (plot.owner != null) {
+            return plot.owner;
+        }
+        PlotWorld pw = plot.getWorld();
+        if (!pw.ALLOW_SIGNS) {
+            return null;
+        }
+        try {
+            Location loc = plot.getManager().getSignLoc(pw, plot);
+            ChunkManager.manager.loadChunk(loc.getWorld(), loc.getChunkLoc(), false);
+            String[] lines = BlockManager.manager.getSign(loc);
+            if (lines == null) {
+                return null;
+            }
+            loop: for (int i = 4; i > 0; i--) {
+                String caption = C.valueOf("OWNER_SIGN_LINE_" + i).s();
+                int index = caption.indexOf("%plr%");
+                if (index == -1) {
+                    continue;
+                }
+                String name = lines[i - 1].substring(index);
+                if (name.length() == 0) {
+                    return null;
+                }
+                UUID owner = UUIDHandler.getUUID(name, null);
+                if (owner != null) {
+                    plot.owner = owner;
+                    break;
+                }
+                if (lines[i - 1].length() == 15) {
+                    BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
+                    for (Entry<StringWrapper, UUID> entry : map.entrySet()) {
+                        String key = entry.getKey().value;
+                        if (key.length() > name.length() && key.startsWith(name)) {
+                            plot.owner = entry.getValue();
+                            break loop;
+                        }
+                    }
+                }
+                plot.owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
+                break;
+            }
+            if (plot.owner != null) {
+                plot.create();
+            }
+            return plot.owner;
+        } catch (Exception e) {
+            return null;
+        }
     }
     
     public static boolean isUnowned(final String world, final PlotId pos1, final PlotId pos2) {
@@ -2104,18 +2180,7 @@ public class MainUtil {
      * @return boolean success
      */
     public static boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
-        if (c.s().length() > 1) {
-            String msg = c.s();
-            if ((args != null) && (args.length > 0)) {
-                msg = C.format(c, args);
-            }
-            if (plr == null) {
-                ConsolePlayer.getConsole().sendMessage(msg);
-            } else {
-                sendMessage(plr, msg, c.usePrefix());
-            }
-        }
-        return true;
+        return sendMessage(plr, c, (Object[]) args);
     }
     
     /**
@@ -2127,17 +2192,23 @@ public class MainUtil {
      * @return boolean success
      */
     public static boolean sendMessage(final PlotPlayer plr, final C c, final Object... args) {
-        if (c.s().length() > 1) {
-            String msg = c.s();
-            if ((args != null) && (args.length > 0)) {
-                msg = C.format(c, args);
-            }
-            if (plr == null) {
-                ConsolePlayer.getConsole().sendMessage(msg);
-            } else {
-                sendMessage(plr, msg, c.usePrefix());
-            }
+        if (c.s().length() == 0) {
+            return true;
         }
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                String msg = c.s();
+                if (args.length != 0) {
+                    msg = c.format(c, args);
+                }
+                if (plr != null) {
+                    plr.sendMessage((c.usePrefix() ? C.PREFIX.s() + msg : msg));
+                } else {
+                    ConsolePlayer.getConsole().sendMessage((c.usePrefix() ? C.PREFIX.s() : "") + msg);
+                }
+            }
+        });
         return true;
     }
     

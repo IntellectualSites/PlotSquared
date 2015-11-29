@@ -116,11 +116,11 @@ public abstract class UUIDHandlerImplementation {
                     offline = null;
                 }
             }
-            if (offline != null) {
+            if (offline != null && !offline.equals(uuid)) {
                 unknown.remove(offline);
                 final Set<Plot> plots = PS.get().getPlots(offline);
                 if (plots.size() > 0) {
-                    for (final Plot plot : PS.get().getPlots(offline)) {
+                    for (final Plot plot : plots) {
                         plot.owner = uuid;
                     }
                     DBFunc.replaceUUID(offline, uuid);
@@ -132,17 +132,21 @@ public abstract class UUIDHandlerImplementation {
         }
         try {
             final UUID offline = uuidMap.put(name, uuid);
-            if ((offline != null) && !offline.equals(uuid)) {
-                final Set<Plot> plots = PS.get().getPlots(offline);
-                if (plots.size() > 0) {
-                    for (final Plot plot : PS.get().getPlots(offline)) {
-                        plot.owner = uuid;
+            if (offline != null) {
+                if (!offline.equals(uuid)) {
+                    final Set<Plot> plots = PS.get().getPlots(offline);
+                    if (plots.size() > 0) {
+                        for (final Plot plot : plots) {
+                            plot.owner = uuid;
+                        }
+                        DBFunc.replaceUUID(offline, uuid);
+                        PS.debug("&cDetected invalid UUID stored for (1): " + name.value);
+                        PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
+                        PS.debug("&6PlotSquared will update incorrect entries when the user logs in, or you can reconstruct your database.");
                     }
-                    DBFunc.replaceUUID(offline, uuid);
-                    PS.debug("&cDetected invalid UUID stored for (1): " + name.value);
-                    PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
-                    PS.debug("&6PlotSquared will update incorrect entries when the user logs in, or you can reconstruct your database.");
+                    return true;
                 }
+                return false;
             }
         } catch (final Exception e) {
             final BiMap<UUID, StringWrapper> inverse = uuidMap.inverse();

@@ -28,7 +28,19 @@ public class ClassicPlotManager extends SquarePlotManager {
                 return true;
             }
             case "all": {
+                setAll(plotworld, plotid, blocks);
+                return true;
+            }
+            case "air": {
                 setAir(plotworld, plotid, blocks);
+                return true;
+            }
+            case "main": {
+                setMain(plotworld, plotid, blocks);
+                return true;
+            }
+            case "middle": {
+                setMiddle(plotworld, plotid, blocks);
                 return true;
             }
             case "outline": {
@@ -67,6 +79,20 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
     
+    public boolean setAll(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
+        Plot plot = MainUtil.getPlotAbs(plotworld.worldname, plotid);
+        if (!plot.isBasePlot()) {
+            return false;
+        }
+        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        for (RegionWrapper region : MainUtil.getRegions(plot)) {
+            Location pos1 = new Location(plot.world, region.minX, 1, region.minZ);
+            Location pos2 = new Location(plot.world, region.maxX, 255, region.maxZ);
+            MainUtil.setCuboidAsync(plotworld.worldname, pos1, pos2, blocks);
+        }
+        return true;
+    }
+
     public boolean setAir(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         Plot plot = MainUtil.getPlotAbs(plotworld.worldname, plotid);
         if (!plot.isBasePlot()) {
@@ -81,6 +107,31 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
     
+    public boolean setMain(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
+        Plot plot = MainUtil.getPlotAbs(plotworld.worldname, plotid);
+        if (!plot.isBasePlot()) {
+            return false;
+        }
+        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        for (RegionWrapper region : MainUtil.getRegions(plot)) {
+            Location pos1 = new Location(plot.world, region.minX, 1, region.minZ);
+            Location pos2 = new Location(plot.world, region.maxX, dpw.PLOT_HEIGHT - 1, region.maxZ);
+            MainUtil.setCuboidAsync(plotworld.worldname, pos1, pos2, blocks);
+        }
+        return true;
+    }
+    
+    public boolean setMiddle(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
+        Plot plot = MainUtil.getPlotAbs(plotworld.worldname, plotid);
+        if (!plot.isBasePlot()) {
+            return false;
+        }
+        Location[] corners = plot.getCorners();
+        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        SetBlockQueue.setBlock(plotworld.worldname, (corners[0].getX() + corners[1].getX()) / 2, dpw.PLOT_HEIGHT, (corners[0].getZ() + corners[1].getZ()) / 2, blocks[0]);
+        return true;
+    }
+
     public boolean setOutline(final PlotWorld plotworld, final PlotId plotid, final PlotBlock[] blocks) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         if (dpw.ROAD_WIDTH == 0) {
@@ -227,7 +278,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         final int sz = pos1.getZ() - 2;
         final int ez = pos2.getZ() + 2;
         MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(plotworld.worldname, ex, 255, ez - 1), new PlotBlock((short) 0, (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz + 1), new Location(plotworld.worldname, ex, dpw.PLOT_HEIGHT, ez - 1), new PlotBlock((short) 7,
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 0, sz + 1), new Location(plotworld.worldname, ex, 0, ez - 1), new PlotBlock((short) 7,
         (byte) 0));
         MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz + 1), new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
         MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, sz + 1), new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, ez - 1),
@@ -368,7 +419,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     
     @Override
     public String[] getPlotComponents(final PlotWorld plotworld, final PlotId plotid) {
-        return new String[] { "floor", "wall", "border", "all", "outline" };
+        return new String[] { "main", "floor", "air", "all", "border", "wall", "outline", "middle" };
     }
     
     /**

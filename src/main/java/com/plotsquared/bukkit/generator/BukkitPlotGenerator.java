@@ -49,7 +49,7 @@ public abstract class BukkitPlotGenerator extends ChunkGenerator {
     public int Z;
     private boolean loaded = false;
     private short[][] result;
-    private final PseudoRandom random = new PseudoRandom();
+    public final PseudoRandom random = new PseudoRandom();
     
     public BukkitPlotGenerator(final String world) {
         WorldEvents.lastWorld = world;

@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotLoc;
+import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
@@ -72,6 +73,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
     }
     
+    @Override
+    public boolean isCompatible(PlotWorld plotworld) {
+        if (plotworld == null || !(plotworld instanceof SquarePlotWorld)) {
+            return false;
+        }
+        return ((ClassicPlotWorld) plotworld).PLOT_WIDTH == PLOT_WIDTH;
+    }
+
     public void setupSchematics() {
         G_SCH_DATA = new HashMap<>();
         G_SCH = new HashMap<>();

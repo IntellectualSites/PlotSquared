@@ -77,6 +77,9 @@ public class Rate extends SubCommand {
                                 v2 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
+                        if (v1 == v2) {
+                            return -0;
+                        }
                         return v2 > v1 ? 1 : -1;
                     }
                 });
@@ -184,7 +187,7 @@ public class Rate extends SubCommand {
         final int rating;
         if (MathMan.isInteger(arg) && (arg.length() < 3) && (arg.length() > 0)) {
             rating = Integer.parseInt(arg);
-            if (rating > 10) {
+            if (rating > 10 || rating < 1) {
                 sendMessage(player, C.RATING_NOT_VALID);
                 return false;
             }

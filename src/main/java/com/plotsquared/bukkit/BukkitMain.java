@@ -3,6 +3,7 @@ package com.plotsquared.bukkit;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -122,7 +123,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public void onEnable() {
         THIS = this;
-        PS.instance = new PS(this, "Bukkit");
+        new PS(this, "Bukkit");
     }
     
     @Override
@@ -191,23 +192,19 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public void runEntityTask() {
         log(C.PREFIX.s() + "KillAllEntities started.");
         TaskManager.runTaskRepeat(new Runnable() {
-            long ticked = 0l;
-            long error = 0l;
-            
             @Override
             public void run() {
-                if (ticked > 36_000L) {
-                    ticked = 0l;
-                    if (error > 0) {
-                        log(C.PREFIX.s() + "KillAllEntities has been running for 6 hours. Errors: " + error);
-                    }
-                    error = 0l;
-                }
                 World world;
                 for (final PlotWorld pw : PS.get().getPlotWorldObjects()) {
                     world = Bukkit.getWorld(pw.worldname);
                     try {
-                        for (final Entity entity : world.getEntities()) {
+                        if (world == null) {
+                            continue;
+                        }
+                        List<Entity> entities = world.getEntities();
+                        Iterator<Entity> iter = entities.iterator();
+                        while (iter.hasNext()) {
+                            Entity entity = iter.next();
                             switch (entity.getType()) {
                                 case EGG:
                                 case ENDER_CRYSTAL:
@@ -251,19 +248,21 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     Plot plot = loc.getPlot();
                                     if (plot == null) {
                                         if (MainUtil.isPlotAreaAbs(loc)) {
+                                            iter.remove();
                                             entity.remove();
                                         }
-                                        return;
+                                        continue;
                                     }
                                     List<MetadataValue> meta = entity.getMetadata("plot");
                                     if (meta.size() == 0) {
-                                        return;
+                                        continue;
                                     }
                                     Plot origin = (Plot) meta.get(0).value();
                                     if (!plot.equals(origin.getBasePlot(false))) {
+                                        iter.remove();
                                         entity.remove();
                                     }
-                                    break;
+                                    continue;
                                 }
                                 case SMALL_FIREBALL:
                                 case FIREBALL:
@@ -317,18 +316,17 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                         final Entity passenger = entity.getPassenger();
                                         if (!(passenger instanceof Player)) {
                                             if (entity.getMetadata("keep").size() == 0) {
+                                                iter.remove();
                                                 entity.remove();
                                             }
                                         }
                                     }
-                                    break;
+                                    continue;
                                 }
                             }
                         }
                     } catch (final Throwable e) {
-                        ++error;
-                    } finally {
-                        ++ticked;
+                        e.printStackTrace();
                     }
                 }
             }

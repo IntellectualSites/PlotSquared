@@ -80,10 +80,8 @@ public abstract class PlotPlayer implements CommandCaller {
      *  - deleting other plugin's metadata may cause issues
      * @param key
      */
-    public void deleteMeta(final String key) {
-        if (meta != null) {
-            meta.remove(key);
-        }
+    public Object deleteMeta(final String key) {
+        return meta == null ? null : meta.remove(key);
     }
     
     /**

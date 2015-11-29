@@ -1,22 +1,23 @@
 package com.plotsquared.bukkit.uuid;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.UUID;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import com.google.common.collect.HashBiMap;
-import com.intellectualcrafters.json.JSONObject;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -31,6 +32,11 @@ import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
 public class SQLUUIDHandler extends UUIDHandlerImplementation {
     
+    final String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
+    final int MAX_REQUESTS = 500;
+    final int INTERVAL = 12000;
+    final JSONParser jsonParser = new JSONParser();
+
     public SQLUUIDHandler(final UUIDWrapper wrapper) {
         super(wrapper);
         _sqLite = new SQLite("./plugins/PlotSquared/usercache.db");
@@ -89,7 +95,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     add(new StringWrapper("*"), DBFunc.everyone);
                     
                     // This should be called as long as there are some unknown plots
-                    final List<UUID> toFetch = new ArrayList<>();
+                    final ArrayDeque<UUID> toFetch = new ArrayDeque<>();
                     for (final UUID u : UUIDHandler.getAllUUIDS()) {
                         if (!uuidExists(u)) {
                             toFetch.add(u);
@@ -113,49 +119,80 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                                 }
                                 return;
                             }
-                            if (!Settings.OFFLINE_MODE) {
-                                PS.debug(C.PREFIX.s() + "&cWill fetch &6" + toFetch.size() + "&c from mojang!");
-                                int i = 0;
-                                final Iterator<UUID> iterator = toFetch.iterator();
-                                while (iterator.hasNext()) {
-                                    final StringBuilder url = new StringBuilder("http://api.intellectualsites.com/uuid/?user=");
-                                    final List<UUID> currentIteration = new ArrayList<>();
-                                    while ((i++ <= 15) && iterator.hasNext()) {
-                                        final UUID _uuid = iterator.next();
-                                        url.append(_uuid.toString());
-                                        if (iterator.hasNext()) {
-                                            url.append(",");
-                                        }
-                                        currentIteration.add(_uuid);
-                                    }
-                                    PS.debug(C.PREFIX.s() + "&cWill attempt to fetch &6" + currentIteration.size() + "&c uuids from: &6" + url.toString());
+                            
+                            TaskManager.runTaskAsync(new Runnable() {
+                                @Override
+                                public void run() {
                                     try {
-                                        final HttpURLConnection connection = (HttpURLConnection) new URL(url.toString()).openConnection();
-                                        connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-                                        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                                        String line;
-                                        final StringBuilder rawJSON = new StringBuilder();
-                                        while ((line = reader.readLine()) != null) {
-                                            rawJSON.append(line);
-                                        }
-                                        reader.close();
-                                        final JSONObject object = new JSONObject(rawJSON.toString());
-                                        for (final UUID _u : currentIteration) {
-                                            final Object o = object.getJSONObject(_u.toString().replace("-", "")).get("username");
-                                            if ((o == null) || !(o instanceof String)) {
-                                                continue;
+                                        if (toFetch.size() == 0) {
+                                            if (whenDone != null) {
+                                                whenDone.run();
                                             }
-                                            add(new StringWrapper(o.toString()), _u);
+                                            return;
                                         }
-                                    } catch (final Exception e) {
+                                        for (int i = 0; i < Math.min(500, toFetch.size()); i++) {
+                                            UUID uuid = toFetch.pop();
+                                            HttpURLConnection connection = (HttpURLConnection) new URL(PROFILE_URL + uuid.toString().replace("-", "")).openConnection();
+                                            InputStreamReader reader = new InputStreamReader(connection.getInputStream());
+                                            JSONObject response = (JSONObject) jsonParser.parse(reader);
+                                            String name = (String) response.get("name");
+                                            if (name != null) {
+                                                add(new StringWrapper(name), uuid);
+                                            }
+                                        }
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-                                    i = 0;
+                                    TaskManager.runTaskLaterAsync(this, INTERVAL);
                                 }
-                            }
-                            if (whenDone != null) {
-                                whenDone.run();
-                            }
+                            });
+                            /*
+                             * This API is no longer accessible.
+                             */
+                            //                            if (!Settings.OFFLINE_MODE) {
+                            //                                PS.debug(C.PREFIX.s() + "&cWill fetch &6" + toFetch.size() + "&c from mojang!");
+                            //
+                            //                                int i = 0;
+                            //                                final Iterator<UUID> iterator = toFetch.iterator();
+                            //                                while (iterator.hasNext()) {
+                            //                                    final StringBuilder url = new StringBuilder("http://api.intellectualsites.com/uuid/?user=");
+                            //                                    final List<UUID> currentIteration = new ArrayList<>();
+                            //                                    while ((i++ <= 15) && iterator.hasNext()) {
+                            //                                        final UUID _uuid = iterator.next();
+                            //                                        url.append(_uuid.toString());
+                            //                                        if (iterator.hasNext()) {
+                            //                                            url.append(",");
+                            //                                        }
+                            //                                        currentIteration.add(_uuid);
+                            //                                    }
+                            //                                    PS.debug(C.PREFIX.s() + "&cWill attempt to fetch &6" + currentIteration.size() + "&c uuids from: &6" + url.toString());
+                            //                                    try {
+                            //                                        final HttpURLConnection connection = (HttpURLConnection) new URL(url.toString()).openConnection();
+                            //                                        connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+                            //                                        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                            //                                        String line;
+                            //                                        final StringBuilder rawJSON = new StringBuilder();
+                            //                                        while ((line = reader.readLine()) != null) {
+                            //                                            rawJSON.append(line);
+                            //                                        }
+                            //                                        reader.close();
+                            //                                        final JSONObject object = new JSONObject(rawJSON.toString());
+                            //                                        for (final UUID _u : currentIteration) {
+                            //                                            final Object o = object.getJSONObject(_u.toString().replace("-", "")).get("username");
+                            //                                            if ((o == null) || !(o instanceof String)) {
+                            //                                                continue;
+                            //                                            }
+                            //                                            add(new StringWrapper(o.toString()), _u);
+                            //                                        }
+                            //                                    } catch (final Exception e) {
+                            //                                        e.printStackTrace();
+                            //                                    }
+                            //                                    i = 0;
+                            //                                }
+                            //                            }
+                            //                            if (whenDone != null) {
+                            //                                whenDone.run();
+                            //                            }
                         }
                     });
                 } catch (final SQLException e) {
@@ -169,24 +206,31 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
     @Override
     public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
         PS.debug(C.PREFIX.s() + "UUID for '" + name + "' was null. We'll cache this from the mojang servers!");
+        if (ifFetch == null) {
+            return;
+        }
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                final String url = "http://api.intellectualsites.com/uuid/?user=" + name;
                 try {
-                    final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                    connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-                    final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    String line;
-                    final StringBuilder rawJSON = new StringBuilder();
-                    while ((line = reader.readLine()) != null) {
-                        rawJSON.append(line);
-                    }
-                    reader.close();
-                    final JSONObject object = new JSONObject(rawJSON.toString());
-                    ifFetch.value = UUID.fromString(object.getJSONObject(name).getString("dashed"));
-                    add(new StringWrapper(name), ifFetch.value);
-                } catch (final IOException e) {
+                    URL url = new URL(PROFILE_URL);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setUseCaches(false);
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+                    String body = JSONArray.toJSONString(Arrays.asList(name));
+                    OutputStream stream = connection.getOutputStream();
+                    stream.write(body.getBytes());
+                    stream.flush();
+                    stream.close();
+                    JSONArray array = (JSONArray) jsonParser.parse(new InputStreamReader(connection.getInputStream()));
+                    JSONObject jsonProfile = (JSONObject) array.get(0);
+                    String id = (String) jsonProfile.get("id");
+                    String name = (String) jsonProfile.get("name");
+                    ifFetch.value = UUID.fromString(id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" + id.substring(20, 32));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 TaskManager.runTask(ifFetch);
@@ -212,7 +256,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                 @Override
                 public void run() {
                     try {
-                        final PreparedStatement statement = getConnection().prepareStatement("INSERT INTO usercache (`uuid`, `username`) VALUES(?, ?)");
+                        final PreparedStatement statement = getConnection().prepareStatement("REPLACE INTO usercache (`uuid`, `username`) VALUES(?, ?)");
                         statement.setString(1, uuid.toString());
                         statement.setString(2, name.toString());
                         statement.execute();
@@ -228,38 +272,8 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
     }
     
     /**
-     * This isn't used as any UUID that is unknown is bulk cached (in lots of 16)
-     * @param uuid
-     * @return
+     * This is useful for name changes
      */
-    @Deprecated
-    public String getName__unused__(final UUID uuid) {
-        PS.debug(C.PREFIX.s() + "Name for '" + uuid + "' was null. We'll cache this from the mojang servers!");
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                final String url = "http://api.intellectualsites.com/uuid/?user=" + uuid;
-                try {
-                    final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                    connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-                    final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    String line;
-                    final StringBuilder rawJSON = new StringBuilder();
-                    while ((line = reader.readLine()) != null) {
-                        rawJSON.append(line);
-                    }
-                    reader.close();
-                    final JSONObject object = new JSONObject(rawJSON.toString());
-                    final String username = object.getJSONObject(uuid.toString().replace("-", "")).getString("username");
-                    add(new StringWrapper(username), uuid);
-                } catch (final IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        return null;
-    }
-    
     @Override
     public void rename(final UUID uuid, final StringWrapper name) {
         super.rename(uuid, name);

@@ -59,6 +59,12 @@ public class Set extends SubCommand {
 
     public Set() {
         component = new SetCommand() {
+            
+            @Override
+            public String getCommand() {
+                return "set.component";
+            }
+
             @Override
             public boolean set(PlotPlayer plr, final Plot plot, String value) {
                 final String world = plr.getLocation().getWorld();
@@ -171,7 +177,7 @@ public class Set extends SubCommand {
         // components
         HashSet<String> components = new HashSet<String>(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.id)));
         if (components.contains(args[0].toLowerCase())) {
-            return component.set(plr, plot, StringMan.join(args, " "));
+            return component.onCommand(plr, Arrays.copyOfRange(args, 0, args.length));
         }
         // flag
         {

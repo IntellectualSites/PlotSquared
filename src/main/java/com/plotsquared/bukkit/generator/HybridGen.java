@@ -131,7 +131,7 @@ public class HybridGen extends BukkitPlotGenerator {
             for (int i = 0; i < cached.length; i++) {
                 cached[i] = new short[4096];
             }
-            final PseudoRandom random = new PseudoRandom();
+            random.state = 7919;
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     cached[CACHE_I[plotheight][x][z]][CACHE_J[plotheight][x][z]] = plotfloors[random.random(plotfloors.length)];
@@ -208,23 +208,17 @@ public class HybridGen extends BukkitPlotGenerator {
                 return;
             }
         }
-        
-        if (plotworld.PLOT_BEDROCK) {
-            for (short x = 0; x < 16; x++) {
-                for (short z = 0; z < 16; z++) {
-                    setBlock(x, 0, z, (short) 7);
-                }
-            }
-        }
+
         if (region != null) {
             for (short x = 0; x < 16; x++) {
                 final int absX = ((sx + x) % size);
                 for (short z = 0; z < 16; z++) {
                     if (contains(region, x, z)) {
+                        setBlock(x, 0, z, (short) 7);
+                        setBlock(x, plotheight, z, plotfloors);
                         for (short y = 1; y < plotheight; y++) {
                             setBlock(x, y, z, filling);
                         }
-                        setBlock(x, plotheight, z, plotfloors);
                         final int absZ = ((sz + z) % size);
                         final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);
@@ -239,6 +233,14 @@ public class HybridGen extends BukkitPlotGenerator {
             return;
         }
         
+        if (plotworld.PLOT_BEDROCK) {
+            for (short x = 0; x < 16; x++) {
+                for (short z = 0; z < 16; z++) {
+                    setBlock(x, 0, z, (short) 7);
+                }
+            }
+        }
+
         for (short x = 0; x < 16; x++) {
             final int absX = ((sx + x) % size);
             final boolean gx = absX > pathWidthLower;
@@ -249,10 +251,10 @@ public class HybridGen extends BukkitPlotGenerator {
                 final boolean lz = absZ < pathWidthUpper;
                 // inside plot
                 if (gx && gz && lx && lz) {
+                    setBlock(x, plotheight, z, plotfloors);
                     for (short y = 1; y < plotheight; y++) {
                         setBlock(x, y, z, filling);
                     }
-                    setBlock(x, plotheight, z, plotfloors);
                     if (plotworld.PLOT_SCHEMATIC) {
                         final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Short> blocks = plotworld.G_SCH.get(loc);

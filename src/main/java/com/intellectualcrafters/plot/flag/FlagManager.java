@@ -157,8 +157,16 @@ public class FlagManager {
         return result == null ? null : (Flag) result.clone();
     }
 
+    /**
+     * Returns the raw flag<br>
+     *  - Faster
+     *  - You should not modify the flag
+     * @param plot
+     * @param flag
+     * @return
+     */
     public static Flag getPlotFlagRaw(final Plot plot, final String flag) {
-        if (!plot.hasOwner()) {
+        if (plot.owner == null) {
             return null;
         }
         return getSettingFlag(plot.world, plot.getSettings(), flag);

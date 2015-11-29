@@ -55,8 +55,17 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         final HashMap<String, Integer> roadWidth = new HashMap<>();
         final HashMap<Integer, Plot> plots = new HashMap<>();
         final HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
-        stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_plots`");
-        r = stmt.executeQuery();
+        try {
+            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_plots`");
+            r = stmt.executeQuery();
+        } catch (Exception e) {
+            PS.debug("========= Table does not exist =========");
+            e.printStackTrace();
+            PS.debug("=======================================");
+            PS.debug("&8 - &7The database does not match the version specified in the PlotMe config");
+            PS.debug("&8 - &7Please correct this, or if you are unsure, the most common is 0.16.3");
+            return null;
+        }
         final boolean checkUUID = DBFunc.hasColumn(r, "ownerID");
         final boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
         while (r.next()) {

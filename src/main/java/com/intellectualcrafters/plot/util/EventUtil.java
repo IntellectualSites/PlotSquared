@@ -63,12 +63,11 @@ public abstract class EventUtil {
     
     public boolean checkPlayerBlockEvent(final PlotPlayer pp, final PlayerBlockEventType type, final Location loc, final LazyBlock block, boolean notifyPerms) {
         final Plot plot = MainUtil.getPlotAbs(loc);
-        final UUID uuid = pp.getUUID();
         if (plot == null) {
             if (!MainUtil.isPlotAreaAbs(loc)) {
                 return true;
             }
-        } else if (plot.isAdded(uuid)) {
+        } else if (plot.isAdded(pp.getUUID())) {
             return true;
         }
         switch (type) {
@@ -83,7 +82,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
                 final Flag use = FlagManager.getPlotFlagRaw(plot, "use");
@@ -151,7 +150,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
                 final Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
@@ -168,7 +167,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD.s(), notifyPerms);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED.s(), notifyPerms);
                 }
                 final Flag flag = FlagManager.getPlotFlagRaw(plot, "place");
@@ -185,7 +184,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), false);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), false);
                 }
                 if (FlagManager.isPlotFlagTrue(plot, "device-interact")) {
@@ -194,12 +193,10 @@ public abstract class EventUtil {
                 final Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
                 final HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
                 if ((value == null) || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
-                    long time = System.currentTimeMillis();
-                    notifyPerms = notifyPerms && (31 * (time / 31) == time);
-                    if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
+                    if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), false)) {
                         return true;
                     }
-                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_DEVICE_INTERACT.s()));
+                    return !(!false || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_DEVICE_INTERACT.s()));
                 }
                 return true;
             }
@@ -207,7 +204,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
                 if (FlagManager.isPlotFlagTrue(plot, "hanging-interact")) {
@@ -227,7 +224,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
                 if (FlagManager.isPlotFlagTrue(plot, "misc-interact")) {
@@ -247,7 +244,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
                 if (FlagManager.isPlotFlagTrue(plot, "vehicle-use")) {
@@ -267,7 +264,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
                 
@@ -288,7 +285,7 @@ public abstract class EventUtil {
                 //                if (plot == null) {
                 //                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
                 //                }
-                //                if (!plot.hasOwner()) {
+                //                if (plot.owner == null) {
                 //                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 //                }
                 //
@@ -306,7 +303,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
                 
@@ -327,7 +324,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
                 }
-                if (!plot.hasOwner()) {
+                if (plot.owner == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
                 

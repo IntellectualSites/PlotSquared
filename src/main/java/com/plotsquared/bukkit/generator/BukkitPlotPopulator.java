@@ -17,7 +17,7 @@ import com.intellectualcrafters.plot.util.SetBlockQueue;
 
 public abstract class BukkitPlotPopulator extends BlockPopulator {
     
-    private final PseudoRandom random = new PseudoRandom();
+    public final PseudoRandom random = new PseudoRandom();
     
     public int X;
     public int Z;
@@ -29,8 +29,15 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
         try {
             this.chunk = chunk;
             worldname = world.getName();
-            X = this.chunk.getX() << 4;
-            Z = this.chunk.getZ() << 4;
+            int cx = this.chunk.getX();
+            int cz = this.chunk.getZ();
+            X = cx << 4;
+            Z = cz << 4;
+            final int prime = 13;
+            int h = 1;
+            h = (prime * h) + cx;
+            h = (prime * h) + cz;
+            random.state = h;
             if (ChunkManager.FORCE_PASTE) {
                 for (short x = 0; x < 16; x++) {
                     for (short z = 0; z < 16; z++) {
@@ -43,7 +50,7 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
                 }
                 return;
             }
-            populate(world, ChunkManager.CURRENT_PLOT_CLEAR, random, X, Z);
+            populate(world, ChunkManager.CURRENT_PLOT_CLEAR, random, cx, cz);
             if (ChunkManager.CURRENT_PLOT_CLEAR != null) {
                 PlotLoc loc;
                 for (final Entry<PlotLoc, HashMap<Short, Byte>> entry : ChunkManager.GENERATE_DATA.entrySet()) {
@@ -96,6 +103,14 @@ public abstract class BukkitPlotPopulator extends BlockPopulator {
         }
     }
     
+    public void setBlock(final short x, final short y, final short z, final byte[] datas) {
+        if (datas.length == 1) {
+            setBlock(x, y, z, datas[0]);
+        } else {
+            setBlock(x, y, z, datas[random.random(datas.length)]);
+        }
+    }
+
     /**
      * Like setblock, but lacks the data != 0 check
      * @param x

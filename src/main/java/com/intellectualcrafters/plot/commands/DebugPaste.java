@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 
 import com.intellectualcrafters.plot.PS;
@@ -34,7 +35,7 @@ public class DebugPaste extends SubCommand {
                     try {
                         latestLOG = HastebinUtility.upload(new File(BukkitMain.THIS.getDirectory(), "../../logs/latest.log"));
                     } catch (final Exception e) {
-                        plr.sendMessage("&clatest.log is too big to be pasted, will ignore");
+                        plr.sendMessage(ChatColor.RED + "latest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }
                     final StringBuilder b = new StringBuilder();

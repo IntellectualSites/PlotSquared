@@ -20,7 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.List;
 import java.util.Set;
 
 import com.intellectualcrafters.plot.PS;
@@ -32,22 +31,17 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
 command = "regenallroads",
 description = "Regenerate all roads in the map using the set road schematic",
 aliases = { "rgar" },
-usage = "/plot regenallroads <world>",
+usage = "/plot regenallroads <world> [height]",
 category = CommandCategory.DEBUG,
 requiredType = RequiredType.CONSOLE,
 permission = "plots.regenallroads")
 public class RegenAllRoads extends SubCommand {
-    
-    public RegenAllRoads() {
-        requiredArguments = new Argument[] { Argument.String };
-    }
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
@@ -60,6 +54,9 @@ public class RegenAllRoads extends SubCommand {
                 MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
                 return false;
             }
+        } else {
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
+            return false;
         }
         final String name = args[0];
         final PlotManager manager = PS.get().getPlotManager(name);
