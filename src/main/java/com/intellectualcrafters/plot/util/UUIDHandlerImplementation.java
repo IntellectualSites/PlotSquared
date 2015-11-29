@@ -116,11 +116,11 @@ public abstract class UUIDHandlerImplementation {
                     offline = null;
                 }
             }
-            if (offline != null) {
+            if (offline != null && !offline.equals(uuid)) {
                 unknown.remove(offline);
                 final Set<Plot> plots = PS.get().getPlots(offline);
                 if (plots.size() > 0) {
-                    for (final Plot plot : PS.get().getPlots(offline)) {
+                    for (final Plot plot : plots) {
                         plot.owner = uuid;
                     }
                     DBFunc.replaceUUID(offline, uuid);
@@ -136,7 +136,7 @@ public abstract class UUIDHandlerImplementation {
                 if (!offline.equals(uuid)) {
                     final Set<Plot> plots = PS.get().getPlots(offline);
                     if (plots.size() > 0) {
-                        for (final Plot plot : PS.get().getPlots(offline)) {
+                        for (final Plot plot : plots) {
                             plot.owner = uuid;
                         }
                         DBFunc.replaceUUID(offline, uuid);

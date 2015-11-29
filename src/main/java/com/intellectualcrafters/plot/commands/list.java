@@ -331,7 +331,7 @@ public class list extends SubCommand {
             }
         }
         if (sort) {
-            plots = PS.get().sortPlots(plots, SortType.CREATION_DATE_TIMESTAMP, world);
+            plots = PS.get().sortPlots(plots, SortType.CREATION_DATE, world);
         }
         if (page < 0) {
             page = 0;

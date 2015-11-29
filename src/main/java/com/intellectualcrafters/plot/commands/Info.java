@@ -134,12 +134,9 @@ public class Info extends SubCommand {
             full = false;
         }
         MainUtil.format(info, plot, player, full, new RunnableVal<String>() {
-            
             @Override
             public void run() {
-                MainUtil.sendMessage(player, C.PLOT_INFO_HEADER);
-                MainUtil.sendMessage(player, value, false);
-                MainUtil.sendMessage(player, C.PLOT_INFO_FOOTER);
+                MainUtil.sendMessage(player, C.PLOT_INFO_HEADER.s() + '\n' + value + '\n' + C.PLOT_INFO_FOOTER.s(), false);
             }
         });
         return true;

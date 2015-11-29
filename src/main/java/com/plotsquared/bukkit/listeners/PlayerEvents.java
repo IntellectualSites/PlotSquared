@@ -334,7 +334,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
         }
         final Player player = event.getPlayer();
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        final BukkitPlayer pp = (BukkitPlayer) BukkitUtil.getPlayer(player);
         Plot plot = pp.getCurrentPlot();
         if (plot == null) {
             return;
@@ -1035,27 +1035,26 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInteract(final PlayerInteractEvent event) {
-        final Action action = event.getAction();
-        final Block block = event.getClickedBlock();
-        if (block == null) {
-            return;
-        }
         final Player player = event.getPlayer();
-        final String world = player.getWorld().getName();
-        if (!PS.get().isPlotWorld(world)) {
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        if (pp.getPlotWorld() == null) {
             return;
         }
-        final Location loc = BukkitUtil.getLocation(block.getLocation());
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
         PlayerBlockEventType eventType = null;
         BukkitLazyBlock lb;
+        Location loc;
+        final Action action = event.getAction();
         switch (action) {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
+                Block block = event.getClickedBlock();
                 lb = new BukkitLazyBlock(block);
+                loc = BukkitUtil.getLocation(block.getLocation());
                 break;
             }
             case RIGHT_CLICK_BLOCK: {
+                Block block = event.getClickedBlock();
+                loc = BukkitUtil.getLocation(block.getLocation());
                 final Material blockType = block.getType();
                 final int blockId = blockType.getId();
                 switch (blockType) {
@@ -1137,8 +1136,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     lb = new BukkitLazyBlock(id, block);
                     break;
                 }
-                lb = new BukkitLazyBlock(new PlotBlock((short) hand.getTypeId(), (byte) hand.getDurability()));
-                switch (hand.getType()) {
+                Material handType = hand.getType();
+                lb = new BukkitLazyBlock(new PlotBlock((short) handType.getId(), (byte) 0));
+                switch (handType) {
                     case MONSTER_EGG:
                     case MONSTER_EGGS: {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
@@ -1181,7 +1181,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                         eventType = PlayerBlockEventType.EAT;
                         break;
                     }
-                    
                     case MINECART:
                     case STORAGE_MINECART:
                     case POWERED_MINECART:
@@ -1205,6 +1204,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 break;
             }
             case LEFT_CLICK_BLOCK: {
+                Block block = event.getClickedBlock();
+                loc = BukkitUtil.getLocation(block.getLocation());
                 eventType = PlayerBlockEventType.BREAK_BLOCK;
                 lb = new BukkitLazyBlock(block);
                 break;

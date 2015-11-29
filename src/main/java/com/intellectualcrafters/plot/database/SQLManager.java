@@ -2819,7 +2819,7 @@ public class SQLManager implements AbstractDB {
             final ConcurrentHashMap<PlotId, Plot> map = entry.getValue();
             if (map.size() > 0) {
                 for (final Entry<PlotId, Plot> entry2 : map.entrySet()) {
-                    PS.debug("$1Plot was deleted: " + entry.getValue() + "// TODO implement this when sure safe");
+                    PS.debug("$1Plot was deleted: " + entry2.getValue() + "// TODO implement this when sure safe");
                 }
             }
         }

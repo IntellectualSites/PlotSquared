@@ -14,7 +14,6 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -71,26 +70,10 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public boolean hasPermission(final String node) {
-        if (Settings.PERMISSION_CACHING) {
-            if (noPerm.contains(node)) {
-                return false;
-            }
-            if (hasPerm.contains(node)) {
-                return true;
-            }
-        }
         if (offline && (EconHandler.manager != null)) {
             return EconHandler.manager.hasPermission(getName(), node);
         }
-        final boolean value = player.hasPermission(node);
-        if (Settings.PERMISSION_CACHING) {
-            if (value) {
-                hasPerm.add(node);
-            } else {
-                noPerm.add(node);
-            }
-        }
-        return value;
+        return player.hasPermission(node);
     }
     
     public Permission getPermission(final String node) {

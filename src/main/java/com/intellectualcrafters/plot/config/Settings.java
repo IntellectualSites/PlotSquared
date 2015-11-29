@@ -40,7 +40,7 @@ public class Settings {
     /**
      * Default UUID_FECTHING: false
      */
-    public static boolean PERMISSION_CACHING = false;
+    public static boolean PERMISSION_CACHING = true;
     public static boolean CACHE_RATINGS = true;
     public static boolean UUID_FROM_DISK = false;
     

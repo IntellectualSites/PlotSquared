@@ -675,14 +675,18 @@ public enum C {
         final Map<String, String> map = new LinkedHashMap<String, String>();
         if (args.length > 0) {
             for (int i = args.length - 1; i >= 0; i--) {
-                if (args[i] == null) {
-                    args[i] = "";
+                String arg = args[i].toString();
+                if (arg == null || arg.length() == 0) {
+                    map.put("%s" + i, "");
+                } else {
+                    arg = C.color(arg);
+                    map.put("%s" + i, arg);
                 }
-                map.put("%s" + i, args[i].toString());
+                if (i == 0) {
+                    map.put("%s", arg);
+                }
             }
-            map.put("%s", args[0].toString());
         }
-        map.putAll(replacements);
         m = StringMan.replaceFromMap(m, map);
         return m;
     }

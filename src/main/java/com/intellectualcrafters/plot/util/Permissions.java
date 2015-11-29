@@ -1,6 +1,9 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.HashMap;
+
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandCaller;
 
@@ -10,7 +13,22 @@ public class Permissions {
     }
     
     public static boolean hasPermission(final PlotPlayer player, final String perm) {
-        return hasPermission((CommandCaller) player, perm);
+        if (!Settings.PERMISSION_CACHING) {
+            return hasPermission((CommandCaller) player, perm);
+        }
+        HashMap<String, Boolean> map = (HashMap<String, Boolean>) player.getMeta("perm");
+        if (map != null) {
+            Boolean result = map.get(perm);
+            if (result != null) {
+                return result;
+            }
+        } else {
+            map = new HashMap<>();
+            player.setMeta("perm", map);
+        }
+        boolean result = hasPermission((CommandCaller) player, perm);
+        map.put(perm, result);
+        return result;
     }
     
     public static boolean hasPermission(final CommandCaller player, String perm) {

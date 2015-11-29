@@ -7,7 +7,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 
 public class BukkitLazyBlock extends LazyBlock {
     
-    private int id = -1;
+    private int id;
     private Block block;
     private PlotBlock pb;
     
@@ -30,7 +30,7 @@ public class BukkitLazyBlock extends LazyBlock {
         if (pb != null) {
             return pb;
         }
-        if (id == -1) {
+        if (id == 0) {
             id = block.getTypeId();
         }
         byte data;
@@ -121,8 +121,10 @@ public class BukkitLazyBlock extends LazyBlock {
             case 191:
             case 192:
                 data = 0;
+                break;
             default:
                 data = block.getData();
+                break;
         }
         pb = new PlotBlock((short) id, data);
         return pb;
@@ -131,7 +133,7 @@ public class BukkitLazyBlock extends LazyBlock {
     
     @Override
     public int getId() {
-        if (id == -1) {
+        if (id == 0) {
             id = block.getTypeId();
         }
         return id;

@@ -2177,18 +2177,7 @@ public class MainUtil {
      * @return boolean success
      */
     public static boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
-        if (c.s().length() > 1) {
-            String msg = c.s();
-            if ((args != null) && (args.length > 0)) {
-                msg = C.format(c, args);
-            }
-            if (plr == null) {
-                ConsolePlayer.getConsole().sendMessage(msg);
-            } else {
-                sendMessage(plr, msg, c.usePrefix());
-            }
-        }
-        return true;
+        return sendMessage(plr, c, (Object[]) args);
     }
     
     /**
@@ -2200,17 +2189,23 @@ public class MainUtil {
      * @return boolean success
      */
     public static boolean sendMessage(final PlotPlayer plr, final C c, final Object... args) {
-        if (c.s().length() > 1) {
-            String msg = c.s();
-            if ((args != null) && (args.length > 0)) {
-                msg = C.format(c, args);
-            }
-            if (plr == null) {
-                ConsolePlayer.getConsole().sendMessage(msg);
-            } else {
-                sendMessage(plr, msg, c.usePrefix());
-            }
+        if (c.s().length() == 0) {
+            return true;
         }
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                String msg = c.s();
+                if (args.length != 0) {
+                    msg = c.format(c, args);
+                }
+                if (plr != null) {
+                    plr.sendMessage((c.usePrefix() ? C.PREFIX.s() + msg : msg));
+                } else {
+                    ConsolePlayer.getConsole().sendMessage((c.usePrefix() ? C.PREFIX.s() : "") + msg);
+                }
+            }
+        });
         return true;
     }
     

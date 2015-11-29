@@ -699,7 +699,7 @@ public class PS {
         try {
             final ArrayList<Plot> overflow = new ArrayList<>();
             if ((range > limit) && (size > 1024)) {
-                plots = new Plot[Math.min((int) range, limit)];
+                plots = new Plot[limit];
                 final int factor = (int) ((range / limit));
                 for (int i = 0; i < size; i++) {
                     Plot plot = list.get(i);
