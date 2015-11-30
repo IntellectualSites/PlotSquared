@@ -213,6 +213,7 @@ commands:
   flag_tutorial_usage: '$1Have an admin set the flag: $2%s'
 errors:
   invalid_player_wait: '$2플레이어를 찾지 못했습니다: $1%s$2, fetching it. 잠시 후 시도해주세요.'
+  invalid_player_offline: '$2플레이어는 반드시 접속 중이어야 합니다: $1%s.'
   invalid_player: '$2플레이어를 찾지 못했습니다: $1%s.'
   command_went_wrong: $2해당 명령어를 실행 중 오류가 발생 하였습니다...
   no_free_plots: $2그곳에는 사용가능한 Free Plot이 없습니다
