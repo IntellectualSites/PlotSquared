@@ -26,7 +26,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -38,10 +37,6 @@ permission = "plots.move",
 category = CommandCategory.ACTIONS,
 requiredType = RequiredType.NONE)
 public class Move extends SubCommand {
-    
-    public Move() {
-        requiredArguments = new Argument[] { Argument.PlotID };
-    }
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {

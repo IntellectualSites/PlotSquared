@@ -22,20 +22,17 @@ package com.intellectualcrafters.plot.commands;
 
 import java.util.Set;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "clear", description = "Clear a plot", permission = "plots.clear", category = CommandCategory.ACTIONS, usage = "/plot clear [id]")
@@ -45,34 +42,34 @@ public class Clear extends SubCommand {
     public boolean onCommand(final PlotPlayer plr, final String... args) {
         final Location loc = plr.getLocation();
         final Plot plot;
-        if (args.length == 2) {
-            final PlotId id = PlotId.fromString(args[0]);
-            if (id == null) {
-                if (args[1].equalsIgnoreCase("mine")) {
-                    final Set<Plot> plots = PS.get().getPlots(plr);
-                    if (plots.size() == 0) {
-                        MainUtil.sendMessage(plr, C.NO_PLOTS);
-                        return false;
-                    }
+        if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("mine")) {
+                Set<Plot> plots = plr.getPlots();
+                if (plots.size() > 0) {
                     plot = plots.iterator().next();
                 } else {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
+                    MainUtil.sendMessage(plr, C.NO_PLOTS);
                     return false;
                 }
             } else {
-                plot = MainUtil.getPlotAbs(loc.getWorld(), id);
+                plot = MainUtil.getPlotFromString(plr, args[0], true);
+            }
+            if (plot == null) {
+                MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
+                return false;
+            }
+        } else if (args.length == 0) {
+            plot = MainUtil.getPlotAbs(loc);
+            if (plot == null) {
+                MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
+                C.NOT_IN_PLOT.send(plr);
+                return false;
             }
         } else {
-            plot = MainUtil.getPlotAbs(loc);
-        }
-        if (plot == null) {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
-            return sendMessage(plr, C.NOT_IN_PLOT);
+            return false;
         }
-        //        if (!MainUtil.getTopPlot(plot).equals(MainUtil.getBottomPlot(plot))) {
-        //            return sendMessage(plr, C.UNLINK_REQUIRED);
-        //        }
-        if (((plot == null) || !plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
+        if ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.clear")) {
             return sendMessage(plr, C.NO_PLOT_PERMS);
         }
         if (plot.getRunning() != 0) {

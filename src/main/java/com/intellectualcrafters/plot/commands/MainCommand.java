@@ -26,12 +26,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
@@ -205,65 +204,84 @@ public class MainCommand extends CommandManager<PlotPlayer> {
     }
     
     public static boolean onCommand(final PlotPlayer player, final String cmd, String... args) {
+        // Clear perm caching //
+        player.deleteMeta("perm");
+        ////////////////////////
         int help_index = -1;
         String category = null;
-        if (args.length == 0) {
-            help_index = 0;
-        } else if (StringMan.isEqualIgnoreCaseToAny(args[0], "he", "help", "?")) {
-            help_index = 0;
-            switch (args.length) {
-                case 3: {
-                    category = args[1];
-                    if (MathMan.isInteger(args[2])) {
-                        try {
-                            help_index = Integer.parseInt(args[2]);
-                        } catch (final NumberFormatException e) {
-                            help_index = 1;
-                        }
-                    }
-                    break;
-                }
-                case 2: {
-                    if (MathMan.isInteger(args[1])) {
-                        category = null;
-                        try {
-                            help_index = Integer.parseInt(args[1]);
-                        } catch (final NumberFormatException e) {
-                            help_index = 1;
-                        }
-                    } else {
-                        help_index = 1;
-                        category = args[1];
-                    }
+        Location loc = null;
+        switch (args.length) {
+            case 0: {
+                help_index = 0;
+                break;
+            }
+            case 1: {
+                if (MathMan.isInteger(args[0])) {
+                    try {
+                        help_index = Integer.parseInt(args[args.length - 1]);
+                    } catch (final NumberFormatException e) {}
                     break;
                 }
             }
-        } else if ((args.length == 1) && MathMan.isInteger(args[args.length - 1])) {
-            try {
-                help_index = Integer.parseInt(args[args.length - 1]);
-            } catch (final NumberFormatException e) {}
-        } else if (ConsolePlayer.isConsole(player) && (args.length >= 2)) {
-            final String[] split = args[0].split(";");
-            String world;
-            PlotId id;
-            if (split.length == 2) {
-                world = player.getLocation().getWorld();
-                id = PlotId.fromString(split[0] + ";" + split[1]);
-            } else if (split.length == 3) {
-                world = split[0];
-                id = PlotId.fromString(split[1] + ";" + split[2]);
-            } else {
-                id = null;
-                world = null;
-            }
-            if ((id != null) && PS.get().isPlotWorld(world)) {
-                final Plot plot = MainUtil.getPlotAbs(world, id);
-                if (plot != null) {
-                    player.teleport(plot.getBottomAbs());
-                    args = Arrays.copyOfRange(args, 1, args.length);
+            default: {
+                switch (args[0].toLowerCase()) {
+                    case "he":
+                    case "help":
+                    case "?": {
+                        switch (args.length) {
+                            case 1: {
+                                help_index = 0;
+                                break;
+                            }
+                            case 2: {
+                                if (MathMan.isInteger(args[1])) {
+                                    category = null;
+                                    try {
+                                        help_index = Integer.parseInt(args[1]);
+                                    } catch (final NumberFormatException e) {
+                                        help_index = 1;
+                                    }
+                                } else {
+                                    help_index = 1;
+                                    category = args[1];
+                                }
+                                break;
+                            }
+                            case 3: {
+                                category = args[1];
+                                if (MathMan.isInteger(args[2])) {
+                                    try {
+                                        help_index = Integer.parseInt(args[2]);
+                                    } catch (final NumberFormatException e) {
+                                        help_index = 1;
+                                    }
+                                }
+                                break;
+                            }
+                            default: {
+                                C.COMMAND_SYNTAX.send(player, "/" + cmd + "? [#|<term>|category [#]]");
+                                return true;
+                            }
+                        }
+                        break;
+                    }
+                    default: {
+                        if (args.length >= 2) {
+                            String world = player.getLocation().getWorld();
+                            Plot plot = Plot.fromString(world, args[0]);
+                            if (plot == null) {
+                                break;
+                            }
+                            if (!ConsolePlayer.isConsole(player) && (!plot.world.equals(world) || plot.isDenied(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN)) {
+                                break;
+                            }
+                            loc = (Location) player.getMeta("location");
+                            player.setMeta("location", plot.getBottomAbs());
+                            args = Arrays.copyOfRange(args, 1, args.length);
+                        }
+                    }
                 }
             }
-            
         }
         if (help_index != -1) {
             displayHelp(player, category, help_index, cmd);
@@ -274,6 +292,9 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         }
         String fullCmd = StringMan.join(args, " ");
         getInstance().handle(player, cmd + " " + fullCmd);
+        if (loc != null) {
+            player.setMeta("location", loc);
+        }
         return true;
     }
     
@@ -320,9 +341,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
     
     @Override
     public int handle(final PlotPlayer plr, final String input) {
-        // Clear perm caching //
-        plr.deleteMeta("perm");
-        ////////////////////////
         final String[] parts = input.split(" ");
         String[] args;
         String label;

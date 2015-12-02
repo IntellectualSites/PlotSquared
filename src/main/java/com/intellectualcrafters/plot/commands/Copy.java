@@ -26,7 +26,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -38,10 +37,6 @@ description = "Copy a plot",
 usage = "/plot copy <X;Z>",
 requiredType = RequiredType.NONE)
 public class Copy extends SubCommand {
-    
-    public Copy() {
-        requiredArguments = new Argument[] { Argument.PlotID };
-    }
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {

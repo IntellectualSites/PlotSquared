@@ -17,8 +17,8 @@ import com.plotsquared.general.commands.CommandCaller;
 import com.plotsquared.listener.PlotListener;
 
 /**
- * Created 2015-02-20 for PlotSquared
- *
+ * The PlotPlayer class<br>
+ *  - Can cast to: BukkitPlayer / SpongePlayer, which are the current implementations<br>
  */
 public abstract class PlotPlayer implements CommandCaller {
     
@@ -28,7 +28,7 @@ public abstract class PlotPlayer implements CommandCaller {
     private ConcurrentHashMap<String, Object> meta;
     
     /**
-     * Efficiently wrap a Player object to get a PlotPlayer (or fetch if it's already cached)<br>
+     * Efficiently wrap a Player, or OfflinePlayer object to get a PlotPlayer (or fetch if it's already cached)<br>
      *  - Accepts sponge/bukkit Player (online)
      *  - Accepts player name (online)
      *  - Accepts UUID
@@ -42,7 +42,7 @@ public abstract class PlotPlayer implements CommandCaller {
     
     /**
      * Get the cached PlotPlayer from a username<br>
-     *  - This will return null if the player has just logged in or is not online
+     *  - This will return null if the player has not finished logging in or is not online
      * @param name
      * @return
      */
