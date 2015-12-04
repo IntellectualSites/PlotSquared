@@ -1336,17 +1336,17 @@ public class PS {
                         }
                         case "f":
                         case "floor": {
-                            config.set(base + "plot.floor", Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(",")));
+                            config.set(base + "plot.floor", new ArrayList<String>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
                             break;
                         }
                         case "m":
                         case "main": {
-                            config.set(base + "plot.filling", Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(",")));
+                            config.set(base + "plot.filling", new ArrayList<String>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
                             break;
                         }
                         case "w":
                         case "wall": {
-                            config.set(base + "wall.filling", Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(",")));
+                            config.set(base + "wall.filling", Configuration.BLOCK.parseString(value).toString());
                             break;
                         }
                         case "b":

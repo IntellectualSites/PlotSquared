@@ -210,6 +210,8 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         int help_index = -1;
         String category = null;
         Location loc = null;
+        Plot plot = null;
+        boolean tp = false;
         switch (args.length) {
             case 0: {
                 help_index = 0;
@@ -268,15 +270,21 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                     default: {
                         if (args.length >= 2) {
                             String world = player.getLocation().getWorld();
-                            Plot plot = Plot.fromString(world, args[0]);
-                            if (plot == null) {
+                            Plot newPlot = Plot.fromString(world, args[0]);
+                            if (newPlot == null) {
                                 break;
                             }
-                            if (!ConsolePlayer.isConsole(player) && (!plot.world.equals(world) || plot.isDenied(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN)) {
+                            if (!ConsolePlayer.isConsole(player) && (!newPlot.world.equals(world) || newPlot.isDenied(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN)) {
                                 break;
                             }
+                            // Save meta
                             loc = (Location) player.getMeta("location");
-                            player.setMeta("location", plot.getBottomAbs());
+                            plot = (Plot) player.getMeta("lastplot");
+                            tp = true;
+                            // Set loc
+                            player.setMeta("location", newPlot.getBottomAbs());
+                            player.setMeta("lastplot", newPlot);
+                            // Trim command
                             args = Arrays.copyOfRange(args, 1, args.length);
                         }
                     }
@@ -292,8 +300,18 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         }
         String fullCmd = StringMan.join(args, " ");
         getInstance().handle(player, cmd + " " + fullCmd);
-        if (loc != null) {
-            player.setMeta("location", loc);
+        // Restore location
+        if (tp) {
+            if (loc == null) {
+                player.deleteMeta("location");
+            } else {
+                player.setMeta("location", loc);
+            }
+            if (plot == null) {
+                player.deleteMeta("lastplot");
+            } else {
+                player.setMeta("lastplot", plot);
+            }
         }
         return true;
     }

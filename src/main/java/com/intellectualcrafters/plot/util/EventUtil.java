@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -21,15 +20,6 @@ import com.plotsquared.bukkit.listeners.PlayerBlockEventType;
 public abstract class EventUtil {
     
     public static EventUtil manager = null;
-    
-    public static void unregisterPlayer(final PlotPlayer player) {
-        final String name = player.getName();
-        if (SetupUtils.setupMap.containsKey(name)) {
-            SetupUtils.setupMap.remove(name);
-        }
-        CmdConfirm.removePending(name);
-        PS.get().IMP.unregister(player);
-    }
     
     public abstract Rating callRating(final PlotPlayer player, final Plot plot, final Rating rating);
     

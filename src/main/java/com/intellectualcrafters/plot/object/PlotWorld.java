@@ -284,6 +284,11 @@ public abstract class PlotWorld {
         }
     }
     
+    @Override
+    public String toString() {
+        return worldname;
+    }
+
     /**
      * Used for the <b>/plot setup</b> command Return null if you do not want to support this feature
      *

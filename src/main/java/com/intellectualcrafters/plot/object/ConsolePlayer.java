@@ -15,7 +15,6 @@ import com.intellectualcrafters.plot.util.PlotWeather;
 public class ConsolePlayer extends PlotPlayer {
     
     private static ConsolePlayer instance;
-    private Location loc;
     private final HashMap<String, Object> meta;
     
     public static ConsolePlayer getConsole() {
@@ -38,8 +37,9 @@ public class ConsolePlayer extends PlotPlayer {
         } else {
             world = "world";
         }
-        loc = new Location(world, 0, 0, 0);
         meta = new HashMap<>();
+        Location loc = new Location(world, 0, 0, 0);
+        setMeta("location", loc);
     }
     
     public static boolean isConsole(final PlotPlayer plr) {
@@ -53,12 +53,12 @@ public class ConsolePlayer extends PlotPlayer {
     
     @Override
     public Location getLocation() {
-        return loc;
+        return (Location) getMeta("location");
     }
     
     @Override
     public Location getLocationFull() {
-        return loc;
+        return (Location) getMeta("location");
     }
     
     @Override
@@ -85,7 +85,7 @@ public class ConsolePlayer extends PlotPlayer {
     public void teleport(final Location loc) {
         final Plot plot = MainUtil.getPlot(loc);
         setMeta("lastplot", plot);
-        this.loc = loc;
+        setMeta("location", loc);
     }
     
     @Override

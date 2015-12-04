@@ -1,6 +1,5 @@
 package com.plotsquared.bukkit.object;
 
-import java.util.HashSet;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -29,8 +28,6 @@ public class BukkitPlayer extends PlotPlayer {
     private UUID uuid;
     private String name;
     private long last = 0;
-    public HashSet<String> hasPerm = new HashSet<>();
-    public HashSet<String> noPerm = new HashSet<>();
     public boolean offline;
     
     /**

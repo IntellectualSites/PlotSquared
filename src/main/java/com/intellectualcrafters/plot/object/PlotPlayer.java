@@ -7,14 +7,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandCaller;
-import com.plotsquared.listener.PlotListener;
 
 /**
  * The PlotPlayer class<br>
@@ -321,17 +322,19 @@ public abstract class PlotPlayer implements CommandCaller {
     public void unregister() {
         final Plot plot = getCurrentPlot();
         if (plot != null) {
-            PlotListener.plotExit(this, plot);
+            EventUtil.manager.callLeave(this, plot);
         }
-        ExpireManager.dates.put(getUUID(), System.currentTimeMillis());
-        EventUtil.unregisterPlayer(this);
         if (Settings.DELETE_PLOTS_ON_BAN && isBanned()) {
             for (final Plot owned : PS.get().getPlotsInWorld(getName())) {
                 owned.deletePlot(null);
                 PS.debug(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), getName()));
             }
         }
-        UUIDHandler.getPlayers().remove(getName());
+        String name = getName();
+        ExpireManager.dates.put(getUUID(), System.currentTimeMillis());
+        SetupUtils.setupMap.remove(name);
+        CmdConfirm.removePending(name);
+        UUIDHandler.getPlayers().remove(name);
         PS.get().IMP.unregister(this);
     }
 }

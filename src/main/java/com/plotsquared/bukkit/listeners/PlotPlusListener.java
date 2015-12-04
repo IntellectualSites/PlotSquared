@@ -65,37 +65,41 @@ public class PlotPlusListener extends PlotListener implements Listener {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                for (final Iterator<Entry<String, Interval>> iter = healRunnable.entrySet().iterator(); iter.hasNext();) {
-                    final Entry<String, Interval> entry = iter.next();
-                    final Interval value = entry.getValue();
-                    ++value.count;
-                    if (value.count == value.interval) {
-                        value.count = 0;
-                        final Player player = Bukkit.getPlayer(entry.getKey());
-                        if (player == null) {
-                            iter.remove();
-                            continue;
-                        }
-                        final double level = player.getHealth();
-                        if (level != value.max) {
-                            player.setHealth(Math.min(level + value.amount, value.max));
+                if (healRunnable.size() > 0) {
+                    for (final Iterator<Entry<String, Interval>> iter = healRunnable.entrySet().iterator(); iter.hasNext();) {
+                        final Entry<String, Interval> entry = iter.next();
+                        final Interval value = entry.getValue();
+                        ++value.count;
+                        if (value.count == value.interval) {
+                            value.count = 0;
+                            final Player player = Bukkit.getPlayer(entry.getKey());
+                            if (player == null) {
+                                iter.remove();
+                                continue;
+                            }
+                            final double level = player.getHealth();
+                            if (level != value.max) {
+                                player.setHealth(Math.min(level + value.amount, value.max));
+                            }
                         }
                     }
                 }
-                for (final Iterator<Entry<String, Interval>> iter = feedRunnable.entrySet().iterator(); iter.hasNext();) {
-                    final Entry<String, Interval> entry = iter.next();
-                    final Interval value = entry.getValue();
-                    ++value.count;
-                    if (value.count == value.interval) {
-                        value.count = 0;
-                        final Player player = Bukkit.getPlayer(entry.getKey());
-                        if (player == null) {
-                            iter.remove();
-                            continue;
-                        }
-                        final int level = player.getFoodLevel();
-                        if (level != value.max) {
-                            player.setFoodLevel(Math.min(level + value.amount, value.max));
+                if (feedRunnable.size() > 0) {
+                    for (final Iterator<Entry<String, Interval>> iter = feedRunnable.entrySet().iterator(); iter.hasNext();) {
+                        final Entry<String, Interval> entry = iter.next();
+                        final Interval value = entry.getValue();
+                        ++value.count;
+                        if (value.count == value.interval) {
+                            value.count = 0;
+                            final Player player = Bukkit.getPlayer(entry.getKey());
+                            if (player == null) {
+                                iter.remove();
+                                continue;
+                            }
+                            final int level = player.getFoodLevel();
+                            if (level != value.max) {
+                                player.setFoodLevel(Math.min(level + value.amount, value.max));
+                            }
                         }
                     }
                 }

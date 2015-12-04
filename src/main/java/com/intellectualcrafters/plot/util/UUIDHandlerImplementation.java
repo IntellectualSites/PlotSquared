@@ -108,27 +108,32 @@ public abstract class UUIDHandlerImplementation {
          * lazy UUID conversion:
          *  - Useful if the person misconfigured the database, or settings before PlotMe conversion
          */
-        if (!Settings.OFFLINE_MODE) {
-            UUID offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
-            if (!unknown.contains(offline) && !name.value.equals(name.value.toLowerCase())) {
-                offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
-                if (!unknown.contains(offline)) {
-                    offline = null;
-                }
-            }
-            if (offline != null && !offline.equals(uuid)) {
-                unknown.remove(offline);
-                final Set<Plot> plots = PS.get().getPlots(offline);
-                if (plots.size() > 0) {
-                    for (final Plot plot : plots) {
-                        plot.owner = uuid;
+        if (!Settings.OFFLINE_MODE && unknown.size() > 0) {
+            TaskManager.runTaskAsync(new Runnable() {
+                @Override
+                public void run() {
+                    UUID offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value).getBytes(Charsets.UTF_8));
+                    if (!unknown.contains(offline) && !name.value.equals(name.value.toLowerCase())) {
+                        offline = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.value.toLowerCase()).getBytes(Charsets.UTF_8));
+                        if (!unknown.contains(offline)) {
+                            offline = null;
+                        }
                     }
-                    DBFunc.replaceUUID(offline, uuid);
-                    PS.debug("&cDetected invalid UUID stored for: " + name.value);
-                    PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
-                    PS.debug("&6PlotSquared will update incorrect entries when the user logs in, or you can reconstruct your database.");
+                    if (offline != null && !offline.equals(uuid)) {
+                        unknown.remove(offline);
+                        final Set<Plot> plots = PS.get().getPlots(offline);
+                        if (plots.size() > 0) {
+                            for (final Plot plot : plots) {
+                                plot.owner = uuid;
+                            }
+                            DBFunc.replaceUUID(offline, uuid);
+                            PS.debug("&cDetected invalid UUID stored for: " + name.value);
+                            PS.debug("&7 - Did you recently switch to online-mode storage without running `uuidconvert`?");
+                            PS.debug("&6PlotSquared will update incorrect entries when the user logs in, or you can reconstruct your database.");
+                        }
+                    }
                 }
-            }
+            });
         }
         try {
             final UUID offline = uuidMap.put(name, uuid);

@@ -74,9 +74,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -96,7 +94,6 @@ import org.bukkit.util.Vector;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
@@ -407,57 +404,48 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onConnect(final PlayerLoginEvent event) {
         final Player player = event.getPlayer();
-        final String name = player.getName();
+        BukkitUtil.getPlayer(event.getPlayer()).unregister();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        if (name.equals("PlotSquared") || pp.getUUID().equals(DBFunc.everyone)) {
-            event.disallow(Result.KICK_WHITELIST, "This account is reserved");
-            BukkitUtil.removePlayer(pp.getName());
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onJoin(final PlayerJoinEvent event) {
-        final Player player = event.getPlayer();
-        if (!player.hasPlayedBefore()) {
-            player.saveData();
-        }
-        BukkitUtil.getPlayer(event.getPlayer()).unregister();;
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        
-        // Set last location
-        pp.setMeta("location", BukkitUtil.getLocation(player.getLocation()));
-        
-        final String username = pp.getName();
-        final StringWrapper name = new StringWrapper(username);
+        // Now
+        String name = pp.getName();
+        StringWrapper sw = new StringWrapper(name);
         final UUID uuid = pp.getUUID();
-        UUIDHandler.add(name, uuid);
-        ExpireManager.dates.put(uuid, System.currentTimeMillis());
-        if (BukkitMain.worldEdit != null) {
-            if (pp.getAttribute("worldedit")) {
-                MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASSED);
-            }
+        UUIDHandler.add(sw, uuid);
+        
+        Location loc = pp.getLocation();
+        final Plot plot = MainUtil.getPlotAbs(loc);
+        if (plot != null) {
+            plotEntry(pp, plot);
         }
-        if ((PS.get().update != null) && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
-            TaskManager.runTaskLater(new Runnable() {
-                @Override
-                public void run() {
+        // Delayed
+        {   
+            
+        }
+        // Async
+        TaskManager.runTaskLaterAsync(new Runnable() {
+            @Override
+            public void run() {
+                if (!player.hasPlayedBefore()) {
+                    player.saveData();
+                }
+                ExpireManager.dates.put(uuid, System.currentTimeMillis());
+                if (BukkitMain.worldEdit != null) {
+                    if (pp.getAttribute("worldedit")) {
+                        MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASSED);
+                    }
+                }
+                if ((PS.get().update != null) && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
                     MainUtil.sendMessage(pp, "&6An update for PlotSquared is available: &7/plot update");
                 }
-            }, 20);
-        }
-        final Location loc = BukkitUtil.getLocation(player.getLocation());
-        final Plot plot = MainUtil.getPlot(loc);
-        if (plot == null) {
-            return;
-        }
-        if (Settings.TELEPORT_ON_LOGIN) {
-            MainUtil.teleportPlayer(pp, pp.getLocation(), plot);
-            MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
-        }
-        plotEntry(pp, plot);
+                if (Settings.TELEPORT_ON_LOGIN && plot != null) {
+                    MainUtil.teleportPlayer(pp, pp.getLocation(), plot);
+                    MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
+                }
+            }
+        }, 20);
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -740,8 +728,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
         }
         if (Settings.PERMISSION_CACHING) {
-            ((BukkitPlayer) pp).hasPerm = new HashSet<>();
-            ((BukkitPlayer) pp).noPerm = new HashSet<>();
+            pp.deleteMeta("perm");
         }
     }
     
@@ -1225,9 +1212,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (entity instanceof Player) {
             return;
         }
-        final Location loc = BukkitUtil.getLocation(event.getLocation());
-        final String world = loc.getWorld();
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final Location loc = BukkitUtil.getLocation(entity.getLocation());
+        final PlotWorld plotworld = loc.getPlotWorld();
         if (plotworld == null) {
             return;
         }
@@ -1235,18 +1221,28 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return;
         }
         final CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
-        if (((reason == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) || (reason == CreatureSpawnEvent.SpawnReason.DISPENSE_EGG)) && !plotworld.SPAWN_EGGS) {
-            event.setCancelled(true);
-            return;
-        } else if ((reason == CreatureSpawnEvent.SpawnReason.BREEDING) && !plotworld.SPAWN_BREEDING) {
-            event.setCancelled(true);
-            return;
-        } else if ((reason == CreatureSpawnEvent.SpawnReason.CUSTOM) && !plotworld.SPAWN_CUSTOM && !(event.getEntityType().getTypeId() == 30)) {
-            event.setCancelled(true);
-            return;
+        switch (reason) {
+            case SPAWNER_EGG:
+            case DISPENSE_EGG:
+                if (!plotworld.SPAWN_EGGS) {
+                    event.setCancelled(true);
+                    return;
+                }
+                break;
+            case BREEDING:
+                if (!plotworld.SPAWN_BREEDING) {
+                    event.setCancelled(true);
+                    return;
+                }
+                break;
+            case CUSTOM:
+                if (!plotworld.SPAWN_CUSTOM && entity.getType().getTypeId() != 30) {
+                    event.setCancelled(true);
+                    return;
+                }
+                break;
         }
-        
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = MainUtil.getPlotAbs(loc);
         if (checkEntity(entity, plot)) {
             event.setCancelled(true);
             return;
@@ -1342,116 +1338,116 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     }
 
     public boolean checkEntity(final Entity entity, final Plot plot) {
-        if ((plot != null) && (plot.owner != null)) {
-            switch (entity.getType()) {
-                case PLAYER: {
-                    return false;
-                }
-                case SMALL_FIREBALL:
-                case FIREBALL:
-                case DROPPED_ITEM:
-                case EGG:
-                case THROWN_EXP_BOTTLE:
-                case SPLASH_POTION:
-                case SNOWBALL:
-                case ENDER_PEARL:
-                case ARROW: {
-                    // projectile
-                }
-                case PRIMED_TNT:
-                case FALLING_BLOCK: {
-                    // Block entities 
-                }
-                case ENDER_CRYSTAL:
-                case COMPLEX_PART:
-                case FISHING_HOOK:
-                case ENDER_SIGNAL:
-                case EXPERIENCE_ORB:
-                case LEASH_HITCH:
-                case FIREWORK:
-                case WEATHER:
-                case LIGHTNING:
-                case WITHER_SKULL:
-                case UNKNOWN: {
-                    // non moving / unremovable
-                    return checkEntity(plot, "entity-cap");
-                }
-                case ITEM_FRAME:
-                case PAINTING:
-                case ARMOR_STAND: {
-                    return checkEntity(plot, "entity-cap", "misc-cap");
-                    // misc
-                }
-                case MINECART:
-                case MINECART_CHEST:
-                case MINECART_COMMAND:
-                case MINECART_FURNACE:
-                case MINECART_HOPPER:
-                case MINECART_MOB_SPAWNER:
-                case MINECART_TNT:
-                case BOAT: {
-                    return checkEntity(plot, "entity-cap", "vehicle-cap");
-                }
-                case RABBIT:
-                case SHEEP:
-                case MUSHROOM_COW:
-                case OCELOT:
-                case PIG:
-                case HORSE:
-                case SQUID:
-                case VILLAGER:
-                case IRON_GOLEM:
-                case WOLF:
-                case CHICKEN:
-                case COW:
-                case SNOWMAN:
-                case BAT: {
-                    // animal
-                    return checkEntity(plot, "entity-cap", "mob-cap", "animal-cap");
-                }
-                case BLAZE:
-                case CAVE_SPIDER:
-                case CREEPER:
-                case ENDERMAN:
-                case ENDERMITE:
-                case ENDER_DRAGON:
-                case GHAST:
-                case GIANT:
-                case GUARDIAN:
-                case MAGMA_CUBE:
-                case PIG_ZOMBIE:
-                case SILVERFISH:
-                case SKELETON:
-                case SLIME:
-                case SPIDER:
-                case WITCH:
-                case WITHER:
-                case ZOMBIE: {
-                    // monster
-                    return checkEntity(plot, "entity-cap", "mob-cap", "hostile-cap");
-                }
-                default: {
-                    String[] types;
-                    if (entity instanceof LivingEntity) {
-                        if (entity instanceof Animals) {
-                            types = new String[] { "entity-cap", "mob-cap", "animal-cap" };
-                        } else if (entity instanceof Monster) {
-                            types = new String[] { "entity-cap", "mob-cap", "hostile-cap" };
-                        } else {
-                            types = new String[] { "entity-cap", "mob-cap" };
-                        }
-                    } else if (entity instanceof Vehicle) {
-                        types = new String[] { "entity-cap", "vehicle-cap" };
-                    } else if (entity instanceof Hanging) {
-                        types = new String[] { "entity-cap", "misc-cap" };
+        if (plot == null || plot.owner == null || plot.settings == null || (plot.settings.flags.size() == 0 && plot.getWorld().DEFAULT_FLAGS.size() == 0)) {
+            return false;
+        }
+        switch (entity.getType()) {
+            case PLAYER: {
+                return false;
+            }
+            case SMALL_FIREBALL:
+            case FIREBALL:
+            case DROPPED_ITEM:
+            case EGG:
+            case THROWN_EXP_BOTTLE:
+            case SPLASH_POTION:
+            case SNOWBALL:
+            case ENDER_PEARL:
+            case ARROW: {
+                // projectile
+            }
+            case PRIMED_TNT:
+            case FALLING_BLOCK: {
+                // Block entities 
+            }
+            case ENDER_CRYSTAL:
+            case COMPLEX_PART:
+            case FISHING_HOOK:
+            case ENDER_SIGNAL:
+            case EXPERIENCE_ORB:
+            case LEASH_HITCH:
+            case FIREWORK:
+            case WEATHER:
+            case LIGHTNING:
+            case WITHER_SKULL:
+            case UNKNOWN: {
+                // non moving / unremovable
+                return checkEntity(plot, "entity-cap");
+            }
+            case ITEM_FRAME:
+            case PAINTING:
+            case ARMOR_STAND: {
+                return checkEntity(plot, "entity-cap", "misc-cap");
+                // misc
+            }
+            case MINECART:
+            case MINECART_CHEST:
+            case MINECART_COMMAND:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_MOB_SPAWNER:
+            case MINECART_TNT:
+            case BOAT: {
+                return checkEntity(plot, "entity-cap", "vehicle-cap");
+            }
+            case RABBIT:
+            case SHEEP:
+            case MUSHROOM_COW:
+            case OCELOT:
+            case PIG:
+            case HORSE:
+            case SQUID:
+            case VILLAGER:
+            case IRON_GOLEM:
+            case WOLF:
+            case CHICKEN:
+            case COW:
+            case SNOWMAN:
+            case BAT: {
+                // animal
+                return checkEntity(plot, "entity-cap", "mob-cap", "animal-cap");
+            }
+            case BLAZE:
+            case CAVE_SPIDER:
+            case CREEPER:
+            case ENDERMAN:
+            case ENDERMITE:
+            case ENDER_DRAGON:
+            case GHAST:
+            case GIANT:
+            case GUARDIAN:
+            case MAGMA_CUBE:
+            case PIG_ZOMBIE:
+            case SILVERFISH:
+            case SKELETON:
+            case SLIME:
+            case SPIDER:
+            case WITCH:
+            case WITHER:
+            case ZOMBIE: {
+                // monster
+                return checkEntity(plot, "entity-cap", "mob-cap", "hostile-cap");
+            }
+            default: {
+                String[] types;
+                if (entity instanceof LivingEntity) {
+                    if (entity instanceof Animals) {
+                        types = new String[] { "entity-cap", "mob-cap", "animal-cap" };
+                    } else if (entity instanceof Monster) {
+                        types = new String[] { "entity-cap", "mob-cap", "hostile-cap" };
                     } else {
-                        types = new String[] { "entity-cap" };
+                        types = new String[] { "entity-cap", "mob-cap" };
                     }
-                    return checkEntity(plot, types);
+                } else if (entity instanceof Vehicle) {
+                    types = new String[] { "entity-cap", "vehicle-cap" };
+                } else if (entity instanceof Hanging) {
+                    types = new String[] { "entity-cap", "misc-cap" };
+                } else {
+                    types = new String[] { "entity-cap" };
                 }
+                return checkEntity(plot, types);
             }
         }
-        return false;
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

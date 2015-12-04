@@ -218,7 +218,7 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     final String flag = args[1];
-                    for (final Plot plot : PS.get().getPlots()) {
+                    for (final Plot plot : PS.get().getBasePlots()) {
                         if (FlagManager.getPlotFlagRaw(plot, flag) != null) {
                             FlagManager.removePlotFlag(plot, flag);
                         }
@@ -407,6 +407,49 @@ public class DebugExec extends SubCommand {
                         e.printStackTrace();
                         return false;
                     }
+                    break;
+                }
+                case "allcmd": {
+                    if (args.length < 3) {
+                        C.COMMAND_SYNTAX.send(player, "/plot debugexec allcmd <condition> <command>");
+                        return false;
+                    }
+                    long start = System.currentTimeMillis();
+                    Command<PlotPlayer> cmd = MainCommand.getInstance().getCommand(args[3]);
+                    String[] params = Arrays.copyOfRange(args, 4, args.length);
+                    if (args[1].equals("true")) {
+                        Location loc = (Location) player.getMeta("location");
+                        Plot plot = (Plot) player.getMeta("lastplot");
+                        for (Plot current : PS.get().getBasePlots()) {
+                            player.setMeta("location", current.getBottomAbs());
+                            player.setMeta("lastplot", current);
+                            cmd.onCommand(player, params);
+                        }
+                        if (loc == null) {
+                            player.deleteMeta("location");
+                        } else {
+                            player.setMeta("location", loc);
+                        }
+                        if (plot == null) {
+                            player.deleteMeta("lastplot");
+                        } else {
+                            player.setMeta("lastplot", plot);
+                        }
+                        player.sendMessage("&c> " + (System.currentTimeMillis() - start));
+                        return true;
+                    }
+                    init();
+                    scope.put("_2", params);
+                    scope.put("_3", cmd);
+                    script = "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if(" + args[1] + "){PlotPlayer.setMeta(\"location\",plot.getBottomAbs());PlotPlayer.setMeta(\"lastplot\",plot);_3.onCommand(PlotPlayer,_2)}}";
+                    break;
+                }
+                case "all": {
+                    if (args.length < 3) {
+                        C.COMMAND_SYNTAX.send(player, "/plot debugexec all <condition> <code>");
+                        return false;
+                    }
+                    script = "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if(" + args[1] + "){" + StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ") + "}}";
                     break;
                 }
                 default: {
