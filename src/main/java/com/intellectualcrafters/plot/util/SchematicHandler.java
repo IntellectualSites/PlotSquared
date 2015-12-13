@@ -170,7 +170,7 @@ public abstract class SchematicHandler {
                     if (HEIGHT >= 256) {
                         y_offset = 0;
                     } else {
-                        y_offset = MainUtil.getHeighestBlock(plot.world, region.minX + 1, region.minZ + 1);
+                        y_offset = PS.get().config.getInt("worlds."+plot.getWorld().worldname+".plot.height") + 1;
                     }
                     final Location pos1 = new Location(plot.world, region.minX + x_offset, y_offset, region.minZ + z_offset);
 //                    Location pos2 = new Location(plot.world, region.maxX, region.maxY, region.maxZ);
