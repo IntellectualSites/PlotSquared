@@ -384,7 +384,15 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
             if (pattern.matcher(msg).matches()) {
                 MainUtil.sendMessage(pp, C.COMMAND_BLOCKED);
-                event.setCancelled(true);
+                String perm;
+                if (plot.isAdded(pp.getUUID())) {
+                    perm = "plots.admin.command.blocked-cmds.shared";
+                } else {
+                    perm = "plots.admin.command.blocked-cmds.other";
+                }
+                if (!Permissions.hasPermission(pp, perm)) {
+                    event.setCancelled(true);
+                }
                 return;
             }
         }
