@@ -156,7 +156,7 @@ public class LikePlotMeConverter {
                 return false;
             }
             
-            sendMessage(plugin + " conversion has started. To disable this, please set 'plotme-convert.enabled' in the 'settings.yml'");
+            sendMessage(plugin + " conversion has started. To disable this, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
             
             mergeWorldYml(plugin, plotConfig);
             

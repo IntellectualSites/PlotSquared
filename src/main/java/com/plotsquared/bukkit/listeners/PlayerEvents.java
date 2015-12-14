@@ -74,7 +74,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -405,7 +405,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onConnect(final PlayerLoginEvent event) {
+    public void onConnect(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         BukkitUtil.getPlayer(event.getPlayer()).unregister();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
@@ -428,7 +428,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
-                if (!player.hasPlayedBefore()) {
+                if (!player.hasPlayedBefore() && player.isOnline()) {
                     player.saveData();
                 }
                 ExpireManager.dates.put(uuid, System.currentTimeMillis());
@@ -1623,12 +1623,19 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             Plot now = MainUtil.getPlot(loc);
             final Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (now == null) {
-                if ((lastPlot != null) && !plotExit(pp, lastPlot)) {
+                if ((lastPlot != null) && !plotExit(pp, lastPlot) && tmp_teleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
+                        tmp_teleport = false;
                         player.teleport(from);
+                        tmp_teleport = true;
                     } else {
-                        player.teleport(player.getWorld().getSpawnLocation());
+                        Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
+                        if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
+                            tmp_teleport = false;
+                            player.teleport(player.getWorld().getSpawnLocation());
+                            tmp_teleport = true;
+                        }
                     }
                     event.setCancelled(true);
                     return;
@@ -1636,29 +1643,43 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             } else if ((lastPlot != null) && now.equals(lastPlot)) {
                 return;
             } else {
-                if (!plotEntry(pp, now)) {
+                if (!plotEntry(pp, now) && tmp_teleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
-                    if (!now.equals(lastPlot)) {
+                    if (!now.equals(MainUtil.getPlot(BukkitUtil.getLocation(from)))) {
+                        tmp_teleport = false;
                         player.teleport(from);
+                        tmp_teleport = true;
                     } else {
-                        player.teleport(player.getWorld().getSpawnLocation());
+                        Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
+                        if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
+                            tmp_teleport = false;
+                            player.teleport(player.getWorld().getSpawnLocation());
+                            tmp_teleport = true;
+                        }
                     }
                     event.setCancelled(true);
                     return;
                 }
             }
             final Integer border = MainUtil.worldBorder.get(worldname);
-            if (border != null) {
+            if (border != null && tmp_teleport) {
                 if (z2 > border) {
                     to.setZ(border - 4);
+                    tmp_teleport = false;
                     player.teleport(event.getTo());
+                    tmp_teleport = true;
                     MainUtil.sendMessage(pp, C.BORDER);
+                    return;
                 } else if (z2 < -border) {
                     to.setZ(-border + 4);
+                    tmp_teleport = false;
                     player.teleport(event.getTo());
+                    tmp_teleport = true;
                     MainUtil.sendMessage(pp, C.BORDER);
+                    return;
                 }
             }
+            return;
         }
     }
     

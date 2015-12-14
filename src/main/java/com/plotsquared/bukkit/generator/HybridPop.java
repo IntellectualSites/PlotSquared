@@ -2,6 +2,7 @@ package com.plotsquared.bukkit.generator;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -109,7 +110,7 @@ public class HybridPop extends BukkitPlotPopulator {
         }
 
         if (requiredRegion != null) {
-            if (!doFloor && !doFilling && plotworld.G_SCH_STATE == null) {
+            if (!doFloor && !doFilling && plotworld.G_SCH_DATA == null) {
                 return;
             }
             for (short x = 0; x < 16; x++) {
@@ -127,8 +128,8 @@ public class HybridPop extends BukkitPlotPopulator {
                             final PlotLoc loc = new PlotLoc(absX, absZ);
                             final HashMap<Short, Byte> blocks = plotworld.G_SCH_DATA.get(loc);
                             if (blocks != null) {
-                                for (final short y : blocks.keySet()) {
-                                    setBlockAbs(x, (short) (plotheight + y), z, blocks.get(y));
+                                for (Entry<Short, Byte> entry : blocks.entrySet()) {
+                                    setBlockAbs(x, (short) (plotheight + entry.getKey()), z, entry.getValue());
                                 }
                             }
                             if (plotworld.G_SCH_STATE != null) {
@@ -164,8 +165,8 @@ public class HybridPop extends BukkitPlotPopulator {
                         final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Byte> blocks = plotworld.G_SCH_DATA.get(loc);
                         if (blocks != null) {
-                            for (final short y : blocks.keySet()) {
-                                setBlockAbs(x, (short) (plotheight + y), z, blocks.get(y));
+                            for (Entry<Short, Byte> entry : blocks.entrySet()) {
+                                setBlockAbs(x, (short) (plotheight + entry.getKey()), z, entry.getValue());
                             }
                         }
                         if (plotworld.G_SCH_STATE != null) {
@@ -199,8 +200,8 @@ public class HybridPop extends BukkitPlotPopulator {
                         final PlotLoc loc = new PlotLoc(absX, absZ);
                         final HashMap<Short, Byte> blocks = plotworld.G_SCH_DATA.get(loc);
                         if (blocks != null) {
-                            for (final short y : blocks.keySet()) {
-                                setBlockAbs(x, (short) (roadheight + y), z, blocks.get(y));
+                            for (Entry<Short, Byte> entry : blocks.entrySet()) {
+                                setBlockAbs(x, (short) (roadheight + entry.getKey()), z, entry.getValue());
                             }
                         }
                     }

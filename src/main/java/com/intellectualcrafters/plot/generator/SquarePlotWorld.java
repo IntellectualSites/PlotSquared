@@ -7,7 +7,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     public static int PLOT_WIDTH_DEFAULT = 42;
     public static int ROAD_WIDTH_DEFAULT = 7;
     public static int ROAD_OFFSET_X_DEFAULT = 0;
-    public static int ROAD_OFFSET__Z_DEFAULT = 0;
+    public static int ROAD_OFFSET_Z_DEFAULT = 0;
     public int PLOT_WIDTH;
     public int ROAD_WIDTH;
     public int ROAD_OFFSET_X;

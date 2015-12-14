@@ -100,6 +100,16 @@ public abstract class ChunkManager {
     
     public abstract void setChunk(final ChunkWrapper loc, final PlotBlock[][] result);
     
+    /**
+     * 0 = Entity
+     * 1 = Animal
+     * 2 = Monster
+     * 3 = Mob
+     * 4 = Boat
+     * 5 = Misc
+     * @param plot
+     * @return
+     */
     public abstract int[] countEntities(final Plot plot);
     
     public abstract boolean loadChunk(final String world, final ChunkLoc loc, final boolean force);
