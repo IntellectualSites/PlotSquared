@@ -485,7 +485,6 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(final File file) {
         if (!file.exists()) {
-            PS.debug(file.toString() + " doesn't exist");
             return null;
         }
         try {

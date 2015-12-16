@@ -1841,6 +1841,7 @@ public class PS {
         options.put("metrics", true);
         options.put("debug", true);
         options.put("update-notifications", Settings.UPDATE_NOTIFICATIONS);
+        options.put("merge.remove-terrain", Settings.MERGE_REMOVES_ROADS);
         
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
@@ -1966,6 +1967,7 @@ public class PS {
         }
         Settings.METRICS = config.getBoolean("metrics");
         Settings.UPDATE_NOTIFICATIONS = config.getBoolean("update-notifications");
+        Settings.MERGE_REMOVES_ROADS = config.getBoolean("merge.remove-terrain");
     }
     
     /**

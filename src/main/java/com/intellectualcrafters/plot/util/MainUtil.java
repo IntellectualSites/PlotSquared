@@ -1616,14 +1616,14 @@ public class MainUtil {
      * @return Home Location
      */
     public static Location getPlotHome(final String w, final PlotId plotid) {
-        final Plot plot = getPlot(w, plotid);
+        final Plot plot = getPlot(w, plotid).getBasePlot(false);
         final BlockLoc home = plot.getPosition();
         PS.get().getPlotManager(w);
         if ((home == null) || ((home.x == 0) && (home.z == 0))) {
             return getDefaultHome(plot);
         } else {
             Location bot = plot.getBottomAbs();
-            final Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z);
+            final Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z, home.yaw, home.pitch);
             if (BlockManager.manager.getBlock(loc).id != 0) {
                 loc.setY(Math.max(getHeighestBlock(w, loc.getX(), loc.getZ()), bot.getY()));
             }

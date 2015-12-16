@@ -2375,8 +2375,7 @@ public class SQLManager implements AbstractDB {
                             break;
                         default:
                             try {
-                                final String[] split = pos.split(",");
-                                final BlockLoc loc = new BlockLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                                BlockLoc loc = BlockLoc.fromString(pos);
                                 cluster.settings.setPosition(loc);
                             } catch (final Exception e) {}
                     }

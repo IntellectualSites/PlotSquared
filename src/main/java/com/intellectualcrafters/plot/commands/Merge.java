@@ -20,7 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -29,12 +28,10 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -46,7 +43,7 @@ command = "merge",
 aliases = { "m" },
 description = "Merge the plot you are standing on, with another plot",
 permission = "plots.merge",
-usage = "/plot merge [direction]",
+usage = "/plot merge <all|n|e|s|w> [removeroads]",
 category = CommandCategory.ACTIONS,
 requiredType = RequiredType.NONE)
 public class Merge extends SubCommand {
@@ -125,7 +122,11 @@ public class Merge extends SubCommand {
 //            }
         } else {
             if (args[0].equalsIgnoreCase("all") || args[0].equalsIgnoreCase("auto")) {
-                if (MainUtil.autoMerge(plot, -1, maxSize - size, uuid, (args.length != 2) || !args[1].equalsIgnoreCase("false"))) {
+                boolean terrain = Settings.MERGE_REMOVES_ROADS;
+                if (args.length == 2) {
+                    terrain = args[1].equalsIgnoreCase("true");
+                }
+                if (MainUtil.autoMerge(plot, -1, maxSize - size, uuid, terrain)) {
                     if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
                         EconHandler.manager.withdrawMoney(plr, plotworld.MERGE_PRICE);
                         sendMessage(plr, C.REMOVED_BALANCE, plotworld.MERGE_PRICE + "");
@@ -145,11 +146,17 @@ public class Merge extends SubCommand {
             }
         }
         if (direction == -1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot merge <" + StringMan.join(values, "|") + ">");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
             MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }
-        if (MainUtil.autoMerge(plot, direction, maxSize - size, uuid, (args.length != 2) || !args[1].equalsIgnoreCase("false"))) {
+        final boolean terrain;
+        if (args.length == 2) {
+            terrain = args[1].equalsIgnoreCase("true");
+        } else {
+            terrain = Settings.MERGE_REMOVES_ROADS;
+        }
+        if (MainUtil.autoMerge(plot, direction, maxSize - size, uuid, terrain)) {
             if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
                 EconHandler.manager.withdrawMoney(plr, plotworld.MERGE_PRICE);
                 sendMessage(plr, C.REMOVED_BALANCE, plotworld.MERGE_PRICE + "");
@@ -179,7 +186,7 @@ public class Merge extends SubCommand {
                 @Override
                 public void run() {
                     MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
-                    MainUtil.autoMerge(plot, dir, maxSize - size, owner, true);
+                    MainUtil.autoMerge(plot, dir, maxSize - size, owner, terrain);
                     final PlotPlayer pp = UUIDHandler.getPlayer(plr.getUUID());
                     if (pp == null) {
                         sendMessage(accepter, C.MERGE_NOT_VALID);

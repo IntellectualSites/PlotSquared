@@ -817,16 +817,17 @@ public class Plot {
      * Set the home location
      * @param loc
      */
-    public void setHome(final BlockLoc loc) {
+    public void setHome(BlockLoc loc) {
         final BlockLoc pos = getSettings().getPosition();
         if (((pos == null || pos.equals(new BlockLoc(0, 0, 0))) && (loc == null)) || ((pos != null) && pos.equals(loc))) {
             return;
         }
-        getSettings().setPosition(loc);
-        if (getSettings().getPosition() == null) {
-            DBFunc.setPosition(this, "");
+        Plot plot = getBasePlot(false);
+        plot.getSettings().setPosition(loc);
+        if (plot.getSettings().getPosition() == null) {
+            DBFunc.setPosition(plot, "");
         } else {
-            DBFunc.setPosition(this, getSettings().getPosition().toString());
+            DBFunc.setPosition(plot, getSettings().getPosition().toString());
         }
     }
     

@@ -37,6 +37,7 @@ public class Settings {
 
     public static boolean ENABLE_CLUSTERS = false;
     public static boolean FAST_CLEAR = false;
+    public static boolean MERGE_REMOVES_ROADS = true;
     /**
      * Default UUID_FECTHING: false
      */
