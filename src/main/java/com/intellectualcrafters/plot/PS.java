@@ -1649,7 +1649,7 @@ public class PS {
         FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("blocked-cmds", new FlagValue.StringListValue()));
-        FlagManager.addFlag(new AbstractFlag("ice-met", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("ice-melt", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("gamemode") {
             
             @Override
