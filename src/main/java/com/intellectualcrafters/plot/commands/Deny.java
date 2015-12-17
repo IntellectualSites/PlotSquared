@@ -88,16 +88,26 @@ public class Deny extends SubCommand {
         EventUtil.manager.callDenied(plr, plot, uuid, true);
         MainUtil.sendMessage(plr, C.DENIED_ADDED);
         if (!uuid.equals(DBFunc.everyone)) {
-            handleKick(uuid, plot);
+            handleKick(UUIDHandler.getPlayer(uuid), plot);
+        } else {
+            for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                handleKick(pp, plot);
+            }
         }
         return true;
     }
     
-    private void handleKick(final UUID uuid, final Plot plot) {
-        final PlotPlayer pp = UUIDHandler.getPlayer(uuid);
-        if ((pp != null) && plot.equals(MainUtil.getPlotAbs(pp.getLocation()))) {
-            pp.teleport(BlockManager.manager.getSpawn(pp.getLocation().getWorld()));
-            MainUtil.sendMessage(pp, C.YOU_GOT_DENIED);
+    private void handleKick(final PlotPlayer pp, final Plot plot) {
+        if (pp == null) {
+            return;
         }
+        if (!plot.equals(pp.getCurrentPlot())) {
+            return;
+        }
+        if (pp.hasPermission("plots.admin.command.deny")) {
+            return;
+        }
+        pp.teleport(BlockManager.manager.getSpawn(pp.getLocation().getWorld()));
+        MainUtil.sendMessage(pp, C.YOU_GOT_DENIED);
     }
 }

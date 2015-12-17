@@ -35,7 +35,6 @@ public class Kick extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
         final Location loc = plr.getLocation();
         final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot == null) {
@@ -57,6 +56,10 @@ public class Kick extends SubCommand {
         final Location otherLoc = player.getLocation();
         if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(MainUtil.getPlotAbs(otherLoc))) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            return false;
+        }
+        if (player.hasPermission("plots.admin.command.kick")) {
+            C.CANNOT_KICK_PLAYER.send(plr, player.getName());
             return false;
         }
         player.teleport(BlockManager.manager.getSpawn(loc.getWorld()));
