@@ -44,7 +44,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
 command = "debugclaimtest",
-description = "If you accidentally delete your database, this command will attempt to restore all plots based on the data from plot sighs. Execution time may vary",
+description = "If you accidentally delete your database, this command will attempt to restore all plots based on the data from plot signs. Execution time may vary",
 category = CommandCategory.DEBUG,
 requiredType = RequiredType.CONSOLE,
 permission = "plots.debugclaimtest")
