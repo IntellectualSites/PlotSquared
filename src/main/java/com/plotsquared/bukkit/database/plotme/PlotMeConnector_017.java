@@ -19,7 +19,6 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class PlotMeConnector_017 extends APlotMeConnector {
@@ -123,7 +122,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                         }
                     }
                     if (owner == null) {
-                        MainUtil.sendConsoleMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
+                        PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
                         continue;
                     }
                 }
@@ -145,7 +144,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         r.close();
         stmt.close();
         try {
-            MainUtil.sendConsoleMessage(" - " + plugin + "core_denied");
+            PS.log(" - " + plugin + "core_denied");
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_denied`");
             r = stmt.executeQuery();
             
@@ -153,14 +152,14 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 final int key = r.getInt("plot_id");
                 final Plot plot = plots.get(key);
                 if (plot == null) {
-                    MainUtil.sendConsoleMessage("&6Denied (" + key + ") references deleted plot; ignoring entry.");
+                    PS.log("&6Denied (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
                 final UUID denied = UUID.fromString(r.getString("player"));
                 plot.getDenied().add(denied);
             }
             
-            MainUtil.sendConsoleMessage(" - " + plugin + "core_allowed");
+            PS.log(" - " + plugin + "core_allowed");
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_allowed`");
             r = stmt.executeQuery();
             
@@ -168,7 +167,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 final int key = r.getInt("plot_id");
                 final Plot plot = plots.get(key);
                 if (plot == null) {
-                    MainUtil.sendConsoleMessage("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
+                    PS.log("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
                 final UUID allowed = UUID.fromString(r.getString("player"));

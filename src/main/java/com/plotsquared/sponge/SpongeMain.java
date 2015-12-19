@@ -2,6 +2,7 @@ package com.plotsquared.sponge;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -28,7 +29,7 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.service.profile.GameProfileResolver;
+import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.translation.Translatable;
@@ -36,6 +37,8 @@ import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.WorldBuilder;
+import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import com.google.inject.Inject;
 import com.intellectualcrafters.configuration.ConfigurationSection;
@@ -80,13 +83,12 @@ import com.plotsquared.sponge.util.SpongeUtil;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
-import org.spongepowered.api.world.WorldBuilder;
 
 /**
  * Created by robin on 01/11/2014
  */
 
-@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.0.0", dependencies = "before:WorldEdit")
+@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.0.0", dependencies = "before:WorldEdit,required-after:TotalEconomy")
 public class SpongeMain implements IPlotMain, PluginContainer {
     public static SpongeMain THIS;
 
@@ -96,13 +98,12 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     private Game game;
     private Server server;
 
-    private GameProfileResolver resolver;
+    private GameProfileManager resolver;
 
     private WorldModify modify;
 
-    private Object plugin;
-
     // stuff //
+    @Override
     public Logger getLogger() {
         return logger;
     }
@@ -115,12 +116,12 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         return server;
     }
 
-    public GameProfileResolver getResolver() {
+    public GameProfileManager getResolver() {
         return resolver;
     }
 
-    public Object getPlugin() {
-        return plugin;
+    public SpongeMain getPlugin() {
+        return THIS;
     }
 
     public Text getText(final String m) {
@@ -192,8 +193,8 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     }
 
     @Override
-    public Object getInstance() {
-        return THIS;
+    public Optional<Object> getInstance() {
+        return Optional.<Object> of(THIS);
     }
 
     @Override
@@ -223,7 +224,24 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Listener
     public void onInit(final GamePreInitializationEvent event) {
-        log("P^2  PRE INIT");
+        // Hook for Project Worlds
+        hookProjectWorlds();
+    }
+    
+    public void hookProjectWorlds() {
+        Optional<PluginContainer> plugin = game.getPluginManager().getPlugin("Project Worlds");
+        if (plugin.isPresent()) {
+            try {
+                Class<?> clazz = Class.forName("com.gmail.trentech.pjw.modifiers.Modifiers");
+                Method method = clazz.getMethod("put", String.class, WorldGeneratorModifier.class);
+                SpongeBasicGen generator = new SpongeBasicGen(null);
+                method.invoke(null, "plotsquared", new WorldModify(generator, false));
+                log("Adding plotsquared modifier to Project Worlds");
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Listener
@@ -232,8 +250,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         THIS = this;
 
         //
-        resolver = game.getServiceManager().provide(GameProfileResolver.class).get();
-        plugin = this;
+        resolver = game.getServiceManager().provide(GameProfileManager.class).get();
         server = game.getServer();
         //
 
@@ -318,7 +335,6 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         PS.get().copyFile("data.txt", "config");
 
         try {
-
             final File id_file = new File(getDirectory(), "config" + File.separator + "ids.txt");
             final List<String> id_lines = Files.readAllLines(id_file.toPath(), StandardCharsets.UTF_8);
 
@@ -494,7 +510,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public void registerCommands() {
-        getGame().getCommandDispatcher().register(plugin, new SpongeCommand(), new String[] { "plots", "p", "plot", "ps", "plotsquared", "p2", "2" });
+        getGame().getCommandManager().register(THIS, new SpongeCommand(), new String[] { "plots", "p", "plot", "ps", "plotsquared", "p2", "2" });
     }
 
     @Override
@@ -523,7 +539,6 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     @Override
     public boolean initWorldEdit() {
         try {
-            log("CHECKING FOR WORLDEDIT!?");
             Class.forName("com.sk89q.worldedit.WorldEdit");
             return true;
         } catch (final Throwable e) {

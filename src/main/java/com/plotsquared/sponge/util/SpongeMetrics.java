@@ -51,7 +51,7 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import org.spongepowered.api.Game;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.service.scheduler.Task;
+import org.spongepowered.api.scheduler.Task;
 
 import com.intellectualcrafters.plot.PS;
 

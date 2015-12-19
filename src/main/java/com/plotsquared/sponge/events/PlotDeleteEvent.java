@@ -1,5 +1,6 @@
 package com.plotsquared.sponge.events;
 
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 
 import com.intellectualcrafters.plot.object.PlotId;
@@ -35,5 +36,10 @@ public class PlotDeleteEvent extends AbstractEvent {
      */
     public String getWorld() {
         return world;
+    }
+    
+    @Override
+    public Cause getCause() {
+        return null;
     }
 }

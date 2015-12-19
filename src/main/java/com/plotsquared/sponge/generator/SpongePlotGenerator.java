@@ -1,10 +1,13 @@
 package com.plotsquared.sponge.generator;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.spongepowered.api.world.biome.BiomeGenerationSettings;
+import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.gen.BiomeGenerator;
-import org.spongepowered.api.world.gen.GeneratorPopulator;
+import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.Populator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 
@@ -14,14 +17,14 @@ import com.intellectualcrafters.plot.object.SetupObject;
 
 public abstract class SpongePlotGenerator implements WorldGenerator {
     
-    public final String world;
+    public String world;
     
     public SpongePlotGenerator(final String world) {
         this.world = world;
     }
     
     @Override
-    public GeneratorPopulator getBaseGeneratorPopulator() {
+    public GenerationPopulator getBaseGenerationPopulator() {
         return getGenerator();
     }
     
@@ -31,22 +34,8 @@ public abstract class SpongePlotGenerator implements WorldGenerator {
     }
     
     @Override
-    public List<GeneratorPopulator> getGeneratorPopulators() {
-        final List<GeneratorPopulator> pops = new ArrayList<>();
-        pops.addAll(getPlotPopulators());
-        return pops;
-    }
-    
-    @Override
     public List<Populator> getPopulators() {
         return new ArrayList<>();
-    }
-    
-    @Override
-    public void setBaseGeneratorPopulator(final GeneratorPopulator arg0) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-        
     }
     
     @Override
@@ -55,6 +44,44 @@ public abstract class SpongePlotGenerator implements WorldGenerator {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
+    @Override
+    public BiomeGenerationSettings getBiomeSettings(BiomeType type) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    }
+    
+    @Override
+    public List<GenerationPopulator> getGenerationPopulators() {
+        final List<GenerationPopulator> pops = new ArrayList<>();
+        pops.addAll(getPlotPopulators());
+        return pops;
+    }
+    
+    @Override
+    public List<GenerationPopulator> getGenerationPopulators(Class<? extends GenerationPopulator> clazz) {
+        List<GenerationPopulator> list = getGenerationPopulators();
+        Iterator<GenerationPopulator> iter = list.iterator();
+        while (iter.hasNext()) {
+            GenerationPopulator pop = iter.next();
+            if (!clazz.isInstance(pop)) {
+                iter.remove();
+            }
+        }
+        return list;
+    }
+    
+    @Override
+    public List<Populator> getPopulators(Class<? extends Populator> arg0) {
+        return new ArrayList<>();
+    }
+    
+    @Override
+    public void setBaseGenerationPopulator(GenerationPopulator arg0) {
+        // TODO 
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+        
+    }
+
     public abstract SpongePlotPopulator getGenerator();
     
     public abstract BiomeGenerator getPlotBiomeProvider();

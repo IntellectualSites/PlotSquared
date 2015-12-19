@@ -53,8 +53,6 @@ public abstract class PlotWorld {
     public final static double PLOT_PRICE_DEFAULT = 100;
     public final static double MERGE_PRICE_DEFAULT = 100;
     public final static double SELL_PRICE_DEFAULT = 75;
-    public final static boolean PVP_DEFAULT = false;
-    public final static boolean PVE_DEFAULT = false;
     public final static boolean SPAWN_EGGS_DEFAULT = false;
     public final static boolean SPAWN_CUSTOM_DEFAULT = true;
     public final static boolean SPAWN_BREEDING_DEFAULT = false;
@@ -80,8 +78,6 @@ public abstract class PlotWorld {
     public double PLOT_PRICE;
     public double MERGE_PRICE;
     public double SELL_PRICE;
-    public boolean PVP;
-    public boolean PVE;
     public boolean SPAWN_EGGS;
     public boolean SPAWN_CUSTOM;
     public boolean SPAWN_BREEDING;
@@ -219,8 +215,6 @@ public abstract class PlotWorld {
             PS.debug("&cInvalid default flags for " + worldname + ": " + StringMan.join(flags, ","));
             DEFAULT_FLAGS = new HashMap<>();
         }
-        PVP = config.getBoolean("event.pvp");
-        PVE = config.getBoolean("event.pve");
         SPAWN_EGGS = config.getBoolean("event.spawn.egg");
         SPAWN_CUSTOM = config.getBoolean("event.spawn.custom");
         SPAWN_BREEDING = config.getBoolean("event.spawn.breeding");
@@ -250,8 +244,6 @@ public abstract class PlotWorld {
         options.put("economy.prices.sell", PlotWorld.SELL_PRICE_DEFAULT);
         options.put("chat.enabled", PlotWorld.PLOT_CHAT_DEFAULT);
         options.put("flags.default", null);
-        options.put("event.pvp", PlotWorld.PVP_DEFAULT);
-        options.put("event.pve", PlotWorld.PVE_DEFAULT);
         options.put("event.spawn.egg", PlotWorld.SPAWN_EGGS_DEFAULT);
         options.put("event.spawn.custom", PlotWorld.SPAWN_CUSTOM_DEFAULT);
         options.put("event.spawn.breeding", PlotWorld.SPAWN_BREEDING_DEFAULT);

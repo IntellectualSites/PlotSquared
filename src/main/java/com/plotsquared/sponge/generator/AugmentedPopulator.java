@@ -15,7 +15,7 @@ import org.spongepowered.api.world.extent.ImmutableBlockVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.extent.StorageType;
 import org.spongepowered.api.world.extent.UnmodifiableBlockVolume;
-import org.spongepowered.api.world.gen.GeneratorPopulator;
+import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.Populator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 
@@ -38,7 +38,7 @@ public class AugmentedPopulator implements Populator {
     public final PlotWorld plotworld;
     public final PlotManager manager;
     public final SpongePlotGenerator generator;
-    public final GeneratorPopulator populator;
+    public final GenerationPopulator populator;
     public final PlotCluster cluster;
     public final Random r = new Random();
     public final boolean p;
@@ -54,7 +54,7 @@ public class AugmentedPopulator implements Populator {
         // Initialize any chach that's needed
         this.cluster = cluster;
         this.generator = generator;
-        populator = generator.getBaseGeneratorPopulator();
+        populator = generator.getBaseGenerationPopulator();
         plotworld = generator.getNewPlotWorld(worldname);
         manager = generator.getPlotManager();
         this.p = p;

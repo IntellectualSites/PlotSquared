@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 
 /**
@@ -276,7 +278,11 @@ public abstract class FlagValue<T> {
                 final short id = Short.parseShort(split[0]);
                 return new PlotBlock(id, data);
             } catch (final Exception e) {
-                return null;
+                final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(t);
+                if ((value == null) || (value.match > 1)) {
+                    return null;
+                }
+                return value.best;
             }
         }
         
@@ -309,19 +315,28 @@ public abstract class FlagValue<T> {
         public HashSet<PlotBlock> parse(final String t) {
             final HashSet<PlotBlock> list = new HashSet<PlotBlock>();
             for (final String item : t.split(",")) {
-                final String[] split = item.split(":");
-                byte data;
-                if (split.length == 2) {
-                    if ("*".equals(split[1])) {
-                        data = -1;
+                PlotBlock block;
+                try {
+                    final String[] split = item.split(":");
+                    byte data;
+                    if (split.length == 2) {
+                        if ("*".equals(split[1])) {
+                            data = -1;
+                        } else {
+                            data = Byte.parseByte(split[1]);
+                        }
                     } else {
-                        data = Byte.parseByte(split[1]);
+                        data = -1;
                     }
-                } else {
-                    data = -1;
+                    final short id = Short.parseShort(split[0]);
+                    block = new PlotBlock(id, data);
+                } catch (Exception e) {
+                    final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(t);
+                    if ((value == null) || (value.match > 1)) {
+                        continue;
+                    }
+                    block = value.best;
                 }
-                final short id = Short.parseShort(split[0]);
-                final PlotBlock block = new PlotBlock(id, data);
                 list.add(block);
             }
             return list;

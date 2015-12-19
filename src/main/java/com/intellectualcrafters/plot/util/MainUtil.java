@@ -66,14 +66,42 @@ import com.plotsquared.listener.PlotListener;
  *
  */
 public class MainUtil {
+    /**
+     * The runners are a list of plots that have currect asynchronous actions taking place.<br>
+     *  - At some point this could be replaced by using the plot metadata
+     */
     public final static HashMap<Plot, Integer> runners = new HashMap<>();
+    
+    /**
+     * If the NMS code for sending chunk updates is functional<br>
+     *  - E.g. If using an older version of Bukkit, or before the plugin is updated to 1.5<br>
+     *  - Slower fallback code will be used if not.<br>
+     */
     public static boolean canSendChunk = false;
-    public static boolean canSetFast = true;
-    public static ArrayList<String> runners_p = new ArrayList<>();
+    
+    /**
+     * Cache for last auto claimed plot.<br>
+     *  - Used for efficiently calculating the next claimable plot<br>
+     */
     public static HashMap<String, PlotId> lastPlot = new HashMap<>();
+    
+    /**
+     * Cache of the furthest claimed plot<br>
+     *  - Used for efficiently calculating the plot border distance
+     */
     public static HashMap<String, Integer> worldBorder = new HashMap<>();
+    
+    /**
+     * Pseudorandom object<br>
+     *  - Not truly random, but good enough for a game<br>
+     *  - A lot more efficient than Random<br>
+     */
     public static PseudoRandom random = new PseudoRandom();
     
+    /**
+     * Cache of mapping x,y,z coordinates to the chunk array<br>
+     *  - Used for efficent world generation<br>
+     */
     public static short[][] x_loc;
     public static short[][] y_loc;
     public static short[][] z_loc;
@@ -137,14 +165,6 @@ public class MainUtil {
             regions_cache.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getY(), pos2.getY(), pos1.getZ(), pos2.getZ()));
             return regions_cache;
         }
-        
-//        Create a list of ALL edges from your rectangles. One rectangle has 4 edges.
-//        Let the Edge be a class with properly defined compareTo() and equals().
-//        Sort the edges list (uses comapreTo).
-//        Iterate through the list. If the same edge is present in the list TWICE, remove them both from the list.
-//        The remaining edges are the edges of your polygon.
-        
-        
         HashSet<Plot> plots = getConnectedPlots(origin);
         regions_cache = new HashSet<>();
         HashSet<PlotId> visited = new HashSet<>();
@@ -247,6 +267,12 @@ public class MainUtil {
         return regions_cache;
     }
     
+    /**
+     * Hashcode of a boolean array.<br>
+     *  - Used for traversing mega plots quickly.  
+     * @param array
+     * @return hashcode
+     */
     public static int hash(boolean[] array) {
         if (array.length == 4) {
             if (!array[0] && !array[1] && !array[2] && !array[3]) {
@@ -261,6 +287,13 @@ public class MainUtil {
         return n;
     }
     
+    /**
+     * Check if a location is in a plot area (roads / plots).<br>
+     *  - A world that is a plot world may not be a plot area if clusters are used<br>
+     *  - A non plot world is not a plot area<br>
+     * @param location
+     * @return
+     */
     public static boolean isPlotArea(final Location location) {
         final PlotWorld plotworld = PS.get().getPlotWorld(location.getWorld());
         if (plotworld == null) {
@@ -272,6 +305,11 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Get the name from a UUID<br>
+     * @param owner
+     * @return The player's name, None, Everyone or Unknown 
+     */
     public static String getName(final UUID owner) {
         if (owner == null) {
             return C.NONE.s();
@@ -285,6 +323,12 @@ public class MainUtil {
         return name;
     }
     
+    /**
+     * Efficiently get a list of PlotPlayers inside a plot<br>
+     *  - PlotSquared caches player locations
+     * @param plot
+     * @return
+     */
     public static List<PlotPlayer> getPlayersInPlot(final Plot plot) {
         final ArrayList<PlotPlayer> players = new ArrayList<>();
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
@@ -296,6 +340,11 @@ public class MainUtil {
         return players;
     }
     
+    /**
+     * Retrigger plot entry functions for the players in a plot.<br>
+     *  - Used when plot settings are changed<br>
+     * @param plot
+     */
     public static void reEnterPlot(final Plot plot) {
         TaskManager.runTaskLater(new Runnable() {
             @Override
@@ -308,6 +357,12 @@ public class MainUtil {
         }, 1);
     }
     
+    /**
+     * Break up a series of tasks so that they can run without lagging the server
+     * @param objects
+     * @param task
+     * @param whenDone
+     */
     public static <T> void objectTask(Collection<T> objects, final RunnableVal<T> task, final Runnable whenDone) {
         final Iterator<T> iter = objects.iterator();
         TaskManager.runTask(new Runnable() {
@@ -328,21 +383,12 @@ public class MainUtil {
         });
     }
     
-    public static void plotTask(Plot plot, RunnableVal<Plot> run) {
-        if (!plot.isMerged()) {
-            run.value = plot;
-            run.run();
-            return;
-        }
-        for (Plot current : getConnectedPlots(plot)) {
-            run.value = current;
-            run.run();
-            if (run.value == null) {
-                break;
-            }
-        }
-    }
-    
+    /**
+     * Fuzzy plot search with spaces separating terms<br>
+     *  - Terms: id, alias, world, owner, trusted, member
+     * @param search
+     * @return
+     */
     public static List<Plot> getPlotsBySearch(final String search) {
         final String[] split = search.split(" ");
         final int size = split.length * 2;
@@ -420,6 +466,13 @@ public class MainUtil {
         return plots;
     }
     
+    /**
+     * Get the plot from a string<br>
+     * @param player Provides a context for what world to search in. Prefixing the term with 'world_name;' will override this context.  
+     * @param arg The search term
+     * @param message If a message should be sent to the player if a plot cannot be found
+     * @return The plot if only 1 result is found, or null
+     */
     public static Plot getPlotFromString(final PlotPlayer player, final String arg, final boolean message) {
         if (arg == null) {
             if (player == null) {
@@ -565,6 +618,12 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Check if a location is a plot area.<br>
+     *  - Directly checks the cluster manager<br>
+     * @param location
+     * @return
+     */
     public static boolean isPlotAreaAbs(final Location location) {
         if (!Settings.ENABLE_CLUSTERS) {
             return true;
@@ -579,6 +638,11 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Check if a location corresponds to a plot road i.e. A plot area but not inside a plot
+     * @param location
+     * @return
+     */
     public static boolean isPlotRoad(final Location location) {
         final PlotWorld plotworld = PS.get().getPlotWorld(location.getWorld());
         if (plotworld.TYPE == 2) {
@@ -591,6 +655,12 @@ public class MainUtil {
         return manager.getPlotId(plotworld, location.getX(), location.getY(), location.getZ()) == null;
     }
     
+    /**
+     * Check if a plot is in a plot area.<br>
+     *  - Useful as plot objects can be created with any location which may not be valid.
+     * @param location
+     * @return
+     */
     public static boolean isPlotArea(final Plot plot) {
         if (!Settings.ENABLE_CLUSTERS) {
             return true;
@@ -600,18 +670,6 @@ public class MainUtil {
             return plot.getCluster() != null;
         }
         return true;
-    }
-    
-    public static boolean enteredPlot(final Location l1, final Location l2) {
-        final PlotId p1 = MainUtil.getPlotId(l1);
-        final PlotId p2 = MainUtil.getPlotId(l2);
-        return (p2 != null) && ((p1 == null) || !p1.equals(p2));
-    }
-    
-    public static boolean leftPlot(final Location l1, final Location l2) {
-        final PlotId p1 = MainUtil.getPlotId(l1);
-        final PlotId p2 = MainUtil.getPlotId(l2);
-        return (p1 != null) && ((p2 == null) || !p1.equals(p2));
     }
     
     /**
@@ -648,6 +706,12 @@ public class MainUtil {
         return count;
     }
     
+    /**
+     * Get the base plot for a plot
+     * @see Plot#getBasePlot(boolean)
+     * @param plot
+     * @return
+     */
     public static Plot getPlot(Plot plot) {
         if (plot == null) {
             return null;
@@ -655,10 +719,21 @@ public class MainUtil {
         return plot.getBasePlot(false);
     }
     
+    /**
+     * Get the plot at a location<br>
+     * @param loc
+     * @return The plot at a location. The base plot will be returned if a mega plot.
+     */
     public static Plot getPlot(Location loc) {
         return getPlot(getPlotAbs(loc));
     }
     
+    /**
+     * Get the plot given the world and plot id
+     * @param world
+     * @param id
+     * @return The plot. The base plot will be returned if a mega plot.
+     */
     public static Plot getPlot(String world, PlotId id) {
         if (id == null) {
             return null;
@@ -666,6 +741,12 @@ public class MainUtil {
         return getPlot(getPlotAbs(world, id));
     }
     
+    /**
+     * Get the default home location for a plot<br>
+     *  - Ignores any home location set for that specific plot
+     * @param plot
+     * @return
+     */
     public static Location getDefaultHome(Plot plot) {
         plot = plot.getBasePlot(false);
         final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
@@ -695,10 +776,16 @@ public class MainUtil {
         return new Location(plot.world, x, y + 1, z);
     }
     
+    /**
+     * Teleport a player to a plot and send them the teleport message.
+     * @param player
+     * @param from
+     * @param plot
+     * @return If the teleportation is allowed.
+     */
     public static boolean teleportPlayer(final PlotPlayer player, final Location from, Plot plot) {
         plot = plot.getBasePlot(false);
         final boolean result = EventUtil.manager.callTeleport(player, from, plot);
-        
         if (result) {
             final Location location;
             if (PS.get().getPlotWorld(plot.world).HOME_ALLOW_NONMEMBER || plot.isAdded(player.getUUID())) {
@@ -734,6 +821,11 @@ public class MainUtil {
         return result;
     }
     
+    /**
+     * Get the plot border distance for a world<br>
+     * @param worldname
+     * @return The border distance or Integer.MAX_VALUE if no border is set
+     */
     public static int getBorder(final String worldname) {
         if (worldBorder.containsKey(worldname)) {
             final int border = worldBorder.get(worldname) + 16;
@@ -746,6 +838,10 @@ public class MainUtil {
         return Integer.MAX_VALUE;
     }
     
+    /**
+     * Setup the plot border for a world (usually done when the world is created)
+     * @param world
+     */
     public static void setupBorder(final String world) {
         final PlotWorld plotworld = PS.get().getPlotWorld(world);
         if (!plotworld.WORLD_BORDER) {
@@ -759,10 +855,19 @@ public class MainUtil {
         }
     }
     
+    /**
+     * Resend the chunk at a location
+     * @param world
+     * @param loc
+     */
     public static void update(final String world, final ChunkLoc loc) {
         BlockUpdateUtil.setBlockManager.update(world, Arrays.asList(loc));
     }
     
+    /**
+     * Resend the chunks in a plot
+     * @param plot
+     */
     public static void update(final Plot plot) {
         TaskManager.runTask(new Runnable() {
             @Override
@@ -778,17 +883,6 @@ public class MainUtil {
                 BlockUpdateUtil.setBlockManager.update(plot.world, chunks);
             }
         });
-    }
-    
-    public static void createWorld(final String world, final String generator) {}
-    
-    public static PlotId parseId(final String arg) {
-        try {
-            final String[] split = arg.split(";");
-            return new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-        } catch (final Exception e) {
-            return null;
-        }
     }
     
     /**
@@ -952,6 +1046,12 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Remove the south east road section of a plot<br>
+     *  - Used when a plot is merged<br>
+     * @param plotworld
+     * @param plot
+     */
     public static void removeRoadSouthEast(final PlotWorld plotworld, final Plot plot) {
         if ((plotworld.TYPE != 0) && (plotworld.TERRAIN > 1)) {
             if (plotworld.TERRAIN == 3) {
@@ -969,6 +1069,12 @@ public class MainUtil {
         }
     }
     
+    /**
+     * Remove the east road section of a plot<br>
+     *  - Used when a plot is merged<br>
+     * @param plotworld
+     * @param plot
+     */
     public static void removeRoadEast(final PlotWorld plotworld, final Plot plot) {
         if ((plotworld.TYPE != 0) && (plotworld.TERRAIN > 1)) {
             if (plotworld.TERRAIN == 3) {
@@ -986,6 +1092,12 @@ public class MainUtil {
         }
     }
     
+    /**
+     * Remove the south road section of a plot<br>
+     *  - Used when a plot is merged<br>
+     * @param plotworld
+     * @param plot
+     */
     public static void removeRoadSouth(final PlotWorld plotworld, final Plot plot) {
         if ((plotworld.TYPE != 0) && (plotworld.TERRAIN > 1)) {
             if (plotworld.TERRAIN == 3) {
@@ -1063,6 +1175,12 @@ public class MainUtil {
         }
     }
     
+    /**
+     * Merge the plot settings<br>
+     *  - Used when a plot is merged<br>
+     * @param a
+     * @param b
+     */
     public static void mergeData(Plot a, Plot b) {
         HashMap<String, Flag> flags1 = a.getFlags();
         HashMap<String, Flag> flags2 = b.getFlags();
@@ -1105,6 +1223,10 @@ public class MainUtil {
         }
     }
     
+    /**
+     * Remove the sign for a plot
+     * @param p
+     */
     public static void removeSign(final Plot p) {
         if (!PS.get().isMainThread(Thread.currentThread())) {
             TaskManager.runTask(new Runnable() {
@@ -1125,6 +1247,10 @@ public class MainUtil {
         BlockManager.setBlocks(world, new int[] { loc.getX() }, new int[] { loc.getY() }, new int[] { loc.getZ() }, new int[] { 0 }, new byte[] { 0 });
     }
     
+    /**
+     * Set the sign for a plot
+     * @param p
+     */
     public static void setSign(final Plot p) {
         if (p.owner == null) {
             setSign(null, p);
@@ -1133,6 +1259,11 @@ public class MainUtil {
         setSign(UUIDHandler.getName(p.owner), p);
     }
     
+    /**
+     * Set the sign for a plot to a specific name
+     * @param name
+     * @param p
+     */
     public static void setSign(final String name, final Plot p) {
         if (!PS.get().isMainThread(Thread.currentThread())) {
             TaskManager.runTask(new Runnable() {
@@ -1158,6 +1289,13 @@ public class MainUtil {
         }
     }
     
+    /**
+     * Get the corner locations for a plot<br>
+     * @see Plot#getCorners() 
+     * @param world
+     * @param region
+     * @return
+     */
     public static Location[] getCorners(String world, RegionWrapper region) {
         Location pos1 = new Location(world, region.minX, region.minY, region.minZ);
         Location pos2 = new Location(world, region.maxX, region.maxY, region.maxZ);
@@ -1178,6 +1316,13 @@ public class MainUtil {
         return getCorners(plot.world, getRegions(plot));
     }
     
+    /**
+     * Get the corner locations for a list of regions<br>
+     * @see Plot#getCorners() 
+     * @param world
+     * @param region
+     * @return
+     */
     public static Location[] getCorners(String world, Collection<RegionWrapper> regions) {
         Location min = null;
         Location max = null;
@@ -1206,6 +1351,12 @@ public class MainUtil {
         return new Location[] { min, max };
     }
     
+    /**
+     * Get the corner plot ids for a plot<br>
+     * @see Plot#getCornerIds()
+     * @param plot
+     * @return
+     */
     public static PlotId[] getCornerIds(Plot plot) {
         if (!plot.isMerged()) {
             return new PlotId[] { plot.id, plot.id };
@@ -1229,6 +1380,20 @@ public class MainUtil {
         return new PlotId[] { min, max };
     }
     
+    /**
+     * Auto merge a plot in a specific direction<br>
+     * @param plot The plot to merge
+     * @param dir The direction to merge<br>
+     * -1 = All directions<br>
+     * 0 = north<br>
+     * 1 = east<br>
+     * 2 = south<br>
+     * 3 = west<br>
+     * @param max The max number of merges to do
+     * @param uuid The UUID it is allowed to merge with
+     * @param removeRoads Wether to remove roads
+     * @return true if a merge takes place
+     */
     public static boolean autoMerge(final Plot plot, int dir, int max, final UUID uuid, final boolean removeRoads) {
         if (plot == null) {
             return false;
@@ -1294,9 +1459,13 @@ public class MainUtil {
         }
         return toReturn;
     }
-    
+
+    /**
+     * Expand the world border to include the provided plot (if applicable)
+     * @param plot
+     */
     public static void updateWorldBorder(final Plot plot) {
-        if (!worldBorder.containsKey(plot.world)) {
+        if (!plot.hasOwner() || !worldBorder.containsKey(plot.world)) {
             return;
         }
         final String world = plot.world;
@@ -1360,22 +1529,6 @@ public class MainUtil {
         return p;
     }
     
-    public static String createId(final int x, final int z) {
-        return x + ";" + z;
-    }
-    
-    public static int square(final int x) {
-        return x * x;
-    }
-    
-    public static short[] getBlock(final String block) {
-        if (block.contains(":")) {
-            final String[] split = block.split(":");
-            return new short[] { Short.parseShort(split[0]), Short.parseShort(split[1]) };
-        }
-        return new short[] { Short.parseShort(block), 0 };
-    }
-    
     /**
      * Clear a plot and associated sections: [sign, entities, border]
      *
@@ -1391,6 +1544,18 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Count the entities in a plot
+     * @see ChunkManager#countEntities(Plot)
+     * 0 = Entity
+     * 1 = Animal
+     * 2 = Monster
+     * 3 = Mob
+     * 4 = Boat
+     * 5 = Misc
+     * @param plot
+     * @return
+     */
     public static int[] countEntities(Plot plot) {
         int[] count = new int[6];
         for (Plot current : getConnectedPlots(plot)) {
@@ -1405,6 +1570,13 @@ public class MainUtil {
         return count;
     }
     
+    /**
+     * Clear and unclaim a plot
+     * @see Plot#clear(Runnable)
+     * @param plot
+     * @param whenDone
+     * @return
+     */
     public static boolean delete(final Plot plot, final Runnable whenDone) {
         // Plot is not claimed
         if (!plot.hasOwner()) {
@@ -1423,6 +1595,14 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Clear a plot (does not remove from database)
+     * @param plot
+     * @param isDelete Different procedures take place if the clearing is a deletion:<br>
+     *  - The sign, border and walls are also cleared on deletion<br>
+     * @param whenDone A runnable that will execute when the clearing is done, or null
+     * @return
+     */
     public static boolean clear(final Plot plot, final boolean isDelete, final Runnable whenDone) {
         if (!EventUtil.manager.callClear(plot.world, plot.id)) {
             return false;
@@ -1478,6 +1658,13 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Set a cuboid in the world to a set of blocks.
+     * @param world
+     * @param pos1
+     * @param pos2
+     * @param blocks If multiple blocks are provided, the result will be a random mix
+     */
     public static void setCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
         if (blocks.length == 1) {
             setSimpleCuboid(world, pos1, pos2, blocks[0]);
@@ -1507,6 +1694,13 @@ public class MainUtil {
         BlockManager.setBlocks(world, xl, yl, zl, ids, data);
     }
     
+    /**
+     * Set a cubioid asynchronously to a set of blocks
+     * @param world
+     * @param pos1
+     * @param pos2
+     * @param blocks
+     */
     public static void setCuboidAsync(final String world, final Location pos1, final Location pos2, final PlotBlock[] blocks) {
         if (blocks.length == 1) {
             setSimpleCuboidAsync(world, pos1, pos2, blocks[0]);
@@ -1523,6 +1717,13 @@ public class MainUtil {
         }
     }
     
+    /**
+     * Set a cuboid to a block
+     * @param world
+     * @param pos1
+     * @param pos2
+     * @param newblock
+     */
     public static void setSimpleCuboid(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
         final int length = (pos2.getX() - pos1.getX()) * (pos2.getY() - pos1.getY()) * (pos2.getZ() - pos1.getZ());
         final int[] xl = new int[length];
@@ -1546,6 +1747,13 @@ public class MainUtil {
         BlockManager.setBlocks(world, xl, yl, zl, ids, data);
     }
     
+    /**
+     * Set a cuboic asynchronously to a block
+     * @param world
+     * @param pos1
+     * @param pos2
+     * @param newblock
+     */
     public static void setSimpleCuboidAsync(final String world, final Location pos1, final Location pos2, final PlotBlock newblock) {
         for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
             for (int x = pos1.getX(); x <= pos2.getX(); x++) {
@@ -1556,6 +1764,12 @@ public class MainUtil {
         }
     }
     
+    /**
+     * Set the biome for a plot asynchronously
+     * @param plot
+     * @param biome The biome e.g. "forest"
+     * @param whenDone The task to run when finished, or null
+     */
     public static void setBiome(final Plot plot, final String biome, final Runnable whenDone) {
         final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(getRegions(plot));
         Runnable run = new Runnable() {
@@ -1584,6 +1798,15 @@ public class MainUtil {
         run.run();
     }
     
+    /**
+     * Synchronously set the biome in a selection
+     * @param world
+     * @param p1x
+     * @param p1z
+     * @param p2x
+     * @param p2z
+     * @param biome
+     */
     public static void setBiome(final String world, final int p1x, final int p1z, final int p2x, final int p2z, final String biome) {
         final int length = ((p2x - p1x) + 1) * ((p2z - p1z) + 1);
         final int[] xl = new int[length];
@@ -1599,6 +1822,13 @@ public class MainUtil {
         BlockManager.setBiomes(world, xl, zl, biome);
     }
     
+    /**
+     * Get the heighest block at a location
+     * @param world
+     * @param x
+     * @param z
+     * @return
+     */
     public static int getHeighestBlock(final String world, final int x, final int z) {
         final int result = BlockManager.manager.getHeighestBlock(world, x, z);
         if (result == 0) {
@@ -1699,6 +1929,15 @@ public class MainUtil {
         return top;
     }
     
+    /**
+     * Gets the bottom location for a plot.<br>
+     *  - Does not respect mega plots<br>
+     *  - Merged plots, only the road will be considered part of the plot<br>
+     *
+     * @param plot
+     *
+     * @return Location bottom of mega plot
+     */
     public static Location getPlotBottomLoc_(Plot plot) {
         Location bot = getPlotBottomLocAbs(plot.world, plot.id);
         if (!plot.isMerged()) {
@@ -1716,6 +1955,14 @@ public class MainUtil {
         return bot;
     }
     
+    /**
+     * Check if a selection of plots can be claimed
+     * @param player
+     * @param world
+     * @param pos1
+     * @param pos2
+     * @return
+     */
     public static boolean canClaim(final PlotPlayer player, final String world, final PlotId pos1, final PlotId pos2) {
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
@@ -1809,6 +2056,13 @@ public class MainUtil {
         }
     }
     
+    /**
+     * Check if the plots in a selection are unowned
+     * @param world
+     * @param pos1
+     * @param pos2
+     * @return
+     */
     public static boolean isUnowned(final String world, final PlotId pos1, final PlotId pos2) {
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
@@ -1823,6 +2077,13 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Swap the settings for two plots
+     * @param p1
+     * @param p2
+     * @param whenDone
+     * @return
+     */
     public static boolean swapData(Plot p1, Plot p2, final Runnable whenDone) {
         if ((p1 == null) || (p1.owner == null)) {
             if ((p2 != null) && (p2.owner != null)) {
@@ -1857,6 +2118,13 @@ public class MainUtil {
         return true;
     }
     
+    /**
+     * Move the settings for a plot
+     * @param pos1
+     * @param pos2
+     * @param whenDone
+     * @return
+     */
     public static boolean moveData(final Plot pos1, final Plot pos2, final Runnable whenDone) {
         if (pos1.owner == null) {
             PS.debug(pos2 + " is unowned (single)");
@@ -1879,6 +2147,14 @@ public class MainUtil {
         return true;
     }
 
+    /**
+     * Move a plot physically, as well as the corresponding settings.
+     * @param origin
+     * @param destination
+     * @param whenDone
+     * @param allowSwap
+     * @return
+     */
     public static boolean move(final Plot origin, final Plot destination, final Runnable whenDone, boolean allowSwap) {
         PlotId offset = new PlotId(destination.id.x - origin.id.x, destination.id.y - origin.id.y);
         Location db = destination.getBottomAbs();
@@ -1958,48 +2234,14 @@ public class MainUtil {
         }
         return true;
     }
-//        final com.intellectualcrafters.plot.object.Location bot1 = MainUtil.getPlotBottomLoc(plot1.world, plot1.id);
-//        final com.intellectualcrafters.plot.object.Location bot2 = MainUtil.getPlotBottomLoc(plot2.world, plot2.id);
-//        final Location top = MainUtil.getPlotTopLoc(plot1.world, plot1.id);
-//        if (plot1.owner == null) {
-//            PS.debug(plot2 + " is unowned (single)");
-//            TaskManager.runTask(whenDone);
-//            return false;
-//        }
-//        final Plot pos1 = getBottomPlot(plot1);
-//        final Plot pos2 = getTopPlot(plot1);
-//        final PlotId size = MainUtil.getSize(plot1);
-//        if (!MainUtil.isUnowned(plot2.world, plot2.id, new PlotId((plot2.id.x + size.x) - 1, (plot2.id.y + size.y) - 1))) {
-//            PS.debug(plot2 + " is unowned (multi)");
-//            TaskManager.runTask(whenDone);
-//            return false;
-//        }
-//        final int offset_x = plot2.id.x - pos1.id.x;
-//        final int offset_y = plot2.id.y - pos1.id.y;
-//        final ArrayList<PlotId> selection = getPlotSelectionIds(pos1.id, pos2.id);
-//        for (final PlotId id : selection) {
-//            final String worldOriginal = plot1.world;
-//            final PlotId idOriginal = new PlotId(id.x, id.y);
-//            final Plot plot = PS.get().getPlot(plot1.world, id);
-//            final Map<String, ConcurrentHashMap<PlotId, Plot>> raw = PS.get().getAllPlotsRaw();
-//            raw.get(plot1.world).remove(id);
-//            plot.id.x += offset_x;
-//            plot.id.y += offset_y;
-//            plot.id.recalculateHash();
-//            raw.get(plot2.world).put(plot.id, plot);
-//            DBFunc.movePlot(getPlot(worldOriginal, idOriginal), getPlot(plot2.world, new PlotId(id.x + offset_x, id.y + offset_y)));
-//        }
-//        ChunkManager.manager.copyRegion(bot1, top, bot2, new Runnable() {
-//            @Override
-//            public void run() {
-//                final Location bot = bot1.clone().add(1, 0, 1);
-//                ChunkManager.manager.regenerateRegion(bot, top, null);
-//                TaskManager.runTaskLater(whenDone, 1);
-//            }
-//        });
-//        return true;
-//    }
     
+    /**
+     * Copy a plot to a location, both physically and the settings
+     * @param origin
+     * @param destination
+     * @param whenDone
+     * @return
+     */
     public static boolean copy(final Plot origin, final Plot destination, final Runnable whenDone) {
         PlotId offset = new PlotId(destination.id.x - origin.id.x, destination.id.y - origin.id.y);
         Location db = destination.getBottomAbs();
@@ -2085,14 +2327,22 @@ public class MainUtil {
         return sendMessage(plr, msg, true);
     }
     
-    public static void sendConsoleMessage(final String msg) {
-        sendMessage(null, msg);
-    }
-    
+    /**
+     * Send a message to console
+     * @param caption
+     * @param args
+     */
     public static void sendConsoleMessage(final C caption, final String... args) {
         sendMessage(null, caption, args);
     }
     
+    /**
+     * Send a message to a player
+     * @param plr Can be null to represent console, or use ConsolePlayer.getConsole()
+     * @param msg
+     * @param prefix If the message should be prefixed with the configured prefix
+     * @return
+     */
     public static boolean sendMessage(final PlotPlayer plr, final String msg, final boolean prefix) {
         if ((msg.length() > 0) && !msg.equals("")) {
             if (plr == null) {
@@ -2102,73 +2352,6 @@ public class MainUtil {
             }
         }
         return true;
-    }
-    
-    public static String[] wordWrap(final String rawString, final int lineLength) {
-        if (rawString == null) {
-            return new String[] { "" };
-        }
-        if ((rawString.length() <= lineLength) && (!rawString.contains("\n"))) {
-            return new String[] { rawString };
-        }
-        final char[] rawChars = (rawString + ' ').toCharArray();
-        StringBuilder word = new StringBuilder();
-        StringBuilder line = new StringBuilder();
-        final ArrayList<String> lines = new ArrayList();
-        int lineColorChars = 0;
-        for (int i = 0; i < rawChars.length; i++) {
-            final char c = rawChars[i];
-            if (c == '\u00A7') {
-                word.append('\u00A7' + (rawChars[(i + 1)]));
-                lineColorChars += 2;
-                i++;
-            } else if ((c == ' ') || (c == '\n')) {
-                if ((line.length() == 0) && (word.length() > lineLength)) {
-                    for (final String partialWord : word.toString().split("(?<=\\G.{" + lineLength + "})")) {
-                        lines.add(partialWord);
-                    }
-                } else if (((line.length() + word.length()) - lineColorChars) == lineLength) {
-                    line.append(word);
-                    lines.add(line.toString());
-                    line = new StringBuilder();
-                    lineColorChars = 0;
-                } else if (((line.length() + 1 + word.length()) - lineColorChars) > lineLength) {
-                    for (final String partialWord : word.toString().split("(?<=\\G.{" + lineLength + "})")) {
-                        lines.add(line.toString());
-                        line = new StringBuilder(partialWord);
-                    }
-                    lineColorChars = 0;
-                } else {
-                    if (line.length() > 0) {
-                        line.append(' ');
-                    }
-                    line.append(word);
-                }
-                word = new StringBuilder();
-                if (c == '\n') {
-                    lines.add(line.toString());
-                    line = new StringBuilder();
-                }
-            } else {
-                word.append(c);
-            }
-        }
-        if (line.length() > 0) {
-            lines.add(line.toString());
-        }
-        if ((lines.get(0).length() == 0) || (lines.get(0).charAt(0) != '\u00A7')) {
-            lines.set(0, "\u00A7f" + lines.get(0));
-        }
-        for (int i = 1; i < lines.size(); i++) {
-            final String pLine = lines.get(i - 1);
-            final String subLine = lines.get(i);
-            
-            final char color = pLine.charAt(pLine.lastIndexOf('\u00A7') + 1);
-            if ((subLine.length() == 0) || (subLine.charAt(0) != '\u00A7')) {
-                lines.set(i, '\u00A7' + (color) + subLine);
-            }
-        }
-        return lines.toArray(new String[lines.size()]);
     }
     
     /**
@@ -2406,6 +2589,11 @@ public class MainUtil {
         return Permissions.hasPermissionRange(p, "plots.plot", Settings.MAX_PLOTS);
     }
     
+    /**
+     * Get the plot at a location
+     * @param loc
+     * @return The plot
+     */
     public static Plot getPlotAbs(final Location loc) {
         final PlotId id = getPlotId(loc);
         if (id == null) {
@@ -2414,6 +2602,11 @@ public class MainUtil {
         return getPlotAbs(loc.getWorld(), id);
     }
     
+    /**
+     * Get the plot and all connected plots at a location
+     * @param loc
+     * @return A set of plots
+     */
     public static Set<Plot> getPlots(final Location loc) {
         final PlotId id = getPlotId(loc);
         if (id == null) {
@@ -2422,6 +2615,12 @@ public class MainUtil {
         return getPlots(loc.getWorld(), id);
     }
     
+    /**
+     * Get the average rating for a plot
+     * @see Plot#getAverageRating()
+     * @param plot
+     * @return
+     */
     public static double getAverageRating(final Plot plot) {
         HashMap<UUID, Integer> rating;
         if (plot.getSettings().ratings != null) {
@@ -2452,6 +2651,12 @@ public class MainUtil {
         return val / size;
     }
     
+    /**
+     * If rating categories are enabled, get the average rating by category.<br>
+     *  - The index corresponds to the index of the category in the config
+     * @param plot
+     * @return
+     */
     public static double[] getAverageRatings(final Plot plot) {
         HashMap<UUID, Integer> rating;
         if (plot.getSettings().ratings != null) {
@@ -2486,10 +2691,28 @@ public class MainUtil {
         return ratings;
     }
     
+    /**
+     * Set a component for a plot to the provided blocks<br>
+     *  - E.g. floor, wall, border etc.<br>
+     *  - The available components depend on the generator being used<br>
+     * @param plot
+     * @param component
+     * @param blocks
+     * @return
+     */
     public static boolean setComponent(final Plot plot, final String component, final PlotBlock[] blocks) {
         return PS.get().getPlotManager(plot.world).setComponent(PS.get().getPlotWorld(plot.world), plot.id, component, blocks);
     }
     
+    /**
+     * Format a string with plot information:<br>
+     * %id%, %alias%, %num%, %desc%, %biome%, %owner%, %members%, %trusted%, %helpers%, %denied%, %flags%, %build%, %desc%, %rating%
+     * @param info
+     * @param plot
+     * @param player
+     * @param full
+     * @param whenDone
+     */
     public static void format(String info, final Plot plot, final PlotPlayer player, final boolean full, final RunnableVal<String> whenDone) {
         final int num = MainUtil.getConnectedPlots(plot).size();
         final String alias = plot.getAlias().length() > 0 ? plot.getAlias() : C.NONE.s();
@@ -2553,6 +2776,12 @@ public class MainUtil {
         whenDone.run(info);
     }
     
+    /**
+     * Get a list of names given a list of uuids.<br>
+     * - Uses the format {@link C#PLOT_USER_LIST} for the returned string
+     * @param uuids
+     * @return
+     */
     public static String getPlayerList(final Collection<UUID> uuids) {
         final ArrayList<UUID> l = new ArrayList<>(uuids);
         if ((l == null) || (l.size() < 1)) {

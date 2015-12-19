@@ -21,7 +21,6 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class ClassicPlotMeConnector extends APlotMeConnector {
@@ -136,7 +135,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         if (name.length() > 0) {
                             owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
                         }
-                        MainUtil.sendConsoleMessage("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
+                        PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
                         missing++;
                         continue;
                     }
@@ -148,11 +147,10 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             plots.get(world).put(id, plot);
         }
         if (missing > 0) {
-            MainUtil.sendConsoleMessage("&cSome names could not be identified:");
-            MainUtil.sendConsoleMessage("&7 - Empty quotes mean PlotMe just stored an unowned plot in the database");
-            MainUtil.sendConsoleMessage("&7 - Names you have never seen before could be from people mistyping commands");
-            MainUtil
-            .sendConsoleMessage("&7 - Converting from a non-uuid version of PlotMe can't identify owners if the playerdata files are deleted (these plots will remain unknown until the player connects)");
+            PS.log("&cSome names could not be identified:");
+            PS.log("&7 - Empty quotes mean PlotMe just stored an unowned plot in the database");
+            PS.log("&7 - Names you have never seen before could be from people mistyping commands");
+            PS.log("&7 - Converting from a non-uuid version of PlotMe can't identify owners if the playerdata files are deleted (these plots will remain unknown until the player connects)");
         }
         
         for (final Entry<String, HashMap<PlotId, boolean[]>> entry : merges.entrySet()) {
@@ -171,7 +169,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         
         try {
             
-            MainUtil.sendConsoleMessage(" - " + prefix + "Denied");
+            PS.log(" - " + prefix + "Denied");
             stmt = connection.prepareStatement("SELECT * FROM `" + prefix + "Denied`");
             r = stmt.executeQuery();
             
@@ -207,7 +205,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         }
                     }
                     if (denied == null) {
-                        MainUtil.sendConsoleMessage("&6Could not identify denied for plot: " + id);
+                        PS.log("&6Could not identify denied for plot: " + id);
                         continue;
                     }
                 }
@@ -251,7 +249,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         }
                     }
                     if (helper == null) {
-                        MainUtil.sendConsoleMessage("&6Could not identify helper for plot: " + id);
+                        PS.log("&6Could not identify helper for plot: " + id);
                         continue;
                     }
                 }

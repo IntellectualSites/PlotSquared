@@ -2,6 +2,7 @@ package com.plotsquared.sponge.events;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
+import org.spongepowered.api.event.cause.Cause;
 
 import com.intellectualcrafters.plot.object.Plot;
 
@@ -47,5 +48,10 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
     @Override
     public void setCancelled(final boolean cancel) {
         cancelled = cancel;
+    }
+    
+    @Override
+    public Cause getCause() {
+        return null;
     }
 }

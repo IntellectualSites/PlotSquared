@@ -37,6 +37,7 @@ public class SpongeBlockManager extends BlockManager {
     @Override
     public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
+
             double match;
             short id;
             byte data;
@@ -94,6 +95,7 @@ public class SpongeBlockManager extends BlockManager {
     
     @Override
     public PlotBlock getPlotBlockFromString(final String block) {
+        dsa
         // TODO Auto-generated method stub
         return null;
     }

@@ -66,7 +66,6 @@ public class SpongeBasicGen extends SpongePlotGenerator {
             }
             pathWidthUpper = (short) (pathWidthLower + plotsize + 1);
         }
-        
         roadblock = SpongeMain.THIS.getBlockState(this.plotworld.ROAD_BLOCK);
         wallfilling = SpongeMain.THIS.getBlockState(this.plotworld.WALL_FILLING);
         wall = SpongeMain.THIS.getBlockState(this.plotworld.WALL_BLOCK);
@@ -127,5 +126,4 @@ public class SpongeBasicGen extends SpongePlotGenerator {
         }
         return biome;
     }
-    
 }

@@ -428,7 +428,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             try {
                 BukkitSetBlockManager.setBlockManager = new SetBlockFast();
             } catch (final Throwable e) {
-                MainUtil.canSetFast = false;
                 BukkitSetBlockManager.setBlockManager = new SetBlockSlow();
             }
         }

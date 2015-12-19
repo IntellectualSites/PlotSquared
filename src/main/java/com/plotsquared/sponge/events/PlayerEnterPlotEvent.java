@@ -1,6 +1,7 @@
 package com.plotsquared.sponge.events;
 
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 
 import com.intellectualcrafters.plot.object.Plot;
 
@@ -26,5 +27,10 @@ public class PlayerEnterPlotEvent extends PlayerEvent {
      */
     public Plot getPlot() {
         return plot;
+    }
+    
+    @Override
+    public Cause getCause() {
+        return null;
     }
 }

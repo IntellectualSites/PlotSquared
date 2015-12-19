@@ -1,7 +1,8 @@
 package com.plotsquared.sponge.events;
 
-import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.event.Cancellable;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.impl.AbstractEvent;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.PlotCluster;
@@ -43,5 +44,10 @@ public class ClusterFlagRemoveEvent extends AbstractEvent implements Cancellable
     @Override
     public void setCancelled(final boolean cancel) {
         cancelled = cancel;
+    }
+    
+    @Override
+    public Cause getCause() {
+        return null;
     }
 }

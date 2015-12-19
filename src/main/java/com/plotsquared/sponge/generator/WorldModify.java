@@ -22,7 +22,8 @@ public class WorldModify implements WorldGeneratorModifier {
     @Override
     public void modifyWorldGenerator(final WorldCreationSettings world, final DataContainer settings, final WorldGenerator gen) {
         if (augment) {
-            final String worldname = plotgen.world;
+            final String worldname = world.getWorldName();
+            plotgen.world = worldname;
             final PlotWorld plotworld = plotgen.getNewPlotWorld(worldname);
             if (plotworld.TYPE == 2) {
                 for (final PlotCluster cluster : ClusterManager.getClusters(worldname)) {
@@ -32,9 +33,9 @@ public class WorldModify implements WorldGeneratorModifier {
                 new AugmentedPopulator(worldname, gen, plotgen, null, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
             }
         } else {
-            gen.getGeneratorPopulators().clear();
+            gen.getGenerationPopulators().clear();
             gen.getPopulators().clear();
-            gen.setBaseGeneratorPopulator(plotgen.getBaseGeneratorPopulator());
+            gen.setBaseGenerationPopulator(plotgen.getBaseGenerationPopulator());
             gen.setBiomeGenerator(plotgen.getBiomeGenerator());
         }
     }

@@ -3,7 +3,7 @@ package com.plotsquared.sponge.util;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.spongepowered.api.service.scheduler.Task;
+import org.spongepowered.api.scheduler.Task;
 
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.sponge.SpongeMain;

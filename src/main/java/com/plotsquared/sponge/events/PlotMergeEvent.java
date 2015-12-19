@@ -2,8 +2,9 @@ package com.plotsquared.sponge.events;
 
 import java.util.ArrayList;
 
-import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.event.Cancellable;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.impl.AbstractEvent;
 import org.spongepowered.api.world.World;
 
 import com.intellectualcrafters.plot.object.Plot;
@@ -56,5 +57,10 @@ public class PlotMergeEvent extends AbstractEvent implements Cancellable {
     @Override
     public void setCancelled(final boolean cancel) {
         cancelled = cancel;
+    }
+    
+    @Override
+    public Cause getCause() {
+        return null;
     }
 }

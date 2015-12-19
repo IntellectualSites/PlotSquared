@@ -381,7 +381,7 @@ public class PlotAPI {
      * @see MainUtil#sendConsoleMessage(String)
      */
     public void sendConsoleMessage(final String msg) {
-        MainUtil.sendConsoleMessage(msg);
+        PS.log(msg);;
     }
     
     /**

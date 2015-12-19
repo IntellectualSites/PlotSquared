@@ -2,7 +2,7 @@ package com.plotsquared.sponge.uuid;
 
 import java.util.UUID;
 
-import org.spongepowered.api.GameProfile;
+import org.spongepowered.api.profile.GameProfile;
 
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.RunnableVal;

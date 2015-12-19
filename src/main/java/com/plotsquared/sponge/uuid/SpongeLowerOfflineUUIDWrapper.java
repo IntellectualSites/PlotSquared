@@ -2,8 +2,8 @@ package com.plotsquared.sponge.uuid;
 
 import java.util.UUID;
 
-import org.spongepowered.api.GameProfile;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.profile.GameProfile;
 
 import com.google.common.base.Charsets;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;

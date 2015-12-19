@@ -126,27 +126,22 @@ public class Configuration {
         @Override
         public boolean validateValue(final String string) {
             try {
-                if (string.contains(":")) {
-                    final String[] split = string.split(":");
-                    Short.parseShort(split[0]);
-                    Short.parseShort(split[1]);
-                } else {
-                    Short.parseShort(string);
+                final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(string);
+                if ((value == null) || (value.match > 1)) {
+                    return false;
                 }
                 return true;
-            } catch (final Exception e) {
-                return false;
-            }
+            } catch (final Exception e) {}
+            return false;
         }
         
         @Override
         public PlotBlock parseString(final String string) {
-            if (string.contains(":")) {
-                final String[] split = string.split(":");
-                return new PlotBlock(Short.parseShort(split[0]), Byte.parseByte(split[1]));
-            } else {
-                return new PlotBlock(Short.parseShort(string), (byte) 0);
+            final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(string);
+            if ((value == null) || (value.match > 1)) {
+                return null;
             }
+            return value.best;
         }
     };
     public static final SettingValue<PlotBlock[]> BLOCKLIST = new SettingValue<PlotBlock[]>("BLOCKLIST") {
