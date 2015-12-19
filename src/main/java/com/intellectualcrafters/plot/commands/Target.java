@@ -46,7 +46,7 @@ public class Target extends SubCommand {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
-        PlotId id = MainUtil.parseId(args[0]);
+        PlotId id = PlotId.fromString(args[0]);
         if (id == null) {
             if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
                 Plot closest = null;

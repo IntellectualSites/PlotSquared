@@ -14,7 +14,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 
@@ -112,7 +111,7 @@ public class PlotAnalysis {
                     if ((plot.getSettings().ratings == null) || (plot.getSettings().ratings.size() == 0)) {
                         iter.remove();
                     } else {
-                        MainUtil.runners.put(plot, 1);
+                        plot.addRunning();
                     }
                 }
                 PS.debug(" - | Reduced to " + plots.size() + " plots");
@@ -121,7 +120,7 @@ public class PlotAnalysis {
                     PS.debug("Calibration cancelled due to insufficient comparison data, please try again later");
                     running = false;
                     for (final Plot plot : plots) {
-                        MainUtil.runners.remove(plot);
+                        plot.removeRunning();
                     }
                     return;
                 }
@@ -179,7 +178,7 @@ public class PlotAnalysis {
                                         e.printStackTrace();
                                     }
                                     synchronized (lock) {
-                                        MainUtil.runners.remove(queuePlot);
+                                        queuePlot.removeRunning();
                                         lock.notify();
                                     }
                                 }
@@ -346,7 +345,7 @@ public class PlotAnalysis {
                         PS.debug("Insufficient data to determine correlation! " + optimal_index + " | " + n);
                         running = false;
                         for (final Plot plot : plots) {
-                            MainUtil.runners.remove(plot);
+                            plot.removeRunning();
                         }
                         return;
                     }
@@ -383,7 +382,7 @@ public class PlotAnalysis {
                 PS.debug("$1Done!");
                 running = false;
                 for (final Plot plot : plots) {
-                    MainUtil.runners.remove(plot);
+                    plot.removeRunning();
                 }
                 whenDone.run();
             }

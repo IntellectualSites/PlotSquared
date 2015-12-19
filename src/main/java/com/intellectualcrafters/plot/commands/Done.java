@@ -56,12 +56,12 @@ public class Done extends SubCommand {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
-        MainUtil.runners.put(plot, 1);
+        plot.addRunning();
         MainUtil.sendMessage(plr, C.GENERATING_LINK);
         HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
             @Override
             public void run() {
-                MainUtil.runners.remove(plot);
+                plot.removeRunning();
                 if ((value == null) || (value.getComplexity() >= Settings.CLEAR_THRESHOLD)) {
                     final Flag flag = new Flag(FlagManager.getFlag("done"), (System.currentTimeMillis() / 1000));
                     FlagManager.addPlotFlag(plot, flag);

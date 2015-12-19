@@ -705,7 +705,7 @@ public class Plot {
     public int addRunning() {
         int value = getRunning();
         for (Plot plot : getConnectedPlots()) {
-            MainUtil.runners.put(plot, value + 1);
+            plot.setMeta("running", value + 1);
         }
         return value;
     }
@@ -714,19 +714,19 @@ public class Plot {
         int value = getRunning();
         if (value < 2) {
             for (Plot plot : getConnectedPlots()) {
-                MainUtil.runners.remove(plot);
+                plot.deleteMeta("running");
             }
         }
         else {
             for (Plot plot : getConnectedPlots()) {
-                MainUtil.runners.put(plot, value - 1);
+                plot.setMeta("running", value - 1);
             }
         }
         return value;
     }
     
     public int getRunning() {
-        Integer value = MainUtil.runners.get(this);
+        Integer value = (Integer) getMeta("running");
         return value == null ? 0 : value;
     }
     

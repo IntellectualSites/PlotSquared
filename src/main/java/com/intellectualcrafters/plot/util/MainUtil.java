@@ -64,15 +64,8 @@ import com.plotsquared.listener.PlotListener;
 /**
  * plot functions
  *
-
  */
 public class MainUtil {
-    /**
-     * The runners are a list of plots that have currect asynchronous actions taking place.<br>
-     *  - At some point this could be replaced by using the plot metadata
-     */
-    public final static HashMap<Plot, Integer> runners = new HashMap<>();
-    
     /**
      * If the NMS code for sending chunk updates is functional<br>
      *  - E.g. If using an older version of Bukkit, or before the plugin is updated to 1.5<br>

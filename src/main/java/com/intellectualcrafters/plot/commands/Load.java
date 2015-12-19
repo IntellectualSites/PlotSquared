@@ -80,22 +80,21 @@ public class Load extends SubCommand {
                     MainUtil.sendMessage(plr, C.LOAD_FAILED);
                     return false;
                 }
-                
-                MainUtil.runners.put(plot, 1);
+                plot.addRunning();
                 MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
                         final Schematic schematic = SchematicHandler.manager.getSchematic(url);
                         if (schematic == null) {
-                            MainUtil.runners.remove(plot);
+                            plot.removeRunning();
                             sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
                             return;
                         }
                         SchematicHandler.manager.paste(schematic, plot, 0, 0, new RunnableVal<Boolean>() {
                             @Override
                             public void run() {
-                                MainUtil.runners.remove(plot);
+                                plot.removeRunning();
                                 if (value) {
                                     sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
                                 } else {
@@ -107,7 +106,7 @@ public class Load extends SubCommand {
                 });
                 return true;
             }
-            MainUtil.runners.remove(plot);
+            plot.removeRunning();
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot load <index>");
             return false;
         }
@@ -116,12 +115,12 @@ public class Load extends SubCommand {
         
         final List<String> schematics = (List<String>) plr.getMeta("plot_schematics");
         if (schematics == null) {
-            MainUtil.runners.put(plot, 1);
+            plot.addRunning();
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
                     final List<String> schematics = SchematicHandler.manager.getSaves(plr.getUUID());
-                    MainUtil.runners.remove(plot);
+                    plot.removeRunning();
                     if ((schematics == null) || (schematics.size() == 0)) {
                         MainUtil.sendMessage(plr, C.LOAD_FAILED);
                         return;

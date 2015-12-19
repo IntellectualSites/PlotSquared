@@ -283,8 +283,8 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // check pos1 / pos2
-                PlotId pos1 = MainUtil.parseId(args[1]);
-                PlotId pos2 = MainUtil.parseId(args[2]);
+                PlotId pos1 = PlotId.fromString(args[1]);
+                PlotId pos2 = PlotId.fromString(args[2]);
                 if ((pos1 == null) || (pos2 == null)) {
                     MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
