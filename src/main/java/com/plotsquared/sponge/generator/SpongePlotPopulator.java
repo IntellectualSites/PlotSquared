@@ -4,14 +4,14 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
-import org.spongepowered.api.world.gen.GeneratorPopulator;
+import org.spongepowered.api.world.gen.GenerationPopulator;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 
-public abstract class SpongePlotPopulator<T extends SpongePlotGenerator> implements GeneratorPopulator {
+public abstract class SpongePlotPopulator<T extends SpongePlotGenerator> implements GenerationPopulator {
     
     public int X;
     public int Z;
@@ -54,8 +54,8 @@ public abstract class SpongePlotPopulator<T extends SpongePlotGenerator> impleme
         } catch (final Exception e) {
             e.printStackTrace();
         }
-    };
-    
+    }
+
     public abstract void populate(final World world, final RegionWrapper requiredRegion, final PseudoRandom random, final int cx, final int cz);
     
     /**
@@ -63,8 +63,7 @@ public abstract class SpongePlotPopulator<T extends SpongePlotGenerator> impleme
      * @param x
      * @param y
      * @param z
-     * @param id
-     * @param data
+     * @param state
      */
     public void setBlock(final int x, final int y, final int z, final BlockState state) {
         buffer.setBlock(X + x, y, Z + z, state);
