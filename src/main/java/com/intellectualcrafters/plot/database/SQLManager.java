@@ -57,7 +57,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 
-/**
+/**
+
  */
 public class SQLManager implements AbstractDB {
     // Public final
@@ -185,7 +186,7 @@ public class SQLManager implements AbstractDB {
     /**
      * Constructor
      *
-     * @param c connection
+     * @param database
      * @param p prefix
      * @throws Exception
      */
