@@ -636,7 +636,7 @@ public class Plot {
      * Clear a plot
      * @see MainUtil#clear(Plot, boolean, Runnable)
      * @see MainUtil#clearAsPlayer(Plot, boolean, Runnable)
-     * @see #deletePlot() to clear and delete a plot
+     * @see #deletePlot(Runnable) to clear and delete a plot
      * @param whenDone A runnable to execute when clearing finishes, or null
      */
     public void clear(final Runnable whenDone) {
@@ -666,8 +666,7 @@ public class Plot {
     
     /**
      * Set a flag for this plot
-     * @param flag
-     * @param value
+     * @param flags
      */
     public void setFlags(Set<Flag> flags) {
         FlagManager.setPlotFlags(this, flags);
@@ -683,7 +682,7 @@ public class Plot {
     
     /**
      * Get the flag for a given key
-     * @param flag
+     * @param key
      */
     public Flag getFlag(final String key) {
         return FlagManager.getPlotFlagRaw(this, key);
@@ -737,7 +736,7 @@ public class Plot {
     
     /**
      * Unlink a plot and remove the roads
-     * @see MainUtil#unlinkPlot(Plot, boolean removeRoad)
+     * @see MainUtil#unlinkPlot(Plot, boolean, boolean)
      * @return true if plot was linked
      */
     public boolean unlink() {
@@ -884,7 +883,7 @@ public class Plot {
     
     /**
      * Auto merge the plot with any adjacent plots of the same owner
-     * @see MainUtil#autoMerge(Plot, UUID) to specify the owner
+     * @see MainUtil#autoMerge(Plot, int, int, UUID, boolean) to specify the owner
      * @param removeRoads If to remove roads when merging
      */
     public boolean autoMerge(final boolean removeRoads) {
@@ -947,7 +946,6 @@ public class Plot {
      *  - If the plot is not connected, it will return its own corners<br>
      *  - the returned locations will not necessarily correspond to claimed plots if the connected plots do not form a rectangular shape
      * @deprecated as merged plots no longer need to be rectangular
-     * @param plot
      * @return new Location[] { bottom, top }
      * @see MainUtil#getCorners(Plot)
      */
@@ -961,7 +959,6 @@ public class Plot {
      *  - If the plot is not connected, it will return itself for the top/bottom<br>
      *  - the returned ids will not necessarily correspond to claimed plots if the connected plots do not form a rectangular shape
      * @deprecated as merged plots no longer need to be rectangular
-     * @param plot
      * @return new Plot[] { bottom, top }
      * @see MainUtil#getCornerIds(Plot)
      */
@@ -1012,12 +1009,12 @@ public class Plot {
     /**
      * Swap the plot contents and settings with another location<br>
      *  - The destination must correspond to a valid plot of equal dimensions
-     * @see ChunkManager#swap(String, bot1, top1, bot2, top2) to swap terrain
+     * @see ChunkManager#swap(Location, Location, Location, Location, Runnable) to swap terrain
      * @see MainUtil#getPlotSelectionIds(PlotId, PlotId) to get the plots inside a selection
-     * @see MainUtil#swapData(String, PlotId, PlotId, Runnable) to swap plot settings
-     * @param other The other plot to swap with
+     * @see MainUtil#swapData(Plot, Plot, Runnable) to swap plot settings
+     * @param destination The other plot to swap with
      * @param whenDone A task to run when finished, or null
-     * @see MainUtil#swapData(String, PlotId, PlotId, Runnable)
+     * @see MainUtil#swapData(Plot, Plot, Runnable)
      * @return boolean if swap was successful
      */
     public boolean swap(final Plot destination, final Runnable whenDone) {
@@ -1261,7 +1258,8 @@ public class Plot {
      * 2 = south<br>
      * 3 = west<br>
      * ----------<br>
-     * @param merged
+     * @param direction
+     * @param value
      */
     public void setMerged(int direction, boolean value) {
         if (getSettings().setMerged(direction, value)) {

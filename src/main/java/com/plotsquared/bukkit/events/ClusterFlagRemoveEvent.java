@@ -29,7 +29,9 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 
 /**
  * Called when a flag is removed from a plot
- *
+ *
+
+
  */
 public class ClusterFlagRemoveEvent extends Event implements Cancellable {
     private static HandlerList handlers = new HandlerList();
@@ -41,7 +43,7 @@ public class ClusterFlagRemoveEvent extends Event implements Cancellable {
      * PlotFlagRemoveEvent: Called when a flag is removed from a plot
      *
      * @param flag Flag that was removed
-     * @param plot Plot from which the flag was removed
+     * @param cluster PlotCluster from which the flag was removed
      */
     public ClusterFlagRemoveEvent(final Flag flag, final PlotCluster cluster) {
         this.cluster = cluster;

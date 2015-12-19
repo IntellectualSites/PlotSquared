@@ -63,7 +63,8 @@ import com.plotsquared.listener.PlotListener;
 
 /**
  * plot functions
- *
+ *
+
  */
 public class MainUtil {
     /**
@@ -150,7 +151,7 @@ public class MainUtil {
     
     /**
      * This will combine each plot into effective rectangular regions
-     * @param plot
+     * @param origin
      * @return
      */
     public static HashSet<RegionWrapper> getRegions(Plot origin) {
@@ -910,7 +911,7 @@ public class MainUtil {
     /**
      * direction 0 = north, 1 = south, etc:
      *
-     * @param id
+     * @param plot
      * @param direction
      *
      * @return Plot relative
@@ -1907,9 +1908,7 @@ public class MainUtil {
      * Gets the top loc of a plot (if mega, returns top loc of that mega plot) - If you would like each plot treated as
      * a small plot use getPlotTopLocAbs(...)
      *
-     * @param world
-     * @param id
-     *
+     * @param plot
      * @return Location top of mega plot
      */
     public static Location getPlotTopLoc_(Plot plot) {

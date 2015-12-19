@@ -78,7 +78,6 @@ public class PlotSettings {
     /**
      * Constructor
      *
-     * @param plot object
      */
     public PlotSettings() {
         flags = new HashMap<>();

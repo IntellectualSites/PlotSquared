@@ -281,7 +281,7 @@ public class NbtFactory {
      * Represents a root NBT list.
      * See also:
      * <ul>
-     *   <li>{@link NbtFactory#createNbtList()}</li>
+     *   <li>{@link NbtFactory#createList(Iterable)}}</li>
      *   <li>{@link NbtFactory#fromList(Object)}</li>
      * </ul>
      * @author Kristian
@@ -408,7 +408,7 @@ public class NbtFactory {
     /**
      * Construct a new NBT compound.
      * <p>
-     * Use {@link NbtCompound#asMap()} to modify it.
+     *
      * @return The NBT compound.
      */
     public static NbtCompound createCompound() {
@@ -497,8 +497,6 @@ public class NbtFactory {
     /**
      * Set the NBT compound tag of a given item stack.
      * <p>
-     * The item stack must be a wrapper for a CraftItemStack. Use
-     * {@link MinecraftReflection#getBukkitItemStack(ItemStack)} if not.
      * @param stack - the item stack, cannot be air.
      * @param compound - the new NBT compound, or NULL to remove it.
      * @throws IllegalArgumentException If the stack is not a CraftItemStack, or it represents air.
@@ -572,7 +570,6 @@ public class NbtFactory {
     
     /**
      * Convert wrapped List and Map objects into their respective NBT counterparts.
-     * @param name - the name of the NBT element to create.
      * @param value - the value of the element to create. Can be a List or a Map.
      * @return The NBT element.
      */

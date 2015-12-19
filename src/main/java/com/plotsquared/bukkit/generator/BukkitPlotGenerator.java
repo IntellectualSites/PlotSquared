@@ -223,7 +223,6 @@ public abstract class BukkitPlotGenerator extends ChunkGenerator {
      * @param cz
      * @param requiredRegion
      * @param biomes
-     * @param result
      * @return
      */
     public abstract void generateChunk(final World world, final RegionWrapper requiredRegion, final PseudoRandom random, final int cx, final int cz, final BiomeGrid biomes);

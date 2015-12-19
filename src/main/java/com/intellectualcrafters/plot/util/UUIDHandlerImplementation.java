@@ -36,7 +36,7 @@ public abstract class UUIDHandlerImplementation {
     
     /**
      * If the UUID is not found, some commands can request to fetch the UUID when possible
-     * @param player
+     * @param name
      * @param ifFetch
      */
     public abstract void fetchUUID(final String name, final RunnableVal<UUID> ifFetch);
