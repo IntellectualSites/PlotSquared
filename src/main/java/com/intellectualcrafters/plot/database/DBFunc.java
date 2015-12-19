@@ -66,8 +66,8 @@ public class DBFunc {
     
     /**
      * Check if a resultset contains a column
-     * @param rs
-     * @param columnName
+     * @param r
+     * @param name
      * @return
      * @throws SQLException
      */
@@ -244,8 +244,7 @@ public class DBFunc {
     /**
      * Get a plot id
      *
-     * @param world World
-     * @param id2   Plot ID
+     * @param plot Plot Object
      *
      * @return ID
      */
@@ -413,7 +412,6 @@ public class DBFunc {
     }
     
     /**
-     * @param world
      * @param plot
      * @param uuid
      */
@@ -429,7 +427,6 @@ public class DBFunc {
     }
     
     /**
-     * @param world
      * @param plot
      * @param uuid
      */
@@ -445,7 +442,6 @@ public class DBFunc {
     }
     
     /**
-     * @param world
      * @param plot
      * @param uuid
      */
@@ -457,7 +453,6 @@ public class DBFunc {
     }
     
     /**
-     * @param world
      * @param plot
      * @param uuid
      */

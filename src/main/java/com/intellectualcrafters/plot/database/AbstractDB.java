@@ -37,7 +37,9 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
-/**
+/**
+
+
  */
 public interface AbstractDB {
     
@@ -70,8 +72,6 @@ public interface AbstractDB {
     
     /**
      * Create tables
-     *
-     * @param database Database in which the tables will be created
      *
      * @throws SQLException If the database manager is unable to create the tables
      */
@@ -109,8 +109,7 @@ public interface AbstractDB {
     /**
      * Get the table entry ID
      *
-     * @param world Which the plot is located in
-     * @param id2   Plot ID
+     * @param plot Plot Object
      *
      * @return Integer = Plot Entry Id
      */
@@ -119,8 +118,7 @@ public interface AbstractDB {
     /**
      * Get the id of a given plot cluster
      *
-     * @param world Which the plot is located in
-     * @param id cluster id
+     * @param cluster PlotCluster Object
      *
      * @return Integer = Cluster Entry Id
      */
@@ -144,7 +142,6 @@ public interface AbstractDB {
     /**
      * Set the merged status for a plot
      *
-     * @param world  World in which the plot is located
      * @param plot   Plot Object
      * @param merged boolean[]
      */
@@ -160,7 +157,6 @@ public interface AbstractDB {
     /**
      * Set plot flags
      *
-     * @param world World in which the plot is located
      * @param plot  Plot Object
      * @param flags flags to set (flag[])
      */
@@ -262,7 +258,6 @@ public interface AbstractDB {
     
     /**
      *
-     * @param world
      * @param cluster
      * @param uuid
      */
@@ -300,7 +295,6 @@ public interface AbstractDB {
     /**
      * Remove a plot comment
      *
-     * @param world   World in which the plot is located
      * @param plot    Plot Object
      * @param comment Comment to remove
      */
@@ -316,7 +310,6 @@ public interface AbstractDB {
     /**
      * Set a plot comment
      *
-     * @param world   World in which the plot is located
      * @param plot    Plot Object
      * @param comment Comment to add
      */
@@ -325,10 +318,7 @@ public interface AbstractDB {
     /**
      * Get Plot Comments
      *
-     * @param world World in which the plot is located
      * @param plot  Plot Object
-     * @param tier  Comment Tier
-     *
      * @return Plot Comments within the specified tier
      */
     void getComments(final Plot plot, final String inbox, final RunnableVal whenDone);

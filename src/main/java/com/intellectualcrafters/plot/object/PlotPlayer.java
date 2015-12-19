@@ -136,7 +136,7 @@ public abstract class PlotPlayer implements CommandCaller {
     
     /**
      * Get the plots the player owns
-     * @see #PS.java for more searching functions
+     * @see PS for more searching functions
      * @see #getPlotCount() for the number of plots
      * @return Set of plots
      */

@@ -26,7 +26,7 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 public class BO3Handler {
     
     /**
-     * @see #saveBO3(null, Plot)
+     * @see #saveBO3(PlotPlayer, Plot)
      * @param plot
      * @return if successfully exported
      */

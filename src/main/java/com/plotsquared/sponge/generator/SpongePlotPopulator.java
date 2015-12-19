@@ -63,8 +63,7 @@ public abstract class SpongePlotPopulator<T extends SpongePlotGenerator> impleme
      * @param x
      * @param y
      * @param z
-     * @param id
-     * @param data
+     * @param state
      */
     public void setBlock(final int x, final int y, final int z, final BlockState state) {
         buffer.setBlock(X + x, y, Z + z, state);

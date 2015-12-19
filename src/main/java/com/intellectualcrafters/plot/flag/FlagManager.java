@@ -41,7 +41,9 @@ import com.intellectualcrafters.plot.util.Permissions;
 
 /**
  * Flag Manager Utility
- *
+ *
+
+
  */
 @SuppressWarnings("unused")
 public class FlagManager {
@@ -210,7 +212,7 @@ public class FlagManager {
     
     /**
      * Add a flag to a plot
-     * @param plot
+     * @param origin
      * @param flag
      */
     public static boolean addPlotFlag(final Plot origin, final Flag flag) {

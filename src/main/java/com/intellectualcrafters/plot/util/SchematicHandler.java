@@ -479,7 +479,7 @@ public abstract class SchematicHandler {
     /**
      * Get a schematic
      *
-     * @param name to check
+     * @param file to check
      *
      * @return schematic if found, else null
      */
@@ -725,7 +725,8 @@ public abstract class SchematicHandler {
     
     /**
      * Schematic Class
-     *
+     *
+
      */
     public class Schematic {
         // Lossy but fast
@@ -744,7 +745,6 @@ public abstract class SchematicHandler {
          *  -
          * @param blockCollection
          * @param schematicDimension
-         * @param file
          */
         @Deprecated
         public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension) {
@@ -877,7 +877,8 @@ public abstract class SchematicHandler {
     
     /**
      * Schematic Dimensions
-     *
+     *
+
      */
     public static class Dimension {
         private final int x;
@@ -905,7 +906,8 @@ public abstract class SchematicHandler {
     
     /**
      * Schematic Data Collection
-     * @deprecated as it is slow to wrap each block
+     * @deprecated as it is slow to wrap each block
+
      */
     @Deprecated
     public class DataCollection {

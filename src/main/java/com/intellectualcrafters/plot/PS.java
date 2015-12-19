@@ -545,7 +545,7 @@ public class PS {
     /**
      * Get the raw plot object
      * @return set of plot
-     * @see #setAllPlotsRaw(LinkedHashMap) to set the raw plot object
+     * @see #setAllPlotsRaw(ConcurrentHashMap) to set the raw plot object
      */
     @Deprecated
     public Set<Plot> getPlotsRaw() {
