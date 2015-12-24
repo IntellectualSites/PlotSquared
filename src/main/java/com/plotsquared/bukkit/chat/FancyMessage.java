@@ -2,21 +2,13 @@ package com.plotsquared.bukkit.chat;
 
 import static com.plotsquared.bukkit.chat.TextualComponent.rawText;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.Achievement;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,13 +20,21 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonWriter;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Represents a formattable message. Such messages can use elements such as colors, formatting codes, hover and click data, and other features provided by the vanilla Minecraft <a href="http://minecraft.gamepedia.com/Tellraw#Raw_JSON_Text">JSON message formatter</a>.
@@ -61,7 +61,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     @Override
     public FancyMessage clone() throws CloneNotSupportedException {
         final FancyMessage instance = (FancyMessage) super.clone();
-        instance.messageParts = new ArrayList<MessagePart>(messageParts.size());
+        instance.messageParts = new ArrayList<>(messageParts.size());
         for (int i = 0; i < messageParts.size(); i++) {
             instance.messageParts.add(i, messageParts.get(i).clone());
         }
@@ -79,7 +79,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
     
     public FancyMessage(final TextualComponent firstPartText) {
-        messageParts = new ArrayList<MessagePart>();
+        messageParts = new ArrayList<>();
         messageParts.add(new MessagePart(firstPartText));
         jsonString = null;
         dirty = false;
@@ -503,9 +503,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
      * @return This builder instance.
      */
     public FancyMessage translationReplacements(final FancyMessage... replacements) {
-        for (final FancyMessage str : replacements) {
-            latest().translationReplacements.add(str);
-        }
+        Collections.addAll(latest().translationReplacements, replacements);
         
         dirty = true;
         
@@ -742,7 +740,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     // Doc copied from interface
     @Override
     public Map<String, Object> serialize() {
-        final HashMap<String, Object> map = new HashMap<String, Object>();
+        final HashMap<String, Object> map = new HashMap<>();
         map.put("messageParts", messageParts);
         //		map.put("JSON", toJSONString());
         return map;
@@ -791,7 +789,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
                 // Deserialize text
                 if (TextualComponent.isTextKey(entry.getKey())) {
                     // The map mimics the YAML serialization, which has a "key" field and one or more "value" fields
-                    final Map<String, Object> serializedMapForm = new HashMap<String, Object>(); // Must be object due to Bukkit serializer API compliance
+                    final Map<String, Object> serializedMapForm = new HashMap<>(); // Must be object due to Bukkit serializer API compliance
                     serializedMapForm.put("key", entry.getKey());
                     if (entry.getValue().isJsonPrimitive()) {
                         // Assume string

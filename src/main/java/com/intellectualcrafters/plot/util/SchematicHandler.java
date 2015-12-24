@@ -1,5 +1,30 @@
 package com.intellectualcrafters.plot.util;
 
+import com.google.common.collect.Lists;
+import com.intellectualcrafters.jnbt.ByteArrayTag;
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.jnbt.IntTag;
+import com.intellectualcrafters.jnbt.ListTag;
+import com.intellectualcrafters.jnbt.NBTInputStream;
+import com.intellectualcrafters.jnbt.NBTOutputStream;
+import com.intellectualcrafters.jnbt.ShortTag;
+import com.intellectualcrafters.jnbt.StringTag;
+import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.json.JSONArray;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.plotsquared.object.schematic.StateWrapper;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,31 +53,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import com.google.common.collect.Lists;
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.NBTInputStream;
-import com.intellectualcrafters.jnbt.NBTOutputStream;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
-import com.intellectualcrafters.jnbt.Tag;
-import com.intellectualcrafters.json.JSONArray;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.plotsquared.object.schematic.StateWrapper;
 
 public abstract class SchematicHandler {
     public static SchematicHandler manager;
@@ -85,9 +85,9 @@ public abstract class SchematicHandler {
                 }
                 final String name;
                 if (namingScheme == null) {
-                    name = plot.id.x + ";" + plot.id.y + "," + plot.world + "," + o;
+                    name = plot.getId().x + ";" + plot.getId().y + "," + plot.world + "," + o;
                 } else {
-                    name = namingScheme.replaceAll("%owner%", o).replaceAll("%id%", plot.id.toString()).replaceAll("%idx%", plot.id.x + "").replaceAll("%idy%", plot.id.y + "")
+                    name = namingScheme.replaceAll("%owner%", o).replaceAll("%id%", plot.getId().toString()).replaceAll("%idx%", plot.getId().x + "").replaceAll("%idy%", plot.getId().y + "")
                     .replaceAll("%world%", plot.world);
                 }
                 final String directory;
@@ -97,21 +97,21 @@ public abstract class SchematicHandler {
                     directory = outputDir.getPath();
                 }
                 final Runnable THIS = this;
-                SchematicHandler.manager.getCompoundTag(plot.world, plot.id, new RunnableVal<CompoundTag>() {
+                SchematicHandler.manager.getCompoundTag(plot.world, plot.getId(), new RunnableVal<CompoundTag>() {
                     @Override
                     public void run() {
                         if (value == null) {
-                            MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.id);
+                            MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.getId());
                         } else {
                             TaskManager.runTaskAsync(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainUtil.sendMessage(null, "&6ID: " + plot.id);
+                                    MainUtil.sendMessage(null, "&6ID: " + plot.getId());
                                     final boolean result = SchematicHandler.manager.save(value, directory + File.separator + name + ".schematic");
                                     if (!result) {
-                                        MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.id);
+                                        MainUtil.sendMessage(null, "&7 - Failed to save &c" + plot.getId());
                                     } else {
-                                        MainUtil.sendMessage(null, "&7 - &a  success: " + plot.id);
+                                        MainUtil.sendMessage(null, "&7 - &a  success: " + plot.getId());
                                     }
                                     TaskManager.runTask(new Runnable() {
                                         @Override
@@ -346,14 +346,12 @@ public abstract class SchematicHandler {
                                         }
                                     }
                                 });
-                                return;
                             }
                         }
                     });
                 } catch (final Exception e) {
                     e.printStackTrace();
                     TaskManager.runTask(whenDone);
-                    return;
                 }
             }
         });

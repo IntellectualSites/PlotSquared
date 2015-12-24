@@ -20,17 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import java.io.File;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Configuration;
@@ -46,6 +35,17 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+
+import java.io.File;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The plot class
@@ -384,7 +384,7 @@ public class Plot {
      * @return boolean false if the player is allowed to enter
      */
     public boolean isDenied(final UUID uuid) {
-        return (getDenied() != null) && ((denied.contains(DBFunc.everyone) && !isAdded(uuid)) || (!isAdded(uuid) && denied.contains(uuid)));
+        return (getDenied() != null) && ((getDenied().contains(DBFunc.everyone) && !isAdded(uuid)) || (!isAdded(uuid) && getDenied().contains(uuid)));
     }
     
     /**
@@ -462,11 +462,11 @@ public class Plot {
             return origin;
         }
         origin = this;
-        PlotId min = id;
+        PlotId min = getId();
         for (Plot plot : MainUtil.getConnectedPlots(this)) {
-            if (plot.id.y < min.y || (plot.id.y == min.y && plot.id.x < min.x)) {
+            if (plot.getId().y < min.y || (plot.getId().y.equals(min.y) && plot.getId().x < min.x)) {
                 origin = plot;
-                min = plot.id;
+                min = plot.getId();
             }
         }
         for (Plot plot : MainUtil.getConnectedPlots(this)) {
@@ -529,13 +529,13 @@ public class Plot {
             case 7:
                 int i = direction - 4;
                 int i2 = 0;
-                return settings.getMerged(i2) && settings.getMerged(i) && MainUtil.getPlotAbs(world, MainUtil.getPlotIdRelative(id, i)).getMerged(i2) && settings.getMerged(i) && settings.getMerged(i2) && MainUtil.getPlotAbs(world, MainUtil.getPlotIdRelative(id, i2)).getMerged(i);
+                return settings.getMerged(i2) && settings.getMerged(i) && MainUtil.getPlotAbs(world, MainUtil.getPlotIdRelative(getId(), i)).getMerged(i2) && settings.getMerged(i) && settings.getMerged(i2) && MainUtil.getPlotAbs(world, MainUtil.getPlotIdRelative(getId(), i2)).getMerged(i);
             case 4:
             case 5:
             case 6:
                 i = direction - 4;
                 i2 = direction - 3;
-                return settings.getMerged(i2) && settings.getMerged(i) && MainUtil.getPlotAbs(world, MainUtil.getPlotIdRelative(id, i)).getMerged(i2) && settings.getMerged(i) && settings.getMerged(i2) && MainUtil.getPlotAbs(world, MainUtil.getPlotIdRelative(id, i2)).getMerged(i);
+                return settings.getMerged(i2) && settings.getMerged(i) && MainUtil.getPlotAbs(world, MainUtil.getPlotIdRelative(getId(), i)).getMerged(i2) && settings.getMerged(i) && settings.getMerged(i2) && MainUtil.getPlotAbs(world, MainUtil.getPlotIdRelative(getId(), i2)).getMerged(i);
                 
         }
         return false;
@@ -930,7 +930,7 @@ public class Plot {
      * @return
      */
     public Location getTopAbs() {
-        return MainUtil.getPlotTopLocAbs(world, id);
+        return MainUtil.getPlotTopLocAbs(world, getId());
     }
     
     /**
@@ -938,7 +938,7 @@ public class Plot {
      * @return
      */
     public Location getBottomAbs() {
-        return MainUtil.getPlotBottomLocAbs(world, id);
+        return MainUtil.getPlotBottomLocAbs(world, getId());
     }
     
     /**
@@ -1109,7 +1109,7 @@ public class Plot {
      * @return
      */
     public void export(final RunnableVal<Boolean> whenDone) {
-        SchematicHandler.manager.getCompoundTag(world, id, new RunnableVal<CompoundTag>() {
+        SchematicHandler.manager.getCompoundTag(world, getId(), new RunnableVal<CompoundTag>() {
             @Override
             public void run() {
                 if (value == null) {
@@ -1121,7 +1121,7 @@ public class Plot {
                     TaskManager.runTaskAsync(new Runnable() {
                         @Override
                         public void run() {
-                            final String name = id + "," + world + "," + MainUtil.getName(owner);
+                            final String name = getId() + "," + world + "," + MainUtil.getName(owner);
                             final boolean result = SchematicHandler.manager.save(value, Settings.SCHEMATIC_SAVE_PATH + File.separator + name + ".schematic");
                             if (whenDone != null) {
                                 whenDone.value = result;
@@ -1154,7 +1154,7 @@ public class Plot {
      * @param whenDone value will be null if uploading fails
      */
     public void upload(final RunnableVal<URL> whenDone) {
-        SchematicHandler.manager.getCompoundTag(world, id, new RunnableVal<CompoundTag>() {
+        SchematicHandler.manager.getCompoundTag(world, getId(), new RunnableVal<CompoundTag>() {
             @Override
             public void run() {
                 TaskManager.runTaskAsync(new Runnable() {
@@ -1186,7 +1186,7 @@ public class Plot {
         if (hashCode() != other.hashCode()) {
             return false;
         }
-        return ((id.x.equals(other.id.x)) && (id.y.equals(other.id.y)) && (StringMan.isEqual(world, other.world)));
+        return ((getId().x.equals(other.getId().x)) && (getId().y.equals(other.getId().y)) && (StringMan.isEqual(world, other.world)));
     }
     
     /**
@@ -1196,7 +1196,7 @@ public class Plot {
      */
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return getId().hashCode();
     }
 
     /**
@@ -1238,7 +1238,7 @@ public class Plot {
      * @param merged
      */
     public void setMerged(boolean[] merged) {
-        getSettings().merged = merged;
+        getSettings().setMerged(merged);
         DBFunc.setMerged(this, merged);
         MainUtil.connected_cache = null;
         MainUtil.regions_cache = null;
@@ -1266,7 +1266,7 @@ public class Plot {
             if (value) {
                 Plot other = MainUtil.getPlotRelative(this, direction).getBasePlot(false);
                 if (!other.equals(getBasePlot(false))) {
-                    Plot base = ((other.id.y < id.y) || ((other.id.y == id.y) && (other.id.x < id.x))) ? other : origin;
+                    Plot base = ((other.getId().y < getId().y) || ((other.getId().y.equals(getId().y)) && (other.getId().x < getId().x))) ? other : origin;
                     origin.origin = base;
                     other.origin = base;
                     origin = base;

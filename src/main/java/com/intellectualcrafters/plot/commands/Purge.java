@@ -116,7 +116,7 @@ public class Purge extends SubCommand {
                 if (plot.owner != null) {
                     final String name = UUIDHandler.getName(plot.owner);
                     if (name == null) {
-                        ids.add(plot.id);
+                        ids.add(plot.getId());
                     }
                 }
             }
@@ -132,7 +132,7 @@ public class Purge extends SubCommand {
             final Set<PlotId> ids = new HashSet<>();
             for (final Plot plot : plots) {
                 if (plot.owner == null) {
-                    ids.add(plot.id);
+                    ids.add(plot.getId());
                 }
             }
             final int length = ids.size();
@@ -147,7 +147,7 @@ public class Purge extends SubCommand {
             final Set<Plot> plots = PS.get().getPlots(worldname, uuid);
             final Set<PlotId> ids = new HashSet<>();
             for (final Plot plot : plots) {
-                ids.add(plot.id);
+                ids.add(plot.getId());
             }
             final int length = ids.size();
             DBFunc.purge(worldname, ids);

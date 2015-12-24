@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +98,6 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
     }
     
     public static UUID getUUIDOf(String name) throws Exception {
-        return new UUIDFetcher(Arrays.asList(name)).call().get(name);
+        return new UUIDFetcher(Collections.singletonList(name)).call().get(name);
     }
 }

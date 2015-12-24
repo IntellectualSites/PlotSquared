@@ -20,13 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.generator;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.Template;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -43,11 +36,19 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class HybridPlotManager extends ClassicPlotManager {
     
     @Override
     public void exportTemplate(final PlotWorld plotworld) throws IOException {
-        final HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
+        final HashSet<FileBytes> files = new HashSet<>(
+                Collections.singletonList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
         final String psRoot = PS.get().IMP.getDirectory() + File.separator;
         final String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
         final String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
@@ -77,7 +78,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        final PlotId id = plot.id;
+        final PlotId id = plot.getId();
         final PlotId id2 = new PlotId(id.x + 1, id.y);
         final Location bot = getPlotBottomLocAbs(hpw, id2);
         final Location top = getPlotTopLocAbs(hpw, id);
@@ -133,7 +134,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        final PlotId id = plot.id;
+        final PlotId id = plot.getId();
         final PlotId id2 = new PlotId(id.x, id.y + 1);
         final Location bot = getPlotBottomLocAbs(hpw, id2);
         final Location top = getPlotTopLocAbs(hpw, id);
@@ -150,7 +151,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        final PlotId id = plot.id;
+        final PlotId id = plot.getId();
         final PlotId id2 = new PlotId(id.x + 1, id.y + 1);
         final Location pos1 = getPlotTopLocAbs(hpw, id).add(1, 0, 1);
         final Location pos2 = getPlotBottomLocAbs(hpw, id2);
@@ -171,7 +172,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         final String world = plotworld.worldname;
         final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
         
-        final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.id);
+        final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.getId());
         final Location pos2 = MainUtil.getPlotTopLoc_(plot);
         // If augmented
         final boolean canRegen = (plotworld.TYPE == 0) && (plotworld.TERRAIN == 0);

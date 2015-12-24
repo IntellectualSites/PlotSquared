@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -35,6 +32,8 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "trust",
@@ -91,7 +90,7 @@ public class Trust extends SubCommand {
         if (plot.removeMember(uuid)) {
             plot.addTrusted(uuid);
         } else {
-            if ((plot.getMembers().size() + plot.getTrusted().size()) >= PS.get().getPlotWorld(plot.world).MAX_PLOT_MEMBERS) {
+            if ((plot.getMembers().size() + plot.getTrusted().size()) >= plot.getWorld().MAX_PLOT_MEMBERS) {
                 MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
                 return false;
             }

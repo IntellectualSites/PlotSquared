@@ -47,7 +47,7 @@ public class DebugRoadRegen extends SubCommand {
     public boolean onCommand(final PlotPlayer player, final String... args) {
         final Location loc = player.getLocation();
         final String world = loc.getWorld();
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotWorld plotworld = loc.getPlotWorld();
         if (!(plotworld instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
@@ -66,14 +66,14 @@ public class DebugRoadRegen extends SubCommand {
                 }
             }
             final boolean result = HybridUtils.manager.regenerateRoad(world, chunk, extend);
-            MainUtil.sendMessage(player, "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result == true ? "&aSuccess" : "&cFailed"));
+            MainUtil.sendMessage(player, "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result ? "&aSuccess" : "&cFailed"));
             MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
         } else {
             final HybridPlotManager manager = (HybridPlotManager) PS.get().getPlotManager(world);
             manager.createRoadEast(plotworld, plot);
             manager.createRoadSouth(plotworld, plot);
             manager.createRoadSouthEast(plotworld, plot);
-            MainUtil.sendMessage(player, "&6Regenerating plot south/east roads: " + plot.id + "\n&6 - Result: &aSuccess");
+            MainUtil.sendMessage(player, "&6Regenerating plot south/east roads: " + plot.getId() + "\n&6 - Result: &aSuccess");
             MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
         }
         return true;

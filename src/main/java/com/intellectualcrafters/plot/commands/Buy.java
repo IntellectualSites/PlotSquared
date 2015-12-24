@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -34,6 +32,8 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.Set;
 
 @CommandDeclaration(
 command = "buy",
@@ -97,7 +97,7 @@ public class Buy extends SubCommand {
             EconHandler.manager.depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), price);
             final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
             if (owner != null) {
-                sendMessage(plr, C.PLOT_SOLD, plot.id + "", plr.getName(), price + "");
+                sendMessage(plr, C.PLOT_SOLD, plot.getId() + "", plr.getName(), price + "");
             }
             FlagManager.removePlotFlag(plot, "price");
         }

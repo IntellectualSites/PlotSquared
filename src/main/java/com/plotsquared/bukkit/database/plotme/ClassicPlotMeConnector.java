@@ -123,9 +123,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                                     e.printStackTrace();
                                     owner = UUID.nameUUIDFromBytes(bytes);
                                 }
-                                if (owner != null) {
-                                    UUIDHandler.add(new StringWrapper(name), owner);
-                                }
+                                UUIDHandler.add(new StringWrapper(name), owner);
                             }
                         } catch (final Exception e) {
                             e.printStackTrace();
@@ -166,13 +164,13 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         
         r.close();
         stmt.close();
-        
+
         try {
-            
+
             PS.log(" - " + prefix + "Denied");
             stmt = connection.prepareStatement("SELECT * FROM `" + prefix + "Denied`");
             r = stmt.executeQuery();
-            
+
             while (r.next()) {
                 final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                 final String name = r.getString("player");
@@ -195,9 +193,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                                         e.printStackTrace();
                                         denied = UUID.nameUUIDFromBytes(bytes);
                                     }
-                                    if (denied != null) {
-                                        UUIDHandler.add(new StringWrapper(name), denied);
-                                    }
+                                    UUIDHandler.add(new StringWrapper(name), denied);
                                 }
                             } catch (final Exception e) {
                                 e.printStackTrace();
@@ -213,10 +209,10 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     plots.get(world).get(id).getDenied().add(denied);
                 }
             }
-            
+
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "Allowed`");
             r = stmt.executeQuery();
-            
+
             while (r.next()) {
                 final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
                 final String name = r.getString("player");
@@ -239,9 +235,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                                         e.printStackTrace();
                                         helper = UUID.nameUUIDFromBytes(bytes);
                                     }
-                                    if (helper != null) {
-                                        UUIDHandler.add(new StringWrapper(name), helper);
-                                    }
+                                    UUIDHandler.add(new StringWrapper(name), helper);
                                 }
                             } catch (final Exception e) {
                                 e.printStackTrace();
@@ -257,11 +251,12 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     plots.get(world).get(id).getTrusted().add(helper);
                 }
             }
-            
+
             r.close();
             stmt.close();
-            
-        } catch (final Exception e) {}
+
+        } catch (SQLException e) {
+        }
         return plots;
     }
     

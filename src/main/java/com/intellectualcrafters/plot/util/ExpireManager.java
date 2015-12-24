@@ -100,13 +100,13 @@ public class ExpireManager {
                         for (final UUID helper : plot.getTrusted()) {
                             final PlotPlayer player = UUIDHandler.getPlayer(helper);
                             if (player != null) {
-                                MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
+                                MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.getId().toString());
                             }
                         }
                         for (final UUID helper : plot.getMembers()) {
                             final PlotPlayer player = UUIDHandler.getPlayer(helper);
                             if (player != null) {
-                                MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.id.toString());
+                                MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.getId().toString());
                             }
                         }
                         final PlotManager manager = PS.get().getPlotManager(world);

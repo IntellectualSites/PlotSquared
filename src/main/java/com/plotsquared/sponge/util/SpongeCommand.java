@@ -1,11 +1,9 @@
 package com.plotsquared.sponge.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.sponge.SpongeMain;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -14,10 +12,11 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.plotsquared.sponge.SpongeMain;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class SpongeCommand implements CommandCallable {
     
@@ -42,7 +41,7 @@ public class SpongeCommand implements CommandCallable {
     @Override
     public List<String> getSuggestions(final CommandSource cmd, final String string) throws CommandException {
         // TODO Auto-generated method stub
-        return new ArrayList<>(Arrays.asList("TEST"));
+        return new ArrayList<>(Collections.singletonList("TEST"));
     }
     
     @Override

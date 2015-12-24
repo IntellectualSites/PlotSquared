@@ -202,16 +202,12 @@ public class Auto extends SubCommand {
                 MainUtil.lastPlot.put(worldname, getNextPlot(getLastPlot(worldname), 1));
             }
         } else {
-            boolean lastPlot = true;
             while (!br) {
                 final PlotId start = getNextPlot(getLastPlot(worldname), 1);
                 // Checking if the current set of plots is a viable option.
                 MainUtil.lastPlot.put(worldname, start);
-                if (lastPlot) {}
                 if ((PS.get().getPlot(worldname, start) != null) && (PS.get().getPlot(worldname, start).owner != null)) {
                     continue;
-                } else {
-                    lastPlot = false;
                 }
                 final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
                 if (MainUtil.canClaim(plr, worldname, start, end)) {

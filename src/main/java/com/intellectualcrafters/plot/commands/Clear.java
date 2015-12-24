@@ -114,7 +114,7 @@ public class Clear extends SubCommand {
             }
         };
         if (Settings.CONFIRM_CLEAR && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
-            CmdConfirm.addPending(plr, "/plot clear " + plot.id, runnable);
+            CmdConfirm.addPending(plr, "/plot clear " + plot.getId(), runnable);
         } else {
             TaskManager.runTask(runnable);
         }

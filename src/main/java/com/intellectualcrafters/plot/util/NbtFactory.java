@@ -1,5 +1,20 @@
 package com.intellectualcrafters.plot.util;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
+import com.google.common.io.Closeables;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
+import com.google.common.io.OutputSupplier;
+import com.google.common.primitives.Primitives;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Server;
+import org.bukkit.inventory.ItemStack;
+
 import java.io.BufferedInputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -16,6 +31,7 @@ import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,22 +39,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.inventory.ItemStack;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.MapMaker;
-import com.google.common.io.Closeables;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
-import com.google.common.io.OutputSupplier;
-import com.google.common.primitives.Primitives;
 
 public class NbtFactory {
     // Convert between NBT id and the equivalent class in java
@@ -191,7 +191,7 @@ public class NbtFactory {
          * @return An existing map, a new map or NULL.
          */
         public NbtCompound getMap(final String key, final boolean createNew) {
-            return getMap(Arrays.asList(key), createNew);
+            return getMap(Collections.singletonList(key), createNew);
         }
         
         // Done
