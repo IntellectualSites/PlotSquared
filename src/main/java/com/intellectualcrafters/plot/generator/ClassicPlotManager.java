@@ -1,7 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.ArrayList;
-
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -11,6 +9,8 @@ import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
+
+import java.util.ArrayList;
 
 /**
  * A plot manager with square plots which tesselate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot)
@@ -58,9 +58,9 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean unclaimPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone) {
         final ClassicPlotWorld dpw = ((ClassicPlotWorld) plotworld);
-        setWallFilling(dpw, plot.id, new PlotBlock[] { dpw.WALL_FILLING });
+        setWallFilling(dpw, plot.getId(), new PlotBlock[] { dpw.WALL_FILLING });
         if ((dpw.WALL_BLOCK.id != 0) || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
-            setWall(dpw, plot.id, new PlotBlock[] { dpw.WALL_BLOCK });
+            setWall(dpw, plot.getId(), new PlotBlock[] { dpw.WALL_BLOCK });
         }
         SetBlockQueue.addNotify(whenDone);
         return true;
@@ -84,7 +84,6 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (!plot.isBasePlot()) {
             return false;
         }
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         for (RegionWrapper region : MainUtil.getRegions(plot)) {
             Location pos1 = new Location(plot.world, region.minX, 1, region.minZ);
             Location pos2 = new Location(plot.world, region.maxX, 255, region.maxZ);
@@ -271,8 +270,8 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean createRoadEast(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
+        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
+        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
         final int sx = pos2.getX() + 1;
         final int ex = (sx + dpw.ROAD_WIDTH) - 1;
         final int sz = pos1.getZ() - 2;
@@ -293,8 +292,8 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean createRoadSouth(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
+        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
+        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
         final int sz = pos2.getZ() + 1;
         final int ez = (sz + dpw.ROAD_WIDTH) - 1;
         final int sx = pos1.getX() - 2;
@@ -314,7 +313,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean createRoadSouthEast(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
+        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
         final int sx = pos2.getX() + 1;
         final int ex = (sx + dpw.ROAD_WIDTH) - 1;
         final int sz = pos2.getZ() + 1;
@@ -329,8 +328,8 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean removeRoadEast(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
+        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
+        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
         final int sx = pos2.getX() + 1;
         final int ex = (sx + dpw.ROAD_WIDTH) - 1;
         final int sz = pos1.getZ() - 1;
@@ -344,8 +343,8 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean removeRoadSouth(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.id);
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.id);
+        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
+        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
         final int sz = pos2.getZ() + 1;
         final int ez = (sz + dpw.ROAD_WIDTH) - 1;
         final int sx = pos1.getX() - 1;
@@ -359,7 +358,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean removeRoadSouthEast(final PlotWorld plotworld, final Plot plot) {
         final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location loc = getPlotTopLocAbs(dpw, plot.id);
+        final Location loc = getPlotTopLocAbs(dpw, plot.getId());
         final int sx = loc.getX() + 1;
         final int ex = (sx + dpw.ROAD_WIDTH) - 1;
         final int sz = loc.getZ() + 1;
@@ -412,7 +411,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         final PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
         if ((claim.id != 0) || !claim.equals(unclaim)) {
-            setWall(plotworld, plot.id, new PlotBlock[] { claim });
+            setWall(plotworld, plot.getId(), new PlotBlock[] { claim });
         }
         return true;
     }

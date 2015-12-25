@@ -36,7 +36,7 @@ public class WE_Anywhere extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] arguments) {
-        return MainCommand.onCommand(player, "plot", new String[] { "toggle", "worldedit" });
+        return MainCommand.onCommand(player, "plot", "toggle", "worldedit");
     }
     
 }

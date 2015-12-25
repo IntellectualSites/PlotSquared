@@ -20,12 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.commands.Template;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
-
-import com.intellectualcrafters.plot.commands.Template;
 
 public abstract class PlotManager {
     /*
@@ -86,7 +86,8 @@ public abstract class PlotManager {
     public abstract boolean finishPlotUnlink(final PlotWorld plotworld, final ArrayList<PlotId> plotIds);
     
     public void exportTemplate(final PlotWorld plotworld) throws IOException {
-        final HashSet<FileBytes> files = new HashSet<>(Arrays.asList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
+        final HashSet<FileBytes> files = new HashSet<>(
+                Collections.singletonList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
         Template.zipAll(plotworld.worldname, files);
     }
     

@@ -48,7 +48,7 @@ public class Download extends SubCommand {
         }
         plot.addRunning();
         MainUtil.sendMessage(plr, C.GENERATING_LINK);
-        SchematicHandler.manager.getCompoundTag(plot.world, plot.id, new RunnableVal<CompoundTag>() {
+        SchematicHandler.manager.getCompoundTag(plot.world, plot.getId(), new RunnableVal<CompoundTag>() {
             @Override
             public void run() {
                 TaskManager.runTaskAsync(new Runnable() {

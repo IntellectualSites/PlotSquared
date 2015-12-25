@@ -20,12 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
@@ -43,9 +37,17 @@ import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandHandlingOutput;
 import com.plotsquared.general.commands.CommandManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
 /**
  * PlotSquared command class
- *
+ *
+
  */
 public class MainCommand extends CommandManager<PlotPlayer> {
     
@@ -325,9 +327,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 count += 5;
             }
         }
-        for (String word : cmd.getDescription().split(" ")) {
-            desc.add(word);
-        }
+        Collections.addAll(desc, cmd.getDescription().split(" "));
         for (String arg : args) {
             if (perm.startsWith(arg)) {
                 count++;

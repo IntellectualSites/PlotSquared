@@ -20,11 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
@@ -38,6 +33,11 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+
 @CommandDeclaration(
 command = "setup",
 permission = "plots.admin.command.setup",
@@ -48,15 +48,15 @@ category = CommandCategory.ACTIONS)
 public class Setup extends SubCommand {
     
     public void displayGenerators(final PlotPlayer plr) {
-        final StringBuffer message = new StringBuffer();
+        final StringBuilder message = new StringBuilder();
         message.append("&6What generator do you want?");
         for (final Entry<String, PlotGenerator<?>> entry : SetupUtils.generators.entrySet()) {
             if (entry.getKey().equals("PlotSquared")) {
-                message.append("\n&8 - &2" + entry.getKey() + " (Default Generator)");
+                message.append("\n&8 - &2").append(entry.getKey()).append(" (Default Generator)");
             } else if (entry.getValue().isFull()) {
-                message.append("\n&8 - &7" + entry.getKey() + " (Plot Generator)");
+                message.append("\n&8 - &7").append(entry.getKey()).append(" (Plot Generator)");
             } else {
-                message.append("\n&8 - &7" + entry.getKey() + " (Unknown structure)");
+                message.append("\n&8 - &7").append(entry.getKey()).append(" (Unknown structure)");
             }
         }
         MainUtil.sendMessage(plr, message.toString());
@@ -109,8 +109,9 @@ public class Setup extends SubCommand {
                 break;
             }
             case 1: { // choose world type
-                final List<String> allTypes = Arrays.asList(new String[] { "default", "augmented", "partial" });
-                final List<String> allDesc = Arrays.asList(new String[] { "Standard plot generation", "Plot generation with vanilla terrain", "Vanilla with clusters of plots" });
+                final List<String> allTypes = Arrays.asList("default", "augmented", "partial");
+                final List<String> allDesc = Arrays.asList("Standard plot generation", "Plot generation with vanilla terrain",
+                        "Vanilla with clusters of plots");
                 final ArrayList<String> types = new ArrayList<>();
                 if (SetupUtils.generators.get(object.setupGenerator).isFull()) {
                     types.add("default");
@@ -170,7 +171,7 @@ public class Setup extends SubCommand {
                 break;
             }
             case 2: { // Choose terrain
-                final List<String> terrain = Arrays.asList(new String[] { "none", "ore", "road", "all" });
+                final List<String> terrain = Arrays.asList("none", "ore", "road", "all");
                 if ((args.length != 1) || !terrain.contains(args[0].toLowerCase())) {
                     MainUtil.sendMessage(plr, "&cYou must choose the terrain!"
                     + "\n&8 - &2NONE&8 - &7No terrain at all"

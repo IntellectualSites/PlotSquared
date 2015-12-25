@@ -1,8 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.HashSet;
-import java.util.Iterator;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -11,6 +8,10 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * A plot manager with a square grid layout, with square shaped plots
@@ -169,7 +170,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                     // northwest
                     return plot.getMerged(7) ? id : null;
             }
-            PS.debug("invalid location: " + merged);
+            PS.debug("invalid location: " + Arrays.toString(merged));
         } catch (Exception e) {
             PS.debug("Invalid plot / road width in settings.yml for world: " + plotworld.worldname);
         }

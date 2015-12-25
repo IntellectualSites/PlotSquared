@@ -123,7 +123,9 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 
 /**
  * Player Events involving plots
- *
+ *
+
+
  */
 @SuppressWarnings({ "deprecation", "unchecked" })
 public class PlayerEvents extends com.plotsquared.listener.PlotListener implements Listener {
@@ -593,7 +595,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final String message = event.getMessage();
         String format = C.PLOT_CHAT_FORMAT.s();
         final String sender = event.getPlayer().getDisplayName();
-        final PlotId id = plot.id;
+        final PlotId id = plot.getId();
         final Set<Player> recipients = event.getRecipients();
         recipients.clear();
         for (final Player p : Bukkit.getOnlinePlayers()) {

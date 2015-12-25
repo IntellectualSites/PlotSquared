@@ -50,7 +50,7 @@ public class Save extends SubCommand {
             return false;
         }
         plot.addRunning();
-        SchematicHandler.manager.getCompoundTag(plot.world, plot.id, new RunnableVal<CompoundTag>() {
+        SchematicHandler.manager.getCompoundTag(plot.world, plot.getId(), new RunnableVal<CompoundTag>() {
             @Override
             public void run() {
                 TaskManager.runTaskAsync(new Runnable() {
@@ -60,7 +60,7 @@ public class Save extends SubCommand {
                         final String name = PS.get().IMP.getServerName().replaceAll("[^A-Za-z0-9]", "");
                         Location[] corners = MainUtil.getCorners(plot);
                         final int size = (corners[1].getX() - corners[0].getX()) + 1;
-                        final PlotId id = plot.id;
+                        final PlotId id = plot.getId();
                         final String world = plot.world.replaceAll("[^A-Za-z0-9]", "");
                         final String file = time + "_" + world + "_" + id.x + "_" + id.y + "_" + size + "_" + name;
                         final UUID uuid = plr.getUUID();

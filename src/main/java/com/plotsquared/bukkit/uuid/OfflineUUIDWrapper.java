@@ -25,10 +25,8 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     
     public OfflineUUIDWrapper() {
         try {
-            getOnline = Server.class.getMethod("getOnlinePlayers", new Class[0]);
-        } catch (final NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (final SecurityException e) {
+            getOnline = Server.class.getMethod("getOnlinePlayers");
+        } catch (final NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -72,7 +70,8 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     
     public Player[] getOnlinePlayers() {
         if (getOnline == null) {
-            return Bukkit.getOnlinePlayers().toArray(new Player[0]);
+            Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+            return onlinePlayers.toArray(new Player[onlinePlayers.size()]);
         }
         try {
             final Object players = getOnline.invoke(Bukkit.getServer(), arg);
@@ -81,12 +80,13 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
             } else {
                 @SuppressWarnings("unchecked")
                 final Collection<? extends Player> p = (Collection<? extends Player>) players;
-                return p.toArray(new Player[0]);
+                return p.toArray(new Player[p.size()]);
             }
         } catch (final Exception e) {
             PS.debug("Failed to resolve online players");
             getOnline = null;
-            return Bukkit.getOnlinePlayers().toArray(new Player[0]);
+            Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+            return onlinePlayers.toArray(new Player[onlinePlayers.size()]);
         }
     }
     

@@ -31,7 +31,7 @@ public class HastebinUtility {
         
         final BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;
-        final StringBuffer response = new StringBuffer();
+        final StringBuilder response = new StringBuilder();
         
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);

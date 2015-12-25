@@ -20,10 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.HashSet;
-import java.util.UUID;
-
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -37,6 +33,9 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "merge",
@@ -79,7 +78,7 @@ public class Merge extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if ((plot == null) || !plot.hasOwner()) {
+        if (!plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
@@ -93,7 +92,7 @@ public class Merge extends SubCommand {
                 uuid = plot.owner;
             }
         }
-        final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
+        final PlotWorld plotworld = plot.getWorld();
         if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d && EconHandler.manager.getMoney(plr) < plotworld.MERGE_PRICE) {
             sendMessage(plr, C.CANNOT_AFFORD_MERGE, plotworld.MERGE_PRICE + "");
             return false;
@@ -164,7 +163,7 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
             return true;
         }
-        Plot adjacent = MainUtil.getPlotAbs(plot.world, MainUtil.getPlotIdRelative(plot.id, direction));
+        Plot adjacent = MainUtil.getPlotAbs(plot.world, MainUtil.getPlotIdRelative(plot.getId(), direction));
         if (adjacent == null || !adjacent.hasOwner() || adjacent.getMerged((direction + 2) % 4) || adjacent.isOwner(uuid)) {
             MainUtil.sendMessage(plr, C.NO_AVAILABLE_AUTOMERGE);
             return false;
@@ -204,7 +203,7 @@ public class Merge extends SubCommand {
                 }
             });
         }
-        if (isOnline == false) {
+        if (!isOnline) {
             MainUtil.sendMessage(plr, C.NO_AVAILABLE_AUTOMERGE);
             return false;
         }

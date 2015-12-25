@@ -20,13 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -38,6 +31,13 @@ import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Flag Manager Utility
@@ -415,8 +415,7 @@ public class FlagManager {
      */
     public static AbstractFlag getFlag(final String string, final boolean create) {
         if ((getFlag(string) == null) && create) {
-            final AbstractFlag flag = new AbstractFlag(string);
-            return flag;
+            return new AbstractFlag(string);
         }
         return getFlag(string);
     }
@@ -433,7 +432,7 @@ public class FlagManager {
     }
     
     public static HashMap<String, Flag> parseFlags(final List<String> flagstrings) {
-        final HashMap<String, Flag> map = new HashMap<String, Flag>();
+        final HashMap<String, Flag> map = new HashMap<>();
         for (final String key : flagstrings) {
             final String[] split;
             if (key.contains(";")) {

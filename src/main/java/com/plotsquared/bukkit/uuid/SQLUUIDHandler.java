@@ -1,22 +1,5 @@
 package com.plotsquared.bukkit.uuid;
 
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.UUID;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import com.google.common.collect.HashBiMap;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -29,6 +12,22 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class SQLUUIDHandler extends UUIDHandlerImplementation {
     
@@ -220,7 +219,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     connection.setUseCaches(false);
                     connection.setDoInput(true);
                     connection.setDoOutput(true);
-                    String body = JSONArray.toJSONString(Arrays.asList(name));
+                    String body = JSONArray.toJSONString(Collections.singletonList(name));
                     OutputStream stream = connection.getOutputStream();
                     stream.write(body.getBytes());
                     stream.flush();

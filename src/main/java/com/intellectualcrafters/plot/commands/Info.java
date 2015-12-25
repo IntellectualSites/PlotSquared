@@ -94,17 +94,20 @@ public class Info extends SubCommand {
             };
             final UUID uuid = player.getUUID();
             final String name = MainUtil.getName(plot.owner);
-            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info", new String[] {
-            "&cID: &6" + plot.getId().toString(),
-            "&cOwner: &6" + name,
-            "&cAlias: &6" + plot.getAlias(),
-            "&cBiome: &6" + plot.getBiome().toString().replaceAll("_", "").toLowerCase(),
-            "&cCan Build: &6" + plot.isAdded(uuid),
-            "&cIs Denied: &6" + plot.isDenied(uuid) }));
-            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cTrusted", new String[] { "&cAmount: &6" + plot.getTrusted().size(), "&8Click to view a list of the trusted users" }));
-            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cMembers", new String[] { "&cAmount: &6" + plot.getMembers().size(), "&8Click to view a list of plot members" }));
-            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cDenied", new String[] { "&cDenied", "&cAmount: &6" + plot.getDenied().size(), "&8Click to view a list of denied players" }));
-            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cFlags", new String[] { "&cFlags", "&cAmount: &6" + plot.getFlags().size(), "&8Click to view a list of plot flags" }));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info", "&cID: &6" + plot.getId().toString(),
+                    "&cOwner: &6" + name,
+                    "&cAlias: &6" + plot.getAlias(),
+                    "&cBiome: &6" + plot.getBiome().replaceAll("_", "").toLowerCase(),
+                    "&cCan Build: &6" + plot.isAdded(uuid),
+                    "&cIs Denied: &6" + plot.isDenied(uuid)));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cTrusted", "&cAmount: &6" + plot.getTrusted().size(),
+                    "&8Click to view a list of the trusted users"));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cMembers", "&cAmount: &6" + plot.getMembers().size(),
+                    "&8Click to view a list of plot members"));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cDenied", "&cDenied", "&cAmount: &6" + plot.getDenied().size(),
+                    "&8Click to view a list of denied players"));
+            inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cFlags", "&cFlags", "&cAmount: &6" + plot.getFlags().size(),
+                    "&8Click to view a list of plot flags"));
             inv.openInventory();
             return true;
         }
@@ -118,7 +121,7 @@ public class Info extends SubCommand {
         }
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
-            MainUtil.sendMessage(player, C.PLOT_INFO_UNCLAIMED, (plot.id.x + ";" + plot.id.y));
+            MainUtil.sendMessage(player, C.PLOT_INFO_UNCLAIMED, (plot.getId().x + ";" + plot.getId().y));
             return true;
         }
         String info = C.PLOT_INFO.s();

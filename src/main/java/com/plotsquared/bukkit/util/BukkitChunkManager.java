@@ -1,13 +1,25 @@
 package com.plotsquared.bukkit.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotLoc;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.BlockUpdateUtil;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ClusterManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.bukkit.generator.AugmentedPopulator;
+import com.plotsquared.bukkit.object.entity.EntityWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.DyeColor;
@@ -43,26 +55,13 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.BlockUpdateUtil;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ClusterManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
-import com.plotsquared.bukkit.object.entity.EntityWrapper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class BukkitChunkManager extends ChunkManager {
     @Override
@@ -83,7 +82,7 @@ public class BukkitChunkManager extends ChunkManager {
         //        Chunk chunk = worldObj.getChunkAt(loc.x, loc.z);
         worldObj.regenerateChunk(loc.x, loc.z);
         if (BlockUpdateUtil.setBlockManager != null) {
-            BlockUpdateUtil.setBlockManager.update(world, Arrays.asList(loc));
+            BlockUpdateUtil.setBlockManager.update(world, Collections.singletonList(loc));
         }
         for (final Player player : worldObj.getPlayers()) {
             final org.bukkit.Location locObj = player.getLocation();
@@ -854,8 +853,7 @@ public class BukkitChunkManager extends ChunkManager {
     
     @Override
     public boolean loadChunk(final String world, final ChunkLoc loc, final boolean force) {
-        boolean result = BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(force);
-        return result;
+        return BukkitUtil.getWorld(world).getChunkAt(loc.x, loc.z).load(force);
     }
     
     @Override
@@ -902,10 +900,8 @@ public class BukkitChunkManager extends ChunkManager {
                             BukkitSetBlockManager.setBlockManager.set(world2, xx, y, zz, 0, (byte) 0);
                         }
                     } else if (id2 == 0) {
-                        if (id1 != 0) {
-                            BukkitSetBlockManager.setBlockManager.set(world1, x, y, z, 0, (byte) 0);
-                            BukkitSetBlockManager.setBlockManager.set(world2, xx, y, zz, id1, data1);
-                        }
+                        BukkitSetBlockManager.setBlockManager.set(world1, x, y, z, 0, (byte) 0);
+                        BukkitSetBlockManager.setBlockManager.set(world2, xx, y, zz, id1, data1);
                     } else if (id1 == id2) {
                         if (data1 != data2) {
                             block1.setData(data2);
@@ -948,8 +944,8 @@ public class BukkitChunkManager extends ChunkManager {
         final int[] count = new int[6];
         final World world = BukkitUtil.getWorld(plot.world);
         
-        final Location bot = MainUtil.getPlotBottomLocAbs(plot.world, plot.id);
-        final Location top = MainUtil.getPlotTopLocAbs(plot.world, plot.id);
+        final Location bot = MainUtil.getPlotBottomLocAbs(plot.world, plot.getId());
+        final Location top = MainUtil.getPlotTopLocAbs(plot.world, plot.getId());
         final int bx = bot.getX() >> 4;
         final int bz = bot.getZ() >> 4;
         
@@ -985,7 +981,7 @@ public class BukkitChunkManager extends ChunkManager {
                         count(count, entity);
                     } else {
                         final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(loc));
-                        if (plot.id.equals(id)) {
+                        if (plot.getId().equals(id)) {
                             count(count, entity);
                         }
                     }
@@ -999,7 +995,7 @@ public class BukkitChunkManager extends ChunkManager {
                 for (final Entity entity : ents) {
                     if ((X == bx) || (X == tx) || (Z == bz) || (Z == tz)) {
                         final PlotId id = MainUtil.getPlotId(BukkitUtil.getLocation(entity));
-                        if (plot.id.equals(id)) {
+                        if (plot.getId().equals(id)) {
                             count(count, entity);
                         }
                     } else {
@@ -1169,7 +1165,7 @@ public class BukkitChunkManager extends ChunkManager {
             restoreEntities(world, 0, 0);
         }
         MainUtil.update(world.getName(), chunkLoc);
-        BukkitSetBlockManager.setBlockManager.update(Arrays.asList(new Chunk[] { chunk }));
+        BukkitSetBlockManager.setBlockManager.update(Collections.singletonList(chunk));
         CURRENT_PLOT_CLEAR = null;
     }
     

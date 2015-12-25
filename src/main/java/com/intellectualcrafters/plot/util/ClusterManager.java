@@ -148,7 +148,7 @@ public class ClusterManager {
     }
     
     public static PlotCluster getCluster(final Plot plot) {
-        return getCluster(plot.world, plot.id);
+        return getCluster(plot.world, plot.getId());
     }
     
     public static PlotCluster getClusterAbs(final Location loc) {
@@ -238,7 +238,7 @@ public class ClusterManager {
     public static PlotId estimatePlotId(final Location loc) {
         final Plot plot = MainUtil.getPlotAbs(loc);
         if (plot != null) {
-            return plot.id;
+            return plot.getId();
         }
         final PlotId a = new PlotId(0, 0);
         final PlotId b = new PlotId(1, 1);

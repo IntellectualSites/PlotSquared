@@ -20,6 +20,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotClusterId;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -40,22 +56,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotClusterId;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
 
@@ -392,8 +392,8 @@ public class SQLManager implements AbstractDB {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
                 statement.setString(1, uuid.toString());
-                statement.setInt(2, plot.id.x);
-                statement.setInt(3, plot.id.y);
+                statement.setInt(2, plot.getId().x);
+                statement.setInt(3, plot.getId().y);
                 statement.setString(4, plot.world);
             }
             
@@ -418,7 +418,7 @@ public class SQLManager implements AbstractDB {
                                 // Creating datastructures
                                 final HashMap<PlotId, Plot> plotMap = new HashMap<>();
                                 for (final Plot plot : myList) {
-                                    plotMap.put(plot.id, plot);
+                                    plotMap.put(plot.getId(), plot);
                                 }
                                 final ArrayList<SettingsPair> settings = new ArrayList<>();
                                 final ArrayList<UUIDPair> helpers = new ArrayList<>();
@@ -573,8 +573,8 @@ public class SQLManager implements AbstractDB {
             
             @Override
             public void setMySQL(final PreparedStatement stmt, final int i, final Plot plot) throws SQLException {
-                stmt.setInt((i * 5) + 1, plot.id.x);
-                stmt.setInt((i * 5) + 2, plot.id.y);
+                stmt.setInt((i * 5) + 1, plot.getId().x);
+                stmt.setInt((i * 5) + 2, plot.getId().y);
                 try {
                     stmt.setString((i * 5) + 3, plot.owner.toString());
                 } catch (final Exception e) {
@@ -587,8 +587,8 @@ public class SQLManager implements AbstractDB {
             @Override
             public void setSQLite(final PreparedStatement stmt, final int i, final Plot plot) throws SQLException {
                 stmt.setNull((i * 6) + 1, 4);
-                stmt.setInt((i * 6) + 2, plot.id.x);
-                stmt.setInt((i * 6) + 3, plot.id.y);
+                stmt.setInt((i * 6) + 2, plot.getId().x);
+                stmt.setInt((i * 6) + 3, plot.getId().y);
                 try {
                     stmt.setString((i * 6) + 4, plot.owner.toString());
                 } catch (final Exception e1) {
@@ -600,8 +600,8 @@ public class SQLManager implements AbstractDB {
             
             @Override
             public void setSQL(final PreparedStatement stmt, final Plot plot) throws SQLException {
-                stmt.setInt(1, plot.id.x);
-                stmt.setInt(2, plot.id.y);
+                stmt.setInt(1, plot.getId().x);
+                stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
                 stmt.setString(4, plot.world);
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
@@ -629,7 +629,7 @@ public class SQLManager implements AbstractDB {
         try {
             int count = 0;
             PreparedStatement preparedStmt = null;
-            String statement = null;
+            String statement;
             int last = -1;
             for (int j = 0; j <= amount; j++) {
                 final List<T> subList = objList.subList(j * packet, Math.min(size, (j + 1) * packet));
@@ -639,13 +639,13 @@ public class SQLManager implements AbstractDB {
                 if (last == -1) {
                     last = subList.size();
                     statement = mod.getCreateMySQL(subList.size());
-                    preparedStmt = connection.prepareStatement(statement.toString());
+                    preparedStmt = connection.prepareStatement(statement);
                 }
                 if ((subList.size() != last) || (((count % 5000) == 0) && (count > 0))) {
                     preparedStmt.executeBatch();
                     preparedStmt.close();
                     statement = mod.getCreateMySQL(subList.size());
-                    preparedStmt = connection.prepareStatement(statement.toString());
+                    preparedStmt = connection.prepareStatement(statement);
                 }
                 for (int i = 0; i < subList.size(); i++) {
                     count++;
@@ -672,7 +672,7 @@ public class SQLManager implements AbstractDB {
         try {
             int count = 0;
             PreparedStatement preparedStmt = null;
-            String statement = null;
+            String statement;
             int last = -1;
             for (int j = 0; j <= amount; j++) {
                 final List<T> subList = objList.subList(j * packet, Math.min(size, (j + 1) * packet));
@@ -682,13 +682,13 @@ public class SQLManager implements AbstractDB {
                 if (last == -1) {
                     last = subList.size();
                     statement = mod.getCreateSQLite(subList.size());
-                    preparedStmt = connection.prepareStatement(statement.toString());
+                    preparedStmt = connection.prepareStatement(statement);
                 }
                 if ((subList.size() != last) || (((count % 5000) == 0) && (count > 0))) {
                     preparedStmt.executeBatch();
                     preparedStmt.clearParameters();
                     statement = mod.getCreateSQLite(subList.size());
-                    preparedStmt = connection.prepareStatement(statement.toString());
+                    preparedStmt = connection.prepareStatement(statement);
                 }
                 for (int i = 0; i < subList.size(); i++) {
                     count++;
@@ -707,9 +707,9 @@ public class SQLManager implements AbstractDB {
             PS.debug("&cERROR 2: " + " | " + objList.get(0).getClass().getCanonicalName());
             PS.debug("&6[WARN] " + "Could not bulk save!");
             try {
-                PreparedStatement preparedStmt = null;
+                PreparedStatement preparedStmt;
                 final String nonBulk = mod.getCreateSQL();
-                preparedStmt = connection.prepareStatement(nonBulk.toString());
+                preparedStmt = connection.prepareStatement(nonBulk);
                 for (final T obj : objList) {
                     try {
                         mod.setSQL(preparedStmt, obj);
@@ -874,7 +874,7 @@ public class SQLManager implements AbstractDB {
             
             @Override
             public void setMySQL(final PreparedStatement stmt, final int i, final Integer id) throws SQLException {
-                stmt.setInt((i * 1) + 1, id);
+                stmt.setInt((i) + 1, id);
             }
             
             @Override
@@ -914,8 +914,8 @@ public class SQLManager implements AbstractDB {
         addPlotTask(plot, new UniqueStatement("createPlot") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                stmt.setInt(1, plot.id.x);
-                stmt.setInt(2, plot.id.y);
+                stmt.setInt(1, plot.getId().x);
+                stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
                 stmt.setString(4, plot.world);
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
@@ -947,8 +947,8 @@ public class SQLManager implements AbstractDB {
         addPlotTask(plot, new UniqueStatement("createPlotAndSettings_" + plot.hashCode()) {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                stmt.setInt(1, plot.id.x);
-                stmt.setInt(2, plot.id.y);
+                stmt.setInt(1, plot.getId().x);
+                stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
                 stmt.setString(4, plot.world);
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
@@ -1007,7 +1007,7 @@ public class SQLManager implements AbstractDB {
             //            ResultSet set = meta.getTables(null, null, prefix + s, null);
             if (!set.next()) {
                 create++;
-            } else {}
+            }
             set.close();
         }
         if (create == 0) {
@@ -1397,8 +1397,8 @@ public class SQLManager implements AbstractDB {
                 return plot.temp;
             }
             stmt = connection.prepareStatement("SELECT `id` FROM `" + prefix + "plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC");
-            stmt.setInt(1, plot.id.x);
-            stmt.setInt(2, plot.id.y);
+            stmt.setInt(1, plot.getId().x);
+            stmt.setInt(2, plot.getId().y);
             stmt.setString(3, plot.world);
             final ResultSet r = stmt.executeQuery();
             int id = Integer.MAX_VALUE;
@@ -1508,16 +1508,16 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots() {
-        final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> newplots = new ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>>();
+        final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> newplots = new ConcurrentHashMap<>();
         final HashMap<Integer, Plot> plots = new HashMap<>();
-        Statement stmt = null;
+        Statement stmt;
         try {
             Set<String> worlds = new HashSet<>();
             if (PS.get().config.contains("worlds")) {
                 worlds = PS.get().config.getConfigurationSection("worlds").getKeys(false);
             }
-            final HashMap<String, UUID> uuids = new HashMap<String, UUID>();
-            final HashMap<String, Integer> noExist = new HashMap<String, Integer>();
+            final HashMap<String, UUID> uuids = new HashMap<>();
+            final HashMap<String, Integer> noExist = new HashMap<>();
             
             PlotId plot_id;
             int id;
@@ -1550,7 +1550,8 @@ public class SQLManager implements AbstractDB {
                     Timestamp timestamp = null;
                     try {
                         timestamp = r.getTimestamp("timestamp");
-                    } catch (final Exception e) {};
+                    } catch (SQLException ignored) {
+                    }
                     long time;
                     if (timestamp == null) {
                         time = plot_id.hashCode();
@@ -1574,7 +1575,7 @@ public class SQLManager implements AbstractDB {
                         final Plot plot = plots.get(id);
                         if (plot != null) {
                             if (plot.getSettings().ratings == null) {
-                                plot.getSettings().ratings = new HashMap<UUID, Integer>();
+                                plot.getSettings().ratings = new HashMap<>();
                             }
                             plot.getSettings().ratings.put(user, r.getInt("rating"));
                         } else {
@@ -1656,7 +1657,7 @@ public class SQLManager implements AbstractDB {
                         if (!newplots.containsKey(plot.world)) {
                             newplots.put(plot.world, new ConcurrentHashMap<PlotId, Plot>());
                         }
-                        newplots.get(plot.world).put(plot.id, plot);
+                        newplots.get(plot.world).put(plot.getId(), plot);
                         final String alias = r.getString("alias");
                         if (alias != null) {
                             plot.getSettings().setAlias(alias);
@@ -1671,18 +1672,14 @@ public class SQLManager implements AbstractDB {
                             default:
                                 try {
                                     plot.getSettings().setPosition(BlockLoc.fromString(pos));
-                                } catch (final Exception e) {}
+                                } catch (final Exception ignored) {}
                         }
                         final Integer m = r.getInt("merged");
-                        if (m != null) {
-                            final boolean[] merged = new boolean[4];
-                            for (int i = 0; i < 4; i++) {
-                                merged[3 - i] = ((m) & (1 << i)) != 0;
-                            }
-                            plot.getSettings().setMerged(merged);
-                        } else {
-                            plot.getSettings().setMerged(new boolean[] { false, false, false, false });
+                        final boolean[] merged = new boolean[4];
+                        for (int i = 0; i < 4; i++) {
+                            merged[3 - i] = ((m) & (1 << i)) != 0;
                         }
+                        plot.getSettings().setMerged(merged);
                         String[] flags_string;
                         final String myflags = r.getString("flags");
                         if (myflags == null) {
@@ -1730,16 +1727,16 @@ public class SQLManager implements AbstractDB {
                 stmt.close();
             }
             if (plots.entrySet().size() > 0) {
-                createEmptySettings(new ArrayList<Integer>(plots.keySet()), null);
+                createEmptySettings(new ArrayList<>(plots.keySet()), null);
                 for (Entry<Integer, Plot> entry : plots.entrySet()) {
                     Plot plot = entry.getValue();
                     plot.getSettings();
                     ConcurrentHashMap<PlotId, Plot> map = newplots.get(plot.world);
                     if (map == null) {
-                        map = new ConcurrentHashMap<PlotId, Plot>();
+                        map = new ConcurrentHashMap<>();
                         newplots.put(plot.world, map);
                     }
-                    map.put(plot.id, plot);
+                    map.put(plot.getId(), plot);
                 }
             }
             boolean invalidPlot = false;
@@ -1815,8 +1812,8 @@ public class SQLManager implements AbstractDB {
         addPlotTask(original, new UniqueStatement("movePlot") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                stmt.setInt(1, newPlot.id.x);
-                stmt.setInt(2, newPlot.id.y);
+                stmt.setInt(1, newPlot.getId().x);
+                stmt.setInt(2, newPlot.getId().y);
                 stmt.setString(3, newPlot.world);
                 stmt.setInt(4, getId(original));
             }
@@ -1883,13 +1880,13 @@ public class SQLManager implements AbstractDB {
                         String stmt_prefix = "";
                         final StringBuilder idstr2 = new StringBuilder("");
                         for (final Integer id : uniqueIds) {
-                            idstr2.append(stmt_prefix + id);
+                            idstr2.append(stmt_prefix).append(id);
                             stmt_prefix = " OR `id` = ";
                         }
                         stmt_prefix = "";
                         final StringBuilder idstr = new StringBuilder("");
                         for (final Integer id : uniqueIds) {
-                            idstr.append(stmt_prefix + id);
+                            idstr.append(stmt_prefix).append(id);
                             stmt_prefix = " OR `plot_plot_id` = ";
                         }
                         PreparedStatement stmt = connection.prepareStatement("DELETE FROM `" + prefix + "plot_helpers` WHERE `plot_plot_id` = " + idstr + "");
@@ -1976,7 +1973,7 @@ public class SQLManager implements AbstractDB {
             public void set(final PreparedStatement statement) throws SQLException {
                 if (plot != null) {
                     statement.setString(1, plot.world);
-                    statement.setInt(2, plot.id.hashCode());
+                    statement.setInt(2, plot.getId().hashCode());
                     statement.setString(3, comment.comment);
                     statement.setString(4, comment.inbox);
                     statement.setString(5, comment.senderName);
@@ -2004,7 +2001,7 @@ public class SQLManager implements AbstractDB {
             public void set(final PreparedStatement statement) throws SQLException {
                 if (plot != null) {
                     statement.setString(1, plot.world);
-                    statement.setInt(2, plot.id.hashCode());
+                    statement.setInt(2, plot.getId().hashCode());
                     statement.setString(3, inbox);
                 } else {
                     statement.setString(1, inbox);
@@ -2028,7 +2025,7 @@ public class SQLManager implements AbstractDB {
             public void set(final PreparedStatement statement) throws SQLException {
                 if (plot != null) {
                     statement.setString(1, plot.world);
-                    statement.setInt(2, plot.id.hashCode());
+                    statement.setInt(2, plot.getId().hashCode());
                     statement.setString(3, inbox);
                 } else {
                     statement.setString(1, inbox);
@@ -2048,7 +2045,7 @@ public class SQLManager implements AbstractDB {
             
             @Override
             public void addBatch(final PreparedStatement statement) throws SQLException {
-                final ArrayList<PlotComment> comments = new ArrayList<PlotComment>();
+                final ArrayList<PlotComment> comments = new ArrayList<>();
                 final ResultSet set = statement.executeQuery();
                 PlotComment comment;
                 while (set.next()) {
@@ -2078,7 +2075,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
                 statement.setString(1, plot.world);
-                statement.setInt(2, plot.id.hashCode());
+                statement.setInt(2, plot.getId().hashCode());
                 statement.setString(3, comment.comment);
                 statement.setString(4, comment.inbox);
                 statement.setInt(5, (int) (comment.timestamp / 1000));
@@ -2190,7 +2187,7 @@ public class SQLManager implements AbstractDB {
     
     @Override
     public HashMap<UUID, Integer> getRatings(final Plot plot) {
-        final HashMap<UUID, Integer> map = new HashMap<UUID, Integer>();
+        final HashMap<UUID, Integer> map = new HashMap<>();
         try {
             final PreparedStatement statement = connection.prepareStatement("SELECT `rating`, `player` FROM `" + prefix + "plot_rating` WHERE `plot_plot_id` = ? ");
             statement.setInt(1, getId(plot));
@@ -2285,8 +2282,8 @@ public class SQLManager implements AbstractDB {
             if (PS.get().config.contains("worlds")) {
                 worlds = PS.get().config.getConfigurationSection("worlds").getKeys(false);
             }
-            final HashMap<String, UUID> uuids = new HashMap<String, UUID>();
-            final HashMap<String, Integer> noExist = new HashMap<String, Integer>();
+            final HashMap<String, UUID> uuids = new HashMap<>();
+            final HashMap<String, Integer> noExist = new HashMap<>();
             /*
              * Getting clusters
              */
@@ -2381,15 +2378,11 @@ public class SQLManager implements AbstractDB {
                             } catch (final Exception e) {}
                     }
                     final Integer m = r.getInt("merged");
-                    if (m != null) {
-                        final boolean[] merged = new boolean[4];
-                        for (int i = 0; i < 4; i++) {
-                            merged[3 - i] = ((m) & (1 << i)) != 0;
-                        }
-                        cluster.settings.setMerged(merged);
-                    } else {
-                        cluster.settings.setMerged(new boolean[] { false, false, false, false });
+                    final boolean[] merged = new boolean[4];
+                    for (int i = 0; i < 4; i++) {
+                        merged[3 - i] = ((m) & (1 << i)) != 0;
                     }
+                    cluster.settings.setMerged(merged);
                     String[] flags_string;
                     final String myflags = r.getString("flags");
                     if (myflags == null) {
@@ -2730,7 +2723,7 @@ public class SQLManager implements AbstractDB {
                 toCreate.add(plot);
                 continue;
             }
-            final Plot dataplot = worldplots.remove(plot.id);
+            final Plot dataplot = worldplots.remove(plot.getId());
             if (dataplot == null) {
                 PS.debug("&8 - &7Creating plot (2): " + plot);
                 toCreate.add(plot);
@@ -2742,7 +2735,7 @@ public class SQLManager implements AbstractDB {
                 setOwner(plot, plot.owner);
             }
             // trusted
-            if (!plot.getTrusted().equals(dataplot.trusted)) {
+            if (!plot.getTrusted().equals(dataplot.getTrusted())) {
                 final HashSet<UUID> toAdd = (HashSet<UUID>) plot.getTrusted().clone();
                 final HashSet<UUID> toRemove = (HashSet<UUID>) dataplot.getTrusted().clone();
                 toRemove.removeAll(plot.getTrusted());
@@ -2759,7 +2752,7 @@ public class SQLManager implements AbstractDB {
                     }
                 }
             }
-            if (!plot.getMembers().equals(dataplot.members)) {
+            if (!plot.getMembers().equals(dataplot.getMembers())) {
                 final HashSet<UUID> toAdd = (HashSet<UUID>) plot.getMembers().clone();
                 final HashSet<UUID> toRemove = (HashSet<UUID>) dataplot.getMembers().clone();
                 toRemove.removeAll(plot.getMembers());
@@ -2776,7 +2769,7 @@ public class SQLManager implements AbstractDB {
                     }
                 }
             }
-            if (!plot.getDenied().equals(dataplot.denied)) {
+            if (!plot.getDenied().equals(dataplot.getDenied())) {
                 final HashSet<UUID> toAdd = (HashSet<UUID>) plot.getDenied().clone();
                 final HashSet<UUID> toRemove = (HashSet<UUID>) dataplot.getDenied().clone();
                 toRemove.removeAll(plot.getDenied());
@@ -2797,12 +2790,12 @@ public class SQLManager implements AbstractDB {
             final PlotSettings ds = dataplot.getSettings();
             final boolean[] pm = ps.getMerged();
             final boolean[] dm = ds.getMerged();
-            if ((pm[0] != dm[0]) || (pm[1] != dm[1]) || (pm[1] != dm[1]) || (pm[1] != dm[1])) {
+            if ((pm[0] != dm[0]) || (pm[1] != dm[1])) {
                 PS.debug("&8 - &7Correcting merge for: " + plot);
                 setMerged(dataplot, ps.getMerged());
             }
-            final HashMap<String, Flag> pf = ps.flags;
-            final HashMap<String, Flag> df = ds.flags;
+            final HashMap<String, Flag> pf = plot.getFlags();
+            final HashMap<String, Flag> df = dataplot.getFlags();
             if ((pf.size() != 0) && (df.size() != 0)) {
                 if ((pf.size() != df.size()) || !StringMan.isEqual(StringMan.joinOrdered(pf.values(), ","), StringMan.joinOrdered(df.values(), ","))) {
                     PS.debug("&8 - &7Correcting flags for: " + plot);

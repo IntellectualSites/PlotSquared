@@ -1,18 +1,17 @@
 package com.plotsquared.bukkit.database.plotme;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
 
 public abstract class APlotMeConnector {
     public abstract Connection getPlotMeConnection(final String plugin, final FileConfiguration plotConfig, final String dataFolder);
@@ -42,15 +41,12 @@ public abstract class APlotMeConnector {
         final String wallblock = plotConfig.getString("worlds." + world + ".WallBlockId"); //
         PS.get().config.set("worlds." + actualWorldName + ".wall.block", wallblock);
         final String floor = plotConfig.getString("worlds." + world + ".PlotFloorBlockId"); //
-        PS.get().config.set("worlds." + actualWorldName + ".plot.floor", Arrays.asList(floor));
+        PS.get().config.set("worlds." + actualWorldName + ".plot.floor", Collections.singletonList(floor));
         final String filling = plotConfig.getString("worlds." + world + ".PlotFillingBlockId"); //
-        PS.get().config.set("worlds." + actualWorldName + ".plot.filling", Arrays.asList(filling));
+        PS.get().config.set("worlds." + actualWorldName + ".plot.filling", Collections.singletonList(filling));
         final String road = plotConfig.getString("worlds." + world + ".RoadMainBlockId");
         PS.get().config.set("worlds." + actualWorldName + ".road.block", road);
         Integer height = plotConfig.getInt("worlds." + world + ".RoadHeight"); //
-        if (height == null) {
-            height = 64;
-        }
         PS.get().config.set("worlds." + actualWorldName + ".road.height", height);
     }
     
