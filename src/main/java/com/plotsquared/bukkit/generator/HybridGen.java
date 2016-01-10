@@ -20,15 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.generator;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.object.PlotLoc;
@@ -36,12 +27,22 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * The default generator is very messy, as we have decided to try externalize all calculations from within the loop. -
  * You will see a lot of slower implementations have a single for loop. - This is perfectly fine to do, it will just
  * mean world generation may take somewhat longer
- *
+ *
+
+
  */
 public class HybridGen extends BukkitPlotGenerator {
     
@@ -120,7 +121,7 @@ public class HybridGen extends BukkitPlotGenerator {
         biome = Biome.valueOf(this.plotworld.PLOT_BIOME);
         try {
             maxY = Bukkit.getWorld(plotworld.worldname).getMaxHeight();
-        } catch (final NullPointerException e) {}
+        } catch (final NullPointerException ignored) {}
         if (maxY == 0) {
             maxY = 256;
         }
@@ -176,7 +177,7 @@ public class HybridGen extends BukkitPlotGenerator {
     public List<BukkitPlotPopulator> getPopulators(final String world) {
         // You can have as many populators as you would like, e.g. tree
         // populator, ore populator
-        return Arrays.asList((BukkitPlotPopulator) new HybridPop(plotworld));
+        return Collections.singletonList((BukkitPlotPopulator) new HybridPop(plotworld));
     }
     
     /**
@@ -292,6 +293,5 @@ public class HybridGen extends BukkitPlotGenerator {
                 }
             }
         }
-        return;
     }
 }

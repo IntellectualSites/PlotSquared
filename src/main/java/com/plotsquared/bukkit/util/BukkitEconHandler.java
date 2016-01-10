@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.util;
 
+import com.plotsquared.bukkit.object.BukkitPlayer;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
@@ -54,19 +55,19 @@ public class BukkitEconHandler extends EconHandler {
     public double getMoney(final PlotPlayer player) {
         final double bal = super.getMoney(player);
         if (Double.isNaN(bal)) {
-            return econ.getBalance(player.getName());
+            return econ.getBalance(((BukkitPlayer)player).player);
         }
         return bal;
     }
     
     @Override
     public void withdrawMoney(final PlotPlayer player, final double amount) {
-        econ.withdrawPlayer(player.getName(), amount);
+        econ.withdrawPlayer(((BukkitPlayer)player).player, amount);
     }
     
     @Override
     public void depositMoney(final PlotPlayer player, final double amount) {
-        econ.depositPlayer(player.getName(), amount);
+        econ.depositPlayer(((BukkitPlayer)player).player, amount);
     }
     
     @Override

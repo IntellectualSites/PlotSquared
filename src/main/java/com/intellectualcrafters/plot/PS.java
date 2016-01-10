@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -385,14 +384,20 @@ public class PS {
      *
      * @param plot Plot Object to update
      */
-    public void updatePlot(final Plot plot) {
-        final String world = plot.world;
-        if (!plots.containsKey(world)) {
-            plots.put(world, new ConcurrentHashMap<PlotId, Plot>());
-        }
-        plots.get(world).put(plot.id, plot);
+    public boolean updatePlot(final Plot plot) {
         for (PlotPlayer pp : plot.getPlayersInPlot()) {
             pp.setMeta("lastplot", plot);
+        }
+        ConcurrentHashMap<PlotId, Plot> map = plots.get(plot.world);
+        if (map == null) {
+            map = new ConcurrentHashMap<PlotId, Plot>();
+            map.put(plot.id, plot);
+            plots.put(plot.world, map);
+            System.out.println("UPDATING PLOT  2!: " + plot);
+            return true;
+        } else {
+            System.out.println("UPDATING PLOT!: " + plot);
+            return map.put(plot.id, plot) == null;
         }
     }
     
@@ -633,7 +638,7 @@ public class PS {
         }
         hardmax = Math.min(hardmax, max);
         final Plot[] cache = new Plot[hardmax + 1];
-        final List<Plot> overflow = new ArrayList<Plot>(overflowSize);
+        final List<Plot> overflow = new ArrayList<>(overflowSize);
         final ArrayList<Plot> extra = new ArrayList<>();
         for (final Plot plot : plots) {
             final int hash = MathMan.getPositiveId(plot.hashCode());
@@ -643,7 +648,7 @@ public class PS {
                 } else {
                     extra.add(plot);
                 }
-            } else if ((Math.abs(plot.id.x) > 15446) || (Math.abs(plot.id.y) > 15446)) {
+            } else if ((Math.abs(plot.getId().x) > 15446) || (Math.abs(plot.getId().y) > 15446)) {
                 extra.add(plot);
             } else {
                 overflow.add(plot);
@@ -651,15 +656,13 @@ public class PS {
         }
         final Plot[] overflowArray = overflow.toArray(new Plot[overflow.size()]);
         sortPlotsByHash(overflowArray);
-        final ArrayList<Plot> result = new ArrayList<Plot>(cache.length + overflowArray.length);
+        final ArrayList<Plot> result = new ArrayList<>(cache.length + overflowArray.length);
         for (final Plot plot : cache) {
             if (plot != null) {
                 result.add(plot);
             }
         }
-        for (final Plot plot : overflowArray) {
-            result.add(plot);
-        }
+        Collections.addAll(result, overflowArray);
         for (final Plot plot : extra) {
             result.add(plot);
         }
@@ -678,14 +681,13 @@ public class PS {
         if (input instanceof ArrayList<?>) {
             list = (List<Plot>) input;
         } else {
-            list = new ArrayList<Plot>(input);
+            list = new ArrayList<>(input);
         }
         long min = Integer.MAX_VALUE;
         long max = 0;
         final int size = list.size();
         final int limit = Math.min(1048576, size * 2);
-        for (int i = 0; i < size; i++) {
-            final Plot plot = list.get(i);
+        for (final Plot plot : list) {
             final long time = plot.getTimestamp();
             if (time < min) {
                 min = time;
@@ -701,8 +703,7 @@ public class PS {
             if ((range > limit) && (size > 1024)) {
                 plots = new Plot[limit];
                 final int factor = (int) ((range / limit));
-                for (int i = 0; i < size; i++) {
-                    Plot plot = list.get(i);
+                for (Plot plot : list) {
                     int index = (int) (plot.getTimestamp() - min) / factor;
                     if (index < 0) {
                         index = 0;
@@ -730,7 +731,7 @@ public class PS {
                     }
                 }
             } else if ((range < size) || (size < 1024)) {
-                final ArrayList<Plot> result = new ArrayList<Plot>(list);
+                final ArrayList<Plot> result = new ArrayList<>(list);
                 Collections.sort(result, new Comparator<Plot>() {
                     @Override
                     public int compare(final Plot a, final Plot b) {
@@ -745,8 +746,7 @@ public class PS {
                 return result;
             } else if (min != 0) {
                 plots = new Plot[(int) range];
-                for (int i = 0; i < size; i++) {
-                    Plot plot = list.get(i);
+                for (Plot plot : list) {
                     int index = (int) (plot.getTimestamp() - min);
                     if (index >= plots.length) {
                         overflow.add(plot);
@@ -772,8 +772,7 @@ public class PS {
                 }
             } else {
                 plots = new Plot[(int) range];
-                for (int i = 0; i < size; i++) {
-                    Plot plot = list.get(i);
+                for (Plot plot : list) {
                     int index = (int) (plot.getTimestamp());
                     if (index >= plots.length) {
                         overflow.add(plot);
@@ -824,7 +823,7 @@ public class PS {
             return result;
         } catch (final Exception e) {
             e.printStackTrace();
-            final ArrayList<Plot> result = new ArrayList<Plot>(list);
+            final ArrayList<Plot> result = new ArrayList<>(list);
             Collections.sort(result, new Comparator<Plot>() {
                 @Override
                 public int compare(final Plot a, final Plot b) {
@@ -848,10 +847,10 @@ public class PS {
     public void sortPlotsByHash(final Plot[] input) {
         final List<Plot>[] bucket = new ArrayList[32];
         for (int i = 0; i < bucket.length; i++) {
-            bucket[i] = new ArrayList<Plot>();
+            bucket[i] = new ArrayList<>();
         }
         boolean maxLength = false;
-        int tmp = -1, placement = 1;
+        int tmp, placement = 1;
         while (!maxLength) {
             maxLength = true;
             for (final Plot i : input) {
@@ -882,7 +881,7 @@ public class PS {
         final int SIZE = 100;
         final List<Plot>[] bucket = new ArrayList[SIZE];
         for (int i = 0; i < bucket.length; i++) {
-            bucket[i] = new ArrayList<Plot>();
+            bucket[i] = new ArrayList<>();
         }
         boolean maxLength = false;
         int tmp = -1, placement = 1;
@@ -907,7 +906,7 @@ public class PS {
     }
     
     public enum SortType {
-        CREATION_DATE, CREATION_DATE_TIMESTAMP, DISTANCE_FROM_ORIGIN;
+        CREATION_DATE, CREATION_DATE_TIMESTAMP, DISTANCE_FROM_ORIGIN
     }
     
     /**
@@ -921,7 +920,7 @@ public class PS {
         // group by world
         // sort each
         final HashMap<String, Collection<Plot>> map = new HashMap<>();
-        final ArrayList<String> worlds = new ArrayList<String>(getPlotWorlds());
+        final ArrayList<String> worlds = new ArrayList<>(getPlotWorlds());
         int totalSize = 0;
         for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : this.plots.entrySet()) {
             totalSize += entry.getValue().size();
@@ -955,7 +954,7 @@ public class PS {
                 return a.hashCode() - b.hashCode();
             }
         });
-        final ArrayList<Plot> toReturn = new ArrayList<Plot>(plots.size());
+        final ArrayList<Plot> toReturn = new ArrayList<>(plots.size());
         for (final String world : worlds) {
             switch (type) {
                 case CREATION_DATE:
@@ -1068,9 +1067,6 @@ public class PS {
         return strings.toArray(new String[strings.size()]);
     }
     
-    private volatile String lastWorld;
-    private volatile Map<PlotId, Plot> lastMap;
-    
     /**
      * Get a map of the plots for a world
      * @param world
@@ -1080,9 +1076,6 @@ public class PS {
     public HashMap<PlotId, Plot> getPlots(final String world) {
         final ConcurrentHashMap<PlotId, Plot> myplots = plots.get(world);
         if (myplots != null) {
-            if (world == lastWorld) {
-                return new HashMap<>(lastMap);
-            }
             return new HashMap<>(myplots);
         }
         return new HashMap<>(0);
@@ -1097,7 +1090,7 @@ public class PS {
             return map.values();
         }
         catch (Throwable e) {e.printStackTrace();}
-        HashSet<Plot> toReturn = new HashSet<Plot>(map.entrySet().size());
+        HashSet<Plot> toReturn = new HashSet<>(map.entrySet().size());
         for (Entry<PlotId, Plot> entry : map.entrySet()) {
             toReturn.add(entry.getValue());
         }
@@ -1105,16 +1098,9 @@ public class PS {
     }
     
     public Plot getPlot(final String world, final PlotId id) {
-        if (world == lastWorld) {
-            if (lastMap != null) {
-                return lastMap.get(id);
-            }
-            return null;
-        }
-        lastWorld = world;
-        lastMap = plots.get(world);
-        if (lastMap != null) {
-            return lastMap.get(id);
+        ConcurrentHashMap<PlotId, Plot> map = plots.get(world);
+        if (map != null) {
+            return map.get(id); 
         }
         return null;
     }
@@ -1336,12 +1322,14 @@ public class PS {
                         }
                         case "f":
                         case "floor": {
-                            config.set(base + "plot.floor", new ArrayList<String>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
+                            config.set(base + "plot.floor",
+                                    new ArrayList<>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
                             break;
                         }
                         case "m":
                         case "main": {
-                            config.set(base + "plot.filling", new ArrayList<String>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
+                            config.set(base + "plot.filling",
+                                    new ArrayList<>(Arrays.asList(StringMan.join(Configuration.BLOCKLIST.parseString(value), ",").split(","))));
                             break;
                         }
                         case "w":
@@ -1968,6 +1956,7 @@ public class PS {
         Settings.METRICS = config.getBoolean("metrics");
         Settings.UPDATE_NOTIFICATIONS = config.getBoolean("update-notifications");
         Settings.MERGE_REMOVES_ROADS = config.getBoolean("merge.remove-terrain");
+        Settings.AUTO_PURGE = config.getBoolean("auto-purge", false);
     }
     
     /**

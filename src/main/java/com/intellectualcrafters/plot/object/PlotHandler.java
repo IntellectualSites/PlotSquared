@@ -1,6 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class PlotHandler {
             }
             return owners;
         }
-        return new HashSet<>(Arrays.asList(plot.owner));
+        return new HashSet<>(Collections.singletonList(plot.owner));
     }
     
     public static boolean isOwner(final Plot plot, final UUID uuid) {

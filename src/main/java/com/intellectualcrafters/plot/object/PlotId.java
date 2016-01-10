@@ -84,41 +84,7 @@ public class PlotId {
     }
     
     public static PlotId unpair(int hash) {
-        if (hash >= 0) {
-            if ((hash % 2) == 0) {
-                // + +
-                hash /= 2;
-                final int i = (int) (Math.abs(-1 + Math.sqrt(1 + (8 * hash))) / 2);
-                final int idx = hash - ((i * (1 + i)) / 2);
-                final int idy = ((i * (3 + i)) / 2) - hash;
-                return new PlotId(idx, idy);
-            } else {
-                // + -
-                hash -= 1;
-                hash /= 2;
-                final int i = (int) (Math.abs(-1 + Math.sqrt(1 + (8 * hash))) / 2);
-                final int idx = hash - ((i * (1 + i)) / 2);
-                final int idy = ((i * (3 + i)) / 2) - hash;
-                return new PlotId(idx, -idy);
-            }
-        } else {
-            if ((hash % 2) == 0) {
-                // - +
-                hash /= -2;
-                final int i = (int) (Math.abs(-1 + Math.sqrt(1 + (8 * hash))) / 2);
-                final int idx = hash - ((i * (1 + i)) / 2);
-                final int idy = ((i * (3 + i)) / 2) - hash;
-                return new PlotId(-idx, idy);
-            } else {
-                // - -
-                hash += 1;
-                hash /= -2;
-                final int i = (int) (Math.abs(-1 + Math.sqrt(1 + (8 * hash))) / 2);
-                final int idx = hash - ((i * (1 + i)) / 2);
-                final int idy = ((i * (3 + i)) / 2) - hash;
-                return new PlotId(-idx, -idy);
-            }
-        }
+        return new PlotId(hash >> 16, hash & 0xFFFF);
     }
     
     private int hash;
@@ -131,22 +97,7 @@ public class PlotId {
     @Override
     public int hashCode() {
         if (hash == 0) {
-            if (x >= 0) {
-                if (y >= 0) {
-                    hash = (x * x) + (3 * x) + (2 * x * y) + y + (y * y);
-                } else {
-                    final int y1 = -y;
-                    hash = (x * x) + (3 * x) + (2 * x * y1) + y1 + (y1 * y1) + 1;
-                }
-            } else {
-                final int x1 = -x;
-                if (y >= 0) {
-                    hash = -((x1 * x1) + (3 * x1) + (2 * x1 * y) + y + (y * y));
-                } else {
-                    final int y1 = -y;
-                    hash = -((x1 * x1) + (3 * x1) + (2 * x1 * y1) + y1 + (y1 * y1) + 1);
-                }
-            }
+            hash = (x << 16) | (y & 0xFFFF);
         }
         return hash;
     }

@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -51,7 +52,9 @@ import com.plotsquared.bukkit.generator.HybridGen;
 
 /**
  * Created 2014-08-17 for PlotSquared
- *
+ *
+
+
  */
 public class LikePlotMeConverter {
     private final String plugin;
@@ -128,7 +131,8 @@ public class LikePlotMeConverter {
             content = content.replaceAll("PlotMe-DefaultGenerator", "PlotSquared");
             content = content.replaceAll(plugin, "PlotSquared");
             Files.write(path, content.getBytes(charset));
-        } catch (final Exception e) {}
+        } catch (IOException e) {
+        }
     }
     
     public boolean run(final APlotMeConnector connector) {
@@ -210,7 +214,7 @@ public class LikePlotMeConverter {
                             pathwidth = 7;
                         }
                         PS.get().config.set("worlds." + world + ".road.width", pathwidth);
-                        
+
                         Integer pathheight = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
                         if ((pathheight == null) || (pathheight == 0)) {
                             pathheight = 64;
@@ -232,21 +236,21 @@ public class LikePlotMeConverter {
                         if (floor == null) {
                             floor = "2";
                         }
-                        PS.get().config.set("worlds." + world + ".plot.floor", Arrays.asList(floor));
+                        PS.get().config.set("worlds." + world + ".plot.floor", Collections.singletonList(floor));
                         String filling = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".FillBlock"); //
                         if (filling == null) {
                             filling = "3";
                         }
-                        PS.get().config.set("worlds." + world + ".plot.filling", Arrays.asList(filling));
+                        PS.get().config.set("worlds." + world + ".plot.filling", Collections.singletonList(filling));
                         String road = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".RoadMainBlock");
                         if (road == null) {
                             road = "5";
                         }
                         PS.get().config.set("worlds." + world + ".road.block", road);
                         Integer height = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
-                        if ((height == null) || (height == 0)) {
+                        if (height == 0) {
                             height = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".GroundHeight"); //
-                            if ((height == null) || (height == 0)) {
+                            if (height == 0) {
                                 height = 64;
                             }
                         }
@@ -255,12 +259,13 @@ public class LikePlotMeConverter {
                         PS.get().config.set("worlds." + actualWorldName + ".wall.height", height);
                         PS.get().config.save(PS.get().configFile);
                     }
-                } catch (final Exception e) {}
+                } catch (IOException e) {
+                }
             }
             for (final String world : plots.keySet()) {
                 int duplicate = 0;
                 for (final Plot plot : plots.get(world).values()) {
-                    if (PS.get().getPlot(world, plot.id) == null) {
+                    if (PS.get().getPlot(world, plot.getId()) == null) {
                         createdPlots.add(plot);
                     } else {
                         duplicate++;

@@ -64,11 +64,11 @@ public class Claim extends SubCommand {
                 MainUtil.teleportPlayer(player, loc, plot);
             }
             final String world = plot.world;
-            final PlotWorld plotworld = PS.get().getPlotWorld(world);
-            final Plot plot2 = PS.get().getPlot(world, plot.id);
+            final PlotWorld plotworld = plot.getWorld();
+            final Plot plot2 = PS.get().getPlot(world, plot.getId());
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 Schematic sch;
-                if (schematic.equals("")) {
+                if (schematic.isEmpty()) {
                     sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                 } else {
                     sch = SchematicHandler.manager.getSchematic(schematic);
@@ -110,7 +110,7 @@ public class Claim extends SubCommand {
         if (!MainUtil.canClaim(plr, plot)) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
-        final PlotWorld world = PS.get().getPlotWorld(plot.world);
+        final PlotWorld world = plot.getWorld();
         if ((EconHandler.manager != null) && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {

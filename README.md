@@ -17,8 +17,8 @@ is to provide a lag-free and smooth experience.
 
 ### Developer Resources
 * *Outdated* [JavaDocs](http://empcraft.com/plotsquared/doc/)
-* [~~Build Server~~](http://ci.intellectualsites.com/job/PlotSquared/)
-* [~~Maven Repo~~](http://mvn.intellectualsites.com/content/repositories/intellectualsites/)
+* [~~Build Server~~](http://ci.xephi.fr/job/PlotSquared/)
+* [~~Maven Repo~~](http://ci.xephi.fr/plugin/repository/everything/)
 
 
 # Maven
@@ -27,13 +27,13 @@ We're now on maven!
 <!-- Repository -->
 <repository>
     <id>intellectualsites</id>
-    <url>http://mvn.intellectualsites.com/content/repositories/intellectualsites/</url>
+    <url>http://ci.xephi.fr/plugin/repository/everything/</url>
 </repository>
 <!-- Dependency -->
 <dependency>
   <groupId>com.intellectualcrafters</groupId>
   <artifactId>PlotSquared</artifactId>
-  <version>2.12.9</version>
+  <version>3.2.24</version>
 </dependency>
 ```
 

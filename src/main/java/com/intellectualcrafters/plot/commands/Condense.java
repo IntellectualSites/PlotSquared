@@ -121,7 +121,7 @@ public class Condense extends SubCommand {
                 while ((start.x <= minimum_radius) && (start.y <= minimum_radius)) {
                     final Plot plot = MainUtil.getPlotAbs(worldname, start);
                     if (!plot.hasOwner()) {
-                        free.add(plot.id);
+                        free.add(plot.getId());
                     }
                     start = Auto.getNextPlot(start, 1);
                 }
@@ -225,8 +225,8 @@ public class Condense extends SubCommand {
     public Set<PlotId> getPlots(final Collection<Plot> plots, final int radius) {
         final HashSet<PlotId> outside = new HashSet<>();
         for (final Plot plot : plots) {
-            if ((plot.id.x > radius) || (plot.id.x < -radius) || (plot.id.y > radius) || (plot.id.y < -radius)) {
-                outside.add(plot.id);
+            if ((plot.getId().x > radius) || (plot.getId().x < -radius) || (plot.getId().y > radius) || (plot.getId().y < -radius)) {
+                outside.add(plot.getId());
             }
         }
         return outside;

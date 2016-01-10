@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -41,6 +33,15 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 @CommandDeclaration(
 command = "trim",
@@ -96,7 +97,8 @@ public class Trim extends SubCommand {
                                         PS.debug("INVALID MCA: " + name);
                                     }
                                 }
-                            } catch (final Exception e) {}
+                            } catch (IOException e) {
+                            }
                         }
                     }
                 }
@@ -134,8 +136,8 @@ public class Trim extends SubCommand {
                     }
                     final Plot plot = plots.remove(0);
                     
-                    final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.id);
-                    final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.id);
+                    final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.getId());
+                    final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.getId());
                     
                     final int ccx1 = (pos1.getX() >> 9);
                     final int ccz1 = (pos1.getZ() >> 9);

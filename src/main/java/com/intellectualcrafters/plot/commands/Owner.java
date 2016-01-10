@@ -83,7 +83,7 @@ public class Owner extends SetCommand {
         MainUtil.setSign(name, plot);
         MainUtil.sendMessage(plr, C.SET_OWNER);
         if (other != null) {
-            MainUtil.sendMessage(other, C.NOW_OWNER, plot.world + ";" + plot.id);
+            MainUtil.sendMessage(other, C.NOW_OWNER, plot.world + ";" + plot.getId());
         }
         return true;
     }

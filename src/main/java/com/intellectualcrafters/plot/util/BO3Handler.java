@@ -1,14 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -18,10 +9,18 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class BO3Handler {
     
@@ -51,7 +50,7 @@ public class BO3Handler {
      * @return
      */
     public static boolean saveBO3(final PlotPlayer plr, final Plot plot) {
-        final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
+        final PlotWorld plotworld = plot.getWorld();
         if (!(plotworld instanceof ClassicPlotWorld) || (plotworld.TYPE != 0)) {
             MainUtil.sendMessage(plr, "BO3 exporting only supports type 0 classic generation.");
             return false;

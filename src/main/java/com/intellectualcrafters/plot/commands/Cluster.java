@@ -249,7 +249,7 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                final PlotWorld plotworld = PS.get().getPlotWorld(plr.getLocation().getWorld());
+                final PlotWorld plotworld = plr.getLocation().getPlotWorld();
                 if (plotworld.TYPE == 2) {
                     final ArrayList<Plot> toRemove = new ArrayList<>();
                     for (final Plot plot : PS.get().getPlotsInWorld(plr.getLocation().getWorld())) {

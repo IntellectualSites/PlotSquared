@@ -53,6 +53,7 @@ public class Unclaim extends SubCommand {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         if (plot.unclaim()) {
+            plot.removeSign();
             MainUtil.sendMessage(plr, C.UNCLAIM_SUCCESS);
         } else {
             MainUtil.sendMessage(plr, C.UNCLAIM_FAILED);

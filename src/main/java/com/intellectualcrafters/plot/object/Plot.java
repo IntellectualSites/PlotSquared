@@ -54,7 +54,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 public class Plot {
     /**
      * plot ID
-     * Direct access is Deprecated: use getId()
+     * Direct access is Deprecated: use id
      */
     @Deprecated
     public final PlotId id;
@@ -384,7 +384,7 @@ public class Plot {
      * @return boolean false if the player is allowed to enter
      */
     public boolean isDenied(final UUID uuid) {
-        return (getDenied() != null) && ((denied.contains(DBFunc.everyone) && !isAdded(uuid)) || (!isAdded(uuid) && denied.contains(uuid)));
+        return (denied != null) && ((denied.contains(DBFunc.everyone) && !isAdded(uuid)) || (!isAdded(uuid) && denied.contains(uuid)));
     }
     
     /**
@@ -464,7 +464,7 @@ public class Plot {
         origin = this;
         PlotId min = id;
         for (Plot plot : MainUtil.getConnectedPlots(this)) {
-            if (plot.id.y < min.y || (plot.id.y == min.y && plot.id.x < min.x)) {
+            if (plot.id.y < min.y || (plot.id.y.equals(min.y) && plot.id.x < min.x)) {
                 origin = plot;
                 min = plot.id;
             }
@@ -877,7 +877,7 @@ public class Plot {
      *  - Any setting from before plot creation will not be saved until the server is stopped properly. i.e. Set any values/options after plot creation.
      * @return true if plot was created successfully
      */
-    public boolean create() {
+    public Plot create() {
         return MainUtil.createPlot(owner, this);
     }
     
@@ -1053,7 +1053,7 @@ public class Plot {
         if ((settings != null) && (settings.getAlias().length() > 1)) {
             return settings.getAlias();
         }
-        return world + ";" + getId().x + ";" + getId().y;
+        return world + ";" + id.x + ";" + id.y;
     }
     
     /**
@@ -1064,7 +1064,7 @@ public class Plot {
     public boolean removeDenied(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : new HashSet<>(getDenied())) {
+            for (UUID other : new HashSet<>(denied)) {
                 result = result || PlotHandler.removeDenied(this, other);
             }
             return result;
@@ -1080,7 +1080,7 @@ public class Plot {
     public boolean removeTrusted(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : new HashSet<>(getTrusted())) {
+            for (UUID other : new HashSet<>(trusted)) {
                 result = result || PlotHandler.removeTrusted(this, other);
             }
             return result;
@@ -1094,9 +1094,12 @@ public class Plot {
      * @param uuid
      */
     public boolean removeMember(final UUID uuid) {
+        if (members == null) {
+            return false;
+        }
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : new HashSet<>(getMembers())) {
+            for (UUID other : new HashSet<>(members)) {
                 result = result || PlotHandler.removeMember(this, other);
             }
             return result;
@@ -1220,7 +1223,7 @@ public class Plot {
         if (settings == null) {
             return "";
         }
-        return getSettings().getAlias();
+        return settings.getAlias();
     }
 
     /**
@@ -1238,7 +1241,7 @@ public class Plot {
      * @param merged
      */
     public void setMerged(boolean[] merged) {
-        getSettings().merged = merged;
+        getSettings().setMerged(merged);
         DBFunc.setMerged(this, merged);
         MainUtil.connected_cache = null;
         MainUtil.regions_cache = null;
@@ -1266,7 +1269,7 @@ public class Plot {
             if (value) {
                 Plot other = MainUtil.getPlotRelative(this, direction).getBasePlot(false);
                 if (!other.equals(getBasePlot(false))) {
-                    Plot base = ((other.id.y < id.y) || ((other.id.y == id.y) && (other.id.x < id.x))) ? other : origin;
+                    Plot base = ((other.id.y < id.y) || ((other.id.y.equals(id.y)) && (other.id.x < id.x))) ? other : origin;
                     origin.origin = base;
                     other.origin = base;
                     origin = base;

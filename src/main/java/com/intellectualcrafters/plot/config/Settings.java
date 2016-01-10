@@ -30,6 +30,7 @@ import java.util.List;
 public class Settings {
     public static boolean USE_SQLUUIDHANDLER = false;
     
+    public static boolean AUTO_PURGE = false;
     /**
      * 
      */

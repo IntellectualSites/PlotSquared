@@ -379,10 +379,12 @@ public class list extends SubCommand {
             
             final PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");
             
-            PlotMessage message = new PlotMessage().text("[").color("$3").text(i + "").command("/plot visit " + plot.world + ";" + plot.id).tooltip("/plot visit " + plot.world + ";" + plot.id)
+            PlotMessage message = new PlotMessage().text("[").color("$3").text(i + "").command("/plot visit " + plot.world + ";" + plot.getId()).tooltip("/plot visit " + plot.world + ";" + plot
+
+                    .getId())
             .color("$1").text("]").color("$3").text(" " + plot.toString())
             
-            .tooltip(trusted, members, flags).command("/plot info " + plot.world + ";" + plot.id)
+            .tooltip(trusted, members, flags).command("/plot info " + plot.world + ";" + plot.getId())
             
             .color(color).text(" - ").color("$2");
             String prefix = "";

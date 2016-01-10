@@ -54,7 +54,7 @@ public class RegenAllRoads extends SubCommand {
                 MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
                 return false;
             }
-        } else {
+        } else if (args.length != 1) {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
             return false;
         }

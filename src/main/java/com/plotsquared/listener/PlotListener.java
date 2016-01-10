@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -46,7 +45,9 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
-/**
+/**
+
+
  */
 public class PlotListener {
     
@@ -55,7 +56,7 @@ public class PlotListener {
             return false;
         }
         final Plot last = (Plot) pp.getMeta("lastplot");
-        if ((last != null) && !last.id.equals(plot.id)) {
+        if ((last != null) && !last.getId().equals(plot.getId())) {
             plotExit(pp, last);
         }
         pp.setMeta("lastplot", MainUtil.getPlot(plot));
@@ -103,7 +104,7 @@ public class PlotListener {
                         if (!Permissions.hasPermission(pp, "plots.gamemode.bypass")) {
                             pp.setGamemode((PlotGamemode) gamemodeFlag.getValue());
                         } else {
-                            MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.id, "{gamemode}", gamemodeFlag.getValue()));
+                            MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.getValue()));
                         }
                     }
                 }
@@ -163,10 +164,10 @@ public class PlotListener {
                         @Override
                         public void run() {
                             final Plot lastPlot = (Plot) pp.getMeta("lastplot");
-                            if ((lastPlot != null) && plot.id.equals(lastPlot.id)) {
+                            if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
                                 final Map<String, String> replacements = new HashMap<>();
-                                replacements.put("%x%", lastPlot.id.x + "");
-                                replacements.put("%z%", lastPlot.id.y + "");
+                                replacements.put("%x%", lastPlot.getId().x + "");
+                                replacements.put("%z%", lastPlot.getId().y + "");
                                 replacements.put("%world%", plot.world);
                                 replacements.put("%greeting%", greeting);
                                 replacements.put("%alias", plot.toString());
@@ -188,7 +189,7 @@ public class PlotListener {
         pp.deleteMeta("lastplot");
         EventUtil.manager.callLeave(pp, plot);
         if (plot.hasOwner()) {
-            final PlotWorld pw = PS.get().getPlotWorld(pp.getLocation().getWorld());
+            final PlotWorld pw = plot.getWorld();
             if (pw == null) {
                 return true;
             }

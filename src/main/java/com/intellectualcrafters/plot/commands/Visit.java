@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -38,6 +30,14 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "visit",
@@ -93,7 +93,7 @@ public class Visit extends SubCommand {
                 } else {
                     final Plot plot = MainUtil.getPlotFromString(player, args[0], true);
                     if (plot != null) {
-                        unsorted = new HashSet<>(Arrays.asList(plot.getBasePlot(false)));
+                        unsorted = new HashSet<>(Collections.singletonList(plot.getBasePlot(false)));
                     }
                 }
                 break;

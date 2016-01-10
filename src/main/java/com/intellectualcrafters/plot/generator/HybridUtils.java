@@ -1,16 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.io.File;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -32,6 +21,17 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetBlockQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
+
+import java.io.File;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HybridUtils {
     
@@ -113,7 +113,7 @@ public abstract class HybridUtils {
     public static boolean UPDATE = false;
     
     public final ArrayList<ChunkLoc> getChunks(final ChunkLoc region) {
-        final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
         final int sx = region.x << 5;
         final int sz = region.z << 5;
         for (int x = sx; x < (sx + 32); x++) {
@@ -133,7 +133,7 @@ public abstract class HybridUtils {
         if (whenDone == null) {
             return;
         }
-        final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
+        final PlotWorld plotworld = plot.getWorld();
         if (!(plotworld instanceof ClassicPlotWorld)) {
             whenDone.value = -1;
             TaskManager.runTask(whenDone);
@@ -185,14 +185,14 @@ public abstract class HybridUtils {
     public boolean scheduleRoadUpdate(final String world, final Set<ChunkLoc> rgs, final int extend) {
         HybridUtils.regions = rgs;
         HybridUtils.world = world;
-        chunks = new HashSet<ChunkLoc>();
+        chunks = new HashSet<>();
         final AtomicInteger count = new AtomicInteger(0);
         final long baseTime = System.currentTimeMillis();
         final AtomicInteger last = new AtomicInteger();
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
-                if (UPDATE == false) {
+                if (!UPDATE) {
                     last.set(0);
                     Iterator<ChunkLoc> iter = chunks.iterator();
                     while (iter.hasNext()) {
@@ -212,7 +212,6 @@ public abstract class HybridUtils {
                     HybridUtils.UPDATE = false;
                     PS.debug(C.PREFIX.s() + "Finished road conversion");
                     // CANCEL TASK
-                    return;
                 } else {
                     final Runnable task = this;
                     TaskManager.runTaskAsync(new Runnable() {
@@ -298,8 +297,8 @@ public abstract class HybridUtils {
     
     public boolean setupRoadSchematic(final Plot plot) {
         final String world = plot.world;
-        final Location bot = MainUtil.getPlotBottomLocAbs(world, plot.id).subtract(1, 0, 1);
-        final Location top = MainUtil.getPlotTopLocAbs(world, plot.id);
+        final Location bot = MainUtil.getPlotBottomLocAbs(world, plot.getId()).subtract(1, 0, 1);
+        final Location top = MainUtil.getPlotTopLocAbs(world, plot.getId());
         final HybridPlotWorld plotworld = (HybridPlotWorld) PS.get().getPlotWorld(world);
         final int sx = (bot.getX() - plotworld.ROAD_WIDTH) + 1;
         final int sz = bot.getZ() + 1;
@@ -307,20 +306,13 @@ public abstract class HybridUtils {
         final int ex = bot.getX();
         final int ez = top.getZ();
         final int ey = get_ey(world, sx, ex, sz, ez, sy);
-        final Location pos1 = new Location(world, sx, sy, sz);
-        final Location pos2 = new Location(world, ex, ey, ez);
-        final int bx = sx;
         final int bz = sz - plotworld.ROAD_WIDTH;
-        final int by = sy;
-        final int tx = ex;
         final int tz = sz - 1;
-        final int ty = get_ey(world, bx, tx, bz, tz, by);
+        final int ty = get_ey(world, sx, ex, bz, tz, sy);
         
-        final Set<RegionWrapper> sideroad = new HashSet<>(Arrays.asList(new RegionWrapper(sx, ex, sy, ey, sz, ez)));
-        final Set<RegionWrapper> intersection = new HashSet<>(Arrays.asList(new RegionWrapper(bx, tx, by, ty, bz, tz)));
-        
-        final Location pos3 = new Location(world, bx, by, bz);
-        final Location pos4 = new Location(world, tx, ty, tz);
+        final Set<RegionWrapper> sideroad = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ey, sz, ez)));
+        final Set<RegionWrapper> intersection = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ty, bz, tz)));
+
         final String dir = PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.world + File.separator;
         SchematicHandler.manager.getCompoundTag(world, sideroad, new RunnableVal<CompoundTag>() {
             @Override

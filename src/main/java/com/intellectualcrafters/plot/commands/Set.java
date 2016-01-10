@@ -20,11 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
@@ -42,6 +37,10 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 @CommandDeclaration(
 command = "set",
@@ -67,10 +66,9 @@ public class Set extends SubCommand {
 
             @Override
             public boolean set(PlotPlayer plr, final Plot plot, String value) {
-                final String world = plr.getLocation().getWorld();
-                final PlotWorld plotworld = PS.get().getPlotWorld(world);
-                final PlotManager manager = PS.get().getPlotManager(world);
-                final String[] components = manager.getPlotComponents(plotworld, plot.id);
+                final PlotWorld plotworld = plr.getLocation().getPlotWorld();
+                final PlotManager manager = plr.getLocation().getPlotManager();
+                final String[] components = manager.getPlotComponents(plotworld, plot.getId());
                 final boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(plr.getUUID());
                 
                 String[] args = value.split(" ");
@@ -131,7 +129,7 @@ public class Set extends SubCommand {
                         }
                         plot.addRunning();
                         for (Plot current : MainUtil.getConnectedPlots(plot)) {
-                            manager.setComponent(plotworld, current.id, component, blocks);
+                            manager.setComponent(plotworld, current.getId(), component, blocks);
                         }
                         MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
                         SetBlockQueue.addNotify(new Runnable() {
@@ -149,11 +147,11 @@ public class Set extends SubCommand {
     }
 
     public boolean noArgs(PlotPlayer plr) {
-        final ArrayList<String> newValues = new ArrayList<String>();
+        final ArrayList<String> newValues = new ArrayList<>();
         newValues.addAll(Arrays.asList("biome", "alias", "home", "flag"));
         Plot plot = plr.getCurrentPlot();
         if (plot != null) {
-            newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.id)));
+            newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.getId())));
         }
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(newValues, C.BLOCK_LIST_SEPARATER.formatted()));
         return false;
@@ -175,7 +173,7 @@ public class Set extends SubCommand {
             return false;
         }
         // components
-        HashSet<String> components = new HashSet<String>(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.id)));
+        HashSet<String> components = new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
             return component.onCommand(plr, Arrays.copyOfRange(args, 0, args.length));
         }

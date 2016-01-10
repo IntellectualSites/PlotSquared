@@ -1,6 +1,7 @@
 package com.plotsquared.bukkit.listeners.worldedit;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -35,16 +36,16 @@ public class WEListener implements Listener {
     public final HashSet<String> rad2 = new HashSet<>(Arrays.asList("fill", "fillr", "removenear", "remove"));
     public final HashSet<String> rad2_1 = new HashSet<>(Arrays.asList("hcyl", "cyl"));
     public final HashSet<String> rad2_2 = new HashSet<>(Arrays.asList("sphere", "pyramid"));
-    public final HashSet<String> rad2_3 = new HashSet<>(Arrays.asList("brush smooth"));
-    public final HashSet<String> rad3_1 = new HashSet<>(Arrays.asList("brush gravity"));
+    public final HashSet<String> rad2_3 = new HashSet<>(Collections.singletonList("brush smooth"));
+    public final HashSet<String> rad3_1 = new HashSet<>(Collections.singletonList("brush gravity"));
     public final HashSet<String> rad3_2 = new HashSet<>(Arrays.asList("brush sphere", "brush cylinder"));
     
     public final HashSet<String> region = new HashSet<>(Arrays.asList("move", "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "naturalize", "paste", "count", "distr",
     "regen", "copy", "cut", "green", "setbiome"));
-    public final HashSet<String> regionExtend = new HashSet<>(Arrays.asList("stack"));
+    public final HashSet<String> regionExtend = new HashSet<>(Collections.singletonList("stack"));
     public final HashSet<String> unregioned = new HashSet<>(Arrays.asList("paste", "redo", "undo", "rotate", "flip", "generate", "schematic", "schem"));
     public final HashSet<String> unsafe1 = new HashSet<>(Arrays.asList("cs", ".s", "restore", "snapshot", "delchunks", "listchunks"));
-    public final HashSet<String> restricted = new HashSet<>(Arrays.asList("up"));
+    public final HashSet<String> restricted = new HashSet<>(Collections.singletonList("up"));
     public final HashSet<String> other = new HashSet<>(Arrays.asList("undo", "redo"));
     
     public boolean checkCommand(final List<String> list, final String cmd) {
@@ -137,11 +138,9 @@ public class WEListener implements Listener {
         final long volume = Math.abs((pos1.getBlockX() - pos2.getBlockX()) * (pos1.getBlockY() - pos2.getBlockY()) * (pos1.getBlockZ() - pos2.getBlockZ())) * modifier;
         return checkVolume(pp, volume, max, e);
     }
-    
-    private final boolean set = false;
-    
+
     public boolean delay(final Player player, final String command, final boolean delayed) {
-        if (!Settings.QUEUE_COMMANDS || !Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT || set) {
+        if (!Settings.QUEUE_COMMANDS || !Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
             return false;
         }
         final boolean free = SetBlockQueue.addNotify(null);

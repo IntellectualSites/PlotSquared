@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.HashSet;
-
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -35,6 +32,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.HashSet;
 
 @CommandDeclaration(
 command = "delete",
@@ -60,7 +59,7 @@ public class Delete extends SubCommand {
         if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
-        final PlotWorld plotworld = PS.get().getPlotWorld(plot.world);
+        final PlotWorld plotworld = plot.getWorld();
         final HashSet<Plot> plots = MainUtil.getConnectedPlots(plot);
         final Runnable run = new Runnable() {
             @Override
@@ -93,7 +92,7 @@ public class Delete extends SubCommand {
             }
         };
         if (Settings.CONFIRM_DELETE && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
-            CmdConfirm.addPending(plr, "/plot delete " + plot.id, run);
+            CmdConfirm.addPending(plr, "/plot delete " + plot.getId(), run);
         } else {
             TaskManager.runTask(run);
         }

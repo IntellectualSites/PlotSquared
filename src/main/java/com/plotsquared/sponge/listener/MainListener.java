@@ -399,7 +399,7 @@ public class MainListener {
         //  - Getting displayname currently causes NPE, so wait until sponge fixes that
         
         final String sender = player.getName();
-        final PlotId id = plot.id;
+        final PlotId id = plot.getId();
         final String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
         final Text forcedMessage = event.getMessage();
         //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
@@ -811,7 +811,7 @@ public class MainListener {
                     }
                     return;
                 }
-            } else if ((lastPlot != null) && id.equals(lastPlot.id)) {
+            } else if ((lastPlot != null) && id.equals(lastPlot.getId())) {
                 return;
             } else {
                 final Plot plot = MainUtil.getPlot(worldname, id);
@@ -873,7 +873,7 @@ public class MainListener {
                     }
                     return;
                 }
-            } else if ((lastPlot != null) && id.equals(lastPlot.id)) {
+            } else if ((lastPlot != null) && id.equals(lastPlot.getId())) {
                 return;
             } else {
                 final Plot plot = MainUtil.getPlot(worldname, id);

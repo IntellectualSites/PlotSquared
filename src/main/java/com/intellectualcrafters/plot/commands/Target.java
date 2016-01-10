@@ -58,7 +58,7 @@ public class Target extends SubCommand {
                         closest = plot;
                     }
                 }
-                id = closest.id;
+                id = closest.getId();
             } else {
                 MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                 return false;

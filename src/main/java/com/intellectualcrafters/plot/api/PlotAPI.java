@@ -21,17 +21,6 @@
 
 package com.intellectualcrafters.plot.api;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.MainCommand;
@@ -53,6 +42,16 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.BukkitSetBlockManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * PlotSquared API
@@ -262,7 +261,7 @@ public class PlotAPI {
                 perms.add(c.s());
             }
         }
-        return perms.toArray(new String[0]);
+        return perms.toArray(new String[perms.size()]);
     }
     
     /**
@@ -376,7 +375,7 @@ public class PlotAPI {
      *
      * @param msg Message that should be sent to the console
      *
-     * @see MainUtil#sendConsoleMessage(String)
+     * @see MainUtil#sendConsoleMessage(C, String...)
      */
     public void sendConsoleMessage(final String msg) {
         PS.log(msg);;
@@ -553,9 +552,9 @@ public class PlotAPI {
      */
     public Location[] getLocations(final Plot p) {
         return new Location[] {
-        BukkitUtil.getLocation(MainUtil.getPlotBottomLocAbs(p.world, p.id).subtract(1, 0, 1)),
-        BukkitUtil.getLocation(MainUtil.getPlotTopLocAbs(p.world, p.id)),
-        BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.id)) };
+        BukkitUtil.getLocation(MainUtil.getPlotBottomLocAbs(p.world, p.getId()).subtract(1, 0, 1)),
+        BukkitUtil.getLocation(MainUtil.getPlotTopLocAbs(p.world, p.getId())),
+        BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.getId())) };
     }
     
     /**
@@ -569,7 +568,7 @@ public class PlotAPI {
      * @see Plot
      */
     public Location getHomeLocation(final Plot p) {
-        return BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.id));
+        return BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.getId()));
     }
     
     /**
@@ -583,7 +582,7 @@ public class PlotAPI {
      * @see Plot
      */
     public Location getBottomLocation(final Plot p) {
-        return BukkitUtil.getLocation(MainUtil.getPlotBottomLocAbs(p.world, p.id).subtract(1, 0, 1));
+        return BukkitUtil.getLocation(MainUtil.getPlotBottomLocAbs(p.world, p.getId()).subtract(1, 0, 1));
     }
     
     /**
@@ -597,7 +596,7 @@ public class PlotAPI {
      * @see Plot
      */
     public Location getTopLocation(final Plot p) {
-        return BukkitUtil.getLocation(MainUtil.getPlotTopLocAbs(p.world, p.id));
+        return BukkitUtil.getLocation(MainUtil.getPlotTopLocAbs(p.world, p.getId()));
     }
     
     /**
