@@ -23,7 +23,6 @@ package com.plotsquared.bukkit.util;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,13 +43,10 @@ import com.intellectualcrafters.jnbt.StringTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.object.schematic.StateWrapper;
 
@@ -200,7 +196,6 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                     case 47:
                                                     case 48:
                                                     case 49:
-                                                    case 50:
                                                     case 51:
                                                     case 55:
                                                     case 56:
@@ -214,8 +209,6 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                     case 11:
                                                     case 73:
                                                     case 74:
-                                                    case 75:
-                                                    case 76:
                                                     case 78:
                                                     case 79:
                                                     case 80:

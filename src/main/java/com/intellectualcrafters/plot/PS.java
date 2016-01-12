@@ -393,10 +393,8 @@ public class PS {
             map = new ConcurrentHashMap<PlotId, Plot>();
             map.put(plot.id, plot);
             plots.put(plot.world, map);
-            System.out.println("UPDATING PLOT  2!: " + plot);
             return true;
         } else {
-            System.out.println("UPDATING PLOT!: " + plot);
             return map.put(plot.id, plot) == null;
         }
     }

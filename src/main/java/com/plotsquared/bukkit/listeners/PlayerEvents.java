@@ -451,7 +451,12 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     MainUtil.sendMessage(pp, "&6An update for PlotSquared is available: &7/plot update");
                 }
                 if (Settings.TELEPORT_ON_LOGIN && plot != null) {
-                    MainUtil.teleportPlayer(pp, pp.getLocation(), plot);
+                    TaskManager.runTask(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainUtil.teleportPlayer(pp, pp.getLocation(), plot);
+                        }
+                    });
                     MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
                 }
             }
@@ -467,6 +472,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             final Player player = event.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(player);
             
+            // Cancel teleport
+            TaskManager.TELEPORT_QUEUE.remove(pp.getName());
+
             // Set last location
             Location loc = BukkitUtil.getLocation(to);
             pp.setMeta("location", loc);
@@ -524,6 +532,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             final Player player = event.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(player);
             
+            // Cancel teleport
+            TaskManager.TELEPORT_QUEUE.remove(pp.getName());
+
             // Set last location
             Location loc = BukkitUtil.getLocation(to);
             pp.setMeta("location", loc);

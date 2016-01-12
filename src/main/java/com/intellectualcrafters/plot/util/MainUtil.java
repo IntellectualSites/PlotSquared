@@ -1482,11 +1482,9 @@ public class MainUtil {
      * Create a plot and notify the world border and plot merger
      */
     public static Plot createPlot(final UUID uuid, final Plot plot) {
-        System.out.println("CLAIMING PLOT 1");
         if (uuid == null) {
             return null;
         }
-        System.out.println("CLAIMING PLOT 2");
         Plot existing = PS.get().getPlot(plot.world, plot.id);
         if (existing != null) {
             return existing;

@@ -640,7 +640,6 @@ public class SQLManager implements AbstractDB {
                 if (last == -1) {
                     last = subList.size();
                     statement = mod.getCreateMySQL(subList.size());
-                    System.out.print(statement);
                     preparedStmt = connection.prepareStatement(statement);
                 }
                 if ((subList.size() != last) || (((count % 5000) == 0) && (count > 0))) {
