@@ -372,6 +372,19 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         }
         Command<PlotPlayer> cmd;
         if (label != null) {
+            if (label.contains(":")) {
+                // Ref: c:v, this will push value to the last spot in the array
+                // ex. /p h:2 SomeUsername
+                // > /p h SomeUsername 2
+                String[] temp = label.split(":");
+                label = temp[0];
+
+                String[] tempArgs = new String[args.length + 1];
+                System.arraycopy(args, 0, tempArgs, 0, args.length);
+                tempArgs[tempArgs.length - 1] = temp[1];
+
+                args = tempArgs;
+            }
             cmd = getInstance().commands.get(label.toLowerCase());
         } else {
             cmd = null;
