@@ -28,11 +28,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -104,8 +100,21 @@ public class Claim extends SubCommand {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
+
+        boolean removeGrantedPlot = false;
+
         if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
-            return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+            if (plr.hasPersistentMeta("grantedPlots")) {
+                int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
+                if (grantedPlots < 1) {
+                    plr.removePersistentMeta("grantedPlots");
+                    return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                } else {
+                    removeGrantedPlot = true;
+                }
+            } else {
+                return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+            }
         }
         if (!MainUtil.canClaim(plr, plot)) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
@@ -120,6 +129,11 @@ public class Claim extends SubCommand {
                 EconHandler.manager.withdrawMoney(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
+        }
+        if (removeGrantedPlot) {
+            int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
+            plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grantedPlots - 1));
+            sendMessage(plr, C.REMOVED_GRANTED_PLOT, "" + (grantedPlots - 1));
         }
         if (!schematic.equals("")) {
             if (world.SCHEMATIC_CLAIM_SPECIFY) {

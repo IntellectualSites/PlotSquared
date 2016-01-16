@@ -129,6 +129,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Continue());
         createCommand(new BO3());
         createCommand(new Middle());
+        createCommand(new Grant());
         // set commands
         createCommand(new Owner());
         createCommand(new Desc());

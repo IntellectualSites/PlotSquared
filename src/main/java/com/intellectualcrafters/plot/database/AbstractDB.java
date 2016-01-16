@@ -20,22 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotClusterId;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
+
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
 
@@ -97,7 +88,13 @@ public interface AbstractDB {
     void deleteRatings(Plot plot);
 
     void delete(final PlotCluster cluster);
-    
+
+    void addPersistentMeta(UUID uuid, String key, byte[] meta, boolean delete);
+
+    void removePersistentMeta(UUID uuid, String key);
+
+    void getPersistentMeta(PlotPlayer player);
+
     /**
      * Create plot settings
      *

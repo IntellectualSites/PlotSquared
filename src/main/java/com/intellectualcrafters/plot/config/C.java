@@ -20,20 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
-import java.io.File;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandCaller;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * Captions class.
@@ -263,6 +258,7 @@ public enum C {
     CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s", "Economy"),
     ADDED_BALANCE("$1%s $2has been added to your balance", "Economy"),
     REMOVED_BALANCE("$1%s $2has been taken from your balance", "Economy"),
+    REMOVED_GRANTED_PLOT("$2You used a plot grant, you've got $1%s $2left", "Economy"),
     /*
      * Setup Stuff
      */
@@ -608,6 +604,9 @@ public enum C {
      * Direction
      */
     DIRECTION("$1Current direction: %dir%", "Help"),
+    GRANTED_PLOTS("$1You've got $2%s $1grants left", "Grants"),
+    GRANTED_PLOT("$1You granted 1 plot to $2%s", "Grants"),
+    GRANTED_PLOT_FAILED("$1Grant failed: $2%s", "Grants"),
     /*
      * Custom
      */

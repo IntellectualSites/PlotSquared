@@ -40,6 +40,7 @@ public class SpongePlayer extends PlotPlayer {
     
     public SpongePlayer(final Player player) {
         this.player = player;
+        super.populatePersistentMetaMap();
     }
     
     @Override

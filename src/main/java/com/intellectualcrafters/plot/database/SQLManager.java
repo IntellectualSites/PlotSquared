@@ -20,43 +20,23 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotClusterId;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+
+import java.lang.reflect.Field;
+import java.sql.*;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
 
@@ -997,9 +977,9 @@ public class SQLManager implements AbstractDB {
     public void createTables() throws SQLException {
         final String[] tables;
         if (Settings.ENABLE_CLUSTERS) {
-            tables = new String[] { "plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings", "cluster" };
+            tables = new String[] { "plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings", "cluster", "player_meta" };
         } else {
-            tables = new String[] { "plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings" };
+            tables = new String[] { "plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings", "player_meta" };
         }
         final DatabaseMetaData meta = connection.getMetaData();
         int create = 0;
@@ -1121,6 +1101,15 @@ public class SQLManager implements AbstractDB {
             + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
             + "  PRIMARY KEY (`cluster_id`)"
             + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `"
+            + prefix
+            + "player_meta` ("
+            + " `meta_id` INT(11) NOT NULL AUTO_INCREMENT,"
+            + " `uuid` VARCHAR(40) NOT NULL,"
+            + " `key` VARCHAR(32) NOT NULL,"
+            + " `value` blob NOT NULL,"
+            + " PRIMARY KEY (`meta_id`)"
+            + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
         } else {
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `"
             + prefix
@@ -1186,6 +1175,14 @@ public class SQLManager implements AbstractDB {
             + "  `merged` INT(11) DEFAULT NULL,"
             + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
             + "  PRIMARY KEY (`cluster_id`)"
+            + ")");
+            stmt.addBatch("CREATE TABLE IF NOT EXISTS `"
+            + prefix
+            + "player_meta` ("
+            + " `meta_id` INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " `uuid` VARCHAR(40) NOT NULL,"
+            + " `key` VARCHAR(32) NOT NULL,"
+            + " `value` blob NOT NULL,"
             + ")");
         }
         stmt.executeBatch();
@@ -2341,7 +2338,86 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
+    @Override
+    public void addPersistentMeta(final UUID uuid, final String key, final byte[] meta, final boolean delete) {
+        addGlobalTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (delete) {
+                        final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + prefix + "player_meta` WHERE `uuid` = ? AND `key` = ?");
+                        statement.setString(1, uuid.toString());
+                        statement.setString(2, key);
+                        statement.executeUpdate();
+                        statement.close();
+                    }
+                    final Blob blob = connection.createBlob();
+                    blob.setBytes(1, meta);
+                    final PreparedStatement statement = connection.prepareStatement("INSERT INTO `" + prefix + "player_meta`(`uuid`, `key`, `value`) VALUES(?, ? ,?)");
+                    statement.setString(1, uuid.toString());
+                    statement.setString(2, key);
+                    statement.setBlob(3, blob);
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void removePersistentMeta(final UUID uuid, final String key) {
+        addGlobalTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + prefix + "player_meta` WHERE `uuid` = ? AND `key` = ?");
+                    statement.setString(1, uuid.toString());
+                    statement.setString(2, key);
+                    statement.executeUpdate();
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void getPersistentMeta(final PlotPlayer player) {
+        addGlobalTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement statement = connection.prepareStatement("SELECT * FROM `" + prefix + "player_meta` WHERE `uuid` = ?");
+                    statement.setString(1, player.getUUID().toString());
+                    ResultSet resultSet = statement.executeQuery();
+
+                    final Map<String, byte[]> metaMap = new HashMap<>();
+
+                    while (resultSet.next()) {
+                        String key = resultSet.getString("key");
+                        Blob rawValue = resultSet.getBlob("value");
+                        byte[] bytes = rawValue.getBytes(1, (int) rawValue.length());
+                        metaMap.put(key, bytes);
+                    }
+
+                    resultSet.close();
+                    statement.close();
+
+                    Field field = PlotPlayer.class.getDeclaredField("metaMap");
+                    field.setAccessible(true);
+                    field.set(player, metaMap);
+                    field.setAccessible(false);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     @Override
     public HashMap<String, HashSet<PlotCluster>> getClusters() {
         final LinkedHashMap<String, HashSet<PlotCluster>> newClusters = new LinkedHashMap<>();

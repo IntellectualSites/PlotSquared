@@ -1,7 +1,10 @@
 package com.plotsquared.bukkit.object;
 
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.*;
+import com.plotsquared.bukkit.util.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -12,15 +15,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotGamemode;
-import com.intellectualcrafters.plot.util.PlotWeather;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.util.BukkitUtil;
+import java.util.UUID;
 
 public class BukkitPlayer extends PlotPlayer {
     
@@ -36,11 +31,13 @@ public class BukkitPlayer extends PlotPlayer {
      */
     public BukkitPlayer(final Player player) {
         this.player = player;
+        super.populatePersistentMetaMap();
     }
     
     public BukkitPlayer(final Player player, final boolean offline) {
         this.player = player;
         this.offline = offline;
+        super.populatePersistentMetaMap();
     }
     
     @Override

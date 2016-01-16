@@ -1,27 +1,25 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.util.CmdConfirm;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotGamemode;
-import com.intellectualcrafters.plot.util.PlotWeather;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandCaller;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The PlotPlayer class<br>
  *  - Can cast to: BukkitPlayer / SpongePlayer, which are the current implementations<br>
  */
 public abstract class PlotPlayer implements CommandCaller {
+
+    protected final Map<String, byte[]> metaMap = new HashMap<>();
     
     /**
      * The metadata map
@@ -336,5 +334,30 @@ public abstract class PlotPlayer implements CommandCaller {
         CmdConfirm.removePending(name);
         UUIDHandler.getPlayers().remove(name);
         PS.get().IMP.unregister(this);
+    }
+
+    public void populatePersistentMetaMap() {
+        DBFunc.dbManager.getPersistentMeta(this);
+    }
+
+    public byte[] getPersistentMeta(String key) {
+        return metaMap.get(key);
+    }
+
+    public void removePersistentMeta(String key) {
+        if (metaMap.containsKey(key)) {
+            metaMap.remove(key);
+        }
+        DBFunc.dbManager.removePersistentMeta(getUUID(), key);
+    }
+
+    public void setPersistentMeta(String key, byte[] value) {
+        boolean delete = hasPersistentMeta(key);
+        metaMap.put(key, value);
+        DBFunc.dbManager.addPersistentMeta(getUUID(), key, value, delete);
+    }
+
+    public boolean hasPersistentMeta(String key) {
+        return metaMap.containsKey(key);
     }
 }
