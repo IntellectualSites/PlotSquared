@@ -258,7 +258,7 @@ public enum C {
     CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s", "Economy"),
     ADDED_BALANCE("$1%s $2has been added to your balance", "Economy"),
     REMOVED_BALANCE("$1%s $2has been taken from your balance", "Economy"),
-    REMOVED_GRANTED_PLOT("$2You used a plot grant, you've got $1%s $2left", "Economy"),
+    REMOVED_GRANTED_PLOT("$2You used %s plot grant(s), you've got $1%s $2left", "Economy"),
     /*
      * Setup Stuff
      */

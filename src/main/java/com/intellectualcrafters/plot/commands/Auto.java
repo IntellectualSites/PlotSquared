@@ -29,6 +29,7 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.util.ByteArrayUtilities;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -122,15 +123,30 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
+
+        int removeGrants = 0;
+
         final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(world, plr);
         final int diff = currentPlots - MainUtil.getAllowedPlots(plr);
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
                 MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
             } else {
-                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                if (plr.hasPersistentMeta("grantedPlots")) {
+                    int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
+                    if (grantedPlots < size_x * size_z) {
+                        plr.removePersistentMeta("grantedPlots");
+                        return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                    } else {
+                        removeGrants = size_x * size_z;
+                    }
+                } else {
+                    MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                }
             }
-            return false;
+            if (removeGrants == 0) {
+                return false;
+            }
         }
         final PlotWorld pWorld = PS.get().getPlotWorld(world);
         if ((EconHandler.manager != null) && pWorld.USE_ECONOMY) {
@@ -144,6 +160,11 @@ public class Auto extends SubCommand {
                 EconHandler.manager.withdrawMoney(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
+        }
+        if (removeGrants > 0) {
+            int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
+            plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grantedPlots - removeGrants));
+            sendMessage(plr, C.REMOVED_GRANTED_PLOT, "" + removeGrants, "" + (grantedPlots - removeGrants));
         }
         if (!schematic.equals("")) {
             // if (pWorld.SCHEMATIC_CLAIM_SPECIFY) {

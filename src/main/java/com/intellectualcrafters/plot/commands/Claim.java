@@ -133,7 +133,7 @@ public class Claim extends SubCommand {
         if (removeGrantedPlot) {
             int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
             plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grantedPlots - 1));
-            sendMessage(plr, C.REMOVED_GRANTED_PLOT, "" + (grantedPlots - 1));
+            sendMessage(plr, C.REMOVED_GRANTED_PLOT, "1", "" + (grantedPlots - 1));
         }
         if (!schematic.equals("")) {
             if (world.SCHEMATIC_CLAIM_SPECIFY) {
