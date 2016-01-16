@@ -8,6 +8,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
+import java.util.UUID;
+
 @CommandDeclaration(
         command = "grant",
         category = CommandCategory.CLAIMING,
@@ -18,7 +20,12 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Grant extends SubCommand {
 
     void grantPlayer(PlotPlayer plr, String enteredName) {
-        PlotPlayer player = UUIDHandler.getPlayer(enteredName);
+        PlotPlayer player;
+        if (enteredName.length() > 16) {
+            player = PlotPlayer.wrap(UUID.fromString(enteredName));
+        } else {
+            player = UUIDHandler.getPlayer(enteredName);
+        }
         if (player == null) {
             sendMessage(plr, C.GRANTED_PLOT_FAILED, "Player not found");
         } else {
