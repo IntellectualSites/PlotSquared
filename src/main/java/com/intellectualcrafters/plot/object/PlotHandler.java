@@ -1,14 +1,15 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import org.bukkit.Bukkit;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class PlotHandler {
     public static HashSet<UUID> getOwners(final Plot plot) {
@@ -41,7 +42,11 @@ public class PlotHandler {
         if (!plot.isMerged()) {
             return false;
         }
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+        Set<Plot> plots;
+        synchronized (Bukkit.getServer()) {
+            plots = MainUtil.getConnectedPlots(plot);
+        }
+        for (Plot current : plots) {
             if (current.owner.equals(uuid)) {
                 return true;
             }
