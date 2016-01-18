@@ -42,11 +42,7 @@ public class PlotHandler {
         if (!plot.isMerged()) {
             return false;
         }
-        Set<Plot> plots;
-        synchronized (Bukkit.getServer()) {
-            plots = MainUtil.getConnectedPlots(plot);
-        }
-        for (Plot current : plots) {
+        for (Plot current : MainUtil.getConnectedPlots(plot);) {
             if (current.owner.equals(uuid)) {
                 return true;
             }
