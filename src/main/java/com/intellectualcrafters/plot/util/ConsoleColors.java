@@ -95,7 +95,6 @@ public class ConsoleColors {
             win = lin;
         }
         
-        @SuppressWarnings("unused")
         public String getWin() {
             return win;
         }

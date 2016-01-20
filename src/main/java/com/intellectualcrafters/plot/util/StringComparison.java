@@ -28,7 +28,6 @@ import java.util.Collections;
  * String comparison library
  *
  */
-@SuppressWarnings("unused")
 public class StringComparison<T> {
     
     private T bestMatch;

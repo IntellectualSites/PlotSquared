@@ -30,7 +30,6 @@ import com.intellectualcrafters.plot.util.StringComparison;
  * Main Configuration Utility
  *
  */
-@SuppressWarnings("unused")
 public class Configuration {
     
     public static final SettingValue<String> STRING = new SettingValue<String>("STRING") {

@@ -45,7 +45,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 
 
  */
-@SuppressWarnings("unused")
 public class FlagManager {
     
     private final static HashSet<String> reserved = new HashSet<>();

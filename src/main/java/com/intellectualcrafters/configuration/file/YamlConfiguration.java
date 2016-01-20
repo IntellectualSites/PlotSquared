@@ -30,6 +30,7 @@ public class YamlConfiguration extends FileConfiguration {
     private final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
     
     @Override
+    @SuppressWarnings("deprecation")
     public String saveToString() {
         yamlOptions.setIndent(options().indent());
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);

@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.util.Permissions;
 
-@SuppressWarnings("unused")
 public class CommandManager<T extends CommandCaller> {
     
     final public ConcurrentHashMap<String, Command<T>> commands;
