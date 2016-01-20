@@ -22,18 +22,18 @@ is to provide a lag-free and smooth experience.
 
 
 # Maven
-We're now on maven!
+We're now on maven! (Unofficial Maven Repo)
 ```xml
 <!-- Repository -->
 <repository>
-    <id>intellectualsites</id>
+    <id>xephi-repo</id>
     <url>http://ci.xephi.fr/plugin/repository/everything/</url>
 </repository>
 <!-- Dependency -->
 <dependency>
   <groupId>com.intellectualcrafters</groupId>
-  <artifactId>PlotSquared</artifactId>
-  <version>3.2.24</version>
+  <artifactId>plotsquared</artifactId>
+  <version>3.2.27-SNAPSHOT</version>
 </dependency>
 ```
 
