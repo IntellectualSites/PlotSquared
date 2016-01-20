@@ -91,7 +91,10 @@ public class StateWrapper {
         }
         return tags;
     }
-    
+
+    /*
+     * TODO: Move this into the spongee module!
+     *
     public Map<String, Tag> serializeItem(final org.spongepowered.api.item.inventory.ItemStack item) {
         final Map<String, Tag> data = new HashMap<String, Tag>();
         
@@ -99,6 +102,7 @@ public class StateWrapper {
         
         return data;
     }
+    */
     
     public Map<String, Tag> serializeItem(final ItemStack item) {
         final Map<String, Tag> data = new HashMap<String, Tag>();

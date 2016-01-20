@@ -1,8 +1,6 @@
 package com.plotsquared.bukkit.util;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -15,11 +13,8 @@ import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.material.Directional;
 import org.bukkit.material.MaterialData;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;

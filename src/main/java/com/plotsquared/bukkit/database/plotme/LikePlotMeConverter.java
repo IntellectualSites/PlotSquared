@@ -29,7 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -210,9 +209,13 @@ public class LikePlotMeConverter {
                         final String actualWorldName = getWorld(world);
                         final String plotMeWorldName = world.toLowerCase();
                         Integer pathwidth = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
+                        /*
+                         * TODO: dead code
+                         * 
                         if (pathwidth == null) {
                             pathwidth = 7;
                         }
+                        */
                         PS.get().config.set("worlds." + world + ".road.width", pathwidth);
 
                         Integer pathheight = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //

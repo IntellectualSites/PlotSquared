@@ -27,7 +27,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
  * SubCommand class
  *
  */
-@SuppressWarnings({ "deprecation", "unused" })
+@SuppressWarnings({ "deprecation" })
 public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer> {
     
     /**

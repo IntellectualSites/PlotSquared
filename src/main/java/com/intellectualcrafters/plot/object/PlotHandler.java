@@ -42,7 +42,7 @@ public class PlotHandler {
         if (!plot.isMerged()) {
             return false;
         }
-        for (Plot current : MainUtil.getConnectedPlots(plot);) {
+        for (Plot current : MainUtil.getConnectedPlots(plot)) {
             if (current.owner.equals(uuid)) {
                 return true;
             }
