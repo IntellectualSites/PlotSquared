@@ -195,6 +195,7 @@
             <url>http://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
 
+		<!--
         <repository>
             <id>sponge-maven-repo</id>
             <url>http://repo.spongepowered.org/maven</url>
@@ -205,6 +206,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        -->
 
         <repository>
             <id>sk89q</id>
@@ -242,7 +244,7 @@
             </exclusions>
         </dependency>
 
-        <!-- Sponge API -->
+        <!-- Sponge API
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>spongeapi</artifactId>
@@ -256,6 +258,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+         -->
 
         <dependency>
             <groupId>javax.websocket</groupId>
