@@ -5,7 +5,10 @@
 *.prefs
 
 ### Maven ###
-target/
+/target/lib
+/target/maven-archiver
+/target/classes
+/target/maven-status
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
