@@ -586,7 +586,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChat(final AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
