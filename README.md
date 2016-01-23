@@ -17,8 +17,8 @@ is to provide a lag-free and smooth experience.
 
 ### Developer Resources
 * *Outdated* [JavaDocs](http://empcraft.com/plotsquared/doc/)
-* [~~Build Server~~](http://ci.xephi.fr/job/PlotSquared/)
-* [~~Maven Repo~~](http://ci.xephi.fr/plugin/repository/everything/)
+* [Build Server](http://ci.xephi.fr/job/PlotSquared/)
+* [Maven Repo](http://ci.xephi.fr/plugin/repository/everything/)
 
 
 # Maven
