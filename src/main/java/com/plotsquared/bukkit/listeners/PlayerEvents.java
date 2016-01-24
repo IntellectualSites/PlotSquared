@@ -586,7 +586,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
     
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onChat(final AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
         final String world = player.getWorld().getName();
@@ -609,6 +609,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final PlotId id = plot.getId();
         final Set<Player> recipients = event.getRecipients();
         recipients.clear();
+        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", "%s").replaceAll("%msg%", "%s");
+        format = ChatColor.translateAlternateColorCodes('&', format);
+
         for (final Player p : Bukkit.getOnlinePlayers()) {
             final PlotPlayer pp = BukkitUtil.getPlayer(p);
             if (pp.getAttribute("chatspy")) {
@@ -617,11 +620,10 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 pp.sendMessage(spy);
             } else if (plot.equals(pp.getCurrentPlot())) {
                 recipients.add(p);
+                pp.sendMessage(String.format(format, sender, message)); // Bypass the chat event.
             }
         }
-        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", "%s").replaceAll("%msg%", "%s");
-        format = ChatColor.translateAlternateColorCodes('&', format);
-        event.setFormat(format);
+        event.setCancelled(true);
     }
     
     @EventHandler(priority = EventPriority.LOWEST)
