@@ -10,7 +10,7 @@
     
     <modules>
 		<module>sponge</module>
-		<module>api</module>
+		<module>core</module>
 		<module>bukkit</module>
     </modules>
 

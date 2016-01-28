@@ -9,12 +9,12 @@
 		<version>3.2.27</version>
     </parent>
     
-    <artifactId>api</artifactId>
+    <artifactId>core</artifactId>
     <packaging>jar</packaging>
 
     <build>
 		
-        <finalName>${project.name}-API-${project.version}</finalName>
+        <finalName>${project.name}-Core-${project.version}</finalName>
 
         <plugins>
 
