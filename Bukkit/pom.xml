@@ -3,63 +3,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.intellectualcrafters</groupId>
-    <artifactId>plotsquared</artifactId>
-    <version>3.2.27</version>
-    <packaging>pom</packaging>
+	<parent>
+		<groupId>com.intellectualcrafters</groupId>
+		<artifactId>plotsquared</artifactId>
+		<version>3.2.27</version>
+    </parent>
     
-    <modules>
-		<module>sponge</module>
-		<module>api</module>
-		<module>bukkit</module>
-    </modules>
-
-    <name>PlotSquared</name>
-    <description>Reinventing the plotworld!</description>
-    <url>http://www.spigotmc.org/resources/plotsquared.1177/</url>
-
-    <organization>
-        <name>IntellectualSites</name>
-        <url>https://github.com/IntellectualSites</url>
-    </organization>
-
-    <scm>
-        <connection>scm:git:https://github.com/IntellectualSites/PlotSquared.git</connection>
-        <developerConnection>scm:git:git@github.com:IntellectualSites/PlotSquared.git</developerConnection>
-        <url>https://github.com/IntellectualSites/PlotSquared</url>
-    </scm>
-
-    <!-- Not Official -->
-    <ciManagement>
-        <system>jenkins</system>
-        <url>http://ci.xephi.fr/job/PlotSquared/</url>
-    </ciManagement>
-
-    <licenses>
-        <license>
-            <name>The GNU General Public Licence version 3 (GPLv3)</name>
-            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
-        </license>
-    </licenses>
-
-    <prerequisites>
-        <maven>3.3.3</maven>
-    </prerequisites>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!-- Change Compiler Version (JDK) HERE! -->
-        <javaVersion>1.7</javaVersion>
-
-        <!-- Change Bukkit Version HERE! -->
-        <bukkitVersion>1.8.8-R0.1-SNAPSHOT</bukkitVersion>
-        <spongeVersion>3.1.0-SNAPSHOT</spongeVersion>
-    </properties>
+    <artifactId>bukkit</artifactId>
+    <packaging>jar</packaging>
 
     <build>
+		
         <finalName>${project.name}-Bukkit-${project.version}</finalName>
-        <sourceDirectory>src/main/java</sourceDirectory>
 
         <resources>
             <resource>
@@ -79,7 +34,7 @@
         </resources>
 
         <plugins>
-
+			
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -87,9 +42,6 @@
                 <configuration>
                     <source>1.7</source>
                     <target>${javaVersion}</target>
-                    <excludes>
-                        <exclude>**/com/plotsquared/sponge/**</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
 
@@ -140,72 +92,59 @@
 
     <repositories>
         <repository>
-            <id>sk89q</id>
-            <url>http://maven.sk89q.com/repo/</url>
+            <id>spigot-repo</id>
+            <url>http://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
         </repository>
     </repositories>
 
     <dependencies>
 
+        <!-- Bukkit API, http://www.spigotmc.org/ or http://bukkit.org/ -->
         <dependency>
-            <groupId>javax.websocket</groupId>
-            <artifactId>javax.websocket-api</artifactId>
-            <version>1.1</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldedit</artifactId>
-            <version>6.0.0-SNAPSHOT</version>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>${bukkitVersion}</version>
             <scope>provided</scope>
             <optional>true</optional>
             <exclusions>
                 <exclusion>
-                    <artifactId>truezip</artifactId>
-                    <groupId>de.schlichtherle</groupId>
+                    <artifactId>junit</artifactId>
+                    <groupId>junit</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>js</artifactId>
-                    <groupId>rhino</groupId>
+                    <artifactId>gson</artifactId>
+                    <groupId>com.google.code.gson</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>jsr305</artifactId>
-                    <groupId>com.google.code.findbugs</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
+                    <artifactId>persistence-api</artifactId>
+                    <groupId>javax.persistence</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6</version>
-            <scope>compile</scope>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.5</version>
+            <scope>provided</scope>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
-        <!-- <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        -->
-
-        <!-- GSON (required to provide 1.7.10 and below compatibility) -->
+        
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.5</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
+			<groupId>com.intellectualcrafters</groupId>
+			<artifactId>api</artifactId>
+			<version>${version}</version>
+		</dependency>
 
     </dependencies>
 </project>

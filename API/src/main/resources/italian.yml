@@ -1,0 +1,340 @@
+locale:
+  camera:
+    camera_started: $2You have entered camera mode for plot $1%s
+    camera_stopped: $2You are no longer in camera mode
+  commands:
+    command_syntax: '$1Usa: $2%s'
+    did_you_mean: '$2Intendevi dire: $1%s'
+    not_valid_subcommand: $2Non è un sottocomando valido
+    subcommand_set_options_header: '$2Valori possibili: '
+    no_commands: $2Nessun permesso per eseguire i sottocomandi.
+    name_little: $2IL nome %s è troppo corto, $1%s0$2<$1%s1
+  flag:
+    not_valid_flag: $2Quella non è una flag valida
+    flag_type: '$2Tipo: %s'
+    need_key: '$2Valori possibili: $1%values%'
+    flag_not_added: $2Quella flag non può essere aggiunta
+    flag_not_removed: $2Quella flag non può essere rimossa
+    flag_removed: $4Flag rimossa con successo
+    flag_added: $4Flag aggiunta con successo
+    flag_desc: '$2Desc: %s'
+    flag_key: '$2Key: %s'
+    flag_not_in_plot: $2I lotto non può avere quella flag
+    not_valid_value: $2Il valore delle flag deve essere alfanumerica
+  setup:
+    setup_world_taken: $2%s è già un mondo lotti registrato
+    setup_invalid_generator: '$2Generatore invalido. Opzioni possibili: %s'
+    setup_missing_generator: $2Devi specificare un generatore($1/plot setup <world> &l<generator>&r$2)&-$1Commandi addizionali:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel
+    setup_init: '$1Usa: $2/plot setup <value>'
+    setup_step: '$3[$1Passo %s0$3] $1%s1 $2- $1Stimato: $2%s2 $1Default: $2%s3'
+    setup_valid_arg: $2Valore $1%s0 $2settato a %s1
+    setup_finished: $3Se stai usando MULTIVERSE o MULTIWORLD ili mondo è stato creato. Altrimenti devi aggiungere il mondo manualmente modificando il file bukkit.yml
+    setup_invalid_arg: '$2%s0 non è un valido argomento per il passaggio %s1. Per cancellare
+      la installazione usa: $1/plot setup cancel'
+    setup_missing_world: $2Devi specificare un nome del mondo con ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel
+  list:
+    plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
+    plot_list_footer: $2>> $1%word% ha un totale di $2%num% %plot% $1claimati.
+    plot_list_header: $1Elenco dei lotti di %word%
+    plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
+    plot_list_header_paged: $2(Pagina $1%cur$2/$1%max$2) $1Lista dei lotti di %word%
+  schematics:
+    schematic_invalid: '$2Schematic invalido. Motivo: $2%s'
+    schematic_paste_success: $4Schematic incollato con successo
+    schematic_paste_failed: $2Incollaggio schematic fallito
+    schematic_valid: $2Quello è uno schema valido
+    schematic_missing_arg: '$2YDevi specificare un argomento. Valori possibili: $1test
+      <nome>$2 , $1save$2 , $1paste $2, $1exportall'
+  teleport:
+    teleported_to_road: $2Sei stato teletrasportato in strada
+    teleport_failed: $2Teletrasporto annulato per movimento o danni
+    teleport_in_seconds: $1Teletrasporto tra %s secondi. Non muoverti...
+    teleported_to_plot: $1Sei stato teletrasportato
+  debug:
+    debug_section: $2>> $1&l%val%
+    debug_line: '$2>> $1%var%$2:$1 %val% '
+    deubg_header: '$1Informazioni Debug '
+  invalid:
+    plot_id_form: '$2L''id del lotto deve essere scritto in questa forma: $1X;Y $2esempio
+      $1-5;7'
+    not_valid_data: $2Quello non è un id valido.
+    not_your_plot: $2Quel lotto non è tuo.
+    not_valid_plot_id: $2Non è un id lotto valido.
+    player_has_not_been_on: $2Quel giocatore non è mai stato nei mondi lotti
+    found_no_plots: $2Non ho trovato lotti con la tua ricerca
+    no_such_plot: $2Quel lotto non esiste
+    not_valid_number: $2Non è un numero valido
+    not_valid_block: $2Non è un blocco valido.
+  position:
+    invalid_position: $2Non è una posizione valida
+    home_argument: $2Usa /plot set home
+    position_set: $1Casa settata nella tua posizione corrente
+    missing_position: '$2Devi specificare una posizione. Valori possibili: $1none'
+  errors:
+    not_in_plot_world: $2Non sei in un mondo lotti
+    not_valid_world: $2Quello non è un mondo valido (case sensitive)
+    not_in_cluster: $2Devi essere dentro a un lotto cluster per eseguire quel commando
+    invalid_player: '$2Giocatore non trovato: $1%s.'
+    command_went_wrong: $2Ops qualcosa è andato storto...
+    no_plots: $2Non hai nessun lotto. Se prima lo avevi contatta lo staff.
+    not_using_plotme: $2Questo server usa il sistema lotti $2PlotSquared. Digita $1/plots $2oppure $1/p
+    not_in_plot: $2Non sei in un lotto.
+    no_free_plots: $2Non ci sono lotti liberi disponibili
+    not_valid_plot_world: $2Quello non è un mondo lotti (case sensitive)
+    wait_for_timer: $2Un setblock timer è segnato sul tuo lotto o su di te. Attendi la conclusione.
+    plotworld_incompatible: $2I due mondi devono essere compatibili
+  economy:
+    cannot_buy_own: $2Non puoi acquistare il tuo stesso lotto
+    not_for_sale: $2Questo lotto non è in vendita
+    removed_balance: $1%s $2sono stati detrati dal tuo bilancio
+    cannot_afford_merge: $2Non hai abbastanza soldi per unire i lotti. Costa $1%s
+    econ_disabled: $2Economia non abilitata
+    added_balance: $1%s $2sono stati aggiunti al tuo bilancio
+    plot_sold: $4Il tuo lotto; $1%s0$4, è stato venduto a $1%s1$4 per $1$%s2
+    cannot_afford_plot: $2Non hai denaro sufficiente per questo lotto. Ti costa $1%s
+  help:
+    help_item: $1%usage% [%alias%]&- $3- $2%desc%&-
+    help_header: $3====== $1Aiuto Plot² $3======
+    help_category: '$1Categoria: $2%category%$2,$1 Pagina: $2%current%$3/$2%max%$2,$1
+      Mostra: $2%dis%$3/$2%total%'
+    help_info: $3====== $1Scegli una categoria $3======
+    direction: '$1Direzione corrente: %dir%'
+    help_info_item: $1/plots help %category% $3- $2%category_desc%
+  titles:
+    title_left_plot_color: GOLD
+    title_entered_plot_sub_color: RED
+    prefix_greeting: '$1%id%$2> '
+    title_entered_plot_color: GOLD
+    prefix_farewell: '$1%id%$2> '
+    title_left_plot_sub: Proprietà di %s
+    title_entered_plot: Sei entrato nel lotto %world%;%x%;%z%
+    title_entered_plot_sub: Proprietà di %s
+    title_left_plot_sub_color: RED
+    title_left_plot: Hai lasciato il lotto %s
+  comment:
+    comment_added: $4Un commento è stato lasciato
+    comment_syntax: $2Usa /plots comment <everyone|trusted|helper|owner|admin> <comment>
+    comment_removed: $4Cancellato con successo %s.
+    invalid_inbox: '$2Non è un valido inbox.&-$1Valori accettati: %s'
+    comment_header: $2====== Comments ======
+    not_valid_inbox_index: $2Indice commento invalido %s
+    inbox_item: $2 - $4%s
+    no_perm_inbox: $2Non hai i permessi per quel inbox
+    no_perm_inbox_modify: $2Non hai i permessi per modificare quel inbox
+    no_plot_inbox: $2Devi stare in un lotto
+    inbox_empty: $2Nessun commento
+    inbox_notification: '%s messaggi non letti. Use /plot inbox'
+  alias:
+    alias_is_taken: $2Quel alias è già in uso
+    alias_set_to: $2Alias lotto cambiato in $1%alias%
+    missing_alias: $2Devi specificare un alias
+    alias_too_long: $2L'alias deve esssere deve essere lungo meno di 50 caratteri
+  block list:
+    block_list_separater: '$1,$2 '
+    not_valid_block_list_header: '$2Quel blocco non è valido. I blocchi validi sono: '
+    block_list_item: ' $1%mat%$2,'
+  cluster:
+    cluster_not_added: $2Quel giocatore non è stato aggiunto al lotto cluster
+    cluster_regenerated: $4Rigenerazione Cluster iniziata correttamente
+    cluster_added: $4Creato un cluster con successo.
+    cluster_added_helper: $4Aggiunto con successo un aiutante al cluster
+    cannot_kick_player: $2Non puoi cacciare quel giocatore
+    cluster_info: '$1Cluster corrente: $2%id%&-$1Nome: $2%name%&-$1Proprietario: $2%owner%&-$1Dimensione:
+      $2%size%&-$1Permessi: $2%rights%'
+    cluster_cannot_leave: $1Devi eliminare o transferire la proprietà prima di lasciarlo
+    cluster_deleted: $4Eliminato il cluster con successo.
+    cluster_list_element: $2 - $1%s&-
+    cluster_intersection: $2La area proposta copre di $1%s$2 clusters/s esistenti
+    invalid_cluster: '$1Nome cluster invalido: $2%s'
+    cluster_kicked_user: $4Cacciato con successo la persona
+    cluster_invited: '$1Sei stato invitato a seguire questo cluster: $2%s'
+    cluster_removed_helper: $4Rimosso con successo un aiutante dal cluster
+    cluster_teleporting: $4Ti sto teletrasportando...
+    cluster_available_args: '$1I seguenti commandi sono disponibili: $4list$2, $4create$2,
+      $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4helpers$2, $4info$2,
+      $4tp$2, $4sethome'
+    cluster_list_heading: $2Ci sono $1%s$2 clusters in questo mondo
+    cluster_removed: '$1Sei stato rimosso dal cluster: $2%s'
+    cluster_resized: $4Cluster ridimensionato con successo.
+    cluster_current_plotid: '$1Lotto corrente: $2%s'
+    cluster_added_user: $4Aggiunta la persona al cluster.
+  set block:
+    set_block_action_finished: $1L'ultima azione setblock ora è terminata.
+  clipboard:
+    paste_failed: '$2Incollaggio fallito. Motivo: $2%s'
+    pasted: $4La selezione dei lotti è stata incollata. Ed è stata pulita dal tuo clipboard.
+    clipboard_info: '$2Selezione corrente - ID Lotto: $1%id$2, Lunghezza: $1%width$2,
+      Blocchi totali: $1%total$2'
+    no_clipboard: $2Non hai una selezione nel tuo clipboard
+    clipboard_set: $2Il lotto corrente è ora copiato nel tuo clipboard, usa $1/plot paste$2 per incollarlo
+  info:
+    plot_info_helpers: $1Aiutanti:$2 %helpers%
+    plot_unowned: $2Il lotto corrente deve avere un proprietario per eseguire questo commando
+    plot_info_denied: $1Bloccati:$2 %denied%
+    info_syntax_console: $2/plot info <world> X;Y
+    plot_info_trusted: $1Ospiti:$2 %trusted%
+    plot_info_owner: $1Proprietario:$2 %owner%
+    plot_info_header: $3====== $1INFO $3======
+    plot_info_flags: $1Flags:$2 %flags%
+    plot_info_biome: $1Biomassa:$2 %biome%
+    plot_info_rating: $1Voto:$2 %rating%
+    plot_info_unclaimed: $2Il lotto $1%s$2 non è ancora claimato
+    plot_info_id: $1ID:$2 %id%
+    plot_info_size: $1Dimensione:$2 %size%
+    plot_user_list: ' $1%user%$2,'
+    plot_info_alias: $1Alias:$2 %alias%
+    plot_info_members: $1Memberi:$2 %members%
+    plot_info: '$1ID: $2%id%$1&-$1Alias: $2%alias%$1&-$1Proprietario: $2%owner%$1&-$1Biomassa:
+      $2%biome%$1&-$1Posso costruire: $2%build%$1&-$1Voto: $2%rating%$1/$210$1&-$1Addati:
+      $2%trusted%$1&-$1Membri: $2%members%$1&-$1Bannati: $2%denied%$1&-$1Flags: $2%flags%'
+    none: None
+  bar api:
+    bossbar_clearing: '$2Pulizia lotto: $1%id%'
+  unclaim:
+    unclaim_success: $4Hai liberato il lotto con successo.
+  need:
+    need_plot_world: $2Devi specificare un mondo lotti.
+    need_plot_id: $2Devi specificare un id lotto.
+    need_plot_number: $2Devi specificare un numero del lotto o alias
+    need_block: $2Devi specificare un blocco
+    need_user: $2Devi specificare un nome.
+  working:
+    plot_not_claimed: $2Lotto non claimato
+    generating_component: $1Iniziando a generare componenti dalla tua configurazione
+    clearing_done: $4Pulizia completata! tempo %sms.
+    claimed: $4Hai claimato il lotto con successo!
+    clearing_plot: $2Pulizia del lotto.
+    plot_is_claimed: $2Questo lotto è già claimato
+  deny:
+    denied_removed: $4YHai rimosso con successo il giocatori dalla lista bloccati di questo lotto
+    denied_need_argument: $2Devi specificare un argomento. $1/plot denied add <nome> $2oppure $1/plot helpers remove <nome>
+    was_not_denied: $2Quel giocatore non è bloccato nel tuo lotto
+    denied_added: $4Hai bloccato con successo quel giocatore dal tuo lotto.
+    you_got_denied: $4You are denied from the plot you were previously on, and got teleported to spawn
+  helper:
+    plot_removed_helper: $1Lotto %s il quale eri stato aggiunto è stato eliminato per inattività del proprietario
+    helper_added: $4Hai aggiunto con sucesso un aiutante nel tuo lotto
+    helper_need_argument: $2Devi specificare un argomento. $1/plot helpers add <nome> $2or $1/plot helpers remove <nome>
+    helper_removed: $4Hai rimosso con successo un aiutante dal tuo lotto
+    was_not_added: $2Quel giocatore non è aiutante in questo lotto
+  move:
+    move_success: $4Spostato il lotto con successo.
+    requires_unowned: $2La località specificata è già occupata.
+    copy_success: $4Successfully copied plot.
+  permission:
+    no_plot_perms: $2Devi essere il proprietario di questo lotto per eseguire questo commando
+    unlink_required: $2Un slaciamento del lotto è richiesto.
+    cant_claim_more_plots: $2Non puoi avere ulteriori lotti.
+    unlink_success: $2Lotti scollegati con successo.
+    no_permission: ''
+    you_be_denied: $2Sei stato bloccato da questo lotto
+    no_perm_merge: '$2Non sei il proprietario del lotto: $1%plot%'
+    no_schematic_permission: $2Non hai i permessi per usare quello schematic $1%s
+    no_merge_to_mega: $2I mega lotti non posso essere uniti. Unisci da un altro mega lotto.
+    cant_claim_more_plots_num: $2Non puoi claimare più di $1%s $2lotti alla volta
+    unlink_impossible: $2Hai scollegato un mega-lotto
+    merge_not_valid: $2Questa richiesta di fusione non è più valida.
+    merge_accepted: $2La richiesta di fusione è stata accettata!
+    success_merge: $2I loti sono stati uniti!
+    merge_requested: $2Mandata la richiesta di fusione
+    merge_request_confirm: Richiesta fusione lotti da %s
+    cant_transfer_more_plots: $2Non puoi avere più lotti uniti
+  signs:
+    owner_sign_line_4: '&3Claimato'
+    owner_sign_line_3: '&2%plr%'
+    owner_sign_line_2: '&1Proprietario:'
+    owner_sign_line_1: '&1ID: $1%id%'
+  trusted:
+    already_owner: $2Quel utente è già il proprietario di questo lotto
+    trusted_removed: $1Hai rimosso con successo un opsite dal lotto
+    already_added: $2Quella persona esiste già in quella categoria.
+    trusted_need_argument: $2Argomento mancante. $1/plot trusted add <nome> $2or $1/plot trusted remove <nome>
+    trusted_added: $4Hai aggiunto con successo un ospite al tuo lotto
+    t_was_not_added: $2Quel giocatore non è stato aggiunto come ospite a questo lotto
+    plot_removed_user: $1Il Lotto %s in cui eri stato aggiunto è stato eliminato per inattività del proprietario
+    was_not_added: $2Quel giocatore non è aiutante in questo lotto
+  rain:
+    setting_updated: $4Hai aggiornato le impostazioni con successo
+    need_on_off: '$2Devi specificare un valore. Valori possibili: $1on$2, $1off'
+  compass:
+    compass_target: $4Lotto targetato con successo co il compasso
+  ratings:
+    rating_applied: $4Hai votato con succeso il lotto $2%s
+    rating_not_your_own: $2Non puoi votare il proprio lotto
+    rating_not_valid: $2Devi specificare un numero da 1 a 10
+    rating_not_owned: $2Non puoi votare un lotto che non è stato claimato
+    rating_already_exists: $2Hai già votato quel lotto $2%s
+  confirm:
+    requires_confirm: '$2Sei sicuro di eseguire: $1%s$2?&-$2Non può essere annullato!
+      Se sei sicuro: $1/plot confirm'
+    failed_confirm: $2Non hai azioni da confermare!
+  trim:
+    not_valid_hybrid_plot_world: Un hybrid plot manager è richiesto per fare questa azione
+    trim_in_progress: Un world trim task è già in esecuzione!
+    trim_syntax: Usa /plot trim <all|x;y> <world>
+    trim_start: Iniziato il trim del mondo...
+  records:
+    record_play: $2%player $2started playing record $1%name
+    notify_enter: $2%player $2è entrato nel tuo lotto ($1%plot$2)
+    notify_leave: $2%player $2ha lasciato il tuo lotto ($1%plot$2)
+  core:
+    prefix: '$3[$1P²$3] '
+    enabled: $1PlotSquared è ora abilitato
+    example_message: $2Questo è un messaggio di esempio &k!!!
+  reload:
+    reload_failed: $2Ricarimento configurazione fallita
+    reloaded_configs: $1Traduzioni e configurazioni del mondo ricaricate
+  time:
+    time_format: $1%hours%, %min%, %sec%
+  worldedit masks:
+    require_selection_in_mask: $2%s delle tue selezioni non è dentro alla tua mask del lotto. Puoi fare modifiche solo all'interno del tuo lotto.
+    worldedit_unmasked: $1l tuo worldedit è ora libero.
+    worldedit_restricted: $1Il tuo worldedit è ora ristretto.
+    worldedit_volume: $2Non puoi selezionare un volume di %current%. Il massimo volume è di %max%.
+    worldedit_iterations: $2Non puoi interare %current% volte. Il massimo numero di volte permesso è %max%.
+    worldedit_unsafe: $2Accesso a quel commando è blocco
+    worldedit_bypass: $2&oPer sbloccare le restrinzioni usa $3/plot wea
+  purge:
+    purge_syntax: Usa /plot purge <x;z|giocatore|unowned|unknown|all> <world>
+    purge_success: $4Eliminati con successo %s lotti
+  '-':
+    custom_string: '-'
+  console:
+    is_console: $2Questo commando può essere eseguito solo da un giocatore.
+    not_console: $2Per ragioni di sicurezza, questo commando può essere eseguito solo dalla console.
+  swap:
+    swap_success: $4Lotti scambiati con successo
+    swap_syntax: $2/plots swap <plot id>
+    swap_overlap: $2La area proposta è una sopra al altra
+    swap_dimensions: $2La area proposta deve avere le stesse dimensioni
+    started_swap: $2Inizio processo. Sarai avvisato al termine
+  chat:
+    plot_chat_format: '$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
+    plot_chat_forced: $2Questo mondo è stato costretto a usare la chat dei lotti.
+    plot_chat_on: $4Chat lotti attivata.
+    plot_chat_off: $4Chat lotti disabilitata.
+  border:
+    border: $2Sei fuori dal limite di questa mappa
+  biome:
+    need_biome: $2Devi specificare una biomassa
+    biome_set_to: $2Settata la biomassa del lotto a $2
+  owner:
+    set_owner: $4Hai settato con successo il proprietario
+    now_owner: $4Sei ora il proprietario di %s
+  left:
+    left_plot: $2Hai lasciato il lotto
+  member:
+    already_owner: $2Quel utente è già il proprietario di questo lotto
+    removed_players: $2Rimossi %s giocatori dal lotto
+    member_added: $4Quel utente può ora buildare quando il proprietario è online
+    already_added: $2Quella persona esiste già in quella categoria.
+    member_was_not_added: $2Quela persona non era aggiunta a questo lotto
+    member_removed: $1Rimosso con successo una persona dal lotto
+    plot_max_members: $2Non puoi aggiungere altre persone in questo lotto
+  inventory:
+    inventory_usage: '&cUso: &6{usage}'
+    inventory_desc: '&cDescrizione: &6{desc}'
+    inventory_category: '&cCategoria: &6{category}'
+  toggle:
+    toggle_enabled: '$2Opzione abilitata: %s'
+    toggle_disabled: '$2Opzione disabilitata: %s'

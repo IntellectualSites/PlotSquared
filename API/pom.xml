@@ -3,80 +3,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.intellectualcrafters</groupId>
-    <artifactId>plotsquared</artifactId>
-    <version>3.2.27</version>
-    <packaging>pom</packaging>
+	<parent>
+		<groupId>com.intellectualcrafters</groupId>
+		<artifactId>plotsquared</artifactId>
+		<version>3.2.27</version>
+    </parent>
     
-    <modules>
-		<module>sponge</module>
-		<module>api</module>
-		<module>bukkit</module>
-    </modules>
-
-    <name>PlotSquared</name>
-    <description>Reinventing the plotworld!</description>
-    <url>http://www.spigotmc.org/resources/plotsquared.1177/</url>
-
-    <organization>
-        <name>IntellectualSites</name>
-        <url>https://github.com/IntellectualSites</url>
-    </organization>
-
-    <scm>
-        <connection>scm:git:https://github.com/IntellectualSites/PlotSquared.git</connection>
-        <developerConnection>scm:git:git@github.com:IntellectualSites/PlotSquared.git</developerConnection>
-        <url>https://github.com/IntellectualSites/PlotSquared</url>
-    </scm>
-
-    <!-- Not Official -->
-    <ciManagement>
-        <system>jenkins</system>
-        <url>http://ci.xephi.fr/job/PlotSquared/</url>
-    </ciManagement>
-
-    <licenses>
-        <license>
-            <name>The GNU General Public Licence version 3 (GPLv3)</name>
-            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
-        </license>
-    </licenses>
-
-    <prerequisites>
-        <maven>3.3.3</maven>
-    </prerequisites>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!-- Change Compiler Version (JDK) HERE! -->
-        <javaVersion>1.7</javaVersion>
-
-        <!-- Change Bukkit Version HERE! -->
-        <bukkitVersion>1.8.8-R0.1-SNAPSHOT</bukkitVersion>
-        <spongeVersion>3.1.0-SNAPSHOT</spongeVersion>
-    </properties>
+    <artifactId>api</artifactId>
+    <packaging>jar</packaging>
 
     <build>
-        <finalName>${project.name}-Bukkit-${project.version}</finalName>
-        <sourceDirectory>src/main/java</sourceDirectory>
-
-        <resources>
-            <resource>
-                <filtering>true</filtering>
-                <includes>
-                    <include>plugin.yml</include>
-                </includes>
-                <directory>${basedir}/src/main/resources/</directory>
-            </resource>
-            <resource>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>plugin.yml</exclude>
-                </excludes>
-                <directory>${basedir}/src/main/resources/</directory>
-            </resource>
-        </resources>
+		
+        <finalName>${project.name}-API-${project.version}</finalName>
 
         <plugins>
 
@@ -87,9 +25,6 @@
                 <configuration>
                     <source>1.7</source>
                     <target>${javaVersion}</target>
-                    <excludes>
-                        <exclude>**/com/plotsquared/sponge/**</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
 
@@ -208,4 +143,5 @@
         </dependency>
 
     </dependencies>
+    
 </project>
