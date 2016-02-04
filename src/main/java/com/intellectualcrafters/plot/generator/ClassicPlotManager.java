@@ -13,7 +13,7 @@ import com.intellectualcrafters.plot.util.SetBlockQueue;
 import java.util.ArrayList;
 
 /**
- * A plot manager with square plots which tesselate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot)
+ * A plot manager with square plots which tessellate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot)
  */
 public class ClassicPlotManager extends SquarePlotManager {
     @Override

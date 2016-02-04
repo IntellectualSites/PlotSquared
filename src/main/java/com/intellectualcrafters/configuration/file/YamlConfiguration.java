@@ -193,7 +193,7 @@ public class YamlConfiguration extends FileConfiguration {
                 }
                 Files.copy(file.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 PS.debug("&dCould not read: &7" + file);
-                PS.debug("&drenamed to: &7" + dest.getName());
+                PS.debug("&dRenamed to: &7" + dest.getName());
                 PS.debug("&c============ Full stacktrace ============");
                 ex.printStackTrace();
                 PS.debug("&c=========================================");

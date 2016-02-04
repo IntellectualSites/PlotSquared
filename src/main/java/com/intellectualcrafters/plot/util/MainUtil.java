@@ -2306,7 +2306,7 @@ public class MainUtil {
     /**
      * Send a message to the player
      *
-     * @param plr Player to recieve message
+     * @param plr Player to receive message
      * @param msg Message to send
      *
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
@@ -2345,7 +2345,7 @@ public class MainUtil {
     /**
      * Send a message to the player
      *
-     * @param plr Player to recieve message
+     * @param plr Player to receive message
      * @param c   Caption to send
      *
      * @return boolean success
@@ -2357,7 +2357,7 @@ public class MainUtil {
     /**
      * Send a message to the player
      *
-     * @param plr Player to recieve message
+     * @param plr Player to receive message
      * @param c   Caption to send
      *
      * @return boolean success

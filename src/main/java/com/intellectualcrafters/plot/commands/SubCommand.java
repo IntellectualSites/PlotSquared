@@ -22,10 +22,12 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * SubCommand class
- *
+ *
+
  */
 @SuppressWarnings({ "deprecation" })
 public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer> {
@@ -38,11 +40,11 @@ public abstract class SubCommand extends com.plotsquared.general.commands.Comman
     /**
      * Send a message
      *
-     * @param plr  Player who will receive the mssage
+     * @param plr  Player who will receive the message
      * @param c    Caption
      * @param args Arguments (%s's)
      *
-     * @see com.intellectualcrafters.plot.util.MainUtil#sendMessage(PlotPlayer, C, String...)
+     * @see MainUtil#sendMessage(PlotPlayer, C, String...)
      */
     public boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
         c.send(plr, args);

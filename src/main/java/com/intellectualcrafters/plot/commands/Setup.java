@@ -164,7 +164,7 @@ public class Setup extends SubCommand {
                     MainUtil.sendMessage(plr, "&6What terrain would you like in plots?"
                     + "\n&8 - &2NONE&8 - &7No terrain at all"
                     + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
-                    + "\n&8 - &7ROAD&8 - &7Terrain seperated by roads"
+                    + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
                     + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                 }
                 object.current++;
@@ -176,7 +176,7 @@ public class Setup extends SubCommand {
                     MainUtil.sendMessage(plr, "&cYou must choose the terrain!"
                     + "\n&8 - &2NONE&8 - &7No terrain at all"
                     + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
-                    + "\n&8 - &7ROAD&8 - &7Terrain seperated by roads"
+                    + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
                     + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                     return false;
                 }
@@ -243,7 +243,7 @@ public class Setup extends SubCommand {
                 try {
                     plr.teleport(BlockManager.manager.getSpawn(world));
                 } catch (final Exception e) {
-                    plr.sendMessage("&cAn error occured. See console for more information");
+                    plr.sendMessage("&cAn error occurred. See console for more information");
                     e.printStackTrace();
                 }
                 sendMessage(plr, C.SETUP_FINISHED, object.world);

@@ -44,7 +44,7 @@ public final class NBTUtils {
         } else if (clazz.equals(IntArrayTag.class)) {
             return "TAG_Int_Array";
         } else {
-            throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
+            throw new IllegalArgumentException("Invalid tag class (" + clazz.getName() + ").");
         }
     }
     
@@ -83,7 +83,7 @@ public final class NBTUtils {
         } else if (clazz.equals(IntArrayTag.class)) {
             return NBTConstants.TYPE_INT_ARRAY;
         } else {
-            throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
+            throw new IllegalArgumentException("Invalid tag class (" + clazz.getName() + ").");
         }
     }
     

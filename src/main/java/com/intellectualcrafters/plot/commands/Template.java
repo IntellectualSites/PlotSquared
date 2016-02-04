@@ -129,7 +129,7 @@ public class Template extends SubCommand {
                     return true;
                 }
             }
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|explort> <world> [template]");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world> [template]");
             return true;
         }
         final String world = args[1];

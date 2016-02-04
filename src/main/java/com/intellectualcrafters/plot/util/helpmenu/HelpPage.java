@@ -10,21 +10,21 @@ import com.intellectualcrafters.plot.util.MainUtil;
 
 public class HelpPage {
     
-    private final List<HelpObject> _helpObjecs;
+    private final List<HelpObject> helpObjects;
     private final String _header;
     
     public HelpPage(final CommandCategory category, final int currentPage, final int maxPages) {
-        _helpObjecs = new ArrayList<>();
+        helpObjects = new ArrayList<>();
         _header = C.HELP_PAGE_HEADER.s().replace("%category%", category == null ? "ALL" : category.toString()).replace("%current%", (currentPage + 1) + "").replace("%max%", (maxPages + 1) + "");
     }
     
     public void render(final PlotPlayer player) {
-        if (_helpObjecs.size() < 1) {
+        if (helpObjects.size() < 1) {
             MainUtil.sendMessage(player, C.NOT_VALID_NUMBER, "(0)");
         } else {
             MainUtil.sendMessage(player, C.HELP_HEADER.s(), false);
             MainUtil.sendMessage(player, _header, false);
-            for (final HelpObject object : _helpObjecs) {
+            for (final HelpObject object : helpObjects) {
                 MainUtil.sendMessage(player, object.toString(), false);
             }
             MainUtil.sendMessage(player, C.HELP_FOOTER.s(), false);
@@ -32,6 +32,6 @@ public class HelpPage {
     }
     
     public void addHelpItem(final HelpObject object) {
-        _helpObjecs.add(object);
+        helpObjects.add(object);
     }
 }

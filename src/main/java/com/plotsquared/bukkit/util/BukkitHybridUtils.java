@@ -28,13 +28,13 @@ public class BukkitHybridUtils extends HybridUtils {
     
     @Override
     public void analyzeRegion(final String world, final RegionWrapper region, final RunnableVal<PlotAnalysis> whenDone) {
-        // int diff, int variety, int verticies, int rotation, int height_sd
+        // int diff, int variety, int vertices, int rotation, int height_sd
         /*
          * diff: compare to base by looping through all blocks
-         * variety: add to hashset for each plotblock
+         * variety: add to HashSet for each PlotBlock
          * height_sd: loop over all blocks and get top block
          *
-         * verticies: store air map and compare with neighbours
+         * vertices: store air map and compare with neighbours
          * for each block check the adjacent
          *  - Store all blocks then go through in second loop
          *  - recheck each block
@@ -150,7 +150,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                                     if (now == 0) {
                                                         air[i]++;
                                                     } else {
-                                                        // check verticies
+                                                        // check vertices
                                                         // modifications_adjacent
                                                         if ((x > 0) && (z > 0) && (y > 0) && (x < (width - 1)) && (z < (length - 1)) && (y < 255)) {
                                                             if (newblocks[y - 1][x][z] == 0) {

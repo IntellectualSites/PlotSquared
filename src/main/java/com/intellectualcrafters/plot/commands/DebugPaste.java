@@ -19,7 +19,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 command = "debugpaste",
 aliases = { "dp" },
 usage = "/plot debugpaste",
-description = "Upload settings.yml & latest.log to hastebin",
+description = "Upload settings.yml & latest.log to HasteBin",
 permission = "plots.debugpaste",
 category = CommandCategory.DEBUG)
 public class DebugPaste extends SubCommand {
