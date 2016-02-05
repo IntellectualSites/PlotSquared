@@ -104,7 +104,7 @@
 
 		<dependency>
 			<groupId>com.intellectualcrafters</groupId>
-			<artifactId>api</artifactId>
+			<artifactId>core</artifactId>
 			<version>${version}</version>
 		</dependency>
 
