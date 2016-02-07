@@ -486,7 +486,7 @@ public class DBFunc {
     }
     
     /**
-     * Replace all occurances of a uuid in the database with another one
+     * Replace all occurrences of a uuid in the database with another one
      * @param old
      * @param now
      */

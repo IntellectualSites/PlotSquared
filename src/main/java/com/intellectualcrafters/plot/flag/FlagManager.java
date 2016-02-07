@@ -372,7 +372,7 @@ public class FlagManager {
     }
     
     /**
-     * Get a list of registerd AbstragFlag objects based on player permissions
+     * Get a list of registered AbstractFlag objects based on player permissions
      *
      * @param player with permissions
      *

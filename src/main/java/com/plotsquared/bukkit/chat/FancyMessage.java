@@ -238,7 +238,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
             return this;
         } catch (final InvocationTargetException e) {
-            Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+            Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
             return this;
         }
     }
@@ -265,7 +265,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
             return this;
         } catch (final InvocationTargetException e) {
-            Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+            Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
             return this;
         }
     }
@@ -296,7 +296,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
             return this;
         } catch (final InvocationTargetException e) {
-            Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+            Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
             return this;
         }
     }
@@ -327,7 +327,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
             return this;
         } catch (final InvocationTargetException e) {
-            Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+            Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
             return this;
         }
     }
@@ -618,7 +618,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         } catch (final InstantiationException e) {
             Bukkit.getLogger().log(Level.WARNING, "Underlying class is abstract.", e);
         } catch (final InvocationTargetException e) {
-            Bukkit.getLogger().log(Level.WARNING, "A error has occured durring invoking of method.", e);
+            Bukkit.getLogger().log(Level.WARNING, "A error has occurred during invoking of method.", e);
         } catch (final NoSuchMethodException e) {
             Bukkit.getLogger().log(Level.WARNING, "Could not find method.", e);
         } catch (final ClassNotFoundException e) {

@@ -548,7 +548,7 @@ public class EntityWrapper {
                 restoreLiving((LivingEntity) entity);
                 return entity;
             }
-            // END AMEABLE //
+            // END AGEABLE //
             case SHEEP: {
                 final Sheep sheep = (Sheep) entity;
                 if (dataByte == 1) {
