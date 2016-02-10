@@ -1,6 +1,5 @@
-package com.intellectualcrafters.plot.object.entity;
+package com.plotsquared.bukkit.object.entity;
 
-import com.plotsquared.bukkit.object.entity.EntityWrapper;
 
 public class EntityBaseStats {
     public EntityWrapper passenger;

@@ -17,7 +17,7 @@ import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
-import com.plotsquared.bukkit.listeners.PlayerBlockEventType;
+import com.plotsquared.listener.PlayerBlockEventType;
 
 public abstract class EventUtil {
     

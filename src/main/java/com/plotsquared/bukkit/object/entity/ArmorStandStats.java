@@ -1,4 +1,4 @@
-package com.intellectualcrafters.plot.object.entity;
+package com.plotsquared.bukkit.object.entity;
 
 public class ArmorStandStats {
     public float[] head = new float[3];

@@ -71,7 +71,6 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
-import com.plotsquared.bukkit.util.BukkitHybridUtils;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -238,7 +237,7 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     if (HybridUtils.regions != null) {
-                        result = ((BukkitHybridUtils) (HybridUtils.manager)).scheduleRoadUpdate(area, HybridUtils.regions, 0);
+                        result = ((HybridUtils.manager)).scheduleRoadUpdate(area, HybridUtils.regions, 0);
                     } else {
                         result = HybridUtils.manager.scheduleRoadUpdate(area, 0);
                     }

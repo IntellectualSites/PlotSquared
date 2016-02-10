@@ -48,7 +48,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.object.schematic.StateWrapper;
+import com.plotsquared.bukkit.object.schematic.StateWrapper;
 
 /**
  * Schematic Handler
@@ -326,5 +326,10 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 });
             }
         });
+    }
+    
+    @Override
+    public void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schem) {
+        new StateWrapper(ct).restoreTag(x, y, z, schem);
     }
 }

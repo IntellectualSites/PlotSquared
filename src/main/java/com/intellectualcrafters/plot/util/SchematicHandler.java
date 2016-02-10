@@ -51,7 +51,6 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.plotsquared.object.schematic.StateWrapper;
 
 public abstract class SchematicHandler {
     public static SchematicHandler manager;
@@ -439,7 +438,7 @@ public abstract class SchematicHandler {
                     final short x = IntTag.class.cast(state.get("x")).getValue().shortValue();
                     final short y = IntTag.class.cast(state.get("y")).getValue().shortValue();
                     final short z = IntTag.class.cast(state.get("z")).getValue().shortValue();
-                    new StateWrapper(ct).restoreTag(x, y, z, schem);
+                    manager.restoreTag(ct, x, y, z, schem);
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
@@ -450,6 +449,8 @@ public abstract class SchematicHandler {
         return schem;
     }
     
+    public abstract void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schem);
+
     /**
      * Get a schematic
      *

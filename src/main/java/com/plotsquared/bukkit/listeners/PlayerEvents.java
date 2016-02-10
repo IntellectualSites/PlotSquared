@@ -116,6 +116,7 @@ import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.listener.PlayerBlockEventType;
 
 /**
  * Player Events involving plots

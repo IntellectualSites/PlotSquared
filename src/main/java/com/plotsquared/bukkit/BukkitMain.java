@@ -26,6 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
@@ -56,6 +57,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.plotsquared.bukkit.commands.DebugUUID;
 import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
 import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
@@ -174,6 +176,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         plotCommand.setExecutor(bcmd);
         plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
         plotCommand.setTabCompleter(bcmd);
+        MainCommand.getInstance().addCommand(new DebugUUID());
     }
     
     @Override

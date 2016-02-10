@@ -1,4 +1,4 @@
-package com.plotsquared.bukkit.listeners;
+package com.plotsquared.listener;
 
 public enum PlayerBlockEventType {
     // Non interactive

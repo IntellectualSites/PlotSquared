@@ -31,7 +31,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -126,11 +125,7 @@ public class Remove extends SubCommand {
                 break;
         }
         if (count == 0) {
-            if (UUIDHandler.implementation instanceof SQLUUIDHandler) {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER_WAIT, args[0]);
-            } else {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
-            }
+            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         } else {
             MainUtil.sendMessage(plr, C.REMOVED_PLAYERS, count + "");

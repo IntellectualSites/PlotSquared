@@ -32,10 +32,6 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.entity.AgeableStats;
-import com.intellectualcrafters.plot.object.entity.ArmorStandStats;
-import com.intellectualcrafters.plot.object.entity.EntityBaseStats;
-import com.intellectualcrafters.plot.object.entity.HorseStats;
 
 public class EntityWrapper {
     public short id;

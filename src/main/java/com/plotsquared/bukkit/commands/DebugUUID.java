@@ -18,7 +18,7 @@
 //                                                                                                 /
 // You can contact us via: support@intellectualsites.com                                           /
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-package com.intellectualcrafters.plot.commands;
+package com.plotsquared.bukkit.commands;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -33,6 +33,9 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.CommandCategory;
+import com.intellectualcrafters.plot.commands.RequiredType;
+import com.intellectualcrafters.plot.commands.SubCommand;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.AbstractDB;
 import com.intellectualcrafters.plot.database.DBFunc;

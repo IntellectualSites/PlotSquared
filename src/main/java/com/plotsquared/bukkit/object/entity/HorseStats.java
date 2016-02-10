@@ -1,4 +1,4 @@
-package com.intellectualcrafters.plot.object.entity;
+package com.plotsquared.bukkit.object.entity;
 
 public class HorseStats {
     public double jump;

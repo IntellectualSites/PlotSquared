@@ -31,7 +31,6 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -71,11 +70,7 @@ public class Trust extends SubCommand {
             uuid = UUIDHandler.getUUID(args[0], null);
         }
         if (uuid == null) {
-            if (UUIDHandler.implementation instanceof SQLUUIDHandler) {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER_WAIT, args[0]);
-            } else {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
-            }
+            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
         if (plot.isOwner(uuid)) {

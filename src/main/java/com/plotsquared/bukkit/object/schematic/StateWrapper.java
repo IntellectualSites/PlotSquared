@@ -1,4 +1,4 @@
-package com.plotsquared.object.schematic;
+package com.plotsquared.bukkit.object.schematic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
