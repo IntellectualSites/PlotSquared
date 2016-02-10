@@ -12,34 +12,35 @@ import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 public class BukkitPlayer extends PlotPlayer {
-    
+
     public final Player player;
+    public boolean offline;
     private UUID uuid;
     private String name;
     private long last = 0;
-    public boolean offline;
-    
+
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
+     *
      * @param player
      */
     public BukkitPlayer(final Player player) {
         this.player = player;
         super.populatePersistentMetaMap();
     }
-    
+
     public BukkitPlayer(final Player player, final boolean offline) {
         this.player = player;
         this.offline = offline;
         super.populatePersistentMetaMap();
     }
-    
+
     @Override
     public long getPreviousLogin() {
         if (last == 0) {
@@ -47,13 +48,13 @@ public class BukkitPlayer extends PlotPlayer {
         }
         return last;
     }
-    
+
     @Override
     public Location getLocation() {
         final Location loc = super.getLocation();
         return loc == null ? BukkitUtil.getLocation(player) : loc;
     }
-    
+
     @Override
     public UUID getUUID() {
         if (uuid == null) {
@@ -61,7 +62,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
         return uuid;
     }
-    
+
     @Override
     public boolean hasPermission(final String node) {
         if (offline && (EconHandler.manager != null)) {
@@ -69,7 +70,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
         return player.hasPermission(node);
     }
-    
+
     public Permission getPermission(final String node) {
         final PluginManager manager = Bukkit.getPluginManager();
         Permission perm = manager.getPermission(node);
@@ -92,17 +93,17 @@ public class BukkitPlayer extends PlotPlayer {
         perm.recalculatePermissibles();
         return perm;
     }
-    
+
     @Override
     public void sendMessage(final String message) {
         player.sendMessage(message);
     }
-    
+
     @Override
     public void sendMessage(final C c, final String... args) {
         MainUtil.sendMessage(this, c, args);
     }
-    
+
     @Override
     public void teleport(final Location loc) {
         if ((Math.abs(loc.getX()) >= 30000000) || (Math.abs(loc.getZ()) >= 30000000)) {
@@ -110,7 +111,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
         player.teleport(new org.bukkit.Location(BukkitUtil.getWorld(loc.getWorld()), loc.getX() + 0.5, loc.getY(), loc.getZ() + 0.5, loc.getYaw(), loc.getPitch()), TeleportCause.COMMAND);
     }
-    
+
     @Override
     public String getName() {
         if (name == null) {
@@ -118,76 +119,50 @@ public class BukkitPlayer extends PlotPlayer {
         }
         return name;
     }
-    
+
     @Override
     public boolean isOnline() {
         return !offline && player.isOnline();
     }
-    
+
     @Override
     public void setCompassTarget(final Location loc) {
         player.setCompassTarget(new org.bukkit.Location(BukkitUtil.getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ()));
-        
+
     }
-    
+
     @Override
     public Location getLocationFull() {
         return BukkitUtil.getLocationFull(player);
     }
-    
+
     @Override
     public void setAttribute(String key) {
-        key = "plotsquared_user_attributes." + key;
-        if ((EconHandler.manager == null) || player.hasPermission("plotsquared_user_attributes.*")) {
-            setMeta(key, true);
-            return;
-        }
-        EconHandler.manager.setPermission(getName(), key, true);
+        setPersistentMeta(key, new byte[1]);
     }
-    
+
     @Override
     public boolean getAttribute(String key) {
-        key = "plotsquared_user_attributes." + key;
-        if ((EconHandler.manager == null) || player.hasPermission("plotsquared_user_attributes.*")) {
-            final Object v = getMeta(key);
-            return v == null ? false : (Boolean) v;
-        }
-        Permission perm = Bukkit.getServer().getPluginManager().getPermission(key);
-        if (perm == null) {
-            try {
-                perm = new Permission(key, PermissionDefault.FALSE);
-                Bukkit.getServer().getPluginManager().addPermission(perm);
-                Bukkit.getServer().getPluginManager().recalculatePermissionDefaults(perm);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return player.hasPermission(key);
+        return getPersistentMeta(key) != null;
     }
-    
+
     @Override
     public void removeAttribute(String key) {
-        key = "plotsquared_user_attributes." + key;
-        if ((EconHandler.manager == null) || player.hasPermission("plotsquared_user_attributes.*")) {
-            deleteMeta(key);
-            return;
-        }
-        EconHandler.manager.setPermission(getName(), key, false);
+        removePersistentMeta(key);
     }
-    
+
     @Override
     public void loadData() {
         if (!player.isOnline()) {
             player.loadData();
         }
     }
-    
+
     @Override
     public void saveData() {
         player.saveData();
     }
-    
+
     @Override
     public void setWeather(final PlotWeather weather) {
         switch (weather) {
@@ -203,7 +178,7 @@ public class BukkitPlayer extends PlotPlayer {
                 return;
         }
     }
-    
+
     @Override
     public PlotGamemode getGamemode() {
         switch (player.getGameMode()) {
@@ -218,7 +193,7 @@ public class BukkitPlayer extends PlotPlayer {
         }
         return null;
     }
-    
+
     @Override
     public void setGamemode(final PlotGamemode gamemode) {
         switch (gamemode) {
@@ -236,7 +211,7 @@ public class BukkitPlayer extends PlotPlayer {
                 return;
         }
     }
-    
+
     @Override
     public void setTime(final long time) {
         if (time != Long.MAX_VALUE) {
@@ -245,22 +220,22 @@ public class BukkitPlayer extends PlotPlayer {
             player.resetPlayerTime();
         }
     }
-    
+
     @Override
     public void setFlight(final boolean fly) {
         player.setAllowFlight(fly);
     }
-    
+
     @Override
     public void playMusic(final Location loc, final int id) {
         player.playEffect(BukkitUtil.getLocation(loc), Effect.RECORD_PLAY, id);
     }
-    
+
     @Override
     public void kick(final String message) {
         player.kickPlayer(message);
     }
-    
+
     @Override
     public boolean isBanned() {
         return player.isBanned();
