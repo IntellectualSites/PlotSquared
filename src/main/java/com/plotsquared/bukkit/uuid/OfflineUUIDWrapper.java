@@ -104,4 +104,9 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         }
         return toReturn;
     }
+    
+    @Override
+    public OfflinePlotPlayer getOfflinePlayer(String name) {
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(name));
+    }
 }

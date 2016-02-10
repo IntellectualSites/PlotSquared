@@ -83,7 +83,7 @@ public class SendChunk {
             Location loc = null;
             String world;
             if (plot != null) {
-                world = plot.world;
+                world = plot.area.worldname;
             } else {
                 loc = pp.getLocation();
                 world = loc.getWorld();

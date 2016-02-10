@@ -22,7 +22,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.WEManager;
@@ -143,7 +143,7 @@ public class WEListener implements Listener {
         if (!Settings.QUEUE_COMMANDS || !Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
             return false;
         }
-        final boolean free = SetBlockQueue.addNotify(null);
+        final boolean free = SetQueue.IMP.addTask(null);
         if (free) {
             if (delayed) {
                 MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.WORLDEDIT_RUN, command);
@@ -155,7 +155,7 @@ public class WEListener implements Listener {
             if (!delayed) {
                 MainUtil.sendMessage(BukkitUtil.getPlayer(player), C.WORLDEDIT_DELAYED);
             }
-            SetBlockQueue.addNotify(new Runnable() {
+            SetQueue.IMP.addTask(new Runnable() {
                 @Override
                 public void run() {
                     delay(player, command, true);
@@ -174,7 +174,7 @@ public class WEListener implements Listener {
         }
         final Player p = e.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(p);
-        if (!PS.get().isPlotWorld(p.getWorld().getName())) {
+        if (!PS.get().hasPlotArea(p.getWorld().getName())) {
             return true;
         }
         final String message = e.getMessage();
@@ -304,7 +304,7 @@ public class WEListener implements Listener {
             }
         }
         if (restricted.contains(reduced)) {
-            final Plot plot = MainUtil.getPlotAbs(pp.getLocation());
+            final Plot plot = pp.getCurrentPlot();
             if ((plot != null) && plot.isAdded(pp.getUUID())) {
                 if (delay(p, message, false)) {
                     e.setCancelled(true);

@@ -30,9 +30,10 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -51,13 +52,13 @@ public class DebugFixFlags extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final String world = args[0];
-        if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(world)) {
+        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
         MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
-        for (final Plot plot : PS.get().getPlotsInWorld(world)) {
+        for (final Plot plot : area.getPlots()) {
             final HashMap<String, Flag> flags = plot.getFlags();
             final Iterator<Entry<String, Flag>> i = flags.entrySet().iterator();
             boolean changed = false;

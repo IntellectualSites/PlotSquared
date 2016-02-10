@@ -27,10 +27,10 @@ public class Download extends SubCommand {
             return false;
         }
         final String world = plr.getLocation().getWorld();
-        if (!PS.get().isPlotWorld(world)) {
+        if (!PS.get().hasPlotArea(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = MainUtil.getPlotAbs(plr.getLocation());
+        final Plot plot = plr.getCurrentPlot();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -48,9 +48,9 @@ public class Download extends SubCommand {
         }
         plot.addRunning();
         MainUtil.sendMessage(plr, C.GENERATING_LINK);
-        SchematicHandler.manager.getCompoundTag(plot.world, plot.getId(), new RunnableVal<CompoundTag>() {
+        SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
             @Override
-            public void run() {
+            public void run(final CompoundTag value) {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {

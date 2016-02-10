@@ -1,7 +1,7 @@
 package com.intellectualcrafters.plot.object;
 
 public abstract class PlotFilter {
-    public boolean allowsWorld(final String world) {
+    public boolean allowsArea(final PlotArea area) {
         return true;
     }
     

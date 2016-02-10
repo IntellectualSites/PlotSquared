@@ -11,6 +11,7 @@ import org.bukkit.event.Event;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -61,13 +62,13 @@ public class BukkitEventUtil extends EventUtil {
     }
     
     @Override
-    public boolean callClear(final String world, final PlotId id) {
-        return callEvent(new PlotClearEvent(world, id));
+    public boolean callClear(final Plot plot) {
+        return callEvent(new PlotClearEvent(plot));
     }
     
     @Override
-    public void callDelete(final String world, final PlotId id) {
-        callEvent(new PlotDeleteEvent(world, id));
+    public void callDelete(final Plot plot) {
+        callEvent(new PlotDeleteEvent(plot));
     }
     
     @Override
@@ -81,13 +82,13 @@ public class BukkitEventUtil extends EventUtil {
     }
     
     @Override
-    public boolean callMerge(final String world, final Plot plot, final ArrayList<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(world), plot, plots));
+    public boolean callMerge(final Plot plot, final ArrayList<PlotId> plots) {
+        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.area.worldname), plot, plots));
     }
     
     @Override
-    public boolean callUnlink(final String world, final ArrayList<PlotId> plots) {
-        return callEvent(new PlotUnlinkEvent(BukkitUtil.getWorld(world), plots));
+    public boolean callUnlink(final PlotArea area, final ArrayList<PlotId> plots) {
+        return callEvent(new PlotUnlinkEvent(BukkitUtil.getWorld(area.worldname), area, plots));
     }
     
     @Override

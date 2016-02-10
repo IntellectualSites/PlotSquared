@@ -14,5 +14,7 @@ public abstract class UUIDWrapper {
     
     public abstract OfflinePlotPlayer getOfflinePlayer(final UUID uuid);
     
+    public abstract OfflinePlotPlayer getOfflinePlayer(final String name);
+
     public abstract OfflinePlotPlayer[] getOfflinePlayers();
 }

@@ -10,8 +10,8 @@ import org.spongepowered.api.world.gen.BiomeGenerator;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.plotsquared.sponge.SpongeMain;
 
 public class SpongeBasicGen extends SpongePlotGenerator {
@@ -45,7 +45,7 @@ public class SpongeBasicGen extends SpongePlotGenerator {
     BlockState[] filling;
     
     @Override
-    public void init(final PlotWorld plotworld) {
+    public void init(final PlotArea plotworld) {
         if (plotworld != null) {
             this.plotworld = (HybridPlotWorld) plotworld;
         }
@@ -83,9 +83,9 @@ public class SpongeBasicGen extends SpongePlotGenerator {
     }
     
     @Override
-    public PlotWorld getNewPlotWorld(final String world) {
+    public PlotArea getNewPlotWorld(final String world) {
         if (plotworld == null) {
-            plotworld = (HybridPlotWorld) PS.get().getPlotWorld(world);
+            plotworld = (HybridPlotWorld) PS.get().getPlotArea(world);
             if (plotworld == null) {
                 plotworld = new HybridPlotWorld(world);
             }

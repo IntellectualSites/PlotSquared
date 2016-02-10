@@ -1,17 +1,25 @@
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.RequiredType;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.util.*;
-import com.plotsquared.general.commands.CommandCaller;
-
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.commands.RequiredType;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.util.CmdConfirm;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.general.commands.CommandCaller;
 
 /**
  * The PlotPlayer class<br>
@@ -63,16 +71,25 @@ public abstract class PlotPlayer implements CommandCaller {
     
     /**
      * Get the metadata for a key
+     * @param <T>
      * @param key
      * @return
      */
-    public Object getMeta(final String key) {
+    public <T> T getMeta(final String key) {
         if (meta != null) {
-            return meta.get(key);
+            return (T) meta.get(key);
         }
         return null;
     }
     
+    public <T> T getMeta(final String key, T def) {
+        if (meta != null) {
+            T value = (T) meta.get(key);
+            return value == null ? def : value;
+        }
+        return def;
+    }
+
     /**
      * Delete the metadata for a key<br>
      *  - metadata is session only
@@ -108,7 +125,7 @@ public abstract class PlotPlayer implements CommandCaller {
      * @return number of allowed plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getAllowedPlots() {
-        return MainUtil.getAllowedPlots(this);
+        return Permissions.hasPermissionRange(this, "plots.plot", Settings.MAX_PLOTS);
     }
     
     /**
@@ -120,7 +137,26 @@ public abstract class PlotPlayer implements CommandCaller {
      * @return number of plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
     public int getPlotCount() {
-        return MainUtil.getPlayerPlotCount(this);
+        if (!Settings.GLOBAL_LIMIT) {
+            return getPlotCount(getLocation().getWorld());
+        }
+        final AtomicInteger count = new AtomicInteger(0);
+        final UUID uuid = getUUID();
+        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
+                    for (Plot plot : value.getPlotsAbs(uuid)) {
+                        if (!plot.getFlags().containsKey("done")) {
+                            count.incrementAndGet();
+                        }
+                    }
+                } else {
+                    count.addAndGet(value.getPlotsAbs(uuid).size());
+                }
+            }
+        });
+        return count.get();
     }
     
     /**
@@ -129,7 +165,20 @@ public abstract class PlotPlayer implements CommandCaller {
      * @return
      */
     public int getPlotCount(final String world) {
-        return MainUtil.getPlayerPlotCount(world, this);
+        final UUID uuid = getUUID();
+        int count = 0;
+        for (PlotArea area : PS.get().getPlotAreas(world)) {
+            if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
+                for (Plot plot : area.getPlotsAbs(uuid)) {
+                    if (!plot.getFlags().containsKey("done")) {
+                        count++;
+                    }
+                }
+            } else {
+                count += area.getPlotsAbs(uuid).size();
+            }
+        }
+        return count;
     }
     
     /**
@@ -143,11 +192,15 @@ public abstract class PlotPlayer implements CommandCaller {
     }
     
     /**
-     * Return the PlotWorld the player is currently in, or null
+     * Return the PlotArea the player is currently in, or null
      * @return
      */
-    public PlotWorld getPlotWorld() {
-        return PS.get().getPlotWorld(getLocation().getWorld());
+    public PlotArea getPlotAreaAbs() {
+        return PS.get().getPlotAreaAbs(getLocation());
+    }
+    
+    public PlotArea getApplicablePlotArea() {
+        return PS.get().getApplicablePlotArea(getLocation());
     }
     
     @Override
@@ -323,17 +376,49 @@ public abstract class PlotPlayer implements CommandCaller {
             EventUtil.manager.callLeave(this, plot);
         }
         if (Settings.DELETE_PLOTS_ON_BAN && isBanned()) {
-            for (final Plot owned : PS.get().getPlotsInWorld(getName())) {
+            for (final Plot owned : getPlots()) {
                 owned.deletePlot(null);
                 PS.debug(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), getName()));
             }
         }
         String name = getName();
         ExpireManager.dates.put(getUUID(), System.currentTimeMillis());
-        SetupUtils.setupMap.remove(name);
         CmdConfirm.removePending(name);
         UUIDHandler.getPlayers().remove(name);
         PS.get().IMP.unregister(this);
+    }
+    
+    public int getPlayerClusterCount(final String world) {
+        final UUID uuid = getUUID();
+        int count = 0;
+        for (final PlotCluster cluster : PS.get().getClusters(world)) {
+            if (uuid.equals(cluster.owner)) {
+                count += cluster.getArea();
+            }
+        }
+        return count;
+    }
+    
+    public int getPlayerClusterCount() {
+        final AtomicInteger count = new AtomicInteger();
+        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                count.addAndGet(value.getClusters().size());
+            }
+        });
+        return count.get();
+    }
+    
+    public Set<Plot> getPlots(String world) {
+        UUID uuid = getUUID();
+        HashSet<Plot> plots = new HashSet<>();
+        for (Plot plot : PS.get().getPlots(world)) {
+            if (plot.isOwner(uuid)) {
+                plots.add(plot);
+            }
+        }
+        return plots;
     }
 
     public void populatePersistentMetaMap() {

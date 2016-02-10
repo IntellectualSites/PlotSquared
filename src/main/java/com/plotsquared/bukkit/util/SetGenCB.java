@@ -1,6 +1,5 @@
 package com.plotsquared.bukkit.util;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,22 +9,25 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.util.SetupUtils;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
+import com.plotsquared.bukkit.generator.BukkitAugmentedGenerator;
 
 public class SetGenCB {
     public static void setGenerator(final World world) throws Exception {
         SetupUtils.manager.updateGenerators();
-        PS.get().removePlotWorldAbs(world.getName());
+        PS.get().removePlotAreas(world.getName());
         final ChunkGenerator gen = world.getGenerator();
         if (gen == null) {
             return;
         }
         final String name = gen.getClass().getCanonicalName();
         boolean set = false;
-        for (final PlotGenerator<?> wrapper : SetupUtils.generators.values()) {
-            final ChunkGenerator newGen = (ChunkGenerator) wrapper.generator;
+        for (final GeneratorWrapper<?> wrapper : SetupUtils.generators.values()) {
+            ChunkGenerator newGen = (ChunkGenerator) wrapper.getPlatformGenerator();
+            if (newGen == null) {
+                newGen = (ChunkGenerator) wrapper;
+            }
             if (newGen.getClass().getCanonicalName().equals(name)) {
                 // set generator
                 final Field generator = world.getClass().getDeclaredField("generator");
@@ -35,10 +37,8 @@ public class SetGenCB {
                 // Set populators (just in case)
                 populators.set(world, new ArrayList<>());
                 // Set generator
-                final Constructor<? extends ChunkGenerator> constructor = newGen.getClass().getConstructor(String.class);
-                final ChunkGenerator newNewGen = constructor.newInstance(world.getName());
-                generator.set(world, newNewGen);
-                populators.set(world, newNewGen.getDefaultPopulators(world));
+                generator.set(world, newGen);
+                populators.set(world, newGen.getDefaultPopulators(world));
                 // end
                 set = true;
                 break;
@@ -47,7 +47,7 @@ public class SetGenCB {
         if (!set) {
             final Iterator<BlockPopulator> iter = world.getPopulators().iterator();
             while (iter.hasNext()) {
-                if (iter.next() instanceof AugmentedPopulator) {
+                if (iter.next() instanceof BukkitAugmentedGenerator) {
                     iter.remove();
                 }
             }

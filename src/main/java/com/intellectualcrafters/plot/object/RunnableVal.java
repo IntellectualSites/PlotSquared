@@ -3,11 +3,16 @@ package com.intellectualcrafters.plot.object;
 public abstract class RunnableVal<T> implements Runnable {
     public T value;
     
-    @Override
-    public abstract void run();
+    public RunnableVal() {}
     
-    public void run(T value) {
+    public RunnableVal(T value) {
         this.value = value;
-        run();
     }
+
+    @Override
+    public void run() {
+        run(value);
+    }
+    
+    public abstract void run(T value);
 }

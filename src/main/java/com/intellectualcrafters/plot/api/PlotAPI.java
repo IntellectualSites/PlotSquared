@@ -21,6 +21,17 @@
 
 package com.intellectualcrafters.plot.api;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.MainCommand;
@@ -29,29 +40,17 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-import com.plotsquared.bukkit.util.BukkitSetBlockManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * PlotSquared API
@@ -117,14 +116,14 @@ public class PlotAPI {
      * Add a plot world
      *
      * @param world     World Name
-     * @param plotWorld Plot World Object
+     * @param plotArea Plot World Object
      * @param manager   World Manager
      *
-     * @see PS#addPlotWorld(String, com.intellectualcrafters.plot.object.PlotWorld,
+     * @see PS#addPlotWorld(String, com.intellectualcrafters.plot.object.PlotArea,
      * com.intellectualcrafters.plot.object.PlotManager)
      */
-    public void addPlotWorld(final String world, final PlotWorld plotWorld, final PlotManager manager) {
-        PS.get().addPlotWorld(world, plotWorld, manager);
+    public void addPlotArea(final PlotArea plotArea) {
+        PS.get().addPlotArea(plotArea);
     }
     
     /**
@@ -172,27 +171,13 @@ public class PlotAPI {
     public ChunkManager getChunkManager() {
         return ChunkManager.manager;
     }
-    
+
     /**
-     * BlockManager class contains useful methods relating to blocks.
-     *
-     * @return BlockManager
-     *
-     * @see com.intellectualcrafters.plot.util.BlockManager
+     * Get the block/biome set queue
+     * @return SetQueue.IMP
      */
-    public BlockManager getBlockManager() {
-        return BlockManager.manager;
-    }
-    
-    /**
-     * BukkitSetBlockManager class contains useful methods relating to bukkit blocks.
-     *
-     * @return BukkitSetBlockManager
-     *
-     * @see com.plotsquared.bukkit.util.BukkitSetBlockManager
-     */
-    public BukkitSetBlockManager getBukkitBlockManager() {
-        return BukkitSetBlockManager.setBlockManager;
+    public SetQueue getSetQueue() {
+        return SetQueue.IMP;
     }
     
     /**
@@ -217,19 +202,6 @@ public class PlotAPI {
     @Deprecated
     public FlagManager getFlagManager() {
         return new FlagManager();
-    }
-    
-    /**
-     * Do not use this. Instead use ClusterManager.[method] in your code.
-     *  - Plot cluster related stuff
-     *
-     * @return ClusterManager
-     *
-     * @see com.intellectualcrafters.plot.util.ClusterManager
-     */
-    @Deprecated
-    public ClusterManager getClusterManager() {
-        return new ClusterManager();
     }
     
     /**
@@ -297,10 +269,21 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.object.PlotManager
      * @see PS#getPlotManager(String)
      */
+    @Deprecated
     public PlotManager getPlotManager(final World world) {
-        return PS.get().getPlotManager(world.getName());
+        if (world == null) {
+            return null;
+        }
+        return getPlotManager(world.getName());
     }
     
+    public Set<PlotArea> getPlotAreas(World world) {
+        if (world == null) {
+            return new HashSet<>();
+        }
+        return PS.get().getPlotAreas(world.getName());
+    }
+
     /**
      * Get the plot manager for a world. - Contains useful low level methods for plot merging, clearing, and
      * tessellation
@@ -312,37 +295,64 @@ public class PlotAPI {
      * @see PS#getPlotManager(String)
      * @see com.intellectualcrafters.plot.object.PlotManager
      */
+    @Deprecated
     public PlotManager getPlotManager(final String world) {
-        return PS.get().getPlotManager(world);
+        Set<PlotArea> areas = PS.get().getPlotAreas(world);
+        switch (areas.size()) {
+            case 0:
+                return null;
+            case 1:
+                return areas.iterator().next().manager;
+            default:
+                PS.debug("PlotAPI#getPlotManager(org.bukkit.World) is deprecated and doesn't support multi plot area worlds.");
+                return null;
+        }
     }
     
     /**
-     * Get the settings for a world (settings bundled in PlotWorld class) - You will need to downcast for the specific
-     * settings a Generator has. e.g. DefaultPlotWorld class implements PlotWorld
+     * Get the settings for a world (settings bundled in PlotArea class) - You will need to downcast for the specific
+     * settings a Generator has. e.g. DefaultPlotWorld class implements PlotArea
      *
      * @param world (to get settings of)
      *
-     * @return PlotWorld class for that world ! will return null if not a plot world world
+     * @return PlotArea class for that world ! will return null if not a plot world world
      *
-     * @see PS#getPlotWorld(String)
-     * @see com.intellectualcrafters.plot.object.PlotWorld
+     * @see #getPlotAreas(World)
+     * @see com.intellectualcrafters.plot.object.PlotArea
      */
-    public PlotWorld getWorldSettings(final World world) {
-        return PS.get().getPlotWorld(world.getName());
+    @Deprecated
+    public PlotArea getWorldSettings(final World world) {
+        if (world == null) {
+            return null;
+        }
+        return getWorldSettings(world.getName());
     }
     
     /**
-     * Get the settings for a world (settings bundled in PlotWorld class)
+     * Get the settings for a world (settings bundled in PlotArea class)
      *
      * @param world (to get settings of)
      *
-     * @return PlotWorld class for that world ! will return null if not a plot world world
+     * @return PlotArea class for that world ! will return null if not a plot world world
      *
-     * @see PS#getPlotWorld(String)
-     * @see com.intellectualcrafters.plot.object.PlotWorld
+     * @see PS#getPlotArea(String)
+     * @see com.intellectualcrafters.plot.object.PlotArea
      */
-    public PlotWorld getWorldSettings(final String world) {
-        return PS.get().getPlotWorld(world);
+    @Deprecated
+    public PlotArea getWorldSettings(final String world) {
+        if (world == null) {
+            return null;
+        }
+        Set<PlotArea> areas = PS.get().getPlotAreas(world);
+        switch (areas.size()) {
+            case 0:
+                return null;
+            case 1:
+                return areas.iterator().next();
+            default:
+                PS.debug("PlotAPI#getWorldSettings(org.bukkit.World) is deprecated and doesn't support multi plot area worlds.");
+                return null;
+        }
     }
     
     /**
@@ -426,11 +436,18 @@ public class PlotAPI {
      *
      * @return plot, null if ID is wrong
      *
-     * @see MainUtil#getPlotAbs(String, com.intellectualcrafters.plot.object.PlotId)
-     * @see Plot
+     * @see PlotArea#getPlot(PlotId)
      */
+    @Deprecated
     public Plot getPlot(final World world, final int x, final int z) {
-        return MainUtil.getPlotAbs(world.getName(), new PlotId(x, z));
+        if (world == null) {
+            return null;
+        }
+        PlotArea area = getWorldSettings(world);
+        if (area == null) {
+            return null;
+        }
+        return area.getPlot(new PlotId(x, z));
     }
     
     /**
@@ -444,7 +461,10 @@ public class PlotAPI {
      * @see Plot
      */
     public Plot getPlot(final Location l) {
-        return MainUtil.getPlotAbs(BukkitUtil.getLocation(l));
+        if (l == null) {
+            return null;
+        }
+        return BukkitUtil.getLocation(l).getPlot();
     }
     
     /**
@@ -470,6 +490,7 @@ public class PlotAPI {
      *
      * @see #getPlots(World, Player, boolean)
      */
+    @Deprecated
     public boolean hasPlot(final World world, final Player player) {
         return (getPlots(world, player, true) != null) && (getPlots(world, player, true).length > 0);
     }
@@ -479,18 +500,18 @@ public class PlotAPI {
      *
      * @param plr        to search for
      * @param just_owner should we just search for owner? Or with rights?
-     *
-     * @see Plot
      */
+    @Deprecated
     public Plot[] getPlots(final World world, final Player plr, final boolean just_owner) {
         final ArrayList<Plot> pPlots = new ArrayList<>();
-        for (final Plot plot : PS.get().getPlotsInWorld(world.getName())) {
+        UUID uuid = BukkitUtil.getPlayer(plr).getUUID();
+        for (final Plot plot : PS.get().getPlots(world.getName())) {
             if (just_owner) {
-                if ((plot.owner != null) && (plot.owner.equals(UUIDHandler.getUUID(BukkitUtil.getPlayer(plr))))) {
+                if ((plot.owner != null) && (plot.owner.equals(uuid))) {
                     pPlots.add(plot);
                 }
             } else {
-                if (plot.isAdded(UUIDHandler.getUUID(BukkitUtil.getPlayer(plr)))) {
+                if (plot.isAdded(uuid)) {
                     pPlots.add(plot);
                 }
             }
@@ -508,9 +529,12 @@ public class PlotAPI {
      * @see PS#getPlots(String)
      * @see Plot
      */
+    @Deprecated
     public Plot[] getPlots(final World world) {
-        final Collection<Plot> plots = PS.get().getPlotsInWorld(world.getName());
-        return plots.toArray(new Plot[plots.size()]);
+        if (world == null) {
+            return new Plot[0];
+        }
+        return PS.get().getPlots(world.getName()).toArray(new Plot[0]);
     }
     
     /**
@@ -520,9 +544,9 @@ public class PlotAPI {
      *
      * @see PS#getPlotWorlds()
      */
+    @Deprecated
     public String[] getPlotWorlds() {
-        final Set<String> worlds = PS.get().getPlotWorlds();
-        return worlds.toArray(new String[worlds.size()]);
+        return PS.get().getPlotWorldStrings().toArray(new String[0]);
     }
     
     /**
@@ -532,10 +556,11 @@ public class PlotAPI {
      *
      * @return boolean (if plot world or not)
      *
-     * @see PS#isPlotWorld(String)
+     * @see PS#hasPlotArea(String)
      */
+    @Deprecated
     public boolean isPlotWorld(final World world) {
-        return PS.get().isPlotWorld(world.getName());
+        return PS.get().hasPlotArea(world.getName());
     }
     
     /**
@@ -545,16 +570,16 @@ public class PlotAPI {
      *
      * @return [0] = bottomLc, [1] = topLoc, [2] = home
      *
+     * @deprecated As merged plots may not have a rectangular shape
+     *
      * @see MainUtil#getPlotBottomLocAbs(String, PlotId)
      * @see MainUtil#getPlotTopLocAbs(String, PlotId)
      * @see MainUtil#getPlotHome(String, PlotId)
      * @see Plot
      */
+    @Deprecated
     public Location[] getLocations(final Plot p) {
-        return new Location[] {
-        BukkitUtil.getLocation(MainUtil.getPlotBottomLocAbs(p.world, p.getId()).subtract(1, 0, 1)),
-        BukkitUtil.getLocation(MainUtil.getPlotTopLocAbs(p.world, p.getId())),
-        BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.getId())) };
+        return new Location[] { BukkitUtil.getLocation(p.getBottom()), BukkitUtil.getLocation(p.getTop()), BukkitUtil.getLocation(p.getHome()) };
     }
     
     /**
@@ -568,7 +593,7 @@ public class PlotAPI {
      * @see Plot
      */
     public Location getHomeLocation(final Plot p) {
-        return BukkitUtil.getLocation(MainUtil.getPlotHome(p.world, p.getId()));
+        return BukkitUtil.getLocation(p.getHome());
     }
     
     /**
@@ -578,11 +603,14 @@ public class PlotAPI {
      *
      * @return plot bottom location
      *
+     * @deprecated As merged plots may not have a rectangular shape
+     *
      * @see MainUtil#getPlotBottomLocAbs(String, PlotId)
      * @see Plot
      */
+    @Deprecated
     public Location getBottomLocation(final Plot p) {
-        return BukkitUtil.getLocation(MainUtil.getPlotBottomLocAbs(p.world, p.getId()).subtract(1, 0, 1));
+        return BukkitUtil.getLocation(p.getBottom());
     }
     
     /**
@@ -591,12 +619,15 @@ public class PlotAPI {
      * @param p Plot that you want to get the location for
      *
      * @return plot top location
+     * 
+     * @deprecated As merged plots may not have a rectangular shape
      *
      * @see MainUtil#getPlotTopLocAbs(String, PlotId)
      * @see Plot
      */
+    @Deprecated
     public Location getTopLocation(final Plot p) {
-        return BukkitUtil.getLocation(MainUtil.getPlotTopLocAbs(p.world, p.getId()));
+        return BukkitUtil.getLocation(p.getTop());
     }
     
     /**
@@ -609,7 +640,7 @@ public class PlotAPI {
      * @see MainUtil#getPlotAbs(com.intellectualcrafters.plot.object.Location)
      */
     public boolean isInPlot(final Player player) {
-        return MainUtil.getPlotAbs(BukkitUtil.getLocation(player)) != null;
+        return getPlot(player) != null;
     }
     
     /**
@@ -649,7 +680,10 @@ public class PlotAPI {
      * @see MainUtil#getPlayerPlotCount(String, PlotPlayer)
      */
     public int getPlayerPlotCount(final World world, final Player player) {
-        return MainUtil.getPlayerPlotCount(world.getName(), BukkitUtil.getPlayer(player));
+        if (world == null) {
+            return 0;
+        }
+        return BukkitUtil.getPlayer(player).getPlotCount(world.getName());
     }
     
     /**
@@ -665,7 +699,10 @@ public class PlotAPI {
      * @see Plot
      */
     public Set<Plot> getPlayerPlots(final World world, final Player player) {
-        return PS.get().getPlots(world.getName(), BukkitUtil.getPlayer(player));
+        if (world == null) {
+            return new HashSet<>();
+        }
+        return BukkitUtil.getPlayer(player).getPlots(world.getName());
     }
     
     /**
@@ -678,7 +715,7 @@ public class PlotAPI {
      */
     public int getAllowedPlots(final Player player) {
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        return MainUtil.getAllowedPlots(pp);
+        return pp.getAllowedPlots();
     }
     
     /**

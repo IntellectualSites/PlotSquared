@@ -44,10 +44,12 @@ import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.generator.HybridGen;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 
 /**
  * Created 2014-08-17 for PlotSquared
@@ -265,17 +267,39 @@ public class LikePlotMeConverter {
                 } catch (IOException e) {
                 }
             }
-            for (final String world : plots.keySet()) {
+            for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+                String world = entry.getKey();
+                PlotArea area = PS.get().getPlotArea(world, null);
                 int duplicate = 0;
-                for (final Plot plot : plots.get(world).values()) {
-                    if (PS.get().getPlot(world, plot.getId()) == null) {
-                        createdPlots.add(plot);
-                    } else {
-                        duplicate++;
+                if (area != null) {
+                    for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                        if (area.getOwnedPlotAbs(entry2.getKey()) != null) {
+                            duplicate++;
+                        } else {
+                            createdPlots.add(entry2.getValue());
+                        }
                     }
-                }
-                if (duplicate > 0) {
-                    PS.debug("&c[WARNING] Found " + duplicate + " duplicate plots already in DB for world: '" + world + "'. Have you run the converter already?");
+                    if (duplicate > 0) {
+                        PS.debug("&c[WARNING] Found " + duplicate + " duplicate plots already in DB for world: '" + world + "'. Have you run the converter already?");
+                    }
+                } else {
+                    if (PS.get().plots_tmp != null) {
+                        HashMap<PlotId, Plot> map = PS.get().plots_tmp.get(world);
+                        if (map != null) {
+                            for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                                if (map.containsKey(entry2.getKey())) {
+                                    duplicate++;
+                                } else {
+                                    createdPlots.add(entry2.getValue());
+                                }
+                            }
+                            if (duplicate > 0) {
+                                PS.debug("&c[WARNING] Found " + duplicate + " duplicate plots already in DB for world: '" + world + "'. Have you run the converter already?");
+                            }
+                            continue;
+                        }
+                    }
+                    createdPlots.addAll(entry.getValue().values());
                 }
             }
             sendMessage("Creating plot DB");
@@ -291,7 +315,7 @@ public class LikePlotMeConverter {
                         PS.debug("&c - Disable 'plotme-convert.enabled' and 'plotme-convert.cache-uuids' in the settings.yml");
                         PS.debug("&c - Correct any generator settings that haven't copied to 'settings.yml' properly");
                         PS.debug("&c - Start the server");
-                        PS.get().setAllPlotsRaw(DBFunc.getPlots());
+                        PS.get().setPlots(DBFunc.getPlots());
                     } else {
                         sendMessage("&cPlease wait until database conversion is complete. You will be notified with instructions when this happens!");
                         done.set(true);
@@ -322,7 +346,7 @@ public class LikePlotMeConverter {
                             }
                             final String actualWorldName = world.getName();
                             sendMessage("Reloading generator for world: '" + actualWorldName + "'...");
-                            PS.get().removePlotWorld(actualWorldName);
+                            PS.get().removePlotAreas(actualWorldName);
                             if (MV) {
                                 // unload world with MV
                                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + actualWorldName);
@@ -347,7 +371,7 @@ public class LikePlotMeConverter {
                                 // Load using Bukkit API
                                 // - User must set generator manually
                                 Bukkit.getServer().unloadWorld(world, true);
-                                final World myworld = WorldCreator.name(actualWorldName).generator(new HybridGen(actualWorldName)).createWorld();
+                                final World myworld = WorldCreator.name(actualWorldName).generator(new BukkitPlotGenerator(actualWorldName, new HybridGen())).createWorld();
                                 myworld.save();
                             }
                         }
@@ -375,6 +399,6 @@ public class LikePlotMeConverter {
     }
     
     public void done() {
-        PS.get().setAllPlotsRaw(DBFunc.getPlots());
+        PS.get().setPlots(DBFunc.getPlots());
     }
 }

@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.WorldUtil;
 
 public class PlotItemStack {
     public final int id;
@@ -19,7 +20,8 @@ public class PlotItemStack {
     }
     
     public PlotItemStack(final String id, final int amount, final String name, final String... lore) {
-        final PlotBlock block = BlockManager.manager.getPlotBlockFromString(id);
+        StringComparison<PlotBlock>.ComparisonResult match = WorldUtil.IMP.getClosestBlock(id);
+        final PlotBlock block = match.best;
         this.id = block.id;
         data = block.data;
         this.amount = amount;

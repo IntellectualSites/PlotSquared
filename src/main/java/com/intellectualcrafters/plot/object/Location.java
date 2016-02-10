@@ -1,11 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * Created 2015-02-11 for PlotSquared
@@ -16,7 +11,7 @@ public class Location implements Cloneable, Comparable<Location> {
     private float yaw, pitch;
     private String world;
     private boolean built;
-    private Object o;
+    private final Object o;
     
     @Override
     public Location clone() {
@@ -73,16 +68,53 @@ public class Location implements Cloneable, Comparable<Location> {
         return world;
     }
     
-    public PlotWorld getPlotWorld() {
-        return PS.get().getPlotWorld(world);
+    public PlotArea getPlotArea() {
+        return PS.get().getPlotAreaAbs(this);
     }
     
+    public Plot getOwnedPlot() {
+        PlotArea area = PS.get().getPlotAreaAbs(this);
+        return area != null ? area.getOwnedPlot(this) : null;
+    }
+    
+    public Plot getOwnedPlotAbs() {
+        PlotArea area = PS.get().getPlotAreaAbs(this);
+        return area != null ? area.getOwnedPlotAbs(this) : null;
+    }
+
+    public boolean isPlotArea() {
+        return PS.get().getPlotAreaAbs(this) != null;
+    }
+    
+    public boolean isPlotRoad() {
+        PlotArea area = PS.get().getPlotAreaAbs(this);
+        if (area == null) {
+            return false;
+        }
+        return area.getPlotAbs(this) == null;
+    }
+    
+    public boolean isUnownedPlotArea() {
+        PlotArea area = PS.get().getPlotAreaAbs(this);
+        if (area == null) {
+            return false;
+        }
+        return area.getOwnedPlotAbs(this) == null;
+    }
+
     public PlotManager getPlotManager() {
-        return PS.get().getPlotManager(world);
+        PlotArea pa = getPlotArea();
+        return pa != null ? pa.getPlotManager() : null;
     }
     
+    public Plot getPlotAbs() {
+        PlotArea area = PS.get().getPlotAreaAbs(this);
+        return area != null ? area.getPlotAbs(this) : null;
+    }
+
     public Plot getPlot() {
-        return MainUtil.getPlot(this);
+        PlotArea area = PS.get().getPlotAreaAbs(this);
+        return area != null ? area.getPlot(this) : null;
     }
     
     public ChunkLoc getChunkLoc() {
@@ -199,38 +231,5 @@ public class Location implements Cloneable, Comparable<Location> {
     @Override
     public String toString() {
         return "\"plotsquaredlocation\":{" + "\"x\":" + x + ",\"y\":" + y + ",\"z\":" + z + ",\"yaw\":" + yaw + ",\"pitch\":" + pitch + ",\"world\":\"" + world + "\"}";
-    }
-    
-    private Object getBukkitWorld() {
-        try {
-            final Class<?> clazz = Class.forName("org.bukkit.Bukkit");
-            return clazz.getMethod("getWorld", String.class).invoke(null, world);
-        } catch (final Exception e) {
-            return null;
-        }
-    }
-    
-    public Object toBukkitLocation() {
-        if (built) {
-            return o;
-        }
-        try {
-            final Constructor<?> constructor = Class.forName("org.bukkit.Location").getConstructor(Class.forName("org.bukkit.World"), double.class, double.class, double.class, float.class,
-            float.class);
-            built = true;
-            return (o = constructor.newInstance(Class.forName("org.bukkit.World").cast(getBukkitWorld()), x, y, z, yaw, pitch));
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
-            return null;
-        }
-    }
-    
-    /**
-     * Please use utility class as this is not efficient
-     */
-    public void teleport(final Object o) throws Exception {
-        if (o.getClass().getName().contains("org.bukkit.entity")) {
-            final Method m = o.getClass().getMethod("teleport", Class.forName("org.bukkit.Location"));
-            m.invoke(o, toBukkitLocation());
-        }
     }
 }

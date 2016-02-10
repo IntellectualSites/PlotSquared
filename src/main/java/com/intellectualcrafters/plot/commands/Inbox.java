@@ -83,18 +83,18 @@ public class Inbox extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] args) {
         
-        final Plot plot = MainUtil.getPlotAbs(player.getLocation());
+        final Plot plot = player.getCurrentPlot();
         if (args.length == 0) {
             sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
-                    if (!inbox.getComments(plot, new RunnableVal() {
+                    if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
                         @Override
-                        public void run() {
+                        public void run(List<PlotComment> value) {
                             if (value != null) {
                                 int total = 0;
                                 int unread = 0;
-                                for (final PlotComment comment : (ArrayList<PlotComment>) value) {
+                                for (final PlotComment comment : value) {
                                     total++;
                                     if (comment.timestamp > CommentManager.getTimestamp(player, inbox.toString())) {
                                         unread++;
@@ -149,10 +149,10 @@ public class Inbox extends SubCommand {
                         return false;
                     }
                     
-                    if (!inbox.getComments(plot, new RunnableVal() {
+                    if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
                         @Override
-                        public void run() {
-                            final List<PlotComment> comments = (List<PlotComment>) value;
+                        public void run(List<PlotComment> value) {
+                            final List<PlotComment> comments = value;
                             if (index > comments.size()) {
                                 sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
                                 return;
@@ -196,10 +196,10 @@ public class Inbox extends SubCommand {
             sendMessage(player, C.NO_PERM_INBOX);
             return false;
         }
-        if (!inbox.getComments(plot, new RunnableVal() {
+        if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
             @Override
-            public void run() {
-                final List<PlotComment> comments = (List<PlotComment>) value;
+            public void run(List<PlotComment> value) {
+                final List<PlotComment> comments = value;
                 displayComments(player, comments, page);
             }
         })) {

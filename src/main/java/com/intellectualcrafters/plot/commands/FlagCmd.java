@@ -68,7 +68,7 @@ public class FlagCmd extends SubCommand {
             return false;
         }
         final Location loc = player.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             MainUtil.sendMessage(player, C.NOT_IN_PLOT);
             return false;

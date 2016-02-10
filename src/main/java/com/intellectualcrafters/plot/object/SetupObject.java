@@ -46,6 +46,21 @@ public class SetupObject {
     public int terrain;
     
     /**
+     * Area ID (may be null)
+     */
+    public String id;
+    
+    /**
+     * Minimum plot id (may be null)
+     */
+    public PlotId min;
+    
+    /**
+     * Max plot id (may be null)
+     */
+    public PlotId max;
+    
+    /**
      * Generator specific configuration steps
      */
     public ConfigurationNode[] step = null;

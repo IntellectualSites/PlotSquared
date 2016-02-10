@@ -20,15 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.ByteArrayUtilities;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -52,16 +56,13 @@ public class Claim extends SubCommand {
         }
         final boolean result = EventUtil.manager.callClaim(player, plot, false);
         if (result) {
-            MainUtil.createPlot(player.getUUID(), plot);
-            MainUtil.setSign(player.getName(), plot);
+            plot.create(player.getUUID(), true);
+            plot.setSign(player.getName());
             MainUtil.sendMessage(player, C.CLAIMED);
-            final Location loc = player.getLocation();
             if (teleport) {
-                MainUtil.teleportPlayer(player, loc, plot);
+                plot.teleportPlayer(player);
             }
-            final String world = plot.world;
-            final PlotWorld plotworld = plot.getWorld();
-            final Plot plot2 = PS.get().getPlot(world, plot.getId());
+            final PlotArea plotworld = plot.getArea();
             if (plotworld.SCHEMATIC_ON_CLAIM) {
                 Schematic sch;
                 if (schematic.isEmpty()) {
@@ -72,9 +73,9 @@ public class Claim extends SubCommand {
                         sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                     }
                 }
-                SchematicHandler.manager.paste(sch, plot2, 0, 0, new RunnableVal<Boolean>() {
+                SchematicHandler.manager.paste(sch, plot, 0, 0, new RunnableVal<Boolean>() {
                     @Override
-                    public void run() {
+                    public void run(Boolean value) {
                         if (value) {
                             MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
                         } else {
@@ -83,7 +84,7 @@ public class Claim extends SubCommand {
                     }
                 });
             }
-            PS.get().getPlotManager(world).claimPlot(plotworld, plot);
+            plotworld.getPlotManager().claimPlot(plotworld, plot);
         }
         return result;
     }
@@ -95,15 +96,13 @@ public class Claim extends SubCommand {
             schematic = args[0];
         }
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(loc.getWorld(), plr);
-
+        final int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(loc.getWorld());
         boolean removeGrantedPlot = false;
-
-        if (currentPlots >= MainUtil.getAllowedPlots(plr)) {
+        if (currentPlots >= plr.getAllowedPlots()) {
             if (plr.hasPersistentMeta("grantedPlots")) {
                 int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
                 if (grantedPlots < 1) {
@@ -116,10 +115,10 @@ public class Claim extends SubCommand {
                 return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
             }
         }
-        if (!MainUtil.canClaim(plr, plot)) {
+        if (!plot.canClaim(plr)) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
-        final PlotWorld world = plot.getWorld();
+        final PlotArea world = plot.getArea();
         if ((EconHandler.manager != null) && world.USE_ECONOMY) {
             final double cost = world.PLOT_PRICE;
             if (cost > 0d) {

@@ -27,11 +27,11 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -47,7 +47,7 @@ public class Deny extends SubCommand {
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -104,10 +104,10 @@ public class Deny extends SubCommand {
         if (!plot.equals(pp.getCurrentPlot())) {
             return;
         }
-        if (pp.hasPermission("plots.admin.command.deny")) {
+        if (pp.hasPermission("plots.admin.entry.denied")) {
             return;
         }
-        pp.teleport(BlockManager.manager.getSpawn(pp.getLocation().getWorld()));
+        pp.teleport(WorldUtil.IMP.getSpawn(pp.getLocation().getWorld()));
         MainUtil.sendMessage(pp, C.YOU_GOT_DENIED);
     }
 }

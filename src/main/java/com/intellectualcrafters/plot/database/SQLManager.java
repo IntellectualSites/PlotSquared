@@ -20,23 +20,48 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import java.lang.reflect.Field;
+import java.sql.Blob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
-
-import java.lang.reflect.Field;
-import java.sql.*;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
 
@@ -97,7 +122,7 @@ public class SQLManager implements AbstractDB {
     
     public synchronized void addPlotTask(Plot plot, UniqueStatement task) {
         if (plot == null) {
-            plot = new Plot("", new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE), null);
+            plot = new Plot(null, new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE));
         }
         Queue<UniqueStatement> tasks = plotTasks.get(plot);
         if (tasks == null) {
@@ -375,7 +400,7 @@ public class SQLManager implements AbstractDB {
                 statement.setString(1, uuid.toString());
                 statement.setInt(2, plot.getId().x);
                 statement.setInt(3, plot.getId().y);
-                statement.setString(4, plot.world);
+                statement.setString(4, plot.area.toString());
             }
             
             @Override
@@ -561,7 +586,7 @@ public class SQLManager implements AbstractDB {
                 } catch (final Exception e) {
                     stmt.setString((i * 5) + 3, everyone.toString());
                 }
-                stmt.setString((i * 5) + 4, plot.world);
+                stmt.setString((i * 5) + 4, plot.area.toString());
                 stmt.setTimestamp((i * 5) + 5, new Timestamp(plot.getTimestamp()));
             }
             
@@ -575,7 +600,7 @@ public class SQLManager implements AbstractDB {
                 } catch (final Exception e1) {
                     stmt.setString((i * 6) + 4, everyone.toString());
                 }
-                stmt.setString((i * 6) + 5, plot.world);
+                stmt.setString((i * 6) + 5, plot.area.toString());
                 stmt.setTimestamp((i * 6) + 6, new Timestamp(plot.getTimestamp()));
             }
             
@@ -584,7 +609,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
-                stmt.setString(4, plot.world);
+                stmt.setString(4, plot.area.toString());
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
                 
             }
@@ -898,7 +923,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
-                stmt.setString(4, plot.world);
+                stmt.setString(4, plot.area.toString());
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
             }
             
@@ -931,7 +956,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(1, plot.getId().x);
                 stmt.setInt(2, plot.getId().y);
                 stmt.setString(3, plot.owner.toString());
-                stmt.setString(4, plot.world);
+                stmt.setString(4, plot.area.toString());
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
             }
             
@@ -1267,7 +1292,7 @@ public class SQLManager implements AbstractDB {
         addPlotTask(plot, new UniqueStatement("delete_plot_comments") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                stmt.setString(1, plot.world);
+                stmt.setString(1, plot.area.toString());
                 stmt.setInt(2, plot.hashCode());
             }
             
@@ -1361,7 +1386,7 @@ public class SQLManager implements AbstractDB {
             stmt.setInt(2, cluster.getP1().y);
             stmt.setInt(3, cluster.getP2().x);
             stmt.setInt(4, cluster.getP2().y);
-            stmt.setString(5, cluster.world);
+            stmt.setString(5, cluster.area.toString());
             final ResultSet r = stmt.executeQuery();
             int c_id = Integer.MAX_VALUE;
             while (r.next()) {
@@ -1397,7 +1422,7 @@ public class SQLManager implements AbstractDB {
             stmt = connection.prepareStatement("SELECT `id` FROM `" + prefix + "plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC");
             stmt.setInt(1, plot.getId().x);
             stmt.setInt(2, plot.getId().y);
-            stmt.setString(3, plot.world);
+            stmt.setString(3, plot.area.toString());
             final ResultSet r = stmt.executeQuery();
             int id = Integer.MAX_VALUE;
             while (r.next()) {
@@ -1540,14 +1565,28 @@ public class SQLManager implements AbstractDB {
      * Load all plots, helpers, denied, trusted, and every setting from DB into a hashmap
      */
     @Override
-    public ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots() {
-        final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> newplots = new ConcurrentHashMap<>();
+    public HashMap<String, HashMap<PlotId, Plot>> getPlots() {
+        final HashMap<String, HashMap<PlotId, Plot>> newplots = new HashMap<>();
         final HashMap<Integer, Plot> plots = new HashMap<>();
         Statement stmt;
         try {
-            Set<String> worlds = new HashSet<>();
+            HashSet<String> areas = new HashSet<>();;
             if (PS.get().config.contains("worlds")) {
-                worlds = PS.get().config.getConfigurationSection("worlds").getKeys(false);
+                ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds");
+                if (worldSection != null) {
+                    for (String worldKey : worldSection.getKeys(false)) {
+                        areas.add(worldKey);
+                        ConfigurationSection areaSection = worldSection.getConfigurationSection(worldKey + ".areas");
+                        if (areaSection != null) {
+                            for (String areaKey : areaSection.getKeys(false)) {
+                                String[] split = areaKey.split("-");
+                                if (split.length == 3) {
+                                    areas.add(worldKey + ";" + split[0]);
+                                }
+                            }
+                        }
+                    }
+                }
             }
             final HashMap<String, UUID> uuids = new HashMap<>();
             final HashMap<String, AtomicInteger> noExist = new HashMap<>();
@@ -1567,17 +1606,17 @@ public class SQLManager implements AbstractDB {
                 while (r.next()) {
                     plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
                     id = r.getInt("id");
-                    final String worldname = r.getString("world");
-                    if (!worlds.contains(worldname)) {
+                    final String areaid = r.getString("world");
+                    if (!areas.contains(areaid)) {
                         if (Settings.AUTO_PURGE) {
                             toDelete.add(id);
                             continue;
                         } else {
-                            AtomicInteger value = noExist.get(worldname);
+                            AtomicInteger value = noExist.get(areaid);
                             if (value != null) {
                                 value.incrementAndGet();
                             } else {
-                                noExist.put(worldname, new AtomicInteger(1));
+                                noExist.put(areaid, new AtomicInteger(1));
                             }
                         }
                     }
@@ -1598,8 +1637,8 @@ public class SQLManager implements AbstractDB {
                     } else {
                         time = timestamp.getTime();
                     }
-                    p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, worldname, new boolean[] { false, false, false, false }, time, id);
-                    ConcurrentHashMap<PlotId, Plot> map = newplots.get(worldname);
+                    p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, null, new boolean[] { false, false, false, false }, time, id);
+                    HashMap<PlotId, Plot> map = newplots.get(areaid);
                     if (map != null) {
                         Plot last = map.put(p.id, p);
                         if (last != null) {
@@ -1612,8 +1651,8 @@ public class SQLManager implements AbstractDB {
                             continue;
                         }
                     } else {
-                        map = new ConcurrentHashMap<PlotId, Plot>();
-                        newplots.put(worldname, map);
+                        map = new HashMap<PlotId, Plot>();
+                        newplots.put(areaid, map);
                         map.put(p.id, p);
                     }
                     plots.put(id, p);
@@ -1881,7 +1920,7 @@ public class SQLManager implements AbstractDB {
             public void set(final PreparedStatement stmt) throws SQLException {
                 stmt.setInt(1, newPlot.getId().x);
                 stmt.setInt(2, newPlot.getId().y);
-                stmt.setString(3, newPlot.world);
+                stmt.setString(3, newPlot.area.toString());
                 stmt.setInt(4, getId(original));
             }
             
@@ -1938,7 +1977,7 @@ public class SQLManager implements AbstractDB {
      * Purge all plots with the following database IDs
      */
     @Override
-    public void purgeIds(final String world, final Set<Integer> uniqueIds) {
+    public void purgeIds(final Set<Integer> uniqueIds) {
         addGlobalTask(new Runnable() {
             @Override
             public void run() {
@@ -1973,24 +2012,24 @@ public class SQLManager implements AbstractDB {
                         stmt.close();
                     } catch (final SQLException e) {
                         e.printStackTrace();
-                        PS.debug("&c[ERROR] " + "FAILED TO PURGE WORLD '" + world + "'!");
+                        PS.debug("&c[ERROR] " + "FAILED TO PURGE PLOTS!");
                         return;
                     }
                 }
-                PS.debug("&6[INFO] " + "SUCCESSFULLY PURGED WORLD '" + world + "'!");
+                PS.debug("&6[INFO] " + "SUCCESSFULLY PURGED " + uniqueIds.size() + " PLOTS!");
             }
         });
     }
     
     @Override
-    public void purge(final String world, final Set<PlotId> plots) {
+    public void purge(final PlotArea area, final Set<PlotId> plots) {
         addGlobalTask(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement stmt;
                 try {
                     stmt = connection.prepareStatement("SELECT `id`, `plot_id_x`, `plot_id_z` FROM `" + prefix + "plot` WHERE `world` = ?");
-                    stmt.setString(1, world);
+                    stmt.setString(1, area.toString());
                     final ResultSet r = stmt.executeQuery();
                     PlotId plot_id;
                     final Set<Integer> ids = new HashSet<>();
@@ -2000,18 +2039,18 @@ public class SQLManager implements AbstractDB {
                             ids.add(r.getInt("id"));
                         }
                     }
-                    purgeIds(world, ids);
+                    purgeIds(ids);
                     stmt.close();
                     r.close();
                     for (final Iterator<PlotId> iter = plots.iterator(); iter.hasNext();) {
                         final PlotId plotId = iter.next();
                         iter.remove();
                         final PlotId id = new PlotId(plotId.x, plotId.y);
-                        PS.get().removePlot(world, new PlotId(id.x, id.y), true);
+                        area.removePlot(id);
                     }
                 } catch (final SQLException e) {
                     e.printStackTrace();
-                    PS.debug("&c[ERROR] " + "FAILED TO PURGE WORLD '" + world + "'!");
+                    PS.debug("&c[ERROR] " + "FAILED TO PURGE AREA '" + area + "'!");
                 }
             }
         });
@@ -2039,7 +2078,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
                 if (plot != null) {
-                    statement.setString(1, plot.world);
+                    statement.setString(1, plot.area.toString());
                     statement.setInt(2, plot.getId().hashCode());
                     statement.setString(3, comment.comment);
                     statement.setString(4, comment.inbox);
@@ -2067,7 +2106,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
                 if (plot != null) {
-                    statement.setString(1, plot.world);
+                    statement.setString(1, plot.area.toString());
                     statement.setInt(2, plot.getId().hashCode());
                     statement.setString(3, inbox);
                 } else {
@@ -2086,12 +2125,12 @@ public class SQLManager implements AbstractDB {
     }
     
     @Override
-    public void getComments(final Plot plot, final String inbox, final RunnableVal whenDone) {
+    public void getComments(final Plot plot, final String inbox, final RunnableVal<List<PlotComment>> whenDone) {
         addPlotTask(plot, new UniqueStatement("getComments_" + plot) {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
                 if (plot != null) {
-                    statement.setString(1, plot.world);
+                    statement.setString(1, plot.area.toString());
                     statement.setInt(2, plot.getId().hashCode());
                     statement.setString(3, inbox);
                 } else {
@@ -2141,7 +2180,7 @@ public class SQLManager implements AbstractDB {
         addPlotTask(plot, new UniqueStatement("setComment") {
             @Override
             public void set(final PreparedStatement statement) throws SQLException {
-                statement.setString(1, plot.world);
+                statement.setString(1, plot.area.toString());
                 statement.setInt(2, plot.getId().hashCode());
                 statement.setString(3, comment.comment);
                 statement.setString(4, comment.inbox);
@@ -2419,14 +2458,28 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public HashMap<String, HashSet<PlotCluster>> getClusters() {
-        final LinkedHashMap<String, HashSet<PlotCluster>> newClusters = new LinkedHashMap<>();
+    public HashMap<String, Set<PlotCluster>> getClusters() {
+        final LinkedHashMap<String, Set<PlotCluster>> newClusters = new LinkedHashMap<>();
         final HashMap<Integer, PlotCluster> clusters = new HashMap<>();
         Statement stmt = null;
         try {
-            Set<String> worlds = new HashSet<>();
+            HashSet<String> areas = new HashSet<>();;
             if (PS.get().config.contains("worlds")) {
-                worlds = PS.get().config.getConfigurationSection("worlds").getKeys(false);
+                ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds");
+                if (worldSection != null) {
+                    for (String worldKey : worldSection.getKeys(false)) {
+                        areas.add(worldKey);
+                        ConfigurationSection areaSection = worldSection.getConfigurationSection(worldKey + ".areas");
+                        if (areaSection != null) {
+                            for (String areaKey : areaSection.getKeys(false)) {
+                                String[] split = areaKey.split("-");
+                                if (split.length == 3) {
+                                    areas.add(worldKey + ";" + split[0]);
+                                }
+                            }
+                        }
+                    }
+                }
             }
             final HashMap<String, UUID> uuids = new HashMap<>();
             final HashMap<String, Integer> noExist = new HashMap<>();
@@ -2439,19 +2492,19 @@ public class SQLManager implements AbstractDB {
             PlotId pos2;
             PlotCluster cluster;
             String owner;
-            String worldname;
+            String areaid;
             UUID user;
             int id;
             while (r.next()) {
                 pos1 = new PlotId(r.getInt("pos1_x"), r.getInt("pos1_z"));
                 pos2 = new PlotId(r.getInt("pos2_x"), r.getInt("pos2_z"));
                 id = r.getInt("id");
-                worldname = r.getString("world");
-                if (!worlds.contains(worldname)) {
-                    if (noExist.containsKey(worldname)) {
-                        noExist.put(worldname, noExist.get(worldname) + 1);
+                areaid = r.getString("world");
+                if (!areas.contains(areaid)) {
+                    if (noExist.containsKey(areaid)) {
+                        noExist.put(areaid, noExist.get(areaid) + 1);
                     } else {
-                        noExist.put(worldname, 1);
+                        noExist.put(areaid, 1);
                     }
                 }
                 owner = r.getString("owner");
@@ -2460,8 +2513,14 @@ public class SQLManager implements AbstractDB {
                     user = UUID.fromString(owner);
                     uuids.put(owner, user);
                 }
-                cluster = new PlotCluster(worldname, pos1, pos2, user, id);
+                cluster = new PlotCluster(null, pos1, pos2, user, id);
                 clusters.put(id, cluster);
+                Set<PlotCluster> set = newClusters.get(areaid);
+                if (set == null) {
+                    set = new HashSet<>();
+                    newClusters.put(areaid, set);
+                }
+                set.add(cluster);
             }
             /*
              * Getting helpers
@@ -2569,18 +2628,11 @@ public class SQLManager implements AbstractDB {
             }
             stmt.close();
             r.close();
-            for (final PlotCluster c : clusters.values()) {
-                final String world = c.world;
-                if (!newClusters.containsKey(world)) {
-                    newClusters.put(world, new HashSet<PlotCluster>());
-                }
-                newClusters.get(world).add(c);
-            }
             boolean invalidPlot = false;
             for (final Entry<String, Integer> entry : noExist.entrySet()) {
-                final String w = entry.getKey();
+                final String a = entry.getKey();
                 invalidPlot = true;
-                PS.debug("&c[WARNING] Found " + noExist.get(w) + " clusters in DB for non existant world; '" + w + "'.");
+                PS.debug("&c[WARNING] Found " + noExist.get(a) + " clusters in DB for non existant area; '" + a + "'.");
             }
             if (invalidPlot) {
                 PS.debug("&c[WARNING] - Please create the world/s or remove the clusters using the purge command");
@@ -2676,7 +2728,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setInt(3, cluster.getP2().x);
                 stmt.setInt(4, cluster.getP2().y);
                 stmt.setString(5, cluster.owner.toString());
-                stmt.setString(6, cluster.world);
+                stmt.setString(6, cluster.area.toString());
             }
             
             @Override
@@ -2713,11 +2765,11 @@ public class SQLManager implements AbstractDB {
     }
     
     @Override
-    public void resizeCluster(final PlotCluster current, final PlotClusterId resize) {
+    public void resizeCluster(final PlotCluster current, PlotId min, PlotId max) {
         final PlotId pos1 = new PlotId(current.getP1().x, current.getP1().y);
         final PlotId pos2 = new PlotId(current.getP2().x, current.getP2().y);
-        current.setP1(resize.pos1);
-        current.setP2(resize.pos2);
+        current.setP1(min);
+        current.setP2(max);
         
         addClusterTask(current, new UniqueStatement("resizeCluster") {
             @Override
@@ -2857,13 +2909,13 @@ public class SQLManager implements AbstractDB {
         } catch (final SQLException e) {
             e.printStackTrace();
         }
-        final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> database = getPlots();
+        final HashMap<String, HashMap<PlotId, Plot>> database = getPlots();
         final ArrayList<Plot> toCreate = new ArrayList<>();
-        for (final Plot plot : PS.get().getPlotsRaw()) {
+        for (final Plot plot : toValidate) {
             if (plot.temp == -1) {
                 continue;
             }
-            final ConcurrentHashMap<PlotId, Plot> worldplots = database.get(plot.world);
+            final HashMap<PlotId, Plot> worldplots = database.get(plot.area.toString());
             if (worldplots == null) {
                 PS.debug("&8 - &7Creating plot (1): " + plot);
                 toCreate.add(plot);
@@ -2948,14 +3000,10 @@ public class SQLManager implements AbstractDB {
                     setFlags(plot, pf.values());
                 }
             }
-            // TODO comments (null)
-            // TODO ratings (null)
-            // TODO alias
-            // TODO unconnected entries from helpers, trusted, denied, comments, settings, rating
         }
         
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : database.entrySet()) {
-            final ConcurrentHashMap<PlotId, Plot> map = entry.getValue();
+        for (final Entry<String, HashMap<PlotId, Plot>> entry : database.entrySet()) {
+            final HashMap<PlotId, Plot> map = entry.getValue();
             if (map.size() > 0) {
                 for (final Entry<PlotId, Plot> entry2 : map.entrySet()) {
                     PS.debug("$1Plot was deleted: " + entry2.getValue() + "// TODO implement this when sure safe");

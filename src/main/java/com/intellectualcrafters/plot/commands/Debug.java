@@ -22,7 +22,9 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -49,11 +51,14 @@ public class Debug extends SubCommand {
         }
         {
             final StringBuilder worlds = new StringBuilder("");
-            for (final String world : PS.get().getPlotWorlds()) {
-                worlds.append(world).append(" ");
-            }
+            PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+                @Override
+                public void run(PlotArea value) {
+                    worlds.append(value.toString()).append(" ");
+                }
+            });
             information.append(header);
-            information.append(getSection(section, "PlotWorld"));
+            information.append(getSection(section, "PlotArea"));
             information.append(getLine(line, "Plot Worlds", worlds));
             information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
             information.append(getSection(section, "Messages"));

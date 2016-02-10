@@ -20,40 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.google.common.io.Files;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.util.BukkitHybridUtils;
-import com.plotsquared.general.commands.Command;
-import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -73,6 +39,41 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
+
+import com.google.common.io.Files;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.AbstractTitle;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
+import com.plotsquared.bukkit.util.BukkitHybridUtils;
+import com.plotsquared.general.commands.Command;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = { "exec" }, category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
@@ -135,7 +136,7 @@ public class DebugExec extends SubCommand {
         scope.put("ConsolePlayer", ConsolePlayer.getConsole());
         scope.put("SchematicHandler", SchematicHandler.manager);
         scope.put("ChunkManager", ChunkManager.manager);
-        scope.put("BlockManager", BlockManager.manager);
+        scope.put("BlockManager", WorldUtil.IMP);
         scope.put("SetupUtils", SetupUtils.manager);
         scope.put("EventUtil", EventUtil.manager);
         scope.put("EconHandler", EconHandler.manager);
@@ -160,7 +161,7 @@ public class DebugExec extends SubCommand {
             boolean async = false;
             switch (arg) {
                 case "analyze": {
-                    final Plot plot = MainUtil.getPlotAbs(player.getLocation());
+                    final Plot plot = player.getCurrentPlot();
                     if (plot == null) {
                         MainUtil.sendMessage(player, C.NOT_IN_PLOT);
                         return false;
@@ -175,7 +176,7 @@ public class DebugExec extends SubCommand {
                     MainUtil.sendMessage(player, "$1Starting task...");
                     HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
                         @Override
-                        public void run() {
+                        public void run(PlotAnalysis value) {
                             MainUtil.sendMessage(player, "$1Done: $2use $3/plot debugexec analyze$2 for more information");
                         }
                     });
@@ -231,14 +232,15 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     boolean result;
-                    if (!PS.get().isPlotWorld(args[1])) {
+                    PlotArea area = PS.get().getPlotAreaByString(args[1]);
+                    if (area == null) {
                         MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;
                     }
                     if (HybridUtils.regions != null) {
-                        result = ((BukkitHybridUtils) (HybridUtils.manager)).scheduleRoadUpdate(args[1], HybridUtils.regions, 0);
+                        result = ((BukkitHybridUtils) (HybridUtils.manager)).scheduleRoadUpdate(area, HybridUtils.regions, 0);
                     } else {
-                        result = HybridUtils.manager.scheduleRoadUpdate(args[1], 0);
+                        result = HybridUtils.manager.scheduleRoadUpdate(area, 0);
                     }
                     if (!result) {
                         MainUtil.sendMessage(player, "&cCannot schedule mass schematic update! (Is one already in progress?)");
@@ -265,12 +267,13 @@ public class DebugExec extends SubCommand {
                 }
                 case "update-expired": {
                     if (args.length > 1) {
-                        final String world = args[1];
-                        if (!BlockManager.manager.isWorld(world)) {
-                            return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
+                        PlotArea area = PS.get().getPlotAreaByString(args[1]);
+                        if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
+                            C.NOT_VALID_PLOT_WORLD.send(player, args[1]);
+                            return false;
                         }
                         MainUtil.sendMessage(player, "Updating expired plot list");
-                        ExpireManager.updateExpired(args[1]);
+                        ExpireManager.updateExpired(area);
                         return true;
                     }
                     return MainUtil.sendMessage(player, "Use /plot debugexec update-expired <world>");
@@ -278,7 +281,7 @@ public class DebugExec extends SubCommand {
                 case "show-expired": {
                     if (args.length > 1) {
                         final String world = args[1];
-                        if (!BlockManager.manager.isWorld(world)) {
+                        if (!WorldUtil.IMP.isWorld(world)) {
                             return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
                         }
                         if (!ExpireManager.expiredPlots.containsKey(args[1])) {
@@ -286,7 +289,8 @@ public class DebugExec extends SubCommand {
                         }
                         MainUtil.sendMessage(player, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
                         for (final Plot plot : ExpireManager.expiredPlots.get(args[1])) {
-                            MainUtil.sendMessage(player, " - " + plot.world + ";" + plot.getId().x + ";" + plot.getId().y + ";" + UUIDHandler.getName(plot.owner) + " : " + ExpireManager.dates.get(plot.owner));
+                            MainUtil.sendMessage(player,
+                            " - " + plot.area + ";" + plot.getId().x + ";" + plot.getId().y + ";" + UUIDHandler.getName(plot.owner) + " : " + ExpireManager.dates.get(plot.owner));
                         }
                         return true;
                     }
@@ -320,7 +324,7 @@ public class DebugExec extends SubCommand {
                         return MainUtil.sendMessage(player, "&7 - Run after plot expiry has run");
                     }
                     final String world = args[1];
-                    if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(args[1])) {
+                    if (!WorldUtil.IMP.isWorld(world) || !PS.get().hasPlotArea(args[1])) {
                         return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
                     }
                     final ArrayList<ChunkLoc> empty = new ArrayList<>();

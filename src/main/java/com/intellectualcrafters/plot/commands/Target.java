@@ -24,7 +24,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -32,7 +31,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
 command = "target",
-usage = "/plot target <X;Z|nearest>",
+usage = "/plot target <<plot>|nearest>",
 description = "Target a plot with your compass",
 permission = "plots.target",
 requiredType = RequiredType.NONE,
@@ -42,30 +41,28 @@ public class Target extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location ploc = plr.getLocation();
-        if (!PS.get().isPlotWorld(ploc.getWorld())) {
+        if (!PS.get().hasPlotArea(ploc.getWorld())) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
-        PlotId id = PlotId.fromString(args[0]);
-        if (id == null) {
-            if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
-                Plot closest = null;
-                int distance = Integer.MAX_VALUE;
-                for (final Plot plot : PS.get().getPlotsInWorld(ploc.getWorld())) {
-                    final double current = plot.getBottomAbs().getEuclideanDistanceSquared(ploc);
-                    if (current < distance) {
-                        distance = (int) current;
-                        closest = plot;
-                    }
+        Plot target = null;
+        if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
+            int distance = Integer.MAX_VALUE;
+            for (final Plot plot : PS.get().getPlots(ploc.getWorld())) {
+                final double current = plot.getCenter().getEuclideanDistanceSquared(ploc);
+                if (current < distance) {
+                    distance = (int) current;
+                    target = plot;
                 }
-                id = closest.getId();
-            } else {
-                MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
+            }
+            if (target == null) {
+                C.FOUND_NO_PLOTS.send(plr);
                 return false;
             }
+        } else if ((target = MainUtil.getPlotFromString(plr, args[0], true)) == null) {
+            return false;
         }
-        final Location loc = MainUtil.getPlotHome(ploc.getWorld(), id);
-        plr.setCompassTarget(loc);
+        plr.setCompassTarget(target.getCenter());
         MainUtil.sendMessage(plr, C.COMPASS_TARGET);
         return true;
     }

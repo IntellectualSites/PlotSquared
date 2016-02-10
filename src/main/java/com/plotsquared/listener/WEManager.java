@@ -8,13 +8,11 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.MainUtil;
 
 public class WEManager {
-    //    public static HashSet<String> bypass = new HashSet<>();
-    
     public static boolean maskContains(final HashSet<RegionWrapper> mask, final int x, final int y, final int z) {
         for (final RegionWrapper region : mask) {
             if (region.isIn(x, y, z)) {
@@ -38,16 +36,20 @@ public class WEManager {
         final UUID uuid = player.getUUID();
         final Location location = player.getLocation();
         final String world = location.getWorld();
-        if (!PS.get().isPlotWorld(world)) {
+        if (!PS.get().hasPlotArea(world)) {
             regions.add(new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE));
             return regions;
         }
-        for (final Plot plot : PS.get().getPlotsInWorld(player.getLocation().getWorld())) {
+        PlotArea area = player.getApplicablePlotArea();
+        if (area == null) {
+            return regions;
+        }
+        for (final Plot plot : area.getPlots()) {
             if (!plot.isBasePlot() || (Settings.DONE_RESTRICTS_BUILDING && (FlagManager.getPlotFlagRaw(plot, "done") != null))) {
                 continue;
             }
             if (Settings.WE_ALLOW_HELPER ? plot.isAdded(uuid) : (plot.isOwner(uuid) || plot.getTrusted().contains(uuid))) {
-                regions.addAll(MainUtil.getRegions(plot));
+                regions.addAll(plot.getRegions());
             }
         }
         return regions;

@@ -23,8 +23,8 @@ package com.intellectualcrafters.plot.config;
 import java.util.ArrayList;
 
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.WorldUtil;
 
 /**
  * Main Configuration Utility
@@ -106,7 +106,7 @@ public class Configuration {
         @Override
         public boolean validateValue(final String string) {
             try {
-                final int biome = BlockManager.manager.getBiomeFromString(string.toUpperCase());
+                final int biome = WorldUtil.IMP.getBiomeFromString(string.toUpperCase());
                 return biome != -1;
             } catch (final Exception e) {
                 return false;
@@ -125,7 +125,7 @@ public class Configuration {
         @Override
         public boolean validateValue(final String string) {
             try {
-                final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(string);
+                final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
                 if ((value == null) || (value.match > 1)) {
                     return false;
                 }
@@ -136,7 +136,7 @@ public class Configuration {
         
         @Override
         public PlotBlock parseString(final String string) {
-            final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(string);
+            final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
             if ((value == null) || (value.match > 1)) {
                 return null;
             }
@@ -153,7 +153,7 @@ public class Configuration {
                         Integer.parseInt(split[0]);
                         block = split[1];
                     }
-                    final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(block);
+                    final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(block);
                     if ((value == null) || (value.match > 1)) {
                         return false;
                     }
@@ -187,7 +187,7 @@ public class Configuration {
                             min = 1;
                         }
                     }
-                    final StringComparison<PlotBlock>.ComparisonResult result = BlockManager.manager.getClosestBlock(blocks[i]);
+                    final StringComparison<PlotBlock>.ComparisonResult result = WorldUtil.IMP.getClosestBlock(blocks[i]);
                     if ((result != null) && (result.match < 2)) {
                         values[i] = result.best;
                     }

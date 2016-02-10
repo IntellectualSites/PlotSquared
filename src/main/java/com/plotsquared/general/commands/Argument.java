@@ -2,6 +2,7 @@ package com.plotsquared.general.commands;
 
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.MainUtil;
 
@@ -75,7 +76,7 @@ public abstract class Argument<T> {
         }
     };
     
-    public static Argument<Plot> Plot = new Argument<Plot>("Plot", new Plot("plotworld", new PlotId(3, -6), null)) {
+    public static Argument<Plot> Plot = new Argument<Plot>("Plot", new Plot(PlotArea.createGeneric("world"), new PlotId(3, -6), null)) {
         @Override
         public Plot parse(final String in) {
             return MainUtil.getPlotFromString(ConsolePlayer.getConsole(), in, false);

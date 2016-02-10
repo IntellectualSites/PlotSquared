@@ -1,15 +1,13 @@
 package com.intellectualcrafters.plot.object;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import org.bukkit.Bukkit;
-
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class PlotHandler {
     public static HashSet<UUID> getOwners(final Plot plot) {
@@ -17,7 +15,7 @@ public class PlotHandler {
             return new HashSet<UUID>();
         }
         if (plot.isMerged()) {
-            HashSet<Plot> plots = MainUtil.getConnectedPlots(plot);
+            HashSet<Plot> plots = plot.getConnectedPlots();
             final HashSet<UUID> owners = new HashSet<UUID>(2);
             UUID last = plot.owner;
             owners.add(plot.owner);
@@ -42,8 +40,10 @@ public class PlotHandler {
         if (!plot.isMerged()) {
             return false;
         }
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
-            if (current.owner.equals(uuid)) {
+        HashSet<Plot> connected = plot.getConnectedPlots();
+        Iterator<Plot> iter = connected.iterator();
+        while (iter.hasNext()) {
+            if (uuid.equals(iter.next().owner)) {
                 return true;
             }
         }
@@ -57,7 +57,7 @@ public class PlotHandler {
         if (!plot.isMerged()) {
             return UUIDHandler.getPlayer(plot.owner) != null;
         }
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+        for (Plot current : plot.getConnectedPlots()) {
             if (current.owner != null && UUIDHandler.getPlayer(current.owner) != null) {
                 return true;
             }
@@ -78,7 +78,7 @@ public class PlotHandler {
             }
             return;
         }
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+        for (Plot current : plot.getConnectedPlots()) {
             if (!owner.equals(current.owner)) {
                 current.owner = owner;
                 DBFunc.setOwner(current, owner);
@@ -177,7 +177,7 @@ public class PlotHandler {
     }
 
     public static void addDenied(Plot plot, UUID uuid) {
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+        for (Plot current : plot.getConnectedPlots()) {
             if (current.getDenied().add(uuid)) {
                 DBFunc.setDenied(current, uuid);
             }
@@ -185,7 +185,7 @@ public class PlotHandler {
     }
     
     public static void addMember(Plot plot, UUID uuid) {
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+        for (Plot current : plot.getConnectedPlots()) {
             if (current.getMembers().add(uuid)) {
                 DBFunc.setMember(current, uuid);
             }
@@ -193,7 +193,7 @@ public class PlotHandler {
     }
     
     public static void addTrusted(Plot plot, UUID uuid) {
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+        for (Plot current : plot.getConnectedPlots()) {
             if (current.getTrusted().add(uuid)) {
                 DBFunc.setTrusted(current, uuid);
             }
@@ -201,7 +201,7 @@ public class PlotHandler {
     }
     
     public static boolean removeDenied(Plot plot, UUID uuid) {
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+        for (Plot current : plot.getConnectedPlots()) {
             if (current.getDenied().remove(uuid)) {
                 DBFunc.removeDenied(current, uuid);
             } else {
@@ -212,7 +212,7 @@ public class PlotHandler {
     }
     
     public static boolean removeMember(Plot plot, UUID uuid) {
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+        for (Plot current : plot.getConnectedPlots()) {
             if (current.getMembers().remove(uuid)) {
                 DBFunc.removeMember(current, uuid);
             } else {
@@ -223,7 +223,7 @@ public class PlotHandler {
     }
     
     public static boolean removeTrusted(Plot plot, UUID uuid) {
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+        for (Plot current : plot.getConnectedPlots()) {
             if (current.getTrusted().remove(uuid)) {
                 DBFunc.removeTrusted(current, uuid);
             } else {
@@ -237,8 +237,8 @@ public class PlotHandler {
         if (plot.owner == null) {
             return false;
         }
-        for (Plot current : MainUtil.getConnectedPlots(plot)) {
-            PS.get().removePlot(current.world, current.id, true);
+        for (Plot current : plot.getConnectedPlots()) {
+            plot.area.removePlot(plot.id);
             DBFunc.delete(current);
             current.settings = null;
         }

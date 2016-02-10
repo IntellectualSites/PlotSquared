@@ -6,13 +6,13 @@ import org.spongepowered.api.world.extent.MutableBiomeArea;
 import org.spongepowered.api.world.gen.BiomeGenerator;
 
 import com.flowpowered.math.vector.Vector2i;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PlotArea;
 
 public class SpongeBasicBiomeProvider implements BiomeGenerator {
     
-    private final PlotWorld plotworld;
+    private final PlotArea plotworld;
     
-    public SpongeBasicBiomeProvider(final PlotWorld plotworld) {
+    public SpongeBasicBiomeProvider(final PlotArea plotworld) {
         this.plotworld = plotworld;
     }
     

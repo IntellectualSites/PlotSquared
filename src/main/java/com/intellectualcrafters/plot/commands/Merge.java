@@ -20,12 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.HashSet;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -33,9 +36,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.util.HashSet;
-import java.util.UUID;
 
 @CommandDeclaration(
 command = "merge",
@@ -74,7 +74,7 @@ public class Merge extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocationFull();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -92,7 +92,7 @@ public class Merge extends SubCommand {
                 uuid = plot.owner;
             }
         }
-        final PlotWorld plotworld = plot.getWorld();
+        final PlotArea plotworld = plot.getArea();
         if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d && EconHandler.manager.getMoney(plr) < plotworld.MERGE_PRICE) {
             sendMessage(plr, C.CANNOT_AFFORD_MERGE, plotworld.MERGE_PRICE + "");
             return false;
@@ -125,7 +125,7 @@ public class Merge extends SubCommand {
                 if (args.length == 2) {
                     terrain = args[1].equalsIgnoreCase("true");
                 }
-                if (MainUtil.autoMerge(plot, -1, maxSize - size, uuid, terrain)) {
+                if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
                     if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
                         EconHandler.manager.withdrawMoney(plr, plotworld.MERGE_PRICE);
                         sendMessage(plr, C.REMOVED_BALANCE, plotworld.MERGE_PRICE + "");
@@ -155,7 +155,7 @@ public class Merge extends SubCommand {
         } else {
             terrain = Settings.MERGE_REMOVES_ROADS;
         }
-        if (MainUtil.autoMerge(plot, direction, maxSize - size, uuid, terrain)) {
+        if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
             if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
                 EconHandler.manager.withdrawMoney(plr, plotworld.MERGE_PRICE);
                 sendMessage(plr, C.REMOVED_BALANCE, plotworld.MERGE_PRICE + "");
@@ -163,7 +163,7 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
             return true;
         }
-        Plot adjacent = MainUtil.getPlotAbs(plot.world, MainUtil.getPlotIdRelative(plot.getId(), direction));
+        Plot adjacent = plot.getRelative(direction);
         if (adjacent == null || !adjacent.hasOwner() || adjacent.getMerged((direction + 2) % 4) || adjacent.isOwner(uuid)) {
             MainUtil.sendMessage(plr, C.NO_AVAILABLE_AUTOMERGE);
             return false;
@@ -185,7 +185,7 @@ public class Merge extends SubCommand {
                 @Override
                 public void run() {
                     MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
-                    MainUtil.autoMerge(plot, dir, maxSize - size, owner, terrain);
+                    plot.autoMerge(dir, maxSize - size, owner, terrain);
                     final PlotPlayer pp = UUIDHandler.getPlayer(plr.getUUID());
                     if (pp == null) {
                         sendMessage(accepter, C.MERGE_NOT_VALID);

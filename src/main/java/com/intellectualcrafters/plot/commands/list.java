@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
@@ -48,11 +50,11 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
 command = "list",
-aliases = { "l" },
+aliases = { "l", "find", "search" },
 description = "List plots",
 permission = "plots.list",
 category = CommandCategory.INFO,
-usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done> [#]")
+usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
 public class list extends SubCommand {
     
     private String[] getArgumentList(final PlotPlayer player) {
@@ -90,6 +92,9 @@ public class list extends SubCommand {
         if (Permissions.hasPermission(player, "plots.list.done")) {
             args.add("done");
         }
+        if (Permissions.hasPermission(player, "plots.list.fuzzy")) {
+            args.add("fuzzy <search...>");
+        }
         return args.toArray(new String[args.size()]);
     }
     
@@ -106,19 +111,20 @@ public class list extends SubCommand {
         int page = 0;
         if (args.length > 1) {
             try {
-                page = Integer.parseInt(args[1]);
+                page = Integer.parseInt(args[args.length - 1]);
                 --page;
                 if (page < 0) {
                     page = 0;
                 }
             } catch (final Exception e) {
-                page = 0;
+                page = -1;
             }
         }
         
         List<Plot> plots = null;
         
         final String world = plr.getLocation().getWorld();
+        final PlotArea area = plr.getApplicablePlotArea();
         final String arg = args[0].toLowerCase();
         boolean sort = true;
         switch (arg) {
@@ -153,7 +159,19 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + world);
                     return false;
                 }
-                plots = new ArrayList<>(PS.get().getPlotsInWorld(world));
+                plots = new ArrayList<>(PS.get().getPlots(world));
+                break;
+            }
+            case "area": {
+                if (!Permissions.hasPermission(plr, "plots.list.area")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.area");
+                    return false;
+                }
+                if (!Permissions.hasPermission(plr, "plots.list.world." + world)) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + world);
+                    return false;
+                }
+                plots = area == null ? new ArrayList<Plot>() : new ArrayList<Plot>(area.getPlots());
                 break;
             }
             case "all": {
@@ -278,8 +296,23 @@ public class list extends SubCommand {
                 }
                 break;
             }
+            case "fuzzy": {
+                if (!Permissions.hasPermission(plr, "plots.list.fuzzy")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.fuzzy");
+                    return false;
+                }
+                if (args.length < (page == -1 ? 2 : 3)) {
+                    C.COMMAND_SYNTAX.send(plr, "/plot list fuzzy <search...> [#]");
+                    return false;
+                }
+                String term = StringMan.join(Arrays.copyOfRange(args, 1, args.length - 2), " ");
+                //TODO improve search reliability / speed
+                plots = MainUtil.getPlotsBySearch(term);
+                sort = false;
+                break;
+            }
             default: {
-                if (PS.get().isPlotWorld(args[0])) {
+                if (PS.get().hasPlotArea(args[0])) {
                     if (!Permissions.hasPermission(plr, "plots.list.world")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world");
                         return false;
@@ -288,7 +321,7 @@ public class list extends SubCommand {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + args[0]);
                         return false;
                     }
-                    plots = new ArrayList<>(PS.get().getPlotsInWorld(args[0]));
+                    plots = new ArrayList<>(PS.get().getPlots(args[0]));
                     break;
                 }
                 UUID uuid = UUIDHandler.getUUID(args[0], null);
@@ -318,11 +351,11 @@ public class list extends SubCommand {
             MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
             return false;
         }
-        displayPlots(plr, plots, 12, page, world, args, sort);
+        displayPlots(plr, plots, 12, page, area, args, sort);
         return true;
     }
     
-    public void displayPlots(final PlotPlayer player, List<Plot> plots, final int pageSize, int page, final String world, final String[] args, final boolean sort) {
+    public void displayPlots(final PlotPlayer player, List<Plot> plots, final int pageSize, int page, final PlotArea area, final String[] args, final boolean sort) {
         int rawSize = plots.size();
         Iterator<Plot> iter = plots.iterator();
         while (iter.hasNext()) {
@@ -331,7 +364,7 @@ public class list extends SubCommand {
             }
         }
         if (sort) {
-            plots = PS.get().sortPlots(plots, SortType.CREATION_DATE, world);
+            plots = PS.get().sortPlots(plots, SortType.CREATION_DATE, area);
         }
         if (page < 0) {
             page = 0;
@@ -379,12 +412,12 @@ public class list extends SubCommand {
             
             final PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");
             
-            PlotMessage message = new PlotMessage().text("[").color("$3").text(i + "").command("/plot visit " + plot.world + ";" + plot.getId()).tooltip("/plot visit " + plot.world + ";" + plot
+            PlotMessage message = new PlotMessage().text("[").color("$3").text(i + "").command("/plot visit " + plot.area + ";" + plot.getId()).tooltip("/plot visit " + plot.area + ";" + plot
 
                     .getId())
             .color("$1").text("]").color("$3").text(" " + plot.toString())
             
-            .tooltip(trusted, members, flags).command("/plot info " + plot.world + ";" + plot.getId())
+            .tooltip(trusted, members, flags).command("/plot info " + plot.area + ";" + plot.getId())
             
             .color(color).text(" - ").color("$2");
             String prefix = "";

@@ -5,8 +5,8 @@ import org.spongepowered.api.world.WorldCreationSettings;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ClusterManager;
 
 public class WorldModify implements WorldGeneratorModifier {
@@ -24,7 +24,7 @@ public class WorldModify implements WorldGeneratorModifier {
         if (augment) {
             final String worldname = world.getWorldName();
             plotgen.world = worldname;
-            final PlotWorld plotworld = plotgen.getNewPlotWorld(worldname);
+            final PlotArea plotworld = plotgen.getNewPlotWorld(worldname);
             if (plotworld.TYPE == 2) {
                 for (final PlotCluster cluster : ClusterManager.getClusters(worldname)) {
                     new AugmentedPopulator(worldname, gen, plotgen, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);

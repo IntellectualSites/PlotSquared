@@ -24,10 +24,10 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "kick", aliases = { "k" }, description = "Kick a player from your plot", permission = "plots.kick", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
@@ -36,7 +36,7 @@ public class Kick extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlot();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -54,15 +54,15 @@ public class Kick extends SubCommand {
             return false;
         }
         final Location otherLoc = player.getLocation();
-        if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(MainUtil.getPlotAbs(otherLoc))) {
+        if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(otherLoc.getPlot())) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        if (player.hasPermission("plots.admin.command.kick")) {
+        if (player.hasPermission("plots.admin.entry.denied")) {
             C.CANNOT_KICK_PLAYER.send(plr, player.getName());
             return false;
         }
-        player.teleport(BlockManager.manager.getSpawn(loc.getWorld()));
+        player.teleport(WorldUtil.IMP.getSpawn(loc.getWorld()));
         return true;
     }
 }

@@ -31,7 +31,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -59,7 +59,7 @@ public class Clear extends SubCommand {
                 return false;
             }
         } else if (args.length == 0) {
-            plot = MainUtil.getPlotAbs(loc);
+            plot = loc.getPlotAbs();
             if (plot == null) {
                 MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot clear [X;Z|mine]");
                 C.NOT_IN_PLOT.send(plr);
@@ -77,7 +77,7 @@ public class Clear extends SubCommand {
             return false;
         }
         if ((FlagManager.getPlotFlagRaw(plot, "done") != null)
-        && (!Permissions.hasPermission(plr, "plots.continue") || (Settings.DONE_COUNTS_TOWARDS_LIMIT && (MainUtil.getAllowedPlots(plr) >= MainUtil.getPlayerPlotCount(plr))))) {
+        && (!Permissions.hasPermission(plr, "plots.continue") || (Settings.DONE_COUNTS_TOWARDS_LIMIT && (plr.getAllowedPlots() >= plr.getPlotCount())))) {
             MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
             return false;
         }
@@ -85,11 +85,11 @@ public class Clear extends SubCommand {
             @Override
             public void run() {
                 final long start = System.currentTimeMillis();
-                final boolean result = MainUtil.clearAsPlayer(plot, plot.owner == null, new Runnable() {
+                final boolean result = plot.clear(true, false, new Runnable() {
                     @Override
                     public void run() {
                         plot.unlink();
-                        SetBlockQueue.addNotify(new Runnable() {
+                        SetQueue.IMP.addTask(new Runnable() {
                             @Override
                             public void run() {
                                 plot.removeRunning();

@@ -30,7 +30,6 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
@@ -70,7 +69,7 @@ public class ChunkListener implements Listener {
                     final PlotPlayer pp = entry.getValue();
                     final Location loc = pp.getLocation();
                     final String world = loc.getWorld();
-                    if (!PS.get().isPlotWorld(world)) {
+                    if (!PS.get().hasPlotArea(world)) {
                         continue;
                     }
                     HashMap<ChunkLoc, Integer> map = players.get(world);
@@ -110,7 +109,7 @@ public class ChunkListener implements Listener {
                 }
                 for (final World world : Bukkit.getWorlds()) {
                     final String name = world.getName();
-                    if (!PS.get().isPlotWorld(name)) {
+                    if (!PS.get().hasPlotArea(name)) {
                         continue;
                     }
                     final boolean autosave = world.isAutoSave();
@@ -161,23 +160,24 @@ public class ChunkListener implements Listener {
         final int x2 = x + 15;
         final int z2 = z + 15;
         Plot plot;
-        plot = MainUtil.getPlotAbs(new Location(world, x, 1, z));
+        Thread thread = new Thread();
+        plot = new Location(world, x, 1, z).getOwnedPlotAbs();
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }
-        plot = MainUtil.getPlotAbs(new Location(world, x2, 1, z2));
+        plot = new Location(world, x2, 1, z2).getOwnedPlotAbs();
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }
-        plot = MainUtil.getPlotAbs(new Location(world, x2, 1, z));
+        plot = new Location(world, x2, 1, z).getOwnedPlotAbs();
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }
-        plot = MainUtil.getPlotAbs(new Location(world, x, 1, z2));
+        plot = new Location(world, x, 1, z2).getOwnedPlotAbs();
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }
-        plot = MainUtil.getPlotAbs(new Location(world, x + 7, 1, z + 7));
+        plot = new Location(world, x + 7, 1, z + 7).getOwnedPlotAbs();
         if ((plot != null) && (plot.owner != null)) {
             return false;
         }
@@ -194,7 +194,7 @@ public class ChunkListener implements Listener {
         if (Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE) {
             final Chunk chunk = event.getChunk();
             final String world = chunk.getWorld().getName();
-            if (PS.get().isPlotWorld(world)) {
+            if (PS.get().hasPlotArea(world)) {
                 if (unloadChunk(world, chunk)) {
                     return;
                 }
@@ -219,7 +219,7 @@ public class ChunkListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (!PS.get().isPlotWorld(chunk.getWorld().getName())) {
+        if (!PS.get().hasPlotArea(chunk.getWorld().getName())) {
             return;
         }
         final Entity[] entities = chunk.getEntities();
@@ -248,7 +248,7 @@ public class ChunkListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (!PS.get().isPlotWorld(chunk.getWorld().getName())) {
+        if (!PS.get().hasPlotArea(chunk.getWorld().getName())) {
             return;
         }
         final Entity[] entities = chunk.getEntities();
@@ -301,7 +301,7 @@ public class ChunkListener implements Listener {
     }
     
     public boolean processChunk(final Chunk chunk, final boolean unload) {
-        if (!PS.get().isPlotWorld(chunk.getWorld().getName())) {
+        if (!PS.get().hasPlotArea(chunk.getWorld().getName())) {
             return false;
         }
         final Entity[] entities = chunk.getEntities();

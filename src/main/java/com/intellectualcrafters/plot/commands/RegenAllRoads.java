@@ -27,10 +27,12 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -58,8 +60,13 @@ public class RegenAllRoads extends SubCommand {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
             return false;
         }
+        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        if (area == null || WorldUtil.IMP.isWorld(area.worldname)) {
+            C.NOT_VALID_PLOT_WORLD.send(plr, args[0]);
+            return false;
+        }
         final String name = args[0];
-        final PlotManager manager = PS.get().getPlotManager(name);
+        final PlotManager manager = area.getPlotManager();
         if ((manager == null) || !(manager instanceof HybridPlotManager)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
@@ -69,7 +76,7 @@ public class RegenAllRoads extends SubCommand {
         MainUtil.sendMessage(plr, "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
         MainUtil.sendMessage(plr, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
         MainUtil.sendMessage(plr, "&6Estimated time: &7" + (chunks.size()) + " seconds");
-        final boolean result = HybridUtils.manager.scheduleRoadUpdate(name, height);
+        final boolean result = HybridUtils.manager.scheduleRoadUpdate(area, height);
         if (!result) {
             MainUtil.sendMessage(plr, "&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;

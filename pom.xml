@@ -191,8 +191,12 @@
 
     <repositories>
         <repository>
+            <id>empcraft-repo</id>
+            <url>http://empcraft.com/maven2</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
-            <url>http://hub.spigotmc.org/nexus/content/groups/public/</url>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
 
 		<!--
@@ -261,13 +265,10 @@
          -->
 
         <dependency>
-            <groupId>javax.websocket</groupId>
-            <artifactId>javax.websocket-api</artifactId>
-            <version>1.1</version>
-            <scope>compile</scope>
-            <optional>true</optional>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldedit</artifactId>

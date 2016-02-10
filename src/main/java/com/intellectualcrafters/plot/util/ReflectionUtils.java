@@ -29,15 +29,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-
 /**
  * @author DPOH-VAR
  * @version 1.0
  */
 public class ReflectionUtils {
     
+    private static String version;
+
     public ReflectionUtils(final String version) {
+        ReflectionUtils.version = version;
         preClassB += "." + version;
         preClassM += "." + version;
     }
@@ -52,12 +53,12 @@ public class ReflectionUtils {
     private static String preClassM = "net.minecraft.server";
     
     public static Class<?> getNmsClass(final String name) {
-        final String className = "net.minecraft.server." + getVersion() + "." + name;
+        final String className = "net.minecraft.server." + version + "." + name;
         return getClass(className);
     }
     
     public static Class<?> getCbClass(final String name) {
-        final String className = "org.bukkit.craftbukkit." + getVersion() + "." + name;
+        final String className = "org.bukkit.craftbukkit." + version + "." + name;
         return getClass(className);
     }
     
@@ -71,11 +72,6 @@ public class ReflectionUtils {
                 return null;
             }
         }
-    }
-    
-    public static String getVersion() {
-        final String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        return packageName.substring(packageName.lastIndexOf('.') + 1);
     }
     
     public static Object getHandle(final Object wrapper) {

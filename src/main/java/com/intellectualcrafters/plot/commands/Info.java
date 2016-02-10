@@ -37,12 +37,10 @@ public class Info extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
-        String arg = null;
         Plot plot;
+        String arg;
         if (args.length > 0) {
-            arg = args[0] + "";
-        }
-        if (arg != null) {
+            arg = args[0];
             switch (arg) {
                 case "trusted":
                 case "alias":
@@ -66,11 +64,12 @@ public class Info extends SubCommand {
                     }
                     break;
             }
+            if (plot == null) {
+                plot = player.getCurrentPlot();
+            }
         } else {
-            plot = MainUtil.getPlotFromString(player, null, false);
-        }
-        if ((plot == null) && (arg != null)) {
-            plot = MainUtil.getPlotFromString(player, null, false);
+            arg = null;
+            plot = player.getCurrentPlot();
         }
         if (plot == null) {
             MainUtil.sendMessage(player, C.NOT_IN_PLOT);
@@ -138,7 +137,7 @@ public class Info extends SubCommand {
         }
         MainUtil.format(info, plot, player, full, new RunnableVal<String>() {
             @Override
-            public void run() {
+            public void run(String value) {
                 MainUtil.sendMessage(player, C.PLOT_INFO_HEADER.s() + '\n' + value + '\n' + C.PLOT_INFO_FOOTER.s(), false);
             }
         });

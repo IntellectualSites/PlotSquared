@@ -1,6 +1,5 @@
 package com.plotsquared.bukkit.util;
 
-import com.plotsquared.bukkit.object.BukkitPlayer;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
@@ -11,6 +10,7 @@ import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 
 public class BukkitEconHandler extends EconHandler {
     

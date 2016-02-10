@@ -20,27 +20,27 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 
 @CommandDeclaration(
 command = "set",
@@ -66,7 +66,7 @@ public class Set extends SubCommand {
 
             @Override
             public boolean set(PlotPlayer plr, final Plot plot, String value) {
-                final PlotWorld plotworld = plr.getLocation().getPlotWorld();
+                final PlotArea plotworld = plr.getLocation().getPlotArea();
                 final PlotManager manager = plr.getLocation().getPlotManager();
                 final String[] components = manager.getPlotComponents(plotworld, plot.getId());
                 final boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(plr.getUUID());
@@ -98,22 +98,22 @@ public class Set extends SubCommand {
                                     } else {
                                         name = split[i];
                                     }
-                                    final StringComparison<PlotBlock>.ComparisonResult match = BlockManager.manager.getClosestBlock(name);
+                                    final StringComparison<PlotBlock>.ComparisonResult match = WorldUtil.IMP.getClosestBlock(name);
                                     if (match != null) {
-                                        name = BlockManager.manager.getClosestMatchingName(match.best);
+                                        name = WorldUtil.IMP.getClosestMatchingName(match.best);
                                         if (name != null) {
                                             MainUtil.sendMessage(plr, C.DID_YOU_MEAN, name.toLowerCase());
                                         }
                                     }
                                     return false;
-                                } else if (!allowUnsafe && !BlockManager.manager.isBlockSolid(block)) {
+                                } else if (!allowUnsafe && !WorldUtil.IMP.isBlockSolid(block)) {
                                     MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
                                     return false;
                                 }
                             }
                             if (!allowUnsafe) {
                                 for (final PlotBlock block : blocks) {
-                                    if (!BlockManager.manager.isBlockSolid(block)) {
+                                    if (!WorldUtil.IMP.isBlockSolid(block)) {
                                         MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
                                         return false;
                                     }
@@ -128,11 +128,11 @@ public class Set extends SubCommand {
                             return false;
                         }
                         plot.addRunning();
-                        for (Plot current : MainUtil.getConnectedPlots(plot)) {
+                        for (Plot current : plot.getConnectedPlots()) {
                             manager.setComponent(plotworld, current.getId(), component, blocks);
                         }
                         MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
-                        SetBlockQueue.addNotify(new Runnable() {
+                        SetQueue.IMP.addTask(new Runnable() {
                             @Override
                             public void run() {
                                 plot.removeRunning();
@@ -151,7 +151,7 @@ public class Set extends SubCommand {
         newValues.addAll(Arrays.asList("biome", "alias", "home", "flag"));
         Plot plot = plr.getCurrentPlot();
         if (plot != null) {
-            newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.getId())));
+            newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
         }
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(newValues, C.BLOCK_LIST_SEPARATER.formatted()));
         return false;
@@ -173,7 +173,7 @@ public class Set extends SubCommand {
             return false;
         }
         // components
-        HashSet<String> components = new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getWorld(), plot.getId())));
+        HashSet<String> components = new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
             return component.onCommand(plr, Arrays.copyOfRange(args, 0, args.length));
         }

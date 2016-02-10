@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.object.comment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -53,9 +54,9 @@ public class InboxOwner extends CommentInbox {
             TaskManager.runTask(whenDone);
             return true;
         }
-        DBFunc.getComments(plot, toString(), new RunnableVal() {
+        DBFunc.getComments(plot, toString(), new RunnableVal<List<PlotComment>>() {
             @Override
-            public void run() {
+            public void run(List<PlotComment> value) {
                 whenDone.value = value;
                 if (value != null) {
                     for (final PlotComment comment : (ArrayList<PlotComment>) value) {

@@ -2,7 +2,9 @@ package com.plotsquared.bukkit.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -11,17 +13,17 @@ import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
+import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
-import com.plotsquared.bukkit.generator.AugmentedPopulator;
-import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
+import com.plotsquared.sponge.generator.AugmentedPopulator;
 
 public class BukkitSetupUtils extends SetupUtils {
     
@@ -35,9 +37,15 @@ public class BukkitSetupUtils extends SetupUtils {
             if (plugin.isEnabled()) {
                 final ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
                 if (generator != null) {
-                    PS.get().removePlotWorld(testWorld);
+                    PS.get().removePlotAreas(testWorld);
                     final String name = plugin.getDescription().getName();
-                    SetupUtils.generators.put(name, new BukkitGeneratorWrapper("CheckingPlotSquaredGenerator", generator));
+                    GeneratorWrapper<?> wrapped;
+                    if (generator instanceof GeneratorWrapper<?>) {
+                        wrapped = (GeneratorWrapper<?>) generator;
+                    } else {
+                        wrapped = new BukkitPlotGenerator(testWorld, generator);
+                    }
+                    SetupUtils.generators.put(name, wrapped);
                 }
             }
         }
@@ -46,21 +54,74 @@ public class BukkitSetupUtils extends SetupUtils {
     @Override
     public String setupWorld(final SetupObject object) {
         SetupUtils.manager.updateGenerators();
-        final ConfigurationNode[] steps = object.step;
+        //
+        ConfigurationNode[] steps = object.step;
         final String world = object.world;
-        for (final ConfigurationNode step : steps) {
-            PS.get().config.set("worlds." + world + "." + step.getConstant(), step.getValue());
+        int type = object.type; // TODO type = 2
+        String worldPath = "worlds." + object.world;
+        if (!PS.get().config.contains(worldPath)) {
+            PS.get().config.createSection(worldPath);
         }
-        if (object.type != 0) {
-            PS.get().config.set("worlds." + world + "." + "generator.type", object.type);
-            PS.get().config.set("worlds." + world + "." + "generator.terrain", object.terrain);
-            PS.get().config.set("worlds." + world + "." + "generator.plugin", object.plotManager);
-            if ((object.setupGenerator != null) && !object.setupGenerator.equals(object.plotManager)) {
-                PS.get().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
+        ConfigurationSection worldSection = PS.get().config.getConfigurationSection(worldPath);
+        switch (type) {
+            case 2: {
+                if (object.id != null) {
+                    String areaname = object.id + "-" + object.min + "-" + object.max;
+                    String areaPath = "areas." + areaname;
+                    if (!worldSection.contains(areaPath)) {
+                        worldSection.createSection(areaPath);
+                    }
+                    ConfigurationSection areaSection = worldSection.getConfigurationSection(areaPath);
+                    HashMap<String, Object> options = new HashMap<>();
+                    for (final ConfigurationNode step : steps) {
+                        options.put(step.getConstant(), step.getValue());
+                    }
+                    options.put("generator.type", object.type);
+                    options.put("generator.terrain", object.terrain);
+                    options.put("generator.plugin", object.plotManager);
+                    if ((object.setupGenerator != null) && !object.setupGenerator.equals(object.plotManager)) {
+                        options.put("generator.init", object.setupGenerator);
+                    }
+                    for (Entry<String, Object> entry : options.entrySet()) {
+                        String key = entry.getKey();
+                        Object value = entry.getValue();
+                        if (worldSection.contains(key)) {
+                            Object current = worldSection.get(key);
+                            if (!Objects.equals(value, current)) {
+                                areaSection.set(key, value);
+                            }
+                        } else {
+                            worldSection.set(key, value);
+                        }
+                    }
+                }
+                GeneratorWrapper<?> gen = generators.get(object.setupGenerator);
+                if ((gen != null) && gen.isFull()) {
+                    object.setupGenerator = null;
+                }
+                break;
             }
-            final PlotGenerator<ChunkGenerator> gen = (PlotGenerator<ChunkGenerator>) generators.get(object.setupGenerator);
-            if ((gen != null) && (gen.generator instanceof BukkitPlotGenerator)) {
-                object.setupGenerator = null;
+            case 1: {
+                for (final ConfigurationNode step : steps) {
+                    worldSection.set(step.getConstant(), step.getValue());
+                }
+                PS.get().config.set("worlds." + world + "." + "generator.type", object.type);
+                PS.get().config.set("worlds." + world + "." + "generator.terrain", object.terrain);
+                PS.get().config.set("worlds." + world + "." + "generator.plugin", object.plotManager);
+                if ((object.setupGenerator != null) && !object.setupGenerator.equals(object.plotManager)) {
+                    PS.get().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
+                }
+                GeneratorWrapper<?> gen = generators.get(object.setupGenerator);
+                if ((gen != null) && gen.isFull()) {
+                    object.setupGenerator = null;
+                }
+                break;
+            }
+            case 0: {
+                for (final ConfigurationNode step : steps) {
+                    worldSection.set(step.getConstant(), step.getValue());
+                }
+                break;
             }
         }
         try {
@@ -121,7 +182,7 @@ public class BukkitSetupUtils extends SetupUtils {
     }
     
     @Override
-    public String getGenerator(final PlotWorld plotworld) {
+    public String getGenerator(final PlotArea plotworld) {
         if (SetupUtils.generators.size() == 0) {
             updateGenerators();
         }
@@ -133,8 +194,9 @@ public class BukkitSetupUtils extends SetupUtils {
         if (!(generator instanceof BukkitPlotGenerator)) {
             return null;
         }
-        for (final Entry<String, PlotGenerator<?>> entry : generators.entrySet()) {
-            if (entry.getValue().generator.getClass().getName().equals(generator.getClass().getName())) {
+        for (final Entry<String, GeneratorWrapper<?>> entry : generators.entrySet()) {
+            GeneratorWrapper<?> current = entry.getValue();
+            if (current.equals(generator)) {
                 return entry.getKey();
             }
         }

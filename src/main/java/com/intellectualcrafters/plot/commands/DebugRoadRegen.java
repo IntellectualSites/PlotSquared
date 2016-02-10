@@ -20,7 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.generator.HybridPlotManager;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
@@ -28,8 +27,8 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -46,8 +45,7 @@ public class DebugRoadRegen extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, final String... args) {
         final Location loc = player.getLocation();
-        final String world = loc.getWorld();
-        final PlotWorld plotworld = loc.getPlotWorld();
+        final PlotArea plotworld = loc.getPlotArea();
         if (!(plotworld instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
@@ -65,11 +63,11 @@ public class DebugRoadRegen extends SubCommand {
                     }
                 }
             }
-            final boolean result = HybridUtils.manager.regenerateRoad(world, chunk, extend);
+            final boolean result = HybridUtils.manager.regenerateRoad(plotworld, chunk, extend);
             MainUtil.sendMessage(player, "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result ? "&aSuccess" : "&cFailed"));
             MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
         } else {
-            final HybridPlotManager manager = (HybridPlotManager) PS.get().getPlotManager(world);
+            final HybridPlotManager manager = (HybridPlotManager) plotworld.getPlotManager();
             manager.createRoadEast(plotworld, plot);
             manager.createRoadSouth(plotworld, plot);
             manager.createRoadSouthEast(plotworld, plot);

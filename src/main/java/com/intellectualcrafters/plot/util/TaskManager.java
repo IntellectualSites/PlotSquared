@@ -1,10 +1,13 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.RunnableVal;
 
 public abstract class TaskManager {
     public static HashSet<String> TELEPORT_QUEUE = new HashSet<>();
@@ -90,4 +93,30 @@ public abstract class TaskManager {
     public abstract void taskLaterAsync(final Runnable r, final int delay);
     
     public abstract void cancelTask(final int task);
+    
+    /**
+     * Break up a series of tasks so that they can run without lagging the server
+     * @param objects
+     * @param task
+     * @param whenDone
+     */
+    public static <T> void objectTask(Collection<T> objects, final RunnableVal<T> task, final Runnable whenDone) {
+        final Iterator<T> iter = objects.iterator();
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                boolean hasNext;
+                while ((hasNext = iter.hasNext()) && System.currentTimeMillis() - start < 5) {
+                    task.value = iter.next();
+                    task.run();
+                }
+                if (!hasNext) {
+                    TaskManager.runTaskLater(whenDone, 1);
+                } else {
+                    TaskManager.runTaskLater(this, 1);
+                }
+            }
+        });
+    }
 }

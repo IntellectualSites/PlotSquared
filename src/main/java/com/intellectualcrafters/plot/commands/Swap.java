@@ -34,7 +34,7 @@ public class Swap extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
-        final Plot plot1 = MainUtil.getPlotAbs(loc);
+        final Plot plot1 = loc.getPlotAbs();
         if (plot1 == null) {
             return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -55,11 +55,11 @@ public class Swap extends SubCommand {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
-        if (!plot1.getWorld().isCompatible(plot2.getWorld())) {
+        if (!plot1.area.isCompatible(plot2.area)) {
             C.PLOTWORLD_INCOMPATIBLE.send(plr);
             return false;
         }
-        if (MainUtil.move(plot1, plot2, new Runnable() {
+        if (plot1.move(plot2, new Runnable() {
             @Override
             public void run() {
                 MainUtil.sendMessage(plr, C.SWAP_SUCCESS);

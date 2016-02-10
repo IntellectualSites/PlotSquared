@@ -30,12 +30,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.DEBUG, requiredType = RequiredType.CONSOLE)
@@ -46,18 +47,18 @@ public class Condense extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String... args) {
         if ((args.length != 2) && (args.length != 3)) {
-            MainUtil.sendMessage(plr, "/plot condense <world> <start|stop|info> [radius]");
+            MainUtil.sendMessage(plr, "/plot condense <area> <start|stop|info> [radius]");
             return false;
         }
-        final String worldname = args[0];
-        if (!BlockManager.manager.isWorld(worldname) || !PS.get().isPlotWorld(worldname)) {
-            MainUtil.sendMessage(plr, "INVALID WORLD");
+        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
+            MainUtil.sendMessage(plr, "INVALID AREA");
             return false;
         }
         switch (args[1].toLowerCase()) {
             case "start": {
                 if (args.length == 2) {
-                    MainUtil.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
+                    MainUtil.sendMessage(plr, "/plot condense " + area.toString() + " start <radius>");
                     return false;
                 }
                 if (TASK) {
@@ -65,7 +66,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 if (args.length == 2) {
-                    MainUtil.sendMessage(plr, "/plot condense " + worldname + " start <radius>");
+                    MainUtil.sendMessage(plr, "/plot condense " + area.toString() + " start <radius>");
                     return false;
                 }
                 if (!MathMan.isInteger(args[2])) {
@@ -73,7 +74,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 final int radius = Integer.parseInt(args[2]);
-                ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlotsInWorld(worldname));
+                ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots(area));
                 // remove non base plots
                 Iterator<Plot> iter = plots.iterator();
                 int maxSize = 0;
@@ -119,11 +120,11 @@ public class Condense extends SubCommand {
                 final List<PlotId> free = new ArrayList<>();
                 PlotId start = new PlotId(0, 0);
                 while ((start.x <= minimum_radius) && (start.y <= minimum_radius)) {
-                    final Plot plot = MainUtil.getPlotAbs(worldname, start);
-                    if (!plot.hasOwner()) {
+                    Plot plot = area.getPlotAbs(start);
+                    if (plot != null && !plot.hasOwner()) {
                         free.add(plot.getId());
                     }
-                    start = Auto.getNextPlot(start, 1);
+                    start = Auto.getNextPlotId(start, 1);
                 }
                 if ((free.size() == 0) || (to_move.size() == 0)) {
                     MainUtil.sendMessage(plr, "NO FREE PLOTS FOUND");
@@ -145,14 +146,14 @@ public class Condense extends SubCommand {
                         final Plot origin = allPlots.remove(0);
                         int i = 0;
                         while (free.size() > i) {
-                            final Plot possible = MainUtil.getPlotAbs(origin.world, free.get(i));
+                            final Plot possible = origin.area.getPlotAbs(free.get(i));
                             if (possible.owner != null) {
                                 free.remove(i);
                                 continue;
                             }
                             i++;
                             final AtomicBoolean result = new AtomicBoolean(false);
-                            result.set(MainUtil.move(origin, possible, new Runnable() {
+                            result.set(origin.move(possible, new Runnable() {
                                 @Override
                                 public void run() {
                                     if (result.get()) {
@@ -190,7 +191,7 @@ public class Condense extends SubCommand {
             }
             case "info": {
                 if (args.length == 2) {
-                    MainUtil.sendMessage(plr, "/plot condense " + worldname + " info <radius>");
+                    MainUtil.sendMessage(plr, "/plot condense " + area.toString() + " info <radius>");
                     return false;
                 }
                 if (!MathMan.isInteger(args[2])) {
@@ -198,7 +199,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 final int radius = Integer.parseInt(args[2]);
-                final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
+                final Collection<Plot> plots = area.getPlots();
                 final int size = plots.size();
                 final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
                 if (radius < minimum_radius) {
@@ -218,7 +219,7 @@ public class Condense extends SubCommand {
                 return true;
             }
         }
-        MainUtil.sendMessage(plr, "/plot condense " + worldname + " <start|stop|info> [radius]");
+        MainUtil.sendMessage(plr, "/plot condense " + area.worldname + " <start|stop|info> [radius]");
         return false;
     }
     

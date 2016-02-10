@@ -27,6 +27,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 
 /**
@@ -36,6 +37,7 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
     private final ArrayList<PlotId> plots;
     private final World world;
     private boolean cancelled;
+    private final PlotArea area;
     
     /**
      * Called when a mega-plot is unlinked.
@@ -43,9 +45,10 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
      * @param world World in which the event occurred
      * @param plots Plots that are involved in the event
      */
-    public PlotUnlinkEvent(final World world, final ArrayList<PlotId> plots) {
+    public PlotUnlinkEvent(final World world, PlotArea area, final ArrayList<PlotId> plots) {
         this.plots = plots;
         this.world = world;
+        this.area = area;
     }
     
     public static HandlerList getHandlerList() {
@@ -65,6 +68,10 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
         return world;
     }
     
+    public PlotArea getArea() {
+        return area;
+    }
+
     @Override
     public HandlerList getHandlers() {
         return handlers;

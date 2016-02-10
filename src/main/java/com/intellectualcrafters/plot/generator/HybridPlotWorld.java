@@ -26,15 +26,20 @@ import java.util.HashSet;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
+    public HybridPlotWorld(String worldname, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
+        super(worldname, id, generator, min, max);
+    }
+
     public boolean ROAD_SCHEMATIC_ENABLED;
     public short SCHEMATIC_HEIGHT;
     public boolean PLOT_SCHEMATIC = false;
@@ -42,16 +47,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
     
-    /*
-     * Here we are just calling the super method, nothing special
-     */
-    public HybridPlotWorld(final String worldname) {
-        super(worldname);
-    }
-    
-    public HashMap<PlotLoc, HashMap<Short, Short>> G_SCH;
-    public HashMap<PlotLoc, HashMap<Short, Byte>> G_SCH_DATA;
-    public HashMap<PlotLoc, HashSet<PlotItem>> G_SCH_STATE;
+    public HashMap<Integer, HashMap<Integer, PlotBlock>> G_SCH;
+    public HashMap<Integer, HashSet<PlotItem>> G_SCH_STATE;
     
     /**
      * This method is called when a world loads. Make sure you set all your constants here. You are provided with the
@@ -74,7 +71,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
     
     @Override
-    public boolean isCompatible(PlotWorld plotworld) {
+    public boolean isCompatible(PlotArea plotworld) {
         if (plotworld == null || !(plotworld instanceof SquarePlotWorld)) {
             return false;
         }
@@ -82,7 +79,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     public void setupSchematics() {
-        G_SCH_DATA = new HashMap<>();
         G_SCH = new HashMap<>();
         final String schem1Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/sideroad";
         final String schem2Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/intersection";
@@ -130,13 +126,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     item.x += shift + oddshift + center_shift_x;
                     item.z += shift + oddshift + center_shift_z;
                     item.y += PLOT_HEIGHT;
-                    final int x = item.x;
-                    final int z = item.z;
-                    final PlotLoc loc = new PlotLoc(x, z);
-                    if (!G_SCH_STATE.containsKey(loc)) {
-                        G_SCH_STATE.put(loc, new HashSet<PlotItem>());
+                    final short x = (short) item.x;
+                    final short z = (short) item.z;
+                    int pair = MathMan.pair(x, z);
+                    HashSet<PlotItem> v = G_SCH_STATE.putIfAbsent(pair, new HashSet<PlotItem>());
+                    if (v != null) {
+                        v.add(item);
                     }
-                    G_SCH_STATE.get(loc).add(item);
                 }
             }
         }
@@ -314,11 +310,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         if (x < 0) {
             x += SIZE;
         }
-        final PlotLoc loc = new PlotLoc(x, z);
-        if (!G_SCH.containsKey(loc)) {
-            G_SCH.put(loc, new HashMap<Short, Short>());
-        }
-        G_SCH.get(loc).put(y, id);
         if (rotate) {
             final byte newdata = rotate(id, data);
             if ((data == 0) && (newdata == 0)) {
@@ -326,9 +317,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
             data = newdata;
         }
-        if (!G_SCH_DATA.containsKey(loc)) {
-            G_SCH_DATA.put(loc, new HashMap<Short, Byte>());
+        int pair = MathMan.pair(x, y);
+        HashMap<Integer, PlotBlock> v = G_SCH.putIfAbsent(pair, new HashMap<Integer, PlotBlock>());
+        if (v != null) {
+            v.put((int) y, new PlotBlock(id, data));
         }
-        G_SCH_DATA.get(loc).put(y, data);
     }
 }

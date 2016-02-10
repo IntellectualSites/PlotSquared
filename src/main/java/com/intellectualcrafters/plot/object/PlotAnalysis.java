@@ -169,7 +169,7 @@ public class PlotAnalysis {
                         public void run() {
                             analyzePlot(queuePlot, new RunnableVal<PlotAnalysis>() {
                                 @Override
-                                public void run() {
+                                public void run(PlotAnalysis value) {
                                     try {
                                         synchronized (this) {
                                             wait(10000);

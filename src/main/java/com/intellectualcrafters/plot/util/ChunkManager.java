@@ -2,7 +2,6 @@ package com.intellectualcrafters.plot.util;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,20 +11,13 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.SetBlockQueue.ChunkWrapper;
+import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 
 public abstract class ChunkManager {
     
     public static ChunkManager manager = null;
-    public static RegionWrapper CURRENT_PLOT_CLEAR = null;
-    public static boolean FORCE_PASTE = false;
-    
-    public static HashMap<PlotLoc, HashMap<Short, Short>> GENERATE_BLOCKS = new HashMap<>();
-    public static HashMap<PlotLoc, HashMap<Short, Byte>> GENERATE_DATA = new HashMap<>();
     
     public static ChunkLoc getChunkChunk(final Location loc) {
         final int x = loc.getX() >> 9;
@@ -33,6 +25,82 @@ public abstract class ChunkManager {
         return new ChunkLoc(x, z);
     }
     
+    private static RunnableVal<PlotChunk<?>> CURRENT_FORCE_CHUNK;
+    private static RunnableVal<PlotChunk<?>> CURRENT_ADD_CHUNK;
+    
+    public static void setChunkInPlotArea(RunnableVal<PlotChunk<?>> force, RunnableVal<PlotChunk<?>> add, String world, ChunkLoc loc) {
+        if (PS.get().isAugmented(world)) {
+            ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
+            PlotChunk<?> chunk = SetQueue.IMP.queue.getChunk(wrap);
+            if (force != null) {
+                force.run(chunk);
+            }
+            manager.regenerateChunk(world, loc);
+            if (add != null) {
+                add.run(chunk);
+            }
+            chunk.addToQueue();
+            chunk.flush(true);
+        } else {
+            CURRENT_FORCE_CHUNK = force;
+            CURRENT_ADD_CHUNK = add;
+            manager.regenerateChunk(world, loc);
+            CURRENT_FORCE_CHUNK = null;
+            CURRENT_ADD_CHUNK = null;
+        }
+    }
+    
+    public static void preProcessChunk(PlotChunk<?> chunk) {
+        if (CURRENT_FORCE_CHUNK != null) {
+            CURRENT_FORCE_CHUNK.run(chunk);
+            CURRENT_FORCE_CHUNK = null;
+        }
+    }
+    
+    public static void postProcessChunk(PlotChunk<?> chunk) {
+        if (CURRENT_ADD_CHUNK != null) {
+            CURRENT_ADD_CHUNK.run(chunk);
+            CURRENT_ADD_CHUNK = null;
+        }
+    }
+
+    public static void regenerateLargeRegion(final String world, final RegionWrapper region, final Runnable whenDone) {
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                HashSet<ChunkLoc> chunks = new HashSet<>();
+                final Set<ChunkLoc> mcrs = manager.getChunkChunks(world);
+                for (ChunkLoc mcr : mcrs) {
+                    int bx = mcr.x << 9;
+                    int bz = mcr.z << 9;
+                    int tx = bx + 511;
+                    int tz = bz + 511;
+                    if (bx <= region.maxX && tx >= region.minX && bz <= region.maxZ && tz >= region.minZ) {
+                        for (int x = (bx >> 4); x <= (tx << 4); x++) {
+                            int cbx = x << 4;
+                            int ctx = cbx + 15;
+                            if (cbx <= region.maxX && ctx >= region.minX) {
+                                for (int z = (bz >> 4); z <= (tz << 4); z++) {
+                                    int cbz = z << 4;
+                                    int ctz = cbz + 15;
+                                    if (cbz <= region.maxZ && ctz >= region.minZ) {
+                                        chunks.add(new ChunkLoc(x, z));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
+                    @Override
+                    public void run(ChunkLoc value) {
+                        manager.regenerateChunk(world, value);
+                    }
+                }, whenDone);
+            }
+        });
+    }
+
     /**
      * The int[] will be in the form: [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge] and will represent the bottom and top parts of the chunk
      * @param pos1
@@ -49,7 +117,6 @@ public abstract class ChunkManager {
         final int bcz = p1z >> 4;
         final int tcx = p2x >> 4;
         final int tcz = p2z >> 4;
-        
         final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
         
         for (int x = bcx; x <= tcx; x++) {
@@ -57,7 +124,6 @@ public abstract class ChunkManager {
                 chunks.add(new ChunkLoc(x, z));
             }
         }
-        
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
@@ -97,8 +163,6 @@ public abstract class ChunkManager {
             }
         });
     }
-    
-    public abstract void setChunk(final ChunkWrapper loc, final PlotBlock[][] result);
     
     /**
      * 0 = Entity
@@ -169,14 +233,13 @@ public abstract class ChunkManager {
         final int x2 = x1 + 15;
         final int z2 = z1 + 15;
         final Location bot = new Location(world, x1, 0, z1);
-        Plot plot;
-        plot = MainUtil.getPlotAbs(bot);
-        if ((plot != null) && (plot.owner != null)) {
+        Plot plot = bot.getOwnedPlotAbs();
+        if (plot != null) {
             return plot;
         }
         final Location top = new Location(world, x2, 0, z2);
-        plot = MainUtil.getPlotAbs(top);
-        if ((plot != null) && (plot.owner != null)) {
+        plot = top.getOwnedPlotAbs();
+        if (plot != null) {
             return plot;
         }
         return null;
@@ -196,7 +259,7 @@ public abstract class ChunkManager {
      * @param whenDone
      * @return
      */
-    public abstract boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone);
+    public abstract boolean regenerateRegion(final Location pos1, final Location pos2, boolean ignoreAugment, final Runnable whenDone);
     
     public abstract void clearAllEntities(final Location pos1, final Location pos2);
     

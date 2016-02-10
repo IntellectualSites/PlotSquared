@@ -26,15 +26,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
@@ -265,7 +264,7 @@ public class DBFunc {
     /**
      * @return Plots
      */
-    public static ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots() {
+    public static HashMap<String, HashMap<PlotId, Plot>> getPlots() {
         return dbManager.getPlots();
     }
     
@@ -298,12 +297,12 @@ public class DBFunc {
         dbManager.setAlias(plot, alias);
     }
     
-    public static void purgeIds(final String world, final Set<Integer> uniqueIds) {
-        dbManager.purgeIds(world, uniqueIds);
+    public static void purgeIds(final Set<Integer> uniqueIds) {
+        dbManager.purgeIds(uniqueIds);
     }
     
-    public static void purge(final String world, final Set<PlotId> plotIds) {
-        dbManager.purge(world, plotIds);
+    public static void purge(final PlotArea area, final Set<PlotId> plotIds) {
+        dbManager.purge(area, plotIds);
     }
     
     /**
@@ -349,7 +348,7 @@ public class DBFunc {
     /**
      * @param plot
      */
-    public static void getComments(final Plot plot, final String inbox, final RunnableVal whenDone) {
+    public static void getComments(final Plot plot, final String inbox, final RunnableVal<List<PlotComment>> whenDone) {
         if ((plot != null) && (plot.temp == -1)) {
             return;
         }
@@ -379,7 +378,7 @@ public class DBFunc {
      * @param world
      * @param cluster
      */
-    public static void createCluster(final String world, final PlotCluster cluster) {
+    public static void createCluster(final PlotCluster cluster) {
         dbManager.createCluster(cluster);
     }
     
@@ -387,8 +386,8 @@ public class DBFunc {
      * @param current
      * @param resize
      */
-    public static void resizeCluster(final PlotCluster current, final PlotClusterId resize) {
-        dbManager.resizeCluster(current, resize);
+    public static void resizeCluster(final PlotCluster current, final PlotId min, PlotId max) {
+        dbManager.resizeCluster(current, min, max);
     }
     
     /**
@@ -437,7 +436,7 @@ public class DBFunc {
         dbManager.setMember(plot, uuid);
     }
     
-    public static void setInvited(final String world, final PlotCluster cluster, final UUID uuid) {
+    public static void setInvited(final PlotCluster cluster, final UUID uuid) {
         dbManager.setInvited(cluster, uuid);
     }
     
@@ -477,7 +476,7 @@ public class DBFunc {
         dbManager.setRating(plot, rater, value);
     }
     
-    public static HashMap<String, HashSet<PlotCluster>> getClusters() {
+    public static HashMap<String, Set<PlotCluster>> getClusters() {
         return dbManager.getClusters();
     }
     

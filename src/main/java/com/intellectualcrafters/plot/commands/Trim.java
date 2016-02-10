@@ -20,20 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,6 +28,20 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.WorldUtil;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
 command = "trim",
@@ -117,7 +117,7 @@ public class Trim extends SubCommand {
         System.currentTimeMillis();
         sendMessage("Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
-        plots.addAll(PS.get().getPlotsInWorld(world));
+        plots.addAll(PS.get().getPlots(world));
         final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
         sendMessage(" - MCA #: " + chunks.size());
         sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
@@ -136,8 +136,8 @@ public class Trim extends SubCommand {
                     }
                     final Plot plot = plots.remove(0);
                     
-                    final Location pos1 = MainUtil.getPlotBottomLocAbs(world, plot.getId());
-                    final Location pos2 = MainUtil.getPlotTopLocAbs(world, plot.getId());
+                    final Location pos1 = plot.getBottom();
+                    final Location pos2 = plot.getTop();
                     
                     final int ccx1 = (pos1.getX() >> 9);
                     final int ccz1 = (pos1.getZ() >> 9);
@@ -199,7 +199,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final String world = args[1];
-        if (!BlockManager.manager.isWorld(world) || (PS.get().getPlotWorld(world) == null)) {
+        if (!WorldUtil.IMP.isWorld(world) || (!PS.get().hasPlotArea(world))) {
             MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }

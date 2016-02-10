@@ -30,10 +30,10 @@ public class Save extends SubCommand {
             return false;
         }
         final String world = plr.getLocation().getWorld();
-        if (!PS.get().isPlotWorld(world)) {
+        if (!PS.get().hasPlotArea(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = MainUtil.getPlotAbs(plr.getLocation());
+        final Plot plot = plr.getCurrentPlot();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -50,18 +50,18 @@ public class Save extends SubCommand {
             return false;
         }
         plot.addRunning();
-        SchematicHandler.manager.getCompoundTag(plot.world, plot.getId(), new RunnableVal<CompoundTag>() {
+        SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
             @Override
-            public void run() {
+            public void run(final CompoundTag value) {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
                         final String time = (System.currentTimeMillis() / 1000) + "";
                         final String name = PS.get().IMP.getServerName().replaceAll("[^A-Za-z0-9]", "");
-                        Location[] corners = MainUtil.getCorners(plot);
+                        Location[] corners = plot.getCorners();
                         final int size = (corners[1].getX() - corners[0].getX()) + 1;
                         final PlotId id = plot.getId();
-                        final String world = plot.world.replaceAll("[^A-Za-z0-9]", "");
+                        final String world = plot.area.toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
                         final String file = time + "_" + world + "_" + id.x + "_" + id.y + "_" + size + "_" + name;
                         final UUID uuid = plr.getUUID();
                         

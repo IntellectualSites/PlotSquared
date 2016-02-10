@@ -35,7 +35,7 @@ public class CommentManager {
                 for (final CommentInbox inbox : inboxes.values()) {
                     inbox.getComments(plot, new RunnableVal() {
                         @Override
-                        public void run() {
+                        public void run(Object value) {
                             int total;
                             if (value != null) {
                                 int num = 0;

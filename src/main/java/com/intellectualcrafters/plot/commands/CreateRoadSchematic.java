@@ -42,11 +42,11 @@ public class CreateRoadSchematic extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, final String... args) {
         final Location loc = player.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!(loc.getPlotWorld() instanceof HybridPlotWorld)) {
+        if (!(loc.getPlotArea() instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
         HybridUtils.manager.setupRoadSchematic(plot);

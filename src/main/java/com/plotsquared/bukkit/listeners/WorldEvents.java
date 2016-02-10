@@ -8,7 +8,7 @@ import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.intellectualcrafters.plot.PS;
-import com.plotsquared.bukkit.generator.BukkitGeneratorWrapper;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 
 public class WorldEvents implements Listener {
@@ -28,11 +28,11 @@ public class WorldEvents implements Listener {
         final World world = event.getWorld();
         final String name = getName(world);
         final ChunkGenerator gen = world.getGenerator();
-        if (gen instanceof BukkitPlotGenerator) {
-            PS.get().loadWorld(name, new BukkitGeneratorWrapper(name, gen));
+        if (gen instanceof GeneratorWrapper) {
+            PS.get().loadWorld(name, (GeneratorWrapper<?>) gen);
         } else {
             if (PS.get().config.contains("worlds." + name)) {
-                PS.get().loadWorld(name, new BukkitGeneratorWrapper(name, null));
+                PS.get().loadWorld(name, new BukkitPlotGenerator(name, gen));
             }
         }
         lastWorld = null;

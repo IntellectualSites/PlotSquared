@@ -17,6 +17,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -129,12 +130,12 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             } else {
                 UUIDHandler.add(new StringWrapper(name), owner);
             }
-            final Plot plot = new Plot(world, id, owner);
+            final Plot plot = new Plot(PlotArea.createGeneric(world), id, owner);
             plots.put(key, plot);
         }
         for (final Entry<Integer, Plot> entry : plots.entrySet()) {
             final Plot plot = entry.getValue();
-            final HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.world);
+            final HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.area.worldname);
             if (mergeMap != null) {
                 if (mergeMap.containsKey(plot.getId())) {
                     plot.setMerged(mergeMap.get(plot.getId()));
@@ -183,10 +184,10 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         
         for (final Entry<Integer, Plot> entry : plots.entrySet()) {
             final Plot plot = entry.getValue();
-            HashMap<PlotId, Plot> map = processed.get(plot.world);
+            HashMap<PlotId, Plot> map = processed.get(plot.area.worldname);
             if (map == null) {
                 map = new HashMap<>();
-                processed.put(plot.world, map);
+                processed.put(plot.area.worldname, map);
             }
             map.put(plot.getId(), plot);
         }

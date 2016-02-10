@@ -46,9 +46,8 @@ import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
@@ -85,10 +84,10 @@ public abstract class SchematicHandler {
                 }
                 final String name;
                 if (namingScheme == null) {
-                    name = plot.getId().x + ";" + plot.getId().y + "," + plot.world + "," + o;
+                    name = plot.getId().x + ";" + plot.getId().y + "," + plot.area + "," + o;
                 } else {
                     name = namingScheme.replaceAll("%owner%", o).replaceAll("%id%", plot.getId().toString()).replaceAll("%idx%", plot.getId().x + "").replaceAll("%idy%", plot.getId().y + "")
-                    .replaceAll("%world%", plot.world);
+                    .replaceAll("%world%", plot.area.toString());
                 }
                 final String directory;
                 if (outputDir == null) {
@@ -97,9 +96,9 @@ public abstract class SchematicHandler {
                     directory = outputDir.getPath();
                 }
                 final Runnable THIS = this;
-                SchematicHandler.manager.getCompoundTag(plot.world, plot.getId(), new RunnableVal<CompoundTag>() {
+                SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                     @Override
-                    public void run() {
+                    public void run(final CompoundTag value) {
                         if (value == null) {
                             MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.getId());
                         } else {
@@ -157,7 +156,7 @@ public abstract class SchematicHandler {
                     final int LENGTH = demensions.getZ();
                     final int HEIGHT = demensions.getY();
                     // Validate dimensions
-                    RegionWrapper region = MainUtil.getLargestRegion(plot);
+                    RegionWrapper region = plot.getLargestRegion();
                     if ((((region.maxX - region.minX + x_offset) + 1) < WIDTH) || (((region.maxZ - region.minZ + z_offset) + 1) < LENGTH) || (HEIGHT > 256)) {
                         PS.debug("Schematic is too large");
                         PS.debug("(" + WIDTH + "," + LENGTH + "," + HEIGHT + ") is bigger than (" + (region.maxX - region.minX) + "," + (region.maxZ - region.minZ) + ",256)");
@@ -172,14 +171,14 @@ public abstract class SchematicHandler {
                     if (HEIGHT >= 256) {
                         y_offset = 0;
                     } else {
-                        PlotWorld pw = plot.getWorld();
+                        PlotArea pw = plot.area;
                         if (pw instanceof ClassicPlotWorld) {
                             y_offset = ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
-                            y_offset = MainUtil.getHeighestBlock(plot.world, region.minX + 1, region.minZ + 1);
+                            y_offset = MainUtil.getHeighestBlock(plot.area.worldname, region.minX + 1, region.minZ + 1);
                         }
                     }
-                    final Location pos1 = new Location(plot.world, region.minX + x_offset, y_offset, region.minZ + z_offset);
+                    final Location pos1 = new Location(plot.area.worldname, region.minX + x_offset, y_offset, region.minZ + z_offset);
                     final Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                     // TODO switch to ChunkManager.chunkTask(pos1, pos2, task, whenDone, allocate);
                     final int p1x = pos1.getX();
@@ -308,11 +307,11 @@ public abstract class SchematicHandler {
                                                 case 190:
                                                 case 191:
                                                 case 192: {
-                                                    SetBlockQueue.setBlock(plot.world, xx, yy, zz, id);
+                                                    SetQueue.IMP.setBlock(plot.area.worldname, xx, yy, zz, id);
                                                     break;
                                                 }
                                                 default: {
-                                                    SetBlockQueue.setBlock(plot.world, xx, yy, zz, new PlotBlock((short) id, datas[i]));
+                                                    SetQueue.IMP.setBlock(plot.area.worldname, xx, yy, zz, new PlotBlock((short) id, datas[i]));
                                                     break;
                                                 }
                                             }
@@ -323,7 +322,7 @@ public abstract class SchematicHandler {
                             if (chunks.size() != 0) {
                                 final Runnable task = this;
                                 // Run when the queue is free
-                                SetBlockQueue.addNotify(new Runnable() {
+                                SetQueue.IMP.addTask(new Runnable() {
                                     @Override
                                     public void run() {
                                         System.gc();
@@ -333,7 +332,7 @@ public abstract class SchematicHandler {
                             } else {
                                 System.gc();
                                 // Finished
-                                SetBlockQueue.addNotify(new Runnable() {
+                                SetQueue.IMP.addTask(new Runnable() {
                                     @Override
                                     public void run() {
                                         pasteStates(schematic, plot, x_offset, z_offset);
@@ -363,10 +362,10 @@ public abstract class SchematicHandler {
         if (items == null) {
             return false;
         }
-        RegionWrapper region = MainUtil.getLargestRegion(plot);
-        Location l1 = new Location(plot.world, region.minX + x_offset, 1, region.minZ + z_offset);
+        RegionWrapper region = plot.getLargestRegion();
+        Location l1 = new Location(plot.area.worldname, region.minX + x_offset, 1, region.minZ + z_offset);
 //        Location l1 = MainUtil.getPlotBottomLoc(plot.world, plot.getId());
-        final int sy = MainUtil.getHeighestBlock(plot.world, l1.getX() + 1, l1.getZ() + 1);
+        final int sy = MainUtil.getHeighestBlock(plot.area.worldname, l1.getX() + 1, l1.getZ() + 1);
         final Dimension demensions = schematic.getSchematicDimension();
         final int HEIGHT = demensions.getY();
         if ((HEIGHT < 255)) {
@@ -379,7 +378,7 @@ public abstract class SchematicHandler {
             item.x += X;
             item.y += Y;
             item.z += Z;
-            BlockManager.manager.addItems(plot.world, item);
+            WorldUtil.IMP.addItems(plot.area.worldname, item);
         }
         return true;
     }
@@ -671,51 +670,8 @@ public abstract class SchematicHandler {
     
     public abstract void getCompoundTag(final String world, Set<RegionWrapper> regions, final RunnableVal<CompoundTag> whenDone);
     
-    public void getCompoundTag(final String world, PlotId id, final RunnableVal<CompoundTag> whenDone) {
-        getCompoundTag(world, MainUtil.getRegions(MainUtil.getPlotAbs(world, id)), whenDone);
-    }
-    
-    public boolean pastePart(final String world, final DataCollection[] blocks, final Location l1, final int x_offset, final int z_offset, final int i1, final int i2, final int WIDTH, final int LENGTH) {
-        int length = 0;
-        for (int i = i1; i <= i2; i++) {
-            if (blocks[i].block == 0) {
-                length++;
-            }
-        }
-        length = (i2 - i1 - length) + 1;
-        
-        final int X = l1.getX();
-        final int Y = l1.getY();
-        final int Z = l1.getZ();
-        
-        final int[] xl = new int[length];
-        final int[] yl = new int[length];
-        final int[] zl = new int[length];
-        final int[] ids = new int[length];
-        final byte[] data = new byte[length];
-        int count = 0;
-        for (int i = i1; i <= i2; i++) {
-            final short id = blocks[i].block;
-            if (id == 0) {
-                continue; //
-            }
-            final int area = WIDTH * LENGTH;
-            final int r = i % (area);
-            final int x = r % WIDTH;
-            final int y = i / area;
-            final int z = r / WIDTH;
-            xl[count] = x + X;
-            yl[count] = y + Y;
-            zl[count] = z + Z;
-            ids[count] = id;
-            data[count] = blocks[i].data;
-            count++;
-            if (y > 256) {
-                break;
-            }
-        }
-        BlockManager.setBlocks(world, xl, yl, zl, ids, data);
-        return true;
+    public void getCompoundTag(Plot plot, final RunnableVal<CompoundTag> whenDone) {
+        getCompoundTag(plot.area.worldname, plot.getRegions(), whenDone);
     }
     
     /**

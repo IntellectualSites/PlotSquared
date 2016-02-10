@@ -1,7 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
 import java.util.HashMap;
-import java.util.Set;
 import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
@@ -30,15 +29,15 @@ public class ConsolePlayer extends PlotPlayer {
      */
     @Deprecated
     public ConsolePlayer() {
-        String world;
-        final Set<String> plotworlds = PS.get().getPlotWorlds();
-        if (plotworlds.size() > 0) {
-            world = plotworlds.iterator().next();
+        PlotArea area = PS.get().getFirstPlotArea();
+        Location loc;
+        if (area != null) {
+            RegionWrapper region = area.getRegion();
+            loc = new Location(area.worldname, region.minX + region.maxX / 2, 0, region.minZ + region.maxZ / 2);
         } else {
-            world = "world";
+            loc = new Location("world", 0, 0, 0);
         }
         meta = new HashMap<>();
-        Location loc = new Location(world, 0, 0, 0);
         setMeta("location", loc);
     }
     
@@ -83,7 +82,7 @@ public class ConsolePlayer extends PlotPlayer {
     
     @Override
     public void teleport(final Location loc) {
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = loc.getPlot();
         setMeta("lastplot", plot);
         setMeta("location", loc);
     }

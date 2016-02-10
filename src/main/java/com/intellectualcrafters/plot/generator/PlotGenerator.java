@@ -1,20 +1,18 @@
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 
 public abstract class PlotGenerator<T> {
-    public final String world;
     public T generator;
     
-    public PlotGenerator(final String world, final T generator) {
-        this.world = world;
+    public PlotGenerator(final T generator) {
         this.generator = generator;
     }
     
-    public abstract void initialize(final PlotWorld plotworld);
+    public abstract void initialize(final PlotArea plotworld);
     
     /**
      * TYPE = 2;
@@ -24,21 +22,9 @@ public abstract class PlotGenerator<T> {
      * @param cluster Will be the cluster, or null
      * @param plotworld
      */
-    public abstract void augment(final PlotCluster cluster, final PlotWorld plotworld);
+    public abstract void augment(PlotArea area);
     
-    /**
-     *
-                    if (gen_string == null) {
-                        generator = new HybridGen(world);
-                    } else {
-                        generator = (PlotGenerator) IMP.getGenerator(world, gen_string);
-                    }
-
-     * @param generator
-     */
-    public abstract void setGenerator(final String generator);
-    
-    public abstract PlotWorld getNewPlotWorld(final String world);
+    public abstract PlotArea getNewPlotArea(final String world, final String id, PlotId min, PlotId max);
     
     public abstract PlotManager getPlotManager();
     

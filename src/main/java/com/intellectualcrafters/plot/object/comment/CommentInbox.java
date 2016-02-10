@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.object.comment;
 
+import java.util.List;
+
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
@@ -25,7 +27,7 @@ public abstract class CommentInbox {
      * @param whenDone
      * @return
      */
-    public abstract boolean getComments(final Plot plot, final RunnableVal whenDone);
+    public abstract boolean getComments(final Plot plot, final RunnableVal<List<PlotComment>> whenDone);
     
     public abstract boolean addComment(final Plot plot, final PlotComment comment);
     

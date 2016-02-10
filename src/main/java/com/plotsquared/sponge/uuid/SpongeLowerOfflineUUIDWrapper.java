@@ -1,16 +1,17 @@
 package com.plotsquared.sponge.uuid;
 
+import java.util.Collection;
+import java.util.UUID;
+
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.profile.GameProfile;
+
 import com.google.common.base.Charsets;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.SpongeMain;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.profile.GameProfile;
-
-import java.util.Collection;
-import java.util.UUID;
 
 public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
     

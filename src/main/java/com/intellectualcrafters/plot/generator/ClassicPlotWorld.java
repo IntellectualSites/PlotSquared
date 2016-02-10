@@ -4,9 +4,15 @@ import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.util.StringMan;
 
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
+    
+    public ClassicPlotWorld(String worldname, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
+        super(worldname, id, generator, min, max);
+    }
+
     public static int ROAD_HEIGHT_DEFAULT = 64;
     public static int PLOT_HEIGHT_DEFAULT = 64;
     public static int WALL_HEIGHT_DEFAULT = 64;
@@ -68,9 +74,5 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         WALL_FILLING = Configuration.BLOCK.parseString(config.getString("wall.filling"));
         WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
         CLAIMED_WALL_BLOCK = Configuration.BLOCK.parseString(config.getString("wall.block_claimed"));
-    }
-    
-    public ClassicPlotWorld(final String worldname) {
-        super(worldname);
     }
 }

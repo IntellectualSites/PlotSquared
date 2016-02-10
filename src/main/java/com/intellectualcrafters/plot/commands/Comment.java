@@ -50,20 +50,19 @@ public class Comment extends SubCommand {
             sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
-        Plot plot;
         final Location loc = player.getLocation();
         final PlotId id = PlotId.fromString(args[1]);
+        Plot plot = MainUtil.getPlotFromString(player, args[1], false);
         int index;
-        if (id != null) {
+        if (plot == null) {
+            index = 1;
+            plot = loc.getPlotAbs();
+        } else {
             if (args.length < 4) {
                 sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));
                 return false;
             }
             index = 2;
-            plot = MainUtil.getPlotAbs(loc.getWorld(), id);
-        } else {
-            index = 1;
-            plot = MainUtil.getPlotAbs(loc);
         }
         if (!inbox.canWrite(plot, player)) {
             sendMessage(player, C.NO_PERM_INBOX, "");

@@ -1,10 +1,5 @@
 package com.intellectualcrafters.configuration.file;
 
-import com.intellectualcrafters.configuration.Configuration;
-import com.intellectualcrafters.configuration.InvalidConfigurationException;
-import com.intellectualcrafters.configuration.MemoryConfiguration;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +13,12 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
+import com.intellectualcrafters.configuration.Configuration;
+import com.intellectualcrafters.configuration.InvalidConfigurationException;
+import com.intellectualcrafters.configuration.MemoryConfiguration;
 
 /**
  * This is a base class for all File based implementations of {@link

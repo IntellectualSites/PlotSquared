@@ -35,15 +35,15 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.object.FileBytes;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -89,7 +89,7 @@ public class Template extends SubCommand {
         }
     }
     
-    public static byte[] getBytes(final PlotWorld plotworld) {
+    public static byte[] getBytes(final PlotArea plotworld) {
         final ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + plotworld.worldname);
         final YamlConfiguration config = new YamlConfiguration();
         final String generator = SetupUtils.manager.getGenerator(plotworld);
@@ -139,7 +139,7 @@ public class Template extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
                     return false;
                 }
-                if (PS.get().isPlotWorld(world)) {
+                if (PS.get().hasPlotArea(world)) {
                     MainUtil.sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
                     return false;
                 }
@@ -177,11 +177,11 @@ public class Template extends SubCommand {
                 setup.step = new ConfigurationNode[0];
                 setup.world = world;
                 SetupUtils.manager.setupWorld(setup);
-                SetBlockQueue.addNotify(new Runnable() {
+                SetQueue.IMP.addTask(new Runnable() {
                     @Override
                     public void run() {
                         MainUtil.sendMessage(plr, "Done!");
-                        plr.teleport(BlockManager.manager.getSpawn(world));
+                        plr.teleport(WorldUtil.IMP.getSpawn(world));
                     }
                 });
                 return true;
@@ -191,18 +191,18 @@ public class Template extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
                     return false;
                 }
-                final PlotWorld plotworld = PS.get().getPlotWorld(world);
-                if (!BlockManager.manager.isWorld(world) || (plotworld == null)) {
+                final PlotArea area = PS.get().getPlotAreaByString(world);
+                if (area == null) {
                     MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
                     return false;
                 }
-                final PlotManager manager = PS.get().getPlotManager(world);
+                final PlotManager manager = area.getPlotManager();
                 final PlotPlayer finalPlr = plr;
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            manager.exportTemplate(plotworld);
+                            manager.exportTemplate(area);
                         } catch (final Exception e) {
                             e.printStackTrace();
                             MainUtil.sendMessage(finalPlr, "Failed: " + e.getMessage());

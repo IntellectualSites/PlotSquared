@@ -41,7 +41,7 @@ public class Continue extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -53,7 +53,7 @@ public class Continue extends SubCommand {
             MainUtil.sendMessage(plr, C.DONE_NOT_DONE);
             return false;
         }
-        if (Settings.DONE_COUNTS_TOWARDS_LIMIT && (MainUtil.getAllowedPlots(plr) >= MainUtil.getPlayerPlotCount(plr))) {
+        if (Settings.DONE_COUNTS_TOWARDS_LIMIT && (plr.getAllowedPlots() >= plr.getPlotCount())) {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.continue");
             return false;
         }

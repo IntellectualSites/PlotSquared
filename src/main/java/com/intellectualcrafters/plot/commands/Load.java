@@ -36,10 +36,10 @@ public class Load extends SubCommand {
             return false;
         }
         final String world = plr.getLocation().getWorld();
-        if (!PS.get().isPlotWorld(world)) {
+        if (!PS.get().hasPlotArea(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = MainUtil.getPlotAbs(plr.getLocation());
+        final Plot plot = plr.getCurrentPlot();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -93,7 +93,7 @@ public class Load extends SubCommand {
                         }
                         SchematicHandler.manager.paste(schematic, plot, 0, 0, new RunnableVal<Boolean>() {
                             @Override
-                            public void run() {
+                            public void run(Boolean value) {
                                 plot.removeRunning();
                                 if (value) {
                                     sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);

@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.LazyBlock;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -27,9 +29,9 @@ public abstract class EventUtil {
     
     public abstract boolean callTeleport(final PlotPlayer player, final Location from, final Plot plot);
     
-    public abstract boolean callClear(final String world, final PlotId id);
+    public abstract boolean callClear(Plot plot);
     
-    public abstract void callDelete(final String world, final PlotId id);
+    public abstract void callDelete(Plot plot);
     
     public abstract boolean callFlagAdd(final Flag flag, final Plot plot);
     
@@ -37,9 +39,9 @@ public abstract class EventUtil {
     
     public abstract boolean callFlagRemove(final Flag flag, final PlotCluster cluster);
     
-    public abstract boolean callMerge(final String world, final Plot plot, final ArrayList<PlotId> plots);
+    public abstract boolean callMerge(final Plot plot, final ArrayList<PlotId> plots);
     
-    public abstract boolean callUnlink(final String world, final ArrayList<PlotId> plots);
+    public abstract boolean callUnlink(final PlotArea area, final ArrayList<PlotId> plots);
     
     public abstract void callEntry(final PlotPlayer player, final Plot plot);
     
@@ -52,9 +54,10 @@ public abstract class EventUtil {
     public abstract void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
     
     public boolean checkPlayerBlockEvent(final PlotPlayer pp, final PlayerBlockEventType type, final Location loc, final LazyBlock block, boolean notifyPerms) {
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        PlotArea area = PS.get().getPlotAreaAbs(loc);
+        Plot plot = area != null ? area.getPlot(loc) : null;
         if (plot == null) {
-            if (!MainUtil.isPlotAreaAbs(loc)) {
+            if (area == null) {
                 return true;
             }
         } else if (plot.isAdded(pp.getUUID())) {

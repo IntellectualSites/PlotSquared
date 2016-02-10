@@ -31,12 +31,12 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 
 /**
@@ -97,20 +97,24 @@ public class FlagManager {
     
     public static boolean addFlag(final AbstractFlag af, final boolean reserved) {
         PS.debug(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
-        for (final PlotWorld plotworld : PS.get().getPlotWorldObjects()) {
-            final Flag flag = ((HashMap<String, Flag>) plotworld.DEFAULT_FLAGS.clone()).get(af.getKey());
-            if (flag != null) {
-                flag.setKey(af);
-            }
-        }
-        if (PS.get().getAllPlotsRaw() != null) {
-            for (final Plot plot : PS.get().getPlotsRaw()) {
-                final Flag flag = plot.getFlags().get(af.getKey());
+        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                final Flag flag = ((HashMap<String, Flag>) value.DEFAULT_FLAGS.clone()).get(af.getKey());
                 if (flag != null) {
                     flag.setKey(af);
                 }
             }
-        }
+        });
+        PS.get().foreachPlot(new RunnableVal<Plot>() {
+            @Override
+            public void run(Plot value) {
+                final Flag flag = value.getFlags().get(af.getKey());
+                if (flag != null) {
+                    flag.setKey(af);
+                }
+            }
+        });
         if ((getFlag(af.getKey()) == null) && flags.add(af)) {
             if (reserved) {
                 reserveFlag(af.getKey());
@@ -120,17 +124,16 @@ public class FlagManager {
         return false;
     }
     
-    public static Flag getSettingFlag(final String world, final PlotSettings settings, final String id) {
+    public static Flag getSettingFlag(final PlotArea area, final PlotSettings settings, final String id) {
         Flag flag;
         if ((settings.flags.size() == 0) || ((flag = settings.flags.get(id)) == null)) {
-            final PlotWorld plotworld = PS.get().getPlotWorld(world);
-            if (plotworld == null) {
+            if (area == null) {
                 return null;
             }
-            if (plotworld.DEFAULT_FLAGS.size() == 0) {
+            if (area.DEFAULT_FLAGS.size() == 0) {
                 return null;
             }
-            return plotworld.DEFAULT_FLAGS.get(id);
+            return area.DEFAULT_FLAGS.get(id);
         }
         return flag;
     }
@@ -170,7 +173,7 @@ public class FlagManager {
         if (plot.owner == null) {
             return null;
         }
-        return getSettingFlag(plot.world, plot.getSettings(), flag);
+        return getSettingFlag(plot.area, plot.getSettings(), flag);
     }
     
     public static boolean isPlotFlagTrue(final Plot plot, final String strFlag) {
@@ -219,9 +222,9 @@ public class FlagManager {
         if (!result) {
             return false;
         }
-        for (Plot plot : MainUtil.getConnectedPlots(origin)) {
+        for (Plot plot : origin.getConnectedPlots()) {
             plot.getFlags().put(flag.getKey(), flag);
-            MainUtil.reEnterPlot(plot);
+            plot.reEnter();
             DBFunc.setFlags(plot, plot.getFlags().values());
         }
         return true;
@@ -237,7 +240,7 @@ public class FlagManager {
     }
     
     public static boolean addClusterFlag(final PlotCluster cluster, final Flag flag) {
-        getSettingFlag(cluster.world, cluster.settings, flag.getKey());
+        getSettingFlag(cluster.area, cluster.settings, flag.getKey());
         cluster.settings.flags.put(flag.getKey(), flag);
         DBFunc.setFlags(cluster, cluster.settings.flags.values());
         return true;
@@ -252,17 +255,14 @@ public class FlagManager {
         if (!plot.hasOwner()) {
             return null;
         }
-        return getSettingFlags(plot.world, plot.getSettings());
+        return getSettingFlags(plot.area, plot.getSettings());
     }
     
-    public static HashMap<String, Flag> getPlotFlags(final String world, final PlotSettings settings, final boolean ignorePluginflags) {
+    public static HashMap<String, Flag> getPlotFlags(PlotArea area, final PlotSettings settings, final boolean ignorePluginflags) {
         final HashMap<String, Flag> flags = new HashMap<>();
-        
-        final PlotWorld plotWorld = PS.get().getPlotWorld(world);
-        if ((plotWorld != null) && (plotWorld.DEFAULT_FLAGS.size() != 0)) {
-            flags.putAll(plotWorld.DEFAULT_FLAGS);
+        if ((area != null) && (area.DEFAULT_FLAGS.size() != 0)) {
+            flags.putAll(area.DEFAULT_FLAGS);
         }
-        
         if (ignorePluginflags) {
             for (final Map.Entry<String, Flag> flag : settings.flags.entrySet()) {
                 if (isReserved(flag.getValue().getAbstractFlag().getKey())) {
@@ -277,8 +277,8 @@ public class FlagManager {
         return flags;
     }
     
-    public static HashMap<String, Flag> getSettingFlags(final String world, final PlotSettings settings) {
-        return getPlotFlags(world, settings, false);
+    public static HashMap<String, Flag> getSettingFlags(PlotArea area, final PlotSettings settings) {
+        return getPlotFlags(area, settings, false);
     }
     
     public static boolean removePlotFlag(final Plot plot, final String id) {
@@ -291,7 +291,7 @@ public class FlagManager {
             plot.getFlags().put(id, flag);
             return false;
         }
-        MainUtil.reEnterPlot(plot);
+        plot.reEnter();
         DBFunc.setFlags(plot, plot.getFlags().values());
         return true;
     }
@@ -322,7 +322,7 @@ public class FlagManager {
             } else {
                 plot.getFlags().clear();
             }
-            MainUtil.reEnterPlot(plot);
+            plot.reEnter();
             DBFunc.setFlags(plot, plot.getFlags().values());
         }
     }

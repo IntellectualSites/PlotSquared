@@ -1,25 +1,25 @@
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
 
 /**
  * A plot manager with a square grid layout, with square shaped plots
  */
 public abstract class SquarePlotManager extends GridPlotManager {
     @Override
-    public boolean clearPlot(final PlotWorld plotworld, final Plot plot, final Runnable whenDone) {
-        final HashSet<RegionWrapper> regions = MainUtil.getRegions(plot);
+    public boolean clearPlot(final PlotArea plotworld, final Plot plot, final Runnable whenDone) {
+        final HashSet<RegionWrapper> regions = plot.getRegions();
         Runnable run = new Runnable() {
             @Override
             public void run() {
@@ -30,9 +30,9 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 Iterator<RegionWrapper> iter = regions.iterator();
                 RegionWrapper region = iter.next();
                 iter.remove();
-                Location pos1 = new Location(plot.world, region.minX, region.minY, region.minZ);
-                Location pos2 = new Location(plot.world, region.maxX, region.maxY, region.maxZ);
-                ChunkManager.manager.regenerateRegion(pos1, pos2, this);
+                Location pos1 = new Location(plot.area.worldname, region.minX, region.minY, region.minZ);
+                Location pos2 = new Location(plot.area.worldname, region.maxX, region.maxY, region.maxZ);
+                ChunkManager.manager.regenerateRegion(pos1, pos2, false, this);
             }
         };
         run.run();
@@ -40,7 +40,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
     }
     
     @Override
-    public Location getPlotTopLocAbs(final PlotWorld plotworld, final PlotId plotid) {
+    public Location getPlotTopLocAbs(final PlotArea plotworld, final PlotId plotid) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
         final int px = plotid.x;
         final int pz = plotid.y;
@@ -50,7 +50,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
     }
     
     @Override
-    public PlotId getPlotIdAbs(final PlotWorld plotworld, int x, final int y, int z) {
+    public PlotId getPlotIdAbs(final PlotArea plotworld, int x, final int y, int z) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
         if (dpw.ROAD_OFFSET_X != 0) {
             x -= dpw.ROAD_OFFSET_X;
@@ -92,7 +92,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
     }
     
     @Override
-    public PlotId getPlotId(final PlotWorld plotworld, int x, final int y, int z) {
+    public PlotId getPlotId(final PlotArea plotworld, int x, final int y, int z) {
         try {
             final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
             if (plotworld == null) {
@@ -139,7 +139,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             if (hash == 0) {
                 return id;
             }
-            Plot plot = PS.get().getPlot(plotworld.worldname, id);
+            Plot plot = plotworld.getOwnedPlotAbs(id);
             // Not merged, and standing on road
             if (plot == null) {
                 return null;
@@ -181,7 +181,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
      * Get the bottom plot loc (some basic math)
      */
     @Override
-    public Location getPlotBottomLocAbs(final PlotWorld plotworld, final PlotId plotid) {
+    public Location getPlotBottomLocAbs(final PlotArea plotworld, final PlotId plotid) {
         final SquarePlotWorld dpw = ((SquarePlotWorld) plotworld);
         final int px = plotid.x;
         final int pz = plotid.y;

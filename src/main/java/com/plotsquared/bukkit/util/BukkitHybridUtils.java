@@ -87,7 +87,7 @@ public class BukkitHybridUtils extends HybridUtils {
                     public void run() {
                         ChunkManager.chunkTask(bot, top, new RunnableVal<int[]>() {
                             @Override
-                            public void run() {
+                            public void run(int[] value) {
                                 // [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge]
                                 final int X = value[0];
                                 final int Z = value[1];
@@ -219,7 +219,7 @@ public class BukkitHybridUtils extends HybridUtils {
                 ChunkManager.chunkTask(bot, top, new RunnableVal<int[]>() {
                     
                     @Override
-                    public void run() {
+                    public void run(int[] value) {
                         final int X = value[0];
                         final int Z = value[1];
                         worldObj.loadChunk(X, Z);

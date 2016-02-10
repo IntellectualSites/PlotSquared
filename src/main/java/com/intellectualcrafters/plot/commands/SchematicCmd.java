@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -71,7 +72,7 @@ public class SchematicCmd extends SubCommand {
                     break;
                 }
                 final Location loc = plr.getLocation();
-                final Plot plot = MainUtil.getPlotAbs(loc);
+                final Plot plot = loc.getPlotAbs();
                 if (plot == null) {
                     return !sendMessage(plr, C.NOT_IN_PLOT);
                 }
@@ -115,7 +116,7 @@ public class SchematicCmd extends SubCommand {
                         }
                         SchematicHandler.manager.paste(schematic, plot, 0, 0, new RunnableVal<Boolean>() {
                             @Override
-                            public void run() {
+                            public void run(Boolean value) {
                                 running = false;
                                 if (value) {
                                     sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
@@ -167,12 +168,17 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(plr, "&cNeed world arg. Use &7/plots sch exportall <world>");
+                    MainUtil.sendMessage(plr, "&cNeed world arg. Use &7/plots sch exportall <area>");
                     return false;
                 }
-                final Collection<Plot> plots = PS.get().getPlotsInWorld(args[1]);
+                PlotArea area = PS.get().getPlotAreaByString(args[1]);
+                if (area == null) {
+                    C.NOT_VALID_PLOT_WORLD.send(plr, args[1]);
+                    return false;
+                }
+                final Collection<Plot> plots = area.getPlots();
                 if ((plots.size() == 0)) {
-                    MainUtil.sendMessage(plr, "&cInvalid world. Use &7/plots sch exportall <world>");
+                    MainUtil.sendMessage(plr, "&cInvalid world. Use &7/plots sch exportall <area>");
                     return false;
                 }
                 final boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
@@ -202,7 +208,7 @@ public class SchematicCmd extends SubCommand {
                 }
                 final Plot p2;
                 final Location loc = plr.getLocation();
-                final Plot plot = MainUtil.getPlotAbs(loc);
+                final Plot plot = loc.getPlotAbs();
                 if (plot == null) {
                     return !sendMessage(plr, C.NOT_IN_PLOT);
                 }

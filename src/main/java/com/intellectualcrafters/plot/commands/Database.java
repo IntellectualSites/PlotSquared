@@ -1,22 +1,23 @@
 package com.intellectualcrafters.plot.commands;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 @CommandDeclaration(
 command = "database",
@@ -25,7 +26,7 @@ category = CommandCategory.DEBUG,
 permission = "plots.database",
 description = "Convert/Backup Storage",
 requiredType = RequiredType.CONSOLE,
-usage = "/plots database [world] <sqlite|mysql|import>"
+usage = "/plots database [area] <sqlite|mysql|import>"
 
 )
 public class Database extends SubCommand {
@@ -58,15 +59,16 @@ public class Database extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {
-            MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql|import>");
+            MainUtil.sendMessage(player, "/plot database [area] <sqlite|mysql|import>");
             return false;
         }
         ArrayList<Plot> plots;
-        if (PS.get().isPlotWorld(args[0])) {
-            plots = PS.get().sortPlotsByTemp(PS.get().getPlotsInWorld(args[0]));
+        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        if (area != null) {
+            plots = PS.get().sortPlotsByTemp(area.getPlots());
             args = Arrays.copyOfRange(args, 1, args.length);
         } else {
-            plots = PS.get().sortPlotsByTemp(PS.get().getPlotsRaw());
+            plots = PS.get().sortPlotsByTemp(PS.get().getPlots());
         }
         if (args.length < 1) {
             MainUtil.sendMessage(player, "/plot database [world] <sqlite|mysql|import>");
@@ -90,18 +92,30 @@ public class Database extends SubCommand {
                     MainUtil.sendMessage(player, "&6Starting...");
                     implementation = new SQLite(file.getPath());
                     final SQLManager manager = new SQLManager(implementation, (args.length == 3) ? args[2] : "", true);
-                    final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> map = manager.getPlots();
+                    final HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<Plot>();
-                    for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : map.entrySet()) {
-                        for (final Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
-                            final Plot plot = entry2.getValue();
-                            if (PS.get().getPlot(plot.world, plot.getId()) != null) {
-                                MainUtil.sendMessage(player, "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
-                                continue;
+                    for (final Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
+                        String areaname = entry.getKey();
+                        PlotArea pa = PS.get().getPlotAreaByString(areaname);
+                        if (pa != null) {
+                            for (final Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                                final Plot plot = entry2.getValue();
+                                if (pa.getOwnedPlotAbs(plot.getId()) != null) {
+                                    MainUtil.sendMessage(player, "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
+                                    continue;
+                                }
+                                PS.get().updatePlot(plot);
+                                plots.add(entry2.getValue());
                             }
-                            PS.get().updatePlot(plot);
-                            plots.add(entry2.getValue());
                         }
+                        else {
+                            HashMap<PlotId, Plot> plotmap = PS.get().plots_tmp.get(areaname);
+                            if (plotmap == null) {
+                                plotmap = new HashMap<>();
+                                PS.get().plots_tmp.put(areaname, plotmap);
+                            }
+                            plotmap.putAll(entry.getValue());
+                        } 
                     }
                     DBFunc.createPlotsAndData(plots, new Runnable() {
                         @Override

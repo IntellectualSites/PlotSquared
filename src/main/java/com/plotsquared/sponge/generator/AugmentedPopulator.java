@@ -21,21 +21,21 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.util.SpongeUtil;
 
 public class AugmentedPopulator implements Populator {
     
-    public final PlotWorld plotworld;
+    public final PlotArea plotworld;
     public final PlotManager manager;
     public final SpongePlotGenerator generator;
     public final GenerationPopulator populator;
@@ -127,9 +127,9 @@ public class AugmentedPopulator implements Populator {
                         for (final Entry<Short, Short> entry : blocks.entrySet()) {
                             final int y = entry.getKey();
                             if (datas != null) {
-                                SetBlockQueue.setBlock(world, x, y, z, new PlotBlock(blocks.get(y), datas.get(y)));
+                                SetQueue.IMP.setBlock(world, x, y, z, new PlotBlock(blocks.get(y), datas.get(y)));
                             } else {
-                                SetBlockQueue.setBlock(world, x, y, z, blocks.get(y));
+                                SetQueue.IMP.setBlock(world, x, y, z, blocks.get(y));
                             }
                         }
                     }
@@ -153,7 +153,7 @@ public class AugmentedPopulator implements Populator {
                         final int zz = loc.z - Z;
                         if ((xx >= 0) && (xx < 16)) {
                             if ((zz >= 0) && (zz < 16)) {
-                                SetBlockQueue.setBlock(world, xx, y, zz, new PlotBlock(entry2.getValue(), data));
+                                SetQueue.IMP.setBlock(world, xx, y, zz, new PlotBlock(entry2.getValue(), data));
                             }
                         }
                     }
@@ -207,7 +207,7 @@ public class AugmentedPopulator implements Populator {
                 }
                 final PlotBlock block = SpongeMain.THIS.getPlotBlock(t);
                 if (block != null) {
-                    SetBlockQueue.setBlock(worldname, x, y, z, block);
+                    SetQueue.IMP.setBlock(worldname, x, y, z, block);
                 }
             }
             
@@ -277,7 +277,7 @@ public class AugmentedPopulator implements Populator {
                 }
                 final PlotBlock block = SpongeMain.THIS.getPlotBlock(t.getDefaultState());
                 if (block != null) {
-                    SetBlockQueue.setBlock(worldname, x, y, z, block);
+                    SetQueue.IMP.setBlock(worldname, x, y, z, block);
                 }
             }
             

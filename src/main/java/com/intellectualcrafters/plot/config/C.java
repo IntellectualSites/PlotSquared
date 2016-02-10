@@ -125,7 +125,7 @@ public enum C {
     "Cluster"),
     CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
     CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster"),
-    CLUSTER_INTERSECTION("$2The proposed area overlaps with $1%s$2 existing cluster/s", "Cluster"),
+    CLUSTER_INTERSECTION("$2The proposed area overlaps with an existing cluster: %s0", "Cluster"),
     CLUSTER_ADDED("$4Successfully created the cluster.", "Cluster"),
     CLUSTER_DELETED("$4Successfully deleted the cluster.", "Cluster"),
     CLUSTER_RESIZED("$4Successfully resized the cluster.", "Cluster"),
@@ -142,7 +142,6 @@ public enum C {
     CLUSTER_REGENERATED("$4Successfully started cluster regeneration", "Cluster"),
     CLUSTER_TELEPORTING("$4Teleporting...", "Cluster"),
     CLUSTER_INFO("$1Current cluster: $2%id%&-$1Name: $2%name%&-$1Owner: $2%owner%&-$1Size: $2%size%&-$1Rights: $2%rights%", "Cluster"),
-    CLUSTER_CURRENT_PLOTID("$1Current plot: $2%s", "Cluster"),
     /*
      * Border
      */
@@ -167,7 +166,7 @@ public enum C {
     WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted.", "WorldEdit Masks"),
     
     GAMEMODE_WAS_BYPASSED("$1You bypassed the gamemode ($2{gamemode}$1) $1set for $2{plot}", "Gamemode"),
-    HEIGHT_LIMIT("$1This plot world has a height limit of $2{limit}", "Height Limit"),
+    HEIGHT_LIMIT("$1This plot area has a height limit of $2{limit}", "Height Limit"),
     /*
      * Records
      */
@@ -382,7 +381,6 @@ public enum C {
     /*
      * purge
      */
-    PURGE_SYNTAX("Use /plot purge <x;z|player|unowned|unknown|all> <world>", "Purge"),
     PURGE_SUCCESS("$4Successfully purged %s plots", "Purge"),
     /*
      * trim
@@ -396,10 +394,10 @@ public enum C {
     NO_FREE_PLOTS("$2There are no free plots available", "Errors"),
     NOT_IN_PLOT("$2You're not in a plot", "Errors"),
     NOT_IN_CLUSTER("$2You must be within a plot cluster to perform that action", "Errors"),
-    NOT_IN_PLOT_WORLD("$2You're not in a plot world", "Errors"),
+    NOT_IN_PLOT_WORLD("$2You're not in a plot area", "Errors"),
     PLOTWORLD_INCOMPATIBLE("$2The two worlds must be compatible", "Errors"),
     NOT_VALID_WORLD("$2That is not a valid world (case sensitive)", "Errors"),
-    NOT_VALID_PLOT_WORLD("$2That is not a valid plot world (case sensitive)", "Errors"),
+    NOT_VALID_PLOT_WORLD("$2That is not a valid plot area (case sensitive)", "Errors"),
     NO_PLOTS("$2You don't have any plots", "Errors"),
     /*
      * Block List
@@ -457,7 +455,7 @@ public enum C {
     NEED_PLOT_NUMBER("$2You've got to specify a plot number or alias", "Need"),
     NEED_BLOCK("$2You've got to specify a block", "Need"),
     NEED_PLOT_ID("$2You've got to specify a plot id.", "Need"),
-    NEED_PLOT_WORLD("$2You've got to specify a plot world.", "Need"),
+    NEED_PLOT_WORLD("$2You've got to specify a plot area.", "Need"),
     NEED_USER("$2You need to specify a username", "Need"),
     /*
      * Info

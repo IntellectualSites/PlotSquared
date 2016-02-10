@@ -20,11 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
@@ -36,13 +44,6 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandHandlingOutput;
 import com.plotsquared.general.commands.CommandManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * PlotSquared command class
@@ -83,7 +84,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Auto());
         createCommand(new Visit());
         createCommand(new Home());
-        createCommand(new TP());
         createCommand(new Set());
         createCommand(new Toggle());
         createCommand(new Clear());
@@ -273,12 +273,12 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                     }
                     default: {
                         if (args.length >= 2) {
-                            String world = player.getLocation().getWorld();
-                            Plot newPlot = Plot.fromString(world, args[0]);
+                            PlotArea area = player.getApplicablePlotArea();
+                            Plot newPlot = Plot.fromString(area, args[0]);
                             if (newPlot == null) {
                                 break;
                             }
-                            if (!ConsolePlayer.isConsole(player) && (!newPlot.world.equals(world) || newPlot.isDenied(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN)) {
+                            if (!ConsolePlayer.isConsole(player) && (!newPlot.area.equals(area) || newPlot.isDenied(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN)) {
                                 break;
                             }
                             // Save meta

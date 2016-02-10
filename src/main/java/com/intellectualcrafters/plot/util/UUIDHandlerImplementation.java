@@ -112,7 +112,7 @@ public abstract class UUIDHandlerImplementation {
                     }
                     if (offline != null && !offline.equals(uuid)) {
                         unknown.remove(offline);
-                        final Set<Plot> plots = PS.get().getPlots(offline);
+                        final Set<Plot> plots = PS.get().getPlotsAbs(offline);
                         if (plots.size() > 0) {
                             for (final Plot plot : plots) {
                                 plot.owner = uuid;

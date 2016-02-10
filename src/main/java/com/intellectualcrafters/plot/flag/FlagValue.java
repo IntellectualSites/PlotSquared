@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.WorldUtil;
 
 /**
  * Created 2014-11-17 for PlotSquared
@@ -278,7 +278,7 @@ public abstract class FlagValue<T> {
                 final short id = Short.parseShort(split[0]);
                 return new PlotBlock(id, data);
             } catch (final Exception e) {
-                final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(t);
+                final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(t);
                 if ((value == null) || (value.match > 1)) {
                     return null;
                 }
@@ -331,7 +331,7 @@ public abstract class FlagValue<T> {
                     final short id = Short.parseShort(split[0]);
                     block = new PlotBlock(id, data);
                 } catch (Exception e) {
-                    final StringComparison<PlotBlock>.ComparisonResult value = BlockManager.manager.getClosestBlock(t);
+                    final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(t);
                     if ((value == null) || (value.match > 1)) {
                         continue;
                     }

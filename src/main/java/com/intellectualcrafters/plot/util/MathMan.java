@@ -17,6 +17,18 @@ public class MathMan {
         return count / array.length;
     }
     
+    public static int pair(short x, short y) {
+        return (x << 16) | (y & 0xFFFF);
+    }
+    
+    public static short unpairX(int hash) {
+        return (short) (hash >> 16);
+    }
+    
+    public static short unpairY(int hash) {
+        return (short) (hash & 0xFFFF);
+    }
+
     /**
      * Returns [x, y, z]
      * @param yaw

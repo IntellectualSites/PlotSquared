@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.AbstractDB;
@@ -46,6 +44,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
 import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
@@ -125,7 +124,7 @@ public class DebugUUID extends SubCommand {
         MainUtil.sendMessage(player, "&7 - Collecting playerdata");
         
         final HashSet<String> worlds = new HashSet<>();
-        worlds.add(Bukkit.getWorlds().get(0).getName());
+        worlds.add(WorldUtil.IMP.getMainWorld());
         worlds.add("world");
         final HashSet<UUID> uuids = new HashSet<>();
         final HashSet<String> names = new HashSet<>();
@@ -259,7 +258,7 @@ public class DebugUUID extends SubCommand {
                 
                 MainUtil.sendMessage(player, "&7 - Updating plot objects");
                 
-                for (final Plot plot : PS.get().getPlotsRaw()) {
+                for (final Plot plot : PS.get().getPlots()) {
                     final UUID value = uCMap.get(plot.owner);
                     if (value != null) {
                         plot.owner = value;

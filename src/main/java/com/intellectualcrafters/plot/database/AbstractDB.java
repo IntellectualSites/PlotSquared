@@ -20,13 +20,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
-
 import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
 
@@ -124,7 +133,7 @@ public interface AbstractDB {
     /**
      * @return A linked hashmap containing all plots
      */
-    ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> getPlots();
+    HashMap<String, HashMap<PlotId, Plot>> getPlots();
     
     /**
      *
@@ -134,7 +143,7 @@ public interface AbstractDB {
     /**
      * @return A hashmap containing all plot clusters
      */
-    HashMap<String, HashSet<PlotCluster>> getClusters();
+    HashMap<String, Set<PlotCluster>> getClusters();
     
     /**
      * Set the merged status for a plot
@@ -186,14 +195,14 @@ public interface AbstractDB {
      * @param world World in which the plot is located
      * @param uniqueIds list of plot id (db) to be purged
      */
-    void purgeIds(final String world, final Set<Integer> uniqueIds);
+    void purgeIds(final Set<Integer> uniqueIds);
     
     /**
      * Purge a whole world
      *
      * @param world World in which the plots should be purged
      */
-    void purge(final String world, final Set<PlotId> plotIds);
+    void purge(final PlotArea area, final Set<PlotId> plotIds);
     
     /**
      * Set Plot Home Position
@@ -318,13 +327,13 @@ public interface AbstractDB {
      * @param plot  Plot Object
      * @return Plot Comments within the specified tier
      */
-    void getComments(final Plot plot, final String inbox, final RunnableVal whenDone);
+    void getComments(final Plot plot, final String inbox, final RunnableVal<List<PlotComment>> whenDone);
     
     void createPlotAndSettings(final Plot plot, final Runnable whenDone);
     
     void createCluster(final PlotCluster cluster);
     
-    void resizeCluster(final PlotCluster current, final PlotClusterId resize);
+    void resizeCluster(final PlotCluster current, PlotId min, PlotId max);
     
     void movePlot(final Plot originalPlot, final Plot newPlot);
     

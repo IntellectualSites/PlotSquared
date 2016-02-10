@@ -148,8 +148,8 @@ public class PlotSettings {
         this.alias = alias;
     }
     
-    public String getJoinMessage(String world) {
-        final Flag greeting = FlagManager.getSettingFlag(world, this, "greeting");
+    public String getJoinMessage(PlotArea area) {
+        final Flag greeting = FlagManager.getSettingFlag(area, this, "greeting");
         if (greeting != null) {
             return greeting.getValueString();
         }
@@ -161,8 +161,8 @@ public class PlotSettings {
      *
      * @return Farewell flag
      */
-    public String getLeaveMessage(String world) {
-        final Flag farewell = FlagManager.getSettingFlag(world, this, "farewell");
+    public String getLeaveMessage(PlotArea area) {
+        final Flag farewell = FlagManager.getSettingFlag(area, this, "farewell");
         if (farewell != null) {
             return farewell.getValueString();
         }

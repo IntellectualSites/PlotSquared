@@ -44,7 +44,7 @@ public class Owner extends SetCommand {
     
     @Override
     public boolean set(PlotPlayer plr, Plot plot, String value) {
-        HashSet<Plot> plots = MainUtil.getConnectedPlots(plot);
+        HashSet<Plot> plots = plot.getConnectedPlots();
         UUID uuid = null;
         String name = null;
         if (value.length() == 36) {
@@ -72,18 +72,18 @@ public class Owner extends SetCommand {
                 return false;
             }
             final int size = plots.size();
-            final int currentPlots = (Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(other) : MainUtil.getPlayerPlotCount(plot.world, other)) + size;
-            if (currentPlots > MainUtil.getAllowedPlots(other)) {
+            final int currentPlots = (Settings.GLOBAL_LIMIT ? other.getPlotCount() : other.getPlotCount(plot.area.worldname)) + size;
+            if (currentPlots > other.getAllowedPlots()) {
                 sendMessage(plr, C.CANT_TRANSFER_MORE_PLOTS);
                 return false;
             }
         }
         
         plot.setOwner(uuid);
-        MainUtil.setSign(name, plot);
+        plot.setSign(name);
         MainUtil.sendMessage(plr, C.SET_OWNER);
         if (other != null) {
-            MainUtil.sendMessage(other, C.NOW_OWNER, plot.world + ";" + plot.getId());
+            MainUtil.sendMessage(other, C.NOW_OWNER, plot.area + ";" + plot.getId());
         }
         return true;
     }

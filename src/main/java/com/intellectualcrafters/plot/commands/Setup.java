@@ -20,23 +20,24 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.BlockManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.WorldUtil;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
 command = "setup",
@@ -50,7 +51,7 @@ public class Setup extends SubCommand {
     public void displayGenerators(final PlotPlayer plr) {
         final StringBuilder message = new StringBuilder();
         message.append("&6What generator do you want?");
-        for (final Entry<String, PlotGenerator<?>> entry : SetupUtils.generators.entrySet()) {
+        for (final Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
             if (entry.getKey().equals("PlotSquared")) {
                 message.append("\n&8 - &2").append(entry.getKey()).append(" (Default Generator)");
             } else if (entry.getValue().isFull()) {
@@ -65,10 +66,10 @@ public class Setup extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         // going through setup
-        final String name = plr.getName();
-        if (!SetupUtils.setupMap.containsKey(name)) {
-            final SetupObject object = new SetupObject();
-            SetupUtils.setupMap.put(name, object);
+        SetupObject object = (SetupObject) plr.getMeta("setup");
+        if (object == null) {
+            object = new SetupObject();
+            plr.setMeta("setup", object);
             SetupUtils.manager.updateGenerators();
             sendMessage(plr, C.SETUP_INIT);
             displayGenerators(plr);
@@ -76,12 +77,11 @@ public class Setup extends SubCommand {
         }
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("cancel")) {
-                SetupUtils.setupMap.remove(name);
+                plr.deleteMeta("setup");
                 MainUtil.sendMessage(plr, "&aCancelled setup");
                 return false;
             }
             if (args[0].equalsIgnoreCase("back")) {
-                final SetupObject object = SetupUtils.setupMap.get(name);
                 if (object.setup_index > 0) {
                     object.setup_index--;
                     final ConfigurationNode node = object.step[object.setup_index];
@@ -92,7 +92,6 @@ public class Setup extends SubCommand {
                 }
             }
         }
-        final SetupObject object = SetupUtils.setupMap.get(name);
         final int index = object.current;
         switch (index) {
             case 0: { // choose generator
@@ -104,7 +103,7 @@ public class Setup extends SubCommand {
                 }
                 object.setupGenerator = args[0];
                 object.current++;
-                final String partial = Settings.ENABLE_CLUSTERS ? "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots" : "";
+                final String partial = "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots";
                 MainUtil.sendMessage(plr, "&6What world type do you want?" + "\n&8 - &2DEFAULT&8 - &7Standard plot generation" + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + partial);
                 break;
             }
@@ -117,9 +116,7 @@ public class Setup extends SubCommand {
                     types.add("default");
                 }
                 types.add("augmented");
-                if (Settings.ENABLE_CLUSTERS) {
-                    types.add("partial");
-                }
+                types.add("partial");
                 if ((args.length != 1) || !types.contains(args[0].toLowerCase())) {
                     MainUtil.sendMessage(plr, "&cYou must choose a world type!");
                     for (final String type : types) {
@@ -133,16 +130,16 @@ public class Setup extends SubCommand {
                     return false;
                 }
                 object.type = allTypes.indexOf(args[0].toLowerCase());
-                final PlotGenerator<?> gen = SetupUtils.generators.get(object.setupGenerator);
+                final GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
                 if (object.type == 0) {
-                    object.current++;
+                    object.current = 7;
                     if (object.step == null) {
                         object.plotManager = object.setupGenerator;
-                        object.step = SetupUtils.generators.get(object.plotManager).getNewPlotWorld(null).getSettingNodes();
-                        SetupUtils.generators.get(object.plotManager).processSetup(object);
+                        object.step = SetupUtils.generators.get(object.plotManager).getPlotGenerator().getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null).getSettingNodes();
+                        SetupUtils.generators.get(object.plotManager).getPlotGenerator().processSetup(object);
                     }
                     if (object.step.length == 0) {
-                        object.current = 4;
+                        object.current = 7;
                         MainUtil.sendMessage(plr, "&6What do you want your world to be called?");
                         object.setup_index = 0;
                         return true;
@@ -153,24 +150,75 @@ public class Setup extends SubCommand {
                     if (gen.isFull()) {
                         object.plotManager = object.setupGenerator;
                         object.setupGenerator = null;
-                        object.step = SetupUtils.generators.get(object.plotManager).getNewPlotWorld(null).getSettingNodes();
-                        SetupUtils.generators.get(object.plotManager).processSetup(object);
+                        object.step = SetupUtils.generators.get(object.plotManager).getPlotGenerator().getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null).getSettingNodes();
+                        SetupUtils.generators.get(object.plotManager).getPlotGenerator().processSetup(object);
                     } else {
                         object.plotManager = "PlotSquared";
                         MainUtil.sendMessage(plr, "&c[WARNING] The specified generator does not identify as BukkitPlotGenerator");
                         MainUtil.sendMessage(plr, "&7 - You may need to manually configure the other plugin");
-                        object.step = SetupUtils.generators.get(object.plotManager).getNewPlotWorld(null).getSettingNodes();
+                        object.step = SetupUtils.generators.get(object.plotManager).getPlotGenerator().getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null).getSettingNodes();
                     }
-                    MainUtil.sendMessage(plr, "&6What terrain would you like in plots?"
-                    + "\n&8 - &2NONE&8 - &7No terrain at all"
-                    + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
-                    + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
-                    + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                    if (object.type == 2) {
+                        MainUtil.sendMessage(plr, "What would you like this area called?");
+                        object.current++;
+                    } else {
+                        MainUtil.sendMessage(plr, "&6What terrain would you like in plots?"
+                        + "\n&8 - &2NONE&8 - &7No terrain at all"
+                        + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
+                        + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
+                        + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                        object.current = 5;
+                    }
                 }
-                object.current++;
                 break;
             }
-            case 2: { // Choose terrain
+            case 2: { // area id
+                if (!StringMan.isAlphanumericUnd(args[0])) {
+                    MainUtil.sendMessage(plr, "&cThe area id must be alphanumerical!");
+                    return false;
+                }
+                for (PlotArea area : PS.get().getPlotAreas()) {
+                    if (area.id != null && area.id.equalsIgnoreCase(args[0])) {
+                        MainUtil.sendMessage(plr, "&cYou must choose an area id that is not in use!");
+                        return false;
+                    }
+                }
+                object.id = args[0];
+                object.current++;
+                MainUtil.sendMessage(plr, "&6What should be the minimum Plot Id?");
+                break;
+            }
+            case 3: { // min
+                object.min = PlotId.fromString(args[0]);
+                if (object.min == null) {
+                    MainUtil.sendMessage(plr, "&cYou must choose a valid minimum PlotId!");
+                    return false;
+                }
+                object.current++;
+                MainUtil.sendMessage(plr, "&6What should be the maximum Plot Id?");
+                break;
+            }
+            case 4: {
+                // max
+                PlotId id = PlotId.fromString(args[0]);
+                if (id == null) {
+                    MainUtil.sendMessage(plr, "&cYou must choose a valid maximum PlotId!");
+                    return false;
+                }
+                if (id.x <= object.min.x || id.y <= object.min.y) {
+                    MainUtil.sendMessage(plr, "&cThe max PlotId must be greater than the minimum!");
+                    return false;
+                }
+                object.max = id;
+                object.current++;
+                MainUtil.sendMessage(plr, "&6What terrain would you like in plots?"
+                + "\n&8 - &2NONE&8 - &7No terrain at all"
+                + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
+                + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
+                + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                break;
+            }
+            case 5: { // Choose terrain
                 final List<String> terrain = Arrays.asList("none", "ore", "road", "all");
                 if ((args.length != 1) || !terrain.contains(args[0].toLowerCase())) {
                     MainUtil.sendMessage(plr, "&cYou must choose the terrain!"
@@ -183,13 +231,13 @@ public class Setup extends SubCommand {
                 object.terrain = terrain.indexOf(args[0].toLowerCase());
                 object.current++;
                 if (object.step == null) {
-                    object.step = SetupUtils.generators.get(object.plotManager).getNewPlotWorld(null).getSettingNodes();
+                    object.step = SetupUtils.generators.get(object.plotManager).getPlotGenerator().getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null).getSettingNodes();
                 }
                 final ConfigurationNode step = object.step[object.setup_index];
                 sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(), step.getDefaultValue() + "");
                 break;
             }
-            case 3: { // world setup
+            case 6: { // world setup
                 if (object.setup_index == object.step.length) {
                     MainUtil.sendMessage(plr, "&6What do you want your world to be called?");
                     object.setup_index = 0;
@@ -219,13 +267,13 @@ public class Setup extends SubCommand {
                     return false;
                 }
             }
-            case 4: {
+            case 7: {
                 if (args.length != 1) {
                     MainUtil.sendMessage(plr, "&cYou need to choose a world name!");
                     return false;
                 }
-                if (BlockManager.manager.isWorld(args[0])) {
-                    if (PS.get().isPlotWorld(args[0])) {
+                if (WorldUtil.IMP.isWorld(args[0])) {
+                    if (PS.get().hasPlotArea(args[0])) {
                         MainUtil.sendMessage(plr, "&cThat world name is already taken!");
                         return false;
                     }
@@ -233,7 +281,7 @@ public class Setup extends SubCommand {
                     "&cThe world you specified already exists. After restarting, new terrain will use PlotSquared, however you may need to reset the world for it to generate correctly!");
                 }
                 object.world = args[0];
-                SetupUtils.setupMap.remove(name);
+                plr.deleteMeta("setup");
                 final String world;
                 if (object.setupManager == null) {
                     world = SetupUtils.manager.setupWorld(object);
@@ -241,13 +289,12 @@ public class Setup extends SubCommand {
                     world = object.setupManager.setupWorld(object);
                 }
                 try {
-                    plr.teleport(BlockManager.manager.getSpawn(world));
+                    plr.teleport(WorldUtil.IMP.getSpawn(world));
                 } catch (final Exception e) {
                     plr.sendMessage("&cAn error occurred. See console for more information");
                     e.printStackTrace();
                 }
                 sendMessage(plr, C.SETUP_FINISHED, object.world);
-                SetupUtils.setupMap.remove(name);
             }
         }
         return false;

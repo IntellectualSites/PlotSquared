@@ -21,14 +21,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.MemorySection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
@@ -43,24 +44,25 @@ import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
-import com.intellectualcrafters.plot.generator.SquarePlotManager;
+import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
+import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotFilter;
 import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.CommentManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
@@ -72,10 +74,13 @@ import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
 
@@ -91,10 +96,23 @@ public class PS {
     // protected static:
     private static PS instance;
     
-    // private final:
-    private final HashMap<String, PlotWorld> plotworlds = new HashMap<>();
-    private final HashMap<String, PlotManager> plotmanagers = new HashMap<>();
+    /**
+     * All plot areas (quick global access)
+     */
+    private PlotArea[] plotareas = new PlotArea[0];
+    /**
+     * All plot areas mapped by world (quick world access)
+     */
+    private final HashMap<String, PlotArea[]> plotareamap = new HashMap<>();
+    /**
+     * All plot areas mapped by location (quick location based access)
+     */
+    private final HashMap<String, QuadMap<PlotArea>> plotareagrid = new HashMap<>();
     
+    public HashMap<String, Set<PlotCluster>> clusters_tmp;
+    
+    public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
+
     // public:
     public File styleFile;
     public File configFile;
@@ -113,8 +131,6 @@ public class PS {
     private int[] VERSION = null;
     private String PLATFORM = null;
     private String LAST_VERSION;
-    private boolean LOADING_WORLD = false;
-    private ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> plots;
     private Database database;
     private Connection connection;
     private Thread thread;
@@ -238,8 +254,10 @@ public class PS {
             InventoryUtil.manager = IMP.initInventoryUtil();
             // create setup util class
             SetupUtils.manager = IMP.initSetupUtils();
+            // World Util
+            WorldUtil.IMP = IMP.initWorldUtil();
             // Set block
-            BlockManager.manager = IMP.initBlockManager();
+            SetQueue.IMP.queue = IMP.initPlotQueue();
             // Set chunk
             ChunkManager.manager = IMP.initChunkManager();
             // Schematic handler
@@ -269,7 +287,7 @@ public class PS {
                     if (world.equals("CheckingPlotSquaredGenerator")) {
                         continue;
                     }
-                    if (BlockManager.manager.isWorld(world)) {
+                    if (WorldUtil.IMP.isWorld(world)) {
                         IMP.setGenerator(world);
                     }
                 }
@@ -280,7 +298,7 @@ public class PS {
                             if (world.equals("CheckingPlotSquaredGenerator")) {
                                 continue;
                             }
-                            if (!BlockManager.manager.isWorld(world) || (BlockManager.manager.isWorld(world) && !isPlotWorld(world))) {
+                            if (!WorldUtil.IMP.isWorld(world)) {
                                 PS.debug("&c`" + world + "` was not properly loaded - PlotSquared will now try to load it properly: ");
                                 PS.debug("&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
                                 PS.debug("&8 - &7Your world management plugin may be faulty (or non existant)");
@@ -356,6 +374,10 @@ public class PS {
         get().IMP.log(StringMan.getString(message));
     }
     
+    public static void stacktrace() {
+        System.err.println(StringMan.join(new Exception().getStackTrace(), "\n\tat "));
+    }
+
     /**
      * Log a message to the IPlotMain logger
      *
@@ -385,48 +407,243 @@ public class PS {
      * @param plot Plot Object to update
      */
     public boolean updatePlot(final Plot plot) {
-        for (PlotPlayer pp : plot.getPlayersInPlot()) {
-            pp.setMeta("lastplot", plot);
-        }
-        ConcurrentHashMap<PlotId, Plot> map = plots.get(plot.world);
-        if (map == null) {
-            map = new ConcurrentHashMap<PlotId, Plot>();
-            map.put(plot.id, plot);
-            plots.put(plot.world, map);
-            return true;
-        } else {
-            return map.put(plot.id, plot) == null;
-        }
+        return plot.area.addPlot(plot);
     }
     
     /**
-     * Get the plot world based on the
-     * name identifier
-     *
-     * @param world World Name
-     * @return plot world | null if not existing
-     * @see #getPlotWorldsString() Get all plot world names
+     * Get the relevant plot area for a location.<br>
+     *  - If there is only one plot area globally that will be returned<br>
+     *  - If there is only one plot area in the world, it will return that<br>
+     *  - If the plot area for a location cannot be unambiguously resolved; null will be returned<br>
+     *  <br>
+     * Note: An applicable plot area may not include the location i.e. clusters
+     * @param loc
+     * @return
      */
-    public PlotWorld getPlotWorld(final String world) {
-        if (plotworlds.containsKey(world)) {
-            return plotworlds.get(world);
+    public PlotArea getApplicablePlotArea(Location loc) {
+        switch (plotareas.length) {
+            case 0:
+                return null;
+            case 1:
+                return plotareas[0];
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                String world = loc.getWorld();
+                PlotArea last = null;
+                int count = 0;
+                int x = loc.getX();
+                int y = loc.getY();
+                int hash = world.hashCode();
+                for (PlotArea area : plotareas) {
+                    if (hash == area.worldhash && world.equals(area.worldname)) {
+                        if (area.contains(loc)) {
+                            return area;
+                        }
+                        count++;
+                        last = area;
+                    }
+                }
+                return count == 1 ? last : null;
+            default:
+                PlotArea[] areas = plotareamap.get(loc.getWorld());
+                if (areas == null) {
+                    return null;
+                }
+                switch (areas.length) {
+                    case 1:
+                        return areas[0];
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        x = loc.getX();
+                        y = loc.getY();
+                        for (PlotArea area : areas) {
+                            if (area.contains(x, y)) {
+                                return area;
+                            }
+                        }
+                        return null;
+                    default:
+                        QuadMap<PlotArea> search = plotareagrid.get(loc.getWorld());
+                        return search.get(loc.getX(), loc.getZ());
+                }
         }
-        return null;
     }
     
+    public PlotArea getPlotArea(String world, String id) {
+        PlotArea[] areas = plotareamap.get(world);
+        if (areas == null) {
+            return null;
+        }
+        if (areas.length == 1) {
+            return areas[0];
+        } else if (id == null) {
+            return null;
+        } else {
+            for (PlotArea area : areas) {
+                if (StringMan.isEqual(id, area.id)) {
+                    return area;
+                }
+            }
+            return null;
+        }
+    }
+    
+    public PlotArea getPlotAreaByString(String search) {
+        String[] split = search.split(";|,");
+        PlotArea[] areas = plotareamap.get(split[0]);
+        if (areas == null) {
+            for (PlotArea area : plotareas) {
+                if (area.worldname.equalsIgnoreCase(split[0])) {
+                    if (area.id == null || (split.length == 2 && area.id.equalsIgnoreCase(split[1]))) {
+                        return area;
+                    }
+                }
+            }
+        }
+        if (areas.length == 1) {
+            return areas[0];
+        } else if (split.length == 1) {
+            return null;
+        } else {
+            for (PlotArea area : areas) {
+                if (StringMan.isEqual(split[1], area.id)) {
+                    return area;
+                }
+            }
+            return null;
+        }
+    }
+    
+    public Set<PlotArea> getPlotAreas(String world, RegionWrapper region) {
+        QuadMap<PlotArea> areas = plotareagrid.get(world);
+        return areas != null ? areas.get(region) : new HashSet<PlotArea>();
+    }
+
+    /**
+     * Get the plot area which contains a location.<br>
+     *  - If the plot area does not contain a location, null will be returned
+     * 
+     * @param loc
+     * @return
+     */
+    public PlotArea getPlotAreaAbs(Location loc) {
+        switch (plotareas.length) {
+            case 0:
+                return null;
+            case 1:
+                PlotArea pa = plotareas[0];
+                return pa.contains(loc) ? pa : null;
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                String world = loc.getWorld();
+                int x = loc.getX();
+                int y = loc.getY();
+                int hash = world.hashCode();
+                for (PlotArea area : plotareas) {
+                    if (hash == area.worldhash && world.equals(area.worldname)) {
+                        if (area.contains(loc)) {
+                            return area;
+                        }
+                    }
+                }
+                return null;
+            default:
+                PlotArea[] areas = plotareamap.get(loc.getWorld());
+                if (areas == null) {
+                    return null;
+                }
+                switch (areas.length) {
+                    case 0:
+                        PlotArea a = areas[0];
+                        return a.contains(loc) ? a : null;
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        x = loc.getX();
+                        y = loc.getY();
+                        for (PlotArea area : areas) {
+                            if (area.contains(x, y)) {
+                                return area;
+                            }
+                        }
+                        return null;
+                    default:
+                        QuadMap<PlotArea> search = plotareagrid.get(loc.getWorld());
+                        return search.get(loc.getX(), loc.getZ());
+                }
+        }
+    }
+
+    public PlotManager getPlotManager(Plot plot) {
+        return plot.area.manager;
+    }
+    
+    public PlotManager getPlotManager(Location loc) {
+        PlotArea pa = getPlotAreaAbs(loc);
+        return pa != null ? pa.manager : null;
+    }
+
     /**
      * Add a global reference to a plot world
      *
      * @param world     World Name
-     * @param plotworld PlotWorld Instance
+     * @param plotworld PlotArea Instance
      * @param manager   PlotManager
      * @see #removePlotWorld(String) To remove the reference
      */
-    public void addPlotWorld(final String world, final PlotWorld plotworld, final PlotManager manager) {
-        plotworlds.put(world, plotworld);
-        plotmanagers.put(world, manager);
-        if (!plots.containsKey(world)) {
-            plots.put(world, new ConcurrentHashMap<PlotId, Plot>());
+    public void addPlotArea(final PlotArea plotarea) {
+        HashMap<PlotId, Plot> plots = plots_tmp.remove(plotarea.toString());
+        if (plots != null) {
+            for (Entry<PlotId, Plot> entry : plots.entrySet()) {
+                Plot plot = entry.getValue();
+                plot.setArea(plotarea);
+            }
+        }
+        if (Settings.ENABLE_CLUSTERS) {
+            Set<PlotCluster> clusters = clusters_tmp.remove(plotarea.toString());
+            if (clusters != null) {
+                for (PlotCluster cluster : clusters) {
+                    cluster.setArea(plotarea);
+                }
+            }
+        }
+        Set<PlotArea> localAreas = getPlotAreas(plotarea.worldname);
+        Set<PlotArea> globalAreas = getPlotAreas();
+        localAreas.add(plotarea);
+        globalAreas.add(plotarea);
+        plotareas = globalAreas.toArray(new PlotArea[0]);
+        plotareamap.put(plotarea.worldname, localAreas.toArray(new PlotArea[0]));
+        if (plotarea.TYPE == 2) {
+            QuadMap<PlotArea> map = plotareagrid.get(plotarea.worldname);
+            if (map == null) {
+                map = new QuadMap<PlotArea>(Integer.MAX_VALUE, 0, 0) {
+                    @Override
+                    public RegionWrapper getRegion(PlotArea value) {
+                        return value.getRegion();
+                    }
+                };
+                plotareagrid.put(plotarea.worldname, map);
+            }
+            map.add(plotarea);
         }
     }
     
@@ -434,35 +651,81 @@ public class PS {
      * Remove a plot world reference
      *
      * @param world World name
-     * @see #addPlotWorld(String, PlotWorld, PlotManager) To add a reference
+     * @see #addPlotWorld(String, PlotArea, PlotManager) To add a reference
      */
-    public void removePlotWorld(final String world) {
-        plots.remove(world);
-        plotmanagers.remove(world);
-        plotworlds.remove(world);
+    public void removePlotArea(final PlotArea area) {
+        Set<PlotArea> areas = getPlotAreas(area.worldname);
+        areas.remove(area);
+        plotareas = areas.toArray(new PlotArea[0]);
+        if (areas.size() == 0) {
+            plotareamap.remove(area.worldname);
+            plotareagrid.remove(area.worldname);
+        } else {
+            plotareamap.put(area.worldname, areas.toArray(new PlotArea[areas.size()]));
+            plotareagrid.get(area.worldname).remove(area);
+        }
+        setPlotsTmp(area);
     }
     
-    /**
-     * @param world World Name
-     */
-    public void removePlotWorldAbs(final String world) {
-        plotmanagers.remove(world);
-        plotworlds.remove(world);
+    public void removePlotAreas(String world) {
+        for (PlotArea area : getPlotAreas(world)) {
+            removePlotArea(area);
+        }
+    }
+
+    private void setPlotsTmp(PlotArea area) {
+        if (plots_tmp == null) {
+            plots_tmp = new HashMap<String, HashMap<PlotId, Plot>>();
+        }
+        HashMap<PlotId, Plot> map = plots_tmp.get(area.toString());
+        if (map == null) {
+            map = new HashMap<>();
+            plots_tmp.put(area.toString(), map);
+        }
+        for (Plot plot : area.getPlots()) {
+            map.put(plot.getId(), plot);
+        }
+        if (clusters_tmp == null) {
+            clusters_tmp = new HashMap<>();
+        }
+        clusters_tmp.put(area.toString(), area.getClusters());
     }
     
-    /**
-     * Get all plots as raw objects
-     *
-     * @see #getPlots() To get the plot objects
-     * @see #getPlotsRaw() To get the plot objects
-     *
-     * @return HashMap containing the world name, and another map with the plot id and the plot object
-     */
-    @Deprecated
-    public Map<String, ConcurrentHashMap<PlotId, Plot>> getAllPlotsRaw() {
-        return plots;
+    public void setPlots(HashMap<String, HashMap<PlotId, Plot>> plots) {
+        if (plots_tmp == null) {
+            plots_tmp = new HashMap<>();
+        }
+        for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            String world = entry.getKey();
+            PlotArea area = getPlotArea(world, null);
+            if (area == null) {
+                HashMap<PlotId, Plot> map = plots_tmp.get(world);
+                if (map == null) {
+                    map = new HashMap<>();
+                    plots_tmp.put(world, map);
+                }
+                map.putAll(entry.getValue());
+            } else {
+                for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                    Plot plot = entry2.getValue();
+                    plot.setArea(area);
+                    area.addPlot(plot);
+                }
+            }
+        }
     }
-    
+
+    public Set<PlotCluster> getClusters(String world) {
+        HashSet<PlotCluster> set = new HashSet<>();
+        if (Settings.ENABLE_CLUSTERS) {
+            for (PlotArea area : getPlotAreas(world)) {
+                set.addAll(area.getClusters());
+            }
+        }
+        return set;
+        
+    }
+
     /**
      * A more generic way to filter plots - make your own method if you need complex filters
      * @param filters
@@ -470,33 +733,26 @@ public class PS {
      */
     public Set<Plot> getPlots(final PlotFilter... filters) {
         final HashSet<Plot> set = new HashSet<>();
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            for (final PlotFilter filter : filters) {
-                if (!filter.allowsWorld(entry.getKey())) {
-                    continue;
-                }
-            }
-            for (Entry<PlotId, Plot> entry2: entry.getValue().entrySet()) {
-                Plot plot = entry2.getValue();
+        foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
                 for (final PlotFilter filter : filters) {
-                    if (!filter.allowsPlot(plot)) {
+                    if (!filter.allowsArea(value)) {
                         continue;
                     }
                 }
-                set.add(plot);
+                for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
+                    Plot plot = entry2.getValue();
+                    for (final PlotFilter filter : filters) {
+                        if (!filter.allowsPlot(plot)) {
+                            continue;
+                        }
+                    }
+                    set.add(plot);
+                }
             }
-        }
+        });
         return set;
-    }
-    
-    /**
-     * Set all the plots as a raw object
-     * @see #getAllPlotsRaw() to get the raw plot object
-     * @param plots
-     */
-    @Deprecated
-    public void setAllPlotsRaw(final ConcurrentHashMap<String, ConcurrentHashMap<PlotId, Plot>> plots) {
-        this.plots = plots;
     }
     
     /**
@@ -504,18 +760,14 @@ public class PS {
      * @return Set of Plot
      */
     public Set<Plot> getPlots() {
-        int size = 0;
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            if (isPlotWorld(entry.getKey())) {
-                size += entry.getValue().size();
-            }
-        }
+        int size = getPlotCount();
         final Set<Plot> result = new HashSet<>(size);
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            if (isPlotWorld(entry.getKey())) {
-                result.addAll(entry.getValue().values());
+        foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                result.addAll(value.getPlots());
             }
-        }
+        });
         return result;
     }
     
@@ -524,44 +776,19 @@ public class PS {
      * @return Set of base Plot
      */
     public Set<Plot> getBasePlots() {
-        int size = 0;
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            if (isPlotWorld(entry.getKey())) {
-                size += entry.getValue().size();
-            }
-        }
+        int size = getPlotCount();
         final Set<Plot> result = new HashSet<>(size);
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            if (isPlotWorld(entry.getKey())) {
-                for (final Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
-                    final Plot plot = entry2.getValue();
+        foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                for (Plot plot : value.getPlots()) {
                     if (plot.getMerged(0) || plot.getMerged(3)) {
                         continue;
                     }
                     result.add(plot);
                 }
             }
-        }
-        return result;
-    }
-    
-    /**
-     * Get the raw plot object
-     * @return set of plot
-     * @see #setAllPlotsRaw(ConcurrentHashMap) to set the raw plot object
-     */
-    @Deprecated
-    public Set<Plot> getPlotsRaw() {
-        int size = 0;
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            size += entry.getValue().size();
-        }
-        final Set<Plot> result = new HashSet<>(size);
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
-                result.add(entry2.getValue());
-            }
-        }
+        });
         return result;
     }
     
@@ -914,59 +1141,56 @@ public class PS {
      * @param priorityWorld - Use null, "world" or "gibberish" if you want default world order
      * @return ArrayList of plot
      */
-    public ArrayList<Plot> sortPlots(final Collection<Plot> plots, final SortType type, final String priorityWorld) {
+    public ArrayList<Plot> sortPlots(final Collection<Plot> myplots, final SortType type, final PlotArea priorityArea) {
         // group by world
         // sort each
-        final HashMap<String, Collection<Plot>> map = new HashMap<>();
-        final ArrayList<String> worlds = new ArrayList<>(getPlotWorlds());
-        int totalSize = 0;
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : this.plots.entrySet()) {
-            totalSize += entry.getValue().size();
-        }
-        if (plots.size() == totalSize) {
-            for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : this.plots.entrySet()) {
-                map.put(entry.getKey(), entry.getValue().values());
+        final HashMap<PlotArea, Collection<Plot>> map = new HashMap<>();
+        int totalSize = getPlotCount();
+        if (myplots.size() == totalSize) {
+            for (PlotArea area : plotareas) {
+                map.put(area, area.getPlots());
             }
         } else {
-            for (final String world : worlds) {
-                map.put(world, new ArrayList<Plot>(plots.size() / worlds.size()));
+            int size = plotareas.length;
+            for (PlotArea area : plotareas) {
+                map.put(area, new ArrayList<Plot>(0));
             }
             Collection<Plot> lastList = null;
-            String lastWorld = "";
-            for (final Plot plot : plots) {
-                if (StringMan.isEqual(lastWorld, plot.world)) {
+            PlotArea lastWorld = null;
+            for (final Plot plot : myplots) {
+                if (lastWorld == plot.area) {
                     lastList.add(plot);
                 } else {
-                    lastWorld = plot.world;
+                    lastWorld = plot.area;
                     lastList = map.get(lastWorld);
                     lastList.add(plot);
                 }
             }
         }
-        Collections.sort(worlds, new Comparator<String>() {
+        ArrayList<PlotArea> areas = new ArrayList<>(Arrays.asList(plotareas));
+        Collections.sort(areas, new Comparator<PlotArea>() {
             @Override
-            public int compare(final String a, final String b) {
-                if ((priorityWorld != null) && StringMan.isEqual(a, priorityWorld)) {
+            public int compare(final PlotArea a, final PlotArea b) {
+                if ((priorityArea != null) && StringMan.isEqual(a.toString(), b.toString())) {
                     return -1;
                 }
                 return a.hashCode() - b.hashCode();
             }
         });
-        final ArrayList<Plot> toReturn = new ArrayList<>(plots.size());
-        for (final String world : worlds) {
+        final ArrayList<Plot> toReturn = new ArrayList<>(myplots.size());
+        for (final PlotArea area : areas) {
             switch (type) {
                 case CREATION_DATE:
-                    toReturn.addAll(sortPlotsByTemp(map.get(world)));
+                    toReturn.addAll(sortPlotsByTemp(map.get(area)));
                     break;
                 case CREATION_DATE_TIMESTAMP:
-                    toReturn.addAll(sortPlotsByTimestamp(map.get(world)));
+                    toReturn.addAll(sortPlotsByTimestamp(map.get(area)));
                     break;
                 case DISTANCE_FROM_ORIGIN:
-                    toReturn.addAll(sortPlotsByHash(map.get(world)));
+                    toReturn.addAll(sortPlotsByHash(map.get(area)));
                     break;
                 default:
                     break;
-            
             }
         }
         return toReturn;
@@ -979,18 +1203,26 @@ public class PS {
      * @return ArrayList of plot
      */
     @Deprecated
-    public ArrayList<Plot> sortPlotsByWorld(final Collection<Plot> plots) {
+    public ArrayList<Plot> sortPlotsByArea(final Collection<Plot> plots) {
         final ArrayList<Plot> newPlots = new ArrayList<>();
-        final ArrayList<String> worlds = new ArrayList<>(plotworlds.keySet());
+        ArrayList<PlotArea> areas = new ArrayList<PlotArea>(Arrays.asList(plotareas));
+        Collections.sort(areas, new Comparator<PlotArea>() {
+            @Override
+            public int compare(final PlotArea a, final PlotArea b) {
+                return a.hashCode() - b.hashCode();
+            }
+        });
         final HashSet<Plot> set = new HashSet<>(plots);
-        Collections.sort(worlds);
-        for (final String world : worlds) {
-            for (final Plot plot : this.plots.get(world).values()) {
-                if (set.contains(plot)) {
-                    newPlots.add(plot);
+        foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                for (Plot plot : value.getPlots()) {
+                    if (set.contains(plot)) {
+                        newPlots.add(plot);
+                    }
                 }
             }
-        }
+        });
         return newPlots;
     }
     
@@ -1006,6 +1238,17 @@ public class PS {
     }
     
     /**
+     * Get all the plots owned by a player name
+     * @param world
+     * @param player
+     * @return Set of Plot
+     */
+    public Set<Plot> getPlots(final PlotArea area, final String player) {
+        final UUID uuid = UUIDHandler.getUUID(player, null);
+        return getPlots(area, uuid);
+    }
+    
+    /**
      * Get all plots by a PlotPlayer
      * @param world
      * @param player
@@ -1017,6 +1260,17 @@ public class PS {
     }
     
     /**
+     * Get all plots by a PlotPlayer
+     * @param world
+     * @param player
+     * @return Set of plot
+     */
+    public Set<Plot> getPlots(final PlotArea area, final PlotPlayer player) {
+        final UUID uuid = player.getUUID();
+        return getPlots(area, uuid);
+    }
+    
+    /**
      * Get all plots by a UUID in a world
      * @param world
      * @param uuid
@@ -1024,7 +1278,25 @@ public class PS {
      */
     public Set<Plot> getPlots(final String world, final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
-        for (final Plot plot : getPlotsInWorld(world)) {
+        for (final Plot plot : getPlots(world)) {
+            if (plot.hasOwner()) {
+                if (PlotHandler.isOwner(plot, uuid)) {
+                    myplots.add(plot);
+                }
+            }
+        }
+        return new HashSet<>(myplots);
+    }
+    
+    /**
+     * Get all plots by a UUID in an area
+     * @param world
+     * @param uuid
+     * @return Set of plot
+     */
+    public Set<Plot> getPlots(final PlotArea area, final UUID uuid) {
+        final ArrayList<Plot> myplots = new ArrayList<>();
+        for (final Plot plot : getPlots(area)) {
             if (plot.hasOwner()) {
                 if (PlotHandler.isOwner(plot, uuid)) {
                     myplots.add(plot);
@@ -1037,70 +1309,53 @@ public class PS {
     /**
      * Check if a plot world
      * @param world
-     * @see #getPlotWorld(String) to get the PlotWorld object
+     * @see #getPlotArea(String) to get the PlotArea object
      * @return if a plot world is registered
      */
-    public boolean isPlotWorld(final String world) {
-        return (plotworlds.containsKey(world));
+    public boolean hasPlotArea(final String world) {
+        switch (plotareas.length) {
+            case 0:
+                return false;
+            case 1:
+                PlotArea a = plotareas[0];
+                return world.hashCode() == a.worldhash && a.worldname.equals(world);
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                int hash = world.hashCode();
+                for (PlotArea area : plotareas) {
+                    if (area.worldhash == hash && area.worldname.equals(world)) {
+                        return true;
+                    }
+                }
+                return false;
+            default:
+                return plotareamap.containsKey(world);
+        }
     }
     
-    /**
-     * Get the plot manager for a world
-     * @param world
-     * @return the PlotManager object, or null if no registered PlotManager
-     */
-    public PlotManager getPlotManager(final String world) {
-        if (plotmanagers.containsKey(world)) {
-            return plotmanagers.get(world);
-        }
-        return null;
+    public Collection<Plot> getPlots(final String world) {
+        final HashSet<Plot> set = new HashSet<>();
+        foreachPlotArea(null);
+        foreachPlotArea(world, new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                set.addAll(value.getPlots());
+            }
+        });
+        return set;
     }
     
-    /**
-     * Get a list of the plot worlds
-     * @return A String array of the plot world names
-     */
-    public String[] getPlotWorldsString() {
-        final Set<String> strings = plotworlds.keySet();
-        return strings.toArray(new String[strings.size()]);
+    public Collection<Plot> getPlots(final PlotArea area) {
+        return area == null ? new HashSet<Plot>() : area.getPlots();
     }
     
-    /**
-     * Get a map of the plots for a world
-     * @param world
-     * @return HashMap of PlotId to Plot
-     */
-    @Deprecated
-    public HashMap<PlotId, Plot> getPlots(final String world) {
-        final ConcurrentHashMap<PlotId, Plot> myplots = plots.get(world);
-        if (myplots != null) {
-            return new HashMap<>(myplots);
-        }
-        return new HashMap<>(0);
-    }
-    
-    public Collection<Plot> getPlotsInWorld(final String world) {
-        final ConcurrentHashMap<PlotId, Plot> map = plots.get(world);
-        if (map == null) {
-            return new HashSet<>(0);
-        }
-        try {
-            return map.values();
-        }
-        catch (Throwable e) {e.printStackTrace();}
-        HashSet<Plot> toReturn = new HashSet<>(map.entrySet().size());
-        for (Entry<PlotId, Plot> entry : map.entrySet()) {
-            toReturn.add(entry.getValue());
-        }
-        return toReturn;
-    }
-    
-    public Plot getPlot(final String world, final PlotId id) {
-        ConcurrentHashMap<PlotId, Plot> map = plots.get(world);
-        if (map != null) {
-            return map.get(id); 
-        }
-        return null;
+    public Plot getPlot(PlotArea area, final PlotId id) {
+        return area == null ? null : (id == null ? null : area.getPlot(id));
     }
     
     /**
@@ -1119,18 +1374,32 @@ public class PS {
      */
     public Set<Plot> getPlots(final UUID uuid) {
         final ArrayList<Plot> myplots = new ArrayList<>();
-        for (final Entry<String, ConcurrentHashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            if (isPlotWorld(entry.getKey())) {
-                for (final Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
-                    final Plot plot = entry2.getValue();
-                    if (plot.hasOwner()) {
-                        if (PlotHandler.isOwner(plot, uuid)) {
-                            myplots.add(plot);
-                        }
-                    }
+        foreachPlot(new RunnableVal<Plot>() {
+            @Override
+            public void run(Plot value) {
+                if (PlotHandler.isOwner(value, uuid)) {
+                    myplots.add(value);
                 }
             }
-        }
+        });
+        return new HashSet<>(myplots);
+    }
+    
+    /**
+     * Get the plots for a UUID
+     * @param uuid
+     * @return Set of Plot
+     */
+    public Set<Plot> getPlotsAbs(final UUID uuid) {
+        final ArrayList<Plot> myplots = new ArrayList<>();
+        foreachPlot(new RunnableVal<Plot>() {
+            @Override
+            public void run(Plot value) {
+                if (value.owner.equals(uuid)) {
+                    myplots.add(value);
+                }
+            }
+        });
         return new HashSet<>(myplots);
     }
     
@@ -1141,31 +1410,30 @@ public class PS {
      * @param callEvent If to call an event about the plot being removed
      * @return true if plot existed | false if it didn't
      */
-    public boolean removePlot(final String world, final PlotId id, final boolean callEvent) {
-        if (callEvent) {
-            EventUtil.manager.callDelete(world, id);
-        }
-        final ConcurrentHashMap<PlotId, Plot> allPlots = plots.get(world);
-        if (allPlots == null) {
+    public boolean removePlot(Plot plot, final boolean callEvent) {
+        if (plot == null) {
             return false;
         }
-        final Plot plot = allPlots.remove(id);
-        if (MainUtil.lastPlot.containsKey(world)) {
-            final PlotId last = MainUtil.lastPlot.get(world);
-            final int last_max = Math.max(last.x, last.y);
-            final int this_max = Math.max(id.x, id.y);
-            if (this_max < last_max) {
-                MainUtil.lastPlot.put(world, id);
-            }
+        if (callEvent) {
+            EventUtil.manager.callDelete(plot);
         }
-        return plot != null;
+        if (plot.area.removePlot(plot.id)) {
+            PlotId last = (PlotId) plot.area.getMeta("lastPlot");
+            final int last_max = Math.max(Math.abs(last.x), Math.abs(last.y));
+            final int this_max = Math.max(Math.abs(plot.id.x), Math.abs(plot.id.y));
+            if (this_max < last_max) {
+                plot.area.setMeta("lastPlot", plot.id);
+            }
+            return true;
+        }
+        return false;
     }
     
     /**
      * This method is called by the PlotGenerator class normally<br>
-     *  - Initializes the PlotWorld and PlotManager classes<br>
-     *  - Registers the PlotWorld and PlotManager classes<br>
-     *  - Loads (and/or generates) the PlotWorld configuration<br>
+     *  - Initializes the PlotArea and PlotManager classes<br>
+     *  - Registers the PlotArea and PlotManager classes<br>
+     *  - Loads (and/or generates) the PlotArea configuration<br>
      *  - Sets up the world border if configured<br>
      *  If loading an augmented plot world:<br>
      *  - Creates the AugmentedPopulator classes<br>
@@ -1173,107 +1441,199 @@ public class PS {
      * @param world The world to load
      * @param generator The generator for that world, or null if no generator
      */
-    public void loadWorld(final String world, final PlotGenerator<?> generator) {
-        PlotWorld plotWorld = getPlotWorld(world);
-        if (plotWorld != null) {
-            if (generator != null) {
-                generator.initialize(plotWorld);
-            }
+    public void loadWorld(final String world, final GeneratorWrapper<?> baseGenerator) {
+        if (world.equals("CheckingPlotSquaredGenerator")) {
+            return;
+        }
+        PlotArea[] areas = plotareamap.get(world);
+        if (areas != null) {
+            PS.debug("World already loaded: " + world);
             return;
         }
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
-        final PlotGenerator<?> plotGenerator;
-        final PlotManager plotManager;
         final String path = "worlds." + world;
-        if (!LOADING_WORLD && (generator.isFull())) {
-            plotGenerator = generator;
-            plotWorld = plotGenerator.getNewPlotWorld(world);
-            plotManager = plotGenerator.getPlotManager();
-            if (!world.equals("CheckingPlotSquaredGenerator")) {
-                log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
-                log(C.PREFIX.s() + "&3 - generator: &7" + plotGenerator.getClass().getName());
-                log(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
-                log(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
+        ConfigurationSection worldSection = config.getConfigurationSection(path);
+        int type = worldSection != null ? worldSection.getInt("generator.type") : 0;
+        if (type == 0) {
+            IndependentPlotGenerator pg;
+            if (baseGenerator != null && baseGenerator.isFull()) {
+                pg = baseGenerator.getPlotGenerator(); 
             }
+            else if (worldSection != null) {
+                String secondaryGeneratorName = worldSection.getString("generator.plugin");
+                GeneratorWrapper<?> secondaryGenerator = IMP.getGenerator(world, secondaryGeneratorName);
+                if (secondaryGenerator != null && secondaryGenerator.isFull()) {
+                    pg = secondaryGenerator.getPlotGenerator();
+                }
+                else {
+                    String primaryGeneratorName = worldSection.getString("generator.init");
+                    GeneratorWrapper<?> primaryGenerator = IMP.getGenerator(world, primaryGeneratorName);
+                    if (primaryGenerator != null && primaryGenerator.isFull()) {
+                        pg = primaryGenerator.getPlotGenerator();
+                    }
+                    else {
+                        return;
+                    }
+                }
+            }
+            else {
+                return;
+            }
+            // Conventional plot generator
+            PlotArea plotArea = pg.getNewPlotArea(world, null, null, null);
+            PlotManager plotManager = pg.getNewPlotManager();
+            log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
+            log(C.PREFIX.s() + "&3 - generator: &7" + baseGenerator + ">" + pg);
+            log(C.PREFIX.s() + "&3 - plotworld: &7" + plotArea.getClass().getName());
+            log(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
             if (!config.contains(path)) {
                 config.createSection(path);
+                worldSection = config.getConfigurationSection(path);
             }
-            plotWorld.saveConfiguration(config.getConfigurationSection(path));
-            plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
+            plotArea.saveConfiguration(worldSection);
+            plotArea.loadDefaultConfiguration(worldSection);
             try {
                 config.save(configFile);
             } catch (final IOException e) {
                 e.printStackTrace();
             }
             // Now add it
-            addPlotWorld(world, plotWorld, plotManager);
-            generator.initialize(plotWorld);
-            MainUtil.setupBorder(world);
+            addPlotArea(plotArea);
+            pg.initialize(plotArea);
+            plotArea.setupBorder();
         } else {
+            // Augmented / Partial
             if (!worlds.contains(world)) {
                 return;
             }
-            if (!LOADING_WORLD) {
-                LOADING_WORLD = true;
-                try {
-                    final String gen_string = config.getString("worlds." + world + "." + "generator.plugin");
-                    generator.setGenerator(gen_string);
-                    //                    if (gen_string == null) {
-                    //                        generator = new HybridGen(world);
-                    //                    } else {
-                    //                        generator = (PlotGenerator) IMP.getGenerator(world, gen_string);
-                    //                    }
-                    loadWorld(world, generator);
-                } catch (final Exception e) {
-                    log("&d=== Oh no! Please set the generator for the " + world + " ===");
-                    e.printStackTrace();
-                    LOADING_WORLD = false;
-                    removePlotWorld(world);
-                } finally {
-                    LOADING_WORLD = false;
+            log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
+            ConfigurationSection areasSection = worldSection.getConfigurationSection("areas");
+            if (areasSection == null) {
+                String gen_string = worldSection.getString("generator.plugin");
+                if (gen_string == null) {
+                    gen_string = "PlotSquared";
                 }
-            } else {
-                LOADING_WORLD = false;
-                plotWorld = generator.getNewPlotWorld(world);
-                plotManager = generator.getPlotManager();
-                if (!config.contains(path)) {
-                    config.createSection(path);
+                if (type == 2) {
+                    Set<PlotCluster> clusters = clusters_tmp != null ? clusters_tmp.get(world) : new HashSet<PlotCluster>();
+                    if (clusters == null) {
+                        throw new IllegalArgumentException("No cluster exists for world: " + world);
+                    }
+                    for (PlotCluster cluster : clusters) {
+                        PlotId pos1 = cluster.getP1(); // Cluster pos1
+                        PlotId pos2 = cluster.getP2(); // Cluster pos2
+                        String name = cluster.getName(); // Cluster name
+                        log(C.PREFIX.s() + "&3 - " + name + "-" + pos1 + "-" + pos2);
+                        GeneratorWrapper<?> areaGen = IMP.getGenerator(world, gen_string);
+                        if (areaGen == null) {
+                            throw new IllegalArgumentException("Invalid Generator: " + gen_string);
+                        }
+                        PlotArea pa = areaGen.getPlotGenerator().getNewPlotArea(world, name, pos1, pos2);
+                        pa.setCompatibility("3.2.X");
+                        pa.saveConfiguration(worldSection);
+                        pa.loadDefaultConfiguration(worldSection);
+                        try {
+                            config.save(configFile);
+                        } catch (final IOException e) {
+                            e.printStackTrace();
+                        }
+                        log(C.PREFIX.s() + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
+                        log(C.PREFIX.s() + "&c | &9plotworld: &7" + pa);
+                        log(C.PREFIX.s() + "&c | &9manager: &7" + pa);
+                        areaGen.getPlotGenerator().initialize(pa);
+                        areaGen.augment(pa);
+                        addPlotArea(pa);
+                    }
+                    return;
                 }
-                plotWorld.TYPE = generator.isFull() ? 0 : 2;
-                plotWorld.TERRAIN = 0;
-                plotWorld.saveConfiguration(config.getConfigurationSection(path));
-                plotWorld.loadDefaultConfiguration(config.getConfigurationSection(path));
-                
+                GeneratorWrapper<?> areaGen = IMP.getGenerator(world, gen_string);
+                if (areaGen == null) {
+                    throw new IllegalArgumentException("Invalid Generator: " + gen_string);
+                }
+                PlotArea pa = areaGen.getPlotGenerator().getNewPlotArea(world, null, null, null);
+                pa.saveConfiguration(worldSection);
+                pa.loadDefaultConfiguration(worldSection);
                 try {
                     config.save(configFile);
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
-                if (((plotWorld.TYPE == 2) && !Settings.ENABLE_CLUSTERS) || !(plotManager instanceof SquarePlotManager)) {
-                    log("&c[ERROR] World '" + world + "' in settings.yml is not using PlotSquared generator! Please set the generator correctly or delete the world from the 'settings.yml'! (https://github.com/IntellectualSites/PlotSquared/wiki/Manual-generator-setting)");
-                    return;
+                log(C.PREFIX.s() + "&3 - generator: &7" + baseGenerator + ">" + areaGen);
+                log(C.PREFIX.s() + "&3 - plotworld: &7" + pa);
+                log(C.PREFIX.s() + "&3 - manager: &7" + pa.getPlotManager());
+                areaGen.getPlotGenerator().initialize(pa);
+                areaGen.augment(pa);
+                addPlotArea(pa);
+                return;
+            }
+            if (type == 1) {
+                throw new IllegalArgumentException("Invalid type for multi-area world. Expected `2`, got `" + type + "`");
+            }
+            for (String areaId : areasSection.getKeys(false)) {
+                log(C.PREFIX.s() + "&3 - " + areaId);
+                String[] split = areaId.split("-");
+                if (split.length != 3) {
+                    throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<pos1>-<pos2>`");
                 }
-                log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
-                log(C.PREFIX.s() + "&3 - generator: &7" + generator.getName());
-                log(C.PREFIX.s() + "&3 - plotworld: &7" + plotWorld.getClass().getName());
-                log(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
-                log(C.PREFIX.s() + "&3 - | terrain: &7" + plotWorld.TERRAIN);
-                log(C.PREFIX.s() + "&3 - | type: &7" + plotWorld.TYPE);
-                
-                addPlotWorld(world, plotWorld, plotManager);
-                if (plotWorld.TYPE == 2) {
-                    if (ClusterManager.getClusters(world).size() > 0) {
-                        for (final PlotCluster cluster : ClusterManager.getClusters(world)) {
-                            log(C.PREFIX.s() + "&3 - &7| cluster: " + cluster);
-                            generator.augment(cluster, plotWorld);
-                            //                            new AugmentedPopulator(world, generator, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
+                String name = split[0];
+                PlotId pos1 = PlotId.fromString(split[1]);
+                PlotId pos2 = PlotId.fromString(split[2]);
+                if (pos1 == null || pos2 == null || name.length() == 0) {
+                    throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
+                }
+                ConfigurationSection section = areasSection.getConfigurationSection(areaId);
+                YamlConfiguration clone = new YamlConfiguration();
+                for (String key : section.getKeys(true)) {
+                    if (section.get(key) instanceof MemorySection) {
+                        continue;
+                    }
+                    if (!clone.contains(key)) {
+                        clone.set(key, section.get(key));
+                    }
+                }
+                for (String key : worldSection.getKeys(true)) {
+                    if (worldSection.get(key) instanceof MemorySection) {
+                        continue;
+                    }
+                    if (!key.startsWith("areas") && !clone.contains(key)) {
+                        clone.set(key, worldSection.get(key));
+                    }
+                }
+                String gen_string = clone.getString("generator.plugin");
+                if (gen_string == null) {
+                    gen_string = "PlotSquared";
+                }
+                GeneratorWrapper<?> areaGen = IMP.getGenerator(world, gen_string);
+                if (areaGen == null) {
+                    throw new IllegalArgumentException("Invalid Generator: " + gen_string);
+                }
+                PlotArea pa = areaGen.getPlotGenerator().getNewPlotArea(world, name, pos1, pos2);
+                pa.saveConfiguration(clone);
+                // netSections is the combination of 
+                for (String key : clone.getKeys(true)) {
+                    if (clone.get(key) instanceof MemorySection) {
+                        continue;
+                    }
+                    if (!worldSection.contains(key)) {
+                        worldSection.set(key, clone.get(key));
+                    } else {
+                        Object value = worldSection.get(key);
+                        if (!Objects.equals(value, clone.get(key))) {
+                            section.set(key, clone.get(key));
                         }
                     }
-                } else if (plotWorld.TYPE == 1) {
-                    generator.augment(null, plotWorld);
-                    //                    new AugmentedPopulator(world, gen_class, null, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
                 }
-                generator.initialize(plotWorld);
+                pa.loadDefaultConfiguration(clone);
+                try {
+                    config.save(configFile);
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                }
+                log(C.PREFIX.s() + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
+                log(C.PREFIX.s() + "&c | &9plotworld: &7" + pa);
+                log(C.PREFIX.s() + "&c | &9manager: &7" + pa.getPlotManager());
+                areaGen.getPlotGenerator().initialize(pa);
+                areaGen.augment(pa);
+                addPlotArea(pa);
             }
         }
     }
@@ -1285,11 +1645,11 @@ public class PS {
      * @param args The arguments
      * @return boolean | if valid arguments were provided
      */
-    public boolean setupPlotWorld(final String world, final String args) {
+    public boolean setupPlotWorld(final String world, final String args, IndependentPlotGenerator generator) {
         if ((args != null) && (args.length() > 0)) {
             // save configuration
             final String[] split = args.split(",");
-            final HybridPlotWorld plotworld = new HybridPlotWorld(world);
+            final HybridPlotWorld plotworld = new HybridPlotWorld(world, null, generator, null, null);
             for (final String element : split) {
                 final String[] pair = element.split("=");
                 if (pair.length != 2) {
@@ -1515,6 +1875,19 @@ public class PS {
         }
     }
     
+    private Map<String, Map<PlotId, Plot>> getPlotsRaw() {
+        HashMap<String, Map<PlotId, Plot>> map = new HashMap<>();
+        for (PlotArea area : plotareas) {
+            Map<PlotId, Plot> map2 = map.get(area.toString());
+            if (map2 == null) {
+                map.put(area.toString(), area.getPlotsRaw());
+            } else {
+                map2.putAll(area.getPlotsRaw());
+            }
+        }
+        return map;
+    }
+
     /**
      * Close the database connection
      */
@@ -1523,7 +1896,7 @@ public class PS {
             TASK = null;
             database = null;
             // Validate that all data in the db is correct
-            DBFunc.validatePlots(getPlotsRaw());
+            DBFunc.validatePlots(getPlots());
             
             // Close the connection
             DBFunc.close();
@@ -1556,9 +1929,9 @@ public class PS {
                 }
             }
             DBFunc.dbManager = new SQLManager(database, Settings.DB.PREFIX, false);
-            plots = DBFunc.getPlots();
+            this.plots_tmp = DBFunc.getPlots();
             if (Settings.ENABLE_CLUSTERS) {
-                ClusterManager.clusters = DBFunc.getClusters();
+                this.clusters_tmp = DBFunc.getClusters();
             }
         } catch (final Exception e) {
             log(C.PREFIX.s() + "&cFailed to open DATABASE connection. The plugin will disable itself.");
@@ -1601,13 +1974,6 @@ public class PS {
         for (final String flag : intFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
-        FlagManager.addFlag(new AbstractFlag("cluster") {
-            @Override
-            public Object parseValueRaw(final String value) {
-                final String[] split = value.split(";");
-                return ClusterManager.getCluster(split[0], split[1]);
-            }
-        }, true);
         FlagManager.addFlag(new AbstractFlag("done", new FlagValue.StringValue()), true);
         FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.IntegerListValue()), true);
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
@@ -1713,11 +2079,10 @@ public class PS {
         // Protection
         options.put("protection.redstone.disable-offline", Settings.REDSTONE_DISABLER);
         options.put("protection.redstone.disable-unoccupied", Settings.REDSTONE_DISABLER_UNOCCUPIED);
-        options.put("protection.piston.falling-blocks", Settings.PISTON_FALLING_BLOCK_CHECK);
         
         // Clusters
         options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
-        
+
         // PlotMe
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
@@ -1731,11 +2096,10 @@ public class PS {
         
         // Mob stuff
         options.put("kill_road_vehicles", Settings.KILL_ROAD_VEHICLES);
-        options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS_DEFAULT);
-        options.put("mob_pathfinding", Settings.MOB_PATHFINDING_DEFAULT);
+        options.put("kill_road_mobs", Settings.KILL_ROAD_MOBS);
         
         // Clearing + Expiry
-        options.put("clear.fastmode", Settings.ENABLE_CLUSTERS);
+        options.put("clear.fastmode", false);
         options.put("clear.on.ban", false);
         options.put("clear.auto.enabled", true);
         options.put("clear.auto.days", 7);
@@ -1820,6 +2184,7 @@ public class PS {
         options.put("global_limit", Settings.GLOBAL_LIMIT);
         options.put("max_plots", Settings.MAX_PLOTS);
         options.put("claim.max-auto-area", Settings.MAX_AUTO_SIZE);
+        options.put("merge.remove-terrain", Settings.MERGE_REMOVES_ROADS);
         
         // Misc
         options.put("console.color", Settings.CONSOLE_COLOR);
@@ -1827,7 +2192,6 @@ public class PS {
         options.put("metrics", true);
         options.put("debug", true);
         options.put("update-notifications", Settings.UPDATE_NOTIFICATIONS);
-        options.put("merge.remove-terrain", Settings.MERGE_REMOVES_ROADS);
         
         for (final Entry<String, Object> node : options.entrySet()) {
             if (!config.contains(node.getKey())) {
@@ -1844,11 +2208,9 @@ public class PS {
         Settings.REDSTONE_DISABLER = config.getBoolean("protection.redstone.disable-offline");
         Settings.REDSTONE_DISABLER_UNOCCUPIED = config.getBoolean("protection.redstone.disable-unoccupied");
         
-        Settings.PISTON_FALLING_BLOCK_CHECK = config.getBoolean("protection.piston.falling-blocks");
-        
         // Clusters
         Settings.ENABLE_CLUSTERS = config.getBoolean("clusters.enabled");
-        
+
         // PlotMe
         Settings.USE_PLOTME_ALIAS = config.getBoolean("plotme-alias");
         Settings.CONVERT_PLOTME = config.getBoolean("plotme-convert.enabled");
@@ -1863,7 +2225,6 @@ public class PS {
         // Mob stuff
         Settings.KILL_ROAD_MOBS = config.getBoolean("kill_road_mobs");
         Settings.KILL_ROAD_VEHICLES = config.getBoolean("kill_road_vehicles");
-        Settings.MOB_PATHFINDING = config.getBoolean("mob_pathfinding");
         
         // Clearing + Expiry
         Settings.FAST_CLEAR = config.getBoolean("clear.fastmode");
@@ -2047,10 +2408,6 @@ public class PS {
         Settings.DB.USE_SQLITE = storage.getBoolean("sqlite.use");
         Settings.DB.SQLITE_DB = storage.getString("sqlite.db");
         Settings.DB.PREFIX = storage.getString("prefix");
-        Settings.METRICS = config.getBoolean("metrics");
-        Settings.AUTO_CLEAR = config.getBoolean("clear.auto.enabled");
-        Settings.AUTO_CLEAR_DAYS = config.getInt("clear.auto.days");
-        Settings.DELETE_PLOTS_ON_BAN = config.getBoolean("clear.on.ban");
     }
     
     /**
@@ -2062,7 +2419,6 @@ public class PS {
             settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
             settings.put("Use Metrics", "" + Settings.METRICS);
             settings.put("Delete Plots On Ban", "" + Settings.DELETE_PLOTS_ON_BAN);
-            settings.put("Mob Pathfinding", "" + Settings.MOB_PATHFINDING);
             settings.put("DB Mysql Enabled", "" + Settings.DB.USE_MYSQL);
             settings.put("DB SQLite Enabled", "" + Settings.DB.USE_SQLITE);
             settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
@@ -2100,19 +2456,101 @@ public class PS {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
     
-    /**
-     * Get the list of plot world names
-     * @return Set of world names (String)
-     */
-    public Set<String> getPlotWorlds() {
-        return plotworlds.keySet();
+    public void foreachPlotArea(RunnableVal<PlotArea> runnable) {
+        for (PlotArea area : plotareas) {
+            runnable.run(area);
+        }
+    }
+    
+    public void foreachPlot(final RunnableVal<Plot> runnable) {
+        for (PlotArea area : plotareas) {
+            for (Plot plot : area.getPlots()) {
+                runnable.run(plot);
+            }
+        }
+    }
+    
+    public void foreachBasePlot(RunnableVal<Plot> run) {
+        for (PlotArea area : plotareas) {
+            area.foreachBasePlot(run);
+        }
+    }
+
+    public void foreachPlotArea(String world, RunnableVal<PlotArea> runnable) {
+        PlotArea[] array = plotareamap.get(world);
+        if (array == null) {
+            return;
+        }
+        for (PlotArea area : array) {
+            runnable.run(area);
+        }
+    }
+    
+    public PlotArea getFirstPlotArea() {
+        return plotareas.length > 0 ? plotareas[0] : null;
+    }
+
+    public int getPlotAreaCount() {
+        return plotareas.length;
+    }
+    
+    public int getPlotCount() {
+        int count = 0;
+        for (PlotArea area : plotareas) {
+            count += area.getPlotCount();
+        }
+        return count;
+    }
+
+    public int getPlotAreaCount(String world) {
+        return plotareamap.size();
+    }
+    
+    public Set<PlotArea> getPlotAreas() {
+        HashSet<PlotArea> set = new HashSet<>(plotareas.length);
+        for (PlotArea area : plotareas) {
+            set.add(area);
+        }
+        return set;
     }
     
     /**
-     * Get a list of PlotWorld objects
-     * @return Collection of PlotWorld objects
+     * @deprecated Since worlds can have multiple plot areas
+     * @return Set of world names
      */
-    public Collection<PlotWorld> getPlotWorldObjects() {
-        return plotworlds.values();
+    @Deprecated
+    public Set<String> getPlotWorldStrings() {
+        HashSet<String> set = new HashSet<>(plotareamap.size());
+        for (Entry<String, PlotArea[]> entry : plotareamap.entrySet()) {
+            set.add(entry.getKey());
+        }
+        return set;
+    }
+    
+    public boolean isAugmented(String world) {
+        PlotArea[] areas = plotareamap.get(world);
+        if (areas == null) {
+            return false;
+        }
+        if (areas.length > 1) {
+            return true;
+        }
+        return areas[0].TYPE != 0;
+    }
+
+    /**
+     * Get a list of PlotArea objects
+     * @return Collection of PlotArea objects
+     */
+    public Set<PlotArea> getPlotAreas(String world) {
+        PlotArea[] areas = plotareamap.get(world);
+        if (areas == null) {
+            return new HashSet<>(0);
+        }
+        HashSet<PlotArea> set = new HashSet<>(areas.length);
+        for (PlotArea area : areas) {
+            set.add(area);
+        }
+        return set;
     }
 }

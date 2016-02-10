@@ -13,7 +13,7 @@ public abstract class SetCommand extends SubCommand {
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }

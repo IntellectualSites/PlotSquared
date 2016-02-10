@@ -9,8 +9,8 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.sponge.generator.AugmentedPopulator;
@@ -32,7 +32,7 @@ public class SpongeSetupUtils extends SetupUtils {
     }
     
     @Override
-    public String getGenerator(final PlotWorld plotworld) {
+    public String getGenerator(final PlotArea plotworld) {
         if (SetupUtils.generators.size() == 0) {
             updateGenerators();
         }

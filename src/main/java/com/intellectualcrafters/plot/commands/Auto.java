@@ -20,15 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.ByteArrayUtilities;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -42,10 +39,10 @@ category = CommandCategory.CLAIMING,
 requiredType = RequiredType.NONE,
 description = "Claim the nearest plot",
 aliases = { "a" },
-usage = "/plot auto")
+usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
     
-    public static PlotId getNextPlot(final PlotId id, final int step) {
+    public static PlotId getNextPlotId(final PlotId id, final int step) {
         final int absX = Math.abs(id.x);
         final int absY = Math.abs(id.y);
         if (absX > absY) {
@@ -76,31 +73,22 @@ public class Auto extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
-        String world;
+        PlotArea plotarea = plr.getApplicablePlotArea();
+        if (plotarea == null) {
+            MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            return false;
+        }
         int size_x = 1;
         int size_z = 1;
-        String schematic = "";
-        if (PS.get().getPlotWorlds().size() == 1) {
-            world = PS.get().getPlotWorlds().iterator().next();
-        } else {
-            world = plr.getLocation().getWorld();
-            if (!PS.get().isPlotWorld(world)) {
-                MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
-                return false;
-            }
-        }
+        String schematic = null;
         if (args.length > 0) {
             if (Permissions.hasPermission(plr, "plots.auto.mega")) {
                 try {
-                    final String[] split = args[0].split(",");
+                    final String[] split = args[0].split(",|;");
                     size_x = Integer.parseInt(split[0]);
                     size_z = Integer.parseInt(split[1]);
                     if ((size_x < 1) || (size_z < 1)) {
                         MainUtil.sendMessage(plr, "&cError: size<=0");
-                    }
-                    if ((size_x > 4) || (size_z > 4)) {
-                        MainUtil.sendMessage(plr, "&cError: size>4");
                     }
                     if (args.length > 1) {
                         schematic = args[1];
@@ -123,11 +111,9 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-
         int removeGrants = 0;
-
-        final int currentPlots = Settings.GLOBAL_LIMIT ? MainUtil.getPlayerPlotCount(plr) : MainUtil.getPlayerPlotCount(world, plr);
-        final int diff = currentPlots - MainUtil.getAllowedPlots(plr);
+        final int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(plotarea.worldname);
+        final int diff = currentPlots - plr.getAllowedPlots();
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
                 MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
@@ -148,9 +134,8 @@ public class Auto extends SubCommand {
                 return false;
             }
         }
-        final PlotWorld pWorld = PS.get().getPlotWorld(world);
-        if ((EconHandler.manager != null) && pWorld.USE_ECONOMY) {
-            double cost = pWorld.PLOT_PRICE;
+        if ((EconHandler.manager != null) && plotarea.USE_ECONOMY) {
+            double cost = plotarea.PLOT_PRICE;
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(plr) < cost) {
@@ -166,9 +151,8 @@ public class Auto extends SubCommand {
             plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grantedPlots - removeGrants));
             sendMessage(plr, C.REMOVED_GRANTED_PLOT, "" + removeGrants, "" + (grantedPlots - removeGrants));
         }
-        if (!schematic.equals("")) {
-            // if (pWorld.SCHEMATIC_CLAIM_SPECIFY) {
-            if (!pWorld.SCHEMATICS.contains(schematic.toLowerCase())) {
+        if (schematic != null && !schematic.equals("")) {
+            if (!plotarea.SCHEMATICS.contains(schematic.toLowerCase())) {
                 sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
@@ -176,24 +160,10 @@ public class Auto extends SubCommand {
                 MainUtil.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
                 return true;
             }
-            // }
         }
-        final String worldname = world;
-        final PlotWorld plotworld = PS.get().getPlotWorld(worldname);
-        if (plotworld.TYPE == 2) {
-            final Location loc = plr.getLocation();
-            final Plot plot = MainUtil.getPlotAbs(new Location(worldname, loc.getX(), loc.getY(), loc.getZ()));
-            if (plot == null) {
-                return sendMessage(plr, C.NOT_IN_PLOT);
-            }
-            final PlotCluster cluster = plot.getCluster();
-            // Must be standing in a cluster
-            if (cluster == null) {
-                MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
-                return false;
-            }
-            final PlotId bot = cluster.getP1();
-            final PlotId top = cluster.getP2();
+        if (plotarea.TYPE == 2) {
+            final PlotId bot = plotarea.getMin();
+            final PlotId top = plotarea.getMax();
             final PlotId origin = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
             PlotId id = new PlotId(0, 0);
             final int width = Math.max((top.x - bot.x) + 1, (top.y - bot.y) + 1);
@@ -201,12 +171,12 @@ public class Auto extends SubCommand {
             //
             for (int i = 0; i <= max; i++) {
                 final PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
-                final Plot current = MainUtil.getPlotAbs(worldname, currentId);
-                if (MainUtil.canClaim(plr, current) && (current.isMerged() == false) && cluster.equals(current.getCluster())) {
+                Plot current = plotarea.getPlotAbs(currentId);
+                if (current.canClaim(plr)) {
                     Claim.claimPlot(plr, current, true, true);
                     return true;
                 }
-                id = getNextPlot(id, 1);
+                id = getNextPlotId(id, 1);
             }
             // no free plots
             MainUtil.sendMessage(plr, C.NO_FREE_PLOTS);
@@ -215,45 +185,44 @@ public class Auto extends SubCommand {
         boolean br = false;
         if ((size_x == 1) && (size_z == 1)) {
             while (!br) {
-                final Plot plot = MainUtil.getPlotAbs(worldname, getLastPlot(worldname));
-                if (MainUtil.canClaim(plr, plot)) {
+                Plot plot = plotarea.getPlotAbs(getLastPlotId(plotarea));
+                if (plot.canClaim(plr)) {
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
                 }
-                MainUtil.lastPlot.put(worldname, getNextPlot(getLastPlot(worldname), 1));
+                plotarea.setMeta("lastPlot", getNextPlotId(plot.id, 1));
             }
         } else {
             while (!br) {
-                final PlotId start = getNextPlot(getLastPlot(worldname), 1);
-                // Checking if the current set of plots is a viable option.
-                MainUtil.lastPlot.put(worldname, start);
-                if ((PS.get().getPlot(worldname, start) != null) && (PS.get().getPlot(worldname, start).owner != null)) {
-                    continue;
-                }
+                final PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
                 final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
-                if (MainUtil.canClaim(plr, worldname, start, end)) {
+                plotarea.setMeta("lastPlot", start);
+                if (plotarea.canClaim(plr, start, end)) {
                     for (int i = start.x; i <= end.x; i++) {
                         for (int j = start.y; j <= end.y; j++) {
-                            final Plot plot = MainUtil.getPlotAbs(worldname, new PlotId(i, j));
+                            Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
                             final boolean teleport = ((i == end.x) && (j == end.y));
                             Claim.claimPlot(plr, plot, teleport, true);
                         }
                     }
-                    if (!MainUtil.mergePlots(worldname, MainUtil.getPlotSelectionIds(start, end), true, true)) {
+                    if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), Settings.MERGE_REMOVES_ROADS, true)) {
                         return false;
                     }
                     br = true;
                 }
             }
         }
-        MainUtil.lastPlot.put(worldname, new PlotId(0, 0));
+        plotarea.setMeta("lastPlot", new PlotId(0, 0));
         return true;
     }
     
-    public PlotId getLastPlot(final String world) {
-        if ((MainUtil.lastPlot == null) || !MainUtil.lastPlot.containsKey(world)) {
-            MainUtil.lastPlot.put(world, new PlotId(0, 0));
+    public PlotId getLastPlotId(final PlotArea area) {
+        PlotId value = (PlotId) area.getMeta("lastPlot");
+        if (value == null) {
+            value = new PlotId(0, 0);
+            area.setMeta("lastPlot", value);
+            return value;
         }
-        return MainUtil.lastPlot.get(world);
+        return value;
     }
 }

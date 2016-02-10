@@ -31,13 +31,11 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.translation.Translatable;
 import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.WorldBuilder;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import com.google.inject.Inject;
@@ -48,11 +46,10 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -268,7 +265,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     public World createWorldFromConfig(final String world) {
         final SpongeBasicGen generator = new SpongeBasicGen(world);
-        final PlotWorld plotworld = generator.getNewPlotWorld(world);
+        final PlotArea plotworld = generator.getNewPlotWorld(world);
         SpongeGeneratorWrapper wrapper;
         if (plotworld.TYPE == 0) {
             wrapper = new SpongeGeneratorWrapper(world, generator);

@@ -29,8 +29,8 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "music", permission = "plots.music", description = "Player music in a plot", usage = "/plot music", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
@@ -39,7 +39,7 @@ public class MusicSubcommand extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] args) {
         final Location loc = player.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }
@@ -65,7 +65,7 @@ public class MusicSubcommand extends SubCommand {
         };
         int index = 0;
         for (int i = 2256; i < 2268; i++) {
-            final String name = "&r&6" + BlockManager.manager.getClosestMatchingName(new PlotBlock((short) i, (byte) 0));
+            final String name = "&r&6" + WorldUtil.IMP.getClosestMatchingName(new PlotBlock((short) i, (byte) 0));
             final String[] lore = { "&r&aClick to play!" };
             final PlotItemStack item = new PlotItemStack(i, (byte) 0, 1, name, lore);
             inv.setItem(index, item);

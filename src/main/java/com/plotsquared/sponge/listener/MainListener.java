@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import org.spongepowered.api.GameProfile;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Transaction;
@@ -27,7 +26,6 @@ import org.spongepowered.api.entity.vehicle.Boat;
 import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.action.LightningEvent;
-import org.spongepowered.api.event.action.MessageEvent;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.GrowBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
@@ -37,10 +35,11 @@ import org.spongepowered.api.event.command.SendCommandEvent;
 import org.spongepowered.api.event.entity.BreedEntityEvent;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
+import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.ExplosionEvent;
+import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
 
@@ -53,11 +52,11 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -164,7 +163,7 @@ public class MainListener {
     public void onCommand(final BreedEntityEvent.Breed event) {
         final Location loc = SpongeUtil.getLocation(event.getTargetEntity());
         final String world = loc.getWorld();
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotArea plotworld = PS.get().getPlotArea(world);
         if (plotworld == null) {
             return;
         }
@@ -183,7 +182,7 @@ public class MainListener {
     @Listener
     public void onMobSpawn(final SpawnEntityEvent event) {
         World world = event.getTargetWorld();
-        final PlotWorld plotworld = PS.get().getPlotWorld(world.getName());
+        final PlotArea plotworld = PS.get().getPlotArea(world.getName());
         if (plotworld == null) {
             return;
         }
@@ -325,7 +324,7 @@ public class MainListener {
     public void onBlockChange(ChangeBlockEvent event) {
         final World world = event.getTargetWorld();
         final String worldname = world.getName();
-        if (!PS.get().isPlotWorld(worldname)) {
+        if (!PS.get().hasPlotArea(worldname)) {
             return;
         }
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
@@ -380,10 +379,10 @@ public class MainListener {
             return;
         }
         final String world = player.getWorld().getName();
-        if (!PS.get().isPlotWorld(world)) {
+        if (!PS.get().hasPlotArea(world)) {
             return;
         }
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotArea plotworld = PS.get().getPlotArea(world);
         final PlotPlayer plr = SpongeUtil.getPlayer(player);
         if (!plotworld.PLOT_CHAT && ((plr.getMeta("chat") == null) || !(Boolean) plr.getMeta("chat"))) {
             return;
@@ -434,7 +433,7 @@ public class MainListener {
     public void onBigBoom(final ExplosionEvent.Detonate event) {
         final World world = event.getTargetWorld();
         final String worldname = world.getName();
-        if (!PS.get().isPlotWorld(worldname)) {
+        if (!PS.get().hasPlotArea(worldname)) {
             return;
         }
         Optional<Explosive> source = event.getExplosion().getSourceExplosive();
@@ -519,7 +518,7 @@ public class MainListener {
         final PlotPlayer pp = SpongeUtil.getPlayer(player);
         final World world = event.getTargetWorld();
         final String worldname = world.getName();
-        if (!PS.get().isPlotWorld(worldname)) {
+        if (!PS.get().hasPlotArea(worldname)) {
             return;
         }
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
@@ -603,7 +602,7 @@ public class MainListener {
         final PlotPlayer pp = SpongeUtil.getPlayer(player);
         final World world = event.getTargetWorld();
         final String worldname = world.getName();
-        if (!PS.get().isPlotWorld(worldname)) {
+        if (!PS.get().hasPlotArea(worldname)) {
             return;
         }
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
@@ -791,7 +790,7 @@ public class MainListener {
             pp.setMeta("location", SpongeUtil.getLocation(player));
             final World world = (World) extent;
             final String worldname = ((World) extent).getName();
-            final PlotWorld plotworld = PS.get().getPlotWorld(worldname);
+            final PlotArea plotworld = PS.get().getPlotArea(worldname);
             if (plotworld == null) {
                 return;
             }
@@ -853,7 +852,7 @@ public class MainListener {
             pp.setMeta("location", SpongeUtil.getLocation(player));
             final World world = (World) extent;
             final String worldname = ((World) extent).getName();
-            final PlotWorld plotworld = PS.get().getPlotWorld(worldname);
+            final PlotArea plotworld = PS.get().getPlotArea(worldname);
             if (plotworld == null) {
                 return;
             }

@@ -7,7 +7,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.SetBlockQueue;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.Vector2D;
 import com.sk89q.worldedit.WorldEditException;
@@ -209,7 +209,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         case 191:
                         case 192: {
                             if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
-                                SetBlockQueue.setBlock(world, x, y, z, id);
+                                SetQueue.IMP.setBlock(world, x, y, z, id);
                             } else {
                                 super.setBlock(location, block);
                             }
@@ -217,7 +217,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         }
                         default: {
                             if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
-                                SetBlockQueue.setBlock(world, x, y, z, new PlotBlock((short) id, (byte) block.getData()));
+                                SetQueue.IMP.setBlock(world, x, y, z, new PlotBlock((short) id, (byte) block.getData()));
                             } else {
                                 super.setBlock(location, block);
                             }
@@ -225,7 +225,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         }
                     }
                     return true;
-                    //                    BlockManager.manager.functionSetBlock(world, x, y, z, id, data);
+                    //                    WorldUtil.IMP.functionSetBlock(world, x, y, z, id, data);
                     //                    return super.setBlock(location, block);
                 }
             }

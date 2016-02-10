@@ -3,16 +3,14 @@ package com.intellectualcrafters.plot.commands;
 import java.io.File;
 import java.io.IOException;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.HastebinUtility;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.BukkitMain;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -33,9 +31,9 @@ public class DebugPaste extends SubCommand {
                     final String settingsYML = HastebinUtility.upload(PS.get().configFile);
                     String latestLOG;
                     try {
-                        latestLOG = HastebinUtility.upload(new File(BukkitMain.THIS.getDirectory(), "../../logs/latest.log"));
+                        latestLOG = HastebinUtility.upload(new File(PS.get().IMP.getDirectory(), "../../logs/latest.log"));
                     } catch (final Exception e) {
-                        plr.sendMessage(ChatColor.RED + "latest.log is too big to be pasted, will ignore");
+                        MainUtil.sendMessage(plr, "&clatest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }
                     final StringBuilder b = new StringBuilder();
@@ -43,12 +41,16 @@ public class DebugPaste extends SubCommand {
                     b.append("links.settings_yml: '").append(settingsYML).append("'\n");
                     b.append("links.latest_log: '").append(latestLOG).append("'\n");
                     b.append("\n# YAAAS! Now let us move on to the server info\n");
-                    b.append("version.server: '").append(Bukkit.getServer().getVersion()).append("'\n");
-                    b.append("version.bukkit: '").append(Bukkit.getBukkitVersion()).append("'\n");
-                    b.append("online_mode: ").append(Bukkit.getServer().getOnlineMode()).append("\n");
+                    b.append("version.server: '").append(PS.get().IMP.getServerVersion()).append("'\n");
+                    b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper() + ";" + !Settings.OFFLINE_MODE).append("\n");
                     b.append("plugins:");
-                    for (final Plugin p : Bukkit.getPluginManager().getPlugins()) {
-                        b.append("\n  ").append(p.getName()).append(":\n    ").append("version: '").append(p.getDescription().getVersion()).append("'").append("\n    enabled: ").append(p.isEnabled());
+                    for (String id : PS.get().IMP.getPluginIds()) {
+                        String[] split = id.split(":");
+                        String[] split2 = split[0].split(";");
+                        String enabled = split.length == 2 ? split[1] : "unknown";
+                        String name = split2[0];
+                        String version = split2.length == 2 ? split2[1] : "unknown";
+                        b.append("\n  ").append(name).append(":\n    ").append("version: '").append(version).append("'").append("\n    enabled: ").append(enabled);
                     }
                     b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
                     final Runtime runtime = Runtime.getRuntime();

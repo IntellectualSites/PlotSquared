@@ -19,6 +19,7 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -141,7 +142,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             } else {
                 UUIDHandler.add(new StringWrapper(name), owner);
             }
-            final Plot plot = new Plot(world, id, owner);
+            final Plot plot = new Plot(PlotArea.createGeneric(world), id, owner);
             plots.get(world).put(id, plot);
         }
         if (missing > 0) {

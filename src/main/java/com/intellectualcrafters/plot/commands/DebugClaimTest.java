@@ -30,16 +30,16 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -57,11 +57,11 @@ public class DebugClaimTest extends SubCommand {
     public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic) {
         final boolean result = EventUtil.manager.callClaim(player, plot, false);
         if (result) {
-            MainUtil.createPlot(player.getUUID(), plot);
-            MainUtil.setSign(player.getName(), plot);
+            plot.create(player.getUUID(), true);
+            plot.setSign(player.getName());
             MainUtil.sendMessage(player, C.CLAIMED);
             if (teleport) {
-                MainUtil.teleportPlayer(player, player.getLocation(), plot);
+                plot.teleportPlayer(player);
             }
         }
         return !result;
@@ -75,9 +75,10 @@ public class DebugClaimTest extends SubCommand {
             null,
             "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
         }
-        final String world = args[0];
-        if (!BlockManager.manager.isWorld(world) || !PS.get().isPlotWorld(world)) {
-            return !MainUtil.sendMessage(plr, "&cInvalid plot world!");
+        PlotArea area = PS.get().getPlotAreaByString(args[0]);
+        if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
+            C.NOT_VALID_PLOT_WORLD.send(plr, args[0]);
+            return false;
         }
         PlotId min, max;
         try {
@@ -91,22 +92,21 @@ public class DebugClaimTest extends SubCommand {
         }
         MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
         MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
-        final PlotManager manager = PS.get().getPlotManager(world);
-        final PlotWorld plotworld = PS.get().getPlotWorld(world);
+        final PlotManager manager = area.getPlotManager();
         final ArrayList<Plot> plots = new ArrayList<>();
         for (final PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
-            final Plot plot = MainUtil.getPlotAbs(world, id);
-            if (PS.get().getPlot(world, plot.getId()) != null) {
+            final Plot plot = area.getPlotAbs(id);
+            if (plot.hasOwner()) {
                 MainUtil.sendMessage(plr, " - &cDB Already contains: " + plot.getId());
                 continue;
             }
-            final Location loc = manager.getSignLoc(plotworld, plot);
+            final Location loc = manager.getSignLoc(area, plot);
             final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
-            final boolean result = ChunkManager.manager.loadChunk(world, chunk, false);
+            final boolean result = ChunkManager.manager.loadChunk(area.worldname, chunk, false);
             if (!result) {
                 continue;
             }
-            final String[] lines = BlockManager.manager.getSign(loc);
+            final String[] lines = WorldUtil.IMP.getSign(loc);
             if (lines != null) {
                 String line = lines[2];
                 if ((line != null) && (line.length() > 2)) {

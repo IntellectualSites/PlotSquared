@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
@@ -38,7 +39,7 @@ public class Unlink extends SubCommand {
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         
         final Location loc = plr.getLocation();
-        final Plot plot = MainUtil.getPlotAbs(loc);
+        final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -51,10 +52,20 @@ public class Unlink extends SubCommand {
         if (!plot.isMerged()) {
             return sendMessage(plr, C.UNLINK_IMPOSSIBLE);
         }
+        final boolean createRoad;
+        if (args.length != 0) {
+            if (args.length != 1 || StringMan.isEqualIgnoreCaseToAny(args[1], "true", "false")) {
+                C.COMMAND_SYNTAX.send(plr, getUsage());
+                return false;
+            }
+            createRoad = Boolean.parseBoolean(args[1]);
+        } else {
+            createRoad = true;
+        }
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if (!MainUtil.unlinkPlot(plot, true, true)) {
+                if (!plot.unlinkPlot(createRoad, createRoad)) {
                     MainUtil.sendMessage(plr, "&cUnlink has been cancelled");
                     return;
                 }

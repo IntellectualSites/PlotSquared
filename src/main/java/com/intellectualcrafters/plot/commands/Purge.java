@@ -20,8 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,136 +30,157 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.CmdConfirm;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "purge", permission = "plots.admin", description = "Purge all plots for a world", category = CommandCategory.ACTIONS, requiredType = RequiredType.CONSOLE)
+@CommandDeclaration(
+usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]",
+command = "purge",
+permission = "plots.admin",
+description = "Purge all plots for a world",
+category = CommandCategory.ACTIONS,
+requiredType = RequiredType.CONSOLE)
 public class Purge extends SubCommand {
-    
-    public PlotId getId(final String id) {
-        try {
-            final String[] split = id.split(";");
-            return new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-        } catch (final Exception e) {
-            return null;
-        }
-    }
-    
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        if (args.length == 1) {
-            final String arg = args[0].toLowerCase();
-            final PlotId id = getId(arg);
-            if (id != null) {
-                MainUtil.sendMessage(plr, "/plot purxe x;z &l<world>");
-                return false;
-            }
-            final UUID uuid = UUIDHandler.getUUID(args[0], null);
-            if (uuid != null) {
-                MainUtil.sendMessage(plr, "/plot purge " + args[0] + " &l<world>");
-                return false;
-            }
-            if (arg.equals("player")) {
-                MainUtil.sendMessage(plr, "/plot purge &l<player> <world>");
-                return false;
-            }
-            if (arg.equals("unowned")) {
-                MainUtil.sendMessage(plr, "/plot purge unowned &l<world>");
-                return false;
-            }
-            if (arg.equals("unknown")) {
-                MainUtil.sendMessage(plr, "/plot purge unknown &l<world>");
-                return false;
-            }
-            if (arg.equals("all")) {
-                MainUtil.sendMessage(plr, "/plot purge all &l<world>");
-                return false;
-            }
-            MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
+        if (args.length == 0) {
             return false;
         }
-        if (args.length != 2) {
-            MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
-            return false;
-        }
-        final String worldname = args[1];
-        if (!PS.get().isPlotWorld(worldname)) {
-            C.NOT_VALID_PLOT_WORLD.send(plr);
-            return false;
-        }
-        final String arg = args[0].toLowerCase();
-        final PlotId id = getId(arg);
-        if (id != null) {
-            final HashSet<Integer> ids = new HashSet<Integer>();
-            final int DBid = DBFunc.getId(MainUtil.getPlotAbs(worldname, id));
-            if (DBid != Integer.MAX_VALUE) {
-                ids.add(DBid);
+
+        String world = null;
+        PlotArea area = null;
+        PlotId id = null;
+        UUID owner = null;
+        UUID added = null;
+        boolean unknown = false;
+        for (String arg : args) {
+            String[] split = arg.split(":");
+            if (split.length != 2) {
+                C.COMMAND_SYNTAX.send(plr, getUsage());
+                return false;
             }
-            DBFunc.purgeIds(worldname, ids);
-            return finishPurge(DBid == Integer.MAX_VALUE ? 1 : 0);
-        }
-        if (arg.equals("all")) {
-            final Set<PlotId> ids = PS.get().getPlots(worldname).keySet();
-            final int length = ids.size();
-            if (length == 0) {
-                return MainUtil.sendMessage(plr, "&cNo plots found");
+            switch (split[0].toLowerCase()) {
+                case "world":
+                case "w": {
+                    world = split[1];
+                    break;
+                }
+                case "area":
+                case "a": {
+                    area = PS.get().getPlotAreaByString(split[1]);
+                    if (area == null) {
+                        C.NOT_VALID_PLOT_WORLD.send(plr, split[1]);
+                        return false;
+                    }
+                    break;
+                }
+                case "plotid":
+                case "id": {
+                    id = PlotId.fromString(split[1]);
+                    if (id == null) {
+                        C.NOT_VALID_PLOT_ID.send(plr, split[1]);
+                        return false;
+                    }
+                    break;
+                }
+                case "owner":
+                case "o": {
+                    owner = UUIDHandler.getUUID(split[1], null);
+                    if (owner == null) {
+                        C.INVALID_PLAYER.send(plr, split[1]);
+                        return false;
+                    }
+                    break;
+                }
+                case "shared":
+                case "s": {
+                    added = UUIDHandler.getUUID(split[1], null);
+                    if (added == null) {
+                        C.INVALID_PLAYER.send(plr, split[1]);
+                        return false;
+                    }
+                    break;
+                }
+                case "unknown":
+                case "?":
+                case "u": {
+                    unknown = Boolean.parseBoolean(split[1]);
+                    break;
+                }
             }
-            DBFunc.purge(worldname, ids);
-            return finishPurge(length);
         }
-        if (arg.equals("unknown")) {
-            final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
-            final Set<PlotId> ids = new HashSet<>();
-            for (final Plot plot : plots) {
-                if (plot.owner != null) {
-                    final String name = UUIDHandler.getName(plot.owner);
-                    if (name == null) {
-                        ids.add(plot.getId());
+        final HashSet<Integer> toDelete = new HashSet<>();
+        Set<Plot> basePlots = PS.get().getBasePlots();
+        for (Plot plot : PS.get().getBasePlots()) {
+            if (world != null && !plot.area.worldname.equalsIgnoreCase(world)) {
+                continue;
+            }
+            if (area != null && !plot.area.equals(area)) {
+                continue;
+            }
+            if (id != null && !plot.id.equals(id)) {
+                continue;
+            }
+            if (owner != null && !plot.isOwner(owner)) {
+                continue;
+            }
+            if (added != null && !plot.isAdded(added)) {
+                continue;
+            }
+            if (unknown && UUIDHandler.getName(plot.owner) != null) {
+                continue;
+            }
+            for (Plot current : plot.getConnectedPlots()) {
+                final int DBid = DBFunc.getId(current);
+                if (DBid != Integer.MAX_VALUE) {
+                    toDelete.add(DBid);
+                }
+            }
+        }
+        if (PS.get().plots_tmp != null) {
+            for (Entry<String, HashMap<PlotId, Plot>> entry : PS.get().plots_tmp.entrySet()) {
+                String worldname = entry.getKey();
+                if (world != null && !world.equalsIgnoreCase(worldname)) {
+                    continue;
+                }
+                for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                    Plot plot = entry2.getValue();
+                    if (id != null && !plot.id.equals(id)) {
+                        continue;
+                    }
+                    if (owner != null && !plot.isOwner(owner)) {
+                        continue;
+                    }
+                    if (added != null && !plot.isAdded(added)) {
+                        continue;
+                    }
+                    if (unknown && UUIDHandler.getName(plot.owner) != null) {
+                        continue;
+                    }
+                    final int DBid = DBFunc.getId(plot);
+                    if (DBid != Integer.MAX_VALUE) {
+                        toDelete.add(DBid);
                     }
                 }
             }
-            final int length = ids.size();
-            if (length == 0) {
-                return MainUtil.sendMessage(plr, "&cNo plots found");
-            }
-            DBFunc.purge(worldname, ids);
-            return finishPurge(length);
         }
-        if (arg.equals("unowned")) {
-            final Collection<Plot> plots = PS.get().getPlotsInWorld(worldname);
-            final Set<PlotId> ids = new HashSet<>();
-            for (final Plot plot : plots) {
-                if (plot.owner == null) {
-                    ids.add(plot.getId());
-                }
-            }
-            final int length = ids.size();
-            if (length == 0) {
-                return MainUtil.sendMessage(plr, "&cNo plots found");
-            }
-            DBFunc.purge(worldname, ids);
-            return finishPurge(length);
+        if (toDelete.size() == 0) {
+            C.FOUND_NO_PLOTS.send(plr);
+            return false;
         }
-        final UUID uuid = UUIDHandler.getUUID(args[0], null);
-        if (uuid != null) {
-            final Set<Plot> plots = PS.get().getPlots(worldname, uuid);
-            final Set<PlotId> ids = new HashSet<>();
-            for (final Plot plot : plots) {
-                ids.add(plot.getId());
+        String cmd = "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
+        CmdConfirm.addPending(plr, cmd, new Runnable() {
+            @Override
+            public void run() {
+                DBFunc.purgeIds(toDelete);
+                C.PURGE_SUCCESS.send(plr, toDelete.size() + "");
             }
-            final int length = ids.size();
-            DBFunc.purge(worldname, ids);
-            return finishPurge(length);
-        }
-        MainUtil.sendMessage(plr, C.PURGE_SYNTAX);
-        return false;
-    }
-    
-    private boolean finishPurge(final int amount) {
-        MainUtil.sendMessage(null, C.PURGE_SUCCESS, amount + "");
-        return false;
+        });
+        return true;
     }
 }

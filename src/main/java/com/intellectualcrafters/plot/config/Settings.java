@@ -36,10 +36,9 @@ public class Settings {
      */
     public static boolean UPDATE_NOTIFICATIONS = true;
 
-    public static boolean ENABLE_CLUSTERS = false;
     public static boolean FAST_CLEAR = false;
     public static boolean MERGE_REMOVES_ROADS = true;
-    /**
+    /**`
      * Default UUID_FECTHING: false
      */
     public static boolean PERMISSION_CACHING = true;
@@ -59,7 +58,10 @@ public class Settings {
     public static boolean REQUIRE_DONE = false;
     public static boolean DONE_COUNTS_TOWARDS_LIMIT = false;
     public static boolean DONE_RESTRICTS_BUILDING = false;
-    
+    /**
+     * Clusters
+     */
+    public static boolean ENABLE_CLUSTERS = false;
     /**
      * PlotMe settings
      */
@@ -86,10 +88,6 @@ public class Settings {
     public static boolean REDSTONE_DISABLER = false;
     public static boolean REDSTONE_DISABLER_UNOCCUPIED = false;
     /**
-     * Check for falling blocks when pistons extend?
-     */
-    public static boolean PISTON_FALLING_BLOCK_CHECK = true;
-    /**
      * Max auto claiming size
      */
     public static int MAX_AUTO_SIZE = 4;
@@ -102,15 +100,6 @@ public class Settings {
     public static long WE_MAX_VOLUME = 500000;
     public static long WE_MAX_ITERATIONS = 1000;
     public static List<String> WE_BLACKLIST = new ArrayList<>();
-    /**
-     * Default kill road mobs: true
-     */
-    public final static boolean KILL_ROAD_MOBS_DEFAULT = false;
-    public final static boolean KILL_ROAD_VEHICLES_DEFAULT = false;
-    /**
-     * Default mob pathfinding: true
-     */
-    public final static boolean MOB_PATHFINDING_DEFAULT = true;
     /**
      * Teleport to path on login
      */
@@ -146,12 +135,8 @@ public class Settings {
     /**
      * Kill road mobs?
      */
-    public static boolean KILL_ROAD_MOBS;
-    public static boolean KILL_ROAD_VEHICLES;
-    /**
-     * mob pathfinding?
-     */
-    public static boolean MOB_PATHFINDING;
+    public static boolean KILL_ROAD_MOBS = false;
+    public static boolean KILL_ROAD_VEHICLES = false;
     /**
      * Delete plots on ban?
      */

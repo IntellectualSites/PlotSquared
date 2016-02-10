@@ -60,7 +60,7 @@ public class UUIDHandler {
     
     public static HashSet<UUID> getAllUUIDS() {
         final HashSet<UUID> uuids = new HashSet<>();
-        for (final Plot plot : PS.get().getPlotsRaw()) {
+        for (final Plot plot : PS.get().getPlots()) {
             if (plot.owner != null) {
                 uuids.add(plot.owner);
                 uuids.addAll(plot.getTrusted());

@@ -11,8 +11,8 @@ import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.Populator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 
 public abstract class SpongePlotGenerator implements WorldGenerator {
@@ -93,14 +93,14 @@ public abstract class SpongePlotGenerator implements WorldGenerator {
      * You don't need to do anything with it necessarily.
      * @param plotworld
      */
-    public abstract void init(final PlotWorld plotworld);
+    public abstract void init(final PlotArea plotworld);
     
     /**
-     * Return a new instance of the PlotWorld for a world
+     * Return a new instance of the PlotArea for a world
      * @param world
      * @return
      */
-    public abstract PlotWorld getNewPlotWorld(final String world);
+    public abstract PlotArea getNewPlotWorld(final String world);
     
     /**
      * Get the PlotManager class for this generator
@@ -110,7 +110,7 @@ public abstract class SpongePlotGenerator implements WorldGenerator {
     
     /**
      * If you need to do anything fancy for /plot setup<br>
-     *  - Otherwise it will just use the PlotWorld configuration<br>
+     *  - Otherwise it will just use the PlotArea configuration<br>
      * Feel free to extend BukkitSetupUtils and customize world creation
      * @param object
      */

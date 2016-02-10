@@ -10,7 +10,7 @@ import com.intellectualcrafters.plot.object.PlotLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.BlockManager;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.sponge.SpongeMain;
 
 public class SpongeBasicPop extends SpongePlotPopulator<SpongeBasicGen> {
@@ -70,7 +70,7 @@ public class SpongeBasicPop extends SpongePlotPopulator<SpongeBasicGen> {
                                 for (final PlotItem items : states) {
                                     items.x = X + x;
                                     items.z = Z + z;
-                                    BlockManager.manager.addItems(generator.plotworld.worldname, items);
+                                    WorldUtil.IMP.addItems(generator.plotworld.worldname, items);
                                 }
                             }
                         }

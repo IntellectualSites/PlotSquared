@@ -46,7 +46,6 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -113,7 +112,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
         }
-        final Plot plot = MainUtil.getPlotAbs(BukkitUtil.getLocation(player));
+        final Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
         if (plot == null) {
             return;
         }
@@ -128,7 +127,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         final Player player = (Player) event.getEntity();
-        final Plot plot = MainUtil.getPlotAbs(BukkitUtil.getLocation(player));
+        final Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
         if (plot == null) {
             return;
         }
@@ -141,7 +140,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public void onItemPickup(final PlayerPickupItemEvent event) {
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        final Plot plot = MainUtil.getPlotAbs(pp.getLocation());
+        final Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
         if (plot == null) {
             return;
         }
@@ -155,7 +154,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public void onItemDrop(final PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        final Plot plot = MainUtil.getPlotAbs(pp.getLocation());
+        final Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
         if (plot == null) {
             return;
         }

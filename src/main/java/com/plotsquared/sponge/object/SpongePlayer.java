@@ -12,7 +12,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.service.ban.BanService;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.chat.ChatTypes;
 
 import com.flowpowered.math.vector.Vector3d;

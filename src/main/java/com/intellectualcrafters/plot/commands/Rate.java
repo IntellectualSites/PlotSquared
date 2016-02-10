@@ -33,7 +33,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotItemStack;
@@ -89,7 +88,7 @@ public class Rate extends SubCommand {
                     && p.isBasePlot()
                     && ((p.getSettings().ratings == null) || !p.getSettings().ratings.containsKey(uuid))
                     && !p.isAdded(uuid)) {
-                        MainUtil.teleportPlayer(player, player.getLocation(), p);
+                        p.teleportPlayer(player);
                         MainUtil.sendMessage(player, C.RATE_THIS);
                         return true;
                     }
@@ -98,8 +97,7 @@ public class Rate extends SubCommand {
                 return false;
             }
         }
-        final Location loc = player.getLocation();
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             return !sendMessage(player, C.NOT_IN_PLOT);
         }

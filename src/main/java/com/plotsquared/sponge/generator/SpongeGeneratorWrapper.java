@@ -5,9 +5,9 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotWorld;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.plotsquared.sponge.util.SpongeUtil;
 
@@ -21,14 +21,14 @@ public class SpongeGeneratorWrapper extends PlotGenerator<WorldGenerator> {
     }
     
     @Override
-    public void initialize(final PlotWorld plotworld) {
+    public void initialize(final PlotArea plotworld) {
         if (generator instanceof SpongePlotGenerator) {
             ((SpongePlotGenerator) generator).init(plotworld);
         }
     }
     
     @Override
-    public void augment(final PlotCluster cluster, final PlotWorld plotworld) {
+    public void augment(final PlotCluster cluster, final PlotArea plotworld) {
         if (generator instanceof SpongePlotGenerator) {
             final SpongePlotGenerator plotgen = (SpongePlotGenerator) generator;
             final World worldObj = SpongeUtil.getWorld(world);
@@ -55,7 +55,7 @@ public class SpongeGeneratorWrapper extends PlotGenerator<WorldGenerator> {
     }
     
     @Override
-    public PlotWorld getNewPlotWorld(final String world) {
+    public PlotArea getNewPlotWorld(final String world) {
         if (!(generator instanceof SpongePlotGenerator)) {
             return null;
         }

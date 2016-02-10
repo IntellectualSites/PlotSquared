@@ -49,6 +49,9 @@ public class PlotId {
      * @return null if the string is invalid
      */
     public static PlotId fromString(final String string) {
+        if (string == null) {
+            return null;
+        }
         int x, y;
         final String[] parts = string.split(";");
         if (parts.length < 2) {
@@ -63,6 +66,24 @@ public class PlotId {
         return new PlotId(x, y);
     }
     
+    public PlotId getRelative(final int direction) {
+        switch (direction) {
+            case 0:
+                return new PlotId(this.x, this.y - 1);
+            case 1:
+                return new PlotId(this.x + 1, this.y);
+            case 2:
+                return new PlotId(this.x, this.y + 1);
+            case 3:
+                return new PlotId(this.x - 1, this.y);
+        }
+        return this;
+    }
+    
+    public PlotId getRelative(int x, int y) {
+        return new PlotId(this.x + x, this.y + y);
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

@@ -1,21 +1,24 @@
 package com.intellectualcrafters.plot;
 
 import java.io.File;
+import java.util.List;
 
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.BlockManager;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.intellectualcrafters.plot.util.PlotQueue;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.intellectualcrafters.plot.util.WorldUtil;
 
 public interface IPlotMain {
     
@@ -129,10 +132,16 @@ public interface IPlotMain {
     EconHandler getEconomyHandler();
     
     /**
-     * Get the block manager
+     * Get the Plot Queue class
      * @return
      */
-    BlockManager initBlockManager();
+    PlotQueue initPlotQueue();
+    
+    /**
+     * Get the World Util class
+     * @return
+     */
+    WorldUtil initWorldUtil();
     
     /**
      * Get the EventUtil class
@@ -199,7 +208,12 @@ public interface IPlotMain {
      * @param name
      * @return
      */
-    PlotGenerator<?> getGenerator(final String world, final String name);
+    GeneratorWrapper<?> getGenerator(final String world, final String name);
+    
+    /**
+     * 
+     */
+    GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator);
     
     /**
      * Register the chunk processor which will clean out chunks that have too many blockstates or entities
@@ -222,4 +236,6 @@ public interface IPlotMain {
      * @return
      */
     AbstractTitle initTitleManager();
+    
+    List<String> getPluginIds();
 }

@@ -20,6 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -31,20 +39,12 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 @CommandDeclaration(
 command = "visit",
 permission = "plots.visit",
 description = "Visit someones plot",
 usage = "/plot visit [player|alias|world|id] [#]",
-aliases = { "v" },
+aliases = { "v", "tp", "teleport", "goto" },
 requiredType = RequiredType.NONE,
 category = CommandCategory.TELEPORT)
 public class Visit extends SubCommand {
@@ -88,8 +88,8 @@ public class Visit extends SubCommand {
                 final UUID user = UUIDHandler.getCachedUUID(args[0], null);
                 if (user != null) {
                     unsorted = PS.get().getPlots(user);
-                } else if (PS.get().isPlotWorld(args[0])) {
-                    unsorted = PS.get().getPlotsInWorld(args[0]);
+                } else if (PS.get().getPlotAreaByString(args[0]) != null) {
+                    unsorted = PS.get().getPlotAreaByString(args[0]).getPlots();
                 } else {
                     final Plot plot = MainUtil.getPlotFromString(player, args[0], true);
                     if (plot != null) {
@@ -147,7 +147,7 @@ public class Visit extends SubCommand {
                 return false;
             }
         }
-        MainUtil.teleportPlayer(player, player.getLocation(), plot);
+        plot.teleportPlayer(player);
         return true;
     }
     

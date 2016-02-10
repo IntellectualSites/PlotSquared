@@ -54,13 +54,13 @@ public class Alias extends SetCommand {
             C.NOT_VALID_VALUE.send(plr);
             return false;
         }
-        for (final Plot p : PS.get().getPlotsInWorld(plr.getLocation().getWorld())) {
+        for (final Plot p : PS.get().getPlots(plot.area)) {
             if (p.getAlias().equalsIgnoreCase(alias)) {
                 MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                 return false;
             }
         }
-        if (UUIDHandler.nameExists(new StringWrapper(alias)) || PS.get().isPlotWorld(alias)) {
+        if (UUIDHandler.nameExists(new StringWrapper(alias)) || PS.get().hasPlotArea(alias)) {
             MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
             return false;
         }

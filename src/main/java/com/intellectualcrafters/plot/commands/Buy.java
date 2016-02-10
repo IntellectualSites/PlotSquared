@@ -20,20 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.Set;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.util.Set;
 
 @CommandDeclaration(
 command = "buy",
@@ -52,23 +51,24 @@ public class Buy extends SubCommand {
         }
         final Location loc = plr.getLocation();
         final String world = loc.getWorld();
-        if (!PS.get().isPlotWorld(world)) {
+        if (!PS.get().hasPlotArea(world)) {
             return sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
         Set<Plot> plots;
         Plot plot;
         if (args.length > 0) {
             try {
-                final String[] split = args[0].split(";");
-                final PlotId id = new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-                plot = MainUtil.getPlotAbs(world, id);
-                plots = MainUtil.getConnectedPlots(plot);
+                plot = MainUtil.getPlotFromString(plr, world, true);
+                if (plot == null) {
+                    return false;
+                }
+                plots = plot.getConnectedPlots();
             } catch (final Exception e) {
                 return sendMessage(plr, C.NOT_VALID_PLOT_ID);
             }
         } else {
-            plot = MainUtil.getPlotAbs(loc);
-            plots = MainUtil.getConnectedPlots(plot);
+            plot = loc.getPlotAbs();
+            plots = plot.getConnectedPlots();
         }
         if (plots == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
@@ -76,8 +76,8 @@ public class Buy extends SubCommand {
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_UNOWNED);
         }
-        final int currentPlots = MainUtil.getPlayerPlotCount(plr) + plots.size();
-        if (currentPlots > MainUtil.getAllowedPlots(plr)) {
+        final int currentPlots = plr.getPlotCount() + plots.size();
+        if (currentPlots > plr.getAllowedPlots()) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
         final Flag flag = FlagManager.getPlotFlagRaw(plot, "price");

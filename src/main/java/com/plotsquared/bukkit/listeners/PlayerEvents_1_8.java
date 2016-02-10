@@ -24,6 +24,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -38,7 +39,7 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             return;
         }
         final HumanEntity entity = event.getWhoClicked();
-        if (!(entity instanceof Player) || !PS.get().isPlotWorld(entity.getWorld().getName())) {
+        if (!(entity instanceof Player) || !PS.get().hasPlotArea(entity.getWorld().getName())) {
             return;
         }
         final Player player = (Player) entity;
@@ -78,13 +79,14 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             return;
         }
         final Location l = BukkitUtil.getLocation(state.getLocation());
-        final Plot plot = MainUtil.getPlotAbs(l);
+        PlotArea area = l.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        final Plot plot = area.getPlotAbs(l);
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         boolean cancelled = false;
         if (plot == null) {
-            if (!MainUtil.isPlotArea(l)) {
-                return;
-            }
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 cancelled = true;
@@ -122,16 +124,13 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
             return;
         }
         final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
-        final String world = l.getWorld();
-        if (!PS.get().isPlotWorld(world)) {
+        final PlotArea area = l.getPlotArea();
+        if (area == null) {
             return;
         }
-        final Plot plot = MainUtil.getPlotAbs(l);
+        final Plot plot = area.getPlotAbs(l);
         final PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
-            if (!MainUtil.isPlotArea(l)) {
-                return;
-            }
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);

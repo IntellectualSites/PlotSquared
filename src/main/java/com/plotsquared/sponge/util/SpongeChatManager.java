@@ -1,7 +1,5 @@
 package com.plotsquared.sponge.util;
 
-import org.spongepowered.api.text.TextBuilder;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.action.TextActions;
 
 import com.intellectualcrafters.plot.object.ConsolePlayer;

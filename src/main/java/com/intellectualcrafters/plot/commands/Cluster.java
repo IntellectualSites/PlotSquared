@@ -31,20 +31,15 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotClusterId;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotWorld;
-import com.intellectualcrafters.plot.util.ClusterManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 //import com.plotsquared.bukkit.generator.AugmentedPopulator;
 //import com.plotsquared.bukkit.generator.AugmentedPopulator;
@@ -82,7 +77,8 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster list");
                     return false;
                 }
-                final HashSet<PlotCluster> clusters = ClusterManager.getClusters(plr.getLocation().getWorld());
+                PlotArea area = plr.getApplicablePlotArea();
+                final Set<PlotCluster> clusters = area.getClusters();
                 MainUtil.sendMessage(plr, C.CLUSTER_LIST_HEADING, clusters.size() + "");
                 for (final PlotCluster cluster : clusters) {
                     // Ignore unmanaged clusters
@@ -105,10 +101,13 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.create");
                     return false;
                 }
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                    return false;
+                }
                 if (args.length != 4) {
-                    final PlotId id = ClusterManager.estimatePlotId(plr.getLocation());
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster create <name> <id-bot> <id-top>");
-                    MainUtil.sendMessage(plr, C.CLUSTER_CURRENT_PLOTID, "" + id);
                     return false;
                 }
                 // check pos1 / pos2
@@ -120,11 +119,9 @@ public class Cluster extends SubCommand {
                 }
                 // check if name is taken
                 final String name = args[1];
-                for (final PlotCluster cluster : ClusterManager.getClusters(plr.getLocation().getWorld())) {
-                    if (name.equals(cluster.getName())) {
-                        MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
-                        return false;
-                    }
+                if (area.getCluster(name) != null) {
+                    MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
+                    return false;
                 }
                 if ((pos2.x < pos1.x) || (pos2.y < pos1.y)) {
                     PlotId tmp = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
@@ -132,15 +129,13 @@ public class Cluster extends SubCommand {
                     pos1 = tmp;
                 }
                 //check if overlap
-                final String world = plr.getLocation().getWorld();
-                final PlotClusterId id = new PlotClusterId(pos1, pos2);
-                final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(world, id);
-                if ((intersects.size() > 0)) {
-                    MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, intersects.size() + "");
+                PlotCluster cluster = area.getFirstIntersectingCluster(pos1, pos2);
+                if (cluster != null) {
+                    MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, cluster.getName());
                     return false;
                 }
                 // Check if it occupies existing plots
-                final Set<Plot> plots = MainUtil.getPlotSelectionOwned(world, pos1, pos2);
+                final Set<Plot> plots = area.getPlotSelectionOwned(pos1, pos2);
                 if (plots.size() > 0) {
                     if (!Permissions.hasPermission(plr, "plots.cluster.create.other")) {
                         final UUID uuid = plr.getUUID();
@@ -153,57 +148,22 @@ public class Cluster extends SubCommand {
                     }
                 }
                 // Check allowed cluster size
-                final PlotCluster cluster = new PlotCluster(world, pos1, pos2, plr.getUUID());
+                cluster = new PlotCluster(area, pos1, pos2, plr.getUUID());
                 int current;
                 if (Settings.GLOBAL_LIMIT) {
-                    current = ClusterManager.getPlayerClusterCount(plr);
+                    current = plr.getPlayerClusterCount();
                 } else {
-                    current = ClusterManager.getPlayerClusterCount(world, plr);
+                    current = plr.getPlayerClusterCount(plr.getLocation().getWorld());
                 }
                 final int allowed = Permissions.hasPermissionRange(plr, "plots.cluster", Settings.MAX_PLOTS);
                 if ((current + cluster.getArea()) > allowed) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
                     return false;
                 }
-                // Set the generator (if applicable)
-                final PlotWorld plotworld = PS.get().getPlotWorld(world);
-                if (plotworld == null) {
-                    PS.get().config.createSection("worlds." + world);
-                    PS.get().loadWorld(world, PS.get().IMP.getGenerator(world, null));
-                } else {
-                    String gen_string = PS.get().config.getString("worlds." + world + "." + "generator.plugin");
-                    if (gen_string == null) {
-                        gen_string = "PlotSquared";
-                    }
-                    final PlotGenerator<?> wrapper = PS.get().IMP.getGenerator(world, gen_string);
-                    if (wrapper.isFull()) {
-                        wrapper.augment(cluster, plotworld);
-                    } else {
-                        MainUtil.sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringMan.join(SetupUtils.generators.keySet(), ","));
-                        return false;
-                    }
-                    //                    BukkitPlotGenerator generator;
-                    //                    if (gen_string == null) {
-                    //                        generator = new HybridGen(world);
-                    //                    } else {
-                    //                        ChunkGenerator chunkgen = (ChunkGenerator) PS.get().IMP.getGenerator(world, gen_string).generator;
-                    //                        if (chunkgen instanceof BukkitPlotGenerator) {
-                    //                            generator = (BukkitPlotGenerator) chunkgen;
-                    //                        }
-                    //                        else {
-                    //                            MainUtil.sendMessage(plr, C.SETUP_INVALID_GENERATOR, StringMan.join(SetupUtils.generators.keySet(), ","));
-                    //                            return false;
-                    //                        }
-                    //                    }
-                    //                    new AugmentedPopulator(world, generator, cluster, plotworld.TERRAIN == 2, plotworld.TERRAIN != 2);
-                }
                 // create cluster
                 cluster.settings.setAlias(name);
-                DBFunc.createCluster(world, cluster);
-                if (!ClusterManager.clusters.containsKey(world)) {
-                    ClusterManager.clusters.put(world, new HashSet<PlotCluster>());
-                }
-                ClusterManager.clusters.get(world).add(cluster);
+                area.addCluster(cluster);
+                DBFunc.createCluster(cluster);
                 // Add any existing plots to the current cluster
                 for (final Plot plot : plots) {
                     if (plot.hasOwner()) {
@@ -211,7 +171,7 @@ public class Cluster extends SubCommand {
                         FlagManager.addPlotFlag(plot, flag);
                         if (!cluster.isAdded(plot.owner)) {
                             cluster.invited.add(plot.owner);
-                            DBFunc.setInvited(world, cluster, plot.owner);
+                            DBFunc.setInvited(cluster, plot.owner);
                         }
                     }
                 }
@@ -229,15 +189,20 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster delete [name]");
                     return false;
                 }
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                    return false;
+                }
                 PlotCluster cluster;
                 if (args.length == 2) {
-                    cluster = ClusterManager.getCluster(plr.getLocation().getWorld(), args[1]);
+                    cluster = area.getCluster(args[1]);
                     if (cluster == null) {
                         MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
                 } else {
-                    cluster = ClusterManager.getCluster(plr.getLocation());
+                    cluster = area.getCluster(plr.getLocation());
                     if (cluster == null) {
                         MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                         return false;
@@ -249,26 +214,7 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                final PlotWorld plotworld = plr.getLocation().getPlotWorld();
-                if (plotworld.TYPE == 2) {
-                    final ArrayList<Plot> toRemove = new ArrayList<>();
-                    for (final Plot plot : PS.get().getPlotsInWorld(plr.getLocation().getWorld())) {
-                        final PlotCluster other = ClusterManager.getCluster(plot);
-                        if (cluster.equals(other)) {
-                            toRemove.add(plot);
-                        }
-                    }
-                    for (final Plot plot : toRemove) {
-                        plot.unclaim();
-                    }
-                }
                 DBFunc.delete(cluster);
-                if (plotworld.TYPE == 2) {
-                    SetupUtils.manager.removePopulator(plr.getLocation().getWorld(), cluster);
-                }
-                ClusterManager.last = null;
-                ClusterManager.clusters.get(cluster.world).remove(cluster);
-                ClusterManager.regenCluster(cluster);
                 MainUtil.sendMessage(plr, C.CLUSTER_DELETED);
                 return true;
             }
@@ -294,9 +240,12 @@ public class Cluster extends SubCommand {
                     pos2 = new PlotId(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
                 }
                 // check if in cluster
-                final Location loc = plr.getLocation();
-                final String world = loc.getWorld();
-                final PlotCluster cluster = ClusterManager.getCluster(loc);
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                    return false;
+                }
+                final PlotCluster cluster = area.getCluster(plr.getLocation());
                 if (cluster == null) {
                     MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -308,14 +257,13 @@ public class Cluster extends SubCommand {
                     }
                 }
                 //check if overlap
-                final PlotClusterId id = new PlotClusterId(pos1, pos2);
-                final HashSet<PlotCluster> intersects = ClusterManager.getIntersects(world, id);
-                if (intersects.size() > 1) {
-                    MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, (intersects.size() - 1) + "");
+                PlotCluster intersect = area.getFirstIntersectingCluster(pos1, pos2);
+                if (intersect != null) {
+                    MainUtil.sendMessage(plr, C.CLUSTER_INTERSECTION, intersect.getName());
                     return false;
                 }
-                final HashSet<Plot> existing = MainUtil.getPlotSelectionOwned(world, cluster.getP1(), cluster.getP2());
-                final HashSet<Plot> newplots = MainUtil.getPlotSelectionOwned(world, pos1, pos2);
+                final HashSet<Plot> existing = area.getPlotSelectionOwned(cluster.getP1(), cluster.getP2());
+                final HashSet<Plot> newplots = area.getPlotSelectionOwned(pos1, pos2);
                 final HashSet<Plot> removed = ((HashSet<Plot>) existing.clone());
                 removed.removeAll(newplots);
                 // Check expand / shrink
@@ -335,9 +283,9 @@ public class Cluster extends SubCommand {
                 // Check allowed cluster size
                 int current;
                 if (Settings.GLOBAL_LIMIT) {
-                    current = ClusterManager.getPlayerClusterCount(plr);
+                    current = plr.getPlayerClusterCount();
                 } else {
-                    current = ClusterManager.getPlayerClusterCount(world, plr);
+                    current = plr.getPlayerClusterCount(plr.getLocation().getWorld());
                 }
                 current -= cluster.getArea() + (((1 + pos2.x) - pos1.x) * ((1 + pos2.y) - pos1.y));
                 final int allowed = Permissions.hasPermissionRange(plr, "plots.cluster", Settings.MAX_PLOTS);
@@ -352,44 +300,8 @@ public class Cluster extends SubCommand {
                     FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("cluster"), cluster));
                 }
                 // resize cluster
-                DBFunc.resizeCluster(cluster, id);
+                DBFunc.resizeCluster(cluster, pos1, pos2);
                 MainUtil.sendMessage(plr, C.CLUSTER_RESIZED);
-                return true;
-            }
-            case "reg":
-            case "regenerate":
-            case "regen": {
-                if (!Permissions.hasPermission(plr, "plots.cluster.delete")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.regen");
-                    return false;
-                }
-                if ((args.length != 1) && (args.length != 2)) {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster regen [name]");
-                    return false;
-                }
-                PlotCluster cluster;
-                if (args.length == 2) {
-                    cluster = ClusterManager.getCluster(plr.getLocation().getWorld(), args[1]);
-                    if (cluster == null) {
-                        MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
-                        return false;
-                    }
-                } else {
-                    cluster = ClusterManager.getCluster(plr.getLocation());
-                    if (cluster == null) {
-                        MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
-                        return false;
-                    }
-                }
-                if (!cluster.owner.equals(plr.getUUID())) {
-                    if (!Permissions.hasPermission(plr, "plots.cluster.regen.other")) {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.regen.other");
-                        return false;
-                    }
-                }
-                final long start = System.currentTimeMillis();
-                ClusterManager.regenCluster(cluster);
-                MainUtil.sendMessage(plr, C.CLUSTER_REGENERATED, (System.currentTimeMillis() - start) + "");
                 return true;
             }
             case "add":
@@ -404,7 +316,11 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 // check if in cluster
-                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                }
+                final PlotCluster cluster = area.getCluster(plr.getLocation());
                 if (cluster == null) {
                     MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -425,7 +341,7 @@ public class Cluster extends SubCommand {
                     // add the user if not added
                     cluster.invited.add(uuid);
                     final String world = plr.getLocation().getWorld();
-                    DBFunc.setInvited(world, cluster, uuid);
+                    DBFunc.setInvited(cluster, uuid);
                     final PlotPlayer player = UUIDHandler.getPlayer(uuid);
                     if (player != null) {
                         MainUtil.sendMessage(player, C.CLUSTER_INVITED, cluster.getName());
@@ -445,7 +361,11 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster kick <player>");
                     return false;
                 }
-                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                }
+                final PlotCluster cluster = area.getCluster(plr.getLocation());
                 if (cluster == null) {
                     MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -478,7 +398,7 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(player, C.CLUSTER_REMOVED, cluster.getName());
                 }
                 for (final Plot plot : new ArrayList<>(PS.get().getPlots(plr.getLocation().getWorld(), uuid))) {
-                    final PlotCluster current = ClusterManager.getCluster(plot);
+                    final PlotCluster current = plot.getCluster();
                     if ((current != null) && current.equals(cluster)) {
                         plr.getLocation().getWorld();
                         plot.unclaim();
@@ -497,15 +417,19 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster leave [name]");
                     return false;
                 }
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                }
                 PlotCluster cluster;
                 if (args.length == 2) {
-                    cluster = ClusterManager.getCluster(plr.getLocation().getWorld(), args[1]);
+                    cluster = area.getCluster(args[1]);
                     if (cluster == null) {
                         MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
                 } else {
-                    cluster = ClusterManager.getCluster(plr.getLocation());
+                    cluster = area.getCluster(plr.getLocation());
                     if (cluster == null) {
                         MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                         return false;
@@ -528,7 +452,7 @@ public class Cluster extends SubCommand {
                 DBFunc.removeInvited(cluster, uuid);
                 MainUtil.sendMessage(plr, C.CLUSTER_REMOVED, cluster.getName());
                 for (final Plot plot : new ArrayList<>(PS.get().getPlots(plr.getLocation().getWorld(), uuid))) {
-                    final PlotCluster current = ClusterManager.getCluster(plot);
+                    final PlotCluster current = plot.getCluster();
                     if ((current != null) && current.equals(cluster)) {
                         plr.getLocation().getWorld();
                         plot.unclaim();
@@ -547,7 +471,11 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster helpers <add|remove> <player>");
                     return false;
                 }
-                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                }
+                final PlotCluster cluster = area.getCluster(plr.getLocation());
                 if (cluster == null) {
                     MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -581,7 +509,11 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster tp <name>");
                     return false;
                 }
-                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation().getWorld(), args[1]);
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                }
+                final PlotCluster cluster = area.getCluster(args[1]);
                 if (cluster == null) {
                     MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                     return false;
@@ -593,7 +525,7 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                plr.teleport(ClusterManager.getHome(cluster));
+                plr.teleport(cluster.getHome());
                 return MainUtil.sendMessage(plr, C.CLUSTER_TELEPORTING);
             }
             case "i":
@@ -608,15 +540,19 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster info [name]");
                     return false;
                 }
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                }
                 PlotCluster cluster;
                 if (args.length == 2) {
-                    cluster = ClusterManager.getCluster(plr.getLocation().getWorld(), args[1]);
+                    cluster = area.getCluster(args[1]);
                     if (cluster == null) {
                         MainUtil.sendMessage(plr, C.INVALID_CLUSTER, args[1]);
                         return false;
                     }
                 } else {
-                    cluster = ClusterManager.getCluster(plr.getLocation());
+                    cluster = area.getCluster(plr.getLocation());
                     if (cluster == null) {
                         MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                         return false;
@@ -650,7 +586,11 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster sethome");
                     return false;
                 }
-                final PlotCluster cluster = ClusterManager.getCluster(plr.getLocation());
+                PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                }
+                final PlotCluster cluster = area.getCluster(plr.getLocation());
                 if (cluster == null) {
                     MainUtil.sendMessage(plr, C.NOT_IN_CLUSTER);
                     return false;
@@ -661,7 +601,7 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                final Location base = ClusterManager.getClusterBottom(cluster);
+                final Location base = cluster.getClusterBottom();
                 final Location relative = plr.getLocation().subtract(base.getX(), 0, base.getZ());
                 final BlockLoc blockloc = new BlockLoc(relative.getX(), relative.getY(), relative.getZ());
                 cluster.settings.setPosition(blockloc);

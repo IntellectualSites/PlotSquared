@@ -34,6 +34,10 @@ public class RegionWrapper {
         return ((x >= minX) && (x <= maxX) && (z >= minZ) && (z <= maxZ));
     }
     
+    public boolean intersects(RegionWrapper other) {
+        return (other.minX <= this.maxX) && (other.maxX >= this.minX) && (other.minY <= this.maxY) && (other.maxY >= this.minY);
+    }
+
     @Override
     public int hashCode() {
         return minX + 13 * maxX + 23 * minZ + 39 * maxZ;
@@ -57,5 +61,11 @@ public class RegionWrapper {
     @Override
     public String toString() {
         return minX + "->" + maxX + "," + minZ + "->" + maxZ;
+    }
+    
+    public Location[] getCorners(String world) {
+        Location pos1 = new Location(world, minX, minY, minZ);
+        Location pos2 = new Location(world, maxX, maxY, maxZ);
+        return new Location[] { pos1, pos2 };
     }
 }

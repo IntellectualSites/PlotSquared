@@ -62,7 +62,7 @@ public class Permissions {
         perm = perm.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
         final String[] nodes = perm.split("\\.");
         final StringBuilder n = new StringBuilder();
-        for (int i = 0; i < (nodes.length - 1); i++) {
+        for (int i = 0; i <= (nodes.length - 1); i++) {
             n.append(nodes[i] + ("."));
             if (!perm.equals(n + C.PERMISSION_STAR.s())) {
                 if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
