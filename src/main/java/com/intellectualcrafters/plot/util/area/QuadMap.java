@@ -140,7 +140,9 @@ public class QuadMap<T> {
         this.objects.add(area);
     }
     
-    public RegionWrapper getRegion(T value) {}
+    public RegionWrapper getRegion(T value) {
+        return null;
+    }
     
     public QuadMap<T> newInstance(int newsize, int x, int z, int min) {
         try {
