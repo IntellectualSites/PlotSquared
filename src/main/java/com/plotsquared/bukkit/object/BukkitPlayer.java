@@ -137,43 +137,20 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public void setAttribute(String key) {
-        key = "plotsquared_user_attributes." + key;
-        if ((EconHandler.manager == null) || player.hasPermission("plotsquared_user_attributes.*")) {
-            setMeta(key, true);
-            return;
-        }
-        EconHandler.manager.setPermission(getName(), key, true);
+        setPersistentMeta("attrib_" + key, new byte[]{(byte) 1});
     }
     
     @Override
     public boolean getAttribute(String key) {
-        key = "plotsquared_user_attributes." + key;
-        if ((EconHandler.manager == null) || player.hasPermission("plotsquared_user_attributes.*")) {
-            final Object v = getMeta(key);
-            return v == null ? false : (Boolean) v;
-        }
-        Permission perm = Bukkit.getServer().getPluginManager().getPermission(key);
-        if (perm == null) {
-            try {
-                perm = new Permission(key, PermissionDefault.FALSE);
-                Bukkit.getServer().getPluginManager().addPermission(perm);
-                Bukkit.getServer().getPluginManager().recalculatePermissionDefaults(perm);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return player.hasPermission(key);
+        if (!hasPersistentMeta(key)) {
+            return false;
+        }    
+        return getPersistentMeta("attrib_" + key)[0] == 1;
     }
     
     @Override
     public void removeAttribute(String key) {
-        key = "plotsquared_user_attributes." + key;
-        if ((EconHandler.manager == null) || player.hasPermission("plotsquared_user_attributes.*")) {
-            deleteMeta(key);
-            return;
-        }
-        EconHandler.manager.setPermission(getName(), key, false);
+        removePersistentMeta("attrib_" + key);
     }
     
     @Override
