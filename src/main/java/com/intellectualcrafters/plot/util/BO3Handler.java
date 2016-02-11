@@ -1,15 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -22,6 +12,16 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class BO3Handler {
     
@@ -51,7 +51,7 @@ public class BO3Handler {
      * @return
      */
     public static boolean saveBO3(final PlotPlayer plr, final Plot plot) {
-        final PlotArea plotworld = plot.area;
+        final PlotArea plotworld = plot.getArea();
         if (!(plotworld instanceof ClassicPlotWorld) || (plotworld.TYPE != 0)) {
             MainUtil.sendMessage(plr, "BO3 exporting only supports type 0 classic generation.");
             return false;
@@ -78,13 +78,13 @@ public class BO3Handler {
             }
         }
         for (ChunkLoc loc : chunks) {
-            ChunkManager.manager.loadChunk(plot.area.worldname, loc, false);
+            ChunkManager.manager.loadChunk(plot.getArea().worldname, loc, false);
         }
 
         boolean content = false;
         for (RegionWrapper region : regions) {
-            Location pos1 = new Location(plot.area.worldname, region.minX, region.minY, region.minZ);
-            Location pos2 = new Location(plot.area.worldname, region.maxX, region.maxY, region.maxZ);
+            Location pos1 = new Location(plot.getArea().worldname, region.minX, region.minY, region.minZ);
+            Location pos2 = new Location(plot.getArea().worldname, region.maxX, region.maxY, region.maxZ);
             for (int x = pos1.getX(); x <= pos2.getX(); x++) {
                 final int X = ((x + 7) - cx) >> 4;
                 final int xx = (x - cx) % 16;
@@ -94,7 +94,7 @@ public class BO3Handler {
                     final ChunkLoc loc = new ChunkLoc(X, Z);
                     BO3 bo3 = map.get(loc);
                     for (int y = 1; y < height; y++) {
-                        final PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.area.worldname, x, y, z));
+                        final PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, y, z));
                         if ((block != null) && !contains(cpw.MAIN_BLOCK, block)) {
                             if (bo3 == null) {
                                 bo3 = new BO3(alias, loc);
@@ -104,7 +104,7 @@ public class BO3Handler {
                             bo3.addBlock(xx, y - height - 1, zz, block);
                         }
                     }
-                    final PlotBlock floor = WorldUtil.IMP.getBlock(new Location(plot.area.worldname, x, height, z));
+                    final PlotBlock floor = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, height, z));
                     if ((floor != null) && !contains(cpw.TOP_BLOCK, floor)) {
                         if (bo3 == null) {
                             bo3 = new BO3(alias, loc);
@@ -114,7 +114,7 @@ public class BO3Handler {
                         bo3.addBlock(xx, -1, zz, floor);
                     }
                     for (int y = height + 1; y < 256; y++) {
-                        final PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.area.worldname, x, y, z));
+                        final PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, y, z));
                         if ((block != null) && (block.id != 0)) {
                             if (bo3 == null) {
                                 bo3 = new BO3(alias, loc);
@@ -172,7 +172,7 @@ public class BO3Handler {
     }
     
     public static boolean save(final Plot plot, final BO3 bo3) {
-        final File base = getBaseFile(plot.area.worldname);
+        final File base = getBaseFile(plot.getArea().worldname);
         try {
             final List<String> lines = Files.readAllLines(base.toPath(), StandardCharsets.UTF_8);
             for (int i = 0; i < lines.size(); i++) {

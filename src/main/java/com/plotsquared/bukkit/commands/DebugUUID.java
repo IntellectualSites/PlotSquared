@@ -20,18 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.commands;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.commands.RequiredType;
@@ -54,6 +42,18 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "uuidconvert",
@@ -139,7 +139,7 @@ public class DebugUUID extends SubCommand {
                     return s.endsWith(".dat");
                 }
             });
-            if (dat != null) {
+            if (dat != null)
                 for (final String current : dat) {
                     final String s = current.replaceAll(".dat$", "");
                     try {
@@ -149,7 +149,6 @@ public class DebugUUID extends SubCommand {
                         MainUtil.sendMessage(player, C.PREFIX.s() + "Invalid playerdata: " + current);
                     }
                 }
-            }
             final File playersFolder = new File(worldname + File.separator + "players");
             dat = playersFolder.list(new FilenameFilter() {
                 @Override

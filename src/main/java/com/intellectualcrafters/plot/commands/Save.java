@@ -1,9 +1,5 @@
 package com.intellectualcrafters.plot.commands;
 
-import java.net.URL;
-import java.util.List;
-import java.util.UUID;
-
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -18,6 +14,10 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.net.URL;
+import java.util.List;
+import java.util.UUID;
 
 @CommandDeclaration(command = "save", aliases = { "backup" }, description = "Save your plot", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE, permission = "plots.save")
 public class Save extends SubCommand {
@@ -61,7 +61,7 @@ public class Save extends SubCommand {
                         Location[] corners = plot.getCorners();
                         final int size = (corners[1].getX() - corners[0].getX()) + 1;
                         final PlotId id = plot.getId();
-                        final String world = plot.area.toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
+                        final String world = plot.getArea().toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
                         final String file = time + "_" + world + "_" + id.x + "_" + id.y + "_" + size + "_" + name;
                         final UUID uuid = plr.getUUID();
                         

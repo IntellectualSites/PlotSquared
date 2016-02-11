@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.object.entity;
 
+import com.intellectualcrafters.plot.PS;
 import org.bukkit.Art;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -30,8 +31,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-
-import com.intellectualcrafters.plot.PS;
 
 public class EntityWrapper {
     public short id;
@@ -71,9 +70,7 @@ public class EntityWrapper {
     }
     
     private void restoreLiving(final LivingEntity entity) {
-        if (lived.loot) {
-            entity.setCanPickupItems(lived.loot);
-        }
+        entity.setCanPickupItems(lived.loot);
         if (lived.name != null) {
             entity.setCustomName(lived.name);
             entity.setCustomNameVisible(lived.visible);
@@ -143,9 +140,7 @@ public class EntityWrapper {
         if (!aged.adult) {
             entity.setBaby();
         }
-        if (aged.locked) {
-            entity.setAgeLock(aged.locked);
-        }
+        entity.setAgeLock(aged.locked);
         if (aged.age > 0) {
             entity.setAge(aged.age);
         }

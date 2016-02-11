@@ -190,7 +190,7 @@ public class Auto extends SubCommand {
                     Claim.claimPlot(plr, plot, true, true);
                     br = true;
                 }
-                plotarea.setMeta("lastPlot", getNextPlotId(plot.id, 1));
+                plotarea.setMeta("lastPlot", getNextPlotId(plot.getId(), 1));
             }
         } else {
             while (!br) {

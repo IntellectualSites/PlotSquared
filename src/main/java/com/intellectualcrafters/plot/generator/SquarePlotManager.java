@@ -1,9 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -12,6 +8,10 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * A plot manager with a square grid layout, with square shaped plots
@@ -30,8 +30,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 Iterator<RegionWrapper> iter = regions.iterator();
                 RegionWrapper region = iter.next();
                 iter.remove();
-                Location pos1 = new Location(plot.area.worldname, region.minX, region.minY, region.minZ);
-                Location pos2 = new Location(plot.area.worldname, region.maxX, region.maxY, region.maxZ);
+                Location pos1 = new Location(plot.getArea().worldname, region.minX, region.minY, region.minZ);
+                Location pos2 = new Location(plot.getArea().worldname, region.maxX, region.maxY, region.maxZ);
                 ChunkManager.manager.regenerateRegion(pos1, pos2, false, this);
             }
         };

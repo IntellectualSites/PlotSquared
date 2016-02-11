@@ -2,18 +2,6 @@ package com.plotsquared.bukkit.util;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
@@ -26,10 +14,22 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.object.BukkitPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * An utility that can be used to send chunks, rather than using bukkit code to do so (uses heavy NMS)
- *
+ *
+
  */
 public class SendChunk {
     
@@ -83,7 +83,7 @@ public class SendChunk {
             Location loc = null;
             String world;
             if (plot != null) {
-                world = plot.area.worldname;
+                world = plot.getArea().worldname;
             } else {
                 loc = pp.getLocation();
                 world = loc.getWorld();

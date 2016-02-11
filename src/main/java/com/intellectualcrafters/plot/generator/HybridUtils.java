@@ -1,17 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.io.File;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -32,6 +20,18 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
+
+import java.io.File;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HybridUtils {
     
@@ -93,7 +93,7 @@ public abstract class HybridUtils {
                 }
                 RegionWrapper region = zones.poll();
                 final Runnable task = this;
-                analyzeRegion(origin.area.worldname, region, new RunnableVal<PlotAnalysis>() {
+                analyzeRegion(origin.getArea().worldname, region, new RunnableVal<PlotAnalysis>() {
                     @Override
                     public void run(PlotAnalysis value) {
                         analysis.add(value);
@@ -151,20 +151,21 @@ public abstract class HybridUtils {
                     return;
                 }
                 RegionWrapper region = zones.poll();
-                Location pos1 = new Location(plot.area.worldname, region.minX, region.minY, region.minZ);
-                Location pos2 = new Location(plot.area.worldname, region.maxX, region.maxY, region.maxZ);
+                Location pos1 = new Location(plot.getArea().worldname, region.minX, region.minY, region.minZ);
+                Location pos2 = new Location(plot.getArea().worldname, region.maxX, region.maxY, region.maxZ);
                 ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
                     @Override
                     public void run(int[] value) {
                         final ChunkLoc loc = new ChunkLoc(value[0], value[1]);
-                        ChunkManager.manager.loadChunk(plot.area.worldname, loc, false);
+                        ChunkManager.manager.loadChunk(plot.getArea().worldname, loc, false);
                         final int bx = value[2];
                         final int bz = value[3];
                         final int ex = value[4];
                         final int ez = value[5];
-                        whenDone.value += checkModified(plot.area.worldname, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez, cpw.MAIN_BLOCK);
-                        whenDone.value += checkModified(plot.area.worldname, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK);
-                        whenDone.value += checkModified(plot.area.worldname, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez, new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) });
+                        whenDone.value += checkModified(plot.getArea().worldname, bx, ex, 1, cpw.PLOT_HEIGHT - 1, bz, ez, cpw.MAIN_BLOCK);
+                        whenDone.value += checkModified(plot.getArea().worldname, bx, ex, cpw.PLOT_HEIGHT, cpw.PLOT_HEIGHT, bz, ez, cpw.TOP_BLOCK);
+                        whenDone.value += checkModified(
+                                plot.getArea().worldname, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez, new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) });
                     }
                 }, this, 5);
                 
@@ -296,10 +297,10 @@ public abstract class HybridUtils {
     }
     
     public boolean setupRoadSchematic(final Plot plot) {
-        final String world = plot.area.worldname;
+        final String world = plot.getArea().worldname;
         final Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         final Location top = plot.getTopAbs();
-        final HybridPlotWorld plotworld = (HybridPlotWorld) plot.area;
+        final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
         final int sx = (bot.getX() - plotworld.ROAD_WIDTH) + 1;
         final int sz = bot.getZ() + 1;
         final int sy = plotworld.ROAD_HEIGHT;
@@ -313,7 +314,8 @@ public abstract class HybridUtils {
         final Set<RegionWrapper> sideroad = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ey, sz, ez)));
         final Set<RegionWrapper> intersection = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ty, bz, tz)));
 
-        final String dir = PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.area.toString() + File.separator;
+        final String dir = PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot
+                .getArea().toString() + File.separator;
         SchematicHandler.manager.getCompoundTag(world, sideroad, new RunnableVal<CompoundTag>() {
             @Override
             public void run(CompoundTag value) {

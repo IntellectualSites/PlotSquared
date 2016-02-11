@@ -1,13 +1,5 @@
 package com.plotsquared.bukkit.util;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -33,6 +25,13 @@ import com.plotsquared.bukkit.events.PlotMergeEvent;
 import com.plotsquared.bukkit.events.PlotRateEvent;
 import com.plotsquared.bukkit.events.PlotUnlinkEvent;
 import com.plotsquared.bukkit.object.BukkitPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class BukkitEventUtil extends EventUtil {
     
@@ -83,7 +82,7 @@ public class BukkitEventUtil extends EventUtil {
     
     @Override
     public boolean callMerge(final Plot plot, final ArrayList<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.area.worldname), plot, plots));
+        return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getArea().worldname), plot, plots));
     }
     
     @Override

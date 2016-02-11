@@ -2,22 +2,6 @@ package com.plotsquared.bukkit.util.block;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -33,6 +17,21 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class FastQueue_1_8_3 extends SlowQueue {
     
@@ -209,10 +208,6 @@ public class FastQueue_1_8_3 extends SlowQueue {
                 boolean fill = true;
                 for (int k = 0; k < newArray.length; k++) {
                     final char n = newArray[k];
-                    if (n == 0) {
-                        fill = false;
-                        continue;
-                    }
                     switch (n) {
                         case 0:
                             fill = false;
@@ -263,7 +258,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
 
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param wrap
      */
     @Override
     public PlotChunk<Chunk> getChunk(ChunkWrapper wrap) {
@@ -415,7 +410,8 @@ public class FastQueue_1_8_3 extends SlowQueue {
 
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param world
+     * @param locs
      */
     @Override
     public void sendChunk(String world, Collection<ChunkLoc> locs) {

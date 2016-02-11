@@ -1,33 +1,5 @@
 package com.intellectualcrafters.plot;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.MemorySection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
@@ -83,6 +55,34 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * An implementation of the core,
@@ -407,7 +407,7 @@ public class PS {
      * @param plot Plot Object to update
      */
     public boolean updatePlot(final Plot plot) {
-        return plot.area.addPlot(plot);
+        return plot.getArea().addPlot(plot);
     }
     
     /**
@@ -594,7 +594,7 @@ public class PS {
     }
 
     public PlotManager getPlotManager(Plot plot) {
-        return plot.area.manager;
+        return plot.getArea().manager;
     }
     
     public PlotManager getPlotManager(Location loc) {
@@ -1158,10 +1158,10 @@ public class PS {
             Collection<Plot> lastList = null;
             PlotArea lastWorld = null;
             for (final Plot plot : myplots) {
-                if (lastWorld == plot.area) {
+                if (lastWorld == plot.getArea()) {
                     lastList.add(plot);
                 } else {
-                    lastWorld = plot.area;
+                    lastWorld = plot.getArea();
                     lastList = map.get(lastWorld);
                     lastList.add(plot);
                 }
@@ -1417,12 +1417,12 @@ public class PS {
         if (callEvent) {
             EventUtil.manager.callDelete(plot);
         }
-        if (plot.area.removePlot(plot.id)) {
-            PlotId last = (PlotId) plot.area.getMeta("lastPlot");
+        if (plot.getArea().removePlot(plot.getId())) {
+            PlotId last = (PlotId) plot.getArea().getMeta("lastPlot");
             final int last_max = Math.max(Math.abs(last.x), Math.abs(last.y));
-            final int this_max = Math.max(Math.abs(plot.id.x), Math.abs(plot.id.y));
+            final int this_max = Math.max(Math.abs(plot.getId().x), Math.abs(plot.getId().y));
             if (this_max < last_max) {
-                plot.area.setMeta("lastPlot", plot.id);
+                plot.getArea().setMeta("lastPlot", plot.getId());
             }
             return true;
         }

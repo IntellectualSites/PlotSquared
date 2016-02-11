@@ -1,16 +1,33 @@
 package com.plotsquared.bukkit.listeners;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.RegExUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.object.BukkitLazyBlock;
+import com.plotsquared.bukkit.object.BukkitPlayer;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.listener.PlayerBlockEventType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -89,34 +106,16 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotInventory;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.RegExUtil;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.bukkit.object.BukkitLazyBlock;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.listener.PlayerBlockEventType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots
@@ -226,7 +225,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                         }
                     }
                     event.setNewCurrent(0);
-                    return;
                 }
             }
         }
@@ -484,66 +482,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return;
             }
             Plot now = area.getPlotAbs(loc);
-            final Plot lastPlot = (Plot) pp.getMeta("lastplot");
-            if (now == null) {
-                if ((lastPlot != null) && !plotExit(pp, lastPlot)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
-                    if (lastPlot.equals((BukkitUtil.getLocation(from).getPlot()))) {
-                        player.teleport(from);
-                    } else {
-                        player.teleport(player.getWorld().getSpawnLocation());
-                    }
-                    event.setCancelled(true);
-                    return;
-                }
-            } else if ((lastPlot != null) && now.equals(lastPlot)) {
-                return;
-            } else {
-                if (!plotEntry(pp, now)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
-                    if (!now.equals(lastPlot)) {
-                        player.teleport(from);
-                    } else {
-                        player.teleport(player.getWorld().getSpawnLocation());
-                    }
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-            final Integer border = area.getBorder();;
-            if (border != null) {
-                if (x2 > border) {
-                    to.setX(border - 4);
-                    player.teleport(event.getTo());
-                    MainUtil.sendMessage(pp, C.BORDER);
-                    return;
-                } else if (x2 < -border) {
-                    to.setX(-border + 4);
-                    player.teleport(event.getTo());
-                    MainUtil.sendMessage(pp, C.BORDER);
-                    return;
-                }
-            }
-            return;
-        }
-        int z2;
-        if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
-            final Player player = event.getPlayer();
-            final PlotPlayer pp = BukkitUtil.getPlayer(player);
-            
-            // Cancel teleport
-            TaskManager.TELEPORT_QUEUE.remove(pp.getName());
-
-            // Set last location
-            Location loc = BukkitUtil.getLocation(to);
-            pp.setMeta("location", loc);
-            
-            PlotArea area = loc.getPlotArea();
-            if (area == null) {
-                return;
-            }
-            Plot now = area.getPlotAbs(loc);
-            final Plot lastPlot = (Plot) pp.getMeta("lastplot");
+            final Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
                 if ((lastPlot != null) && !plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
@@ -570,16 +509,71 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             }
             final Integer border = area.getBorder();
-            if (border != null) {
-                if (z2 > border) {
-                    to.setZ(border - 4);
-                    player.teleport(event.getTo());
-                    MainUtil.sendMessage(pp, C.BORDER);
-                } else if (z2 < -border) {
-                    to.setZ(-border + 4);
-                    player.teleport(event.getTo());
-                    MainUtil.sendMessage(pp, C.BORDER);
+            if (x2 > border) {
+                to.setX(border - 4);
+                player.teleport(event.getTo());
+                MainUtil.sendMessage(pp, C.BORDER);
+                return;
+            } else if (x2 < -border) {
+                to.setX(-border + 4);
+                player.teleport(event.getTo());
+                MainUtil.sendMessage(pp, C.BORDER);
+                return;
+            }
+            return;
+        }
+        int z2;
+        if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
+            final Player player = event.getPlayer();
+            final PlotPlayer pp = BukkitUtil.getPlayer(player);
+            
+            // Cancel teleport
+            TaskManager.TELEPORT_QUEUE.remove(pp.getName());
+
+            // Set last location
+            Location loc = BukkitUtil.getLocation(to);
+            pp.setMeta("location", loc);
+            
+            PlotArea area = loc.getPlotArea();
+            if (area == null) {
+                return;
+            }
+            Plot now = area.getPlotAbs(loc);
+            final Plot lastPlot = pp.getMeta("lastplot");
+            if (now == null) {
+                if ((lastPlot != null) && !plotExit(pp, lastPlot)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
+                    if (lastPlot.equals((BukkitUtil.getLocation(from).getPlot()))) {
+                        player.teleport(from);
+                    } else {
+                        player.teleport(player.getWorld().getSpawnLocation());
+                    }
+                    event.setCancelled(true);
+                    return;
                 }
+            } else if ((lastPlot != null) && now.equals(lastPlot)) {
+                return;
+            } else {
+                if (!plotEntry(pp, now)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
+                    if (!now.equals(lastPlot)) {
+                        player.teleport(from);
+                    } else {
+                        player.teleport(player.getWorld().getSpawnLocation());
+                    }
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            final Integer border = area.getBorder();
+            if (z2 > border) {
+                to.setZ(border - 4);
+                player.teleport(event.getTo());
+                MainUtil.sendMessage(pp, C.BORDER);
+            } else if (z2 < -border) {
+                to.setZ(-border + 4);
+                player.teleport(event.getTo());
+                MainUtil.sendMessage(pp, C.BORDER);
             }
         }
     }
@@ -713,7 +707,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                             iter.remove();
                         }
                     }
-                    return;
                 }
             } else {
                 event.setCancelled(true);
@@ -791,7 +784,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     public void onBD(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
         Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
-        final String world;
         if (player == null) {
             if (loc.isPlotRoad()) {
                 event.setCancelled(true);
@@ -871,7 +863,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final Location loc = BukkitUtil.getLocation(b.getLocation());
         if (loc.isUnownedPlotArea()) {
             e.setCancelled(true);
-            return;
         }
     }
     
@@ -973,7 +964,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             Plot newPlot = area.getOwnedPlot(loc);
             if (!Objects.equals(plot, newPlot)) {
                 event.setCancelled(true);
-                return;
             }
         }
     }
@@ -1269,7 +1259,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
         if (checkEntity(entity, plot)) {
             event.setCancelled(true);
-            return;
         }
     }
     
@@ -1557,7 +1546,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return;
             }
             Plot now = area.getPlotAbs(loc);
-            final Plot lastPlot = (Plot) pp.getMeta("lastplot");
+            final Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
                 if ((lastPlot != null) && !plotExit(pp, lastPlot) && tmp_teleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
@@ -1598,7 +1587,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             }
             final Integer border = area.getBorder();
-            if (border != null && tmp_teleport) {
+            if (tmp_teleport) {
                 if (x2 > border) {
                     to.setX(border - 4);
                     tmp_teleport = false;
@@ -1629,7 +1618,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return;
             }
             Plot now = area.getPlotAbs(loc);
-            final Plot lastPlot = (Plot) pp.getMeta("lastplot");
+            final Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
                 if ((lastPlot != null) && !plotExit(pp, lastPlot) && tmp_teleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
@@ -1670,24 +1659,21 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             }
             final Integer border = area.getBorder();
-            if (border != null && tmp_teleport) {
+            if (tmp_teleport) {
                 if (z2 > border) {
                     to.setZ(border - 4);
                     tmp_teleport = false;
                     player.teleport(event.getTo());
                     tmp_teleport = true;
                     MainUtil.sendMessage(pp, C.BORDER);
-                    return;
                 } else if (z2 < -border) {
                     to.setZ(-border + 4);
                     tmp_teleport = false;
                     player.teleport(event.getTo());
                     tmp_teleport = true;
                     MainUtil.sendMessage(pp, C.BORDER);
-                    return;
                 }
             }
-            return;
         }
     }
     
@@ -1737,7 +1723,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
         final Player player = (Player) clicker;
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        final PlotInventory inv = (PlotInventory) pp.getMeta("inventory");
+        final PlotInventory inv = pp.getMeta("inventory");
         if ((inv != null) && (event.getRawSlot() == event.getSlot())) {
             if (!inv.onClick(event.getSlot())) {
                 event.setCancelled(true);
@@ -1857,7 +1843,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
             if (checkEntity(e.getEntity(), plot)) {
                 e.setCancelled(true);
-                return;
             }
 
         }
@@ -2154,10 +2139,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return true;
         }
         // player is null
-        if ((damager instanceof Arrow) && (!(victim instanceof Creature))) {
-            return false;
-        }
-        return true;
+        return !((damager instanceof Arrow) && (!(victim instanceof Creature)));
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

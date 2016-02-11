@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.HashSet;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
@@ -31,6 +28,9 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "setowner",
@@ -72,7 +72,7 @@ public class Owner extends SetCommand {
                 return false;
             }
             final int size = plots.size();
-            final int currentPlots = (Settings.GLOBAL_LIMIT ? other.getPlotCount() : other.getPlotCount(plot.area.worldname)) + size;
+            final int currentPlots = (Settings.GLOBAL_LIMIT ? other.getPlotCount() : other.getPlotCount(plot.getArea().worldname)) + size;
             if (currentPlots > other.getAllowedPlots()) {
                 sendMessage(plr, C.CANT_TRANSFER_MORE_PLOTS);
                 return false;
@@ -83,7 +83,7 @@ public class Owner extends SetCommand {
         plot.setSign(name);
         MainUtil.sendMessage(plr, C.SET_OWNER);
         if (other != null) {
-            MainUtil.sendMessage(other, C.NOW_OWNER, plot.area + ";" + plot.getId());
+            MainUtil.sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
         }
         return true;
     }

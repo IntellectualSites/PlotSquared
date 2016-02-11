@@ -20,18 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -49,6 +37,18 @@ import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Jesse Boyd
@@ -539,7 +539,7 @@ public abstract class PlotArea {
         if (plot == null) {
             return null;
         }
-        return clusters != null ? clusters.get(plot.id.x, plot.id.y) : null;
+        return clusters != null ? clusters.get(plot.getId().x, plot.getId().y) : null;
     }
     
     public PlotCluster getFirstIntersectingCluster(PlotId pos1, PlotId pos2) {
@@ -629,11 +629,11 @@ public abstract class PlotArea {
         for (PlotPlayer pp : plot.getPlayersInPlot()) {
             pp.setMeta("lastplot", plot);
         }
-        return plots.put(plot.id, plot) == null;
+        return plots.put(plot.getId(), plot) == null;
     }
     
     public boolean addPlotIfAbsent(Plot plot) {
-        if (plots.putIfAbsent(plot.id, plot) == null) {
+        if (plots.putIfAbsent(plot.getId(), plot) == null) {
             for (PlotPlayer pp : plot.getPlayersInPlot()) {
                 pp.setMeta("lastplot", plot);
             }
@@ -643,12 +643,11 @@ public abstract class PlotArea {
     }
 
     public boolean addPlotAbs(Plot plot) {
-        return plots.put(plot.id, plot) == null;
+        return plots.put(plot.getId(), plot) == null;
     }
 
     /**
      * Check if the plots in a selection are unowned
-     * @param world
      * @param pos1
      * @param pos2
      * @return
@@ -657,7 +656,7 @@ public abstract class PlotArea {
         int area = (pos2.x - pos1.x + 1) * (pos2.y - pos1.y + 1);
         if (area > getPlotCount()) {
             for (Plot plot : getPlots()) {
-                if (plot.id.x >= pos1.x && plot.id.x <= pos2.x && plot.id.y >= pos1.y && plot.id.y <= pos2.y) {
+                if (plot.getId().x >= pos1.x && plot.getId().x <= pos2.x && plot.getId().y >= pos1.y && plot.getId().y <= pos2.y) {
                     return false;
                 }
             }
@@ -676,7 +675,6 @@ public abstract class PlotArea {
     
     /**
      * Get the plot border distance for a world<br>
-     * @param worldname
      * @return The border distance or Integer.MAX_VALUE if no border is set
      */
     public int getBorder() {
@@ -694,7 +692,6 @@ public abstract class PlotArea {
     
     /**
      * Setup the plot border for a world (usually done when the world is created)
-     * @param world
      */
     public void setupBorder() {
         if (!WORLD_BORDER) {

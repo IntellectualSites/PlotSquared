@@ -1,5 +1,28 @@
 package com.intellectualcrafters.plot.util;
 
+import com.google.common.collect.Lists;
+import com.intellectualcrafters.jnbt.ByteArrayTag;
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.jnbt.IntTag;
+import com.intellectualcrafters.jnbt.ListTag;
+import com.intellectualcrafters.jnbt.NBTInputStream;
+import com.intellectualcrafters.jnbt.NBTOutputStream;
+import com.intellectualcrafters.jnbt.ShortTag;
+import com.intellectualcrafters.jnbt.StringTag;
+import com.intellectualcrafters.jnbt.Tag;
+import com.intellectualcrafters.json.JSONArray;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,29 +51,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import com.google.common.collect.Lists;
-import com.intellectualcrafters.jnbt.ByteArrayTag;
-import com.intellectualcrafters.jnbt.CompoundTag;
-import com.intellectualcrafters.jnbt.IntTag;
-import com.intellectualcrafters.jnbt.ListTag;
-import com.intellectualcrafters.jnbt.NBTInputStream;
-import com.intellectualcrafters.jnbt.NBTOutputStream;
-import com.intellectualcrafters.jnbt.ShortTag;
-import com.intellectualcrafters.jnbt.StringTag;
-import com.intellectualcrafters.jnbt.Tag;
-import com.intellectualcrafters.json.JSONArray;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
 
 public abstract class SchematicHandler {
     public static SchematicHandler manager;
@@ -83,10 +83,10 @@ public abstract class SchematicHandler {
                 }
                 final String name;
                 if (namingScheme == null) {
-                    name = plot.getId().x + ";" + plot.getId().y + "," + plot.area + "," + o;
+                    name = plot.getId().x + ";" + plot.getId().y + "," + plot.getArea() + "," + o;
                 } else {
                     name = namingScheme.replaceAll("%owner%", o).replaceAll("%id%", plot.getId().toString()).replaceAll("%idx%", plot.getId().x + "").replaceAll("%idy%", plot.getId().y + "")
-                    .replaceAll("%world%", plot.area.toString());
+                            .replaceAll("%world%", plot.getArea().toString());
                 }
                 final String directory;
                 if (outputDir == null) {
@@ -170,14 +170,14 @@ public abstract class SchematicHandler {
                     if (HEIGHT >= 256) {
                         y_offset = 0;
                     } else {
-                        PlotArea pw = plot.area;
+                        PlotArea pw = plot.getArea();
                         if (pw instanceof ClassicPlotWorld) {
                             y_offset = ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
-                            y_offset = MainUtil.getHeighestBlock(plot.area.worldname, region.minX + 1, region.minZ + 1);
+                            y_offset = MainUtil.getHeighestBlock(plot.getArea().worldname, region.minX + 1, region.minZ + 1);
                         }
                     }
-                    final Location pos1 = new Location(plot.area.worldname, region.minX + x_offset, y_offset, region.minZ + z_offset);
+                    final Location pos1 = new Location(plot.getArea().worldname, region.minX + x_offset, y_offset, region.minZ + z_offset);
                     final Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                     // TODO switch to ChunkManager.chunkTask(pos1, pos2, task, whenDone, allocate);
                     final int p1x = pos1.getX();
@@ -306,11 +306,11 @@ public abstract class SchematicHandler {
                                                 case 190:
                                                 case 191:
                                                 case 192: {
-                                                    SetQueue.IMP.setBlock(plot.area.worldname, xx, yy, zz, id);
+                                                    SetQueue.IMP.setBlock(plot.getArea().worldname, xx, yy, zz, id);
                                                     break;
                                                 }
                                                 default: {
-                                                    SetQueue.IMP.setBlock(plot.area.worldname, xx, yy, zz, new PlotBlock((short) id, datas[i]));
+                                                    SetQueue.IMP.setBlock(plot.getArea().worldname, xx, yy, zz, new PlotBlock((short) id, datas[i]));
                                                     break;
                                                 }
                                             }
@@ -362,9 +362,9 @@ public abstract class SchematicHandler {
             return false;
         }
         RegionWrapper region = plot.getLargestRegion();
-        Location l1 = new Location(plot.area.worldname, region.minX + x_offset, 1, region.minZ + z_offset);
+        Location l1 = new Location(plot.getArea().worldname, region.minX + x_offset, 1, region.minZ + z_offset);
 //        Location l1 = MainUtil.getPlotBottomLoc(plot.world, plot.getId());
-        final int sy = MainUtil.getHeighestBlock(plot.area.worldname, l1.getX() + 1, l1.getZ() + 1);
+        final int sy = MainUtil.getHeighestBlock(plot.getArea().worldname, l1.getX() + 1, l1.getZ() + 1);
         final Dimension demensions = schematic.getSchematicDimension();
         final int HEIGHT = demensions.getY();
         if ((HEIGHT < 255)) {
@@ -377,7 +377,7 @@ public abstract class SchematicHandler {
             item.x += X;
             item.y += Y;
             item.z += Z;
-            WorldUtil.IMP.addItems(plot.area.worldname, item);
+            WorldUtil.IMP.addItems(plot.getArea().worldname, item);
         }
         return true;
     }
@@ -672,7 +672,7 @@ public abstract class SchematicHandler {
     public abstract void getCompoundTag(final String world, Set<RegionWrapper> regions, final RunnableVal<CompoundTag> whenDone);
     
     public void getCompoundTag(Plot plot, final RunnableVal<CompoundTag> whenDone) {
-        getCompoundTag(plot.area.worldname, plot.getRegions(), whenDone);
+        getCompoundTag(plot.getArea().worldname, plot.getRegions(), whenDone);
     }
     
     /**
@@ -684,33 +684,10 @@ public abstract class SchematicHandler {
         // Lossy but fast
         private final short[] ids;
         private final byte[] datas;
-        
-        @Deprecated
-        private DataCollection[] collection;
-        
+
         private final Dimension schematicDimension;
         private HashSet<PlotItem> items;
-        
-        /**
-         * This is deprecated as having a wrapper for each block is slow.<br>
-         *  - There's also a performance hit by having to cast the DataCollection short / byte
-         *  -
-         * @param blockCollection
-         * @param schematicDimension
-         */
-        @Deprecated
-        public Schematic(final DataCollection[] blockCollection, final Dimension schematicDimension) {
-            ids = new short[blockCollection.length];
-            datas = new byte[blockCollection.length];
-            for (int i = 0; i < blockCollection.length; i++) {
-                final DataCollection block = blockCollection[i];
-                ids[i] = (byte) block.block;
-                datas[i] = block.data;
-            }
-            collection = blockCollection;
-            this.schematicDimension = schematicDimension;
-        }
-        
+
         public Schematic(final short[] i, final byte[] b, final Dimension d) {
             ids = i;
             datas = b;
@@ -759,22 +736,7 @@ public abstract class SchematicHandler {
         public byte[] getDatas() {
             return datas;
         }
-        
-        /**
-         * @deprecated as it is slow to wrap each block
-         * @return DataCollection of schematic blocks
-         */
-        @Deprecated
-        public DataCollection[] getBlockCollection() {
-            if (collection == null) {
-                collection = new DataCollection[ids.length];
-                for (int i = 0; i < ids.length; i++) {
-                    collection[i] = new DataCollection(ids[i], datas[i]);
-                }
-            }
-            return collection;
-        }
-        
+
         public Schematic copySection(RegionWrapper region) {
 
             int x1 = region.minX;
@@ -855,29 +817,5 @@ public abstract class SchematicHandler {
             return z;
         }
     }
-    
-    /**
-     * Schematic Data Collection
-     * @deprecated as it is slow to wrap each block
 
-     */
-    @Deprecated
-    public class DataCollection {
-        private final short block;
-        private final byte data;
-        
-        // public CompoundTag tag;
-        public DataCollection(final short block, final byte data) {
-            this.block = block;
-            this.data = data;
-        }
-        
-        public short getBlock() {
-            return block;
-        }
-        
-        public byte getData() {
-            return data;
-        }
-    }
 }

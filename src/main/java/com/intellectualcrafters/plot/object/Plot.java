@@ -20,22 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import java.io.File;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
@@ -57,6 +41,22 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
 
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * The plot class
  */
@@ -72,8 +72,7 @@ public class Plot {
      * plot world
      * Direct access is Deprecated: use getWorld()
      */
-    @Deprecated
-    public PlotArea area;
+    private PlotArea area;
     /**
      * plot owner
      * (Merged plots can have multiple owners)
@@ -304,7 +303,7 @@ public class Plot {
      * @return the PlotCluster object, or null
      */
     public PlotCluster getCluster() {
-        return area.getCluster(id);
+        return getArea().getCluster(id);
     }
     
     /**
@@ -389,7 +388,7 @@ public class Plot {
     }
     
     public void setArea(PlotArea area) {
-        if (this.area != null) {
+        if (this.getArea() != null) {
             this.area.removePlot(id);
         }
         this.area = area;

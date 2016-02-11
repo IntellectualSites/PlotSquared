@@ -54,7 +54,7 @@ public class Alias extends SetCommand {
             C.NOT_VALID_VALUE.send(plr);
             return false;
         }
-        for (final Plot p : PS.get().getPlots(plot.area)) {
+        for (final Plot p : PS.get().getPlots(plot.getArea())) {
             if (p.getAlias().equalsIgnoreCase(alias)) {
                 MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                 return false;

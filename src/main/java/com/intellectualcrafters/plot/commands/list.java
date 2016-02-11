@@ -20,15 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.PS.SortType;
 import com.intellectualcrafters.plot.config.C;
@@ -47,6 +38,15 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "list",
@@ -412,12 +412,14 @@ public class list extends SubCommand {
             
             final PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");
             
-            PlotMessage message = new PlotMessage().text("[").color("$3").text(i + "").command("/plot visit " + plot.area + ";" + plot.getId()).tooltip("/plot visit " + plot.area + ";" + plot
+            PlotMessage message = new PlotMessage().text("[").color("$3").text(i + "").command("/plot visit " + plot.getArea() + ";" + plot.getId()).tooltip("/plot visit " + plot
+
+                    .getArea() + ";" + plot
 
                     .getId())
             .color("$1").text("]").color("$3").text(" " + plot.toString())
             
-            .tooltip(trusted, members, flags).command("/plot info " + plot.area + ";" + plot.getId())
+            .tooltip(trusted, members, flags).command("/plot info " + plot.getArea() + ";" + plot.getId())
             
             .color(color).text(" - ").color("$2");
             String prefix = "";

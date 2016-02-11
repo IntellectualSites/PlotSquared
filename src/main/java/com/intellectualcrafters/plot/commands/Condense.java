@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -38,6 +30,14 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.DEBUG, requiredType = RequiredType.CONSOLE)
 public class Condense extends SubCommand {
@@ -146,7 +146,7 @@ public class Condense extends SubCommand {
                         final Plot origin = allPlots.remove(0);
                         int i = 0;
                         while (free.size() > i) {
-                            final Plot possible = origin.area.getPlotAbs(free.get(i));
+                            final Plot possible = origin.getArea().getPlotAbs(free.get(i));
                             if (possible.owner != null) {
                                 free.remove(i);
                                 continue;

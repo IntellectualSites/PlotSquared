@@ -1,5 +1,7 @@
 package com.intellectualcrafters.configuration.serialization;
 
+import com.intellectualcrafters.configuration.Configuration;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,8 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.intellectualcrafters.configuration.Configuration;
 
 /**
  * Utility class for storing and retrieving classes for {@link Configuration}.
@@ -86,16 +86,12 @@ public class ConfigurationSerialization {
             throw new NullPointerException("Args must not be null");
         }
         ConfigurationSerializable result = null;
-        Method method = null;
-        
-        if (result == null) {
-            method = getMethod("deserialize", true);
-            
-            if (method != null) {
-                result = deserializeViaMethod(method, args);
-            }
+        Method method = getMethod("deserialize", true);
+
+        if (method != null) {
+            result = deserializeViaMethod(method, args);
         }
-        
+
         if (result == null) {
             method = getMethod("valueOf", true);
             
@@ -247,15 +243,13 @@ public class ConfigurationSerialization {
                 return getAlias(delegate.value());
             }
         }
-        
-        if (delegate == null) {
-            final SerializableAs alias = clazz.getAnnotation(SerializableAs.class);
-            
-            if ((alias != null) && (alias.value() != null)) {
-                return alias.value();
-            }
+
+        final SerializableAs alias = clazz.getAnnotation(SerializableAs.class);
+
+        if ((alias != null) && (alias.value() != null)) {
+            return alias.value();
         }
-        
+
         return clazz.getName();
     }
 }

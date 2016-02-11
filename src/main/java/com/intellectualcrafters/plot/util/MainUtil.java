@@ -20,15 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.regex.Matcher;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -46,6 +37,15 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.regex.Matcher;
 
 /**
  * plot functions
@@ -216,10 +216,7 @@ public class MainUtil {
                 if (uuid == null) {
                     uuid = UUID.fromString(term);
                 }
-                if (uuid != null) {
-                    uuids.add(uuid);
-                    continue;
-                }
+                uuids.add(uuid);
             } catch (final Exception e) {
                 id = PlotId.fromString(term);
                 if (id != null) {
@@ -253,7 +250,7 @@ public class MainUtil {
                     count++;
                 }
             }
-            if ((area != null) && plot.area.equals(area)) {
+            if ((area != null) && plot.getArea().equals(area)) {
                 count++;
             }
             if ((alias != null) && alias.equals(plot.getAlias())) {
@@ -633,7 +630,7 @@ public class MainUtil {
         final int num = plot.getConnectedPlots().size();
         final String alias = plot.getAlias().length() > 0 ? plot.getAlias() : C.NONE.s();
         final Location bot = plot.getCorners()[0];
-        final String biome = WorldUtil.IMP.getBiome(plot.area.worldname, bot.getX(), bot.getZ());
+        final String biome = WorldUtil.IMP.getBiome(plot.getArea().worldname, bot.getX(), bot.getZ());
         final String trusted = getPlayerList(plot.getTrusted());
         final String members = getPlayerList(plot.getMembers());
         final String denied = getPlayerList(plot.getDenied());
@@ -643,7 +640,9 @@ public class MainUtil {
         
         final String flags = StringMan.replaceFromMap(
         "$2"
-        + (StringMan.join(FlagManager.getPlotFlags(plot.area, plot.getSettings(), true).values(), "").length() > 0 ? StringMan.join(FlagManager.getPlotFlags(plot.area, plot.getSettings(), true)
+        + (StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "").length() > 0 ? StringMan.join(FlagManager.getPlotFlags(
+
+                plot.getArea(), plot.getSettings(), true)
         .values(), "$1, $2") : C.NONE.s()), C.replacements);
         final boolean build = plot.isAdded(player.getUUID());
         

@@ -1,10 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
@@ -15,6 +10,11 @@ import com.intellectualcrafters.plot.object.comment.InboxOwner;
 import com.intellectualcrafters.plot.object.comment.InboxPublic;
 import com.intellectualcrafters.plot.object.comment.InboxReport;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommentManager {
     public static HashMap<String, CommentInbox> inboxes = new HashMap<>();
@@ -33,13 +33,13 @@ public class CommentManager {
                 final AtomicInteger count = new AtomicInteger(0);
                 final AtomicInteger size = new AtomicInteger(boxes.size());
                 for (final CommentInbox inbox : inboxes.values()) {
-                    inbox.getComments(plot, new RunnableVal() {
+                    inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
                         @Override
-                        public void run(Object value) {
+                        public void run(List<PlotComment> value) {
                             int total;
                             if (value != null) {
                                 int num = 0;
-                                for (final PlotComment comment : (ArrayList<PlotComment>) value) {
+                                for (final PlotComment comment : value) {
                                     if (comment.timestamp > getTimestamp(player, inbox.toString())) {
                                         num++;
                                     }
