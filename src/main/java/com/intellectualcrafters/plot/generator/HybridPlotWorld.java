@@ -62,7 +62,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         } else {
             PATH_WIDTH_LOWER = (short) (Math.floor(ROAD_WIDTH / 2));
         }
-        PATH_WIDTH_UPPER = (short) (PATH_WIDTH_LOWER + PLOT_WIDTH + 1);
+        PATH_WIDTH_UPPER = (short) (ROAD_WIDTH == 0 ? SIZE + 1 : PATH_WIDTH_LOWER + PLOT_WIDTH + 1);
         try {
             setupSchematics();
         } catch (final Exception e) {

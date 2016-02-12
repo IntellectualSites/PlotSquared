@@ -30,7 +30,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "kick", aliases = { "k" }, description = "Kick a player from your plot", permission = "plots.kick", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "kick", aliases = { "k" }, description = "Kick a player from your plot", permission = "plots.kick", category = CommandCategory.TELEPORT, requiredType = RequiredType.NONE)
 public class Kick extends SubCommand {
     
     @Override

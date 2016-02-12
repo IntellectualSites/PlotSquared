@@ -36,7 +36,7 @@ description = "Update PlotSquared",
 usage = "/plot update",
 requiredType = RequiredType.NONE,
 aliases = { "updateplugin" },
-category = CommandCategory.DEBUG)
+category = CommandCategory.ADMINISTRATION)
 public class Update extends SubCommand {
     
     public static String version;

@@ -39,6 +39,7 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
+import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
@@ -306,7 +307,6 @@ public class list extends SubCommand {
                     return false;
                 }
                 String term = StringMan.join(Arrays.copyOfRange(args, 1, args.length - 2), " ");
-                //TODO improve search reliability / speed
                 plots = MainUtil.getPlotsBySearch(term);
                 sort = false;
                 break;
@@ -356,7 +356,7 @@ public class list extends SubCommand {
     }
     
     public void displayPlots(final PlotPlayer player, List<Plot> plots, final int pageSize, int page, final PlotArea area, final String[] args, final boolean sort) {
-        int rawSize = plots.size();
+        // Header
         Iterator<Plot> iter = plots.iterator();
         while (iter.hasNext()) {
             if (!iter.next().isBasePlot()) {
@@ -366,93 +366,47 @@ public class list extends SubCommand {
         if (sort) {
             plots = PS.get().sortPlots(plots, SortType.CREATION_DATE, area);
         }
-        if (page < 0) {
-            page = 0;
-        }
-        final int totalPages = (int) Math.ceil(plots.size() / pageSize);
-        if (page > totalPages) {
-            page = totalPages;
-        }
-        // Only display pageSize!
-        int max = (page * pageSize) + pageSize;
-        if (max > plots.size()) {
-            max = plots.size();
-        }
-        
-        final List<Plot> subList = plots.subList(page * pageSize, max);
-        
-        // Header
-        final String header = C.PLOT_LIST_HEADER_PAGED.s().replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%amount%", plots.size() + "/" + rawSize)
-        .replaceAll("%word%", "all");
-        MainUtil.sendMessage(player, header);
-        
-        int i = page * pageSize;
-        for (final Plot plot : subList) {
-            i++;
-            String color;
-            if (plot.owner == null) {
-                color = "$3";
-            } else if (plot.isOwner(player.getUUID())) {
-                color = "$1";
-            } else if (plot.isAdded(player.getUUID())) {
-                color = "$4";
-            } else if (plot.isDenied(player.getUUID())) {
-                color = "$2";
-            } else {
-                color = "$1";
-            }
-            final PlotMessage trusted = new PlotMessage().text(C.color(C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted())))).color("$1");
-            
-            final PlotMessage members = new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers())))).color("$1");
-            
-            String strFlags = StringMan.join(plot.getFlags().values(), ",");
-            if (strFlags.length() == 0) {
-                strFlags = C.NONE.s();
-            }
-            
-            final PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");
-            
-            PlotMessage message = new PlotMessage().text("[").color("$3").text(i + "").command("/plot visit " + plot.area + ";" + plot.getId()).tooltip("/plot visit " + plot.area + ";" + plot
-
-                    .getId())
-            .color("$1").text("]").color("$3").text(" " + plot.toString())
-            
-            .tooltip(trusted, members, flags).command("/plot info " + plot.area + ";" + plot.getId())
-            
-            .color(color).text(" - ").color("$2");
-            String prefix = "";
-            for (final UUID uuid : plot.getOwners()) {
-                final String name = UUIDHandler.getName(uuid);
-                if (name == null) {
-                    message = message.text(prefix).color("$4").text("unknown").color("$2").tooltip(uuid.toString()).suggest(uuid.toString());
+        this.<Plot> paginate(player, plots, pageSize, page, new RunnableVal3<Integer, Plot, PlotMessage>() {
+            @Override
+            public void run(Integer i, Plot plot, PlotMessage message) {
+                String color;
+                if (plot.owner == null) {
+                    color = "$3";
+                } else if (plot.isOwner(player.getUUID())) {
+                    color = "$1";
+                } else if (plot.isAdded(player.getUUID())) {
+                    color = "$4";
+                } else if (plot.isDenied(player.getUUID())) {
+                    color = "$2";
                 } else {
-                    final PlotPlayer pp = UUIDHandler.getPlayer(uuid);
-                    if (pp != null) {
-                        message = message.text(prefix).color("$4").text(name).color("$1").tooltip(new PlotMessage("Online").color("$4"));
-                    } else {
-                        message = message.text(prefix).color("$4").text(name).color("$1").tooltip(new PlotMessage("Offline").color("$3"));
-                    }
+                    color = "$1";
                 }
-                prefix = ", ";
+                final PlotMessage trusted = new PlotMessage().text(C.color(C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted())))).color("$1");
+                final PlotMessage members = new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers())))).color("$1");
+                String strFlags = StringMan.join(plot.getFlags().values(), ",");
+                if (strFlags.length() == 0) {
+                    strFlags = C.NONE.s();
+                }
+                final PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");
+                message.text("[").color("$3").text(i + "").command("/plot visit " + plot.area + ";" + plot.getId()).tooltip("/plot visit " + plot.area + ";" + plot.getId()).color("$1").text("]")
+                .color("$3").text(" " + plot.toString()).tooltip(trusted, members, flags).command("/plot info " + plot.area + ";" + plot.getId()).color(color).text(" - ").color("$2");
+                String prefix = "";
+                for (final UUID uuid : plot.getOwners()) {
+                    final String name = UUIDHandler.getName(uuid);
+                    if (name == null) {
+                        message = message.text(prefix).color("$4").text("unknown").color("$2").tooltip(uuid.toString()).suggest(uuid.toString());
+                    } else {
+                        final PlotPlayer pp = UUIDHandler.getPlayer(uuid);
+                        if (pp != null) {
+                            message = message.text(prefix).color("$4").text(name).color("$1").tooltip(new PlotMessage("Online").color("$4"));
+                        } else {
+                            message = message.text(prefix).color("$4").text(name).color("$1").tooltip(new PlotMessage("Offline").color("$3"));
+                        }
+                    }
+                    prefix = ", ";
+                }
             }
-            message.send(player);
-        }
-        if ((page < totalPages) && (page > 0)) {
-            // back | next
-            new PlotMessage().text("<-").color("$1").command("/plot list " + args[0] + " " + (page)).text(" | ").color("$3").text("->").color("$1").command("/plot list " + args[0] + " " + (page + 2))
-            .text(C.CLICKABLE.s()).color("$2").send(player);
-            return;
-        }
-        if ((page == 0) && (totalPages != 0)) {
-            // next
-            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1").command("/plot list " + args[0] + " " + (page + 2)).text(C.CLICKABLE.s()).color("$2").send(player);
-            return;
-        }
-        if ((page == totalPages) && (totalPages != 0)) {
-            // back
-            new PlotMessage().text("<-").color("$1").command("/plot list " + args[0] + " " + (page)).text(" | ").color("$3").text("->").color("$3").text(C.CLICKABLE.s()).color("$2").send(player);
-            return;
-        }
+        }, "/plot list " + args[0], C.PLOT_LIST_HEADER_PAGED.s());
     }
     
     private String getArgumentList(final String[] strings) {

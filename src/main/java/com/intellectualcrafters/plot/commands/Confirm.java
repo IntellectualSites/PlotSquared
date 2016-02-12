@@ -28,7 +28,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "confirm", permission = "plots.use", description = "Confirm an action", category = CommandCategory.ACTIONS)
+@CommandDeclaration(command = "confirm", permission = "plots.use", description = "Confirm an action", category = CommandCategory.INFO)
 public class Confirm extends SubCommand {
     
     @Override

@@ -46,7 +46,7 @@ command = "schematic",
 permission = "plots.schematic",
 description = "Schematic command",
 aliases = { "sch" },
-category = CommandCategory.ACTIONS,
+category = CommandCategory.SCHEMATIC,
 usage = "/plot schematic <arg...>")
 public class SchematicCmd extends SubCommand {
     

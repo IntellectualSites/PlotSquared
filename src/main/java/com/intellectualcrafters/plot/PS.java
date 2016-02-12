@@ -509,6 +509,7 @@ public class PS {
                     }
                 }
             }
+            return null;
         }
         if (areas.length == 1) {
             return areas[0];
@@ -1445,16 +1446,15 @@ public class PS {
         if (world.equals("CheckingPlotSquaredGenerator")) {
             return;
         }
-        PlotArea[] areas = plotareamap.get(world);
-        if (areas != null) {
-            PS.debug("World already loaded: " + world);
-            return;
-        }
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
         final String path = "worlds." + world;
         ConfigurationSection worldSection = config.getConfigurationSection(path);
         int type = worldSection != null ? worldSection.getInt("generator.type") : 0;
         if (type == 0) {
+            if (plotareamap.containsKey(world)) {
+                PS.debug("World possibly already loaded: " + world);
+                return;
+            }
             IndependentPlotGenerator pg;
             if (baseGenerator != null && baseGenerator.isFull()) {
                 pg = baseGenerator.getPlotGenerator(); 
@@ -1502,13 +1502,16 @@ public class PS {
             pg.initialize(plotArea);
             plotArea.setupBorder();
         } else {
-            // Augmented / Partial
             if (!worlds.contains(world)) {
                 return;
             }
-            log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
             ConfigurationSection areasSection = worldSection.getConfigurationSection("areas");
             if (areasSection == null) {
+                if (plotareamap.containsKey(world)) {
+                    PS.debug("World possibly already loaded: " + world);
+                    return;
+                }
+                log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
                 String gen_string = worldSection.getString("generator.plugin");
                 if (gen_string == null) {
                     gen_string = "PlotSquared";
@@ -1580,6 +1583,9 @@ public class PS {
                 if (pos1 == null || pos2 == null || name.length() == 0) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }
+                if (getPlotArea(world, name) != null) {
+                    continue;
+                }
                 ConfigurationSection section = areasSection.getConfigurationSection(areaId);
                 YamlConfiguration clone = new YamlConfiguration();
                 for (String key : section.getKeys(true)) {
@@ -1628,6 +1634,7 @@ public class PS {
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
+                log(C.PREFIX.s() + "&aDetected area load for '" + world + "'");
                 log(C.PREFIX.s() + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
                 log(C.PREFIX.s() + "&c | &9plotworld: &7" + pa);
                 log(C.PREFIX.s() + "&c | &9manager: &7" + pa.getPlotManager());

@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.SetupObject;
 
 public abstract class SetupUtils {
@@ -18,6 +17,4 @@ public abstract class SetupUtils {
     public abstract String getGenerator(final PlotArea plotworld);
     
     public abstract String setupWorld(final SetupObject object);
-    
-    public abstract void removePopulator(final String world, final PlotCluster cluster);
 }

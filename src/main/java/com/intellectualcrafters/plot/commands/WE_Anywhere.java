@@ -30,7 +30,7 @@ description = "Force bypass of WorldEdit",
 aliases = { "wea" },
 usage = "/plot weanywhere",
 requiredType = RequiredType.NONE,
-category = CommandCategory.DEBUG)
+category = CommandCategory.ADMINISTRATION)
 @Deprecated
 public class WE_Anywhere extends SubCommand {
     

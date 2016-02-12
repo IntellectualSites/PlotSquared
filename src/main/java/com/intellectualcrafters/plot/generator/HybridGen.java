@@ -38,8 +38,8 @@ public class HybridGen extends IndependentPlotGenerator {
         // Coords
         int cx = result.getX();
         int cz = result.getZ();
-        int bx = cx << 4;
-        int bz = cz << 4;
+        int bx = (cx << 4) - hpw.ROAD_OFFSET_X;
+        int bz = (cz << 4) - hpw.ROAD_OFFSET_Z;
         short rbx = (short) ((bx < 0) ? (hpw.SIZE + (bx % hpw.SIZE)) : bx % hpw.SIZE);
         short rbz = (short) ((bz < 0) ? (hpw.SIZE + (bz % hpw.SIZE)) : bz % hpw.SIZE);
         short[] rx = new short[16];

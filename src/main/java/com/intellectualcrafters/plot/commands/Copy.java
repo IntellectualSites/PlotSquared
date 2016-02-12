@@ -32,7 +32,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 command = "copy",
 permission = "plots.copy",
 aliases = { "copypaste" },
-category = CommandCategory.ACTIONS,
+category = CommandCategory.CLAIMING,
 description = "Copy a plot",
 usage = "/plot copy <X;Z>",
 requiredType = RequiredType.NONE)

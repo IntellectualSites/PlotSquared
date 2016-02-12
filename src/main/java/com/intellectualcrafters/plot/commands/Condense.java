@@ -39,7 +39,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.DEBUG, requiredType = RequiredType.CONSOLE)
+@CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE)
 public class Condense extends SubCommand {
     
     public static boolean TASK = false;

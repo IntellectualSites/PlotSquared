@@ -36,7 +36,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "comment", aliases = { "msg" }, description = "Comment on a plot", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE, permission = "plots.comment")
+@CommandDeclaration(command = "comment", aliases = { "msg" }, description = "Comment on a plot", category = CommandCategory.CHAT, requiredType = RequiredType.NONE, permission = "plots.comment")
 public class Comment extends SubCommand {
     
     @Override

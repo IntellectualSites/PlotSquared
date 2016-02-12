@@ -32,7 +32,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "unlink", aliases = { "u", "unmerge" }, description = "Unlink a mega-plot", usage = "/plot unlink", requiredType = RequiredType.NONE, category = CommandCategory.ACTIONS)
+@CommandDeclaration(command = "unlink", aliases = { "u", "unmerge" }, description = "Unlink a mega-plot", usage = "/plot unlink", requiredType = RequiredType.NONE, category = CommandCategory.SETTINGS)
 public class Unlink extends SubCommand {
     
     @Override

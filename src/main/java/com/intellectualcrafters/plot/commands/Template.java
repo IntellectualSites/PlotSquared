@@ -51,7 +51,7 @@ command = "template",
 permission = "plots.admin",
 description = "Create or use a world template",
 usage = "/plot template [import|export] <world> <template>",
-category = CommandCategory.DEBUG)
+category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
     
     public static boolean extractAllFiles(final String world, final String template) {

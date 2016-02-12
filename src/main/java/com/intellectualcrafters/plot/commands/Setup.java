@@ -45,7 +45,7 @@ permission = "plots.admin.command.setup",
 description = "Setup wizard for plot worlds",
 usage = "/plot setup",
 aliases = { "create" },
-category = CommandCategory.ACTIONS)
+category = CommandCategory.ADMINISTRATION)
 public class Setup extends SubCommand {
     
     public void displayGenerators(final PlotPlayer plr) {

@@ -41,7 +41,7 @@ permission = "plots.use",
 description = "Toggle per user settings",
 usage = "/plot toggle <setting>",
 requiredType = RequiredType.NONE,
-category = CommandCategory.ACTIONS)
+category = CommandCategory.SETTINGS)
 public class Toggle extends SubCommand {
     
     public void noArgs(final PlotPlayer plr) {

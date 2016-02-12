@@ -40,7 +40,7 @@ aliases = { "t" },
 requiredType = RequiredType.NONE,
 usage = "/plot trust <player>",
 description = "Allow a player to build in a plot",
-category = CommandCategory.ACTIONS)
+category = CommandCategory.SETTINGS)
 public class Trust extends SubCommand {
     
     public Trust() {

@@ -52,7 +52,7 @@ permission = "plots.rate",
 description = "Rate the plot",
 usage = "/plot rate [#|next]",
 aliases = { "rt" },
-category = CommandCategory.ACTIONS,
+category = CommandCategory.INFO,
 requiredType = RequiredType.NONE)
 public class Rate extends SubCommand {
     

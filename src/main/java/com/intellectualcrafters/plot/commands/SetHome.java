@@ -34,7 +34,7 @@ permission = "plots.set.home",
 description = "Set the plot home",
 usage = "/plot sethome [none]",
 aliases = { "sh", "seth" },
-category = CommandCategory.ACTIONS,
+category = CommandCategory.SETTINGS,
 requiredType = RequiredType.NONE)
 public class SetHome extends SetCommand {
     

@@ -34,7 +34,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "done", aliases = { "submit" }, description = "Mark a plot as done", permission = "plots.done", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "done", aliases = { "submit" }, description = "Mark a plot as done", permission = "plots.done", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
 public class Done extends SubCommand {
     
     @Override

@@ -64,7 +64,7 @@ public abstract class ChunkManager {
         }
     }
 
-    public static void regenerateLargeRegion(final String world, final RegionWrapper region, final Runnable whenDone) {
+    public static void largeRegionTask(final String world, final RegionWrapper region, final RunnableVal<ChunkLoc> task, final Runnable whenDone) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -91,12 +91,7 @@ public abstract class ChunkManager {
                         }
                     }
                 }
-                TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
-                    @Override
-                    public void run(ChunkLoc value) {
-                        manager.regenerateChunk(world, value);
-                    }
-                }, whenDone);
+                TaskManager.objectTask(chunks, task, whenDone);
             }
         });
     }

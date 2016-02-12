@@ -27,7 +27,7 @@ import com.plotsquared.general.commands.CommandCaller;
  */
 public abstract class PlotPlayer implements CommandCaller {
 
-    protected final Map<String, byte[]> metaMap = new HashMap<>();
+    private Map<String, byte[]> metaMap = new HashMap<>();
     
     /**
      * The metadata map
@@ -422,7 +422,12 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     public void populatePersistentMetaMap() {
-        DBFunc.dbManager.getPersistentMeta(this);
+        DBFunc.dbManager.getPersistentMeta(this, new RunnableVal<Map<String, byte[]>>() {
+            @Override
+            public void run(Map<String, byte[]> value) {
+                PlotPlayer.this.metaMap = value;
+            }
+        });
     }
 
     public byte[] getPersistentMeta(String key) {

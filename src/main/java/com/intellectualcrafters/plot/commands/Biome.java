@@ -34,7 +34,7 @@ permission = "plots.set.biome",
 description = "Set the plot biome",
 usage = "/plot biome [biome]",
 aliases = { "biome", "sb", "setb", "b" },
-category = CommandCategory.ACTIONS,
+category = CommandCategory.APPEARANCE,
 requiredType = RequiredType.NONE)
 public class Biome extends SetCommand {
     

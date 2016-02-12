@@ -29,11 +29,16 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotItemStack;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "music", permission = "plots.music", description = "Player music in a plot", usage = "/plot music", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
+@CommandDeclaration(
+command = "music",
+permission = "plots.music",
+description = "Player music in a plot",
+usage = "/plot music",
+category = CommandCategory.APPEARANCE,
+requiredType = RequiredType.NONE)
 public class MusicSubcommand extends SubCommand {
     
     @Override

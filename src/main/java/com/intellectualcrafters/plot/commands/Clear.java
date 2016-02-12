@@ -35,7 +35,7 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "clear", description = "Clear a plot", permission = "plots.clear", category = CommandCategory.ACTIONS, usage = "/plot clear [id]")
+@CommandDeclaration(command = "clear", description = "Clear a plot", permission = "plots.clear", category = CommandCategory.APPEARANCE, usage = "/plot clear [id]")
 public class Clear extends SubCommand {
     
     @Override

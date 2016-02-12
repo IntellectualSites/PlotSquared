@@ -20,15 +20,20 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
+import java.io.File;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandCaller;
-
-import java.io.File;
-import java.util.*;
 
 /**
  * Captions class.
@@ -104,6 +109,10 @@ public enum C {
     COPY_SUCCESS("$4Successfully copied plot.", "Move"),
     REQUIRES_UNOWNED("$2The location specified is already occupied.", "Move"),
     /*
+     * Area Create
+     */
+    SET_ATTRIBUTE("$4Successfully set %s0 set to %s1", "Set"),
+    /*
      * Web
      */
     GENERATING_LINK("$1Processing plot...", "Web"),
@@ -125,7 +134,7 @@ public enum C {
     "Cluster"),
     CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
     CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster"),
-    CLUSTER_INTERSECTION("$2The proposed area overlaps with an existing cluster: %s0", "Cluster"),
+    CLUSTER_INTERSECTION("$2The proposed area overlaps with: %s0", "Cluster"),
     CLUSTER_ADDED("$4Successfully created the cluster.", "Cluster"),
     CLUSTER_DELETED("$4Successfully deleted the cluster.", "Cluster"),
     CLUSTER_RESIZED("$4Successfully resized the cluster.", "Cluster"),
@@ -218,7 +227,7 @@ public enum C {
     NO_CLIPBOARD("$2You don't have a selection in your clipboard", "Clipboard"),
     CLIPBOARD_INFO("$2Current Selection - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2", "Clipboard"),
     /*
-     *
+     * Toggle
      */
     TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"),
     TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
@@ -509,6 +518,7 @@ public enum C {
      */
     COMMENT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% comments", "List"),
     CLICKABLE(" (interactive)", "List"),
+    AREA_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% areas", "List"),
     PLOT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% plots", "List"),
     PLOT_LIST_HEADER("$1List of %word% plots", "List"),
     PLOT_LIST_ITEM("$2>> $1%id$2:$1%world $2- $1%owner", "List"),

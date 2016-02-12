@@ -39,7 +39,7 @@ command = "add",
 aliases = { "a" },
 description = "Allow a user to build while you are online",
 usage = "/plot add <player>",
-category = CommandCategory.ACTIONS,
+category = CommandCategory.SETTINGS,
 permission = "plots.add",
 requiredType = RequiredType.NONE)
 public class Add extends SubCommand {

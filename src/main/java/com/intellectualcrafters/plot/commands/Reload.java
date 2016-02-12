@@ -33,7 +33,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "reload", permission = "plots.admin.command.reload", description = "Reload configurations", usage = "/plot reload", category = CommandCategory.INFO)
+@CommandDeclaration(command = "reload", permission = "plots.admin.command.reload", description = "Reload configurations", usage = "/plot reload", category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {
     
     @Override

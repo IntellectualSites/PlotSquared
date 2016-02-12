@@ -19,11 +19,9 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.sponge.generator.AugmentedPopulator;
 
 public class BukkitSetupUtils extends SetupUtils {
     
@@ -54,10 +52,9 @@ public class BukkitSetupUtils extends SetupUtils {
     @Override
     public String setupWorld(final SetupObject object) {
         SetupUtils.manager.updateGenerators();
-        //
-        ConfigurationNode[] steps = object.step;
+        ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
         final String world = object.world;
-        int type = object.type; // TODO type = 2
+        int type = object.type;
         String worldPath = "worlds." + object.world;
         if (!PS.get().config.contains(worldPath)) {
             PS.get().config.createSection(worldPath);
@@ -201,10 +198,5 @@ public class BukkitSetupUtils extends SetupUtils {
             }
         }
         return null;
-    }
-    
-    @Override
-    public void removePopulator(final String world, final PlotCluster cluster) {
-        AugmentedPopulator.removePopulator(world, cluster);
     }
 }

@@ -34,7 +34,7 @@ command = "move",
 description = "Move a plot",
 aliases = { "debugmove" },
 permission = "plots.move",
-category = CommandCategory.ACTIONS,
+category = CommandCategory.CLAIMING,
 requiredType = RequiredType.NONE)
 public class Move extends SubCommand {
     

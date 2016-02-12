@@ -22,7 +22,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
 command = "database",
 aliases = { "convert" },
-category = CommandCategory.DEBUG,
+category = CommandCategory.ADMINISTRATION,
 permission = "plots.database",
 description = "Convert/Backup Storage",
 requiredType = RequiredType.CONSOLE,

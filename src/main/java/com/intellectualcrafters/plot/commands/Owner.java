@@ -38,7 +38,7 @@ permission = "plots.set.owner",
 description = "Set the plot owner",
 usage = "/plot setowner <player>",
 aliases = { "owner", "so", "seto" },
-category = CommandCategory.ACTIONS,
+category = CommandCategory.CLAIMING,
 requiredType = RequiredType.NONE)
 public class Owner extends SetCommand {
     
@@ -58,6 +58,16 @@ public class Owner extends SetCommand {
             name = name == null ? value : name;
         }
         if (uuid == null) {
+            if (value.equalsIgnoreCase("none")) {
+                HashSet<Plot> connected = plot.getConnectedPlots();
+                plot.unlink();
+                for (Plot current : connected) {
+                    current.unclaim();
+                    current.removeSign();
+                }
+                MainUtil.sendMessage(plr, C.SET_OWNER);
+                return true;
+            }
             C.INVALID_PLAYER.send(plr, value);
             return false;
         }

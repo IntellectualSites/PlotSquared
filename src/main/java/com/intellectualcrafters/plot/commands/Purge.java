@@ -43,7 +43,7 @@ usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<sha
 command = "purge",
 permission = "plots.admin",
 description = "Purge all plots for a world",
-category = CommandCategory.ACTIONS,
+category = CommandCategory.ADMINISTRATION,
 requiredType = RequiredType.CONSOLE)
 public class Purge extends SubCommand {
     @Override

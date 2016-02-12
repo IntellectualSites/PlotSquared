@@ -12,7 +12,7 @@ public class HelpMenu {
     public static final int PER_PAGE = 5;
     
     private final PlotPlayer _player;
-    private HelpPage _page = new HelpPage(CommandCategory.ACTIONS, 0, 0);
+    private HelpPage _page = new HelpPage(CommandCategory.INFO, 0, 0);
     private int _maxPage;
     private CommandCategory _commandCategory;
     private List<Command<PlotPlayer>> _commands;

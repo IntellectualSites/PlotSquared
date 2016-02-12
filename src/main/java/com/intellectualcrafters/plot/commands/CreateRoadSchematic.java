@@ -32,7 +32,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
 command = "createroadschematic",
 aliases = { "crs" },
-category = CommandCategory.DEBUG,
+category = CommandCategory.ADMINISTRATION,
 requiredType = RequiredType.NONE,
 permission = "plots.createroadschematic",
 description = "Add a road schematic to your world using the roads around your current plot",

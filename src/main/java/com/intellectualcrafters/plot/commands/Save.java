@@ -19,7 +19,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "save", aliases = { "backup" }, description = "Save your plot", category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE, permission = "plots.save")
+@CommandDeclaration(command = "save", aliases = { "backup" }, description = "Save your plot", category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE, permission = "plots.save")
 public class Save extends SubCommand {
     
     @Override

@@ -49,7 +49,7 @@ permission = "plots.admin",
 description = "Delete unmodified portions of your plotworld",
 usage = "/plot trim",
 requiredType = RequiredType.CONSOLE,
-category = CommandCategory.DEBUG)
+category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
     
     public static boolean TASK = false;

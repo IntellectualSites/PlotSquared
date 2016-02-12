@@ -21,7 +21,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
 command = "load",
 aliases = { "restore" },
-category = CommandCategory.ACTIONS,
+category = CommandCategory.SCHEMATIC,
 requiredType = RequiredType.NONE,
 description = "Load your plot",
 permission = "plots.load",

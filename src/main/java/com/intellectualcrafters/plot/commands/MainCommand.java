@@ -68,13 +68,13 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Buy());
         createCommand(new Save());
         createCommand(new Load());
-        createCommand(new Unclaim());
         createCommand(new Confirm());
         createCommand(new Template());
         createCommand(new Download());
         createCommand(new Update());
         createCommand(new Template());
         createCommand(new Setup());
+        createCommand(new Area());
         createCommand(new DebugSaveTest());
         createCommand(new DebugLoadTest());
         createCommand(new CreateRoadSchematic());

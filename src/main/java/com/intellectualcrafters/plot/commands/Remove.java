@@ -39,7 +39,7 @@ command = "remove",
 aliases = { "r" },
 description = "Remove a player from a plot",
 usage = "/plot remove <player>",
-category = CommandCategory.ACTIONS,
+category = CommandCategory.SETTINGS,
 requiredType = RequiredType.NONE,
 permission = "plots.remove")
 public class Remove extends SubCommand {

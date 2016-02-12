@@ -104,14 +104,14 @@ public class QuadMap<T> {
         if (region.minX >= x) {
             if (region.minZ >= z) {
                 if (one == null) {
-                    one = newInstance(newsize, x, z, min);
+                    one = newInstance(newsize, x + newsize, z + newsize, min);
                 }
                 one.add(area);
                 recalculateSkip();
                 return;
             } else if (region.maxZ < z) {
                 if (two == null) {
-                    two = newInstance(newsize, x, z, min);
+                    two = newInstance(newsize, x + newsize, z - newsize, min);
                 }
                 two.add(area);
                 recalculateSkip();
@@ -120,14 +120,14 @@ public class QuadMap<T> {
         } else if (region.maxX < x) {
             if (region.minZ >= z) {
                 if (four == null) {
-                    four = newInstance(newsize, x, z, min);
+                    four = newInstance(newsize, x - newsize, z + newsize, min);
                 }
                 four.add(area);
                 recalculateSkip();
                 return;
             } else if (region.maxZ < z) {
                 if (three == null) {
-                    three = newInstance(newsize, x, z, min);
+                    three = newInstance(newsize, x - newsize, z - newsize, min);
                 }
                 three.add(area);
                 recalculateSkip();
@@ -252,7 +252,7 @@ public class QuadMap<T> {
     }
     
     public boolean intersects(RegionWrapper other) {
-        return (other.minX <= this.x + size) && (other.maxX >= this.x) && (other.minZ <= this.z + size) && (other.maxZ >= this.z);
+        return (other.minX <= this.x + size) && (other.maxX >= this.x - size) && (other.minZ <= this.z + size) && (other.maxZ >= this.z - size);
     }
 
     public T get(int x, int z) {

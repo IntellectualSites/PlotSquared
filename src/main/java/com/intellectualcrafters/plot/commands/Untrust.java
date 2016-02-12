@@ -42,7 +42,7 @@ permission = "plots.untrust",
 description = "Remove a trusted user from a plot",
 usage = "/plot untrust <player>",
 requiredType = RequiredType.NONE,
-category = CommandCategory.ACTIONS)
+category = CommandCategory.SETTINGS)
 public class Untrust extends SubCommand {
     
     public Untrust() {

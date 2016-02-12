@@ -34,7 +34,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 command = "continue",
 description = "Continue a plot that was previously marked as done",
 permission = "plots.continue",
-category = CommandCategory.ACTIONS,
+category = CommandCategory.SETTINGS,
 requiredType = RequiredType.NONE)
 public class Continue extends SubCommand {
     

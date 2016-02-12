@@ -43,7 +43,7 @@ aliases = { "m" },
 description = "Merge the plot you are standing on, with another plot",
 permission = "plots.merge",
 usage = "/plot merge <all|n|e|s|w> [removeroads]",
-category = CommandCategory.ACTIONS,
+category = CommandCategory.SETTINGS,
 requiredType = RequiredType.NONE)
 public class Merge extends SubCommand {
     public final static String[] values = new String[] { "north", "east", "south", "west", "auto" };

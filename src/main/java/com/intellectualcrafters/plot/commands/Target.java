@@ -35,7 +35,7 @@ usage = "/plot target <<plot>|nearest>",
 description = "Target a plot with your compass",
 permission = "plots.target",
 requiredType = RequiredType.NONE,
-category = CommandCategory.ACTIONS)
+category = CommandCategory.INFO)
 public class Target extends SubCommand {
     
     @Override

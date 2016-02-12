@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -102,7 +103,7 @@ public interface AbstractDB {
 
     void removePersistentMeta(UUID uuid, String key);
 
-    void getPersistentMeta(PlotPlayer player);
+    void getPersistentMeta(PlotPlayer player, RunnableVal<Map<String, byte[]>> result);
 
     /**
      * Create plot settings

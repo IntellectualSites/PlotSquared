@@ -34,7 +34,7 @@ permission = "plots.set.desc",
 description = "Set the plot description",
 usage = "/plot desc <description>",
 aliases = { "desc", "setdesc", "setd", "description" },
-category = CommandCategory.ACTIONS,
+ category = CommandCategory.SETTINGS,
 requiredType = RequiredType.NONE)
 public class Desc extends SetCommand {
     

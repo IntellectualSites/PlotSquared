@@ -52,7 +52,7 @@
     </properties>
 
     <build>
-        <finalName>${project.name}-Bukkit-${project.version}</finalName>
+        <finalName>${project.name}-Bukkit</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
 
         <resources>
@@ -144,7 +144,8 @@
                 </configuration>
             </plugin>
 
-            <plugin>
+            <!-- None of these are needed -->
+            <!-- <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.3</version>
@@ -152,6 +153,7 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <minimizeJar>false</minimizeJar>
                     <relocations>
+                        
                         <relocation>
                             <pattern>com.google.gson</pattern>
                             <shadedPattern>com.plotsquared.libs.gson</shadedPattern>
@@ -174,7 +176,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
 
             <!-- Useless ATM
             <plugin>
@@ -199,7 +201,7 @@
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
 
-		<!--
+        <!--
         <repository>
             <id>sponge-maven-repo</id>
             <url>http://repo.spongepowered.org/maven</url>
@@ -237,10 +239,10 @@
                     <artifactId>junit</artifactId>
                     <groupId>junit</groupId>
                 </exclusion>
-                <exclusion>
+                <!-- <exclusion>
                     <artifactId>gson</artifactId>
                     <groupId>com.google.code.gson</groupId>
-                </exclusion>
+                </exclusion> -->
                 <exclusion>
                     <artifactId>persistence-api</artifactId>
                     <groupId>javax.persistence</groupId>
@@ -295,13 +297,13 @@
             </exclusions>
         </dependency>
 
-        <dependency>
+        <!-- <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>3.6</version>
             <scope>compile</scope>
             <optional>true</optional>
-        </dependency>
+        </dependency> -->
 
         <!-- <dependency>
             <groupId>junit</groupId>
@@ -327,13 +329,14 @@
         </dependency>
 
         <!-- GSON (required to provide 1.7.10 and below compatibility) -->
-        <dependency>
+        <!-- GSON (except it's only needed in 1.8+) -->
+        <!-- <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.5</version>
             <scope>compile</scope>
             <optional>true</optional>
-        </dependency>
+        </dependency> -->
 
     </dependencies>
 </project>

@@ -16,7 +16,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "download", aliases = { "dl" }, category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE, description = "Download your plot", permission = "plots.download")
+@CommandDeclaration(command = "download", aliases = { "dl" }, category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE, description = "Download your plot", permission = "plots.download")
 public class Download extends SubCommand {
     
     @Override

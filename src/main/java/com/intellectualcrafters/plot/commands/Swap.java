@@ -28,7 +28,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(usage = "/plot swap <X;Z>", command = "swap", description = "Swap two plots", aliases = { "switch" }, category = CommandCategory.ACTIONS, requiredType = RequiredType.NONE)
+@CommandDeclaration(usage = "/plot swap <X;Z>", command = "swap", description = "Swap two plots", aliases = { "switch" }, category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE)
 public class Swap extends SubCommand {
     
     @Override

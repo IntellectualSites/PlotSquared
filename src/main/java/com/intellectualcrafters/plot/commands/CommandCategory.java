@@ -16,25 +16,40 @@ public enum CommandCategory {
      *
      * Such as: /plot visit
      */
-    TELEPORT("Teleportation"),
+    TELEPORT("Teleport"),
     /**
-     * Action Commands
-     *
-     * Such as: /plot clear
+     * Protection
      */
-    ACTIONS("Actions"),
+    SETTINGS("Protection"),
+    /**
+     * Chat
+     */
+    CHAT("Chat"),
+    /**
+     * Web
+     */
+    SCHEMATIC("Web"),
+    /**
+     * Cosmetic
+     */
+    APPEARANCE("Cosmetic"),
     /**
      * Information Commands
      *
      * Such as: /plot info
      */
-    INFO("Information"),
+    INFO("Info"),
     /**
      * Debug Commands
      *
      * Such as: /plot debug
      */
-    DEBUG("Debug");
+    DEBUG("Debug"),
+    /**
+     * Administration commands
+     */
+    ADMINISTRATION("Admin");
+
     /**
      * The category name (Readable)
      */

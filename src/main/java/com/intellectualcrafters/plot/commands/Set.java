@@ -48,7 +48,7 @@ description = "Set a plot value",
 aliases = { "s" },
 usage = "/plot set <biome|alias|home|flag> <value...>",
 permission = "plots.set",
-category = CommandCategory.ACTIONS,
+category = CommandCategory.APPEARANCE,
 requiredType = RequiredType.NONE)
 public class Set extends SubCommand {
     public final static String[] values = new String[] { "biome", "alias", "home", "flag" };

@@ -46,7 +46,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
 command = "cluster",
 aliases = { "clusters" },
-category = CommandCategory.ACTIONS,
+category = CommandCategory.ADMINISTRATION,
 requiredType = RequiredType.NONE,
 permission = "plots.cluster",
 description = "Manage a plot cluster")

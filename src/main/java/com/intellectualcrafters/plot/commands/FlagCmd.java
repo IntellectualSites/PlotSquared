@@ -43,7 +43,7 @@ command = "setflag",
 aliases = { "f", "flag", "setf", "setflag" },
 usage = "/plot flag <set|remove|add|list|info> <flag> <value>",
 description = "Set plot flags",
-category = CommandCategory.ACTIONS,
+category = CommandCategory.SETTINGS,
 requiredType = RequiredType.NONE,
 permission = "plots.flag")
 public class FlagCmd extends SubCommand {

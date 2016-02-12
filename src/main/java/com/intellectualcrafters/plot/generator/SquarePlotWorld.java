@@ -10,14 +10,10 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
         super(worldname, id, generator, min, max);
     }
 
-    public static int PLOT_WIDTH_DEFAULT = 42;
-    public static int ROAD_WIDTH_DEFAULT = 7;
-    public static int ROAD_OFFSET_X_DEFAULT = 0;
-    public static int ROAD_OFFSET_Z_DEFAULT = 0;
-    public int PLOT_WIDTH;
-    public int ROAD_WIDTH;
-    public int ROAD_OFFSET_X;
-    public int ROAD_OFFSET_Z;
+    public int PLOT_WIDTH = 42;
+    public int ROAD_WIDTH = 7;
+    public int ROAD_OFFSET_X = 0;
+    public int ROAD_OFFSET_Z = 0;
     
     @Override
     public void loadConfiguration(final ConfigurationSection config) {

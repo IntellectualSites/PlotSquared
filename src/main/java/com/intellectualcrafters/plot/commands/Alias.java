@@ -36,7 +36,7 @@ permission = "plots.set.alias",
  description = "Set the plot name",
 usage = "/plot alias <alias>",
 aliases = { "alias", "sa", "name", "rename", "setname", "seta" },
-category = CommandCategory.ACTIONS,
+ category = CommandCategory.SETTINGS,
 requiredType = RequiredType.NONE)
 public class Alias extends SetCommand {
     

@@ -41,7 +41,7 @@ permission = "plots.delete",
 description = "Delete a plot",
 usage = "/plot delete",
 aliases = { "dispose", "del" },
-category = CommandCategory.ACTIONS,
+category = CommandCategory.CLAIMING,
 requiredType = RequiredType.NONE)
 public class Delete extends SubCommand {
     
