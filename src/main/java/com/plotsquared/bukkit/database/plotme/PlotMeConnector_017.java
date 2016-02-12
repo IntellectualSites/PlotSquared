@@ -1,15 +1,5 @@
 package com.plotsquared.bukkit.database.plotme;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
@@ -21,6 +11,16 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 public class PlotMeConnector_017 extends APlotMeConnector {
     private String plugin;
@@ -135,7 +135,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         }
         for (final Entry<Integer, Plot> entry : plots.entrySet()) {
             final Plot plot = entry.getValue();
-            final HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.area.worldname);
+            final HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.getArea().worldname);
             if (mergeMap != null) {
                 if (mergeMap.containsKey(plot.getId())) {
                     plot.setMerged(mergeMap.get(plot.getId()));
@@ -184,10 +184,10 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         
         for (final Entry<Integer, Plot> entry : plots.entrySet()) {
             final Plot plot = entry.getValue();
-            HashMap<PlotId, Plot> map = processed.get(plot.area.worldname);
+            HashMap<PlotId, Plot> map = processed.get(plot.getArea().worldname);
             if (map == null) {
                 map = new HashMap<>();
-                processed.put(plot.area.worldname, map);
+                processed.put(plot.getArea().worldname, map);
             }
             map.put(plot.getId(), plot);
         }

@@ -20,12 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -37,6 +31,12 @@ import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 
 @CommandDeclaration(
 usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]",
@@ -117,13 +117,13 @@ public class Purge extends SubCommand {
         final HashSet<Integer> toDelete = new HashSet<>();
         Set<Plot> basePlots = PS.get().getBasePlots();
         for (Plot plot : PS.get().getBasePlots()) {
-            if (world != null && !plot.area.worldname.equalsIgnoreCase(world)) {
+            if (world != null && !plot.getArea().worldname.equalsIgnoreCase(world)) {
                 continue;
             }
-            if (area != null && !plot.area.equals(area)) {
+            if (area != null && !plot.getArea().equals(area)) {
                 continue;
             }
-            if (id != null && !plot.id.equals(id)) {
+            if (id != null && !plot.getId().equals(id)) {
                 continue;
             }
             if (owner != null && !plot.isOwner(owner)) {
@@ -150,7 +150,7 @@ public class Purge extends SubCommand {
                 }
                 for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                     Plot plot = entry2.getValue();
-                    if (id != null && !plot.id.equals(id)) {
+                    if (id != null && !plot.getId().equals(id)) {
                         continue;
                     }
                     if (owner != null && !plot.isOwner(owner)) {

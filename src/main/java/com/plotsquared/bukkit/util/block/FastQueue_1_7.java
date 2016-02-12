@@ -2,16 +2,6 @@ package com.plotsquared.bukkit.util.block;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -23,6 +13,15 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 public class FastQueue_1_7 extends SlowQueue {
     
@@ -54,7 +53,7 @@ public class FastQueue_1_7 extends SlowQueue {
                     return;
                 }
                 int count = 0;
-                final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+                final ArrayList<Chunk> chunks = new ArrayList<>();
                 final Iterator<Entry<ChunkWrapper, Chunk>> i = toUpdate.entrySet().iterator();
                 while (i.hasNext() && (count < 128)) {
                     chunks.add(i.next().getValue());
@@ -145,7 +144,7 @@ public class FastQueue_1_7 extends SlowQueue {
     
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param wrap
      */
     @Override
     public PlotChunk<Chunk> getChunk(ChunkWrapper wrap) {
@@ -154,7 +153,8 @@ public class FastQueue_1_7 extends SlowQueue {
     
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param chunk
+     * @param fixAll
      */
     @Override
     public boolean fixLighting(PlotChunk<Chunk> chunk, boolean fixAll) {
@@ -165,7 +165,8 @@ public class FastQueue_1_7 extends SlowQueue {
     
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param world
+     * @param locs
      */
     @Override
     public void sendChunk(String world, Collection<ChunkLoc> locs) {

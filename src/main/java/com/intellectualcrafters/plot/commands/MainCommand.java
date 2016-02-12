@@ -20,13 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
@@ -44,6 +37,13 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandHandlingOutput;
 import com.plotsquared.general.commands.CommandManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * PlotSquared command class
@@ -278,7 +278,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                             if (newPlot == null) {
                                 break;
                             }
-                            if (!ConsolePlayer.isConsole(player) && (!newPlot.area.equals(area) || newPlot.isDenied(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN)) {
+                            if (!ConsolePlayer.isConsole(player) && (!newPlot.getArea().equals(area) || newPlot.isDenied(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN)) {
                                 break;
                             }
                             // Save meta

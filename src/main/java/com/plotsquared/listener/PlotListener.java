@@ -20,10 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.listener;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -44,6 +40,10 @@ import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
 
@@ -168,7 +168,7 @@ public class PlotListener {
                                 final Map<String, String> replacements = new HashMap<>();
                                 replacements.put("%x%", lastPlot.getId().x + "");
                                 replacements.put("%z%", lastPlot.getId().y + "");
-                                replacements.put("%world%", plot.area.toString());
+                                replacements.put("%world%", plot.getArea().toString());
                                 replacements.put("%greeting%", greeting);
                                 replacements.put("%alias", plot.toString());
                                 replacements.put("%s", MainUtil.getName(plot.owner));

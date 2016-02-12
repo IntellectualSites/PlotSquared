@@ -61,7 +61,7 @@ public class Save extends SubCommand {
                         Location[] corners = plot.getCorners();
                         final int size = (corners[1].getX() - corners[0].getX()) + 1;
                         final PlotId id = plot.getId();
-                        final String world = plot.area.toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
+                        final String world = plot.getArea().toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
                         final String file = time + "_" + world + "_" + id.x + "_" + id.y + "_" + size + "_" + name;
                         final UUID uuid = plr.getUUID();
                         

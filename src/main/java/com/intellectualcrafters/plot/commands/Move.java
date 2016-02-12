@@ -62,7 +62,7 @@ public class Move extends SubCommand {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot copy <X;Z>");
             return false;
         }
-        if (!plot1.area.isCompatible(plot2.area)) {
+        if (!plot1.getArea().isCompatible(plot2.getArea())) {
             C.PLOTWORLD_INCOMPATIBLE.send(plr);
             return false;
         }

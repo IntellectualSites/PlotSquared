@@ -50,7 +50,7 @@ public class Deny extends SubCommand {
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if ((plot == null) || !plot.hasOwner()) {
+        if (!plot.hasOwner()) {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }

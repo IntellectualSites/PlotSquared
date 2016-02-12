@@ -20,13 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -38,6 +31,13 @@ import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Flag Manager Utility
@@ -173,7 +173,7 @@ public class FlagManager {
         if (plot.owner == null) {
             return null;
         }
-        return getSettingFlag(plot.area, plot.getSettings(), flag);
+        return getSettingFlag(plot.getArea(), plot.getSettings(), flag);
     }
     
     public static boolean isPlotFlagTrue(final Plot plot, final String strFlag) {
@@ -255,7 +255,7 @@ public class FlagManager {
         if (!plot.hasOwner()) {
             return null;
         }
-        return getSettingFlags(plot.area, plot.getSettings());
+        return getSettingFlags(plot.getArea(), plot.getSettings());
     }
     
     public static HashMap<String, Flag> getPlotFlags(PlotArea area, final PlotSettings settings, final boolean ignorePluginflags) {

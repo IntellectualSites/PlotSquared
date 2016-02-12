@@ -100,7 +100,7 @@ public class list extends SubCommand {
     }
     
     public void noArgs(final PlotPlayer plr) {
-        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(getArgumentList(plr)));
+        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(plr));
     }
     
     @Override
@@ -388,8 +388,9 @@ public class list extends SubCommand {
                     strFlags = C.NONE.s();
                 }
                 final PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");
-                message.text("[").color("$3").text(i + "").command("/plot visit " + plot.area + ";" + plot.getId()).tooltip("/plot visit " + plot.area + ";" + plot.getId()).color("$1").text("]")
-                .color("$3").text(" " + plot.toString()).tooltip(trusted, members, flags).command("/plot info " + plot.area + ";" + plot.getId()).color(color).text(" - ").color("$2");
+                message.text("[").color("$3").text(i + "").command("/plot visit " + plot.getArea() + ";" + plot.getId()).tooltip("/plot visit " + plot.getArea() + ";" + plot.getId()).color("$1")
+                .text("]")
+                .color("$3").text(" " + plot.toString()).tooltip(trusted, members, flags).command("/plot info " + plot.getArea() + ";" + plot.getId()).color(color).text(" - ").color("$2");
                 String prefix = "";
                 for (final UUID uuid : plot.getOwners()) {
                     final String name = UUIDHandler.getName(uuid);

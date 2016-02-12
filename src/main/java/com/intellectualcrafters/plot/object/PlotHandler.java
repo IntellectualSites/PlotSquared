@@ -1,13 +1,13 @@
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
-
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 
 public class PlotHandler {
     public static HashSet<UUID> getOwners(final Plot plot) {
@@ -238,7 +238,7 @@ public class PlotHandler {
             return false;
         }
         for (Plot current : plot.getConnectedPlots()) {
-            plot.area.removePlot(plot.id);
+            plot.getArea().removePlot(plot.getId());
             DBFunc.delete(current);
             current.settings = null;
         }

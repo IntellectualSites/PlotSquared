@@ -146,7 +146,7 @@ public class Condense extends SubCommand {
                         final Plot origin = allPlots.remove(0);
                         int i = 0;
                         while (free.size() > i) {
-                            final Plot possible = origin.area.getPlotAbs(free.get(i));
+                            final Plot possible = origin.getArea().getPlotAbs(free.get(i));
                             if (possible.owner != null) {
                                 free.remove(i);
                                 continue;

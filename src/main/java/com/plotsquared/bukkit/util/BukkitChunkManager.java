@@ -1,13 +1,24 @@
 package com.plotsquared.bukkit.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.AugmentedUtils;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotLoc;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.PlotChunk;
+import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
+import com.plotsquared.bukkit.object.entity.EntityWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.DyeColor;
@@ -42,25 +53,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.generator.AugmentedUtils;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.PlotChunk;
-import com.intellectualcrafters.plot.util.SetQueue;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
-import com.plotsquared.bukkit.object.entity.EntityWrapper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class BukkitChunkManager extends ChunkManager {
     @Override
@@ -1026,7 +1025,7 @@ public class BukkitChunkManager extends ChunkManager {
     @Override
     public int[] countEntities(final Plot plot) {
         final int[] count = new int[6];
-        PlotArea area = plot.area;
+        PlotArea area = plot.getArea();
         final World world = BukkitUtil.getWorld(area.worldname);
         
         final Location bot = plot.getBottomAbs();
