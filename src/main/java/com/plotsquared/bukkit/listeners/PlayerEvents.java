@@ -1,33 +1,16 @@
 package com.plotsquared.bukkit.listeners;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotInventory;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.RegExUtil;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.bukkit.object.BukkitLazyBlock;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.listener.PlayerBlockEventType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -106,16 +89,34 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.RegExUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.object.BukkitLazyBlock;
+import com.plotsquared.bukkit.object.BukkitPlayer;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.listener.PlayerBlockEventType;
 
 /**
  * Player Events involving plots
@@ -308,7 +309,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return;
             }
             final Location sLoc = BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
-            if (!area.contains(sLoc)) {
+            if (!area.contains(sLoc.getX(), sLoc.getZ())) {
                 entity.remove();
                 return;
             }
@@ -479,6 +480,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             pp.setMeta("location", loc);
             PlotArea area = loc.getPlotArea();
             if (area == null) {
+                pp.deleteMeta("lastplot");
                 return;
             }
             Plot now = area.getPlotAbs(loc);
@@ -536,6 +538,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             
             PlotArea area = loc.getPlotArea();
             if (area == null) {
+                pp.deleteMeta("lastplot");
                 return;
             }
             Plot now = area.getPlotAbs(loc);
@@ -703,7 +706,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     while (iter.hasNext()) {
                         final Block b = iter.next();
                         loc = BukkitUtil.getLocation(b.getLocation());
-                        if (!area.contains(loc) || !origin.equals(area.getOwnedPlot(loc))) {
+                        if (!area.contains(loc.getX(), loc.getZ()) || !origin.equals(area.getOwnedPlot(loc))) {
                             iter.remove();
                         }
                     }
@@ -892,7 +895,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final List<Block> blocks = event.getBlocks();
         for (final Block b : blocks) {
             final Location bloc = BukkitUtil.getLocation(b.getLocation().add(relative));
-            if (!area.contains(bloc)) {
+            if (!area.contains(bloc.getX(), bloc.getZ())) {
                 event.setCancelled(true);
                 return;
             }
@@ -940,7 +943,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             try {
                 for (final Block pulled : event.getBlocks()) {
                     loc = BukkitUtil.getLocation(pulled.getLocation());
-                    if (!area.contains(loc)) {
+                    if (!area.contains(loc.getX(), loc.getZ())) {
                         event.setCancelled(true);
                         return;
                     }
@@ -1006,7 +1009,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             }
             for (int i = blocks.size() - 1; i >= 0; i--) {
                 loc = BukkitUtil.getLocation(blocks.get(i).getLocation());
-                if (!area.contains(loc)) {
+                if (!area.contains(loc.getX(), loc.getZ())) {
                     blocks.remove(i);
                     continue;
                 }
@@ -2029,7 +2032,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final Location dloc = BukkitUtil.getLocation(damager);
         final Location vloc = BukkitUtil.getLocation(victim);
         PlotArea dArea = dloc.getPlotArea();
-        PlotArea vArea = (dArea != null && dArea.contains(vloc)) ? dArea : vloc.getPlotArea();
+        PlotArea vArea = (dArea != null && dArea.contains(vloc.getX(), vloc.getZ())) ? dArea : vloc.getPlotArea();
         if (dArea == null && vArea == null) {
             return true;
         }

@@ -20,6 +20,18 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -37,18 +49,6 @@ import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Jesse Boyd
@@ -133,18 +133,24 @@ public abstract class PlotArea {
      * @return
      */
     public RegionWrapper getRegion() {
+        region = getRegionAbs();
+        if (region == null) {
+            return new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+        return region;
+    }
+    
+    public RegionWrapper getRegionAbs() {
         if (region == null) {
             if (min != null) {
                 Location bot = getPlotManager().getPlotBottomLocAbs(this, min);
                 Location top = getPlotManager().getPlotTopLocAbs(this, max);
                 this.region = new RegionWrapper(bot.getX() - 1, top.getX() + 1, bot.getZ() - 1, top.getZ() + 1);
-            } else {
-                return new RegionWrapper(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
             }
         }
         return region;
     }
-    
+
     /**
      * Returns the min PlotId
      * @return
@@ -427,8 +433,12 @@ public abstract class PlotArea {
         return plot == null ? null : plot.getBasePlot(false);
     }
 
+    public boolean contains(int x, int z) {
+        return TYPE != 2 || getRegionAbs().isIn(x, z);
+    }
+
     public boolean contains(Location loc) {
-        return StringMan.isEqual(loc.getWorld(), worldname) && (region == null || region.isIn(loc.getX(), loc.getZ()));
+        return StringMan.isEqual(loc.getWorld(), worldname) && (getRegionAbs() == null || region.isIn(loc.getX(), loc.getZ()));
     }
     
     public Set<Plot> getPlotsAbs(UUID uuid) {
@@ -477,10 +487,6 @@ public abstract class PlotArea {
     
     public int getPlotCount(PlotPlayer player) {
         return player != null ? getPlotCount(player.getUUID()) : 0;
-    }
-
-    public boolean contains(int x, int z) {
-        return region == null || region.isIn(x, z);
     }
 
     public Plot getPlotAbs(PlotId id) {

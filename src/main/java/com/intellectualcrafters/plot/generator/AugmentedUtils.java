@@ -28,7 +28,7 @@ public class AugmentedUtils {
         }
         final int bx = cx << 4;
         final int bz = cz << 4;
-        RegionWrapper region = new RegionWrapper(bx, bx + 16, bz, bz + 16);
+        RegionWrapper region = new RegionWrapper(bx, bx + 15, bz, bz + 15);
         Set<PlotArea> areas = PS.get().getPlotAreas(world, region);
         if (areas.size() == 0) {
             return;
@@ -56,8 +56,8 @@ public class AugmentedUtils {
             // coords
             int bxx = Math.max(0, area.getRegion().minX - bx);
             int bzz = Math.max(0, area.getRegion().minZ - bz);
-            int txx = Math.min(16, area.getRegion().maxX - bx);
-            int tzz = Math.min(16, area.getRegion().maxZ - bz);
+            int txx = Math.min(15, area.getRegion().maxX - bx);
+            int tzz = Math.min(15, area.getRegion().maxZ - bz);
             // gen
             if (area.TYPE == 2) {
                 primaryMask = new PlotChunk<Object>(wrap) {
@@ -99,8 +99,8 @@ public class AugmentedUtils {
                 PlotManager manager = area.getPlotManager();
                 final boolean[][] canPlace = new boolean[16][16];
                 boolean has = false;
-                for (int x = bxx; x < txx; x++) {
-                    for (int z = bzz; z < tzz; z++) {
+                for (int x = bxx; x <= txx; x++) {
+                    for (int z = bzz; z <= tzz; z++) {
                         int rx = x + bx;
                         int rz = z + bz;
                         boolean can = manager.getPlotIdAbs(area, rx, 0, rz) == null;
@@ -144,8 +144,8 @@ public class AugmentedUtils {
                 };
             } else {
                 secondaryMask = primaryMask;
-                for (int x = bxx; x < txx; x++) {
-                    for (int z = bzz; z < tzz; z++) {
+                for (int x = bxx; x <= txx; x++) {
+                    for (int z = bzz; z <= tzz; z++) {
                         for (int y = 1; y < 128; y++) {
                             result.setBlock(x, y, z, air);
                         }
@@ -156,6 +156,7 @@ public class AugmentedUtils {
         }
         if (cache_chunk != null) {
             cache_chunk.addToQueue();
+            cache_chunk.flush(false);
         }
     }
 }

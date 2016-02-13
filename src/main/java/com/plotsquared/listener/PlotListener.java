@@ -20,6 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.listener;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -40,10 +44,6 @@ import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 /**
 

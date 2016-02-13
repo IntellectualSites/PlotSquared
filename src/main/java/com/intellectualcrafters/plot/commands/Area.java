@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Set;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
@@ -38,7 +39,7 @@ category = CommandCategory.ADMINISTRATION,
 requiredType = RequiredType.NONE,
 description = "Create a new PlotArea",
 aliases = { "world" },
-usage = "/plot area <create|info|list|tp>")
+usage = "/plot area <create|info|list|tp|regen>")
 //plot createarea partial
 public class Area extends SubCommand {
     
@@ -108,8 +109,8 @@ public class Area extends SubCommand {
                                 object.id = area.id;
                                 object.terrain = area.TERRAIN;
                                 object.type = area.TYPE;
-                                object.min = new PlotId(0, 0);
-                                object.max = new PlotId(numx - 1, numz - 1);
+                                object.min = new PlotId(1, 1);
+                                object.max = new PlotId(numx, numz);
                                 object.plotManager = "PlotSquared";
                                 object.setupGenerator = "PlotSquared";
                                 object.step = area.getSettingNodes();
@@ -156,8 +157,9 @@ public class Area extends SubCommand {
                         }
                         object.world = split[0];
                         final HybridPlotWorld pa = new HybridPlotWorld(object.world, id, new HybridGen(), null, null);
-                        if (PS.get().getPlotArea(pa.worldname, id) != null) {
-                            C.SETUP_WORLD_TAKEN.send(plr, pa.worldname);
+                        PlotArea other = PS.get().getPlotArea(pa.worldname, id);
+                        if (other != null && Objects.equals(pa.id, other.id)) {
+                            C.SETUP_WORLD_TAKEN.send(plr, pa.toString());
                             return false;
                         }
                         Set<PlotArea> areas = PS.get().getPlotAreas(pa.worldname);
@@ -322,7 +324,7 @@ public class Area extends SubCommand {
                     region = area.getRegion().toString();
                 } else {
                     name = area.worldname;
-                    percent = claimed == 0 ? 0 : Short.MAX_VALUE * Short.MAX_VALUE / (double) claimed;
+                    percent = claimed == 0 ? 0 : (100d * claimed) / (Integer.MAX_VALUE);
                     region = "N/A";
                 }
                 String value = "&r$1NAME: " + name
@@ -396,6 +398,29 @@ public class Area extends SubCommand {
                 }, "/plot area list", C.AREA_LIST_HEADER_PAGED.s());
                 return true;
             }
+            case "regen":
+            case "regenerate": {
+                if (!Permissions.hasPermission(plr, "plots.area.regen")) {
+                    C.NO_PERMISSION.send(plr, "plots.area.regen");
+                    return false;
+                }
+                final PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                    return false;
+                }
+                if (area.TYPE != 2) {
+                    MainUtil.sendMessage(plr, "$4Stop the server and delete: " + area.worldname + "/region");
+                    return false;
+                }
+                ChunkManager.largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<ChunkLoc>() {
+                    @Override
+                    public void run(ChunkLoc value) {
+                        AugmentedUtils.generate(area.worldname, value.x, value.z);
+                    }
+                }, null);
+                return true;
+            }
             case "goto":
             case "v":
             case "teleport":
@@ -414,8 +439,19 @@ public class Area extends SubCommand {
                     C.NOT_VALID_PLOT_WORLD.send(plr, args[1]);
                     return false;
                 }
-                Location spawn = WorldUtil.IMP.getSpawn(area.worldname);
-                plr.teleport(spawn);
+                RegionWrapper region = area.getRegion();
+                Location center = new Location(area.worldname, region.minX + (region.maxX - region.minX) / 2, 0, region.minZ + (region.maxZ - region.minZ) / 2);
+                center.setY(WorldUtil.IMP.getHeighestBlock(area.worldname, center.getX(), center.getZ()));
+                plr.teleport(center);
+                return true;
+            }
+            case "delete":
+            case "remove": {
+                MainUtil.sendMessage(plr, "$1World creation settings may be stored in multiple locations:"
+                + "\n$3 - $2Bukkit bukkit.yml"
+                + "\n$3 - $2PlotSquared settings.yml"
+                + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
+                + "\n$1Stop the server and delete it from these locations.");
                 return true;
             }
         }

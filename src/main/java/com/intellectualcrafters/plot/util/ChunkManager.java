@@ -76,11 +76,11 @@ public abstract class ChunkManager {
                     int tx = bx + 511;
                     int tz = bz + 511;
                     if (bx <= region.maxX && tx >= region.minX && bz <= region.maxZ && tz >= region.minZ) {
-                        for (int x = (bx >> 4); x <= (tx << 4); x++) {
+                        for (int x = (bx >> 4); x <= (tx >> 4); x++) {
                             int cbx = x << 4;
                             int ctx = cbx + 15;
                             if (cbx <= region.maxX && ctx >= region.minX) {
-                                for (int z = (bz >> 4); z <= (tz << 4); z++) {
+                                for (int z = (bz >> 4); z <= (tz >> 4); z++) {
                                     int cbz = z << 4;
                                     int ctz = cbz + 15;
                                     if (cbz <= region.maxZ && ctz >= region.minZ) {
@@ -91,7 +91,15 @@ public abstract class ChunkManager {
                         }
                     }
                 }
-                TaskManager.objectTask(chunks, task, whenDone);
+                TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
+                    
+                    @Override
+                    public void run(ChunkLoc value) {
+                        if (manager.loadChunk(world, value, false)) {
+                            task.run(value);
+                        }
+                    }
+                }, whenDone);
             }
         });
     }

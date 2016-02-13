@@ -1,5 +1,33 @@
 package com.intellectualcrafters.plot;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.MemorySection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
@@ -55,34 +83,6 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * An implementation of the core,
@@ -434,21 +434,17 @@ public class PS {
             case 7:
             case 8:
                 String world = loc.getWorld();
-                PlotArea last = null;
-                int count = 0;
                 int x = loc.getX();
                 int y = loc.getY();
                 int hash = world.hashCode();
                 for (PlotArea area : plotareas) {
-                    if (hash == area.worldhash && world.equals(area.worldname)) {
-                        if (area.contains(loc)) {
+                    if (hash == area.worldhash) {
+                        if (area.contains(loc.getX(), loc.getZ()) && world.equals(area.worldname)) {
                             return area;
                         }
-                        count++;
-                        last = area;
                     }
                 }
-                return count == 1 ? last : null;
+                return null;
             default:
                 PlotArea[] areas = plotareamap.get(loc.getWorld());
                 if (areas == null) {
@@ -498,6 +494,19 @@ public class PS {
         }
     }
     
+    public PlotArea getPlotAreaAbs(String world, String id) {
+        PlotArea[] areas = plotareamap.get(world);
+        if (areas == null) {
+            return null;
+        }
+        for (PlotArea area : areas) {
+            if (StringMan.isEqual(id, area.id)) {
+                return area;
+            }
+        }
+        return null;
+    }
+
     public PlotArea getPlotAreaByString(String search) {
         String[] split = search.split(";|,");
         PlotArea[] areas = plotareamap.get(split[0]);
@@ -556,8 +565,8 @@ public class PS {
                 int y = loc.getY();
                 int hash = world.hashCode();
                 for (PlotArea area : plotareas) {
-                    if (hash == area.worldhash && world.equals(area.worldname)) {
-                        if (area.contains(loc)) {
+                    if (hash == area.worldhash) {
+                        if (area.contains(loc.getX(), loc.getZ()) && world.equals(area.worldname)) {
                             return area;
                         }
                     }
@@ -571,7 +580,7 @@ public class PS {
                 switch (areas.length) {
                     case 0:
                         PlotArea a = areas[0];
-                        return a.contains(loc) ? a : null;
+                        return a.contains(loc.getX(), loc.getZ()) ? a : null;
                     case 2:
                     case 3:
                     case 4:
@@ -1583,7 +1592,7 @@ public class PS {
                 if (pos1 == null || pos2 == null || name.length() == 0) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }
-                if (getPlotArea(world, name) != null) {
+                if (getPlotAreaAbs(world, name) != null) {
                     continue;
                 }
                 ConfigurationSection section = areasSection.getConfigurationSection(areaId);

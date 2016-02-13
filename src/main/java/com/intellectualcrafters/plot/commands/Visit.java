@@ -80,12 +80,12 @@ public class Visit extends SubCommand {
                 page = Integer.parseInt(args[1]);
             }
             case 1: {
-                if (page == Integer.MIN_VALUE && MathMan.isInteger(args[0])) {
+                final UUID user = UUIDHandler.getCachedUUID(args[0], null);
+                if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
                     unsorted = PS.get().getPlots(player);
                     break;
                 }
-                final UUID user = UUIDHandler.getCachedUUID(args[0], null);
                 if (user != null) {
                     unsorted = PS.get().getPlots(user);
                 } else if (PS.get().getPlotAreaByString(args[0]) != null) {
