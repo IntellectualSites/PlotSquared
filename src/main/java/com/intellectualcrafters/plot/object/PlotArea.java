@@ -276,7 +276,7 @@ public abstract class PlotArea {
         final String homeDefault = config.getString("home.default");
         if (homeDefault.equalsIgnoreCase("side")) {
             DEFAULT_HOME = null;
-        } else if (homeDefault.equalsIgnoreCase("center")) {
+        } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle")) {
             DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
         } else {
             try {
