@@ -17,87 +17,26 @@ import java.util.Map;
  * <p>Different instances of this class can be created with static constructor methods.</p>
  */
 public abstract class TextualComponent implements Cloneable {
-    
+
     static {
         ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
         ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);
     }
-    
 
-    
-
-    
-
-    
-
-    
-
-    
-    static TextualComponent deserialize(final Map<String, Object> map) {
-        if (map.containsKey("key") && map.size() == 2 && map.containsKey("value")) {
-            // Arbitrary text component
-            return ArbitraryTextTypeComponent.deserialize(map);
-        } else if (map.size() >= 2 && map.containsKey("key") && !map.containsKey("value") /* It contains keys that START WITH value */) {
-            // Complex JSON object
-            return ComplexTextTypeComponent.deserialize(map);
-        }
-        
-        return null;
-    }
-    
-    static boolean isTextKey(final String key) {
-        return "translate".equals(key) || "text".equals(key) || "score".equals(key) || "selector".equals(key);
-    }
-    
-    static boolean isTranslatableText(final TextualComponent component) {
-        return component instanceof ComplexTextTypeComponent && "translate".equals(component.getKey());
+    @Override
+    public String toString() {
+        return getReadableString();
     }
 
     /**
-
-     @Override public String toString() {
-     return getReadableString();
-     }te a t
-    /**
-      * @return The JSON key used to represent text components of this type.
+     * @return The JSON key used to represent text components of this type.
      */
     public abstract String getKey();
 
-    extual component
-    representing a
-    string literal
-    .
-     * This is the default type of textual component when a single string literal is given to a method.
-     * @param textValue The text which will be represented.
-     * @return The text component representing the specified literal text.
-     */
-    public static TextualComponent rawText(final String textValue) {
-        return new ArbitraryTextTypeComponent("text", textValue);
-    }
-    
     /**
-     * Create a t
-     /**
      * @return A readable String
      */
     public abstract String getReadableString();
-
-    extual component
-    representing a
-    localized string
-    .
-     * The client will see this text component as their localized version of the specified string <em>key</em>, which can be overridden by a resource pack.
-     * <p>
-     * If the specified translation key is not present on the client resource pack, the translation key will be displayed as a string literal to the client.
-     * </p>
-     * @param translateKey The string key which maps to localized text.
-     * @return The text component representing the specified localized text.
-     */
-    public static TextualComponent localizedText(final String translateKey) {
-        return new ArbitraryTextTypeComponent("translate", translateKey);
-    }
-
-    private static void t
 
     /**
      * Clones a textual component instance.
@@ -106,13 +45,7 @@ public abstract class TextualComponent implements Cloneable {
     @Override
     public abstract TextualComponent clone() throws CloneNotSupportedException;
 
-    hrowUnsupportedSnapshot() {
-        throw new UnsupportedOperationException("This feature is only supported in snapshot releases.");
-    }
-    
     /**
-     * Create a t
-     /**
      * Writes the text data represented by this textual component to the specified JSON writer object.
      * A new object within the writer is not started.
      * @param writer The object to which to write the JSON data.
@@ -120,39 +53,35 @@ public abstract class TextualComponent implements Cloneable {
      */
     public abstract void writeJson(final JsonWriter writer) throws IOException;
 
-    extual component
-    representing a
-    scoreboard value
-    .
-     * The client will see their own score for the specified objective as the text represented by this component.
-     * <p>
-     * <b>This method is currently guaranteed to throw an {@code UnsupportedOperationException} as it is only supported on snapshot clients.</b>
-     * </p>
-     * @param scoreboardObjective The name of the objective for which to display the score.
-     * @return The text component representing the specified scoreboard score (for the viewing player), or {@code null} if an error occurs during JSON serialization.
-     */
-    public static TextualComponent objectiveScore(final String scoreboardObjective) {
-        return objectiveScore("*", scoreboardObjective);
+    static TextualComponent deserialize(final Map<String, Object> map) {
+        if (map.containsKey("key") && (map.size() == 2) && map.containsKey("value")) {
+            // Arbitrary text component
+            return ArbitraryTextTypeComponent.deserialize(map);
+        } else if ((map.size() >= 2) && map.containsKey("key") && !map.containsKey("value") /* It contains keys that START WITH value */) {
+            // Complex JSON object
+            return ComplexTextTypeComponent.deserialize(map);
+        }
+
+        return null;
     }
-    
+
+    static boolean isTextKey(final String key) {
+        return key.equals("translate") || key.equals("text") || key.equals("score") || key.equals("selector");
+    }
+
+    static boolean isTranslatableText(final TextualComponent component) {
+        return (component instanceof ComplexTextTypeComponent) && ((ComplexTextTypeComponent) component).getKey().equals("translate");
+    }
+
     /**
-     * Create a t
-     /**
      * Internal class used to represent all types of text components.
      * Exception validating done is on keys and values.
      */
     private static final class ArbitraryTextTypeComponent extends TextualComponent implements ConfigurationSerializable {
 
-        private String _key;
-        private String _value;
-
         public ArbitraryTextTypeComponent(final String key, final String value) {
             setKey(key);
             setValue(value);
-        }
-
-        public static ArbitraryTextTypeComponent deserialize(final Map<String, Object> map) {
-            return new ArbitraryTextTypeComponent(map.get("key").toString(), map.get("value").toString());
         }
 
         @Override
@@ -161,7 +90,7 @@ public abstract class TextualComponent implements Cloneable {
         }
 
         public void setKey(final String key) {
-            Preconditions.checkArgument(key != null && !key.isEmpty(), "The key must be specified.");
+            Preconditions.checkArgument((key != null) && !key.isEmpty(), "The key must be specified.");
             _key = key;
         }
 
@@ -174,8 +103,11 @@ public abstract class TextualComponent implements Cloneable {
             _value = value;
         }
 
+        private String _key;
+        private String _value;
+
         @Override
-        public TextualComponent clone() {
+        public TextualComponent clone() throws CloneNotSupportedException {
             // Since this is a private and final class, we can just reinstantiate this class instead of casting super.clone
             return new ArbitraryTextTypeComponent(getKey(), getValue());
         }
@@ -196,59 +128,25 @@ public abstract class TextualComponent implements Cloneable {
             };
         }
 
+        public static ArbitraryTextTypeComponent deserialize(final Map<String, Object> map) {
+            return new ArbitraryTextTypeComponent(map.get("key").toString(), map.get("value").toString());
+        }
+
         @Override
         public String getReadableString() {
             return getValue();
         }
     }
 
-    extual component
-    representing a
-    scoreboard value
-    .
-     * The client will see the score of the specified player for the specified objective as the text represented by this component.
-     * <p>
-     * <b>This method is currently guaranteed to throw an {@code UnsupportedOperationException} as it is only supported on snapshot clients.</b>
-     * </p>
-     * @param playerName The name of the player whos score will be shown. If this string represents the single-character sequence "*", the viewing player's score will be displayed.
-     * Standard minecraft selectors (@a, @p, etc) are <em>not</em> supported.
-     * @param scoreboardObjective The name of the objective for which to display the score.
-     * @return The text component representing the specified scoreboard score for the specified player, or {@code null} if an error occurs during JSON serialization.
-     */
-    public static TextualComponent objectiveScore(final String playerName, final String scoreboardObjective) {
-        throwUnsupportedSnapshot(); // Remove this line when the feature is released to non-snapshot versions, in addition to updating ALL THE
-        // OVERLOADS documentation accordingly
-
-        return new ComplexTextTypeComponent("score", ImmutableMap.<String, String>builder().put("name", playerName).put("objective",
-                scoreboardObjective).build());
-    }
-    
     /**
-     * Create a t
      * Internal class used to represent a text component with a nested JSON value.
      * Exception validating done is on keys and values.
      */
     private static final class ComplexTextTypeComponent extends TextualComponent implements ConfigurationSerializable {
 
-        private private String _key;
-        Map<String, String> _value;
-
         public ComplexTextTypeComponent(final String key, final Map<String, String> values) {
             setKey(key);
             setValue(values);
-        }
-
-        public static ComplexTextTypeComponent deserialize(final Map<String, Object> map) {
-            String key = null;
-            final Map<String, String> value = new HashMap<String, String>();
-            for (final Map.Entry<String, Object> valEntry : map.entrySet()) {
-                if ("key".equals(valEntry.getKey())) {
-                    key = (String) valEntry.getValue();
-                } else if (valEntry.getKey().startsWith("value.")) {
-                    value.put(valEntry.getKey().substring(6) /* Strips out the value prefix */, valEntry.getValue().toString());
-                }
-            }
-            return new ComplexTextTypeComponent(key, value);
         }
 
         @Override
@@ -257,7 +155,7 @@ public abstract class TextualComponent implements Cloneable {
         }
 
         public void setKey(final String key) {
-            Preconditions.checkArgument(key != null && !key.isEmpty(), "The key must be specified.");
+            Preconditions.checkArgument((key != null) && !key.isEmpty(), "The key must be specified.");
             _key = key;
         }
 
@@ -270,8 +168,11 @@ public abstract class TextualComponent implements Cloneable {
             _value = value;
         }
 
+        private String _key;
+        private Map<String, String> _value;
+
         @Override
-        public TextualComponent clone() {
+        public TextualComponent clone() throws CloneNotSupportedException {
             // Since this is a private and final class, we can just reinstantiate this class instead of casting super.clone
             return new ComplexTextTypeComponent(getKey(), getValue());
         }
@@ -299,6 +200,19 @@ public abstract class TextualComponent implements Cloneable {
             };
         }
 
+        public static ComplexTextTypeComponent deserialize(final Map<String, Object> map) {
+            String key = null;
+            final Map<String, String> value = new HashMap<String, String>();
+            for (final Map.Entry<String, Object> valEntry : map.entrySet()) {
+                if (valEntry.getKey().equals("key")) {
+                    key = (String) valEntry.getValue();
+                } else if (valEntry.getKey().startsWith("value.")) {
+                    value.put(valEntry.getKey().substring(6) /* Strips out the value prefix */, valEntry.getValue().toString());
+                }
+            }
+            return new ComplexTextTypeComponent(key, value);
+        }
+
         @Override
         public String getReadableString() {
             return getKey();
@@ -306,7 +220,64 @@ public abstract class TextualComponent implements Cloneable {
     }
 
     /**
-     * Creaextual component representing a player name, retrievable by using a standard minecraft selector.
+     * Create a textual component representing a string literal.
+     * This is the default type of textual component when a single string literal is given to a method.
+     * @param textValue The text which will be represented.
+     * @return The text component representing the specified literal text.
+     */
+    public static TextualComponent rawText(final String textValue) {
+        return new ArbitraryTextTypeComponent("text", textValue);
+    }
+
+    /**
+     * Create a textual component representing a localized string.
+     * The client will see this text component as their localized version of the specified string <em>key</em>, which can be overridden by a resource pack.
+     * <p>
+     * If the specified translation key is not present on the client resource pack, the translation key will be displayed as a string literal to the client.
+     * </p>
+     * @param translateKey The string key which maps to localized text.
+     * @return The text component representing the specified localized text.
+     */
+    public static TextualComponent localizedText(final String translateKey) {
+        return new ArbitraryTextTypeComponent("translate", translateKey);
+    }
+
+    private static void throwUnsupportedSnapshot() {
+        throw new UnsupportedOperationException("This feature is only supported in snapshot releases.");
+    }
+
+    /**
+     * Create a textual component representing a scoreboard value.
+     * The client will see their own score for the specified objective as the text represented by this component.
+     * <p>
+     * <b>This method is currently guaranteed to throw an {@code UnsupportedOperationException} as it is only supported on snapshot clients.</b>
+     * </p>
+     * @param scoreboardObjective The name of the objective for which to display the score.
+     * @return The text component representing the specified scoreboard score (for the viewing player), or {@code null} if an error occurs during JSON serialization.
+     */
+    public static TextualComponent objectiveScore(final String scoreboardObjective) {
+        return objectiveScore("*", scoreboardObjective);
+    }
+
+    /**
+     * Create a textual component representing a scoreboard value.
+     * The client will see the score of the specified player for the specified objective as the text represented by this component.
+     * <p>
+     * <b>This method is currently guaranteed to throw an {@code UnsupportedOperationException} as it is only supported on snapshot clients.</b>
+     * </p>
+     * @param playerName The name of the player whos score will be shown. If this string represents the single-character sequence "*", the viewing player's score will be displayed.
+     * Standard minecraft selectors (@a, @p, etc) are <em>not</em> supported.
+     * @param scoreboardObjective The name of the objective for which to display the score.
+     * @return The text component representing the specified scoreboard score for the specified player, or {@code null} if an error occurs during JSON serialization.
+     */
+    public static TextualComponent objectiveScore(final String playerName, final String scoreboardObjective) {
+        throwUnsupportedSnapshot(); // Remove this line when the feature is released to non-snapshot versions, in addition to updating ALL THE OVERLOADS documentation accordingly
+
+        return new ComplexTextTypeComponent("score", ImmutableMap.<String, String> builder().put("name", playerName).put("objective", scoreboardObjective).build());
+    }
+
+    /**
+     * Create a textual component representing a player name, retrievable by using a standard minecraft selector.
      * The client will see the players or entities captured by the specified selector as the text represented by this component.
      * <p>
      * <b>This method is currently guaranteed to throw an {@code UnsupportedOperationException} as it is only supported on snapshot clients.</b>
