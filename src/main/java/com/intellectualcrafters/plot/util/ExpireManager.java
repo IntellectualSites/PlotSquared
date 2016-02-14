@@ -78,7 +78,7 @@ public class ExpireManager {
                             updateExpired(area);
                             return;
                         }
-                        if ((plots.size() == 0)) {
+                        if ((plots.isEmpty())) {
                             if (updateExpired(area)) {
                                 PS.debug("$2[&5Expire&dManager$2] $4Re-evaluating expired plots for: " + area);
                                 return;
@@ -168,7 +168,7 @@ public class ExpireManager {
         final String name = UUIDHandler.getName(uuid);
         if (name != null) {
             long last;
-            if (dates.contains(uuid)) {
+            if (dates.containsKey(uuid)) {
                 last = dates.get(uuid);
             } else {
                 OfflinePlotPlayer opp;
@@ -207,9 +207,7 @@ public class ExpireManager {
     public static List<Plot> getOldPlots(final PlotArea area) {
         final ArrayList<Plot> plots = new ArrayList<>(area.getPlots());
         final List<Plot> toRemove = new ArrayList<>();
-        final Iterator<Plot> iter = plots.iterator();
-        while (iter.hasNext()) {
-            final Plot plot = iter.next();
+        for (Plot plot : plots) {
             final Flag keepFlag = FlagManager.getPlotFlagRaw(plot, "keep");
             if ((keepFlag != null) && (Boolean) keepFlag.getValue()) {
                 continue;

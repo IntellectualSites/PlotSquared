@@ -36,13 +36,6 @@ import java.util.List;
 public class ReflectionUtils {
     
     private static String version;
-
-    public ReflectionUtils(final String version) {
-        ReflectionUtils.version = version;
-        preClassB += "." + version;
-        preClassM += "." + version;
-    }
-    
     /**
      * prefix of bukkit classes
      */
@@ -51,6 +44,12 @@ public class ReflectionUtils {
      * prefix of minecraft classes
      */
     private static String preClassM = "net.minecraft.server";
+
+    public ReflectionUtils(final String version) {
+        ReflectionUtils.version = version;
+        preClassB += "." + version;
+        preClassM += "." + version;
+    }
     
     public static Class<?> getNmsClass(final String name) {
         final String className = "net.minecraft.server." + version + "." + name;
@@ -252,7 +251,7 @@ public class ReflectionUtils {
          *
          * @throws RuntimeException if method not found
          */
-        public RefMethod getMethod(final String name, final Object... types) throws NoSuchMethodException {
+        public RefMethod getMethod(final String name, final Object... types) {
             try {
                 final Class[] classes = new Class[types.length];
                 int i = 0;

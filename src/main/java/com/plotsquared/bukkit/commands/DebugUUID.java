@@ -74,30 +74,26 @@ public class DebugUUID extends SubCommand {
         final UUIDWrapper newWrapper;
         
         switch (args[0].toLowerCase()) {
-            case "lower": {
+            case "lower":
                 newWrapper = new LowerOfflineUUIDWrapper();
                 break;
-            }
-            case "offline": {
+            case "offline":
                 newWrapper = new OfflineUUIDWrapper();
                 break;
-            }
-            case "online": {
+            case "online":
                 newWrapper = new DefaultUUIDWrapper();
                 break;
-            }
-            default: {
+            default:
                 try {
                     final Class<?> clazz = Class.forName(args[0]);
                     newWrapper = (UUIDWrapper) clazz.newInstance();
-                } catch (final Exception e) {
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert <lower|offline|online>");
                     return false;
                 }
-            }
         }
-        
-        if ((args.length != 2) || !args[1].equals("-o")) {
+
+        if (args.length != 2 || !"-o".equals(args[1])) {
             MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert " + args[0] + " - o");
             MainUtil.sendMessage(player, "&cBe aware of the following!");
             MainUtil.sendMessage(player, "&8 - &cUse the database command or another method to backup your plots beforehand");
@@ -120,9 +116,9 @@ public class DebugUUID extends SubCommand {
         }
         
         MainUtil.sendMessage(player, "&7 - Initializing map");
-        
-        final HashMap<UUID, UUID> uCMap = new HashMap<UUID, UUID>();
-        final HashMap<UUID, UUID> uCReverse = new HashMap<UUID, UUID>();
+
+        final HashMap<UUID, UUID> uCMap = new HashMap<>();
+        final HashMap<UUID, UUID> uCReverse = new HashMap<>();
         
         MainUtil.sendMessage(player, "&7 - Collecting playerdata");
         
@@ -187,7 +183,7 @@ public class DebugUUID extends SubCommand {
                 uCReverse.put(uuid2, uuid);
             }
         }
-        if (uCMap.size() == 0) {
+        if (uCMap.isEmpty()) {
             MainUtil.sendMessage(player, "&c - Error! Attempting to repopulate");
             for (final OfflinePlotPlayer op : currentUUIDWrapper.getOfflinePlayers()) {
                 if (op.getLastPlayed() != 0) {
@@ -201,7 +197,7 @@ public class DebugUUID extends SubCommand {
                     }
                 }
             }
-            if (uCMap.size() == 0) {
+            if (uCMap.isEmpty()) {
                 MainUtil.sendMessage(player, "&cError. Failed to collect UUIDs!");
                 return false;
             } else {
@@ -229,13 +225,13 @@ public class DebugUUID extends SubCommand {
                         for (String line : lines) {
                             try {
                                 line = line.trim();
-                                if (line.length() == 0) {
+                                if (line.isEmpty()) {
                                     continue;
                                 }
                                 line = line.replaceAll("[\\|][0-9]+[\\|][0-9]+[\\|]", "");
                                 final String[] split = line.split("\\|");
                                 final String name = split[0];
-                                if ((name.length() == 0) || (name.length() > 16) || !StringMan.isAlphanumericUnd(name)) {
+                                if (name.isEmpty() || name.length() > 16 || !StringMan.isAlphanumericUnd(name)) {
                                     continue;
                                 }
                                 final UUID old = currentUUIDWrapper.getUUID(name);
@@ -302,16 +298,13 @@ public class DebugUUID extends SubCommand {
                 if (newWrapper instanceof OfflineUUIDWrapper) {
                     PS.get().config.set("UUID.force-lowercase", false);
                     PS.get().config.set("UUID.offline", true);
-                } else if (newWrapper instanceof LowerOfflineUUIDWrapper) {
-                    PS.get().config.set("UUID.force-lowercase", true);
-                    PS.get().config.set("UUID.offline", true);
                 } else if (newWrapper instanceof DefaultUUIDWrapper) {
                     PS.get().config.set("UUID.force-lowercase", false);
                     PS.get().config.set("UUID.offline", false);
                 }
                 try {
                     PS.get().config.save(PS.get().configFile);
-                } catch (final Exception e) {
+                } catch (IOException e) {
                     MainUtil.sendMessage(player, "Could not save configuration. It will need to be manuall set!");
                 }
                 

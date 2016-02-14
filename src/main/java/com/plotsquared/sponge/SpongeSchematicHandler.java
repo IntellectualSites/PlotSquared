@@ -1,14 +1,5 @@
 package com.plotsquared.sponge;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.world.World;
-
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.IntTag;
@@ -25,6 +16,14 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.sponge.util.SpongeUtil;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.world.World;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 public class SpongeSchematicHandler extends SchematicHandler {
     
@@ -63,7 +62,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                 TaskManager.runTask(new Runnable() {
                     @Override
                     public void run() {
-                        if (queue.size() == 0) {
+                        if (queue.isEmpty()) {
                             TaskManager.runTaskAsync(new Runnable() {
                                 @Override
                                 public void run() {
@@ -108,7 +107,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                             @Override
                             public void run() {
                                 final long start = System.currentTimeMillis();
-                                while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < 20)) {
+                                while ((!chunks.isEmpty()) && ((System.currentTimeMillis() - start) < 20)) {
                                     // save schematics
                                     final ChunkLoc chunk = chunks.remove(0);
                                     final int X = chunk.x;
@@ -268,7 +267,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                         }
                                     }
                                 }
-                                if (chunks.size() != 0) {
+                                if (!chunks.isEmpty()) {
                                     TaskManager.runTaskLater(this, 1);
                                 } else {
                                     regionTask.run();

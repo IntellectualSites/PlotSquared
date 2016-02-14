@@ -2,22 +2,6 @@ package com.plotsquared.bukkit.util.block;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -33,9 +17,26 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class FastQueue_1_8_3 extends SlowQueue {
-    
+
+    public final SendChunk chunksender;
     private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
     private final RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
     private final RefClass classPacket = getRefClass("{nms}.Packet");
@@ -47,7 +48,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
     private final RefField mustSave = classChunk.getField("mustSave");
     private final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
     private final RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
-    
+    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     private RefMethod methodGetHandlePlayer;
     private RefMethod methodGetHandleChunk;
     private RefConstructor MapChunk;
@@ -61,10 +62,6 @@ public class FastQueue_1_8_3 extends SlowQueue {
     private RefField fieldSections;
     private RefField fieldWorld;
     private RefMethod methodGetIdArray;
-    
-    public final SendChunk chunksender;
-
-    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
     public FastQueue_1_8_3() throws NoSuchMethodException {
         methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
@@ -84,7 +81,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-                if (toUpdate.size() == 0) {
+                if (toUpdate.isEmpty()) {
                     return;
                 }
                 int count = 0;
@@ -103,9 +100,9 @@ public class FastQueue_1_8_3 extends SlowQueue {
         }, 1);
         MainUtil.initCache();
     }
-    
+
     public void update(final Collection<Chunk> chunks) {
-        if (chunks.size() == 0) {
+        if (chunks.isEmpty()) {
             return;
         }
         if (!MainUtil.canSendChunk) {
@@ -123,7 +120,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
             MainUtil.canSendChunk = false;
         }
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
      * @param pc
@@ -140,7 +137,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
         chunk.load(true);
         try {
             final boolean flag = world.getEnvironment() == Environment.NORMAL;
-            
+
             // Sections
             final Method getHandele = chunk.getClass().getDeclaredMethod("getHandle");
             final Object c = getHandele.invoke(chunk);
@@ -149,15 +146,15 @@ public class FastQueue_1_8_3 extends SlowQueue {
             sf.setAccessible(true);
             final Field tf = clazz.getDeclaredField("tileEntities");
             final Field ef = clazz.getDeclaredField("entitySlices");
-            
+
             final Object[] sections = (Object[]) sf.get(c);
             final HashMap<?, ?> tiles = (HashMap<?, ?>) tf.get(c);
             final List<?>[] entities = (List<?>[]) ef.get(c);
-            
+
             Method xm = null;
             Method ym = null;
             Method zm = null;
-            
+
             // Trim tiles
             final Set<Entry<?, ?>> entryset = (Set<Entry<?, ?>>) (Set<?>) tiles.entrySet();
             final Iterator<Entry<?, ?>> iter = entryset.iterator();
@@ -183,14 +180,14 @@ public class FastQueue_1_8_3 extends SlowQueue {
                     iter.remove();
                 }
             }
-            
+
             // Trim entities
             for (int i = 0; i < 16; i++) {
                 if ((entities[i] != null) && (fs.getCount(i) >= 4096)) {
                     entities[i].clear();
                 }
             }
-            
+
             // Efficiently merge sections
             for (int j = 0; j < sections.length; j++) {
                 if (fs.getCount(j) == 0) {
@@ -227,7 +224,8 @@ public class FastQueue_1_8_3 extends SlowQueue {
                 }
             }
             // Clear
-        } catch (final Exception e) {
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException |
+                NoSuchFieldException e) {
             e.printStackTrace();
         }
         int[][] biomes = fs.biomes;
@@ -248,11 +246,11 @@ public class FastQueue_1_8_3 extends SlowQueue {
             }
         }
     }
-    
+
     public Object newChunkSection(final int i, final boolean flag, final char[] ids) {
         return classChunkSectionConstructor.create(i, flag, ids);
     }
-    
+
     public char[] getIdArray(final Object obj) {
         return (char[]) methodGetIdArray.of(obj).call();
     }
@@ -265,7 +263,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
     public PlotChunk<Chunk> getChunk(ChunkWrapper wrap) {
         return new FastChunk_1_8_3(wrap);
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
      * @param pc
@@ -277,15 +275,14 @@ public class FastQueue_1_8_3 extends SlowQueue {
             final Chunk chunk = bc.getChunk();
             if (!chunk.isLoaded()) {
                 chunk.load(false);
-            }
-            else {
+            } else {
                 chunk.unload(true, false);
                 chunk.load(false);
             }
-            
+
             // Initialize lighting
             final Object c = methodGetHandleChunk.of(chunk).call();
-            
+
             if (fixAll && !(boolean) methodAreNeighborsLoaded.of(c).call(1)) {
                 World world = chunk.getWorld();
                 ChunkWrapper wrapper = bc.getChunkWrapper();
@@ -305,19 +302,19 @@ public class FastQueue_1_8_3 extends SlowQueue {
                     return false;
                 }
             }
-            
+
             methodInitLighting.of(c).call();
-            
+
             if ((bc.getTotalRelight() == 0 && !fixAll)) {
                 return true;
             }
-            
+
             final Object[] sections = (Object[]) fieldSections.of(c).get();
             final Object w = fieldWorld.of(c).get();
-            
+
             final int X = chunk.getX() << 4;
             final int Z = chunk.getZ() << 4;
-            
+
             RefExecutor relight = methodX.of(w);
             for (int j = 0; j < sections.length; j++) {
                 final Object section = sections[j];
@@ -376,22 +373,19 @@ public class FastQueue_1_8_3 extends SlowQueue {
         }
         return false;
     }
-    
+
     public boolean isSurrounded(Object[] sections, int x, int y, int z) {
         return isSolid(getId(sections, x, y + 1, z))
-        && isSolid(getId(sections, x + 1, y - 1, z))
-        && isSolid(getId(sections, x - 1, y, z))
-        && isSolid(getId(sections, x, y, z + 1))
-        && isSolid(getId(sections, x, y, z - 1));
+                && isSolid(getId(sections, x + 1, y - 1, z))
+                && isSolid(getId(sections, x - 1, y, z))
+                && isSolid(getId(sections, x, y, z + 1))
+                && isSolid(getId(sections, x, y, z - 1));
     }
-    
+
     public boolean isSolid(int i) {
-        if (i == 0) {
-            return false;
-        }
-        return Material.getMaterial(i).isOccluding();
+        return i != 0 && Material.getMaterial(i).isOccluding();
     }
-    
+
     public int getId(Object[] sections, int x, int y, int z) {
         if (x < 0 || x > 15 || z < 0 || z > 15) {
             return 1;

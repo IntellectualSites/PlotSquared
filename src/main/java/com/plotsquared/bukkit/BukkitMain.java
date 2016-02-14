@@ -1,28 +1,5 @@
 package com.plotsquared.bukkit;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-import org.bukkit.World;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
 import com.intellectualcrafters.plot.PS;
@@ -96,6 +73,30 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
+import org.bukkit.World;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
@@ -115,11 +116,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 if (split.length == 3) {
                     version[2] = Integer.parseInt(split[2]);
                 }
-            } catch (final Exception e) {
+            } catch (NumberFormatException e) {
                 e.printStackTrace();
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion()));
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
-                return new int[] { Integer.MAX_VALUE, 0, 0 };
+                return new int[]{Integer.MAX_VALUE, 0, 0};
             }
         }
         return version;
@@ -261,7 +262,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                             continue;
                                         }
                                         List<MetadataValue> meta = entity.getMetadata("plot");
-                                        if (meta.size() == 0) {
+                                        if (meta.isEmpty()) {
                                             continue;
                                         }
                                         Plot origin = (Plot) meta.get(0).value();
@@ -322,13 +323,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                         if (BukkitUtil.getLocation(loc).isPlotRoad()) {
                                             final Entity passenger = entity.getPassenger();
                                             if (!(passenger instanceof Player)) {
-                                                if (entity.getMetadata("keep").size() == 0) {
+                                                if (entity.getMetadata("keep").isEmpty()) {
                                                     iter.remove();
                                                     entity.remove();
                                                 }
                                             }
                                         }
-                                        continue;
                                     }
                                 }
                             }
@@ -412,7 +412,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             if (econ.init()) {
                 return econ;
             }
-        } catch (final Throwable e) {}
+        } catch (final Throwable ignored) {
+        }
         return null;
     }
     
@@ -428,11 +429,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
             try {
                 return new FastQueue_1_8_3();
-            } catch (final Throwable e) {
+            } catch (NoSuchMethodException e) {
                 e.printStackTrace();
                 try {
                     return new FastQueue_1_8();
-                } catch (Throwable e2) {
+                } catch (NoSuchMethodException e2) {
                     e2.printStackTrace();
                     return new SlowQueue();
                 }
@@ -440,7 +441,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         try {
             return new FastQueue_1_7();
-        } catch (final Throwable e) {
+        } catch (NoSuchMethodException e) {
             return new SlowQueue();
         }
     }
@@ -524,9 +525,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             FlagManager.removeFlag(FlagManager.getFlag("titles"));
         } else {
             AbstractTitle.TITLE_CLASS = new DefaultTitle();
-            if (wrapper instanceof DefaultUUIDWrapper) {
-                Settings.TWIN_MODE_UUID = true;
-            } else if ((wrapper.getClass() == OfflineUUIDWrapper.class) && !Bukkit.getOnlineMode()) {
+            if (wrapper instanceof DefaultUUIDWrapper || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
                 Settings.TWIN_MODE_UUID = true;
             }
         }
@@ -579,7 +578,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             final Metrics metrics = new Metrics(this);
             metrics.start();
             log(C.PREFIX.s() + "&6Metrics enabled.");
-        } catch (final Exception e) {
+        } catch (IOException e) {
             log(C.PREFIX.s() + "&cFailed to load up metrics.");
         }
     }
@@ -667,8 +666,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         final Class<?> bukkitServerClass = server.getClass();
         String[] pas = bukkitServerClass.getName().split("\\.");
         if (pas.length == 5) {
-            final String verB = pas[3];
-            return verB;
+            return pas[3];
         }
         try {
             final Method getHandle = bukkitServerClass.getDeclaredMethod("getHandle");
@@ -676,10 +674,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             final Class handleServerClass = handle.getClass();
             pas = handleServerClass.getName().split("\\.");
             if (pas.length == 5) {
-                final String verM = pas[3];
-                return verM;
+                return pas[3];
             }
-        } catch (final Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | SecurityException | NoSuchMethodException | IllegalArgumentException e) {
             e.printStackTrace();
         }
         PS.debug("Unknown NMS package: " + StringMan.getString(pas));

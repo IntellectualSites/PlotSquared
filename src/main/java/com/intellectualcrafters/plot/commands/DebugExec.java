@@ -74,7 +74,8 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-@CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = { "exec" }, category = CommandCategory.DEBUG)
+@CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = "exec",
+        category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
     
     private ScriptEngine engine;
@@ -85,13 +86,16 @@ public class DebugExec extends SubCommand {
             final File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
             if (file.exists()) {
                 init();
-                final String script = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"), StandardCharsets.UTF_8),
-                System.getProperty("line.separator"));
+                final String script = StringMan.join(Files
+                                .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"),
+                                        StandardCharsets.UTF_8),
+                        System.getProperty("line.separator"));
                 scope.put("THIS", this);
                 scope.put("PlotPlayer", ConsolePlayer.getConsole());
                 engine.eval(script, scope);
             }
-        } catch (final Exception e) {}
+        } catch (IOException | ScriptException e) {
+        }
     }
     
     public ScriptEngine getEngine() {
@@ -106,9 +110,9 @@ public class DebugExec extends SubCommand {
         if (engine != null) {
             return;
         }
-        engine = (new ScriptEngineManager(null)).getEngineByName("nashorn");
+        engine = new ScriptEngineManager(null).getEngineByName("nashorn");
         if (engine == null) {
-            engine = (new ScriptEngineManager(null)).getEngineByName("JavaScript");
+            engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
         }
         final ScriptContext context = new SimpleScriptContext();
         scope = context.getBindings(ScriptContext.ENGINE_SCOPE);
@@ -168,7 +172,7 @@ public class DebugExec extends SubCommand {
                     final PlotAnalysis analysis = plot.getComplexity();
                     if (analysis != null) {
                         final int complexity = analysis.getComplexity();
-                        MainUtil.sendMessage(player, "Changes/column: " + (analysis.changes / 1.0));
+                        MainUtil.sendMessage(player, "Changes/column: " + analysis.changes / 1.0);
                         MainUtil.sendMessage(player, "Complexity: " + complexity);
                         return true;
                     }
@@ -181,7 +185,7 @@ public class DebugExec extends SubCommand {
                     });
                     return true;
                 }
-                case "calibrate-analysis": {
+                case "calibrate-analysis":
                     if (args.length != 2) {
                         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec analyze <threshold>");
                         MainUtil.sendMessage(player, "$1<threshold> $2= $1The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating it)");
@@ -202,8 +206,7 @@ public class DebugExec extends SubCommand {
                         }
                     }, threshold);
                     return true;
-                }
-                case "stop-expire": {
+                case "stop-expire":
                     if (ExpireManager.task != -1) {
                         PS.get().TASK.cancelTask(ExpireManager.task);
                     } else {
@@ -211,8 +214,7 @@ public class DebugExec extends SubCommand {
                     }
                     ExpireManager.task = -1;
                     return MainUtil.sendMessage(player, "Cancelled task.");
-                }
-                case "remove-flag": {
+                case "remove-flag":
                     if (args.length != 2) {
                         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec remove-flag <flag>");
                         return false;
@@ -224,20 +226,19 @@ public class DebugExec extends SubCommand {
                         }
                     }
                     return MainUtil.sendMessage(player, "Cleared flag: " + flag);
-                }
                 case "start-rgar": {
                     if (args.length != 2) {
                         MainUtil.sendMessage(player, "&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
-                    boolean result;
                     PlotArea area = PS.get().getPlotAreaByString(args[1]);
                     if (area == null) {
                         MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;
                     }
+                    boolean result;
                     if (HybridUtils.regions != null) {
-                        result = ((HybridUtils.manager)).scheduleRoadUpdate(area, HybridUtils.regions, 0);
+                        result = HybridUtils.manager.scheduleRoadUpdate(area, HybridUtils.regions, 0);
                     } else {
                         result = HybridUtils.manager.scheduleRoadUpdate(area, 0);
                     }
@@ -247,7 +248,7 @@ public class DebugExec extends SubCommand {
                     }
                     return true;
                 }
-                case "stop-rgar": {
+                case "stop-rgar":
                     if (!HybridUtils.UPDATE) {
                         MainUtil.sendMessage(player, "&cTASK NOT RUNNING!");
                         return false;
@@ -255,16 +256,14 @@ public class DebugExec extends SubCommand {
                     HybridUtils.UPDATE = false;
                     MainUtil.sendMessage(player, "&cCancelling task... (please wait)");
                     return true;
-                }
-                case "start-expire": {
+                case "start-expire":
                     if (ExpireManager.task == -1) {
                         ExpireManager.runTask();
                     } else {
                         return MainUtil.sendMessage(player, "Plot expiry task already started");
                     }
                     return MainUtil.sendMessage(player, "Started plot expiry task");
-                }
-                case "update-expired": {
+                case "update-expired":
                     if (args.length > 1) {
                         PlotArea area = PS.get().getPlotAreaByString(args[1]);
                         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
@@ -276,8 +275,7 @@ public class DebugExec extends SubCommand {
                         return true;
                     }
                     return MainUtil.sendMessage(player, "Use /plot debugexec update-expired <world>");
-                }
-                case "show-expired": {
+                case "show-expired":
                     if (args.length > 1) {
                         final String world = args[1];
                         if (!WorldUtil.IMP.isWorld(world)) {
@@ -294,8 +292,7 @@ public class DebugExec extends SubCommand {
                         return true;
                     }
                     return MainUtil.sendMessage(player, "Use /plot debugexec show-expired <world>");
-                }
-                case "seen": {
+                case "seen":
                     if (args.length != 2) {
                         return MainUtil.sendMessage(player, "Use /plot debugexec seen <player>");
                     }
@@ -304,7 +301,7 @@ public class DebugExec extends SubCommand {
                         return MainUtil.sendMessage(player, "player not found: " + args[1]);
                     }
                     final OfflinePlotPlayer op = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
-                    if ((op == null) || (op.getLastPlayed() == 0)) {
+                    if (op == null || op.getLastPlayed() == 0) {
                         return MainUtil.sendMessage(player, "player hasn't connected before: " + args[1]);
                     }
                     final Timestamp stamp = new Timestamp(op.getLastPlayed());
@@ -315,8 +312,7 @@ public class DebugExec extends SubCommand {
                     MainUtil.sendMessage(player, "GMT: " + date.toGMTString());
                     MainUtil.sendMessage(player, "Local: " + date.toLocaleString());
                     return true;
-                }
-                case "trim-check": {
+                case "trim-check":
                     if (args.length != 2) {
                         MainUtil.sendMessage(player, "Use /plot debugexec trim-check <world>");
                         MainUtil.sendMessage(player, "&7 - Generates a list of regions to trim");
@@ -332,12 +328,11 @@ public class DebugExec extends SubCommand {
                         public void run() {
                             Trim.sendMessage("Processing is complete! Here's how many chunks would be deleted:");
                             Trim.sendMessage(" - MCA #: " + empty.size());
-                            Trim.sendMessage(" - CHUNKS: " + (empty.size() * 1024) + " (max)");
+                            Trim.sendMessage(" - CHUNKS: " + empty.size() * 1024 + " (max)");
                             Trim.sendMessage("Exporting log for manual approval...");
                             final File file = new File(PS.get().IMP.getDirectory() + File.separator + "trim.txt");
-                            PrintWriter writer;
                             try {
-                                writer = new PrintWriter(file);
+                                PrintWriter writer = new PrintWriter(file);
                                 for (final ChunkLoc loc : empty) {
                                     writer.println(world + "/region/r." + loc.x + "." + loc.z + ".mca");
                                 }
@@ -357,18 +352,18 @@ public class DebugExec extends SubCommand {
                         MainUtil.sendMessage(player, "Trim task already started!");
                     }
                     return result;
-                }
                 case "h":
                 case "he":
                 case "?":
-                case "help": {
+                case "help":
                     MainUtil.sendMessage(player, "Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, "|") + ">");
                     return false;
-                }
-                case "addcmd": {
+                case "addcmd":
                     try {
-                        final String cmd = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8),
-                        System.getProperty("line.separator"));
+                        final String cmd = StringMan.join(Files
+                                        .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]),
+                                                StandardCharsets.UTF_8),
+                                System.getProperty("line.separator"));
                         final Command<PlotPlayer> subcommand = new Command<PlotPlayer>(args[1].split("\\.")[0]) {
                             @Override
                             public boolean onCommand(final PlotPlayer plr, final String[] args) {
@@ -386,16 +381,14 @@ public class DebugExec extends SubCommand {
                         };
                         MainCommand.getInstance().addCommand(subcommand);
                         return true;
-                    } catch (final Exception e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec addcmd <file>");
                         return false;
                     }
-                }
-                case "runasync": {
+                case "runasync":
                     async = true;
-                }
-                case "run": {
+                case "run":
                     try {
                         script = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8),
                         System.getProperty("line.separator"));
@@ -411,8 +404,7 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     break;
-                }
-                case "allcmd": {
+                case "allcmd":
                     if (args.length < 3) {
                         C.COMMAND_SYNTAX.send(player, "/plot debugexec allcmd <condition> <command>");
                         return false;
@@ -420,9 +412,9 @@ public class DebugExec extends SubCommand {
                     long start = System.currentTimeMillis();
                     Command<PlotPlayer> cmd = MainCommand.getInstance().getCommand(args[3]);
                     String[] params = Arrays.copyOfRange(args, 4, args.length);
-                    if (args[1].equals("true")) {
-                        Location loc = (Location) player.getMeta("location");
-                        Plot plot = (Plot) player.getMeta("lastplot");
+                    if ("true".equals(args[1])) {
+                        Location loc = player.getMeta("location");
+                        Plot plot = player.getMeta("lastplot");
                         for (Plot current : PS.get().getBasePlots()) {
                             player.setMeta("location", current.getBottomAbs());
                             player.setMeta("lastplot", current);
@@ -445,19 +437,20 @@ public class DebugExec extends SubCommand {
                     scope.put("_2", params);
                     scope.put("_3", cmd);
                     script = "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if(" + args[1] + "){PlotPlayer.setMeta(\"location\",plot.getBottomAbs());PlotPlayer.setMeta(\"lastplot\",plot);_3.onCommand(PlotPlayer,_2)}}";
+
                     break;
-                }
-                case "all": {
+                case "all":
                     if (args.length < 3) {
                         C.COMMAND_SYNTAX.send(player, "/plot debugexec all <condition> <code>");
                         return false;
                     }
-                    script = "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if(" + args[1] + "){" + StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ") + "}}";
+                    script = "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if(" + args[1] + "){" + StringMan
+                            .join(Arrays.copyOfRange(args, 2, args.length), " ")
+                            + "}}";
+
                     break;
-                }
-                default: {
+                default:
                     script = StringMan.join(args, " ");
-                }
             }
             if (!ConsolePlayer.isConsole(player)) {
                 MainUtil.sendMessage(player, C.NOT_CONSOLE);

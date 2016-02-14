@@ -20,6 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.plotsquared.general.commands.CommandCaller;
+
 import java.io.File;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -27,13 +34,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.plotsquared.general.commands.CommandCaller;
 
 /**
  * Captions class.
@@ -150,7 +150,7 @@ public enum C {
     CLUSTER_REMOVED_HELPER("$4Successfully removed a helper from the cluster", "Cluster"),
     CLUSTER_REGENERATED("$4Successfully started cluster regeneration", "Cluster"),
     CLUSTER_TELEPORTING("$4Teleporting...", "Cluster"),
-    CLUSTER_INFO("$1Current cluster: $2%id%&-$1Name: $2%name%&-$1Owner: $2%owner%&-$1Size: $2%size%&-$1Rights: $2%rights%", "Cluster"),
+    CLUSTER_INFO("$1Current cluster: $2%type%&-$1Name: $2%name%&-$1Owner: $2%owner%&-$1Size: $2%size%&-$1Rights: $2%rights%", "Cluster"),
     /*
      * Border
      */
@@ -187,7 +187,7 @@ public enum C {
      */
     SWAP_OVERLAP("$2The proposed areas are not allowed to overlap", "Swap"),
     SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions", "Swap"),
-    SWAP_SYNTAX("$2/plots swap <plot id>", "Swap"),
+    SWAP_SYNTAX("$2/plots swap <plot type>", "Swap"),
     SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
     STARTED_SWAP("$2Started plot swap task. You will be notified when it finishes", "Swap"),
     /*
@@ -225,7 +225,7 @@ public enum C {
     PASTED("$4The plot selection was successfully pasted. It has been cleared from your clipboard.", "Clipboard"),
     PASTE_FAILED("$2Failed to paste the selection. Reason: $2%s", "Clipboard"),
     NO_CLIPBOARD("$2You don't have a selection in your clipboard", "Clipboard"),
-    CLIPBOARD_INFO("$2Current Selection - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2", "Clipboard"),
+    CLIPBOARD_INFO("$2Current Selection - Plot ID: $1%type$2, Width: $1%width$2, Total Blocks: $1%total$2", "Clipboard"),
     /*
      * Toggle
      */
@@ -298,8 +298,8 @@ public enum C {
      */
     TITLE_ENTERED_PLOT("$1Plot: %world%;%x%;%z%", "Titles"),
     TITLE_ENTERED_PLOT_SUB("$4Owned by %s", "Titles"),
-    PREFIX_GREETING("$1%id%$2> ", "Titles"),
-    PREFIX_FAREWELL("$1%id%$2> ", "Titles"),
+    PREFIX_GREETING("$1%type%$2> ", "Titles"),
+    PREFIX_FAREWELL("$1%type%$2> ", "Titles"),
     /*
      * Core Stuff
      */
@@ -315,7 +315,7 @@ public enum C {
     /*
      * BarAPI
      */
-    BOSSBAR_CLEARING("$2Clearing plot: $1%id%", "Bar API"),
+    BOSSBAR_CLEARING("$2Clearing plot: $1%type%", "Bar API"),
     
     DESC_SET("$2Plot description set", "Desc"),
     DESC_UNSET("$2Plot description unset", "Desc"),
@@ -443,12 +443,12 @@ public enum C {
     /*
      * Invalid
      */
-    NOT_VALID_DATA("$2That's not a valid data id.", "Invalid"),
+    NOT_VALID_DATA("$2That's not a valid data type.", "Invalid"),
     NOT_VALID_BLOCK("$2That's not a valid block: %s", "Invalid"),
     NOT_ALLOWED_BLOCK("$2That block is not allowed: %s", "Invalid"),
     NOT_VALID_NUMBER("$2That's not a valid number within the range: %s", "Invalid"),
-    NOT_VALID_PLOT_ID("$2That's not a valid plot id.", "Invalid"),
-    PLOT_ID_FORM("$2The plot id must be in the form: $1X;Y $2e.g. $1-5;7", "Invalid"),
+    NOT_VALID_PLOT_ID("$2That's not a valid plot type.", "Invalid"),
+    PLOT_ID_FORM("$2The plot type must be in the form: $1X;Y $2e.g. $1-5;7", "Invalid"),
     NOT_YOUR_PLOT("$2That is not your plot.", "Invalid"),
     NO_SUCH_PLOT("$2There is no such plot", "Invalid"),
     PLAYER_HAS_NOT_BEEN_ON("$2That player hasn't been in the plotworld", "Invalid"),
@@ -463,7 +463,7 @@ public enum C {
      */
     NEED_PLOT_NUMBER("$2You've got to specify a plot number or alias", "Need"),
     NEED_BLOCK("$2You've got to specify a block", "Need"),
-    NEED_PLOT_ID("$2You've got to specify a plot id.", "Need"),
+    NEED_PLOT_ID("$2You've got to specify a plot type.", "Need"),
     NEED_PLOT_WORLD("$2You've got to specify a plot area.", "Need"),
     NEED_USER("$2You need to specify a username", "Need"),
     /*
@@ -475,7 +475,7 @@ public enum C {
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
-    PLOT_INFO("$1ID: $2%id%$1&-"
+    PLOT_INFO("$1ID: $2%type%$1&-"
     + "$1Alias: $2%alias%$1&-"
     + "$1Owner: $2%owner%$1&-"
     + "$1Biome: $2%biome%$1&-"
@@ -493,7 +493,7 @@ public enum C {
     PLOT_INFO_BIOME("$1Biome:$2 %biome%", "Info"),
     PLOT_INFO_RATING("$1Rating:$2 %rating%", "Info"),
     PLOT_INFO_OWNER("$1Owner:$2 %owner%", "Info"),
-    PLOT_INFO_ID("$1ID:$2 %id%", "Info"),
+    PLOT_INFO_ID("$1ID:$2 %type%", "Info"),
     PLOT_INFO_ALIAS("$1Alias:$2 %alias%", "Info"),
     PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
     PLOT_USER_LIST(" $1%user%$2,", "Info"),
@@ -521,8 +521,8 @@ public enum C {
     AREA_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% areas", "List"),
     PLOT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% plots", "List"),
     PLOT_LIST_HEADER("$1List of %word% plots", "List"),
-    PLOT_LIST_ITEM("$2>> $1%id$2:$1%world $2- $1%owner", "List"),
-    PLOT_LIST_ITEM_ORDERED("$2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner", "List"),
+    PLOT_LIST_ITEM("$2>> $1%type$2:$1%world $2- $1%owner", "List"),
+    PLOT_LIST_ITEM_ORDERED("$2[$1%in$2] >> $1%type$2:$1%world $2- $1%owner", "List"),
     PLOT_LIST_FOOTER("$2>> $1%word% a total of $2%num% $1claimed %plot%.", "List"),
     /*
      * Left
@@ -595,7 +595,7 @@ public enum C {
     /*
      * Signs
      */
-    OWNER_SIGN_LINE_1("$1ID: $1%id%", "Signs"),
+    OWNER_SIGN_LINE_1("$1ID: $1%type%", "Signs"),
     OWNER_SIGN_LINE_2("$1Owner:", "Signs"),
     OWNER_SIGN_LINE_3("$2%plr%", "Signs"),
     OWNER_SIGN_LINE_4("$3Claimed", "Signs"),
@@ -670,11 +670,6 @@ public enum C {
         this(d, true, cat.toLowerCase());
     }
     
-    @Override
-    public String toString() {
-        return s;
-    }
-    
     public static String format(String m, final Object... args) {
         if (args.length == 0) {
             return m;
@@ -683,7 +678,7 @@ public enum C {
         if (args.length > 0) {
             for (int i = args.length - 1; i >= 0; i--) {
                 String arg = args[i].toString();
-                if (arg == null || arg.length() == 0) {
+                if (arg == null || arg.isEmpty()) {
                     map.put("%s" + i, "");
                 } else {
                     arg = C.color(arg);
@@ -783,6 +778,11 @@ public enum C {
         } catch (final Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String toString() {
+        return s;
     }
     
     public String s() {

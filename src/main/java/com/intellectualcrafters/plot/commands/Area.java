@@ -1,10 +1,5 @@
 package com.intellectualcrafters.plot.commands;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Set;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -31,6 +26,11 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Set;
 
 @CommandDeclaration(
 command = "area",
@@ -59,7 +59,7 @@ public class Area extends SubCommand {
                 }
                 switch (args.length) {
                     case 1: {
-                        C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                        C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:type]] [<modifier>=<value>]...");
                         return false;
                     }
                     case 2: {
@@ -67,7 +67,7 @@ public class Area extends SubCommand {
                             case "pos1": { // Set position 1
                                 HybridPlotWorld area = plr.<HybridPlotWorld> getMeta("area_create_area");
                                 if (area == null) {
-                                    C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                    C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:type]] [<modifier>=<value>]...");
                                     return false;
                                 }
                                 Location loc = plr.getLocation();
@@ -80,7 +80,7 @@ public class Area extends SubCommand {
                             case "pos2": { // Set position 2 and finish creation for type=2 (partial)
                                 final HybridPlotWorld area = plr.<HybridPlotWorld> getMeta("area_create_area");
                                 if (area == null) {
-                                    C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                    C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:type]] [<modifier>=<value>]...");
                                     return false;
                                 }
                                 Location pos1 = plr.getLocation();
@@ -100,7 +100,7 @@ public class Area extends SubCommand {
                                 final int offsetz = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final RegionWrapper region = new RegionWrapper(bx, tx, bz, tz);
                                 Set<PlotArea> areas = PS.get().getPlotAreas(area.worldname, region);
-                                if (areas.size() > 0) {
+                                if (!areas.isEmpty()) {
                                     C.CLUSTER_INTERSECTION.send(plr, areas.iterator().next().toString());
                                     return false;
                                 }
@@ -163,14 +163,14 @@ public class Area extends SubCommand {
                             return false;
                         }
                         Set<PlotArea> areas = PS.get().getPlotAreas(pa.worldname);
-                        if (areas.size() > 0) {
+                        if (!areas.isEmpty()) {
                             PlotArea area = areas.iterator().next();
                             pa.TYPE = area.TYPE;
                         }
                         for (int i = 2; i < args.length; i++) {
                             String[] pair = args[i].split("=");
                             if (pair.length != 2) {
-                                C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:type]] [<modifier>=<value>]...");
                                 return false;
                             }
                             switch (pair[0].toLowerCase()) {
@@ -225,7 +225,7 @@ public class Area extends SubCommand {
                                     break;
                                 }
                                 default: {
-                                    C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                    C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:type]] [<modifier>=<value>]...");
                                     return false;
                                 }
                             }
@@ -264,7 +264,7 @@ public class Area extends SubCommand {
                             return true;
                         }
                         if (pa.id == null) {
-                            C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                            C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:type]] [<modifier>=<value>]...");
                             return false;
                         }
                         if (WorldUtil.IMP.isWorld(pa.worldname)) {

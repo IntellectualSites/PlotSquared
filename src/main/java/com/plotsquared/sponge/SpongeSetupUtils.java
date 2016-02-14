@@ -1,11 +1,5 @@
 package com.plotsquared.sponge;
 
-import java.io.IOException;
-import java.util.Map.Entry;
-
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.gen.WorldGenerator;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
@@ -18,12 +12,17 @@ import com.plotsquared.sponge.generator.SpongeBasicGen;
 import com.plotsquared.sponge.generator.SpongeGeneratorWrapper;
 import com.plotsquared.sponge.generator.SpongePlotGenerator;
 import com.plotsquared.sponge.util.SpongeUtil;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.gen.WorldGenerator;
+
+import java.io.IOException;
+import java.util.Map.Entry;
 
 public class SpongeSetupUtils extends SetupUtils {
     
     @Override
     public void updateGenerators() {
-        if (SetupUtils.generators.size() > 0) {
+        if (!SetupUtils.generators.isEmpty()) {
             return;
         }
         // TODO get external world generators
@@ -33,7 +32,7 @@ public class SpongeSetupUtils extends SetupUtils {
     
     @Override
     public String getGenerator(final PlotArea plotworld) {
-        if (SetupUtils.generators.size() == 0) {
+        if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
         final World world = SpongeUtil.getWorld(plotworld.worldname);

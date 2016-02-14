@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.HashSet;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -37,14 +34,12 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-command = "merge",
-aliases = { "m" },
-description = "Merge the plot you are standing on, with another plot",
-permission = "plots.merge",
-usage = "/plot merge <all|n|e|s|w> [removeroads]",
-category = CommandCategory.SETTINGS,
-requiredType = RequiredType.NONE)
+import java.util.HashSet;
+import java.util.UUID;
+
+@CommandDeclaration(command = "merge", aliases = "m", description = "Merge the plot you are standing on, with another plot",
+        permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]", category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE)
 public class Merge extends SubCommand {
     public final static String[] values = new String[] { "north", "east", "south", "west", "auto" };
     public final static String[] aliases = new String[] { "n", "e", "s", "w", "all" };
@@ -93,17 +88,18 @@ public class Merge extends SubCommand {
             }
         }
         final PlotArea plotworld = plot.getArea();
-        if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d && EconHandler.manager.getMoney(plr) < plotworld.MERGE_PRICE) {
+        if (EconHandler.manager != null && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d
+                && EconHandler.manager.getMoney(plr) < plotworld.MERGE_PRICE) {
             sendMessage(plr, C.CANNOT_AFFORD_MERGE, plotworld.MERGE_PRICE + "");
             return false;
         }
-        int direction = -1;
         final int size = plot.getConnectedPlots().size();
         final int maxSize = Permissions.hasPermissionRange(plr, "plots.merge", Settings.MAX_PLOTS);
         if (size - 1> maxSize) {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.merge." + (size + 1));
             return false;
         }
+        int direction = -1;
         if (args.length == 0) {
 //            switch (direction(plr.getLocationFull().getYaw())) {
 //                case "NORTH":
@@ -120,13 +116,13 @@ public class Merge extends SubCommand {
 //                    break;
 //            }
         } else {
-            if (args[0].equalsIgnoreCase("all") || args[0].equalsIgnoreCase("auto")) {
+            if ("all".equalsIgnoreCase(args[0]) || "auto".equalsIgnoreCase(args[0])) {
                 boolean terrain = Settings.MERGE_REMOVES_ROADS;
                 if (args.length == 2) {
-                    terrain = args[1].equalsIgnoreCase("true");
+                    terrain = "true".equalsIgnoreCase(args[1]);
                 }
                 if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
-                    if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
+                    if (EconHandler.manager != null && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
                         EconHandler.manager.withdrawMoney(plr, plotworld.MERGE_PRICE);
                         sendMessage(plr, C.REMOVED_BALANCE, plotworld.MERGE_PRICE + "");
                     }
@@ -151,12 +147,12 @@ public class Merge extends SubCommand {
         }
         final boolean terrain;
         if (args.length == 2) {
-            terrain = args[1].equalsIgnoreCase("true");
+            terrain = "true".equalsIgnoreCase(args[1]);
         } else {
             terrain = Settings.MERGE_REMOVES_ROADS;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
-            if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
+            if (EconHandler.manager != null && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
                 EconHandler.manager.withdrawMoney(plr, plotworld.MERGE_PRICE);
                 sendMessage(plr, C.REMOVED_BALANCE, plotworld.MERGE_PRICE + "");
             }
@@ -191,7 +187,7 @@ public class Merge extends SubCommand {
                         sendMessage(accepter, C.MERGE_NOT_VALID);
                         return;
                     }
-                    if ((EconHandler.manager != null) && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
+                    if (EconHandler.manager != null && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
                         if (EconHandler.manager.getMoney(plr) < plotworld.MERGE_PRICE) {
                             sendMessage(plr, C.CANNOT_AFFORD_MERGE, plotworld.MERGE_PRICE + "");
                             return;

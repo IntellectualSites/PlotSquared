@@ -108,7 +108,7 @@ public class XML {
                 if ("CDATA".equals(token)) {
                     if (x.next() == '[') {
                         string = x.nextCDATA();
-                        if (string.length() > 0) {
+                        if (!string.isEmpty()) {
                             context.accumulate("content", string);
                         }
                         return false;
@@ -192,7 +192,7 @@ public class XML {
                             return false;
                         } else if (token instanceof String) {
                             string = (String) token;
-                            if (string.length() > 0) {
+                            if (!string.isEmpty()) {
                                 jsonobject.accumulate("content", XML.stringToValue(string));
                             }
                             // Nested element
@@ -380,7 +380,8 @@ public class XML {
                 return sb.toString();
             } else {
                 string = (object == null) ? "null" : escape(object.toString());
-                return (tagName == null) ? "\"" + string + "\"" : (string.length() == 0) ? "<" + tagName + "/>" : "<" + tagName + ">" + string + "</" + tagName + ">";
+                return (tagName == null) ? "\"" + string + "\"" :
+                        (string.isEmpty()) ? "<" + tagName + "/>" : "<" + tagName + ">" + string + "</" + tagName + ">";
             }
         }
     }

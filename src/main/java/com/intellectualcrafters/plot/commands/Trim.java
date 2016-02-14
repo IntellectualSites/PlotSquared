@@ -20,15 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -42,6 +33,15 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 @CommandDeclaration(
 command = "trim",
@@ -76,7 +76,7 @@ public class Trim extends SubCommand {
                                 final int z = Integer.parseInt(split[2]);
                                 final ChunkLoc loc = new ChunkLoc(x, z);
                                 empty.add(loc);
-                            } catch (final Exception e) {
+                            } catch (NumberFormatException e) {
                                 PS.debug("INVALID MCA: " + name);
                             }
                         } else {
@@ -97,7 +97,7 @@ public class Trim extends SubCommand {
                                         PS.debug("INVALID MCA: " + name);
                                     }
                                 }
-                            } catch (IOException e) {
+                            } catch (IOException ignored) {
                             }
                         }
                     }
@@ -127,7 +127,7 @@ public class Trim extends SubCommand {
             public void run() {
                 final long start = System.currentTimeMillis();
                 while ((System.currentTimeMillis() - start) < 50) {
-                    if (plots.size() == 0) {
+                    if (plots.isEmpty()) {
                         empty.addAll(chunks);
                         Trim.TASK = false;
                         TaskManager.runTaskAsync(whenDone);

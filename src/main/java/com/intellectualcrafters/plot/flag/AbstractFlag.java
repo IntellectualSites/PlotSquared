@@ -24,7 +24,9 @@ import com.intellectualcrafters.plot.util.StringMan;
 
 /**
  * Created 2014-09-23 for PlotSquared
- *
+ *
+
+
  */
 public class AbstractFlag {
     public final String key;
@@ -105,6 +107,6 @@ public class AbstractFlag {
             return false;
         }
         final AbstractFlag otherObj = (AbstractFlag) other;
-        return (otherObj.key.equals(key));
+        return otherObj.key.equals(key);
     }
 }

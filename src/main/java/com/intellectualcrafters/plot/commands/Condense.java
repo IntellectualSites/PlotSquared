@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -38,6 +30,14 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE)
 public class Condense extends SubCommand {
@@ -126,7 +126,7 @@ public class Condense extends SubCommand {
                     }
                     start = Auto.getNextPlotId(start, 1);
                 }
-                if ((free.size() == 0) || (to_move.size() == 0)) {
+                if ((free.isEmpty()) || (to_move.isEmpty())) {
                     MainUtil.sendMessage(plr, "NO FREE PLOTS FOUND");
                     return false;
                 }
@@ -137,7 +137,7 @@ public class Condense extends SubCommand {
                         if (!TASK) {
                             MainUtil.sendMessage(plr, "TASK CANCELLED.");
                         }
-                        if (allPlots.size() == 0) {
+                        if (allPlots.isEmpty()) {
                             TASK = false;
                             MainUtil.sendMessage(plr, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
                             return;
@@ -147,7 +147,7 @@ public class Condense extends SubCommand {
                         int i = 0;
                         while (free.size() > i) {
                             final Plot possible = origin.getArea().getPlotAbs(free.get(i));
-                            if (possible.owner != null) {
+                            if (possible.hasOwner()) {
                                 free.remove(i);
                                 continue;
                             }
@@ -166,7 +166,7 @@ public class Condense extends SubCommand {
                                 break;
                             }
                         }
-                        if (free.size() == 0) {
+                        if (free.isEmpty()) {
                             TASK = false;
                             MainUtil.sendMessage(plr, "TASK FAILED. NO FREE PLOTS FOUND!");
                             return;

@@ -1,14 +1,5 @@
 package com.plotsquared.bukkit.util.block;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Chunk;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -17,18 +8,26 @@ import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.PlotQueue;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
+import org.bukkit.Chunk;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SlowQueue implements PlotQueue<Chunk> {
-    
+
+    private final ConcurrentHashMap<ChunkWrapper, PlotChunk<Chunk>> blocks = new ConcurrentHashMap<>();
+
     public SlowQueue() {
         MainUtil.initCache();
     }
 
-    private final ConcurrentHashMap<ChunkWrapper, PlotChunk<Chunk>> blocks = new ConcurrentHashMap<>();
-
     @Override
     public boolean setBlock(String world, int x, int y, int z, short id, byte data) {
-        if ((y > 255) || (y < 0)) {
+        if (y > 255 || y < 0) {
             return false;
         }
         final ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world, x >> 4, z >> 4);
@@ -48,19 +47,19 @@ public class SlowQueue implements PlotQueue<Chunk> {
         result.setBlock(x, y, z, id, data);
         return true;
     }
-    
+
     @Override
     public void setChunk(PlotChunk<Chunk> chunk) {
         blocks.put(chunk.getChunkWrapper(), chunk);
     }
-    
+
     @Override
     public PlotChunk<Chunk> next() {
         if (!PS.get().isMainThread(Thread.currentThread())) {
             throw new IllegalStateException("Must be called from main thread!");
         }
         try {
-            if (blocks.size() == 0) {
+            if (blocks.isEmpty()) {
                 return null;
             }
             final Iterator<Entry<ChunkWrapper, PlotChunk<Chunk>>> iter = blocks.entrySet().iterator();
@@ -77,14 +76,14 @@ public class SlowQueue implements PlotQueue<Chunk> {
             return null;
         }
     }
-    
+
     @Override
     public PlotChunk<Chunk> next(ChunkWrapper wrap, boolean fixLighting) {
         if (!PS.get().isMainThread(Thread.currentThread())) {
             throw new IllegalStateException("Must be called from main thread!");
         }
         try {
-            if (blocks.size() == 0) {
+            if (blocks.isEmpty()) {
                 return null;
             }
             final PlotChunk<Chunk> toReturn = blocks.remove(wrap);
@@ -99,12 +98,12 @@ public class SlowQueue implements PlotQueue<Chunk> {
             return null;
         }
     }
-    
+
     @Override
     public void clear() {
         blocks.clear();
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
      * @param pc
@@ -125,13 +124,12 @@ public class SlowQueue implements PlotQueue<Chunk> {
                 Block block = chunk.getBlock(x, y, z);
                 PlotBlock newBlock = result2[j];
                 switch (newBlock.id) {
-                    case -1: {
+                    case -1:
                         if (block.getData() == newBlock.data) {
                             continue;
                         }
                         block.setData(newBlock.data);
                         continue;
-                    }
                     case 0:
                     case 2:
                     case 4:
@@ -212,14 +210,13 @@ public class SlowQueue implements PlotQueue<Chunk> {
                     case 189:
                     case 190:
                     case 191:
-                    case 192: {
+                    case 192:
                         if (block.getTypeId() == newBlock.id) {
                             continue;
                         }
                         block.setTypeId(newBlock.id, false);
                         continue;
-                    }
-                    default: {
+                    default:
                         if (block.getTypeId() == newBlock.id && block.getData() == newBlock.data) {
                             continue;
                         }
@@ -229,7 +226,6 @@ public class SlowQueue implements PlotQueue<Chunk> {
                             block.setTypeIdAndData(newBlock.id, newBlock.data, false);
                         }
                         continue;
-                    }
                 }
             }
         }
@@ -251,29 +247,29 @@ public class SlowQueue implements PlotQueue<Chunk> {
             }
         }
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param wrap
      */
     @Override
     public PlotChunk<Chunk> getChunk(ChunkWrapper wrap) {
         return new SlowChunk(wrap);
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param fixAll
      */
     @Override
     public boolean fixLighting(PlotChunk<Chunk> chunk, boolean fixAll) {
         // Do nothing
         return true;
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param locs
      */
     @Override
     public void sendChunk(String world, Collection<ChunkLoc> locs) {

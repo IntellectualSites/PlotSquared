@@ -20,15 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.PS.SortType;
 import com.intellectualcrafters.plot.config.C;
@@ -48,6 +39,15 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "list",
@@ -346,8 +346,8 @@ public class list extends SubCommand {
             sendMessage(plr, C.DID_YOU_MEAN, new StringComparison<String>(args[0], new String[] { "mine", "shared", "world", "all" }).getBestMatch());
             return false;
         }
-        
-        if (plots.size() == 0) {
+
+        if (plots.isEmpty()) {
             MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
             return false;
         }
@@ -384,7 +384,7 @@ public class list extends SubCommand {
                 final PlotMessage trusted = new PlotMessage().text(C.color(C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted())))).color("$1");
                 final PlotMessage members = new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers())))).color("$1");
                 String strFlags = StringMan.join(plot.getFlags().values(), ",");
-                if (strFlags.length() == 0) {
+                if (strFlags.isEmpty()) {
                     strFlags = C.NONE.s();
                 }
                 final PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");

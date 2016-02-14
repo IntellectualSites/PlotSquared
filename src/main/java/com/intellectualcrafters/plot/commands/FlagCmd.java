@@ -20,10 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
@@ -37,6 +33,11 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @CommandDeclaration(
 command = "setflag",
@@ -81,7 +82,7 @@ public class FlagCmd extends SubCommand {
             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag.other");
             return false;
         }
-        if ((args.length > 1) && FlagManager.isReserved(args[1])) {
+        if (args.length > 1 && FlagManager.isReserved(args[1])) {
             MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
             return false;
         }
@@ -147,7 +148,7 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.flag.remove");
                     return false;
                 }
-                if ((args.length != 2) && (args.length != 3)) {
+                if (args.length != 2 && args.length != 3) {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
                     return false;
                 }
@@ -173,7 +174,7 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.FLAG_NOT_IN_PLOT);
                     return false;
                 }
-                if ((args.length == 3) && flag.getAbstractFlag().isList()) {
+                if (args.length == 3 && flag.getAbstractFlag().isList()) {
                     final String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                     ((FlagValue.ListValue) flag.getAbstractFlag().value).remove(flag.getValue(), value);
                     DBFunc.setFlags(plot, plot.getFlags().values());
@@ -214,7 +215,7 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 Flag flag = FlagManager.getPlotFlag(plot, args[1].toLowerCase());
-                if ((flag == null) || !flag.getAbstractFlag().isList()) {
+                if (flag == null || !flag.getAbstractFlag().isList()) {
                     flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), parsed);
                 } else {
                     ((FlagValue.ListValue) flag.getAbstractFlag().value).add(flag.getValue(), value);
@@ -228,7 +229,7 @@ public class FlagCmd extends SubCommand {
                 MainUtil.sendMessage(player, C.FLAG_ADDED);
                 return true;
             }
-            case "list": {
+            case "list":
                 if (!Permissions.hasPermission(player, "plots.flag.list")) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.flag.list");
                     return false;
@@ -247,13 +248,12 @@ public class FlagCmd extends SubCommand {
                 }
                 String message = "";
                 String prefix = "";
-                for (final String flag : flags.keySet()) {
-                    message += prefix + "&6" + flag + ": &7" + StringMan.join(flags.get(flag), ", ");
+                for (final Map.Entry<String, ArrayList<String>> stringArrayListEntry : flags.entrySet()) {
+                    message += prefix + "&6" + stringArrayListEntry.getKey() + ": &7" + StringMan.join(stringArrayListEntry.getValue(), ", ");
                     prefix = "\n";
                 }
                 MainUtil.sendMessage(player, message);
                 return true;
-            }
         }
         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag <set|remove|add|list|info>");
         return false;

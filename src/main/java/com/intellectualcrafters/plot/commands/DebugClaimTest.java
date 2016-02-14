@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -41,6 +38,10 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "debugclaimtest",
@@ -109,14 +110,14 @@ public class DebugClaimTest extends SubCommand {
             final String[] lines = WorldUtil.IMP.getSign(loc);
             if (lines != null) {
                 String line = lines[2];
-                if ((line != null) && (line.length() > 2)) {
+                if (line != null && line.length() > 2) {
                     line = line.substring(2);
                     final BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
-                    UUID uuid = (map.get(new StringWrapper(line)));
+                    UUID uuid = map.get(new StringWrapper(line));
                     if (uuid == null) {
-                        for (final StringWrapper string : map.keySet()) {
-                            if (string.value.toLowerCase().startsWith(line.toLowerCase())) {
-                                uuid = map.get(string);
+                        for (final Map.Entry<StringWrapper, UUID> stringWrapperUUIDEntry : map.entrySet()) {
+                            if (stringWrapperUUIDEntry.getKey().value.toLowerCase().startsWith(line.toLowerCase())) {
+                                uuid = stringWrapperUUIDEntry.getValue();
                                 break;
                             }
                         }
@@ -134,7 +135,7 @@ public class DebugClaimTest extends SubCommand {
                 }
             }
         }
-        if (plots.size() > 0) {
+        if (!plots.isEmpty()) {
             MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
             DBFunc.createPlotsAndData(plots, new Runnable() {
                 @Override

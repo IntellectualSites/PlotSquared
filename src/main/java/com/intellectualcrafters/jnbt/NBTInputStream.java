@@ -26,7 +26,7 @@ public final class NBTInputStream implements Closeable {
      *
      * @throws IOException if an I/O error occurs
      */
-    public NBTInputStream(final InputStream is) throws IOException {
+    public NBTInputStream(final InputStream is) {
         this.is = new DataInputStream(is);
     }
     

@@ -1,18 +1,5 @@
 package com.plotsquared.bukkit.util;
 
-import java.util.HashSet;
-import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.ChunkGenerator.BiomeGrid;
-import org.bukkit.material.Directional;
-import org.bukkit.material.MaterialData;
-
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
@@ -23,9 +10,21 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.ChunkGenerator.BiomeGrid;
+import org.bukkit.material.Directional;
+import org.bukkit.material.MaterialData;
+
+import java.util.HashSet;
+import java.util.Random;
 
 public class BukkitHybridUtils extends HybridUtils {
-    
+
     @Override
     public void analyzeRegion(final String world, final RegionWrapper region, final RunnableVal<PlotAnalysis> whenDone) {
         // int diff, int variety, int vertices, int rotation, int height_sd
@@ -50,20 +49,21 @@ public class BukkitHybridUtils extends HybridUtils {
                 }
                 final BiomeGrid nullBiomeGrid = new BiomeGrid() {
                     @Override
-                    public void setBiome(final int a, final int b, final Biome c) {}
-                    
+                    public void setBiome(final int a, final int b, final Biome c) {
+                    }
+
                     @Override
                     public Biome getBiome(final int a, final int b) {
                         return null;
                     }
                 };
-                
+
                 final Location bot = new Location(world, region.minX, region.minY, region.minZ);
                 final Location top = new Location(world, region.maxX, region.maxY, region.maxZ);
-                
-//                final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.id).add(1, 0, 1);
-//                final Location top = MainUtil.getPlotTopLoc(plot.world, plot.id);
-                
+
+                //                final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.type).add(1, 0, 1);
+                //                final Location top = MainUtil.getPlotTopLoc(plot.world, plot.type);
+
                 final int bx = bot.getX();
                 final int bz = bot.getZ();
                 final int tx = top.getX();
@@ -76,12 +76,12 @@ public class BukkitHybridUtils extends HybridUtils {
                 MainUtil.initCache();
                 final int width = (tx - bx) + 1;
                 final int length = (tz - bz) + 1;
-                
+
                 System.gc();
                 System.gc();
                 final short[][][] oldblocks = new short[256][width][length];
                 final short[][][] newblocks = new short[256][width][length];
-                
+
                 final Runnable run = new Runnable() {
                     @Override
                     public void run() {
@@ -123,7 +123,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                         oldblocks[y][x][z] = result[i][j];
                                     }
                                 }
-                                
+
                             }
                         }, new Runnable() {
                             @Override
@@ -172,7 +172,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                                                 faces[i]++;
                                                             }
                                                         }
-                                                        
+
                                                         final Material material = Material.getMaterial(now);
                                                         final Class<? extends MaterialData> md = material.getData();
                                                         if (md.equals(Directional.class)) {
@@ -189,7 +189,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                         }
                                         // analyze plot
                                         // put in analysis obj
-                                        
+
                                         // run whenDone
                                         final PlotAnalysis analysis = new PlotAnalysis();
                                         analysis.changes = (int) (MathMan.getMean(changes) * 100);
@@ -197,7 +197,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                         analysis.data = (int) (MathMan.getMean(data) * 100);
                                         analysis.air = (int) (MathMan.getMean(air) * 100);
                                         analysis.variety = (int) (MathMan.getMean(variety) * 100);
-                                        
+
                                         analysis.changes_sd = (int) (MathMan.getSD(changes, analysis.changes));
                                         analysis.faces_sd = (int) (MathMan.getSD(faces, analysis.faces));
                                         analysis.data_sd = (int) (MathMan.getSD(data, analysis.data));
@@ -211,13 +211,13 @@ public class BukkitHybridUtils extends HybridUtils {
                                 });
                             }
                         }, 5);
-                        
+
                     }
                 };
                 System.gc();
                 MainUtil.initCache();
                 ChunkManager.chunkTask(bot, top, new RunnableVal<int[]>() {
-                    
+
                     @Override
                     public void run(int[] value) {
                         final int X = value[0];
@@ -247,10 +247,10 @@ public class BukkitHybridUtils extends HybridUtils {
                         } else {
                             maxZ = 16;
                         }
-                        
+
                         final int cbx = X << 4;
                         final int cbz = Z << 4;
-                        
+
                         final int xb = (cbx) - bx;
                         final int zb = (cbz) - bz;
                         for (int x = minX; x <= maxX; x++) {
@@ -276,9 +276,10 @@ public class BukkitHybridUtils extends HybridUtils {
             }
         });
     }
-    
+
     @Override
-    public int checkModified(final String worldname, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks) {
+    public int checkModified(final String worldname, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2,
+            final PlotBlock[] blocks) {
         final World world = BukkitUtil.getWorld(worldname);
         int count = 0;
         for (int y = y1; y <= y2; y++) {
@@ -301,7 +302,7 @@ public class BukkitHybridUtils extends HybridUtils {
         }
         return count;
     }
-    
+
     @Override
     public int get_ey(final String worldname, final int sx, final int ex, final int sz, final int ez, final int sy) {
         final World world = BukkitUtil.getWorld(worldname);

@@ -20,11 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -42,6 +37,11 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "cluster",
@@ -103,7 +103,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (args.length != 4) {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster create <name> <id-bot> <id-top>");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster create <name> <type-bot> <type-top>");
                     return false;
                 }
                 // check pos1 / pos2
@@ -132,7 +132,7 @@ public class Cluster extends SubCommand {
                 }
                 // Check if it occupies existing plots
                 final Set<Plot> plots = area.getPlotSelectionOwned(pos1, pos2);
-                if (plots.size() > 0) {
+                if (!plots.isEmpty()) {
                     if (!Permissions.hasPermission(plr, "plots.cluster.create.other")) {
                         final UUID uuid = plr.getUUID();
                         for (final Plot plot : plots) {
@@ -263,14 +263,14 @@ public class Cluster extends SubCommand {
                 final HashSet<Plot> removed = ((HashSet<Plot>) existing.clone());
                 removed.removeAll(newplots);
                 // Check expand / shrink
-                if (removed.size() > 0) {
+                if (!removed.isEmpty()) {
                     if (!Permissions.hasPermission(plr, "plots.cluster.resize.shrink")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize.shrink");
                         return false;
                     }
                 }
                 newplots.removeAll(existing);
-                if (newplots.size() > 0) {
+                if (!newplots.isEmpty()) {
                     if (!Permissions.hasPermission(plr, "plots.cluster.resize.expand")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize.expand");
                         return false;
@@ -336,7 +336,6 @@ public class Cluster extends SubCommand {
                 if (!cluster.isAdded(uuid)) {
                     // add the user if not added
                     cluster.invited.add(uuid);
-                    final String world = plr.getLocation().getWorld();
                     DBFunc.setInvited(cluster, uuid);
                     final PlotPlayer player = UUIDHandler.getPlayer(uuid);
                     if (player != null) {

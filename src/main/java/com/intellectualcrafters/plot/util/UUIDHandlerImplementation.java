@@ -7,18 +7,28 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class UUIDHandlerImplementation {
-    
-    private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
+
+    public final ConcurrentHashMap<String, PlotPlayer> players;
     public boolean CACHED = false;
     public UUIDWrapper uuidWrapper = null;
-    public final ConcurrentHashMap<String, PlotPlayer> players;
+    public HashSet<UUID> unknown = new HashSet<>();
+    private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
     
     public UUIDHandlerImplementation(final UUIDWrapper wrapper) {
         uuidWrapper = wrapper;
@@ -57,7 +67,7 @@ public abstract class UUIDHandlerImplementation {
     }
     
     public void add(final BiMap<StringWrapper, UUID> toAdd) {
-        if (uuidMap.size() == 0) {
+        if (uuidMap.isEmpty()) {
             uuidMap = toAdd;
         }
         for (final Map.Entry<StringWrapper, UUID> entry : toAdd.entrySet()) {
@@ -79,8 +89,6 @@ public abstract class UUIDHandlerImplementation {
         PS.debug(C.PREFIX.s() + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
     }
     
-    public HashSet<UUID> unknown = new HashSet<>();
-    
     public boolean add(final StringWrapper name, final UUID uuid) {
         if ((uuid == null)) {
             return false;
@@ -99,7 +107,7 @@ public abstract class UUIDHandlerImplementation {
          * lazy UUID conversion:
          *  - Useful if the person misconfigured the database, or settings before PlotMe conversion
          */
-        if (!Settings.OFFLINE_MODE && unknown.size() > 0) {
+        if (!Settings.OFFLINE_MODE && !unknown.isEmpty()) {
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
@@ -113,7 +121,7 @@ public abstract class UUIDHandlerImplementation {
                     if (offline != null && !offline.equals(uuid)) {
                         unknown.remove(offline);
                         final Set<Plot> plots = PS.get().getPlotsAbs(offline);
-                        if (plots.size() > 0) {
+                        if (!plots.isEmpty()) {
                             for (final Plot plot : plots) {
                                 plot.owner = uuid;
                             }
@@ -131,7 +139,7 @@ public abstract class UUIDHandlerImplementation {
             if (offline != null) {
                 if (!offline.equals(uuid)) {
                     final Set<Plot> plots = PS.get().getPlots(offline);
-                    if (plots.size() > 0) {
+                    if (!plots.isEmpty()) {
                         for (final Plot plot : plots) {
                             plot.owner = uuid;
                         }
@@ -194,7 +202,7 @@ public abstract class UUIDHandlerImplementation {
     }
     
     public UUID getUUID(final String name, final RunnableVal<UUID> ifFetch) {
-        if ((name == null) || (name.length() == 0)) {
+        if ((name == null) || (name.isEmpty())) {
             return null;
         }
         // check online

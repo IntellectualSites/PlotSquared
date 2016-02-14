@@ -10,7 +10,7 @@ public class DefaultTitle extends AbstractTitle {
         try {
             final DefaultTitleManager title = new DefaultTitleManager(head, sub, in, delay, out);
             title.send(((BukkitPlayer) player).player);
-        } catch (final Throwable e) {
+        } catch (Exception e) {
             AbstractTitle.TITLE_CLASS = new DefaultTitle_183();
             AbstractTitle.TITLE_CLASS.sendTitle(player, head, sub, in, delay, out);
         }

@@ -1,16 +1,5 @@
 package com.plotsquared.bukkit.object.schematic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.bukkit.block.BlockState;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-
 import com.intellectualcrafters.jnbt.ByteTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.ListTag;
@@ -20,6 +9,16 @@ import com.intellectualcrafters.plot.object.schematic.ItemType;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
+import org.bukkit.block.BlockState;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class StateWrapper {
     
@@ -46,9 +45,9 @@ public class StateWrapper {
         for (int i = 0; i < length; i++) {
             final Tag itemTag = itemsTag.get(i);
             final CompoundTag itemComp = (CompoundTag) itemTag;
-            short id = itemComp.getShort("id");
-            String idStr = itemComp.getString("id");
-            if ((idStr != null) && !MathMan.isInteger(idStr)) {
+            short id = itemComp.getShort("type");
+            String idStr = itemComp.getString("type");
+            if (idStr != null && !MathMan.isInteger(idStr)) {
                 idStr = idStr.split(":")[0].toLowerCase();
                 id = (short) ItemType.getId(idStr);
             }
@@ -69,7 +68,7 @@ public class StateWrapper {
         if (state instanceof InventoryHolder) {
             final InventoryHolder inv = (InventoryHolder) state;
             final ItemStack[] contents = inv.getInventory().getContents();
-            final Map<String, Tag> values = new HashMap<String, Tag>();
+            final Map<String, Tag> values = new HashMap<>();
             values.put("Items", new ListTag("Items", CompoundTag.class, serializeInventory(contents)));
             return new CompoundTag(values);
         }
@@ -81,7 +80,7 @@ public class StateWrapper {
     }
     
     public List<CompoundTag> serializeInventory(final ItemStack[] items) {
-        final List<CompoundTag> tags = new ArrayList<CompoundTag>();
+        final List<CompoundTag> tags = new ArrayList<>();
         for (int i = 0; i < items.length; ++i) {
             if (items[i] != null) {
                 final Map<String, Tag> tagData = serializeItem(items[i]);
@@ -105,19 +104,19 @@ public class StateWrapper {
     */
     
     public Map<String, Tag> serializeItem(final ItemStack item) {
-        final Map<String, Tag> data = new HashMap<String, Tag>();
-        data.put("id", new ShortTag("id", (short) item.getTypeId()));
+        final Map<String, Tag> data = new HashMap<>();
+        data.put("type", new ShortTag("type", (short) item.getTypeId()));
         data.put("Damage", new ShortTag("Damage", item.getDurability()));
         data.put("Count", new ByteTag("Count", (byte) item.getAmount()));
         if (!item.getEnchantments().isEmpty()) {
-            final List<CompoundTag> enchantmentList = new ArrayList<CompoundTag>();
+            final List<CompoundTag> enchantmentList = new ArrayList<>();
             for (final Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
-                final Map<String, Tag> enchantment = new HashMap<String, Tag>();
-                enchantment.put("id", new ShortTag("id", (short) entry.getKey().getId()));
+                final Map<String, Tag> enchantment = new HashMap<>();
+                enchantment.put("type", new ShortTag("type", (short) entry.getKey().getId()));
                 enchantment.put("lvl", new ShortTag("lvl", entry.getValue().shortValue()));
                 enchantmentList.add(new CompoundTag(enchantment));
             }
-            final Map<String, Tag> auxData = new HashMap<String, Tag>();
+            final Map<String, Tag> auxData = new HashMap<>();
             auxData.put("ench", new ListTag("ench", CompoundTag.class, enchantmentList));
             data.put("tag", new CompoundTag("tag", auxData));
         }

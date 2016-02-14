@@ -4,20 +4,15 @@ import com.intellectualcrafters.plot.PS;
 
 /**
  * Created 2015-02-11 for PlotSquared
- *
+ *
+
  */
 public class Location implements Cloneable, Comparable<Location> {
     private int x, y, z;
     private float yaw, pitch;
     private String world;
     private boolean built;
-    private final Object o;
-    
-    @Override
-    public Location clone() {
-        return new Location(world, x, y, z, yaw, pitch);
-    }
-    
+
     public Location(final String world, final int x, final int y, final int z, final float yaw, final float pitch) {
         this.world = world;
         this.x = x;
@@ -26,7 +21,6 @@ public class Location implements Cloneable, Comparable<Location> {
         this.yaw = yaw;
         this.pitch = pitch;
         built = false;
-        o = null;
     }
     
     public Location() {
@@ -36,7 +30,12 @@ public class Location implements Cloneable, Comparable<Location> {
     public Location(final String world, final int x, final int y, final int z) {
         this(world, x, y, z, 0f, 0f);
     }
-    
+
+    @Override
+    public Location clone() {
+        return new Location(world, x, y, z, yaw, pitch);
+    }
+
     public int getX() {
         return x;
     }
@@ -67,7 +66,12 @@ public class Location implements Cloneable, Comparable<Location> {
     public String getWorld() {
         return world;
     }
-    
+
+    public void setWorld(final String world) {
+        this.world = world;
+        built = false;
+    }
+
     public PlotArea getPlotArea() {
         return PS.get().getPlotAreaAbs(this);
     }
@@ -76,7 +80,7 @@ public class Location implements Cloneable, Comparable<Location> {
         PlotArea area = PS.get().getPlotAreaAbs(this);
         return area != null ? area.getOwnedPlot(this) : null;
     }
-    
+
     public Plot getOwnedPlotAbs() {
         PlotArea area = PS.get().getPlotAreaAbs(this);
         return area != null ? area.getOwnedPlotAbs(this) : null;
@@ -88,25 +92,19 @@ public class Location implements Cloneable, Comparable<Location> {
     
     public boolean isPlotRoad() {
         PlotArea area = PS.get().getPlotAreaAbs(this);
-        if (area == null) {
-            return false;
-        }
-        return area.getPlotAbs(this) == null;
+        return area != null && area.getPlotAbs(this) == null;
     }
-    
+
     public boolean isUnownedPlotArea() {
         PlotArea area = PS.get().getPlotAreaAbs(this);
-        if (area == null) {
-            return false;
-        }
-        return area.getOwnedPlotAbs(this) == null;
+        return area != null && area.getOwnedPlotAbs(this) == null;
     }
 
     public PlotManager getPlotManager() {
         PlotArea pa = getPlotArea();
         return pa != null ? pa.getPlotManager() : null;
     }
-    
+
     public Plot getPlotAbs() {
         PlotArea area = PS.get().getPlotAreaAbs(this);
         return area != null ? area.getPlotAbs(this) : null;
@@ -116,14 +114,9 @@ public class Location implements Cloneable, Comparable<Location> {
         PlotArea area = PS.get().getPlotAreaAbs(this);
         return area != null ? area.getPlot(this) : null;
     }
-    
+
     public ChunkLoc getChunkLoc() {
         return new ChunkLoc(x >> 4, z >> 4);
-    }
-
-    public void setWorld(final String world) {
-        this.world = world;
-        built = false;
     }
     
     public float getYaw() {
@@ -156,7 +149,7 @@ public class Location implements Cloneable, Comparable<Location> {
         final double x = getX() - l2.getX();
         final double y = getY() - l2.getY();
         final double z = getZ() - l2.getZ();
-        return (x * x) + (y * y) + (z * z);
+        return x * x + y * y + z * z;
     }
     
     public double getEuclideanDistance(final Location l2) {
@@ -164,32 +157,31 @@ public class Location implements Cloneable, Comparable<Location> {
     }
     
     public boolean isInSphere(final Location origin, final int radius) {
-        return getEuclideanDistanceSquared(origin) < (radius * radius);
+        return getEuclideanDistanceSquared(origin) < radius * radius;
     }
     
     @Override
     public int hashCode() {
         int hash = 127;
-        hash = (hash * 31) + x;
-        hash = (hash * 31) + y;
-        hash = (hash * 31) + z;
-        hash = (int) ((hash * 31) + getYaw());
-        hash = (int) ((hash * 31) + getPitch());
-        return (hash * 31) + (world == null ? 127 : world.hashCode());
+        hash = hash * 31 + x;
+        hash = hash * 31 + y;
+        hash = hash * 31 + z;
+        hash = (int) (hash * 31 + getYaw());
+        hash = (int) (hash * 31 + getPitch());
+        return hash * 31 + (world == null ? 127 : world.hashCode());
     }
     
     public boolean isInAABB(final Location min, final Location max) {
-        return (x >= min.getX()) && (x <= max.getX()) && (y >= min.getY()) && (y <= max.getY()) && (z >= min.getX()) && (z < max.getZ());
+        return x >= min.getX() && x <= max.getX() && y >= min.getY() && y <= max.getY() && z >= min.getX() && z < max.getZ();
     }
     
     public void lookTowards(final int x, final int y) {
         final double l = this.x - x;
-        final double w = z - z;
-        final double c = Math.sqrt((l * l) + (w * w));
-        if (((Math.asin(w / c) / Math.PI) * 180) > 90) {
-            setYaw((float) (180 - ((-Math.asin(l / c) / Math.PI) * 180)));
+        final double c = Math.sqrt(l * l + 0.0);
+        if (Math.asin((double) 0 / c) / Math.PI * 180 > 90) {
+            setYaw((float) (180 - -Math.asin(l / c) / Math.PI * 180));
         } else {
-            setYaw((float) ((-Math.asin(l / c) / Math.PI) * 180));
+            setYaw((float) (-Math.asin(l / c) / Math.PI * 180));
         }
         built = false;
     }
@@ -211,7 +203,7 @@ public class Location implements Cloneable, Comparable<Location> {
             return false;
         }
         final Location l = (Location) o;
-        return (x == l.getX()) && (y == l.getY()) && (z == l.getZ()) && world.equals(l.getWorld()) && (yaw == l.getY()) && (pitch == l.getPitch());
+        return x == l.getX() && y == l.getY() && z == l.getZ() && world.equals(l.getWorld()) && yaw == l.getY() && pitch == l.getPitch();
     }
     
     @Override
@@ -219,10 +211,10 @@ public class Location implements Cloneable, Comparable<Location> {
         if (o == null) {
             throw new NullPointerException("Specified object was null");
         }
-        if (((x == o.getX()) && (y == o.getY())) || (z == o.getZ())) {
+        if (x == o.getX() && y == o.getY() || z == o.getZ()) {
             return 0;
         }
-        if ((x < o.getX()) && (y < o.getY()) && (z < o.getZ())) {
+        if (x < o.getX() && y < o.getY() && z < o.getZ()) {
             return -1;
         }
         return 1;

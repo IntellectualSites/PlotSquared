@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Set;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -35,7 +33,10 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "clear", description = "Clear a plot", permission = "plots.clear", category = CommandCategory.APPEARANCE, usage = "/plot clear [id]")
+import java.util.Set;
+
+@CommandDeclaration(command = "clear", description = "Clear a plot", permission = "plots.clear", category = CommandCategory.APPEARANCE,
+        usage = "/plot clear [type]")
 public class Clear extends SubCommand {
     
     @Override
@@ -45,7 +46,7 @@ public class Clear extends SubCommand {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("mine")) {
                 Set<Plot> plots = plr.getPlots();
-                if (plots.size() > 0) {
+                if (!plots.isEmpty()) {
                     plot = plots.iterator().next();
                 } else {
                     MainUtil.sendMessage(plr, C.NO_PLOTS);

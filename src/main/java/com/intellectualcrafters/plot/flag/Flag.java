@@ -20,9 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import java.lang.reflect.Method;
-
 import com.intellectualcrafters.plot.util.StringMan;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class Flag implements Cloneable {
     private AbstractFlag key;
@@ -51,13 +52,6 @@ public class Flag implements Cloneable {
         }
     }
     
-    public void setKey(final AbstractFlag key) {
-        this.key = key;
-        if (value instanceof String) {
-            value = key.parseValueRaw((String) value);
-        }
-    }
-    
     /**
      * Warning: Unchecked
      */
@@ -83,7 +77,14 @@ public class Flag implements Cloneable {
     public String getKey() {
         return key.getKey();
     }
-    
+
+    public void setKey(final AbstractFlag key) {
+        this.key = key;
+        if (value instanceof String) {
+            value = key.parseValueRaw((String) value);
+        }
+    }
+
     /**
      * Get the value
      *
@@ -99,7 +100,7 @@ public class Flag implements Cloneable {
     
     @Override
     public String toString() {
-        if (value.equals("")) {
+        if ("".equals(value)) {
             return key.getKey();
         }
         return key + ":" + getValueString();
@@ -117,7 +118,7 @@ public class Flag implements Cloneable {
             return false;
         }
         final Flag other = (Flag) obj;
-        return (key.getKey().equals(other.key.getKey()) && value.equals(other.value));
+        return key.getKey().equals(other.key.getKey()) && value.equals(other.value);
     }
     
     @Override
@@ -139,7 +140,22 @@ public class Flag implements Cloneable {
                 return new Flag(key, method.invoke(value));
             }
             return new Flag(key, key.parseValueRaw(value.toString()));
-        } catch (Exception e) {
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return this;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return this;
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return this;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return this;
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return this;
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
             return this;
         }

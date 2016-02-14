@@ -29,6 +29,7 @@ public class PlotId {
      * y value
      */
     public Integer y;
+    private int hash;
     
     /**
      * PlotId class (PlotId x,y values do not correspond to Block locations)
@@ -44,7 +45,7 @@ public class PlotId {
     /**
      * Get a Plot Id based on a string
      *
-     * @param string to create id from
+     * @param string to create type from
      *
      * @return null if the string is invalid
      */
@@ -65,7 +66,11 @@ public class PlotId {
         }
         return new PlotId(x, y);
     }
-    
+
+    public static PlotId unpair(int hash) {
+        return new PlotId(hash >> 16, hash & 0xFFFF);
+    }
+
     public PlotId getRelative(final int direction) {
         switch (direction) {
             case 0:
@@ -103,12 +108,6 @@ public class PlotId {
     public String toString() {
         return x + ";" + y;
     }
-    
-    public static PlotId unpair(int hash) {
-        return new PlotId(hash >> 16, hash & 0xFFFF);
-    }
-    
-    private int hash;
     
     public void recalculateHash() {
         hash = 0;

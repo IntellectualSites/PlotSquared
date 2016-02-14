@@ -1,5 +1,10 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.plotsquared.general.commands.Command;
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -10,11 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.plotsquared.general.commands.Command;
 
 public class GenerateDocs {
     public static void main(final String[] args) {
@@ -56,7 +56,7 @@ public class GenerateDocs {
             
             log("#### Description");
             log("`" + command.getDescription() + "`");
-            if (comment.length() > 0) {
+            if (!comment.isEmpty()) {
                 log("##### Comments");
                 log("``` java");
                 log(comment);
@@ -72,7 +72,7 @@ public class GenerateDocs {
             }
             
             final Set<String> aliases = command.getAliases();
-            if (aliases.size() > 0) {
+            if (!aliases.isEmpty()) {
                 log("#### Aliases");
                 log("`" + StringMan.getString(command.getAliases()) + "`");
             }
@@ -80,7 +80,7 @@ public class GenerateDocs {
             log("#### Permissions");
             log("##### Primary");
             log(" - `" + command.getPermission() + "`    ");
-            if (perms.size() > 0) {
+            if (!perms.isEmpty()) {
                 log("");
                 log("##### Other");
                 log(" - `" + StringMan.join(perms, "`\n - `") + "`");

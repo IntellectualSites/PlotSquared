@@ -1,16 +1,5 @@
 package com.plotsquared.bukkit.database.plotme;
 
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.google.common.base.Charsets;
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
@@ -23,6 +12,17 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 public class ClassicPlotMeConnector extends APlotMeConnector {
     
@@ -46,20 +46,19 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             } else {
                 return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
             }
-        } catch (SQLException | ClassNotFoundException e) {}
+        } catch (SQLException | ClassNotFoundException ignored) {
+        }
         return null;
     }
     
     @Override
     public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(final Connection connection) throws SQLException {
-        ResultSet r;
-        PreparedStatement stmt;
         final HashMap<String, Integer> plotWidth = new HashMap<>();
         final HashMap<String, Integer> roadWidth = new HashMap<>();
         final HashMap<String, HashMap<PlotId, Plot>> plots = new HashMap<>();
         final HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
-        stmt = connection.prepareStatement("SELECT * FROM `" + prefix + "Plots`");
-        r = stmt.executeQuery();
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `" + prefix + "Plots`");
+        ResultSet r = stmt.executeQuery();
         String column = null;
         final boolean checkUUID = DBFunc.hasColumn(r, "ownerid");
         final boolean checkUUID2 = DBFunc.hasColumn(r, "ownerId");
@@ -68,7 +67,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         } else if (checkUUID2) {
             column = "ownerId";
         }
-        final boolean merge = !plugin.equalsIgnoreCase("plotme") && Settings.CONVERT_PLOTME;
+        final boolean merge = !"plotme".equalsIgnoreCase(plugin) && Settings.CONVERT_PLOTME;
         int missing = 0;
         while (r.next()) {
             final PlotId id = new PlotId(r.getInt("idX"), r.getInt("idZ"));
@@ -108,7 +107,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             }
             UUID owner = UUIDHandler.getUUID(name, null);
             if (owner == null) {
-                if (name.equals("*")) {
+                if ("*".equals(name)) {
                     owner = DBFunc.everyone;
                 } else {
                     if (checkUUID || checkUUID2) {
@@ -126,12 +125,12 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                                 }
                                 UUIDHandler.add(new StringWrapper(name), owner);
                             }
-                        } catch (final Exception e) {
+                        } catch (SQLException e) {
                             e.printStackTrace();
                         }
                     }
                     if (owner == null) {
-                        if (name.length() > 0) {
+                        if (!name.isEmpty()) {
                             owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
                         }
                         PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
@@ -178,7 +177,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 final String world = LikePlotMeConverter.getWorld(r.getString("world"));
                 UUID denied = UUIDHandler.getUUID(name, null);
                 if (denied == null) {
-                    if (name.equals("*")) {
+                    if ("*".equals(name)) {
                         denied = DBFunc.everyone;
                     } else {
                         if (DBFunc.hasColumn(r, "playerid")) {
@@ -196,7 +195,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                                     }
                                     UUIDHandler.add(new StringWrapper(name), denied);
                                 }
-                            } catch (final Exception e) {
+                            } catch (SQLException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -220,7 +219,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 final String world = LikePlotMeConverter.getWorld(r.getString("world"));
                 UUID helper = UUIDHandler.getUUID(name, null);
                 if (helper == null) {
-                    if (name.equals("*")) {
+                    if ("*".equals(name)) {
                         helper = DBFunc.everyone;
                     } else {
                         if (DBFunc.hasColumn(r, "playerid")) {
@@ -238,7 +237,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                                     }
                                     UUIDHandler.add(new StringWrapper(name), helper);
                                 }
-                            } catch (final Exception e) {
+                            } catch (SQLException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -263,9 +262,6 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
     
     @Override
     public boolean accepts(final String version) {
-        if (version == null) {
-            return true;
-        }
-        return PS.get().canUpdate(version, "0.17.0") || PS.get().canUpdate("0.999.999", version);
+        return version == null || PS.get().canUpdate(version, "0.17.0") || PS.get().canUpdate("0.999.999", version);
     }
 }

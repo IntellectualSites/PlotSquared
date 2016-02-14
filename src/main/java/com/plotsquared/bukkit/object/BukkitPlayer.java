@@ -3,7 +3,11 @@ package com.plotsquared.bukkit.object;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -12,7 +16,6 @@ import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.UUID;
@@ -20,10 +23,10 @@ import java.util.UUID;
 public class BukkitPlayer extends PlotPlayer {
     
     public final Player player;
+    public boolean offline;
     private UUID uuid;
     private String name;
     private long last = 0;
-    public boolean offline;
     
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
@@ -64,7 +67,7 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public boolean hasPermission(final String node) {
-        if (offline && (EconHandler.manager != null)) {
+        if (offline && EconHandler.manager != null) {
             return EconHandler.manager.hasPermission(getName(), node);
         }
         return player.hasPermission(node);
@@ -77,8 +80,8 @@ public class BukkitPlayer extends PlotPlayer {
             final String[] nodes = node.split("\\.");
             perm = new Permission(node);
             final StringBuilder n = new StringBuilder();
-            for (int i = 0; i < (nodes.length - 1); i++) {
-                n.append(nodes[i] + ("."));
+            for (int i = 0; i < nodes.length - 1; i++) {
+                n.append(nodes[i]).append(".");
                 if (!node.equals(n + C.PERMISSION_STAR.s())) {
                     final Permission parent = getPermission(n + C.PERMISSION_STAR.s());
                     if (parent != null) {
@@ -105,7 +108,7 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public void teleport(final Location loc) {
-        if ((Math.abs(loc.getX()) >= 30000000) || (Math.abs(loc.getZ()) >= 30000000)) {
+        if (Math.abs(loc.getX()) >= 30000000 || Math.abs(loc.getZ()) >= 30000000) {
             return;
         }
         player.teleport(new org.bukkit.Location(BukkitUtil.getWorld(loc.getWorld()), loc.getX() + 0.5, loc.getY(), loc.getZ() + 0.5, loc.getYaw(), loc.getPitch()), TeleportCause.COMMAND);
@@ -142,6 +145,7 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public boolean getAttribute(String key) {
+
         if (!hasPersistentMeta(key)) {
             return false;
         }    
@@ -171,10 +175,9 @@ public class BukkitPlayer extends PlotPlayer {
             case CLEAR:
                 player.setPlayerWeather(WeatherType.CLEAR);
                 return;
-            case RAIN: {
+            case RAIN:
                 player.setPlayerWeather(WeatherType.DOWNFALL);
                 return;
-            }
             case RESET:
                 player.resetPlayerWeather();
                 return;

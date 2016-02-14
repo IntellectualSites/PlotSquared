@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.generator;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -35,21 +32,133 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
-public class HybridPlotWorld extends ClassicPlotWorld {
-    public HybridPlotWorld(String worldname, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
-        super(worldname, id, generator, min, max);
-    }
+import java.util.HashMap;
+import java.util.HashSet;
 
+public class HybridPlotWorld extends ClassicPlotWorld {
     public boolean ROAD_SCHEMATIC_ENABLED;
     public short SCHEMATIC_HEIGHT;
     public boolean PLOT_SCHEMATIC = false;
     public short REQUIRED_CHANGES = 0;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
-    
     public HashMap<Integer, HashMap<Integer, PlotBlock>> G_SCH;
     public HashMap<Integer, HashSet<PlotItem>> G_SCH_STATE;
-    
+
+    public HybridPlotWorld(String worldname, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
+        super(worldname, id, generator, min, max);
+    }
+
+    public static byte wrap(byte data, final int start) {
+        if ((data >= start) && (data < (start + 4))) {
+            data = (byte) ((((data - start) + 2) & 3) + start);
+        }
+        return data;
+    }
+
+    public static byte wrap2(byte data, final int start) {
+        if ((data >= start) && (data < (start + 2))) {
+            data = (byte) ((((data - start) + 1) & 1) + start);
+        }
+        return data;
+    }
+
+    // FIXME depends on block ids
+    // Possibly make abstract?
+    public static byte rotate(final short id, byte data) {
+        switch (id) {
+            case 162:
+            case 17:
+                if (data >= 4 && data < 12) {
+                    if (data >= 8) {
+                        return (byte) (data - 4);
+                    }
+                    return (byte) (data + 4);
+                }
+                return data;
+            case 183:
+            case 184:
+            case 185:
+            case 186:
+            case 187:
+            case 107:
+            case 53:
+            case 67:
+            case 108:
+            case 109:
+            case 114:
+            case 128:
+            case 134:
+            case 135:
+            case 136:
+            case 156:
+            case 163:
+            case 164:
+            case 180:
+                data = wrap(data, 0);
+                data = wrap(data, 4);
+                return data;
+
+            case 26:
+            case 86:
+                data = wrap(data, 0);
+                return data;
+            case 64:
+            case 71:
+            case 193:
+            case 194:
+            case 195:
+            case 196:
+            case 197:
+            case 93:
+            case 94:
+            case 131:
+            case 145:
+            case 149:
+            case 150:
+            case 96:
+            case 167:
+                data = wrap(data, 0);
+                data = wrap(data, 4);
+                data = wrap(data, 8);
+                data = wrap(data, 12);
+                return data;
+            case 28:
+            case 66:
+            case 157:
+            case 27:
+                data = wrap2(data, 0);
+                data = wrap2(data, 3);
+                if (data == 2) {
+                    data = 5;
+                } else if (data == 5) {
+                    data = 2;
+                }
+                return data;
+
+            case 23:
+            case 29:
+            case 33:
+            case 158:
+            case 54:
+            case 130:
+            case 146:
+            case 61:
+            case 62:
+            case 65:
+            case 68:
+            case 144:
+                data = wrap(data, 2);
+                return data;
+            case 143:
+            case 77:
+                data = wrap(data, 1);
+                return data;
+            default:
+                return data;
+        }
+    }
+
     /**
      * This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.
@@ -72,10 +181,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     
     @Override
     public boolean isCompatible(PlotArea plotworld) {
-        if (plotworld == null || !(plotworld instanceof SquarePlotWorld)) {
+        if (!(plotworld instanceof SquarePlotWorld)) {
             return false;
         }
-        return ((ClassicPlotWorld) plotworld).PLOT_WIDTH == PLOT_WIDTH;
+        return ((SquarePlotWorld) plotworld).PLOT_WIDTH == PLOT_WIDTH;
     }
 
     public void setupSchematics() {
@@ -99,11 +208,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             final short w3 = (short) d3.getX();
             final short l3 = (short) d3.getZ();
             final short h3 = (short) d3.getY();
-            int center_shift_x = 0;
             int center_shift_z = 0;
             if (l3 < PLOT_WIDTH) {
                 center_shift_z = (PLOT_WIDTH - l3) / 2;
             }
+            int center_shift_x = 0;
             if (w3 < PLOT_WIDTH) {
                 center_shift_x = (PLOT_WIDTH - w3) / 2;
             }
@@ -114,7 +223,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         final short id = ids[index];
                         final byte data = datas[index];
                         if (id != 0) {
-                            addOverlayBlock((short) (x + shift + oddshift + center_shift_x), (y), (short) (z + shift + oddshift + center_shift_z), id, data, false);
+                            addOverlayBlock((short) (x + shift + oddshift + center_shift_x), y, (short) (z + shift + oddshift + center_shift_z), id,
+                                    data, false);
                         }
                     }
                 }
@@ -136,20 +246,20 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
         }
-        if ((schem1 == null) || (schem2 == null) || (ROAD_WIDTH == 0)) {
+        if (schem1 == null || schem2 == null || ROAD_WIDTH == 0) {
             PS.debug(C.PREFIX.s() + "&3 - schematic: &7false");
             return;
         }
         ROAD_SCHEMATIC_ENABLED = true;
         // Do not populate road if using schematic population
         ROAD_BLOCK = new PlotBlock(ROAD_BLOCK.id, (byte) 0);
-        
+
         final short[] ids1 = schem1.getIds();
         final byte[] datas1 = schem1.getDatas();
-        
+
         final short[] ids2 = schem2.getIds();
         final byte[] datas2 = schem2.getDatas();
-        
+
         final Dimension d1 = schem1.getSchematicDimension();
         final short w1 = (short) d1.getX();
         final short l1 = (short) d1.getZ();
@@ -166,8 +276,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     final short id = ids1[index];
                     final byte data = datas1[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - (shift)), (y), (short) (z + shift + oddshift), id, data, false);
-                        addOverlayBlock((short) (z + shift + oddshift), (y), (short) (x - shift), id, data, true);
+                        addOverlayBlock((short) (x - shift), y, (short) (z + shift + oddshift), id, data, false);
+                        addOverlayBlock((short) (z + shift + oddshift), y, (short) (x - shift), id, data, true);
                     }
                 }
             }
@@ -179,127 +289,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     final short id = ids2[index];
                     final byte data = datas2[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), (y), (short) (z - shift), id, data, false);
+                        addOverlayBlock((short) (x - shift), y, (short) (z - shift), id, data, false);
                     }
                 }
             }
-        }
-    }
-    
-    public static byte wrap(byte data, final int start) {
-        if ((data >= start) && (data < (start + 4))) {
-            data = (byte) ((((data - start) + 2) & 3) + start);
-        }
-        return data;
-    }
-    
-    public static byte wrap2(byte data, final int start) {
-        if ((data >= start) && (data < (start + 2))) {
-            data = (byte) ((((data - start) + 1) & 1) + start);
-        }
-        return data;
-    }
-    
-    // FIXME depends on block ids
-    // Possibly make abstract?
-    public static byte rotate(final short id, byte data) {
-        switch (id) {
-            case 162:
-            case 17: {
-                if ((data >= 4) && (data < 12)) {
-                    if (data >= 8) {
-                        return (byte) (data - 4);
-                    }
-                    return (byte) (data + 4);
-                }
-                return data;
-            }
-            case 183:
-            case 184:
-            case 185:
-            case 186:
-            case 187:
-            case 107:
-            case 53:
-            case 67:
-            case 108:
-            case 109:
-            case 114:
-            case 128:
-            case 134:
-            case 135:
-            case 136:
-            case 156:
-            case 163:
-            case 164:
-            case 180: {
-                data = wrap(data, 0);
-                data = wrap(data, 4);
-                return data;
-            }
-            
-            case 26:
-            case 86: {
-                data = wrap(data, 0);
-                return data;
-            }
-            case 64:
-            case 71:
-            case 193:
-            case 194:
-            case 195:
-            case 196:
-            case 197:
-            case 93:
-            case 94:
-            case 131:
-            case 145:
-            case 149:
-            case 150:
-            case 96:
-            case 167: {
-                data = wrap(data, 0);
-                data = wrap(data, 4);
-                data = wrap(data, 8);
-                data = wrap(data, 12);
-                return data;
-            }
-            case 28:
-            case 66:
-            case 157:
-            case 27: {
-                data = wrap2(data, 0);
-                data = wrap2(data, 3);
-                if (data == 2) {
-                    data = 5;
-                } else if (data == 5) {
-                    data = 2;
-                }
-                return data;
-            }
-            
-            case 23:
-            case 29:
-            case 33:
-            case 158:
-            case 54:
-            case 130:
-            case 146:
-            case 61:
-            case 62:
-            case 65:
-            case 68:
-            case 144: {
-                data = wrap(data, 2);
-                return data;
-            }
-            case 143:
-            case 77: {
-                data = wrap(data, 1);
-                return data;
-            }
-            default:
-                return data;
         }
     }
     
@@ -312,7 +305,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         if (rotate) {
             final byte newdata = rotate(id, data);
-            if ((data == 0) && (newdata == 0)) {
+            if (data == 0 && newdata == 0) {
                 return;
             }
             data = newdata;

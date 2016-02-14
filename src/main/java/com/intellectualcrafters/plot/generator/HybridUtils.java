@@ -36,17 +36,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class HybridUtils {
     
     public static HybridUtils manager;
-    
+    public static Set<ChunkLoc> regions;
+    public static Set<ChunkLoc> chunks = new HashSet<>();
+    public static PlotArea area;
+    public static boolean UPDATE = false;
+
     public abstract void analyzeRegion(final String world, final RegionWrapper region, final RunnableVal<PlotAnalysis> whenDone);
-    
+
     public void analyzePlot(final Plot origin, final RunnableVal<PlotAnalysis> whenDone) {
         final ArrayDeque<RegionWrapper> zones = new ArrayDeque<>(origin.getRegions());
         final ArrayList<PlotAnalysis> analysis = new ArrayList<>();
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                if (zones.size() == 0) {
-                    if (analysis.size() > 0) {
+                if (zones.isEmpty()) {
+                    if (!analysis.isEmpty()) {
                         whenDone.value = new PlotAnalysis();
                         for (PlotAnalysis data : analysis) {
                             whenDone.value.air += data.air;
@@ -80,7 +84,7 @@ public abstract class HybridUtils {
                     result.add(whenDone.value.data);
                     result.add(whenDone.value.air);
                     result.add(whenDone.value.variety);
-                    
+
                     result.add(whenDone.value.changes_sd);
                     result.add(whenDone.value.faces_sd);
                     result.add(whenDone.value.data_sd);
@@ -104,13 +108,8 @@ public abstract class HybridUtils {
         };
         run.run();
     }
-    
+
     public abstract int checkModified(final String world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks);
-    
-    public static Set<ChunkLoc> regions;
-    public static Set<ChunkLoc> chunks = new HashSet<>();
-    public static PlotArea area;
-    public static boolean UPDATE = false;
     
     public final ArrayList<ChunkLoc> getChunks(final ChunkLoc region) {
         final ArrayList<ChunkLoc> chunks = new ArrayList<>();
@@ -145,7 +144,7 @@ public abstract class HybridUtils {
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                if (zones.size() == 0) {
+                if (zones.isEmpty()) {
                     
                     TaskManager.runTask(whenDone);
                     return;
@@ -209,7 +208,7 @@ public abstract class HybridUtils {
                 if ((count.intValue() % 20) == 0) {
                     PS.debug("PROGRESS: " + ((100 * (2048 - chunks.size())) / 2048) + "%");
                 }
-                if ((regions.size() == 0) && (chunks.size() == 0)) {
+                if ((regions.isEmpty()) && (chunks.isEmpty())) {
                     HybridUtils.UPDATE = false;
                     PS.debug(C.PREFIX.s() + "Finished road conversion");
                     // CANCEL TASK
@@ -223,7 +222,7 @@ public abstract class HybridUtils {
                                     last.set((int) (System.currentTimeMillis() - baseTime));
                                 }
                                 if (chunks.size() < 1024) {
-                                    if (regions.size() > 0) {
+                                    if (!regions.isEmpty()) {
                                         Iterator<ChunkLoc> iter = regions.iterator();
                                         final ChunkLoc loc = iter.next();
                                         iter.remove();
@@ -233,7 +232,7 @@ public abstract class HybridUtils {
                                         System.gc();
                                     }
                                 }
-                                if (chunks.size() > 0) {
+                                if (!chunks.isEmpty()) {
                                     final long diff = System.currentTimeMillis() + 1;
                                     if (((System.currentTimeMillis() - baseTime - last.get()) > 2000) && (last.get() != 0)) {
                                         last.set(0);
@@ -252,7 +251,7 @@ public abstract class HybridUtils {
                                         return;
                                     }
                                     if ((((System.currentTimeMillis() - baseTime) - last.get()) < 1500) && (last.get() != 0)) {
-                                        while ((System.currentTimeMillis() < diff) && (chunks.size() > 0)) {
+                                        while ((System.currentTimeMillis() < diff) && (!chunks.isEmpty())) {
                                             Iterator<ChunkLoc> iter = chunks.iterator();
                                             final ChunkLoc chunk = iter.next();
                                             iter.remove();

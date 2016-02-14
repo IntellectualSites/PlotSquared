@@ -1,7 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -11,6 +9,8 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
+
+import java.util.Set;
 
 public class AugmentedUtils {
     
@@ -30,7 +30,7 @@ public class AugmentedUtils {
         final int bz = cz << 4;
         RegionWrapper region = new RegionWrapper(bx, bx + 15, bz, bz + 15);
         Set<PlotArea> areas = PS.get().getPlotAreas(world, region);
-        if (areas.size() == 0) {
+        if (areas.isEmpty()) {
             return;
         }
         final PseudoRandom r = new PseudoRandom();

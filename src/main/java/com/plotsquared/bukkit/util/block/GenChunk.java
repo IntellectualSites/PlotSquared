@@ -1,28 +1,24 @@
 package com.plotsquared.bukkit.util.block;
 
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotChunk;
+import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
+import com.plotsquared.bukkit.util.BukkitUtil;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotChunk;
-import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-import com.plotsquared.bukkit.util.BukkitUtil;
+public class GenChunk extends PlotChunk<Chunk> {
 
-public class GenChunk extends PlotChunk<Chunk>{
-
+    public final Biome[] biomes;
     public Chunk chunk;
-
     public short[][] result;
     public byte[][] result_data;
     public ChunkData cd;
-    
     public boolean modified = false;
-
     public BiomeGrid grid;
-    public final Biome[] biomes;
 
     public GenChunk(Chunk chunk, ChunkWrapper wrap) {
         super(wrap);
@@ -34,10 +30,10 @@ public class GenChunk extends PlotChunk<Chunk>{
         }
         this.biomes = Biome.values();
     }
-    
+
     @Override
     public Chunk getChunkAbs() {
-        ChunkWrapper wrap = getChunkWrapper(); 
+        ChunkWrapper wrap = getChunkWrapper();
         if (wrap.x != chunk.getX() || wrap.z != chunk.getZ()) {
             chunk = BukkitUtil.getWorld(wrap.world).getChunkAt(wrap.x, wrap.z);
         }
@@ -55,7 +51,7 @@ public class GenChunk extends PlotChunk<Chunk>{
             grid.setBiome(x, z, biome);
         }
     }
-    
+
     @Override
     public void setBlock(int x, int y, int z, int id, byte data) {
         if (result == null) {
@@ -74,7 +70,7 @@ public class GenChunk extends PlotChunk<Chunk>{
             getChunk().getBlock(x, y, z).setData(data);
         }
     }
-    
+
     @Override
     public PlotChunk clone() {
         GenChunk toReturn = new GenChunk(getChunkAbs(), getChunkWrapper());
@@ -97,7 +93,7 @@ public class GenChunk extends PlotChunk<Chunk>{
         toReturn.cd = cd;
         return toReturn;
     }
-    
+
     @Override
     public PlotChunk shallowClone() {
         GenChunk toReturn = new GenChunk(getChunkAbs(), getChunkWrapper());

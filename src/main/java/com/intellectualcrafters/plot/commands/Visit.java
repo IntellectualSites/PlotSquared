@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -39,11 +31,19 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
 @CommandDeclaration(
 command = "visit",
 permission = "plots.visit",
 description = "Visit someones plot",
-usage = "/plot visit [player|alias|world|id] [#]",
+        usage = "/plot visit [player|alias|world|type] [#]",
 aliases = { "v", "tp", "teleport", "goto" },
 requiredType = RequiredType.NONE,
 category = CommandCategory.TELEPORT)
@@ -110,7 +110,7 @@ public class Visit extends SubCommand {
         if (page == Integer.MIN_VALUE) {
             page = 1;
         }
-        if (unsorted == null || unsorted.size() == 0) {
+        if (unsorted == null || unsorted.isEmpty()) {
             sendMessage(player, C.FOUND_NO_PLOTS);
             return false;
         }

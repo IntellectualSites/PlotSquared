@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 public class FastQueue_1_7 extends SlowQueue {
-    
+
     public final RefClass classBlock = getRefClass("{nms}.Block");
     public final RefClass classChunk = getRefClass("{nms}.Chunk");
     public final RefClass classWorld = getRefClass("{nms}.World");
@@ -36,7 +36,7 @@ public class FastQueue_1_7 extends SlowQueue {
     public final RefMethod methodInitLighting;
 
     public final SendChunk chunksender;
-    
+
     public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
     public FastQueue_1_7() throws NoSuchMethodException {
@@ -49,7 +49,7 @@ public class FastQueue_1_7 extends SlowQueue {
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-                if (toUpdate.size() == 0) {
+                if (toUpdate.isEmpty()) {
                     return;
                 }
                 int count = 0;
@@ -68,9 +68,9 @@ public class FastQueue_1_7 extends SlowQueue {
         }, 1);
         MainUtil.initCache();
     }
-    
+
     public void update(final Collection<Chunk> chunks) {
-        if (chunks.size() == 0) {
+        if (chunks.isEmpty()) {
             return;
         }
         if (!MainUtil.canSendChunk) {
@@ -141,7 +141,7 @@ public class FastQueue_1_7 extends SlowQueue {
             }
         }
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
      * @param wrap
@@ -150,7 +150,7 @@ public class FastQueue_1_7 extends SlowQueue {
     public PlotChunk<Chunk> getChunk(ChunkWrapper wrap) {
         return new SlowChunk(wrap);
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
      * @param chunk
@@ -162,7 +162,7 @@ public class FastQueue_1_7 extends SlowQueue {
         methodInitLighting.of(c).call();
         return true;
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
      * @param world

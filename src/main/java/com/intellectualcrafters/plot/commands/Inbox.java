@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -34,6 +31,9 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @CommandDeclaration(
 command = "inbox",
 description = "Review the comments for a plot",
@@ -44,7 +44,7 @@ requiredType = RequiredType.NONE)
 public class Inbox extends SubCommand {
     
     public void displayComments(final PlotPlayer player, final List<PlotComment> oldComments, int page) {
-        if ((oldComments == null) || (oldComments.size() == 0)) {
+        if ((oldComments == null) || (oldComments.isEmpty())) {
             MainUtil.sendMessage(player, C.INBOX_EMPTY);
             return;
         }

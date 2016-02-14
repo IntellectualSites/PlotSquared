@@ -1,18 +1,5 @@
 package com.plotsquared.bukkit.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Objects;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.WorldCreator;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.Plugin;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
@@ -22,12 +9,24 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 public class BukkitSetupUtils extends SetupUtils {
-    
+
     @Override
     public void updateGenerators() {
-        if (SetupUtils.generators.size() > 0) {
+        if (!SetupUtils.generators.isEmpty()) {
             return;
         }
         final String testWorld = "CheckingPlotSquaredGenerator";
@@ -48,7 +47,7 @@ public class BukkitSetupUtils extends SetupUtils {
             }
         }
     }
-    
+
     @Override
     public String setupWorld(final SetupObject object) {
         SetupUtils.manager.updateGenerators();
@@ -127,8 +126,10 @@ public class BukkitSetupUtils extends SetupUtils {
             e.printStackTrace();
         }
         if (object.setupGenerator != null) {
-            if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.setupGenerator);
+            if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core")
+                    .isEnabled()) {
+                Bukkit.getServer()
+                        .dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.setupGenerator);
                 setGenerator(world, object.setupGenerator);
                 if (Bukkit.getWorld(world) != null) {
                     return world;
@@ -147,7 +148,8 @@ public class BukkitSetupUtils extends SetupUtils {
             Bukkit.createWorld(wc);
             setGenerator(world, object.setupGenerator);
         } else {
-            if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core").isEnabled()) {
+            if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core")
+                    .isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal");
                 if (Bukkit.getWorld(world) != null) {
                     return world;
@@ -163,9 +165,9 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         return object.world;
     }
-    
+
     public void setGenerator(final String world, final String generator) {
-        if ((Bukkit.getWorlds().size() == 0) || !Bukkit.getWorlds().get(0).getName().equals(world)) {
+        if ((Bukkit.getWorlds().isEmpty()) || !Bukkit.getWorlds().get(0).getName().equals(world)) {
             return;
         }
         final File file = new File("bukkit.yml").getAbsoluteFile();
@@ -177,10 +179,10 @@ public class BukkitSetupUtils extends SetupUtils {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public String getGenerator(final PlotArea plotworld) {
-        if (SetupUtils.generators.size() == 0) {
+        if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
         final World world = Bukkit.getWorld(plotworld.worldname);

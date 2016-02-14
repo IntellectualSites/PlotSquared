@@ -51,12 +51,12 @@ public class SetupObject {
     public String id;
     
     /**
-     * Minimum plot id (may be null)
+     * Minimum plot type (may be null)
      */
     public PlotId min;
     
     /**
-     * Max plot id (may be null)
+     * Max plot type (may be null)
      */
     public PlotId max;
     

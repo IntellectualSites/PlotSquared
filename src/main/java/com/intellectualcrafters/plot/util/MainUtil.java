@@ -80,9 +80,9 @@ public class MainUtil {
             for (int i = 0; i < 16; i++) {
                 final int i4 = i << 4;
                 for (int j = 0; j < 4096; j++) {
-                    final int y = (i4) + (j >> 8);
-                    final int a = (j - ((y & 0xF) << 8));
-                    final int z1 = (a >> 4);
+                    final int y = i4 + (j >> 8);
+                    final int a = j - ((y & 0xF) << 8);
+                    final int z1 = a >> 4;
                     final int x1 = a - (z1 << 4);
                     x_loc[i][j] = (short) x1;
                     y_loc[i][j] = (short) y;
@@ -97,7 +97,7 @@ public class MainUtil {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 256; y++) {
                         final short i = (short) (y >> 4);
-                        final short j = (short) (((y & 0xF) << 8) | (z << 4) | x);
+                        final short j = (short) ((y & 0xF) << 8 | z << 4 | x);
                         CACHE_I[y][x][z] = i;
                         CACHE_J[y][x][z] = j;
                     }
@@ -120,8 +120,8 @@ public class MainUtil {
             return ((array[0] ? 1 : 0) << 3) + ((array[1] ? 1 : 0) << 2) + ((array[2] ? 1 : 0) << 1) + (array[3] ? 1 : 0);
         }
         int n = 0;
-        for (int j = 0; j < array.length; ++j) {
-            n = (n << 1) + (array[j] ? 1 : 0);
+        for (boolean anArray : array) {
+            n = (n << 1) + (anArray ? 1 : 0);
         }
         return n;
     }
@@ -197,7 +197,7 @@ public class MainUtil {
 
     /**
      * Fuzzy plot search with spaces separating terms<br>
-     *  - Terms: id, alias, world, owner, trusted, member
+     *  - Terms: type, alias, world, owner, trusted, member
      * @param search
      * @return
      */
@@ -236,7 +236,7 @@ public class MainUtil {
         
         for (final Plot plot : PS.get().getPlots()) {
             int count = 0;
-            if (uuids.size() > 0) {
+            if (!uuids.isEmpty()) {
                 for (final UUID uuid : uuids) {
                     if (plot.isOwner(uuid)) {
                         count += 2;
@@ -250,20 +250,20 @@ public class MainUtil {
                     count++;
                 }
             }
-            if ((area != null) && plot.getArea().equals(area)) {
+            if (area != null && plot.getArea().equals(area)) {
                 count++;
             }
-            if ((alias != null) && alias.equals(plot.getAlias())) {
+            if (alias != null && alias.equals(plot.getAlias())) {
                 count += 2;
             }
             if (count != 0) {
                 plotList.get(count - 1).add(plot);
             }
         }
-        
-        final List<Plot> plots = new ArrayList<Plot>();
+
+        final List<Plot> plots = new ArrayList<>();
         for (int i = plotList.size() - 1; i >= 0; i--) {
-            if (plotList.get(i).size() > 0) {
+            if (!plotList.get(i).isEmpty()) {
                 plots.addAll(plotList.get(i));
             }
         }
@@ -287,8 +287,7 @@ public class MainUtil {
             }
             return player.getLocation().getPlotAbs();
         }
-        PlotArea area = null;
-        PlotId id = null;
+        PlotArea area;
         if (player != null) {
             area = player.getApplicablePlotArea();
         }
@@ -296,6 +295,7 @@ public class MainUtil {
             area = ConsolePlayer.getConsole().getApplicablePlotArea();
         }
         final String[] split = arg.split(";|,");
+        PlotId id;
         if (split.length == 4) {
             area = PS.get().getPlotAreaByString(split[0] + ";" + split[1]);
             id = PlotId.fromString(split[2] + ";" + split[3]);
@@ -314,7 +314,7 @@ public class MainUtil {
             } else {
                 for (final Plot p : area.getPlots()) {
                     final String name = p.getAlias();
-                    if ((name.length() != 0) && StringMan.isEqualIgnoreCase(name, arg)) {
+                    if (!name.isEmpty() && StringMan.isEqualIgnoreCase(name, arg)) {
                         return p;
                     }
                 }
@@ -325,12 +325,10 @@ public class MainUtil {
             }
         }
         if (id == null) {
-            if (id == null) {
-                if (message) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
-                }
-                return null;
+            if (message) {
+                MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
             }
+            return null;
         }
         if (area == null) {
             if (message) {
@@ -490,7 +488,7 @@ public class MainUtil {
      * @return
      */
     public static boolean sendMessage(final PlotPlayer plr, final String msg, final boolean prefix) {
-        if ((msg.length() > 0) && !msg.equals("")) {
+        if (!msg.isEmpty()) {
             if (plr == null) {
                 ConsolePlayer.getConsole().sendMessage((prefix ? C.PREFIX.s() : "") + msg);
             } else {
@@ -521,7 +519,7 @@ public class MainUtil {
      * @return boolean success
      */
     public static boolean sendMessage(final PlotPlayer plr, final C c, final Object... args) {
-        if (c.s().length() == 0) {
+        if (c.s().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(new Runnable() {
@@ -529,10 +527,10 @@ public class MainUtil {
             public void run() {
                 String msg = c.s();
                 if (args.length != 0) {
-                    msg = c.format(c, args);
+                    msg = C.format(c, args);
                 }
                 if (plr != null) {
-                    plr.sendMessage((c.usePrefix() ? C.PREFIX.s() + msg : msg));
+                    plr.sendMessage(c.usePrefix() ? C.PREFIX.s() + msg : msg);
                 } else {
                     ConsolePlayer.getConsole().sendMessage((c.usePrefix() ? C.PREFIX.s() : "") + msg);
                 }
@@ -556,19 +554,19 @@ public class MainUtil {
         } else {
             rating = DBFunc.getRatings(plot);
         }
-        if ((rating == null) || (rating.size() == 0)) {
+        if (rating == null || rating.isEmpty()) {
             return 0;
         }
         double val = 0;
         int size = 0;
         for (final Entry<UUID, Integer> entry : rating.entrySet()) {
             int current = entry.getValue();
-            if ((Settings.RATING_CATEGORIES == null) || (Settings.RATING_CATEGORIES.size() == 0)) {
+            if (Settings.RATING_CATEGORIES == null || Settings.RATING_CATEGORIES.isEmpty()) {
                 val += current;
                 size++;
             } else {
                 for (int i = 0; i < Settings.RATING_CATEGORIES.size(); i++) {
-                    val += (current % 10) - 1;
+                    val += current % 10 - 1;
                     current /= 10;
                     size++;
                 }
@@ -597,16 +595,16 @@ public class MainUtil {
             size = Math.max(1, Settings.RATING_CATEGORIES.size());
         }
         final double[] ratings = new double[size];
-        if ((rating == null) || (rating.size() == 0)) {
+        if (rating == null || rating.isEmpty()) {
             return ratings;
         }
         for (final Entry<UUID, Integer> entry : rating.entrySet()) {
             int current = entry.getValue();
-            if ((Settings.RATING_CATEGORIES == null) || (Settings.RATING_CATEGORIES.size() == 0)) {
+            if (Settings.RATING_CATEGORIES == null || Settings.RATING_CATEGORIES.isEmpty()) {
                 ratings[0] += current;
             } else {
                 for (int i = 0; i < Settings.RATING_CATEGORIES.size(); i++) {
-                    ratings[i] += (current % 10) - 1;
+                    ratings[i] += current % 10 - 1;
                     current /= 10;
                 }
             }
@@ -619,7 +617,7 @@ public class MainUtil {
     
     /**
      * Format a string with plot information:<br>
-     * %id%, %alias%, %num%, %desc%, %biome%, %owner%, %members%, %trusted%, %helpers%, %denied%, %flags%, %build%, %desc%, %rating%
+     * %type%, %alias%, %num%, %desc%, %biome%, %owner%, %members%, %trusted%, %helpers%, %denied%, %flags%, %build%, %desc%, %rating%
      * @param info
      * @param plot
      * @param player
@@ -628,7 +626,7 @@ public class MainUtil {
      */
     public static void format(String info, final Plot plot, final PlotPlayer player, final boolean full, final RunnableVal<String> whenDone) {
         final int num = plot.getConnectedPlots().size();
-        final String alias = plot.getAlias().length() > 0 ? plot.getAlias() : C.NONE.s();
+        final String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : C.NONE.s();
         final Location bot = plot.getCorners()[0];
         final String biome = WorldUtil.IMP.getBiome(plot.getArea().worldname, bot.getX(), bot.getZ());
         final String trusted = getPlayerList(plot.getTrusted());
@@ -640,7 +638,8 @@ public class MainUtil {
         
         final String flags = StringMan.replaceFromMap(
         "$2"
-        + (StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "").length() > 0 ? StringMan.join(FlagManager.getPlotFlags(
+                + (!StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "").isEmpty() ?
+                StringMan.join(FlagManager.getPlotFlags(
 
                 plot.getArea(), plot.getSettings(), true)
         .values(), "$1, $2") : C.NONE.s()), C.replacements);
@@ -655,7 +654,7 @@ public class MainUtil {
         info = info.replaceAll("%biome%", biome);
         info = info.replaceAll("%owner%", owner);
         info = info.replaceAll("%members%", members);
-        info = info.replaceAll("%player%", player != null ? player.getName() : C.NONE.s());
+        info = info.replaceAll("%player%", player.getName());
         info = info.replaceAll("%trusted%", trusted);
         info = info.replaceAll("%helpers%", members);
         info = info.replaceAll("%denied%", denied);
@@ -668,11 +667,11 @@ public class MainUtil {
                 @Override
                 public void run() {
                     int max = 10;
-                    if ((Settings.RATING_CATEGORIES != null) && (Settings.RATING_CATEGORIES.size() > 0)) {
+                    if (Settings.RATING_CATEGORIES != null && !Settings.RATING_CATEGORIES.isEmpty()) {
                         max = 8;
                     }
                     String info;
-                    if (full && (Settings.RATING_CATEGORIES != null) && (Settings.RATING_CATEGORIES.size() > 1)) {
+                    if (full && Settings.RATING_CATEGORIES != null && Settings.RATING_CATEGORIES.size() > 1) {
                         String rating = "";
                         String prefix = "";
                         final double[] ratings = MainUtil.getAverageRatings(plot);
@@ -706,7 +705,7 @@ public class MainUtil {
         final String c = C.PLOT_USER_LIST.s();
         final StringBuilder list = new StringBuilder();
         for (int x = 0; x < l.size(); x++) {
-            if ((x + 1) == l.size()) {
+            if (x + 1 == l.size()) {
                 list.append(c.replace("%user%", getName(l.get(x))).replace(",", ""));
             } else {
                 list.append(c.replace("%user%", getName(l.get(x))));

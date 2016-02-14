@@ -20,15 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -37,6 +28,15 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
 
@@ -123,7 +123,7 @@ public interface AbstractDB {
     int getId(final Plot plot);
     
     /**
-     * Get the id of a given plot cluster
+     * Get the type of a given plot cluster
      *
      * @param cluster PlotCluster Object
      *
@@ -193,15 +193,14 @@ public interface AbstractDB {
     /**
      * Purgle a plot
      *
-     * @param world World in which the plot is located
-     * @param uniqueIds list of plot id (db) to be purged
+     * @param uniqueIds list of plot type (db) to be purged
      */
     void purgeIds(final Set<Integer> uniqueIds);
     
     /**
      * Purge a whole world
      *
-     * @param world World in which the plots should be purged
+     * @param area World in which the plots should be purged
      */
     void purge(final PlotArea area, final Set<PlotId> plotIds);
     

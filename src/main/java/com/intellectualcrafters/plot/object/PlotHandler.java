@@ -5,7 +5,6 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,9 +40,8 @@ public class PlotHandler {
             return false;
         }
         HashSet<Plot> connected = plot.getConnectedPlots();
-        Iterator<Plot> iter = connected.iterator();
-        while (iter.hasNext()) {
-            if (uuid.equals(iter.next().owner)) {
+        for (Plot aConnected : connected) {
+            if (aConnected.isOwner(uuid)) {
                 return true;
             }
         }
@@ -58,7 +56,7 @@ public class PlotHandler {
             return UUIDHandler.getPlayer(plot.owner) != null;
         }
         for (Plot current : plot.getConnectedPlots()) {
-            if (current.owner != null && UUIDHandler.getPlayer(current.owner) != null) {
+            if (current.hasOwner() && UUIDHandler.getPlayer(current.owner) != null) {
                 return true;
             }
         }
@@ -92,7 +90,7 @@ public class PlotHandler {
         }
         final HashSet<UUID> owners = getOwners(plot1);
         owners.retainAll(getOwners(plot2));
-        return owners.size() > 0;
+        return !owners.isEmpty();
     }
     
     public static boolean isAdded(final Plot plot, final UUID uuid) {

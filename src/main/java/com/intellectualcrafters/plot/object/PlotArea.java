@@ -20,18 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -50,10 +38,31 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * @author Jesse Boyd
  */
 public abstract class PlotArea {
+
+    public final String worldname;
+    public final String id;
+    public final PlotManager manager;
+    public final int worldhash;
+    private final PlotId min;
+    private final PlotId max;
+    private final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
+    private final IndependentPlotGenerator generator;
     public int MAX_PLOT_MEMBERS = 128;
     public boolean AUTO_MERGE = false;
     public boolean ALLOW_SIGNS = true;
@@ -80,33 +89,22 @@ public abstract class PlotArea {
     public int MAX_BUILD_HEIGHT = 256;
     public int MIN_BUILD_HEIGHT = 1;
     public PlotGamemode GAMEMODE = PlotGamemode.CREATIVE;
-    
-    public final String worldname;
-    public final String id;
-    public final PlotManager manager;
-    private final PlotId min;
-    private final PlotId max;
+    int hash;
     private RegionWrapper region;
-    
     /**
      * Please ignore
      */
     @Deprecated
     private int compatibility_id;
-
     private ConcurrentHashMap<String, Object> meta;
-    
-    private final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
-    
     private QuadMap<PlotCluster> clusters;
-    private final IndependentPlotGenerator generator;
 
     public PlotArea(final String worldname, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
         this.worldname = worldname;
         this.id = id;
         this.manager = generator != null ? generator.getNewPlotManager() : null;
         this.generator = generator;
-        if ((min == null) || (max == null)) {
+        if (min == null || max == null) {
             if (min != max) {
                 throw new IllegalArgumentException("None of the ids can be null for this constructor");
             }
@@ -127,7 +125,7 @@ public abstract class PlotArea {
             public ConfigurationNode[] getSettingNodes() {return null;}
         };
     }
-    
+
     /**
      * Returns the region for this PlotArea
      * @return
@@ -158,7 +156,7 @@ public abstract class PlotArea {
     public PlotId getMin() {
         return min == null ? new PlotId(Integer.MIN_VALUE, Integer.MIN_VALUE) : min;
     }
-    
+
     /**
      * Returns the max PlotId
      * @return
@@ -170,8 +168,6 @@ public abstract class PlotArea {
     public IndependentPlotGenerator getGenerator() {
         return generator;
     }
-
-    public final int worldhash;
 
     @Override
     public boolean equals(final Object obj) {
@@ -187,7 +183,7 @@ public abstract class PlotArea {
         final PlotArea plotarea = (PlotArea) obj;
         return this.worldhash == plotarea.worldhash && this.worldname.equals(plotarea.worldname) && StringMan.isEqual(this.id, plotarea.id);
     }
-    
+
     public Set<PlotCluster> getClusters() {
         return clusters == null ? new HashSet<PlotCluster>() : clusters.getAll();
     }
@@ -238,7 +234,7 @@ public abstract class PlotArea {
         SCHEMATIC_FILE = config.getString("schematic.file");
         SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
         SCHEMATICS = config.getStringList("schematic.schematics");
-        USE_ECONOMY = config.getBoolean("economy.use") && (EconHandler.manager != null);
+        USE_ECONOMY = config.getBoolean("economy.use") && EconHandler.manager != null;
         PLOT_PRICE = config.getDouble("economy.prices.claim");
         MERGE_PRICE = config.getDouble("economy.prices.merge");
         SELL_PRICE = config.getDouble("economy.prices.sell");
@@ -246,7 +242,7 @@ public abstract class PlotArea {
         WORLD_BORDER = config.getBoolean("world.border");
         MAX_BUILD_HEIGHT = config.getInt("world.max_height");
         MIN_BUILD_HEIGHT = config.getInt("min.max_height");
-        
+
         switch (config.getString("world.gamemode").toLowerCase()) {
             case "survival":
             case "s":
@@ -271,10 +267,10 @@ public abstract class PlotArea {
                 PS.debug("&cInvalid gamemode set for: " + worldname);
                 break;
         }
-        
+
         HOME_ALLOW_NONMEMBER = config.getBoolean("home.allow-nonmembers");
         final String homeDefault = config.getString("home.default");
-        if (homeDefault.equalsIgnoreCase("side")) {
+        if ("side".equalsIgnoreCase(homeDefault)) {
             DEFAULT_HOME = null;
         } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle")) {
             DEFAULT_HOME = new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE);
@@ -282,20 +278,20 @@ public abstract class PlotArea {
             try {
                 final String[] split = homeDefault.split(",");
                 DEFAULT_HOME = new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-            } catch (final Exception e) {
+            } catch (NumberFormatException e) {
                 DEFAULT_HOME = null;
             }
         }
-        
+
         List<String> flags = config.getStringList("flags.default");
-        if ((flags == null) || (flags.size() == 0)) {
+        if (flags == null || flags.isEmpty()) {
             flags = config.getStringList("flags");
-            if ((flags == null) || (flags.size() == 0)) {
+            if (flags == null || flags.isEmpty()) {
                 flags = new ArrayList<>();
                 final ConfigurationSection section = config.getConfigurationSection("flags");
                 final Set<String> keys = section.getKeys(false);
                 for (final String key : keys) {
-                    if (!key.equals("default")) {
+                    if (!"default".equals(key)) {
                         flags.add(key + ";" + section.get(key));
                     }
                 }
@@ -347,8 +343,8 @@ public abstract class PlotArea {
         options.put("world.max_height", MAX_BUILD_HEIGHT);
         options.put("world.min_height", MIN_BUILD_HEIGHT);
         options.put("world.gamemode", GAMEMODE.name().toLowerCase());
-        
-        if ((TYPE != 0)) {
+
+        if (TYPE != 0) {
             options.put("generator.terrain", TERRAIN);
             options.put("generator.type", TYPE);
         }
@@ -359,9 +355,9 @@ public abstract class PlotArea {
         for (final ConfigurationNode setting : settings) {
             options.put(setting.getConstant(), setting.getValue());
         }
-        for (final String option : options.keySet()) {
-            if (!config.contains(option)) {
-                config.set(option, options.get(option));
+        for (final Entry<String, Object> stringObjectEntry : options.entrySet()) {
+            if (!config.contains(stringObjectEntry.getKey())) {
+                config.set(stringObjectEntry.getKey(), stringObjectEntry.getValue());
             }
         }
         if (!config.contains("flags")) {
@@ -371,10 +367,8 @@ public abstract class PlotArea {
     
     @Override
     public String toString() {
-        return (compatibility_id == 1 || id == null) ? worldname : worldname + ";" + id;
+        return compatibility_id == 1 || id == null ? worldname : worldname + ";" + id;
     }
-    
-    int hash;
     
     @Override
     public int hashCode() {
@@ -559,7 +553,7 @@ public abstract class PlotArea {
      */
     public void setMeta(final String key, final Object value) {
         if (meta == null) {
-            meta = new ConcurrentHashMap<String, Object>();
+            meta = new ConcurrentHashMap<>();
         }
         meta.put(key, value);
     }
@@ -716,7 +710,7 @@ public abstract class PlotArea {
     }
     
     public boolean mergePlots(final PlotPlayer player, final ArrayList<PlotId> plotIds) {
-        if ((EconHandler.manager != null) && USE_ECONOMY) {
+        if (EconHandler.manager != null && USE_ECONOMY) {
             final double cost = plotIds.size() * MERGE_PRICE;
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(player) < cost) {
@@ -746,10 +740,10 @@ public abstract class PlotArea {
         if (!result) {
             return false;
         }
-        
-        final HashSet<UUID> trusted = new HashSet<UUID>();
-        final HashSet<UUID> members = new HashSet<UUID>();
-        final HashSet<UUID> denied = new HashSet<UUID>();
+
+        final HashSet<UUID> trusted = new HashSet<>();
+        final HashSet<UUID> members = new HashSet<>();
+        final HashSet<UUID> denied = new HashSet<>();
         
         manager.startPlotMerge(this, plotIds);
         for (int x = pos1.x; x <= pos2.x; x++) {
@@ -767,7 +761,6 @@ public abstract class PlotArea {
         members.removeAll(trusted);
         denied.removeAll(trusted);
         denied.removeAll(members);
-        Plot plot2;
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final boolean lx = x < pos2.x;
@@ -777,6 +770,7 @@ public abstract class PlotArea {
                 plot.setTrusted(trusted);
                 plot.setMembers(members);
                 plot.setDenied(denied);
+                Plot plot2;
                 if (lx) {
                     if (ly) {
                         if (!plot.getMerged(1) || !plot.getMerged(2)) {
@@ -810,20 +804,20 @@ public abstract class PlotArea {
      * @return
      */
     public HashSet<Plot> getPlotSelectionOwned(final PlotId pos1, final PlotId pos2) {
-        final int size = ((1 + pos2.x) - pos1.x) * ((1 + pos2.y) - pos1.y);
+        final int size = (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
         final HashSet<Plot> result = new HashSet<>();
         if (size < 16 || size < getPlotCount()) {
             for (final PlotId pid : MainUtil.getPlotSelectionIds(pos1, pos2)) {
                 final Plot plot = getPlotAbs(pid);
                 if (plot.hasOwner()) {
-                    if ((plot.getId().x > pos1.x) || (plot.getId().y > pos1.y) || (plot.getId().x < pos2.x) || (plot.getId().y < pos2.y)) {
+                    if (plot.getId().x > pos1.x || plot.getId().y > pos1.y || plot.getId().x < pos2.x || plot.getId().y < pos2.y) {
                         result.add(plot);
                     }
                 }
             }
         } else {
             for (final Plot plot : getPlots()) {
-                if ((plot.getId().x > pos1.x) || (plot.getId().y > pos1.y) || (plot.getId().x < pos2.x) || (plot.getId().y < pos2.y)) {
+                if (plot.getId().x > pos1.x || plot.getId().y > pos1.y || plot.getId().x < pos2.x || plot.getId().y < pos2.y) {
                     result.add(plot);
                 }
             }

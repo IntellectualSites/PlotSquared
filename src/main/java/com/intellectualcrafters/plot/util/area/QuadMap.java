@@ -1,27 +1,22 @@
 package com.intellectualcrafters.plot.util.area;
 
+import com.intellectualcrafters.plot.object.RegionWrapper;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import com.intellectualcrafters.plot.object.RegionWrapper;
 
 public class QuadMap<T> {
     public final int size;
     public final int x;
     public final int z;
-
+    private final int newsize;
+    private final int min;
     public HashSet<T> objects;
-
     public QuadMap<T> one;
     public QuadMap<T> two;
     public QuadMap<T> three;
     public QuadMap<T> four;
-    
     public QuadMap<T> skip;
-    
-    private final int newsize;
-    
-    private final int min;
 
     public QuadMap(int size, int x, int z) {
         this.size = size;
@@ -161,7 +156,7 @@ public class QuadMap<T> {
     public boolean remove(T area) {
         if (objects != null) {
             if (objects.remove(area)) {
-                return objects.size() == 0;
+                return objects.isEmpty();
             }
         }
         if (skip != null) {

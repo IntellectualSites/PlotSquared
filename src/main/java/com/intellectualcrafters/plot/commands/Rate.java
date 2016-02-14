@@ -20,15 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import org.apache.commons.lang.mutable.MutableInt;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -45,6 +36,14 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+import org.apache.commons.lang.mutable.MutableInt;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "rate",
@@ -113,7 +112,7 @@ public class Rate extends SubCommand {
             sendMessage(player, C.RATING_NOT_DONE);
             return false;
         }
-        if ((Settings.RATING_CATEGORIES != null) && (Settings.RATING_CATEGORIES.size() != 0)) {
+        if ((Settings.RATING_CATEGORIES != null) && (!Settings.RATING_CATEGORIES.isEmpty())) {
             final Runnable run = new Runnable() {
                 @Override
                 public void run() {
@@ -183,7 +182,7 @@ public class Rate extends SubCommand {
         }
         final String arg = args[0];
         final int rating;
-        if (MathMan.isInteger(arg) && (arg.length() < 3) && (arg.length() > 0)) {
+        if (MathMan.isInteger(arg) && (arg.length() < 3) && (!arg.isEmpty())) {
             rating = Integer.parseInt(arg);
             if (rating > 10 || rating < 1) {
                 sendMessage(player, C.RATING_NOT_VALID);

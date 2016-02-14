@@ -1,21 +1,22 @@
 package com.plotsquared.general.commands;
 
+import com.intellectualcrafters.plot.commands.CommandCategory;
+import com.intellectualcrafters.plot.commands.RequiredType;
+
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.intellectualcrafters.plot.commands.CommandCategory;
-import com.intellectualcrafters.plot.commands.RequiredType;
-
 public abstract class Command<E extends CommandCaller> extends CommandManager {
-    
+
+    protected Argument<?>[] requiredArguments;
     private RequiredType requiredType = RequiredType.NONE;
     private String command, usage = "", description = "", permission = "";
     private Set<String> aliases = new HashSet<>();
     private CommandCategory category;
-    protected Argument<?>[] requiredArguments;
+    private int hash;
     
     public Command() {
         super(null, new ArrayList<Command>());
@@ -114,14 +115,14 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
     }
     
     public String getUsage() {
-        if (this.usage.length() == 0) {
+        if (this.usage.isEmpty()) {
             return "/{label} " + command;
         }
         return this.usage;
     }
     
     public String getPermission() {
-        if ((this.permission == null) || (this.permission.length() == 0)) {
+        if ((this.permission == null) || (this.permission.isEmpty())) {
             this.permission = "plots." + command.toLowerCase();
         }
         return this.permission;
@@ -166,8 +167,6 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
         }
         return this.command.equals(other.command);
     }
-    
-    private int hash;
     
     @Override
     public int hashCode() {

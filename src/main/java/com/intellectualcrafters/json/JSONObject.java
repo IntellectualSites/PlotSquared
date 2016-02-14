@@ -360,7 +360,7 @@ public class JSONObject {
     }
     
     public static Writer quote(final String string, final Writer w) throws IOException {
-        if ((string == null) || (string.length() == 0)) {
+        if ((string == null) || (string.isEmpty())) {
             w.write("\"\"");
             return w;
         }
@@ -1111,7 +1111,7 @@ public class JSONObject {
                     } else if (name.startsWith("is")) {
                         key = name.substring(2);
                     }
-                    if ((key.length() > 0) && Character.isUpperCase(key.charAt(0)) && (method.getParameterTypes().length == 0)) {
+                    if ((!key.isEmpty()) && Character.isUpperCase(key.charAt(0)) && (method.getParameterTypes().length == 0)) {
                         if (key.length() == 1) {
                             key = key.toLowerCase();
                         } else if (!Character.isUpperCase(key.charAt(1))) {

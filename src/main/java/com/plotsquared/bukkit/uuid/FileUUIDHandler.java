@@ -1,21 +1,7 @@
 package com.plotsquared.bukkit.uuid;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import com.google.common.collect.HashBiMap;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.ByteSource;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -30,6 +16,18 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.NbtFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 public class FileUUIDHandler extends UUIDHandlerImplementation {
     
@@ -39,17 +37,14 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
     
     @Override
     public boolean startCaching(final Runnable whenDone) {
-        if (!super.startCaching(whenDone)) {
-            return false;
-        }
-        return cache(whenDone);
+        return super.startCaching(whenDone) && cache(whenDone);
     }
     
     public boolean cache(final Runnable whenDone) {
         final File container = Bukkit.getWorldContainer();
         final List<World> worlds = Bukkit.getWorlds();
         final String world;
-        if (worlds.size() == 0) {
+        if (worlds.isEmpty()) {
             world = "world";
         } else {
             world = worlds.get(0).getName();
@@ -65,13 +60,13 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         for (String line : lines) {
                             try {
                                 line = line.trim();
-                                if (line.length() == 0) {
+                                if (line.isEmpty()) {
                                     continue;
                                 }
                                 line = line.replaceAll("[\\|][0-9]+[\\|][0-9]+[\\|]", "");
                                 final String[] split = line.split("\\|");
                                 final String name = split[0];
-                                if ((name.length() == 0) || (name.length() > 16) || !StringMan.isAlphanumericUnd(name)) {
+                                if ((name.isEmpty()) || (name.length() > 16) || !StringMan.isAlphanumericUnd(name)) {
                                     continue;
                                 }
                                 final UUID uuid = uuidWrapper.getUUID(name);
@@ -99,7 +94,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             return s.endsWith(".dat");
                         }
                     });
-                    final boolean check = all.size() == 0;
+                    final boolean check = all.isEmpty();
                     if (dat != null) {
                         for (final String current : dat) {
                             final String s = current.replaceAll(".dat$", "");
@@ -107,7 +102,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 final UUID uuid = UUID.fromString(s);
                                 if (check || all.remove(uuid)) {
                                     final File file = new File(playerdataFolder + File.separator + current);
-                                    final InputSupplier<FileInputStream> is = com.google.common.io.Files.newInputStreamSupplier(file);
+                                    final ByteSource is = com.google.common.io.Files.asByteSource(file);
                                     final NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
                                     final NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
                                     final String name = (String) bukkit.get("lastKnownName");
@@ -122,7 +117,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         }
                     }
                     add(toAdd);
-                    if (all.size() == 0) {
+                    if (all.isEmpty()) {
                         if (whenDone != null) {
                             whenDone.run();
                         }
@@ -178,7 +173,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 for (UUID uuid : uuids) {
                     try {
                         final File file = new File(playerdataFolder + File.separator + uuid.toString() + ".dat");
-                        final InputSupplier<FileInputStream> is = com.google.common.io.Files.newInputStreamSupplier(file);
+                        final ByteSource is = com.google.common.io.Files.asByteSource(file);
                         final NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
                         final NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
                         final String name = (String) bukkit.get("lastKnownName");
@@ -203,8 +198,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     final StringWrapper nameWrap = new StringWrapper(name);
                     toAdd.put(nameWrap, uuid);
                 }
-                
-                if (getUUIDMap().size() == 0) {
+
+                if (getUUIDMap().isEmpty()) {
                     for (final OfflinePlotPlayer op : uuidWrapper.getOfflinePlayers()) {
                         final long last = op.getLastPlayed();
                         if (last != 0) {

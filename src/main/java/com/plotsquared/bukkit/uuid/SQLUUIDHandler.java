@@ -1,5 +1,21 @@
 package com.plotsquared.bukkit.uuid;
 
+import com.google.common.collect.HashBiMap;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.SQLite;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -13,29 +29,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-import com.google.common.collect.HashBiMap;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.SQLite;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
-import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-
 public class SQLUUIDHandler extends UUIDHandlerImplementation {
     
     final String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
     final int MAX_REQUESTS = 500;
     final int INTERVAL = 12000;
     final JSONParser jsonParser = new JSONParser();
+    private final SQLite _sqLite;
 
     public SQLUUIDHandler(final UUIDWrapper wrapper) {
         super(wrapper);
@@ -45,7 +45,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        
+
         try {
             final PreparedStatement stmt = getConnection().prepareStatement(
             "CREATE TABLE IF NOT EXISTS `usercache` (uuid VARCHAR(32) NOT NULL, username VARCHAR(32) NOT NULL, PRIMARY KEY (uuid, username))");
@@ -56,14 +56,6 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         }
         startCaching(null);
     }
-    
-    private class SQLUUIDHandlerException extends RuntimeException {
-        SQLUUIDHandlerException(final String s, final Throwable c) {
-            super("SQLUUIDHandler caused an exception: " + s, c);
-        }
-    }
-    
-    private final SQLite _sqLite;
     
     private Connection getConnection() {
         synchronized (_sqLite) {
@@ -93,7 +85,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     statement.close();
                     add(toAdd);
                     add(new StringWrapper("*"), DBFunc.everyone);
-                    
+
                     // This should be called as long as there are some unknown plots
                     final ArrayDeque<UUID> toFetch = new ArrayDeque<>();
                     for (final UUID u : UUIDHandler.getAllUUIDS()) {
@@ -119,12 +111,12 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                                 }
                                 return;
                             }
-                            
+
                             TaskManager.runTaskAsync(new Runnable() {
                                 @Override
                                 public void run() {
                                     try {
-                                        if (toFetch.size() == 0) {
+                                        if (toFetch.isEmpty()) {
                                             if (whenDone != null) {
                                                 whenDone.run();
                                             }
@@ -227,7 +219,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     stream.close();
                     JSONArray array = (JSONArray) jsonParser.parse(new InputStreamReader(connection.getInputStream()));
                     JSONObject jsonProfile = (JSONObject) array.get(0);
-                    String id = (String) jsonProfile.get("id");
+                    String id = (String) jsonProfile.get("type");
                     String name = (String) jsonProfile.get("name");
                     ifFetch.value = UUID.fromString(id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" + id.substring(20, 32));
                 } catch (Exception e) {
@@ -291,5 +283,12 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                 }
             }
         });
+    }
+
+    private class SQLUUIDHandlerException extends RuntimeException {
+
+        SQLUUIDHandlerException(final String s, final Throwable c) {
+            super("SQLUUIDHandler caused an exception: " + s, c);
+        }
     }
 }

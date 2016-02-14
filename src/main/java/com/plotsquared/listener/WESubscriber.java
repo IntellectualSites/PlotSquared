@@ -1,8 +1,5 @@
 package com.plotsquared.listener;
 
-import java.lang.reflect.Field;
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -26,6 +23,9 @@ import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
 
+import java.lang.reflect.Field;
+import java.util.HashSet;
+
 public class WESubscriber {
     
     @Subscribe(priority = Priority.VERY_EARLY)
@@ -38,14 +38,14 @@ public class WESubscriber {
         final World worldObj = event.getWorld();
         final String world = worldObj.getName();
         final Actor actor = event.getActor();
-        if ((actor != null) && actor.isPlayer()) {
+        if (actor != null && actor.isPlayer()) {
             final String name = actor.getName();
             final PlotPlayer pp = PlotPlayer.wrap(name);
-            if ((pp != null) && pp.getAttribute("worldedit")) {
+            if (pp != null && pp.getAttribute("worldedit")) {
                 return;
             }
             final HashSet<RegionWrapper> mask = WEManager.getMask(pp);
-            if (mask.size() == 0) {
+            if (mask.isEmpty()) {
                 if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
                     MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
                 }
@@ -57,33 +57,34 @@ public class WESubscriber {
             if (Settings.CHUNK_PROCESSOR) {
                 if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
                     try {
-                        final LocalSession session = worldedit.getSession(name);
+                        final LocalSession session = worldedit.getSessionManager().findByName(name);
                         boolean hasMask = session.getMask() != null;
                         final Player objPlayer = (Player) actor;
                         final int item = objPlayer.getItemInHand();
                         if (!hasMask) {
                             try {
                                 final Tool tool = session.getTool(item);
-                                if ((tool != null) && (tool instanceof BrushTool)) {
+                                if (tool instanceof BrushTool) {
                                     hasMask = ((BrushTool) tool).getMask() != null;
                                 }
-                            } catch (final Exception e) {}
+                            } catch (final Exception e) {
+                            }
                         }
                         AbstractDelegateExtent extent = (AbstractDelegateExtent) event.getExtent();
                         ChangeSetExtent history = null;
                         MultiStageReorder reorder = null;
                         MaskingExtent maskextent = null;
                         final boolean fast = session.hasFastMode();
-                        while ((extent.getExtent() != null) && (extent.getExtent() instanceof AbstractDelegateExtent)) {
+                        while (extent.getExtent() != null && extent.getExtent() instanceof AbstractDelegateExtent) {
                             final AbstractDelegateExtent tmp = (AbstractDelegateExtent) extent.getExtent();
-                            if ((tmp.getExtent() != null) && (tmp.getExtent() instanceof AbstractDelegateExtent)) {
+                            if (tmp.getExtent() != null && tmp.getExtent() instanceof AbstractDelegateExtent) {
                                 if (tmp instanceof ChangeSetExtent) {
                                     history = (ChangeSetExtent) tmp;
                                 }
                                 if (tmp instanceof MultiStageReorder) {
                                     reorder = (MultiStageReorder) tmp;
                                 }
-                                if (hasMask && (tmp instanceof MaskingExtent)) {
+                                if (hasMask && tmp instanceof MaskingExtent) {
                                     maskextent = (MaskingExtent) tmp;
                                 }
                                 extent = tmp;
@@ -116,7 +117,7 @@ public class WESubscriber {
                             }
                         }
                         return;
-                    } catch (final Exception e) {
+                    } catch (IllegalAccessException | SecurityException | NoSuchFieldException | IllegalArgumentException e) {
                         e.printStackTrace();
                     }
                 }

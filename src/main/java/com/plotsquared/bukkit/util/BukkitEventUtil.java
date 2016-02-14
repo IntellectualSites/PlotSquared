@@ -34,97 +34,94 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class BukkitEventUtil extends EventUtil {
-    
+
     public Player getPlayer(final PlotPlayer player) {
         if (player instanceof BukkitPlayer) {
             return ((BukkitPlayer) player).player;
         }
         return null;
     }
-    
+
     public boolean callEvent(final Event event) {
         Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event instanceof Cancellable) {
-            return !((Cancellable) event).isCancelled();
-        }
-        return true;
+        return !(event instanceof Cancellable) || !((Cancellable) event).isCancelled();
     }
-    
+
     @Override
     public boolean callClaim(final PlotPlayer player, final Plot plot, final boolean auto) {
         return callEvent(new PlayerClaimPlotEvent(getPlayer(player), plot, auto));
     }
-    
+
     @Override
     public boolean callTeleport(final PlotPlayer player, final Location from, final Plot plot) {
         return callEvent(new PlayerTeleportToPlotEvent(getPlayer(player), from, plot));
     }
-    
+
     @Override
     public boolean callClear(final Plot plot) {
         return callEvent(new PlotClearEvent(plot));
     }
-    
+
     @Override
     public void callDelete(final Plot plot) {
         callEvent(new PlotDeleteEvent(plot));
     }
-    
+
     @Override
     public boolean callFlagAdd(final Flag flag, final Plot plot) {
         return callEvent(new PlotFlagAddEvent(flag, plot));
     }
-    
+
     @Override
     public boolean callFlagRemove(final Flag flag, final Plot plot) {
         return callEvent(new PlotFlagRemoveEvent(flag, plot));
     }
-    
+
     @Override
     public boolean callMerge(final Plot plot, final ArrayList<PlotId> plots) {
         return callEvent(new PlotMergeEvent(BukkitUtil.getWorld(plot.getArea().worldname), plot, plots));
     }
-    
+
     @Override
     public boolean callUnlink(final PlotArea area, final ArrayList<PlotId> plots) {
         return callEvent(new PlotUnlinkEvent(BukkitUtil.getWorld(area.worldname), area, plots));
     }
-    
+
     @Override
     public void callEntry(final PlotPlayer player, final Plot plot) {
         callEvent(new PlayerEnterPlotEvent(getPlayer(player), plot));
     }
-    
+
     @Override
     public void callLeave(final PlotPlayer player, final Plot plot) {
         callEvent(new PlayerLeavePlotEvent(getPlayer(player), plot));
     }
-    
+
     @Override
     public void callDenied(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added) {
         callEvent(new PlayerPlotDeniedEvent(getPlayer(initiator), plot, player, added));
     }
-    
+
     @Override
     public void callTrusted(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added) {
         callEvent(new PlayerPlotHelperEvent(getPlayer(initiator), plot, player, added));
     }
-    
+
     @Override
     public void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added) {
         callEvent(new PlayerPlotTrustedEvent(getPlayer(initiator), plot, player, added));
     }
-    
+
     @Override
     public boolean callFlagRemove(final Flag flag, final PlotCluster cluster) {
         return callEvent(new ClusterFlagRemoveEvent(flag, cluster));
     }
-    
+
     @Override
     public Rating callRating(final PlotPlayer player, final Plot plot, final Rating rating) {
         final PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         Bukkit.getServer().getPluginManager().callEvent(event);
         return event.getRating();
     }
-    
+
 }

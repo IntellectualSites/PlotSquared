@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.generator;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.Template;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -43,6 +35,14 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.WorldUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
 
 public class HybridPlotManager extends ClassicPlotManager {
     
@@ -66,7 +66,7 @@ public class HybridPlotManager extends ClassicPlotManager {
             if (plot.exists()) {
                 files.add(new FileBytes(newDir + "plot.schematic", Files.readAllBytes(plot.toPath())));
             }
-        } catch (final Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         Template.zipAll(plotworld.worldname, files);

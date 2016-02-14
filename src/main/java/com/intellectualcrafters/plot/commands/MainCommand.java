@@ -55,13 +55,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
     private static MainCommand instance;
     private HashMap<String, Command<PlotPlayer>> setCommands;
     
-    public static MainCommand getInstance() {
-        if (instance == null) {
-            instance = new MainCommand();
-        }
-        return instance;
-    }
-    
     private MainCommand() {
         super(null, new ArrayList<Command<PlotPlayer>>());
         instance = this;
@@ -139,6 +132,13 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         if (Settings.ENABLE_CLUSTERS) {
             MainCommand.getInstance().addCommand(new Cluster());
         }
+    }
+
+    public static MainCommand getInstance() {
+        if (instance == null) {
+            instance = new MainCommand();
+        }
+        return instance;
     }
 
     public static boolean no_permission(final PlotPlayer player, final String permission) {
@@ -347,9 +347,9 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 require = 0;
             }
             String[] split = usage[i].split("\\|| |\\>|\\<|\\[|\\]|\\{|\\}|\\_|\\/");
-            for (int j = 0; j < split.length; j++) {
+            for (String aSplit : split) {
                 for (String arg : args) {
-                    if (StringMan.isEqualIgnoreCase(arg, split[j])) {
+                    if (StringMan.isEqualIgnoreCase(arg, aSplit)) {
                         count += 5 - i + require;
                     }
                 }
@@ -395,7 +395,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             MainUtil.sendMessage(plr, C.NOT_VALID_SUBCOMMAND);
             {
                 final List<Command<PlotPlayer>> cmds = getCommands(null, plr);
-                if ((label == null) || (cmds.size() == 0)) {
+                if ((label == null) || (cmds.isEmpty())) {
                     MainUtil.sendMessage(plr, C.DID_YOU_MEAN, "/plot help");
                 } else {
                     final HashSet<String> setargs = new HashSet<>(args.length + 1);

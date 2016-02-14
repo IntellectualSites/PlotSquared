@@ -2,10 +2,17 @@ package com.plotsquared.bukkit.listeners;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
+import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -24,26 +31,17 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
-import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class ChunkListener implements Listener {
     
-    private Chunk lastChunk = null;
-    
     private final RefClass classChunk = getRefClass("{nms}.Chunk");
     private final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-    private RefMethod methodGetHandleChunk;
     private final RefField mustSave = classChunk.getField("mustSave");
+    private Chunk lastChunk = null;
+    private RefMethod methodGetHandleChunk;
     
     
     public ChunkListener() {
@@ -62,7 +60,6 @@ public class ChunkListener implements Listener {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
-                int time = 300;
                 final int distance = Bukkit.getViewDistance() + 2;
                 final HashMap<String, HashMap<ChunkLoc, Integer>> players = new HashMap<>();
                 for (final Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
@@ -90,23 +87,24 @@ public class ChunkListener implements Listener {
                         map.put(origin, distance);
                     }
                     for (int x = -distance; x <= distance; x++) {
-                        if ((x >= check) || (-x >= check)) {
+                        if (x >= check || -x >= check) {
                             continue;
                         }
                         for (int z = -distance; z <= distance; z++) {
-                            if ((z >= check) || (-z >= check)) {
+                            if (z >= check || -z >= check) {
                                 continue;
                             }
                             final int weight = distance - Math.max(Math.abs(x), Math.abs(z));
                             final ChunkLoc chunk = new ChunkLoc(x + origin.x, z + origin.z);
                             val = map.get(chunk);
-                            if ((val == null) || (val < weight)) {
+                            if (val == null || val < weight) {
                                 map.put(chunk, weight);
                             }
 
                         }
                     }
                 }
+                int time = 300;
                 for (final World world : Bukkit.getWorlds()) {
                     final String name = world.getName();
                     if (!PS.get().hasPlotArea(name)) {
@@ -117,11 +115,11 @@ public class ChunkListener implements Listener {
                         world.setAutoSave(false);
                     }
                     final HashMap<ChunkLoc, Integer> map = players.get(name);
-                    if ((map == null) || (map.size() == 0)) {
+                    if (map == null || map.isEmpty()) {
                         continue;
                     }
                     Chunk[] chunks = world.getLoadedChunks();
-                    ArrayDeque<Chunk> toUnload = new ArrayDeque<Chunk>();
+                    ArrayDeque<Chunk> toUnload = new ArrayDeque<>();
                     for (final Chunk chunk : chunks) {
                         final int x = chunk.getX();
                         final int z = chunk.getZ();
@@ -129,17 +127,17 @@ public class ChunkListener implements Listener {
                             toUnload.add(chunk);
                         }
                     }
-                    if (toUnload.size() > 0) {
+                    if (!toUnload.isEmpty()) {
                         long start = System.currentTimeMillis();
                         Chunk chunk;
-                        while ((chunk = toUnload.poll()) != null && (System.currentTimeMillis() - start < 5)) {
+                        while ((chunk = toUnload.poll()) != null && System.currentTimeMillis() - start < 5) {
                             if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE || !unloadChunk(name, chunk)) {
                                 if (chunk.isLoaded()) {
                                     chunk.unload(true, false);
                                 }
                             }
                         }
-                        if (toUnload.size() > 0) {
+                        if (!toUnload.isEmpty()) {
                             time = 1;
                         }
                     }
@@ -159,26 +157,25 @@ public class ChunkListener implements Listener {
         final int z = Z << 4;
         final int x2 = x + 15;
         final int z2 = z + 15;
-        Plot plot;
         Thread thread = new Thread();
-        plot = new Location(world, x, 1, z).getOwnedPlotAbs();
-        if ((plot != null) && (plot.owner != null)) {
+        Plot plot = new Location(world, x, 1, z).getOwnedPlotAbs();
+        if (plot != null && plot.hasOwner()) {
             return false;
         }
         plot = new Location(world, x2, 1, z2).getOwnedPlotAbs();
-        if ((plot != null) && (plot.owner != null)) {
+        if (plot != null && plot.hasOwner()) {
             return false;
         }
         plot = new Location(world, x2, 1, z).getOwnedPlotAbs();
-        if ((plot != null) && (plot.owner != null)) {
+        if (plot != null && plot.hasOwner()) {
             return false;
         }
         plot = new Location(world, x, 1, z2).getOwnedPlotAbs();
-        if ((plot != null) && (plot.owner != null)) {
+        if (plot != null && plot.hasOwner()) {
             return false;
         }
         plot = new Location(world, x + 7, 1, z + 7).getOwnedPlotAbs();
-        if ((plot != null) && (plot.owner != null)) {
+        if (plot != null && plot.hasOwner()) {
             return false;
         }
         final Object c = methodGetHandleChunk.of(chunk).call();
@@ -284,7 +281,7 @@ public class ChunkListener implements Listener {
                 }
                 final long start = System.currentTimeMillis();
                 int i = 0;
-                while ((System.currentTimeMillis() - start) < 250) {
+                while (System.currentTimeMillis() - start < 250) {
                     if (i >= tiles.length) {
                         Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                         TaskManager.tasks.remove(currentIndex);

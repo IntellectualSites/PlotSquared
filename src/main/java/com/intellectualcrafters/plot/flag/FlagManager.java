@@ -115,7 +115,7 @@ public class FlagManager {
                 }
             }
         });
-        if ((getFlag(af.getKey()) == null) && flags.add(af)) {
+        if (getFlag(af.getKey()) == null && flags.add(af)) {
             if (reserved) {
                 reserveFlag(af.getKey());
             }
@@ -126,11 +126,11 @@ public class FlagManager {
     
     public static Flag getSettingFlag(final PlotArea area, final PlotSettings settings, final String id) {
         Flag flag;
-        if ((settings.flags.size() == 0) || ((flag = settings.flags.get(id)) == null)) {
+        if (settings.flags.isEmpty() || (flag = settings.flags.get(id)) == null) {
             if (area == null) {
                 return null;
             }
-            if (area.DEFAULT_FLAGS.size() == 0) {
+            if (area.DEFAULT_FLAGS.isEmpty()) {
                 return null;
             }
             return area.DEFAULT_FLAGS.get(id);
@@ -181,7 +181,7 @@ public class FlagManager {
             return false;
         }
         final Flag flag = getPlotFlagRaw(plot, strFlag);
-        return !((flag == null) || !((Boolean) flag.getValue()));
+        return !(flag == null || !((Boolean) flag.getValue()));
     }
     
     public static boolean isPlotFlagFalse(final Plot plot, final String strFlag) {
@@ -189,7 +189,7 @@ public class FlagManager {
             return false;
         }
         final Flag flag = getPlotFlagRaw(plot, strFlag);
-        if ((flag == null) || ((Boolean) flag.getValue())) {
+        if (flag == null || (Boolean) flag.getValue()) {
             return false;
         }
         return false;
@@ -206,7 +206,7 @@ public class FlagManager {
     }
     
     public static Flag getSettingFlagAbs(final PlotSettings settings, final String flag) {
-        if ((settings.flags == null) || (settings.flags.size() == 0)) {
+        if (settings.flags == null || settings.flags.isEmpty()) {
             return null;
         }
         return settings.flags.get(flag);
@@ -260,7 +260,7 @@ public class FlagManager {
     
     public static HashMap<String, Flag> getPlotFlags(PlotArea area, final PlotSettings settings, final boolean ignorePluginflags) {
         final HashMap<String, Flag> flags = new HashMap<>();
-        if ((area != null) && (area.DEFAULT_FLAGS.size() != 0)) {
+        if (area != null && !area.DEFAULT_FLAGS.isEmpty()) {
             flags.putAll(area.DEFAULT_FLAGS);
         }
         if (ignorePluginflags) {
@@ -312,12 +312,12 @@ public class FlagManager {
     
     public static void setPlotFlags(final Plot origin, final Set<Flag> flags) {
         for (Plot plot : origin.getConnectedPlots()) {
-            if ((flags != null) && (flags.size() != 0)) {
+            if (flags != null && !flags.isEmpty()) {
                 plot.getFlags().clear();
                 for (final Flag flag : flags) {
                     plot.getFlags().put(flag.getKey(), flag);
                 }
-            } else if (plot.getFlags().size() == 0) {
+            } else if (plot.getFlags().isEmpty()) {
                 return;
             } else {
                 plot.getFlags().clear();
@@ -328,12 +328,12 @@ public class FlagManager {
     }
     
     public static void setClusterFlags(final PlotCluster cluster, final Set<Flag> flags) {
-        if ((flags != null) && (flags.size() != 0)) {
+        if (flags != null && !flags.isEmpty()) {
             cluster.settings.flags.clear();
             for (final Flag flag : flags) {
                 cluster.settings.flags.put(flag.getKey(), flag);
             }
-        } else if (cluster.settings.flags.size() == 0) {
+        } else if (cluster.settings.flags.isEmpty()) {
             return;
         } else {
             cluster.settings.flags.clear();
@@ -413,7 +413,7 @@ public class FlagManager {
      * @return AbstractFlag
      */
     public static AbstractFlag getFlag(final String string, final boolean create) {
-        if ((getFlag(string) == null) && create) {
+        if (getFlag(string) == null && create) {
             return new AbstractFlag(string);
         }
         return getFlag(string);

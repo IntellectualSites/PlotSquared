@@ -23,7 +23,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                if (regions.size() == 0) {
+                if (regions.isEmpty()) {
                     whenDone.run();
                     return;
                 }

@@ -32,7 +32,7 @@ import java.util.Map.Entry;
 
  */
 public class SendChunk {
-    
+
     //    // Ref Class
     private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
     private final RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
@@ -47,13 +47,11 @@ public class SendChunk {
     private final RefField connection;
     private final RefMethod send;
     private final RefMethod methodInitLighting;
-    
+
     /**
      * Constructor
-     *
-     * @throws NoSuchMethodException
      */
-    public SendChunk() throws NoSuchMethodException {
+    public SendChunk() {
         methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
         methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         methodInitLighting = classChunk.getMethod("initLighting");
@@ -61,7 +59,7 @@ public class SendChunk {
         connection = classEntityPlayer.getField("playerConnection");
         send = classConnection.getMethod("sendPacket", classPacket.getRealClass());
     }
-    
+
     public void sendChunk(final Collection<Chunk> input) {
         final HashSet<Chunk> chunks = new HashSet<Chunk>(input);
         final HashMap<String, ArrayList<Chunk>> map = new HashMap<>();
@@ -99,7 +97,7 @@ public class SendChunk {
             final int cz = loc.getZ() >> 4;
             final Player player = ((BukkitPlayer) pp).player;
             final Object entity = methodGetHandlePlayer.of(player).call();
-            
+
             for (final Chunk chunk : list) {
                 final int dx = Math.abs(cx - chunk.getX());
                 final int dz = Math.abs(cz - chunk.getZ());
@@ -127,7 +125,8 @@ public class SendChunk {
                         final String worldname = chunk.getWorld().getName();
                         PS.debug("$4Could not save chunk: " + worldname + ";" + chunk.getX() + ";" + chunk.getZ());
                         PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
-                        PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname + "/level_old.dat may be corrupt (try repairing or removing these)");
+                        PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname
+                                + "/level_old.dat may be corrupt (try repairing or removing these)");
                     }
                 }
             });
@@ -173,7 +172,8 @@ public class SendChunk {
         //                            String worldname = chunk.getWorld().getName();
         //                            PS.debug("$4Could not save chunk: " + worldname + ";" + chunk.getX() + ";" + chunk.getZ());
         //                            PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
-        //                            PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname + "level_old.dat may be corrupt (try repairing or removing these)");
+        //                            PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname + "level_old.dat may be corrupt (try repairing
+        // or removing these)");
         //                        }
         //                    }
         //                });
@@ -181,7 +181,7 @@ public class SendChunk {
         //
         //        }
     }
-    
+
     public void sendChunk(final String worldname, final List<ChunkLoc> locs) {
         final World myworld = Bukkit.getWorld(worldname);
         final ArrayList<Chunk> chunks = new ArrayList<>();

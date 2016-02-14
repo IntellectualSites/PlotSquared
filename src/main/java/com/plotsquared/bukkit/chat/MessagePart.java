@@ -1,25 +1,55 @@
 package com.plotsquared.bukkit.chat;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.gson.stream.JsonWriter;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.gson.stream.JsonWriter;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
-
 /**
  * Internal class: Represents a component of a JSON-serializable {@link FancyMessage}.
  */
 final class MessagePart implements JsonRepresentedObject, ConfigurationSerializable, Cloneable {
-    
+
+    static final BiMap<ChatColor, String> stylesToNames;
+
+    static {
+        final ImmutableBiMap.Builder<ChatColor, String> builder = ImmutableBiMap.builder();
+        for (final ChatColor style : ChatColor.values()) {
+            if (!style.isFormat()) {
+                continue;
+            }
+
+            String styleName;
+            switch (style) {
+                case MAGIC:
+                    styleName = "obfuscated";
+                    break;
+                case UNDERLINE:
+                    styleName = "underlined";
+                    break;
+                default:
+                    styleName = style.name().toLowerCase();
+                    break;
+            }
+
+            builder.put(style, styleName);
+        }
+        stylesToNames = builder.build();
+    }
+
+    static {
+        ConfigurationSerialization.registerClass(MessagePart.class);
+    }
+
     ChatColor color = ChatColor.WHITE;
     ArrayList<ChatColor> styles = new ArrayList<ChatColor>();
     String clickActionName = null, clickActionData = null, hoverActionName = null;
@@ -35,7 +65,21 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
     MessagePart() {
         text = null;
     }
-    
+
+    @SuppressWarnings("unchecked")
+    public static MessagePart deserialize(final Map<String, Object> serialized) {
+        final MessagePart part = new MessagePart((TextualComponent) serialized.get("text"));
+        part.styles = (ArrayList<ChatColor>) serialized.get("styles");
+        part.color = ChatColor.getByChar(serialized.get("color").toString());
+        part.hoverActionName = (String) serialized.get("hoverActionName");
+        part.hoverActionData = (JsonRepresentedObject) serialized.get("hoverActionData");
+        part.clickActionName = (String) serialized.get("clickActionName");
+        part.clickActionData = (String) serialized.get("clickActionData");
+        part.insertionData = (String) serialized.get("insertion");
+        part.translationReplacements = (ArrayList<JsonRepresentedObject>) serialized.get("translationReplacements");
+        return part;
+    }
+
     boolean hasText() {
         return text != null;
     }
@@ -52,34 +96,7 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
         }
         obj.translationReplacements = (ArrayList<JsonRepresentedObject>) translationReplacements.clone();
         return obj;
-        
-    }
-    
-    static final BiMap<ChatColor, String> stylesToNames;
-    
-    static {
-        final ImmutableBiMap.Builder<ChatColor, String> builder = ImmutableBiMap.builder();
-        for (final ChatColor style : ChatColor.values()) {
-            if (!style.isFormat()) {
-                continue;
-            }
-            
-            String styleName;
-            switch (style) {
-                case MAGIC:
-                    styleName = "obfuscated";
-                    break;
-                case UNDERLINE:
-                    styleName = "underlined";
-                    break;
-                default:
-                    styleName = style.name().toLowerCase();
-                    break;
-            }
-            
-            builder.put(style, styleName);
-        }
-        stylesToNames = builder.build();
+
     }
     
     @Override
@@ -102,7 +119,7 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
             if (insertionData != null) {
                 json.name("insertion").value(insertionData);
             }
-            if ((translationReplacements.size() > 0) && (text != null) && TextualComponent.isTranslatableText(text)) {
+            if ((!translationReplacements.isEmpty()) && (text != null) && TextualComponent.isTranslatableText(text)) {
                 json.name("with").beginArray();
                 for (final JsonRepresentedObject obj : translationReplacements) {
                     obj.writeJson(json);
@@ -128,24 +145,6 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
         map.put("insertion", insertionData);
         map.put("translationReplacements", translationReplacements);
         return map;
-    }
-    
-    @SuppressWarnings("unchecked")
-    public static MessagePart deserialize(final Map<String, Object> serialized) {
-        final MessagePart part = new MessagePart((TextualComponent) serialized.get("text"));
-        part.styles = (ArrayList<ChatColor>) serialized.get("styles");
-        part.color = ChatColor.getByChar(serialized.get("color").toString());
-        part.hoverActionName = (String) serialized.get("hoverActionName");
-        part.hoverActionData = (JsonRepresentedObject) serialized.get("hoverActionData");
-        part.clickActionName = (String) serialized.get("clickActionName");
-        part.clickActionData = (String) serialized.get("clickActionData");
-        part.insertionData = (String) serialized.get("insertion");
-        part.translationReplacements = (ArrayList<JsonRepresentedObject>) serialized.get("translationReplacements");
-        return part;
-    }
-    
-    static {
-        ConfigurationSerialization.registerClass(MessagePart.class);
     }
     
 }

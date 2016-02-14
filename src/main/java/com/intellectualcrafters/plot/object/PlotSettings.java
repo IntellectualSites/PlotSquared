@@ -20,15 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
  * Generic settings class
@@ -98,7 +98,7 @@ public class PlotSettings {
      * Returns true if the plot is merged (i.e. if it's a mega plot)
      */
     public boolean isMerged() {
-        return (merged[0] || merged[1] || merged[2] || merged[3]);
+        return merged[0] || merged[1] || merged[2] || merged[3];
     }
     
     public boolean[] getMerged() {

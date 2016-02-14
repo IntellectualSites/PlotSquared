@@ -75,7 +75,7 @@ public class CDL {
         for (;;) {
             final String value = getValue(x);
             char c = x.next();
-            if ((value == null) || ((ja.length() == 0) && (value.length() == 0) && (c != ','))) {
+            if ((value == null) || ((ja.length() == 0) && (value.isEmpty()) && (c != ','))) {
                 return null;
             }
             ja.put(value);
@@ -128,7 +128,8 @@ public class CDL {
             final Object object = ja.opt(i);
             if (object != null) {
                 final String string = object.toString();
-                if ((string.length() > 0) && ((string.indexOf(',') >= 0) || (string.indexOf('\n') >= 0) || (string.indexOf('\r') >= 0) || (string.indexOf(0) >= 0) || (string.charAt(0) == '"'))) {
+                if ((!string.isEmpty()) && ((string.indexOf(',') >= 0) || (string.indexOf('\n') >= 0) || (string.indexOf('\r') >= 0) || (
+                        string.indexOf(0) >= 0) || (string.charAt(0) == '"'))) {
                     sb.append('"');
                     final int length = string.length();
                     for (int j = 0; j < length; j += 1) {

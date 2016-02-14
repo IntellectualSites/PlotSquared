@@ -40,7 +40,7 @@ public class Desc extends SetCommand {
     
     @Override
     public boolean set(PlotPlayer plr, Plot plot, String desc) {
-        if (desc.length() == 0) {
+        if (desc.isEmpty()) {
             plot.removeFlag("description");
             MainUtil.sendMessage(plr, C.DESC_UNSET);
             return true;

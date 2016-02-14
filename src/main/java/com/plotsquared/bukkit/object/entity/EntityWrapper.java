@@ -33,7 +33,8 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 public class EntityWrapper {
-    public short id;
+
+    public EntityType type;
     public float yaw;
     public float pitch;
     public double x;
@@ -55,110 +56,6 @@ public class EntityWrapper {
     
     private int hash;
     
-    @Override
-    public boolean equals(final Object obj) {
-        return hash == obj.hashCode();
-    }
-    
-    @Override
-    public int hashCode() {
-        return hash;
-    }
-    
-    public void storeInventory(final InventoryHolder held) {
-        inventory = held.getInventory().getContents().clone();
-    }
-    
-    private void restoreLiving(final LivingEntity entity) {
-        entity.setCanPickupItems(lived.loot);
-        if (lived.name != null) {
-            entity.setCustomName(lived.name);
-            entity.setCustomNameVisible(lived.visible);
-        }
-        if ((lived.potions != null) && (lived.potions.size() > 0)) {
-            entity.addPotionEffects(lived.potions);
-        }
-        entity.setRemainingAir(lived.air);
-        entity.setRemoveWhenFarAway(lived.persistent);
-        if (lived.equipped) {
-            final EntityEquipment equipment = entity.getEquipment();
-            equipment.setItemInHand(lived.hands);
-            equipment.setHelmet(lived.helmet);
-            equipment.setChestplate(lived.chestplate);
-            equipment.setLeggings(lived.leggings);
-            equipment.setBoots(lived.boots);
-        }
-        if (lived.leashed) {
-            // TODO leashes
-            //            World world = entity.getWorld();
-            //            Entity leash = world.spawnEntity(new Location(world, Math.floor(x) + lived.leash_x, Math.floor(y) + lived.leash_y, Math.floor(z) + lived.leash_z), EntityType.LEASH_HITCH);
-            //            entity.setLeashHolder(leash);
-        }
-    }
-    
-    private void restoreInventory(final InventoryHolder entity) {
-        entity.getInventory().setContents(inventory);
-    }
-    
-    public void storeLiving(final LivingEntity lived) {
-        this.lived = new LivingEntityStats();
-        this.lived.potions = lived.getActivePotionEffects();
-        this.lived.loot = lived.getCanPickupItems();
-        this.lived.name = lived.getCustomName();
-        this.lived.visible = lived.isCustomNameVisible();
-        this.lived.health = (float) lived.getHealth();
-        this.lived.air = (short) lived.getRemainingAir();
-        this.lived.persistent = lived.getRemoveWhenFarAway();
-        this.lived.leashed = lived.isLeashed();
-        if (this.lived.leashed) {
-            final Location loc = lived.getLeashHolder().getLocation();
-            this.lived.leash_x = (short) (x - loc.getBlockX());
-            this.lived.leash_y = (short) (y - loc.getBlockY());
-            this.lived.leash_z = (short) (z - loc.getBlockZ());
-        }
-        final EntityEquipment equipment = lived.getEquipment();
-        this.lived.equipped = equipment != null;
-        if (this.lived.equipped) {
-            this.lived.hands = equipment.getItemInHand().clone();
-            this.lived.boots = equipment.getBoots().clone();
-            this.lived.leggings = equipment.getLeggings().clone();
-            this.lived.chestplate = equipment.getChestplate().clone();
-            this.lived.helmet = equipment.getHelmet().clone();
-        }
-    }
-    
-    private void restoreTameable(final Tameable entity) {
-        if (tamed.tamed) {
-            if (tamed.owner != null) {
-                entity.setTamed(true);
-                entity.setOwner(tamed.owner);
-            }
-        }
-    }
-    
-    private void restoreAgeable(final Ageable entity) {
-        if (!aged.adult) {
-            entity.setBaby();
-        }
-        entity.setAgeLock(aged.locked);
-        if (aged.age > 0) {
-            entity.setAge(aged.age);
-        }
-    }
-    
-    public void storeAgeable(final Ageable aged) {
-        this.aged = new AgeableStats();
-        this.aged.age = aged.getAge();
-        this.aged.locked = aged.getAgeLock();
-        this.aged.adult = aged.isAdult();
-    }
-    
-    public void storeTameable(final Tameable tamed) {
-        this.tamed = new TameableStats();
-        this.tamed.owner = tamed.getOwner();
-        this.tamed.tamed = tamed.isTamed();
-    }
-    
     @SuppressWarnings("deprecation")
     public EntityWrapper(final org.bukkit.entity.Entity entity, final short depth) {
         hash = entity.getEntityId();
@@ -169,7 +66,7 @@ public class EntityWrapper {
         x = loc.getX();
         y = loc.getY();
         z = loc.getZ();
-        id = entity.getType().getTypeId();
+        type = entity.getType();
         if (depth == 0) {
             return;
         }
@@ -330,37 +227,37 @@ public class EntityWrapper {
                 inventory = new ItemStack[] { stand.getItemInHand().clone(), stand.getHelmet().clone(), stand.getChestplate().clone(), stand.getLeggings().clone(), stand.getBoots().clone() };
                 storeLiving((LivingEntity) entity);
                 this.stand = new ArmorStandStats();
-                
+
                 final EulerAngle head = stand.getHeadPose();
                 this.stand.head[0] = (float) head.getX();
                 this.stand.head[1] = (float) head.getY();
                 this.stand.head[2] = (float) head.getZ();
-                
+
                 final EulerAngle body = stand.getBodyPose();
                 this.stand.body[0] = (float) body.getX();
                 this.stand.body[1] = (float) body.getY();
                 this.stand.body[2] = (float) body.getZ();
-                
+
                 final EulerAngle leftLeg = stand.getLeftLegPose();
                 this.stand.leftLeg[0] = (float) leftLeg.getX();
                 this.stand.leftLeg[1] = (float) leftLeg.getY();
                 this.stand.leftLeg[2] = (float) leftLeg.getZ();
-                
+
                 final EulerAngle rightLeg = stand.getRightLegPose();
                 this.stand.rightLeg[0] = (float) rightLeg.getX();
                 this.stand.rightLeg[1] = (float) rightLeg.getY();
                 this.stand.rightLeg[2] = (float) rightLeg.getZ();
-                
+
                 final EulerAngle leftArm = stand.getLeftArmPose();
                 this.stand.leftArm[0] = (float) leftArm.getX();
                 this.stand.leftArm[1] = (float) leftArm.getY();
                 this.stand.leftArm[2] = (float) leftArm.getZ();
-                
+
                 final EulerAngle rightArm = stand.getRightArmPose();
                 this.stand.rightArm[0] = (float) rightArm.getX();
                 this.stand.rightArm[1] = (float) rightArm.getY();
                 this.stand.rightArm[2] = (float) rightArm.getZ();
-                
+
                 if (stand.hasArms()) {
                     this.stand.arms = true;
                 }
@@ -403,16 +300,120 @@ public class EntityWrapper {
             // END LIVING //
         }
     }
-    
+
+    @Override
+    public boolean equals(final Object obj) {
+        return hash == obj.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    public void storeInventory(final InventoryHolder held) {
+        inventory = held.getInventory().getContents().clone();
+    }
+
+    private void restoreLiving(final LivingEntity entity) {
+        entity.setCanPickupItems(lived.loot);
+        if (lived.name != null) {
+            entity.setCustomName(lived.name);
+            entity.setCustomNameVisible(lived.visible);
+        }
+        if ((lived.potions != null) && (!lived.potions.isEmpty())) {
+            entity.addPotionEffects(lived.potions);
+        }
+        entity.setRemainingAir(lived.air);
+        entity.setRemoveWhenFarAway(lived.persistent);
+        if (lived.equipped) {
+            final EntityEquipment equipment = entity.getEquipment();
+            equipment.setItemInHand(lived.hands);
+            equipment.setHelmet(lived.helmet);
+            equipment.setChestplate(lived.chestplate);
+            equipment.setLeggings(lived.leggings);
+            equipment.setBoots(lived.boots);
+        }
+        if (lived.leashed) {
+            // TODO leashes
+            //            World world = entity.getWorld();
+            //            Entity leash = world.spawnEntity(new Location(world, Math.floor(x) + lived.leash_x, Math.floor(y) + lived.leash_y, Math
+            // .floor(z) + lived.leash_z), EntityType.LEASH_HITCH);
+            //            entity.setLeashHolder(leash);
+        }
+    }
+
+    private void restoreInventory(final InventoryHolder entity) {
+        entity.getInventory().setContents(inventory);
+    }
+
+    public void storeLiving(final LivingEntity lived) {
+        this.lived = new LivingEntityStats();
+        this.lived.potions = lived.getActivePotionEffects();
+        this.lived.loot = lived.getCanPickupItems();
+        this.lived.name = lived.getCustomName();
+        this.lived.visible = lived.isCustomNameVisible();
+        this.lived.health = (float) lived.getHealth();
+        this.lived.air = (short) lived.getRemainingAir();
+        this.lived.persistent = lived.getRemoveWhenFarAway();
+        this.lived.leashed = lived.isLeashed();
+        if (this.lived.leashed) {
+            final Location loc = lived.getLeashHolder().getLocation();
+            this.lived.leash_x = (short) (x - loc.getBlockX());
+            this.lived.leash_y = (short) (y - loc.getBlockY());
+            this.lived.leash_z = (short) (z - loc.getBlockZ());
+        }
+        final EntityEquipment equipment = lived.getEquipment();
+        this.lived.equipped = equipment != null;
+        if (this.lived.equipped) {
+            this.lived.hands = equipment.getItemInHand().clone();
+            this.lived.boots = equipment.getBoots().clone();
+            this.lived.leggings = equipment.getLeggings().clone();
+            this.lived.chestplate = equipment.getChestplate().clone();
+            this.lived.helmet = equipment.getHelmet().clone();
+        }
+    }
+
+    private void restoreTameable(final Tameable entity) {
+        if (tamed.tamed) {
+            if (tamed.owner != null) {
+                entity.setTamed(true);
+                entity.setOwner(tamed.owner);
+            }
+        }
+    }
+
+    private void restoreAgeable(final Ageable entity) {
+        if (!aged.adult) {
+            entity.setBaby();
+        }
+        entity.setAgeLock(aged.locked);
+        if (aged.age > 0) {
+            entity.setAge(aged.age);
+        }
+    }
+
+    public void storeAgeable(final Ageable aged) {
+        this.aged = new AgeableStats();
+        this.aged.age = aged.getAge();
+        this.aged.locked = aged.getAgeLock();
+        this.aged.adult = aged.isAdult();
+    }
+
+    public void storeTameable(final Tameable tamed) {
+        this.tamed = new TameableStats();
+        this.tamed.owner = tamed.getOwner();
+        this.tamed.tamed = tamed.isTamed();
+    }
+
     @SuppressWarnings("deprecation")
     public Entity spawn(final World world, final int x_offset, final int z_offset) {
         final Location loc = new Location(world, x + x_offset, y, z + z_offset);
         loc.setYaw(yaw);
         loc.setPitch(pitch);
-        if (id == -1) {
+        if (type.isSpawnable()) {
             return null;
         }
-        final EntityType type = EntityType.fromId(id);
         Entity entity;
         switch (type) {
             case DROPPED_ITEM: {

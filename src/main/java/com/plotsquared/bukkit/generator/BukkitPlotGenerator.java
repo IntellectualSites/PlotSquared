@@ -20,17 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.generator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.generator.BlockPopulator;
-import org.bukkit.generator.ChunkGenerator;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
@@ -47,18 +36,27 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.block.GenChunk;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.generator.BlockPopulator;
+import org.bukkit.generator.ChunkGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
     
-    private boolean loaded = false;
     private final PlotChunk<Chunk> chunkSetter;
     private final PseudoRandom random = new PseudoRandom();
-    private PlotManager manager;
     private final IndependentPlotGenerator plotGenerator;
+    private final List<BlockPopulator> populators = new ArrayList<>();
+    private boolean loaded = false;
+    private PlotManager manager;
     private ChunkGenerator platformGenerator;
     private boolean full;
-    
-    private final List<BlockPopulator> populators = new ArrayList<>();
 
     public BukkitPlotGenerator(final String world, IndependentPlotGenerator generator) {
         WorldEvents.lastWorld = world;
@@ -211,7 +209,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 final String name = WorldEvents.getName(world);
                 PS.get().loadWorld(name, this);
                 Set<PlotArea> areas = PS.get().getPlotAreas(name);
-                if (areas.size() != 0) {
+                if (!areas.isEmpty()) {
                     PlotArea area = areas.iterator().next();
                     if (!area.MOB_SPAWNING) {
                         if (!area.SPAWN_EGGS) {

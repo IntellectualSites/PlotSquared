@@ -1,16 +1,33 @@
 package com.plotsquared.bukkit.listeners;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotHandler;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.RegExUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.object.BukkitLazyBlock;
+import com.plotsquared.bukkit.object.BukkitPlayer;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.listener.PlayerBlockEventType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -89,34 +106,16 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotInventory;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.RegExUtil;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.bukkit.object.BukkitLazyBlock;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.listener.PlayerBlockEventType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots
@@ -126,6 +125,9 @@ import com.plotsquared.listener.PlayerBlockEventType;
 public class PlayerEvents extends com.plotsquared.listener.PlotListener implements Listener {
     
     private boolean pistonBlocks = true;
+    private float lastRadius;
+    // To prevent recursion
+    private boolean tmp_teleport = true;
     
     public static void sendBlockChange(final org.bukkit.Location bloc, final Material type, final byte data) {
         TaskManager.runTaskLater(new Runnable() {
@@ -139,10 +141,10 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     PlotPlayer player = entry.getValue();
                     final Location loc = player.getLocation();
                     if (loc.getWorld().equals(world)) {
-                        if ((16 * (Math.abs(loc.getX() - x) / 16)) > distance) {
+                        if (16 * Math.abs(loc.getX() - x) / 16 > distance) {
                             continue;
                         }
-                        if ((16 * (Math.abs(loc.getZ() - z) / 16)) > distance) {
+                        if (16 * Math.abs(loc.getZ() - z) / 16 > distance) {
                             continue;
                         }
                         ((BukkitPlayer) player).player.sendBlockChange(bloc, type, data);
@@ -182,10 +184,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             case JUNGLE_FENCE_GATE:
             case ACACIA_FENCE_GATE:
             case DARK_OAK_FENCE_GATE:
-            case POWERED_RAIL: {
+            case POWERED_RAIL:
                 return;
-            }
-            default: {
+            default:
                 final Location loc = BukkitUtil.getLocation(block.getLocation());
                 PlotArea area = loc.getPlotArea();
                 if (area == null) {
@@ -227,7 +228,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     }
                     event.setNewCurrent(0);
                 }
-            }
         }
     }
     
@@ -254,7 +254,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             case 122:
             case 145:
             case 12:
-            case 13: {
+            case 13:
                 final Block block = event.getBlock();
                 final Location loc = BukkitUtil.getLocation(block.getLocation());
                 PlotArea area = loc.getPlotArea();
@@ -262,15 +262,13 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return;
                 }
                 final Plot plot = area.getOwnedPlotAbs(loc);
-                if ((plot != null) && FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
+                if (plot != null && FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
                     event.setCancelled(true);
                     return;
                 }
                 return;
-            }
-            default: {
+            default:
                 break;
-            }
         }
     }
     
@@ -286,9 +284,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return;
         }
         Plot plot = area.getPlotAbs(loc);
-        // 
+        //
         final ProjectileSource shooter = entity.getShooter();
-        if ((shooter instanceof Player)) {
+        if (shooter instanceof Player) {
             final PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_PROJECTILE_UNOWNED)) {
@@ -314,7 +312,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return;
             }
             final Plot sPlot = area.getOwnedPlotAbs(sLoc);
-            if ((sPlot == null) || !PlotHandler.sameOwners(plot, sPlot)) {
+            if (sPlot == null || !PlotHandler.sameOwners(plot, sPlot)) {
                 entity.remove();
             }
         }
@@ -323,7 +321,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void PlayerCommand(final PlayerCommandPreprocessEvent event) {
         String msg = event.getMessage().toLowerCase().replaceAll("/", "").trim();
-        if (msg.length() == 0) {
+        if (msg.isEmpty()) {
             return;
         }
         final String[] split = msg.split(" ");
@@ -388,7 +386,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         for (final String s : v) {
             Pattern pattern;
             if (!RegExUtil.compiledPatterns.containsKey(s)) {
-                RegExUtil.compiledPatterns.put(s, ((pattern = Pattern.compile(s))));
+                RegExUtil.compiledPatterns.put(s, pattern = Pattern.compile(s));
             } else {
                 pattern = RegExUtil.compiledPatterns.get(s);
             }
@@ -418,7 +416,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         StringWrapper sw = new StringWrapper(name);
         final UUID uuid = pp.getUUID();
         UUIDHandler.add(sw, uuid);
-        
+
         Location loc = pp.getLocation();
         PlotArea area = loc.getPlotArea();
         final Plot plot;
@@ -431,9 +429,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             plot = null;
         }
         // Delayed
-        {   
-            
-        }
+
         // Async
         TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
@@ -447,7 +443,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                         MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASSED);
                     }
                 }
-                if ((PS.get().update != null) && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
+                if (PS.get().update != null && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
                     MainUtil.sendMessage(pp, "&6An update for PlotSquared is available: &7/plot update");
                 }
                 if (Settings.TELEPORT_ON_LOGIN && plot != null) {
@@ -471,7 +467,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
             final Player player = event.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(player);
-            
+
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
 
@@ -486,9 +482,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             Plot now = area.getPlotAbs(loc);
             final Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if ((lastPlot != null) && !plotExit(pp, lastPlot)) {
+                if (lastPlot != null && !plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
-                    if (lastPlot.equals((BukkitUtil.getLocation(from).getPlot()))) {
+                    if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {
                         player.teleport(from);
                     } else {
                         player.teleport(player.getWorld().getSpawnLocation());
@@ -496,7 +492,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     event.setCancelled(true);
                     return;
                 }
-            } else if ((lastPlot != null) && now.equals(lastPlot)) {
+            } else if (lastPlot != null && now.equals(lastPlot)) {
                 return;
             } else {
                 if (!plotEntry(pp, now)) {
@@ -528,14 +524,14 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
             final Player player = event.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(player);
-            
+
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
 
             // Set last location
             Location loc = BukkitUtil.getLocation(to);
             pp.setMeta("location", loc);
-            
+
             PlotArea area = loc.getPlotArea();
             if (area == null) {
                 pp.deleteMeta("lastplot");
@@ -544,9 +540,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             Plot now = area.getPlotAbs(loc);
             final Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if ((lastPlot != null) && !plotExit(pp, lastPlot)) {
+                if (lastPlot != null && !plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
-                    if (lastPlot.equals((BukkitUtil.getLocation(from).getPlot()))) {
+                    if (lastPlot.equals(BukkitUtil.getLocation(from).getPlot())) {
                         player.teleport(from);
                     } else {
                         player.teleport(player.getWorld().getSpawnLocation());
@@ -554,7 +550,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     event.setCancelled(true);
                     return;
                 }
-            } else if ((lastPlot != null) && now.equals(lastPlot)) {
+            } else if (lastPlot != null && now.equals(lastPlot)) {
                 return;
             } else {
                 if (!plotEntry(pp, now)) {
@@ -587,7 +583,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final PlotPlayer plr = BukkitUtil.getPlayer(player);
         Location loc = plr.getLocation();
         PlotArea area = loc.getPlotArea();
-        if (area == null || (!area.PLOT_CHAT && !plr.getAttribute("chat"))) {
+        if (area == null || !area.PLOT_CHAT && !plr.getAttribute("chat")) {
             return;
         }
         final Plot plot = area.getPlotAbs(loc);
@@ -640,7 +636,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             } else if (!plot.isAdded(pp.getUUID())) {
                 final Flag destroy = FlagManager.getPlotFlagRaw(plot, "break");
                 final Block block = event.getBlock();
-                if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
+                if (destroy != null && ((HashSet<PlotBlock>) destroy.getValue())
+                        .contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                     return;
                 }
                 if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
@@ -686,7 +683,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
                     List<MetadataValue> meta = event.getEntity().getMetadata("plot");
                     Plot origin;
-                    if (meta.size() == 0) {
+                    if (meta.isEmpty()) {
                         origin = plot;
                     } else {
                         origin = (Plot) meta.get(0).value();
@@ -694,7 +691,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     if (lastRadius != 0) {
                         final List<Entity> nearby = event.getEntity().getNearbyEntities(lastRadius, lastRadius, lastRadius);
                         for (final Entity near : nearby) {
-                            if ((near instanceof TNTPrimed) || (near.getType() == EntityType.MINECART_TNT)) {
+                            if (near instanceof TNTPrimed || near.getType() == EntityType.MINECART_TNT) {
                                 if (!near.hasMetadata("plot")) {
                                     near.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, plot));
                                 }
@@ -721,7 +718,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     public void onWorldChanged(final PlayerChangedWorldEvent event) {
         final Player player = event.getPlayer();
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        
+
 
         // Delete last location
         pp.deleteMeta("location");
@@ -729,7 +726,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (plot != null) {
             plotExit(pp, plot);
         }
-        
+
         if (BukkitMain.worldEdit != null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_WORLDEDIT_BYPASS)) {
                 if (pp.getAttribute("worldedit")) {
@@ -815,7 +812,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             if (!plot.isAdded(pp.getUUID())) {
                 final Flag destroy = FlagManager.getPlotFlagRaw(plot, "break");
                 final Block block = event.getBlock();
-                if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
+                if (destroy != null && ((HashSet<PlotBlock>) destroy.getValue())
+                        .contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                     return;
                 }
                 if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
@@ -928,7 +926,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     pistonBlocks = false;
                 }
             }
-            if (!pistonBlocks && (block.getType() != Material.PISTON_BASE)) {
+            if (!pistonBlocks && block.getType() != Material.PISTON_BASE) {
                 final BlockFace dir = event.getDirection();
                 loc = BukkitUtil.getLocation(block.getLocation().add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
                 if (loc.getPlotArea() != null) {
@@ -957,7 +955,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 pistonBlocks = false;
             }
         }
-        if (!pistonBlocks && (block.getType() != Material.PISTON_BASE)) {
+        if (!pistonBlocks && block.getType() != Material.PISTON_BASE) {
             final BlockFace dir = event.getDirection();
             loc = BukkitUtil.getLocation(block.getLocation().add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
             if (!area.contains(loc)) {
@@ -989,7 +987,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return;
         }
         final List<BlockState> blocks = e.getBlocks();
-        if (blocks.size() == 0) {
+        if (blocks.isEmpty()) {
             return;
         }
         Location loc = BukkitUtil.getLocation(blocks.get(0).getLocation());
@@ -1106,24 +1104,21 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     case HOPPER:
                     case NOTE_BLOCK:
                     case JUKEBOX:
-                    case WORKBENCH: {
+                    case WORKBENCH:
                         eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         break;
-                    }
-                    case DRAGON_EGG: {
+                    case DRAGON_EGG:
                         eventType = PlayerBlockEventType.TELEPORT_OBJECT;
                         break;
-                    }
-                    default: {
+                    default:
                         if (blockId > 197) {
                             eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         }
                         break;
-                    }
                 }
                 lb = new BukkitLazyBlock(blockId, block);
                 final ItemStack hand = player.getItemInHand();
-                if ((eventType != null) && !player.isSneaking()) {
+                if (eventType != null && !player.isSneaking()) {
                     break;
                 }
                 Material type = hand == null ? null : hand.getType();
@@ -1141,23 +1136,20 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 lb = new BukkitLazyBlock(new PlotBlock((short) handType.getId(), (byte) 0));
                 switch (handType) {
                     case MONSTER_EGG:
-                    case MONSTER_EGGS: {
+                    case MONSTER_EGGS:
                         eventType = PlayerBlockEventType.SPAWN_MOB;
                         break;
-                    }
-                    
-                    case ARMOR_STAND: {
+
+                    case ARMOR_STAND:
                         eventType = PlayerBlockEventType.PLACE_MISC;
                         break;
-                    }
-                    
+
                     case WRITTEN_BOOK:
                     case BOOK_AND_QUILL:
-                    case BOOK: {
+                    case BOOK:
                         eventType = PlayerBlockEventType.READ;
                         break;
-                    }
-                    
+
                     case APPLE:
                     case BAKED_POTATO:
                     case MUSHROOM_SOUP:
@@ -1178,42 +1170,36 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     case RABBIT_STEW:
                     case RAW_BEEF:
                     case RAW_FISH:
-                    case RAW_CHICKEN: {
+                    case RAW_CHICKEN:
                         eventType = PlayerBlockEventType.EAT;
                         break;
-                    }
                     case MINECART:
                     case STORAGE_MINECART:
                     case POWERED_MINECART:
                     case HOPPER_MINECART:
                     case EXPLOSIVE_MINECART:
                     case COMMAND_MINECART:
-                    case BOAT: {
+                    case BOAT:
                         eventType = PlayerBlockEventType.PLACE_VEHICLE;
                         break;
-                    }
                     case PAINTING:
-                    case ITEM_FRAME: {
+                    case ITEM_FRAME:
                         eventType = PlayerBlockEventType.PLACE_HANGING;
                         break;
-                    }
-                    default: {
+                    default:
                         eventType = PlayerBlockEventType.INTERACT_BLOCK;
                         break;
-                    }
                 }
                 break;
             }
-            case LEFT_CLICK_BLOCK: {
+            case LEFT_CLICK_BLOCK:
                 Block block = event.getClickedBlock();
                 loc = BukkitUtil.getLocation(block.getLocation());
                 eventType = PlayerBlockEventType.BREAK_BLOCK;
                 lb = new BukkitLazyBlock(block);
                 break;
-            }
-            default: {
+            default:
                 return;
-            }
         }
         if (!EventUtil.manager.checkPlayerBlockEvent(pp, eventType, loc, lb, true)) {
             event.setCancelled(true);
@@ -1293,7 +1279,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (event.getTo().hasGravity()) {
             Entity entity = event.getEntity();
             List<MetadataValue> meta = entity.getMetadata("plot");
-            if (meta.size() == 0) {
+            if (meta.isEmpty()) {
                 return;
             }
             Plot origin = (Plot) meta.get(0).value();
@@ -1307,13 +1293,11 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
     
-    private float lastRadius;
-    
     @EventHandler
     public void onPrime(final ExplosionPrimeEvent event) {
         lastRadius = event.getRadius() + 1;
     }
-    
+
     public boolean checkEntity(Plot plot, String... flags) {
         int[] mobs = null;
         for (String flag : flags) {
@@ -1337,9 +1321,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 case "misc-cap":
                     i = 5;
                     break;
-                default: {
+                default:
                     i = 0;
-                }
             }
             final Flag plotFlag = FlagManager.getPlotFlagRaw(plot, flag);
             if (plotFlag == null) {
@@ -1348,7 +1331,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             if (mobs == null) {
                 mobs = plot.countEntities();
             }
-            if (mobs[i] >= ((Integer) plotFlag.getValue())) {
+            if (mobs[i] >= (Integer) plotFlag.getValue()) {
                 return true;
             }
         }
@@ -1356,13 +1339,14 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     }
 
     public boolean checkEntity(final Entity entity, final Plot plot) {
-        if (plot == null || plot.owner == null || plot.settings == null || (plot.settings.flags.size() == 0 && plot.getArea().DEFAULT_FLAGS.size() == 0)) {
+        if (plot == null || plot.owner == null || plot.settings == null || plot.getFlags().isEmpty() && plot.getArea().DEFAULT_FLAGS
+                .isEmpty
+                        ()) {
             return false;
         }
         switch (entity.getType()) {
-            case PLAYER: {
+            case PLAYER:
                 return false;
-            }
             case SMALL_FIREBALL:
             case FIREBALL:
             case DROPPED_ITEM:
@@ -1371,13 +1355,11 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             case SPLASH_POTION:
             case SNOWBALL:
             case ENDER_PEARL:
-            case ARROW: {
+            case ARROW:
                 // projectile
-            }
             case PRIMED_TNT:
-            case FALLING_BLOCK: {
-                // Block entities 
-            }
+            case FALLING_BLOCK:
+                // Block entities
             case ENDER_CRYSTAL:
             case COMPLEX_PART:
             case FISHING_HOOK:
@@ -1388,16 +1370,14 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             case WEATHER:
             case LIGHTNING:
             case WITHER_SKULL:
-            case UNKNOWN: {
+            case UNKNOWN:
                 // non moving / unremovable
                 return checkEntity(plot, "entity-cap");
-            }
             case ITEM_FRAME:
             case PAINTING:
-            case ARMOR_STAND: {
+            case ARMOR_STAND:
                 return checkEntity(plot, "entity-cap", "misc-cap");
-                // misc
-            }
+            // misc
             case MINECART:
             case MINECART_CHEST:
             case MINECART_COMMAND:
@@ -1405,9 +1385,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             case MINECART_HOPPER:
             case MINECART_MOB_SPAWNER:
             case MINECART_TNT:
-            case BOAT: {
+            case BOAT:
                 return checkEntity(plot, "entity-cap", "vehicle-cap");
-            }
             case RABBIT:
             case SHEEP:
             case MUSHROOM_COW:
@@ -1421,10 +1400,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             case CHICKEN:
             case COW:
             case SNOWMAN:
-            case BAT: {
+            case BAT:
                 // animal
                 return checkEntity(plot, "entity-cap", "mob-cap", "animal-cap");
-            }
             case BLAZE:
             case CAVE_SPIDER:
             case CREEPER:
@@ -1442,11 +1420,10 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             case SPIDER:
             case WITCH:
             case WITHER:
-            case ZOMBIE: {
+            case ZOMBIE:
                 // monster
                 return checkEntity(plot, "entity-cap", "mob-cap", "hostile-cap");
-            }
-            default: {
+            default:
                 String[] types;
                 if (entity instanceof LivingEntity) {
                     if (entity instanceof Animals) {
@@ -1464,7 +1441,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     types = new String[] { "entity-cap" };
                 }
                 return checkEntity(plot, types);
-            }
         }
     }
     
@@ -1526,12 +1502,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
     
-    // To prevent recursion
-    private boolean tmp_teleport = true;
-    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent event) {
-        if ((event.getTo() == null) || (event.getFrom() == null)) {
+        if (event.getTo() == null || event.getFrom() == null) {
             BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("location");
             BukkitUtil.getPlayer(event.getPlayer()).deleteMeta("lastplot");
             return;
@@ -1551,7 +1524,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             Plot now = area.getPlotAbs(loc);
             final Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if ((lastPlot != null) && !plotExit(pp, lastPlot) && tmp_teleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && tmp_teleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
                         tmp_teleport = false;
@@ -1568,7 +1541,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     event.setCancelled(true);
                     return;
                 }
-            } else if ((lastPlot != null) && now.equals(lastPlot)) {
+            } else if (lastPlot != null && now.equals(lastPlot)) {
                 return;
             } else {
                 if (!plotEntry(pp, now) && tmp_teleport) {
@@ -1623,7 +1596,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             Plot now = area.getPlotAbs(loc);
             final Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if ((lastPlot != null) && !plotExit(pp, lastPlot) && tmp_teleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && tmp_teleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
                         tmp_teleport = false;
@@ -1640,7 +1613,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     event.setCancelled(true);
                     return;
                 }
-            } else if ((lastPlot != null) && now.equals(lastPlot)) {
+            } else if (lastPlot != null && now.equals(lastPlot)) {
                 return;
             } else {
                 if (!plotEntry(pp, now) && tmp_teleport) {
@@ -1706,7 +1679,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 e.setCancelled(true);
             } else if (!plot.isAdded(pp.getUUID())) {
                 final Flag use = FlagManager.getPlotFlagRaw(plot, C.FLAG_USE.s());
-                if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) e.getBucket().getId(), (byte) 0))) {
+                if (use != null && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) e.getBucket().getId(), (byte) 0))) {
                     return;
                 }
                 if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -1727,7 +1700,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final Player player = (Player) clicker;
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         final PlotInventory inv = pp.getMeta("inventory");
-        if ((inv != null) && (event.getRawSlot() == event.getSlot())) {
+        if (inv != null && event.getRawSlot() == event.getSlot()) {
             if (!inv.onClick(event.getSlot())) {
                 event.setCancelled(true);
                 inv.close();
@@ -1778,7 +1751,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             } else if (!plot.isAdded(pp.getUUID())) {
                 final Flag use = FlagManager.getPlotFlagRaw(plot, C.FLAG_USE.s());
                 final Block block = e.getBlockClicked();
-                if ((use != null) && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
+                if (use != null && ((HashSet<PlotBlock>) use.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                     return;
                 }
                 if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
@@ -1939,19 +1912,19 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
                 final Entity entity = e.getRightClicked();
-                if ((entity instanceof Monster) && FlagManager.isPlotFlagTrue(plot, C.FLAG_HOSTILE_INTERACT.s())) {
+                if (entity instanceof Monster && FlagManager.isPlotFlagTrue(plot, C.FLAG_HOSTILE_INTERACT.s())) {
                     return;
                 }
-                if ((entity instanceof Animals) && FlagManager.isPlotFlagTrue(plot, C.FLAG_ANIMAL_INTERACT.s())) {
+                if (entity instanceof Animals && FlagManager.isPlotFlagTrue(plot, C.FLAG_ANIMAL_INTERACT.s())) {
                     return;
                 }
-                if ((entity instanceof Tameable) && ((Tameable) entity).isTamed() && FlagManager.isPlotFlagTrue(plot, C.FLAG_TAMED_INTERACT.s())) {
+                if (entity instanceof Tameable && ((Tameable) entity).isTamed() && FlagManager.isPlotFlagTrue(plot, C.FLAG_TAMED_INTERACT.s())) {
                     return;
                 }
-                if ((entity instanceof Vehicle) && FlagManager.isPlotFlagTrue(plot, C.FLAG_VEHICLE_USE.s())) {
+                if (entity instanceof Vehicle && FlagManager.isPlotFlagTrue(plot, C.FLAG_VEHICLE_USE.s())) {
                     return;
                 }
-                if ((entity instanceof Player) && FlagManager.isPlotFlagTrue(plot, C.FLAG_PLAYER_INTERACT.s())) {
+                if (entity instanceof Player && FlagManager.isPlotFlagTrue(plot, C.FLAG_PLAYER_INTERACT.s())) {
                     return;
                 }
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
@@ -2032,7 +2005,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         final Location dloc = BukkitUtil.getLocation(damager);
         final Location vloc = BukkitUtil.getLocation(victim);
         PlotArea dArea = dloc.getPlotArea();
-        PlotArea vArea = (dArea != null && dArea.contains(vloc.getX(), vloc.getZ())) ? dArea : vloc.getPlotArea();
+        PlotArea vArea = dArea != null && dArea.contains(vloc.getX(), vloc.getZ()) ? dArea : vloc.getPlotArea();
         if (dArea == null && vArea == null) {
             return true;
         }
@@ -2042,7 +2015,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         
         Plot plot;
         String stub;
-        if ((dplot == null) && (vplot == null)) {
+        if (dplot == null && vplot == null) {
             if (dArea == null) {
                 return true;
             }
@@ -2050,7 +2023,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             stub = "road";
         } else {
             // Priorize plots for close to seamless pvp zones
-            plot = vplot == null ? dplot : (((dplot == null) || !(victim instanceof Player)) ? vplot : (victim.getTicksLived() > damager.getTicksLived() ? dplot : vplot));
+            plot = vplot == null ? dplot : dplot == null || !(victim instanceof Player) ? vplot :
+                    victim.getTicksLived() > damager.getTicksLived() ? dplot : vplot;
             stub = plot.hasOwner() ? "other" : "unowned";
         }
         
@@ -2071,7 +2045,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (player != null) {
             final PlotPlayer pp = BukkitUtil.getPlayer(player);
             if (victim instanceof Hanging) { // hanging
-                if ((plot != null) && ((FlagManager.isPlotFlagTrue(plot, "hanging-break") || plot.isAdded(pp.getUUID())))) {
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "hanging-break") || plot.isAdded(pp.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.destroy." + stub)) {
@@ -2079,15 +2053,16 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return false;
                 }
             } else if (victim.getEntityId() == 30) {
-                if ((plot != null) && ((FlagManager.isPlotFlagTrue(plot, "misc-break") || plot.isAdded(pp.getUUID())))) {
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "misc-break") || plot.isAdded(pp.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.destroy." + stub)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.destroy." + stub);
                     return false;
                 }
-            } else if ((victim instanceof Monster) || (victim instanceof EnderDragon)) { // victim is monster
-                if ((plot != null) && ((FlagManager.isPlotFlagTrue(plot, "hostile-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
+            } else if (victim instanceof Monster || victim instanceof EnderDragon) { // victim is monster
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "hostile-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot
+                        .isAdded(pp.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
@@ -2095,7 +2070,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return false;
                 }
             } else if (victim instanceof Tameable) { // victim is tameable
-                if ((plot != null) && ((FlagManager.isPlotFlagTrue(plot, "tamed-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "tamed-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot
+                        .isAdded(pp.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
@@ -2121,7 +2097,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return false;
                 }
             } else if (victim instanceof Creature) { // victim is animal
-                if ((plot != null) && ((FlagManager.isPlotFlagTrue(plot, "animal-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "animal-attack") || FlagManager.isPlotFlagTrue(plot, "pve") || plot
+                        .isAdded(pp.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
@@ -2131,7 +2108,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             } else if (victim instanceof Vehicle) { // Vehicles are managed in vehicle destroy event
                 return true;
             } else { // victim is something else
-                if ((plot != null) && ((FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID())))) {
+                if (plot != null && (FlagManager.isPlotFlagTrue(plot, "pve") || plot.isAdded(pp.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
@@ -2142,7 +2119,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             return true;
         }
         // player is null
-        return !((damager instanceof Arrow) && (!(victim instanceof Creature)));
+        return !(damager instanceof Arrow && !(victim instanceof Creature));
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -2195,7 +2172,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             } else if (!plot.isAdded(pp.getUUID())) {
                 final Flag place = FlagManager.getPlotFlagRaw(plot, C.FLAG_PLACE.s());
                 final Block block = event.getBlock();
-                if (((place == null) || !((HashSet<PlotBlock>) place.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData())))
+                if ((place == null || !((HashSet<PlotBlock>) place.getValue()).contains(new PlotBlock((short) block.getTypeId(), block.getData())))
                 && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
@@ -2214,7 +2191,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     sendBlockChange(block.getLocation(), block.getType(), block.getData());
                 }
             }
-            if (((loc.getY() > area.MAX_BUILD_HEIGHT) && (loc.getY() < area.MIN_BUILD_HEIGHT)) && !Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
+            if (loc.getY() > area.MAX_BUILD_HEIGHT && loc.getY() < area.MIN_BUILD_HEIGHT && !Permissions
+                    .hasPermission(pp, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", "" + area.MAX_BUILD_HEIGHT));
             }

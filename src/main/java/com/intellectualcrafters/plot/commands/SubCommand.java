@@ -20,20 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.List;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.MainUtil;
 
+import java.util.List;
+
 /**
  * SubCommand class
  *
 
  */
-@SuppressWarnings({ "deprecation" })
 public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer> {
     
     /**
@@ -64,7 +63,7 @@ public abstract class SubCommand extends com.plotsquared.general.commands.Comman
         if (page > totalPages) {
             page = totalPages;
         }
-        int max = (page * size) + size;
+        int max = page * size + size;
         if (max > c.size()) {
             max = c.size();
         }
@@ -81,18 +80,20 @@ public abstract class SubCommand extends com.plotsquared.general.commands.Comman
             msg.send(player);
         }
         // Send the footer
-        if ((page < totalPages) && (page > 0)) { // Back | Next
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + (page)).text(" | ").color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
+        if (page < totalPages && page > 0) { // Back | Next
+            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ").color("$3").text("->").color("$1")
+                    .command(baseCommand + " " + (page + 2))
             .text(C.CLICKABLE.s()).color("$2").send(player);
             return;
         }
-        if ((page == 0) && (totalPages != 0)) { // Next
+        if (page == 0 && totalPages != 0) { // Next
             new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2)).text(C.CLICKABLE.s()).color("$2").send(player);
             return;
         }
-        if ((page == totalPages) && (totalPages != 0)) { // Back
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + (page)).text(" | ").color("$3").text("->").color("$3").text(C.CLICKABLE.s()).color("$2").send(player);
-            return;
+        if (page == totalPages && totalPages != 0) { // Back
+            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ").color("$3").text("->").color("$3")
+                    .text(C.CLICKABLE.s()).color("$2").send(player);
+
         }
     }
 }

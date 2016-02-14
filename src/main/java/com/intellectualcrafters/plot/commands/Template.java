@@ -20,15 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
@@ -46,6 +37,16 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
 @CommandDeclaration(
 command = "template",
 permission = "plots.admin",
@@ -55,7 +56,6 @@ category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
     
     public static boolean extractAllFiles(final String world, final String template) {
-        final byte[] buffer = new byte[2048];
         try {
             final File folder = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
             if (!folder.exists()) {
@@ -66,24 +66,28 @@ public class Template extends SubCommand {
             if (!output.exists()) {
                 output.mkdirs();
             }
-            final ZipInputStream zis = new ZipInputStream(new FileInputStream(input));
-            ZipEntry ze = zis.getNextEntry();
-            while (ze != null) {
-                final String name = ze.getName().replace('\\', File.separatorChar).replace('/', File.separatorChar);
-                final File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
-                new File(newFile.getParent()).mkdirs();
-                final FileOutputStream fos = new FileOutputStream(newFile);
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len);
+            try (ZipInputStream zis = new ZipInputStream(new FileInputStream(input))) {
+                ZipEntry ze = zis.getNextEntry();
+                final byte[] buffer = new byte[2048];
+                while (ze != null) {
+                    final String name = ze.getName().replace('\\', File.separatorChar).replace('/', File.separatorChar);
+                    final File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
+                    new File(newFile.getParent()).mkdirs();
+                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                    }
+                    ze = zis.getNextEntry();
                 }
-                fos.close();
-                ze = zis.getNextEntry();
+                zis.closeEntry();
             }
-            zis.closeEntry();
-            zis.close();
             return true;
-        } catch (final Exception e) {
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -105,21 +109,21 @@ public class Template extends SubCommand {
     public static void zipAll(final String world, final Set<FileBytes> files) throws IOException {
         final File output = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
         output.mkdirs();
-        final FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
-        final ZipOutputStream zos = new ZipOutputStream(fos);
-        
-        for (final FileBytes file : files) {
-            final ZipEntry ze = new ZipEntry(file.path);
-            zos.putNextEntry(ze);
-            zos.write(file.data);
+        try (FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
+                ZipOutputStream zos = new ZipOutputStream(fos)) {
+
+            for (final FileBytes file : files) {
+                final ZipEntry ze = new ZipEntry(file.path);
+                zos.putNextEntry(ze);
+                zos.write(file.data);
+            }
+            zos.closeEntry();
         }
-        zos.closeEntry();
-        zos.close();
     }
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        if ((args.length != 2) && (args.length != 3)) {
+        if (args.length != 2 && args.length != 3) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
@@ -186,7 +190,7 @@ public class Template extends SubCommand {
                 });
                 return true;
             }
-            case "export": {
+            case "export":
                 if (args.length != 2) {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
                     return false;
@@ -197,25 +201,22 @@ public class Template extends SubCommand {
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();
-                final PlotPlayer finalPlr = plr;
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             manager.exportTemplate(area);
-                        } catch (final Exception e) {
+                        } catch (IOException e) {
                             e.printStackTrace();
-                            MainUtil.sendMessage(finalPlr, "Failed: " + e.getMessage());
+                            MainUtil.sendMessage(plr, "Failed: " + e.getMessage());
                             return;
                         }
-                        MainUtil.sendMessage(finalPlr, "Done!");
+                        MainUtil.sendMessage(plr, "Done!");
                     }
                 });
                 return true;
-            }
-            default: {
+            default:
                 C.COMMAND_SYNTAX.send(plr, getUsage());
-            }
         }
         return false;
     }

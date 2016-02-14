@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -32,7 +30,10 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "info", aliases = { "i" }, description = "Display plot info", usage = "/plot info <id>", category = CommandCategory.INFO)
+import java.util.UUID;
+
+@CommandDeclaration(command = "info", aliases = {"i"}, description = "Display plot info", usage = "/plot info <type>",
+        category = CommandCategory.INFO)
 public class Info extends SubCommand {
     
     @Override
@@ -48,7 +49,7 @@ public class Info extends SubCommand {
                 case "biome":
                 case "denied":
                 case "flags":
-                case "id":
+                case "type":
                 case "size":
                 case "members":
                 case "owner":
@@ -156,7 +157,7 @@ public class Info extends SubCommand {
                 return C.PLOT_INFO_DENIED.s();
             case "flags":
                 return C.PLOT_INFO_FLAGS.s();
-            case "id":
+            case "type":
                 return C.PLOT_INFO_ID.s();
             case "size":
                 return C.PLOT_INFO_SIZE.s();

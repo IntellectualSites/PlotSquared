@@ -2,17 +2,6 @@ package com.plotsquared.bukkit.util.block;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -25,24 +14,33 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 public class FastQueue_1_8 extends SlowQueue {
-    
+
+    public final RefMethod methodInitLighting;
     private final RefClass classBlock = getRefClass("{nms}.Block");
     private final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
     private final RefClass classIBlockData = getRefClass("{nms}.IBlockData");
     private final RefClass classChunk = getRefClass("{nms}.Chunk");
     private final RefClass classWorld = getRefClass("{nms}.World");
     private final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
+    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     private RefMethod methodGetHandle;
     private RefMethod methodGetChunkAt;
     private RefMethod methodA;
     private RefMethod methodGetByCombinedId;
     private RefConstructor constructorBlockPosition;
     private SendChunk chunksender;
-    public final RefMethod methodInitLighting;
-    
-    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
     public FastQueue_1_8() throws NoSuchMethodException {
         methodInitLighting = classChunk.getMethod("initLighting");
@@ -55,7 +53,7 @@ public class FastQueue_1_8 extends SlowQueue {
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-                if (toUpdate.size() == 0) {
+                if (toUpdate.isEmpty()) {
                     return;
                 }
                 int count = 0;
@@ -74,9 +72,9 @@ public class FastQueue_1_8 extends SlowQueue {
         }, 1);
         MainUtil.initCache();
     }
-    
+
     public void update(final Collection<Chunk> chunks) {
-        if (chunks.size() == 0) {
+        if (chunks.isEmpty()) {
             return;
         }
         if (!MainUtil.canSendChunk) {
@@ -94,7 +92,7 @@ public class FastQueue_1_8 extends SlowQueue {
             MainUtil.canSendChunk = false;
         }
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
      * @param pc
@@ -179,7 +177,7 @@ public class FastQueue_1_8 extends SlowQueue {
                         continue;
                     }
                 }
-                
+
                 // Start data value shortcut
                 final Block block = world.getBlockAt(x, y, z);
                 final int currentId = block.getTypeId();
@@ -323,7 +321,7 @@ public class FastQueue_1_8 extends SlowQueue {
                     }
                 }
                 // End blockstate workaround //
-                
+
                 // check sign
                 final Object pos = constructorBlockPosition.create(x, y, z);
                 final Object combined = methodGetByCombinedId.call(newBlock.id + (newBlock.data << 12));
@@ -348,19 +346,19 @@ public class FastQueue_1_8 extends SlowQueue {
             }
         }
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param wrap
      */
     @Override
     public PlotChunk<Chunk> getChunk(ChunkWrapper wrap) {
         return new SlowChunk(wrap);
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param fixAll
      */
     @Override
     public boolean fixLighting(PlotChunk<Chunk> chunk, boolean fixAll) {
@@ -368,10 +366,10 @@ public class FastQueue_1_8 extends SlowQueue {
         methodInitLighting.of(c).call();
         return true;
     }
-    
+
     /**
      * This should be overriden by any specialized queues 
-     * @param pc
+     * @param locs
      */
     @Override
     public void sendChunk(String world, Collection<ChunkLoc> locs) {

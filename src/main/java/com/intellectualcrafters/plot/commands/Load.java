@@ -1,9 +1,5 @@
 package com.intellectualcrafters.plot.commands;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -17,6 +13,10 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
 @CommandDeclaration(
 command = "load",
@@ -121,7 +121,7 @@ public class Load extends SubCommand {
                 public void run() {
                     final List<String> schematics = SchematicHandler.manager.getSaves(plr.getUUID());
                     plot.removeRunning();
-                    if ((schematics == null) || (schematics.size() == 0)) {
+                    if ((schematics == null) || (schematics.isEmpty())) {
                         MainUtil.sendMessage(plr, C.LOAD_FAILED);
                         return;
                     }

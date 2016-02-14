@@ -1,11 +1,9 @@
 package com.plotsquared.sponge.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.commands.MainCommand;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.sponge.SpongeMain;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -13,10 +11,11 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-import com.intellectualcrafters.plot.commands.MainCommand;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.plotsquared.sponge.SpongeMain;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class SpongeCommand implements CommandCallable {
     
@@ -31,7 +30,7 @@ public class SpongeCommand implements CommandCallable {
         } catch (final Exception e) {
             pp = ConsolePlayer.getConsole();
         }
-        if (MainCommand.onCommand(pp, cmd.getName(), string.length() == 0 ? new String[] {} : string.split(" "))) {
+        if (MainCommand.onCommand(pp, cmd.getName(), string.isEmpty() ? new String[]{} : string.split(" "))) {
             return CommandResult.success();
         } else {
             return CommandResult.empty();

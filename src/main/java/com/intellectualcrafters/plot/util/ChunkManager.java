@@ -1,11 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
@@ -15,18 +9,23 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public abstract class ChunkManager {
     
     public static ChunkManager manager = null;
-    
+    private static RunnableVal<PlotChunk<?>> CURRENT_FORCE_CHUNK;
+    private static RunnableVal<PlotChunk<?>> CURRENT_ADD_CHUNK;
+
     public static ChunkLoc getChunkChunk(final Location loc) {
         final int x = loc.getX() >> 9;
         final int z = loc.getZ() >> 9;
         return new ChunkLoc(x, z);
     }
-    
-    private static RunnableVal<PlotChunk<?>> CURRENT_FORCE_CHUNK;
-    private static RunnableVal<PlotChunk<?>> CURRENT_ADD_CHUNK;
     
     public static void setChunkInPlotArea(RunnableVal<PlotChunk<?>> force, RunnableVal<PlotChunk<?>> add, String world, ChunkLoc loc) {
         if (PS.get().isAugmented(world)) {
@@ -131,7 +130,7 @@ public abstract class ChunkManager {
             @Override
             public void run() {
                 final long start = System.currentTimeMillis();
-                while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < allocate)) {
+                while ((!chunks.isEmpty()) && ((System.currentTimeMillis() - start) < allocate)) {
                     final ChunkLoc chunk = chunks.remove(0);
                     task.value = new int[7];
                     task.value[0] = chunk.x;
@@ -158,7 +157,7 @@ public abstract class ChunkManager {
                     }
                     task.run();
                 }
-                if (chunks.size() != 0) {
+                if (!chunks.isEmpty()) {
                     TaskManager.runTaskLater(this, 1);
                 } else {
                     TaskManager.runTask(whenDone);

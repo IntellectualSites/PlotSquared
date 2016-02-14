@@ -1,19 +1,17 @@
 package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.plot.object.PlotBlock;
+
 import java.util.ArrayDeque;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.intellectualcrafters.plot.object.PlotBlock;
 
 public class SetQueue {
     
     public static final SetQueue IMP = new SetQueue();
-    
-    public PlotQueue<?> queue;
-    
     private final AtomicInteger time_waiting = new AtomicInteger(2);
     private final AtomicInteger time_current = new AtomicInteger(0);
     private final ArrayDeque<Runnable> runnables = new ArrayDeque<>();
+    public PlotQueue<?> queue;
     private long last;
     private long last2;
 
@@ -72,7 +70,7 @@ public class SetQueue {
     }
     
     public boolean tasks() {
-        if (runnables.size() == 0) {
+        if (runnables.isEmpty()) {
             return false;
         }
         final ArrayDeque<Runnable> tmp = runnables.clone();
@@ -106,8 +104,7 @@ public class SetQueue {
      * @param x
      * @param y
      * @param z
-     * @param id
-     * @param data
+     * @param block
      * @return
      */
     public boolean setBlock(final String world, final int x, final int y, final int z, PlotBlock block) {

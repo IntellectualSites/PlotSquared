@@ -20,13 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.listeners;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
+import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.listener.PlotListener;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -42,18 +43,17 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
-import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.listener.PlotListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 /**
  * Created 2014-10-30 for PlotSquared
- *
+ *
+
  */
 @SuppressWarnings({ "deprecation" })
 public class PlotPlusListener extends PlotListener implements Listener {
@@ -64,7 +64,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                if (healRunnable.size() > 0) {
+                if (!healRunnable.isEmpty()) {
                     for (final Iterator<Entry<String, Interval>> iter = healRunnable.entrySet().iterator(); iter.hasNext();) {
                         final Entry<String, Interval> entry = iter.next();
                         final Interval value = entry.getValue();
@@ -83,7 +83,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
                         }
                     }
                 }
-                if (feedRunnable.size() > 0) {
+                if (!feedRunnable.isEmpty()) {
                     for (final Iterator<Entry<String, Interval>> iter = feedRunnable.entrySet().iterator(); iter.hasNext();) {
                         final Entry<String, Interval> entry = iter.next();
                         final Interval value = entry.getValue();
@@ -216,7 +216,8 @@ public class PlotPlusListener extends PlotListener implements Listener {
     
     /**
      * Record Meta Class
-     *
+     *
+
      */
     public static class RecordMeta {
         public final static List<RecordMeta> metaList = new ArrayList<>();

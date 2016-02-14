@@ -1,8 +1,5 @@
 package com.plotsquared.listener;
 
-import java.lang.reflect.Field;
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -19,14 +16,17 @@ import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
 
+import java.lang.reflect.Field;
+import java.util.HashSet;
+
 public class ProcessedWEExtent extends AbstractDelegateExtent {
     private final HashSet<RegionWrapper> mask;
+    private final String world;
+    private final int max;
     int BScount = 0;
     int Ecount = 0;
     boolean BSblocked = false;
     boolean Eblocked = false;
-    private final String world;
-    private final int max;
     private int count;
     private Extent parent;
     
@@ -225,7 +225,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         }
                     }
                     return true;
-                    //                    WorldUtil.IMP.functionSetBlock(world, x, y, z, id, data);
+                    //                    WorldUtil.IMP.functionSetBlock(world, x, y, z, type, data);
                     //                    return super.setBlock(location, block);
                 }
             }

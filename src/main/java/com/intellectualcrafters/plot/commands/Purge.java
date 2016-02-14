@@ -39,7 +39,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @CommandDeclaration(
-usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]",
+        usage = "/plot purge world:<world> area:<area> type:<type> owner:<owner> shared:<shared> unknown:[true|false]",
 command = "purge",
 permission = "plots.admin",
 description = "Purge all plots for a world",
@@ -80,7 +80,7 @@ public class Purge extends SubCommand {
                     break;
                 }
                 case "plotid":
-                case "id": {
+                case "type": {
                     id = PlotId.fromString(split[1]);
                     if (id == null) {
                         C.NOT_VALID_PLOT_ID.send(plr, split[1]);
@@ -169,7 +169,7 @@ public class Purge extends SubCommand {
                 }
             }
         }
-        if (toDelete.size() == 0) {
+        if (toDelete.isEmpty()) {
             C.FOUND_NO_PLOTS.send(plr);
             return false;
         }

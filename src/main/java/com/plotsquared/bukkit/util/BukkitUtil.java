@@ -1,8 +1,17 @@
 package com.plotsquared.bukkit.util;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
+import com.plotsquared.bukkit.object.BukkitPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -23,26 +32,17 @@ import org.bukkit.material.Tree;
 import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
 
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
-import com.plotsquared.bukkit.object.BukkitPlayer;
+import java.util.Arrays;
+import java.util.List;
 
 public class BukkitUtil extends WorldUtil {
+
     private static String lastString = null;
     private static World lastWorld = null;
-    
+
     private static Player lastPlayer = null;
     private static PlotPlayer lastPlotPlayer = null;
-    
+
     public static void removePlayer(final String plr) {
         lastPlayer = null;
         lastPlotPlayer = null;
@@ -56,7 +56,7 @@ public class BukkitUtil extends WorldUtil {
         player.loadData();
         return new BukkitPlayer(player, true);
     }
-    
+
     public static PlotPlayer getPlayer(final Player player) {
         if (player == lastPlayer) {
             return lastPlotPlayer;
@@ -71,15 +71,15 @@ public class BukkitUtil extends WorldUtil {
         lastPlayer = player;
         return lastPlotPlayer;
     }
-    
+
     public static Location getLocation(final org.bukkit.Location loc) {
         return new Location(loc.getWorld().getName(), MathMan.roundInt(loc.getX()), MathMan.roundInt(loc.getY()), MathMan.roundInt(loc.getZ()));
     }
-    
+
     public static org.bukkit.Location getLocation(final Location loc) {
         return new org.bukkit.Location(getWorld(loc.getWorld()), loc.getX(), loc.getY(), loc.getZ());
     }
-    
+
     public static World getWorld(final String string) {
         if (StringMan.isEqual(string, lastString)) {
             if (lastWorld != null) {
@@ -91,36 +91,37 @@ public class BukkitUtil extends WorldUtil {
         lastWorld = world;
         return world;
     }
-    
+
     public static String getWorld(final Entity entity) {
         return entity.getWorld().getName();
     }
-    
+
     public static List<Entity> getEntities(final String worldname) {
         return getWorld(worldname).getEntities();
     }
-    
+
     public static Location getLocation(final Entity entity) {
         final org.bukkit.Location loc = entity.getLocation();
         final String world = loc.getWorld().getName();
         return new Location(world, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
-    
+
     public static Location getLocationFull(final Entity entity) {
         final org.bukkit.Location loc = entity.getLocation();
-        return new Location(loc.getWorld().getName(), MathMan.roundInt(loc.getX()), MathMan.roundInt(loc.getY()), MathMan.roundInt(loc.getZ()), loc.getYaw(), loc.getPitch());
+        return new Location(loc.getWorld().getName(), MathMan.roundInt(loc.getX()), MathMan.roundInt(loc.getY()), MathMan.roundInt(loc.getZ()),
+                loc.getYaw(), loc.getPitch());
     }
-    
+
     @Override
     public boolean isWorld(final String world) {
         return getWorld(world) != null;
     }
-    
+
     @Override
     public String getBiome(final String world, final int x, final int z) {
         return getWorld(world).getBiome(x, z).name();
     }
-    
+
     @Override
     public void setSign(final String worldname, final int x, final int y, final int z, final String[] lines) {
         final World world = getWorld(worldname);
@@ -128,7 +129,7 @@ public class BukkitUtil extends WorldUtil {
         //        block.setType(Material.AIR);
         block.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
         final BlockState blockstate = block.getState();
-        if ((blockstate instanceof Sign)) {
+        if (blockstate instanceof Sign) {
             final Sign sign = (Sign) blockstate;
             for (int i = 0; i < lines.length; i++) {
                 sign.setLine(i, lines[i]);
@@ -142,7 +143,7 @@ public class BukkitUtil extends WorldUtil {
             }, 20);
         }
     }
-    
+
     @Override
     public String[] getSign(final Location loc) {
         final Block block = getWorld(loc.getWorld()).getBlockAt(loc.getX(), loc.getY(), loc.getZ());
@@ -154,18 +155,18 @@ public class BukkitUtil extends WorldUtil {
         }
         return null;
     }
-    
+
     @Override
     public Location getSpawn(final String world) {
         final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
         return new Location(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), temp.getYaw(), temp.getPitch());
     }
-    
+
     @Override
     public int getHeighestBlock(final String world, final int x, final int z) {
         return getWorld(world).getHighestBlockAt(x, z).getY();
     }
-    
+
     @Override
     public int getBiomeFromString(final String biomeStr) {
         try {
@@ -178,7 +179,7 @@ public class BukkitUtil extends WorldUtil {
             return -1;
         }
     }
-    
+
     @Override
     public String[] getBiomeList() {
         final Biome[] biomes = Biome.values();
@@ -188,7 +189,7 @@ public class BukkitUtil extends WorldUtil {
         }
         return list;
     }
-    
+
     @Override
     public boolean addItems(final String worldname, final PlotItem items) {
         final World world = getWorld(worldname);
@@ -197,8 +198,8 @@ public class BukkitUtil extends WorldUtil {
             return false;
         }
         final BlockState state = block.getState();
-        if ((state != null) && (state instanceof InventoryHolder)) {
-            final InventoryHolder holder = ((InventoryHolder) state);
+        if (state instanceof InventoryHolder) {
+            final InventoryHolder holder = (InventoryHolder) state;
             final Inventory inv = holder.getInventory();
             for (int i = 0; i < items.id.length; i++) {
                 final ItemStack item = new ItemStack(items.id[i], items.amount[i], items.data[i]);
@@ -209,24 +210,23 @@ public class BukkitUtil extends WorldUtil {
         }
         return false;
     }
-    
+
     @Override
     public boolean isBlockSolid(final PlotBlock block) {
         try {
             final Material material = Material.getMaterial(block.id);
             if (material.isBlock() && material.isSolid() && !material.hasGravity()) {
                 final Class<? extends MaterialData> data = material.getData();
-                if ((data.equals(MaterialData.class) && !material.isTransparent() && material.isOccluding())
-                || data.equals(Tree.class)
-                || data.equals(Sandstone.class)
-                || data.equals(Wool.class)
-                || data.equals(Step.class)
-                || data.equals(WoodenStep.class)) {
+                if (data.equals(MaterialData.class) && !material.isTransparent() && material.isOccluding()
+                        || data.equals(Tree.class)
+                        || data.equals(Sandstone.class)
+                        || data.equals(Wool.class)
+                        || data.equals(Step.class)
+                        || data.equals(WoodenStep.class)) {
                     switch (material) {
                         case NOTE_BLOCK:
-                        case MOB_SPAWNER: {
+                        case MOB_SPAWNER:
                             return false;
-                        }
                         default:
                             return true;
                     }
@@ -237,7 +237,7 @@ public class BukkitUtil extends WorldUtil {
             return false;
         }
     }
-    
+
     @Override
     public String getClosestMatchingName(final PlotBlock block) {
         try {
@@ -246,16 +246,15 @@ public class BukkitUtil extends WorldUtil {
             return null;
         }
     }
-    
+
     @Override
     public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
             final Material material = Material.valueOf(name.toUpperCase());
             return new StringComparison<PlotBlock>().new ComparisonResult(0, new PlotBlock((short) material.getId(), (byte) 0));
-        } catch (Exception e) {}
+        } catch (IllegalArgumentException e) {
+        }
         try {
-            double match;
-            short id;
             byte data;
             final String[] split = name.split(":");
             if (split.length == 2) {
@@ -264,22 +263,25 @@ public class BukkitUtil extends WorldUtil {
             } else {
                 data = 0;
             }
+            double match;
+            short id;
             if (MathMan.isInteger(split[0])) {
                 id = Short.parseShort(split[0]);
                 match = 0;
             } else {
-                final StringComparison<Material>.ComparisonResult comparison = new StringComparison<Material>(name, Material.values()).getBestMatchAdvanced();
+                final StringComparison<Material>.ComparisonResult comparison = new StringComparison<>(name, Material.values()).getBestMatchAdvanced();
                 match = comparison.match;
                 id = (short) comparison.best.getId();
             }
             final PlotBlock block = new PlotBlock(id, data);
-            final StringComparison<PlotBlock> outer = new StringComparison<PlotBlock>();
+            final StringComparison<PlotBlock> outer = new StringComparison<>();
             return outer.new ComparisonResult(match, block);
-            
-        } catch (final Exception e) {}
+
+        } catch (NumberFormatException e) {
+        }
         return null;
     }
-    
+
     @Override
     public void setBiomes(final String worldname, RegionWrapper region, final String biomeStr) {
         final World world = getWorld(worldname);
@@ -290,7 +292,7 @@ public class BukkitUtil extends WorldUtil {
             }
         }
     }
-    
+
     @Override
     public PlotBlock getBlock(final Location loc) {
         final World world = getWorld(loc.getWorld());
@@ -300,7 +302,7 @@ public class BukkitUtil extends WorldUtil {
         }
         return new PlotBlock((short) block.getTypeId(), block.getData());
     }
-    
+
     @Override
     public String getMainWorld() {
         return Bukkit.getWorlds().get(0).getName();

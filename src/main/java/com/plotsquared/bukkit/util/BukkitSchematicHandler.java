@@ -20,20 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.util;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.IntTag;
@@ -49,13 +35,28 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.object.schematic.StateWrapper;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Schematic Handler
- *
+ *
+
+
  */
 public class BukkitSchematicHandler extends SchematicHandler {
-    
+
     @Override
     public void getCompoundTag(final String world, final Set<RegionWrapper> regions, final RunnableVal<CompoundTag> whenDone) {
         // async
@@ -66,7 +67,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 Location[] corners = MainUtil.getCorners(world, regions);
                 final Location bot = corners[0];
                 final Location top = corners[1];
-                
+
                 final int width = (top.getX() - bot.getX()) + 1;
                 final int height = (top.getY() - bot.getY()) + 1;
                 final int length = (top.getZ() - bot.getZ()) + 1;
@@ -83,7 +84,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
                 schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
                 // Arrays of data types
-                final List<Tag> tileEntities = new ArrayList<Tag>();
+                final List<Tag> tileEntities = new ArrayList<>();
                 final byte[] blocks = new byte[width * height * length];
                 final byte[] blockData = new byte[width * height * length];
                 // Queue
@@ -91,7 +92,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 TaskManager.runTask(new Runnable() {
                     @Override
                     public void run() {
-                        if (queue.size() == 0) {
+                        if (queue.isEmpty()) {
                             TaskManager.runTaskAsync(new Runnable() {
                                 @Override
                                 public void run() {
@@ -124,7 +125,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                         final int sy = pos1.getY();
                         final int ey = pos2.getY();
                         // Generate list of chunks
-                        final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+                        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
                         for (int x = bcx; x <= tcx; x++) {
                             for (int z = bcz; z <= tcz; z++) {
                                 chunks.add(new ChunkLoc(x, z));
@@ -136,7 +137,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                             @Override
                             public void run() {
                                 final long start = System.currentTimeMillis();
-                                while ((chunks.size() > 0) && ((System.currentTimeMillis() - start) < 20)) {
+                                while ((!chunks.isEmpty()) && ((System.currentTimeMillis() - start) < 20)) {
                                     // save schematics
                                     final ChunkLoc chunk = chunks.remove(0);
                                     final Chunk bc = worldObj.getChunkAt(chunk.x, chunk.z);
@@ -149,7 +150,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                     int zzb = Z << 4;
                                     int xxt = xxb + 15;
                                     int zzt = zzb + 15;
-                                    
+
                                     if (X == bcx) {
                                         xxb = p1x;
                                     }
@@ -289,7 +290,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                                 for (final Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
                                                                     values.put(entry.getKey(), entry.getValue());
                                                                 }
-                                                                values.put("id", new StringTag("id", wrapper.getId()));
+                                                                values.put("type", new StringTag("type", wrapper.getId()));
                                                                 values.put("x", new IntTag("x", x));
                                                                 values.put("y", new IntTag("y", y));
                                                                 values.put("z", new IntTag("z", z));
@@ -303,19 +304,22 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                     }
                                                 }
                                                 // For optimization reasons, we are not supporting custom data types
-                                                // Especially since the most likely reason beyond  this range is modded servers in which the blocks have NBT
-                                                //                                        if (id > 255) {
+                                                // Especially since the most likely reason beyond  this range is modded servers in which the blocks
+                                                // have NBT
+                                                //                                        if (type > 255) {
                                                 //                                            if (addBlocks == null) {
                                                 //                                                addBlocks = new byte[(blocks.length >> 1) + 1];
                                                 //                                            }
-                                                //                                            addBlocks[index >> 1] = (byte) (((index & 1) == 0) ? (addBlocks[index >> 1] & 0xF0) | ((id >> 8) & 0xF) : (addBlocks[index >> 1] & 0xF) | (((id >> 8) & 0xF) << 4));
+                                                //                                            addBlocks[index >> 1] = (byte) (((index & 1) == 0) ?
+                                                // (addBlocks[index >> 1] & 0xF0) | ((type >> 8) & 0xF) : (addBlocks[index >> 1] & 0xF) | (((type
+                                                // >> 8) & 0xF) << 4));
                                                 //                                        }
                                                 blocks[index] = (byte) id;
                                             }
                                         }
                                     }
                                 }
-                                if (chunks.size() != 0) {
+                                if (!chunks.isEmpty()) {
                                     TaskManager.runTaskLater(this, 1);
                                 } else {
                                     regionTask.run();
@@ -327,7 +331,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
             }
         });
     }
-    
+
     @Override
     public void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schem) {
         new StateWrapper(ct).restoreTag(x, y, z, schem);

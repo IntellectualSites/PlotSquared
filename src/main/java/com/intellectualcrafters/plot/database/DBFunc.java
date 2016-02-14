@@ -20,6 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -29,14 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
  * Database Functions
@@ -241,7 +241,7 @@ public class DBFunc {
     }
     
     /**
-     * Get a plot id
+     * Get a plot type
      *
      * @param plot Plot Object
      *
@@ -250,10 +250,10 @@ public class DBFunc {
     /*
      * public static int getId(String plotId id2) { Statement stmt =
      * null; try { stmt = connection.createStatement(); ResultSet r =
-     * stmt.executeQuery("SELECT `id` FROM `plot` WHERE `plot_id_x` = '" + id2.x
+     * stmt.executeQuery("SELECT `type` FROM `plot` WHERE `plot_id_x` = '" + id2.x
      * + "' AND `plot_id_z` = '" + id2.y + "' AND `world` = '" + world +
-     * "' ORDER BY `timestamp` ASC"); int id = Integer.MAX_VALUE;
-     * while(r.next()) { id = r.getInt("id"); } stmt.close(); return id; }
+     * "' ORDER BY `timestamp` ASC"); int type = Integer.MAX_VALUE;
+     * while(r.next()) { type = r.getInt("type"); } stmt.close(); return type; }
      * catch(SQLException e) { e.printStackTrace(); } return Integer.MAX_VALUE;
      * }
      */

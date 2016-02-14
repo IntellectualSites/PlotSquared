@@ -21,17 +21,6 @@
 
 package com.intellectualcrafters.plot.api;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.MainCommand;
@@ -51,6 +40,17 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * PlotSquared API
@@ -115,12 +115,8 @@ public class PlotAPI {
     /**
      * Add a plot world
      *
-     * @param world     World Name
      * @param plotArea Plot World Object
-     * @param manager   World Manager
-     *
-     * @see PS#addPlotWorld(String, com.intellectualcrafters.plot.object.PlotArea,
-     * com.intellectualcrafters.plot.object.PlotManager)
+     * @see PS#addPlotArea(PlotArea)
      */
     public void addPlotArea(final PlotArea plotArea) {
         PS.get().addPlotArea(plotArea);
@@ -229,7 +225,7 @@ public class PlotAPI {
     public String[] getPermissions() {
         final ArrayList<String> perms = new ArrayList<>();
         for (final C c : C.values()) {
-            if (c.getCat().equals("static.permissions")) {
+            if ("static.permissions".equals(c.getCat())) {
                 perms.add(c.s());
             }
         }
@@ -267,7 +263,7 @@ public class PlotAPI {
      * @return PlotManager
      *
      * @see com.intellectualcrafters.plot.object.PlotManager
-     * @see PS#getPlotManager(String)
+     * @see PS#getPlotManager(Plot)
      */
     @Deprecated
     public PlotManager getPlotManager(final World world) {
@@ -292,7 +288,7 @@ public class PlotAPI {
      *
      * @return PlotManager
      *
-     * @see PS#getPlotManager(String)
+     * @see PS#getPlotManager(Plot)
      * @see com.intellectualcrafters.plot.object.PlotManager
      */
     @Deprecated
@@ -335,7 +331,7 @@ public class PlotAPI {
      *
      * @return PlotArea class for that world ! will return null if not a plot world world
      *
-     * @see PS#getPlotArea(String)
+     * @see PS#getPlotArea(String, String)
      * @see com.intellectualcrafters.plot.object.PlotArea
      */
     @Deprecated
@@ -388,7 +384,7 @@ public class PlotAPI {
      * @see MainUtil#sendConsoleMessage(C, String...)
      */
     public void sendConsoleMessage(final String msg) {
-        PS.log(msg);;
+        PS.log(msg);
     }
     
     /**
@@ -457,7 +453,6 @@ public class PlotAPI {
      *
      * @return plot if found, otherwise it creates a temporary plot-
      *
-     * @see MainUtil#getPlotAbs(com.intellectualcrafters.plot.object.Location)
      * @see Plot
      */
     public Plot getPlot(final Location l) {
@@ -492,7 +487,7 @@ public class PlotAPI {
      */
     @Deprecated
     public boolean hasPlot(final World world, final Player player) {
-        return (getPlots(world, player, true) != null) && (getPlots(world, player, true).length > 0);
+        return getPlots(world, player, true) != null && getPlots(world, player, true).length > 0;
     }
     
     /**
@@ -507,7 +502,7 @@ public class PlotAPI {
         UUID uuid = BukkitUtil.getPlayer(plr).getUUID();
         for (final Plot plot : PS.get().getPlots(world.getName())) {
             if (just_owner) {
-                if ((plot.owner != null) && (plot.owner.equals(uuid))) {
+                if (plot.hasOwner() && plot.isOwner(uuid)) {
                     pPlots.add(plot);
                 }
             } else {
@@ -534,7 +529,8 @@ public class PlotAPI {
         if (world == null) {
             return new Plot[0];
         }
-        return PS.get().getPlots(world.getName()).toArray(new Plot[0]);
+        Collection<Plot> plots = PS.get().getPlots(world.getName());
+        return plots.toArray(new Plot[plots.size()]);
     }
     
     /**
@@ -542,11 +538,11 @@ public class PlotAPI {
      *
      * @return World[] - array of plot worlds
      *
-     * @see PS#getPlotWorlds()
      */
     @Deprecated
     public String[] getPlotWorlds() {
-        return PS.get().getPlotWorldStrings().toArray(new String[0]);
+        Set<String> plotWorldStrings = PS.get().getPlotWorldStrings();
+        return plotWorldStrings.toArray(new String[plotWorldStrings.size()]);
     }
     
     /**
@@ -572,9 +568,6 @@ public class PlotAPI {
      *
      * @deprecated As merged plots may not have a rectangular shape
      *
-     * @see MainUtil#getPlotBottomLocAbs(String, PlotId)
-     * @see MainUtil#getPlotTopLocAbs(String, PlotId)
-     * @see MainUtil#getPlotHome(String, PlotId)
      * @see Plot
      */
     @Deprecated
@@ -589,7 +582,6 @@ public class PlotAPI {
      *
      * @return plot bottom location
      *
-     * @see MainUtil#getPlotHome(String, PlotId)
      * @see Plot
      */
     public Location getHomeLocation(final Plot p) {
@@ -605,7 +597,6 @@ public class PlotAPI {
      *
      * @deprecated As merged plots may not have a rectangular shape
      *
-     * @see MainUtil#getPlotBottomLocAbs(String, PlotId)
      * @see Plot
      */
     @Deprecated
@@ -622,7 +613,6 @@ public class PlotAPI {
      * 
      * @deprecated As merged plots may not have a rectangular shape
      *
-     * @see MainUtil#getPlotTopLocAbs(String, PlotId)
      * @see Plot
      */
     @Deprecated
@@ -637,7 +627,6 @@ public class PlotAPI {
      *
      * @return true if the player is in a plot, false if not-
      *
-     * @see MainUtil#getPlotAbs(com.intellectualcrafters.plot.object.Location)
      */
     public boolean isInPlot(final Player player) {
         return getPlot(player) != null;
@@ -677,7 +666,6 @@ public class PlotAPI {
      *
      * @return the number of plots the player has
      *
-     * @see MainUtil#getPlayerPlotCount(String, PlotPlayer)
      */
     public int getPlayerPlotCount(final World world, final Player player) {
         if (world == null) {
