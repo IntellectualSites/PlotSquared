@@ -45,7 +45,7 @@ public class Continue extends SubCommand {
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.continue")) {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.continue")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
