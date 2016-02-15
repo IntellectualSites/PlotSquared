@@ -20,6 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -35,11 +40,6 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
 
 @CommandDeclaration(
 command = "schematic",
@@ -153,7 +153,7 @@ public class SchematicCmd extends SubCommand {
 //                }
 //                final int l1 = schematic.getSchematicDimension().getX();
 //                final int l2 = schematic.getSchematicDimension().getZ();
-            //                final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.type);
+            //                final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.id);
 //                if ((l1 < length) || (l2 < length)) {
 //                    sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
 //                    break;

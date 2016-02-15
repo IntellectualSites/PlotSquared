@@ -20,6 +20,26 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
+
 import com.google.common.io.Files;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -54,26 +74,6 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
-
 @CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = "exec",
         category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
@@ -83,19 +83,20 @@ public class DebugExec extends SubCommand {
     
     public DebugExec() {
         try {
-            final File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
-            if (file.exists()) {
-                init();
-                final String script = StringMan.join(Files
-                                .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"),
-                                        StandardCharsets.UTF_8),
-                        System.getProperty("line.separator"));
-                scope.put("THIS", this);
-                scope.put("PlotPlayer", ConsolePlayer.getConsole());
-                engine.eval(script, scope);
+            if (PS.get() != null) {
+                final File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
+                if (file.exists()) {
+                    init();
+                    final String script = StringMan.join(Files
+                                    .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"),
+                                            StandardCharsets.UTF_8),
+                            System.getProperty("line.separator"));
+                    scope.put("THIS", this);
+                    scope.put("PlotPlayer", ConsolePlayer.getConsole());
+                    engine.eval(script, scope);
+                }
             }
-        } catch (IOException | ScriptException e) {
-        }
+        } catch (IOException | ScriptException e) {}
     }
     
     public ScriptEngine getEngine() {

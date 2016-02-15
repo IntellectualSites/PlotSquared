@@ -20,6 +20,20 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.util;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.IntTag;
@@ -35,19 +49,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.object.schematic.StateWrapper;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * Schematic Handler
@@ -290,7 +291,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                                 for (final Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
                                                                     values.put(entry.getKey(), entry.getValue());
                                                                 }
-                                                                values.put("type", new StringTag("type", wrapper.getId()));
+                                                                values.put("id", new StringTag("id", wrapper.getId()));
                                                                 values.put("x", new IntTag("x", x));
                                                                 values.put("y", new IntTag("y", y));
                                                                 values.put("z", new IntTag("z", z));

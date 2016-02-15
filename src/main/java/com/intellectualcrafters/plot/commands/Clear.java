@@ -20,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.Set;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
@@ -33,10 +35,8 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.Set;
-
 @CommandDeclaration(command = "clear", description = "Clear a plot", permission = "plots.clear", category = CommandCategory.APPEARANCE,
-        usage = "/plot clear [type]")
+ usage = "/plot clear [id]")
 public class Clear extends SubCommand {
     
     @Override

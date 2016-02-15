@@ -36,7 +36,7 @@ public class SetupObject {
     public String setupGenerator = null;
     
     /**
-     * The management type
+     * The management type (normal, augmented, partial)
      */
     public int type;
     
@@ -51,12 +51,12 @@ public class SetupObject {
     public String id;
     
     /**
-     * Minimum plot type (may be null)
+     * Minimum plot id (may be null)
      */
     public PlotId min;
     
     /**
-     * Max plot type (may be null)
+     * Max plot id (may be null)
      */
     public PlotId max;
     

@@ -20,24 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -61,6 +43,24 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
 
@@ -168,7 +168,7 @@ public class SQLManager implements AbstractDB {
         // setTimout();
         // Public final
         SET_OWNER = "UPDATE `" + prefix + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND `world` = ?";
-        GET_ALL_PLOTS = "SELECT `type`, `plot_id_x`, `plot_id_z`, `world` FROM `" + prefix + "plot`";
+        GET_ALL_PLOTS = "SELECT `id`, `plot_id_x`, `plot_id_z`, `world` FROM `" + prefix + "plot`";
         CREATE_PLOTS = "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) values ";
         CREATE_SETTINGS = "INSERT INTO `" + prefix + "plot_settings` (`plot_plot_id`) values ";
         CREATE_TIERS = "INSERT INTO `" + prefix + "plot_%tier%` (`plot_plot_id`, `user_uuid`) values ";
@@ -481,7 +481,7 @@ public class SQLManager implements AbstractDB {
                                 final PreparedStatement stmt = connection.prepareStatement(GET_ALL_PLOTS);
                                 try (ResultSet result = stmt.executeQuery()) {
                                     while (result.next()) {
-                                        final int id = result.getInt("type");
+                                        final int id = result.getInt("id");
                                         final int x = result.getInt("plot_id_x");
                                         final int y = result.getInt("plot_id_z");
                                         final PlotId plotId = new PlotId(x, y);
@@ -616,7 +616,7 @@ public class SQLManager implements AbstractDB {
             @Override
             public String getCreateSQLite(final int size) {
                 return getCreateSQLite(size, "INSERT INTO `" + prefix
-                        + "plot` SELECT ? AS `type`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ", 6);
+                        + "plot` SELECT ? AS `id`, ? AS `plot_id_x`, ? AS `plot_id_z`, ? AS `owner`, ? AS `world`, ? AS `timestamp` ", 6);
             }
 
             @Override
@@ -808,7 +808,7 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setMySQL(final PreparedStatement stmt, final int i, final SettingsPair pair) throws SQLException {
-                stmt.setInt((i * 10) + 1, pair.id); // type
+                stmt.setInt((i * 10) + 1, pair.id); // id
                 stmt.setNull((i * 10) + 2, 4); // biome
                 stmt.setNull((i * 10) + 3, 4); // rain
                 stmt.setNull((i * 10) + 4, 4); // custom_time
@@ -848,7 +848,7 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setSQLite(final PreparedStatement stmt, final int i, final SettingsPair pair) throws SQLException {
-                stmt.setInt((i * 10) + 1, pair.id); // type
+                stmt.setInt((i * 10) + 1, pair.id); // id
                 stmt.setNull((i * 10) + 2, 4); // biome
                 stmt.setNull((i * 10) + 3, 4); // rain
                 stmt.setNull((i * 10) + 4, 4); // custom_time
@@ -1434,7 +1434,7 @@ public class SQLManager implements AbstractDB {
             final ResultSet r = stmt.executeQuery();
             int c_id = Integer.MAX_VALUE;
             while (r.next()) {
-                c_id = r.getInt("type");
+                c_id = r.getInt("id");
             }
             stmt.close();
             r.close();
@@ -1470,7 +1470,7 @@ public class SQLManager implements AbstractDB {
             final ResultSet r = stmt.executeQuery();
             int id = Integer.MAX_VALUE;
             while (r.next()) {
-                id = r.getInt("type");
+                id = r.getInt("id");
             }
             r.close();
             stmt.close();
@@ -1648,7 +1648,7 @@ public class SQLManager implements AbstractDB {
                 ArrayList<Integer> toDelete = new ArrayList<>();
                 while (r.next()) {
                     PlotId plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
-                    id = r.getInt("type");
+                    id = r.getInt("id");
                     final String areaid = r.getString("world");
                     if (!areas.contains(areaid)) {
                         if (Settings.AUTO_PURGE) {
@@ -1701,7 +1701,7 @@ public class SQLManager implements AbstractDB {
                     }
                     plots.put(id, p);
                 }
-                deleteRows(toDelete, "plot", "type");
+                deleteRows(toDelete, "plot", "id");
             }
             if (Settings.CACHE_RATINGS) {
                 try (ResultSet r = stmt.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + prefix + "plot_rating`")) {
@@ -2031,7 +2031,7 @@ public class SQLManager implements AbstractDB {
                         final StringBuilder idstr2 = new StringBuilder("");
                         for (final Integer id : uniqueIds) {
                             idstr2.append(stmt_prefix).append(id);
-                            stmt_prefix = " OR `type` = ";
+                            stmt_prefix = " OR `id` = ";
                         }
                         stmt_prefix = "";
                         final StringBuilder idstr = new StringBuilder("");
@@ -2079,7 +2079,7 @@ public class SQLManager implements AbstractDB {
                     while (r.next()) {
                         PlotId plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
                         if (plots.contains(plot_id)) {
-                            ids.add(r.getInt("type"));
+                            ids.add(r.getInt("id"));
                         }
                     }
                     purgeIds(ids);
@@ -2539,7 +2539,7 @@ public class SQLManager implements AbstractDB {
             while (r.next()) {
                 PlotId pos1 = new PlotId(r.getInt("pos1_x"), r.getInt("pos1_z"));
                 PlotId pos2 = new PlotId(r.getInt("pos2_x"), r.getInt("pos2_z"));
-                id = r.getInt("type");
+                id = r.getInt("id");
                 String areaid = r.getString("world");
                 if (!areas.contains(areaid)) {
                     if (noExist.containsKey(areaid)) {

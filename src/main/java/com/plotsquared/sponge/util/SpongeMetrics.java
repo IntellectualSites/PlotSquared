@@ -28,14 +28,6 @@ package com.plotsquared.sponge.util;
  * either expressed or implied, of anybody else.
  */
 
-import com.intellectualcrafters.plot.PS;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.spongepowered.api.Game;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.Task;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -51,7 +43,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPOutputStream;
 
-import javax.inject.Inject;
+import com.intellectualcrafters.plot.PS;
 
 public class SpongeMetrics {
 
@@ -101,7 +93,7 @@ public class SpongeMetrics {
      */
     private File configurationFile;
     /**
-     * Unique server type
+     * Unique server id
      */
     private String guid;
     /**

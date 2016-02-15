@@ -29,8 +29,8 @@ public abstract class IndependentPlotGenerator {
      * Return a new PlotArea object
      * @param world world name
      * @param id (May be null) Area name
-     * @param min Min plot type (may be null)
-     * @param max Max plot type (may be null)
+     * @param min Min plot id (may be null)
+     * @param max Max plot id (may be null)
      * @return
      */
     public abstract PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max);

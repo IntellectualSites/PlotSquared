@@ -1,5 +1,30 @@
 package com.plotsquared.bukkit;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
+import org.bukkit.World;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
 import com.intellectualcrafters.plot.PS;
@@ -73,30 +98,6 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-import org.bukkit.World;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
@@ -217,7 +218,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case EGG:
                                     case ENDER_CRYSTAL:
                                     case COMPLEX_PART:
-                                    case ARMOR_STAND:
                                     case FISHING_HOOK:
                                     case ENDER_SIGNAL:
                                     case EXPERIENCE_ORB:
@@ -227,8 +227,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case LIGHTNING:
                                     case WITHER_SKULL:
                                     case UNKNOWN:
-                                    case ITEM_FRAME:
-                                    case PAINTING:
                                     case PLAYER: {
                                         // non moving / unremovable
                                         continue;
@@ -240,6 +238,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case ARROW: {
                                         // managed elsewhere | projectile
                                         continue;
+                                    }
+                                    case ARMOR_STAND:
+                                    case ITEM_FRAME:
+                                    case PAINTING: {
+                                        // TEMPORARILY CLASSIFY AS VEHICLE
                                     }
                                     case MINECART:
                                     case MINECART_CHEST:
@@ -429,7 +432,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
             try {
                 return new FastQueue_1_8_3();
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException | RuntimeException e) {
                 e.printStackTrace();
                 try {
                     return new FastQueue_1_8();

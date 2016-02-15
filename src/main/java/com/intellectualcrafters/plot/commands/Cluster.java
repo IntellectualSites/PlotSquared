@@ -20,6 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -37,11 +42,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 @CommandDeclaration(
 command = "cluster",
@@ -103,7 +103,7 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 if (args.length != 4) {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster create <name> <type-bot> <type-top>");
+                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster create <name> <id-bot> <id-top>");
                     return false;
                 }
                 // check pos1 / pos2

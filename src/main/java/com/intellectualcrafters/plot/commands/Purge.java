@@ -20,6 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -32,14 +38,8 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
 @CommandDeclaration(
-        usage = "/plot purge world:<world> area:<area> type:<type> owner:<owner> shared:<shared> unknown:[true|false]",
+usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]",
 command = "purge",
 permission = "plots.admin",
 description = "Purge all plots for a world",
@@ -80,7 +80,7 @@ public class Purge extends SubCommand {
                     break;
                 }
                 case "plotid":
-                case "type": {
+                case "id": {
                     id = PlotId.fromString(split[1]);
                     if (id == null) {
                         C.NOT_VALID_PLOT_ID.send(plr, split[1]);

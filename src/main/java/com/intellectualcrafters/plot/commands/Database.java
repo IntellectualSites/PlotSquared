@@ -1,5 +1,11 @@
 package com.intellectualcrafters.plot.commands;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.MySQL;
@@ -12,12 +18,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 @CommandDeclaration(
 command = "database",
@@ -101,7 +101,7 @@ public class Database extends SubCommand {
                             for (final Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                                 final Plot plot = entry2.getValue();
                                 if (pa.getOwnedPlotAbs(plot.getId()) != null) {
-                                    MainUtil.sendMessage(player, "Skipping duplicate plot: " + plot + " | type=" + plot.temp);
+                                    MainUtil.sendMessage(player, "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
                                     continue;
                                 }
                                 PS.get().updatePlot(plot);

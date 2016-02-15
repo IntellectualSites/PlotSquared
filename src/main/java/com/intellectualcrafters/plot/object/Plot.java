@@ -20,6 +20,25 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
@@ -40,22 +59,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
-
-import java.io.File;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The plot class
@@ -1353,7 +1356,7 @@ public class Plot {
     }
     
     /**
-     * Returns the top and bottom plot type.<br>
+     * Returns the top and bottom plot id.<br>
      *  - If the plot is not connected, it will return itself for the top/bottom<br>
      *  - the returned ids will not necessarily correspond to claimed plots if the connected plots do not form a rectangular shape
      * @deprecated as merged plots no longer need to be rectangular
@@ -1427,7 +1430,7 @@ public class Plot {
     /**
      * Get plot display name
      *
-     * @return alias if set, else type
+     * @return alias if set, else id
      */
     @Override
     public String toString() {
@@ -2231,6 +2234,25 @@ public class Plot {
         }, 1);
     }
     
+    public List<Location> getAllCorners() {
+        Area area = new Area();
+        for (RegionWrapper region : getRegions()) {
+            Area rectArea = new Area(new Rectangle(region.minX, region.minZ, region.maxX - region.minX, region.maxZ - region.minZ));
+            area.add(rectArea);
+        }
+        PathIterator iter = area.getPathIterator(null);
+        List<Location> locs = new ArrayList<>();
+        while (!iter.isDone()) {
+            iter.next();
+            double[] result = new double[6];
+            iter.currentSegment(result);
+            int x = (int) result[0];
+            int z = (int) result[1];
+            locs.add(new Location(this.area.worldname, x, 0, z));
+        }
+        return locs;
+    }
+
     /**
      * Teleport a player to a plot and send them the teleport message.
      * @param player

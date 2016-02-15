@@ -23,7 +23,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "home", aliases = {"h"}, description = "Go to your plot", usage = "/plot home [type|alias]",
+@CommandDeclaration(command = "home", aliases = { "h" }, description = "Go to your plot", usage = "/plot home [id|alias]",
         category = CommandCategory.TELEPORT, requiredType = RequiredType.NONE)
 public class Home extends SubCommand {
     

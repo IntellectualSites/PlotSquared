@@ -1,5 +1,9 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -14,10 +18,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.plotsquared.listener.PlayerBlockEventType;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.UUID;
 
 public abstract class EventUtil {
     
@@ -250,7 +250,7 @@ public abstract class EventUtil {
             }
             case SPAWN_MOB: {
                 if (plot == null) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
@@ -269,26 +269,11 @@ public abstract class EventUtil {
                 }
                 return true;
             }
-            case PLACE_HANGING:
-                //                if (plot == null) {
-                //                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
-                //                }
-                //                if (plot.owner == null) {
-                //                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
-                //                }
-                //
-                //                if (FlagManager.isPlotFlagTrue(plot, "hanging-place")) {
-                //                    return true;
-                //                }
-                //                Flag flag = FlagManager.getPlotFlag(plot, "place");
-                //                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
-                //                if (value == null || (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()))) {
-                //                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
-                //                }
+            case PLACE_HANGING: // Handled elsewhere
                 return true;
             case PLACE_MISC: {
                 if (plot == null) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
@@ -309,7 +294,7 @@ public abstract class EventUtil {
             }
             case PLACE_VEHICLE:
                 if (plot == null) {
-                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms);
+                    return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);

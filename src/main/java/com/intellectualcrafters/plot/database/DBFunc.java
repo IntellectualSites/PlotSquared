@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
-
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -37,6 +29,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
  * Database Functions
@@ -241,21 +241,11 @@ public class DBFunc {
     }
     
     /**
-     * Get a plot type
+     * Get a plot id
      *
      * @param plot Plot Object
      *
      * @return ID
-     */
-    /*
-     * public static int getId(String plotId id2) { Statement stmt =
-     * null; try { stmt = connection.createStatement(); ResultSet r =
-     * stmt.executeQuery("SELECT `type` FROM `plot` WHERE `plot_id_x` = '" + id2.x
-     * + "' AND `plot_id_z` = '" + id2.y + "' AND `world` = '" + world +
-     * "' ORDER BY `timestamp` ASC"); int type = Integer.MAX_VALUE;
-     * while(r.next()) { type = r.getInt("type"); } stmt.close(); return type; }
-     * catch(SQLException e) { e.printStackTrace(); } return Integer.MAX_VALUE;
-     * }
      */
     public static int getId(final Plot plot) {
         return dbManager.getId(plot);

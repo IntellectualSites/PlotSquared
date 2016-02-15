@@ -1,14 +1,10 @@
 package com.plotsquared.sponge.generator;
 
-import com.flowpowered.math.vector.Vector3i;
+import org.bukkit.block.BlockState;
+
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.ImmutableBiomeArea;
-import org.spongepowered.api.world.extent.MutableBlockVolume;
-import org.spongepowered.api.world.gen.GenerationPopulator;
 
 public abstract class SpongePlotPopulator<T extends SpongePlotGenerator> implements GenerationPopulator {
 
@@ -58,7 +54,7 @@ public abstract class SpongePlotPopulator<T extends SpongePlotGenerator> impleme
     public abstract void populate(final World world, final RegionWrapper requiredRegion, final PseudoRandom random, final int cx, final int cz);
     
     /**
-     * Set the type and data at a location. (x, y, z) must be between [0,15], [0,255], [0,15]
+     * Set the id and data at a location. (x, y, z) must be between [0,15], [0,255], [0,15]
      * @param x
      * @param y
      * @param z

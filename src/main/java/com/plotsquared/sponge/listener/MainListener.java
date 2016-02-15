@@ -1,6 +1,22 @@
 package com.plotsquared.sponge.listener;
 
-import com.flowpowered.math.vector.Vector3d;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Predicate;
+
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Ambient;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.Explosive;
+import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Monster;
+
+import com.avaje.ebean.Transaction;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -26,48 +42,7 @@ import com.plotsquared.listener.PlotListener;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import com.plotsquared.sponge.util.SpongeUtil;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.entity.Transform;
-import org.spongepowered.api.entity.explosive.Explosive;
-import org.spongepowered.api.entity.explosive.PrimedTNT;
-import org.spongepowered.api.entity.living.Ambient;
-import org.spongepowered.api.entity.living.Living;
-import org.spongepowered.api.entity.living.animal.Animal;
-import org.spongepowered.api.entity.living.monster.Monster;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.vehicle.Boat;
-import org.spongepowered.api.entity.vehicle.minecart.Minecart;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.action.LightningEvent;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.block.GrowBlockEvent;
-import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.event.block.MoveBlockEvent;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.command.SendCommandEvent;
-import org.spongepowered.api.event.entity.BreedEntityEvent;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent;
-import org.spongepowered.api.event.entity.SpawnEntityEvent;
-import org.spongepowered.api.event.message.MessageEvent;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.event.world.ExplosionEvent;
-import org.spongepowered.api.profile.GameProfile;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.Extent;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Predicate;
+import com.sk89q.worldedit.extent.Extent;
 
 public class MainListener {
     
@@ -400,7 +375,7 @@ public class MainListener {
         final PlotId id = plot.getId();
         final String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
         final Text forcedMessage = event.getMessage();
-        //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", type.x + ";" + type.y, "%sender%", sender);
+        //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer user = entry.getValue();
             String toSend;

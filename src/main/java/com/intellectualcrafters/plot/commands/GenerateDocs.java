@@ -1,10 +1,5 @@
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.plotsquared.general.commands.Command;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,6 +10,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.plotsquared.general.commands.Command;
 
 public class GenerateDocs {
     public static void main(final String[] args) {
@@ -52,6 +52,7 @@ public class GenerateDocs {
             final File file = new File("src/main/java/com/intellectualcrafters/plot/commands/" + clazz + ".java");
             final List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
             final List<String> perms = getPerms(name, lines);
+            final List<String> usages = getUsage(name, lines);
             final String comment = getComments(lines);
             
             log("#### Description");
@@ -63,8 +64,20 @@ public class GenerateDocs {
                 log("```");
             }
             
-            log("#### Usage");
-            log("`" + command.getUsage().replaceAll("\\{label\\}", "plot") + "`");
+            log("#### Usage    ");
+            {
+                String mainUsage = command.getUsage().replaceAll("\\{label\\}", "plot");
+                if (!usages.isEmpty() && !usages.get(0).equalsIgnoreCase(mainUsage)) {
+                    log("##### Primary    ");
+                    log(" - `" + mainUsage + "`    ");
+                    log("");
+                    log("##### Other    ");
+                    log(" - `" + StringMan.join(usages, "`\n - `") + "`    ");
+                    log("");
+                } else {
+                    log("`" + mainUsage + "`    ");
+                }
+            }
             
             if (command.getRequiredType() != RequiredType.NONE) {
                 log("#### Required callers");
@@ -78,14 +91,16 @@ public class GenerateDocs {
             }
             
             log("#### Permissions");
-            log("##### Primary");
-            log(" - `" + command.getPermission() + "`    ");
             if (!perms.isEmpty()) {
+                log("##### Primary");
+                log(" - `" + command.getPermission() + "`    ");
                 log("");
                 log("##### Other");
                 log(" - `" + StringMan.join(perms, "`\n - `") + "`");
+                log("");
+            } else {
+                log("`" + command.getPermission() + "`    ");
             }
-            log("");
             log("***");
             log("");
         } catch (final Exception e) {
@@ -93,6 +108,27 @@ public class GenerateDocs {
         }
     }
     
+    public static List<String> getUsage(String cmd, List<String> lines) {
+        final Pattern p = Pattern.compile("\"([^\"]*)\"");
+        HashSet<String> usages = new HashSet<String>();
+        for (final String line : lines) {
+            if (line.contains("COMMAND_SYNTAX") && !line.contains("getUsage()")) {
+                final Matcher m = p.matcher(line);
+                String prefix = "";
+                StringBuilder usage = new StringBuilder();
+                while (m.find()) {
+                    String match = m.group(1);
+                    usage.append(prefix).append(match);
+                    prefix = " <arg> ";
+                }
+                if (usage.length() != 0) {
+                    usages.add(usage.toString().trim().replaceAll("  ", " ").replaceAll("\\{label\\}", "plot"));
+                }
+            }
+        }
+        return new ArrayList<>(usages);
+    }
+
     public static List<String> getPerms(final String cmd, final List<String> lines) {
         final HashSet<String> perms = new HashSet<String>();
         final Pattern p = Pattern.compile("\"([^\"]*)\"");
@@ -104,7 +140,6 @@ public class GenerateDocs {
             while (m2.find()) {
                 perms.add(C.valueOf("PERMISSION_" + m2.group(1)).s());
             }
-            
             if (line.contains("Permissions.hasPermission(")) {
                 String[] split = line.split("Permissions.hasPermission");
                 split = Arrays.copyOfRange(split, 1, split.length);

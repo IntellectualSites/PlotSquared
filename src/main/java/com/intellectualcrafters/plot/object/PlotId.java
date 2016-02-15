@@ -45,7 +45,7 @@ public class PlotId {
     /**
      * Get a Plot Id based on a string
      *
-     * @param string to create type from
+     * @param string to create id from
      *
      * @return null if the string is invalid
      */

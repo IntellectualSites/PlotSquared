@@ -1,15 +1,8 @@
 package com.plotsquared.bukkit.util;
 
-import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.TaskManager;
+import java.util.HashSet;
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -20,8 +13,16 @@ import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.material.Directional;
 import org.bukkit.material.MaterialData;
 
-import java.util.HashSet;
-import java.util.Random;
+import com.intellectualcrafters.plot.generator.HybridUtils;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 public class BukkitHybridUtils extends HybridUtils {
 
@@ -60,9 +61,6 @@ public class BukkitHybridUtils extends HybridUtils {
 
                 final Location bot = new Location(world, region.minX, region.minY, region.minZ);
                 final Location top = new Location(world, region.maxX, region.maxY, region.maxZ);
-
-                //                final Location bot = MainUtil.getPlotBottomLoc(plot.world, plot.type).add(1, 0, 1);
-                //                final Location top = MainUtil.getPlotTopLoc(plot.world, plot.type);
 
                 final int bx = bot.getX();
                 final int bz = bot.getZ();

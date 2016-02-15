@@ -20,6 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
@@ -33,11 +38,6 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
 
 @CommandDeclaration(
 command = "setup",
@@ -172,14 +172,14 @@ public class Setup extends SubCommand {
                 }
                 break;
             }
-            case 2: { // area type
+            case 2: { // area id
                 if (!StringMan.isAlphanumericUnd(args[0])) {
-                    MainUtil.sendMessage(plr, "&cThe area type must be alphanumerical!");
+                    MainUtil.sendMessage(plr, "&cThe area id must be alphanumerical!");
                     return false;
                 }
                 for (PlotArea area : PS.get().getPlotAreas()) {
                     if (area.id != null && area.id.equalsIgnoreCase(args[0])) {
-                        MainUtil.sendMessage(plr, "&cYou must choose an area type that is not in use!");
+                        MainUtil.sendMessage(plr, "&cYou must choose an area id that is not in use!");
                         return false;
                     }
                 }

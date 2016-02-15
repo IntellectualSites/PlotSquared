@@ -2,6 +2,16 @@ package com.plotsquared.bukkit.util.block;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -13,15 +23,6 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 public class FastQueue_1_7 extends SlowQueue {
 
@@ -39,7 +40,7 @@ public class FastQueue_1_7 extends SlowQueue {
 
     public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
-    public FastQueue_1_7() throws NoSuchMethodException {
+    public FastQueue_1_7() throws NoSuchMethodException, RuntimeException {
         methodGetHandle = classCraftWorld.getMethod("getHandle");
         methodGetChunkAt = classWorld.getMethod("getChunkAt", int.class, int.class);
         methodA = classChunk.getMethod("a", int.class, int.class, int.class, classBlock, int.class);

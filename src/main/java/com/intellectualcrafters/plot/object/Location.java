@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.util.MathMan;
 
 /**
  * Created 2015-02-11 for PlotSquared
@@ -162,13 +163,7 @@ public class Location implements Cloneable, Comparable<Location> {
     
     @Override
     public int hashCode() {
-        int hash = 127;
-        hash = hash * 31 + x;
-        hash = hash * 31 + y;
-        hash = hash * 31 + z;
-        hash = (int) (hash * 31 + getYaw());
-        hash = (int) (hash * 31 + getPitch());
-        return hash * 31 + (world == null ? 127 : world.hashCode());
+        return MathMan.pair((short) x, (short) z) * 17 + y;
     }
     
     public boolean isInAABB(final Location min, final Location max) {
@@ -178,7 +173,7 @@ public class Location implements Cloneable, Comparable<Location> {
     public void lookTowards(final int x, final int y) {
         final double l = this.x - x;
         final double c = Math.sqrt(l * l + 0.0);
-        if (Math.asin((double) 0 / c) / Math.PI * 180 > 90) {
+        if (Math.asin(0 / c) / Math.PI * 180 > 90) {
             setYaw((float) (180 - -Math.asin(l / c) / Math.PI * 180));
         } else {
             setYaw((float) (-Math.asin(l / c) / Math.PI * 180));

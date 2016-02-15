@@ -20,10 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
-import com.intellectualcrafters.plot.util.StringMan;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import com.intellectualcrafters.plot.util.StringMan;
 
 public class Flag implements Cloneable {
     private AbstractFlag key;
@@ -140,24 +140,9 @@ public class Flag implements Cloneable {
                 return new Flag(key, method.invoke(value));
             }
             return new Flag(key, key.parseValueRaw(value.toString()));
-        } catch (CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
             e.printStackTrace();
-            return this;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return this;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return this;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return this;
-        } catch (SecurityException e) {
-            e.printStackTrace();
-            return this;
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            return this;
         }
+        return this;
     }
 }
