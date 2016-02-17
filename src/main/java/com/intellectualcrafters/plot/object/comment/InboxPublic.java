@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -18,7 +17,8 @@ public class InboxPublic extends CommentInbox {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.read." + toString());
         }
-        return (Permissions.hasPermission(player, "plots.inbox.read." + toString()) && (PlotHandler.isOwner(plot, player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.read."
+        return (Permissions.hasPermission(player, "plots.inbox.read." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
+        .hasPermission(player, "plots.inbox.read."
         + toString()
         + ".other")));
     }
@@ -28,7 +28,7 @@ public class InboxPublic extends CommentInbox {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.write." + toString());
         }
-        return (Permissions.hasPermission(player, "plots.inbox.write." + toString()) && (PlotHandler.isOwner(plot, player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.write."
+        return (Permissions.hasPermission(player, "plots.inbox.write." + toString()) && (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.write."
         + toString()
         + ".other")));
     }
@@ -38,7 +38,7 @@ public class InboxPublic extends CommentInbox {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.modify." + toString());
         }
-        return (Permissions.hasPermission(player, "plots.inbox.modify." + toString()) && (PlotHandler.isOwner(plot, player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.modify."
+        return (Permissions.hasPermission(player, "plots.inbox.modify." + toString()) && (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.modify."
         + toString()
         + ".other")));
     }

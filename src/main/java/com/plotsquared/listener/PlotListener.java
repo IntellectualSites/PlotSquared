@@ -20,6 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.listener;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -27,7 +31,6 @@ import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.AbstractTitle;
@@ -40,10 +43,6 @@ import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 /**
 
@@ -90,7 +89,7 @@ public class PlotListener {
                 final Flag enter = flags.get("notify-enter");
                 if ((enter != null) && ((Boolean) enter.getValue())) {
                     if (!Permissions.hasPermission(pp, "plots.flag.notify-enter.bypass")) {
-                        for (final UUID uuid : PlotHandler.getOwners(plot)) {
+                        for (final UUID uuid : plot.getOwners()) {
                             final PlotPlayer owner = UUIDHandler.getPlayer(uuid);
                             if ((owner != null) && !owner.getUUID().equals(pp.getUUID())) {
                                 MainUtil.sendMessage(owner, C.NOTIFY_ENTER.s().replace("%player", pp.getName()).replace("%plot", plot.getId().toString()));
@@ -214,7 +213,7 @@ public class PlotListener {
             final Flag leave = FlagManager.getPlotFlagRaw(plot, "notify-leave");
             if ((leave != null) && ((Boolean) leave.getValue())) {
                 if (!Permissions.hasPermission(pp, "plots.flag.notify-enter.bypass")) {
-                    for (final UUID uuid : PlotHandler.getOwners(plot)) {
+                    for (final UUID uuid : plot.getOwners()) {
                         final PlotPlayer owner = UUIDHandler.getPlayer(uuid);
                         if ((owner != null) && !owner.getUUID().equals(pp.getUUID())) {
                             MainUtil.sendMessage(pp, C.NOTIFY_LEAVE.s().replace("%player", pp.getName()).replace("%plot", plot.getId().toString()));

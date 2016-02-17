@@ -1,5 +1,11 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -10,15 +16,8 @@ import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ExpireManager {
     public static ConcurrentHashMap<String, List<Plot>> expiredPlots = new ConcurrentHashMap<>();
@@ -196,7 +195,7 @@ public class ExpireManager {
     }
     
     public static boolean isExpired(final Plot plot) {
-        for (final UUID owner : PlotHandler.getOwners(plot)) {
+        for (final UUID owner : plot.getOwners()) {
             if (!isExpired(owner)) {
                 return false;
             }

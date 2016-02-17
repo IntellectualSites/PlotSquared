@@ -57,7 +57,6 @@ import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotFilter;
-import com.intellectualcrafters.plot.object.PlotHandler;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -1204,7 +1203,7 @@ public class PS {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(world)) {
             if (plot.hasOwner()) {
-                if (PlotHandler.isOwner(plot, uuid)) {
+                if (plot.isOwnerAbs(uuid)) {
                     myplots.add(plot);
                 }
             }
@@ -1222,7 +1221,7 @@ public class PS {
         final ArrayList<Plot> myplots = new ArrayList<>();
         for (final Plot plot : getPlots(area)) {
             if (plot.hasOwner()) {
-                if (PlotHandler.isOwner(plot, uuid)) {
+                if (plot.isOwnerAbs(uuid)) {
                     myplots.add(plot);
                 }
             }
@@ -1301,7 +1300,7 @@ public class PS {
         foreachPlot(new RunnableVal<Plot>() {
             @Override
             public void run(Plot value) {
-                if (PlotHandler.isOwner(value, uuid)) {
+                if (value.isOwnerAbs(uuid)) {
                     myplots.add(value);
                 }
             }
@@ -1319,7 +1318,7 @@ public class PS {
         foreachPlot(new RunnableVal<Plot>() {
             @Override
             public void run(Plot value) {
-                if (value.isOwner(uuid)) {
+                if (value.isOwnerAbs(uuid)) {
                     myplots.add(value);
                 }
             }
