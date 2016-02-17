@@ -2494,8 +2494,6 @@ public class SQLManager implements AbstractDB {
                 }
 
                 resultSet.close();
-                stmt.close();
-
                 result.run(metaMap);
             }
 
