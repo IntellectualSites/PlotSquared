@@ -3031,6 +3031,62 @@ public class SQLManager implements AbstractDB {
     }
     
     @Override
+    public void replaceWorld(final String oldWorld, final String newWorld, final PlotId min, final PlotId max) {
+        addGlobalTask(new Runnable() {
+            @Override
+            public void run() {
+                if (min == null) {
+                    try (PreparedStatement stmt = connection.prepareStatement("UPDATE `" + prefix + "plot` SET `world` = ? WHERE `world` = ?")) {
+                        stmt.setString(1, newWorld);
+                        stmt.setString(2, oldWorld);
+                        stmt.executeUpdate();
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    try (PreparedStatement stmt = connection.prepareStatement("UPDATE `" + prefix + "cluster` SET `world` = ? WHERE `world` = ?")) {
+                        stmt.setString(1, newWorld);
+                        stmt.setString(2, oldWorld);
+                        stmt.executeUpdate();
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try (PreparedStatement stmt = connection.prepareStatement("UPDATE `"
+                    + prefix
+                    + "plot` SET `world` = ? WHERE `world` = ? AND `plot_id_x` BETWEEN ? AND ? AND `plot_id_z` BETWEEN ? AND ?")) {
+                        stmt.setString(1, newWorld);
+                        stmt.setString(2, oldWorld);
+                        stmt.setInt(3, min.x);
+                        stmt.setInt(4, max.x);
+                        stmt.setInt(5, min.y);
+                        stmt.setInt(6, max.y);
+                        stmt.executeUpdate();
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    try (PreparedStatement stmt = connection.prepareStatement("UPDATE `"
+                    + prefix
+                    + "cluster` SET `world` = ? WHERE `world` = ? AND `pos1_x` <= ? AND `pos1_z` <= ? AND `pos2_x` >= ? AND `pos2_z` >= ?")) {
+                        stmt.setString(1, newWorld);
+                        stmt.setString(2, oldWorld);
+                        stmt.setInt(3, max.x);
+                        stmt.setInt(4, max.y);
+                        stmt.setInt(5, min.x);
+                        stmt.setInt(6, min.y);
+                        stmt.executeUpdate();
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
     public void replaceUUID(final UUID old, final UUID now) {
         addGlobalTask(new Runnable() {
             @Override

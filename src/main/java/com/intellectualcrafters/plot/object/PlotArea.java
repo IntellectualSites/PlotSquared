@@ -20,6 +20,18 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -37,18 +49,6 @@ import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Jesse Boyd
@@ -91,11 +91,6 @@ public abstract class PlotArea {
     public PlotGamemode GAMEMODE = PlotGamemode.CREATIVE;
     int hash;
     private RegionWrapper region;
-    /**
-     * Please ignore
-     */
-    @Deprecated
-    private int compatibility_id;
     private ConcurrentHashMap<String, Object> meta;
     private QuadMap<PlotCluster> clusters;
 
@@ -186,16 +181,6 @@ public abstract class PlotArea {
 
     public Set<PlotCluster> getClusters() {
         return clusters == null ? new HashSet<PlotCluster>() : clusters.getAll();
-    }
-
-    public void setCompatibility(String version) {
-        switch (version) {
-            case "3.2.X":
-                compatibility_id = 1;
-                break;
-            default:
-                throw new IllegalArgumentException("Not valid version");
-        }
     }
 
     public boolean isCompatible(PlotArea plotarea) {
@@ -367,7 +352,7 @@ public abstract class PlotArea {
     
     @Override
     public String toString() {
-        return compatibility_id == 1 || id == null ? worldname : worldname + ";" + id;
+        return id == null ? worldname : worldname + ";" + id;
     }
     
     @Override
@@ -429,6 +414,10 @@ public abstract class PlotArea {
 
     public boolean contains(int x, int z) {
         return TYPE != 2 || getRegionAbs().isIn(x, z);
+    }
+    
+    public boolean contains(PlotId id) {
+        return min == null || (id.x >= min.x && id.x <= max.x && id.y >= min.y && id.y <= max.y);
     }
 
     public boolean contains(Location loc) {

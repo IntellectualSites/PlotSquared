@@ -14,6 +14,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -617,7 +619,22 @@ public class PS {
      */
     public void addPlotArea(final PlotArea plotarea) {
         HashMap<PlotId, Plot> plots = plots_tmp.remove(plotarea.toString());
-        if (plots != null) {
+        if (plots == null) {
+            if (plotarea.TYPE == 2) {
+                plots = plots_tmp.get(plotarea.worldname);
+                if (plots != null) {
+                    Iterator<Entry<PlotId, Plot>> iter = plots.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Entry<PlotId, Plot> next = iter.next();
+                        PlotId id = next.getKey();
+                        if (plotarea.contains(id)) {
+                            next.getValue().setArea(plotarea);
+                            iter.remove();
+                        }
+                    }
+                }
+            }
+        } else {
             for (Entry<PlotId, Plot> entry : plots.entrySet()) {
                 Plot plot = entry.getValue();
                 plot.setArea(plotarea);
@@ -625,7 +642,21 @@ public class PS {
         }
         if (Settings.ENABLE_CLUSTERS) {
             Set<PlotCluster> clusters = clusters_tmp.remove(plotarea.toString());
-            if (clusters != null) {
+            if (clusters == null) {
+                if (plotarea.TYPE == 2) {
+                    clusters = clusters_tmp.get(plotarea.worldname);
+                    if (clusters != null) {
+                        Iterator<PlotCluster> iter = clusters.iterator();
+                        while (iter.hasNext()) {
+                            PlotCluster next = iter.next();
+                            if (next.intersects(plotarea.getMin(), plotarea.getMax())) {
+                                next.setArea(plotarea);
+                                iter.remove();
+                            }
+                        }
+                    }
+                }
+            } else {
                 for (PlotCluster cluster : clusters) {
                     cluster.setArea(plotarea);
                 }
@@ -1442,17 +1473,21 @@ public class PS {
                     if (clusters == null) {
                         throw new IllegalArgumentException("No cluster exists for world: " + world);
                     }
+                    ArrayDeque<PlotArea> toLoad = new ArrayDeque<>();
                     for (PlotCluster cluster : clusters) {
                         PlotId pos1 = cluster.getP1(); // Cluster pos1
                         PlotId pos2 = cluster.getP2(); // Cluster pos2
                         String name = cluster.getName(); // Cluster name
+                        String fullId = name + "-" + pos1 + "-" + pos2;
+                        worldSection.createSection("areas." + fullId);
+                        DBFunc.replaceWorld(world, world + ";" + name, pos1, pos2); // NPE
+
                         log(C.PREFIX.s() + "&3 - " + name + "-" + pos1 + "-" + pos2);
                         GeneratorWrapper<?> areaGen = IMP.getGenerator(world, gen_string);
                         if (areaGen == null) {
                             throw new IllegalArgumentException("Invalid Generator: " + gen_string);
                         }
                         PlotArea pa = areaGen.getPlotGenerator().getNewPlotArea(world, name, pos1, pos2);
-                        pa.setCompatibility("3.2.X");
                         pa.saveConfiguration(worldSection);
                         pa.loadDefaultConfiguration(worldSection);
                         try {
@@ -1463,9 +1498,13 @@ public class PS {
                         log(C.PREFIX.s() + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
                         log(C.PREFIX.s() + "&c | &9plotworld: &7" + pa);
                         log(C.PREFIX.s() + "&c | &9manager: &7" + pa);
+                        log(C.PREFIX.s() + "&cNote: &7Area created for cluster:" + name + " (invalid or old configuration?)");
                         areaGen.getPlotGenerator().initialize(pa);
                         areaGen.augment(pa);
-                        addPlotArea(pa);
+                        toLoad.add(pa);
+                    }
+                    for (PlotArea area : toLoad) {
+                        addPlotArea(area);
                     }
                     return;
                 }

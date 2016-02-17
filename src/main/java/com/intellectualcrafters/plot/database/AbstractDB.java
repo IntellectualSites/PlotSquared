@@ -352,4 +352,6 @@ public interface AbstractDB {
     boolean deleteTables();
     
     void close();
+    
+    void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max);
 }

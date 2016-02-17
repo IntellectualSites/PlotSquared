@@ -474,6 +474,10 @@ public class DBFunc {
         dbManager.setPosition(cluster, position);
     }
     
+    public static void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max) {
+        dbManager.replaceWorld(oldWorld, newWorld, min, max);
+    }
+    
     /**
      * Replace all occurrences of a uuid in the database with another one
      * @param old
