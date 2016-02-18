@@ -6,7 +6,7 @@
 **How to replicate**:
 
 Make sure you've completed the following steps (put X inside of brackets):
-- [ ] Include debugpaste
-- [ ] Made sure there aren't duplicates of this report
+- [ ] Include `/plot debugpaste`
+- [ ] Made sure there aren't duplicates of this report [(Use Search)](https://github.com/IntellectualSites/PlotSquared/issues)
 - [ ] Made sure you're using an updated version of PlotSquared
-- [ ] Made sure the bug/error isn't caused by another other plugin
+- [ ] Made sure the bug/error isn't caused by any other plugin
