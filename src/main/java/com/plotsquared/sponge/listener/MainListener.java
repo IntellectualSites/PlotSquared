@@ -332,7 +332,7 @@ public class MainListener {
         Location loc = SpongeUtil.getLocation(worldname, first.getOriginal().getPosition());
         Plot plot = loc.getPlot();
         if (plot == null) {
-            if (loc.getPlotAbs() == null /*MainUtil.isPlotAreaAbs(loc)*/) {
+            if (loc.getPlotAbs() == null ) {
                 return;
             }
             event.setCancelled(true);
@@ -392,7 +392,7 @@ public class MainListener {
         if (plot == null) {
             return;
         }
-        final Text message = event.getMessage().get();
+        final Text message = event.getMessage().orElse(Text.EMPTY);
         
         // TODO use display name rather than username
         //  - Getting displayname currently causes NPE, so wait until sponge fixes that
@@ -400,7 +400,7 @@ public class MainListener {
         final String sender = player.getName();
         final PlotId id = plot.getId();
         final String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
-        final Text forcedMessage = event.getMessage().get();
+        final Text forcedMessage = event.getMessage().orElse(Text.EMPTY);
         //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer user = entry.getValue();
@@ -450,7 +450,7 @@ public class MainListener {
             event.setCancelled(true);
             return;
         }
-        if (originPlot == null && current.getPlotAbs() == null /*May not work*/) {
+        if (originPlot == null && current.getPlotAbs() == null) {
             return;
         }
         if (!FlagManager.isPlotFlagTrue(currentPlot, "explosion")) {
@@ -492,12 +492,6 @@ public class MainListener {
     public void onBlockBreak(final ChangeBlockEvent.Decay event) {
         onBlockChange(event);
     }
-    
-    //    @Listener
-    //    public void onBlockBreak(final ChangeBlockEvent.Fluid event) {
-    //        onBlockChange(event);
-    //    }
-    
     @Listener
     public void onBlockBreak(final ChangeBlockEvent.Grow event) {
         onBlockChange(event);
@@ -824,7 +818,7 @@ public class MainListener {
                     return;
                 }
             }
-            final Integer border = plotworld.getBorder(); //worldBorder.get(worldname); **May not work**
+            final Integer border = plotworld.getBorder();
             if (border != null) {
                 if (x2 > border) {
                     final Vector3d pos = to.getPosition();
@@ -858,7 +852,7 @@ public class MainListener {
             }
             final PlotManager plotManager = PS.get().getPlotManager(PS.get().getPlot(plotworld, plotworld.getMin()));
             final PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
-            final Plot lastPlot = (Plot) pp.getMeta("lastplot");
+            final Plot lastPlot = pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
                     return;
@@ -886,7 +880,7 @@ public class MainListener {
                     return;
                 }
             }
-            final Integer border = plotworld.getBorder(); //worldBorder.get(worldname); **May not work**
+            final Integer border = plotworld.getBorder();
             if (border != null) {
                 if (z2 > border) {
                     final Vector3d pos = to.getPosition();

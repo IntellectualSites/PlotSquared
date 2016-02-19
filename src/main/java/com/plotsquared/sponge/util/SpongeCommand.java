@@ -50,17 +50,17 @@ public class SpongeCommand implements CommandCallable {
     
     @Override
     public Optional<? extends Text> getShortDescription(final CommandSource cmd) {
-        return Optional.of(Texts.of("Shows plot help"));
+        return Optional.of(Text.of("Shows plot help"));
     }
     
     @Override
     public Optional<? extends Text> getHelp(final CommandSource cmd) {
-        return Optional.of(Texts.of("/plot help"));
+        return Optional.of(Text.of("/plot help"));
     }
     
     @Override
     public Text getUsage(final CommandSource cmd) {
-        return Texts.of("/plot <command>");
+        return Text.of("/plot <command>");
     }
     
 }

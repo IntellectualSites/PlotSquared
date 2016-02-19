@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -87,7 +88,8 @@ public class JSONObject {
         for (final String name : names) {
             try {
                 putOnce(name, jo.opt(name));
-            } catch (final Exception ignore) {}
+            } catch (JSONException ignore) {
+            }
         }
     }
     
@@ -192,7 +194,8 @@ public class JSONObject {
         for (final String name : names) {
             try {
                 putOpt(name, c.getField(name).get(object));
-            } catch (final Exception ignore) {}
+            } catch (JSONException | SecurityException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException ignore) {
+            }
         }
     }
     
@@ -458,7 +461,8 @@ public class JSONObject {
                         }
                     }
                 }
-            } catch (final Exception ignore) {}
+            } catch (NumberFormatException ignore) {
+            }
         }
         return string;
     }
@@ -514,7 +518,7 @@ public class JSONObject {
             } catch (final Exception e) {
                 throw new JSONException(e);
             }
-            if (object instanceof String) {
+            if (object != null) {
                 return (String) object;
             }
             throw new JSONException("Bad value from toJSONString: " + object);
@@ -553,18 +557,18 @@ public class JSONObject {
                 return NULL;
             }
             if ((object instanceof JSONObject)
-            || (object instanceof JSONArray)
-            || NULL.equals(object)
-            || (object instanceof JSONString)
-            || (object instanceof Byte)
-            || (object instanceof Character)
-            || (object instanceof Short)
-            || (object instanceof Integer)
-            || (object instanceof Long)
-            || (object instanceof Boolean)
-            || (object instanceof Float)
-            || (object instanceof Double)
-            || (object instanceof String)) {
+                    || (object instanceof JSONArray)
+                    || NULL.equals(object)
+                    || (object instanceof JSONString)
+                    || (object instanceof Byte)
+                    || (object instanceof Character)
+                    || (object instanceof Short)
+                    || (object instanceof Integer)
+                    || (object instanceof Long)
+                    || (object instanceof Boolean)
+                    || (object instanceof Float)
+                    || (object instanceof Double)
+                    || (object instanceof String)) {
                 return object;
             }
             if (object instanceof Collection) {
@@ -582,7 +586,7 @@ public class JSONObject {
                 return object.toString();
             }
             return new JSONObject(object);
-        } catch (final Exception exception) {
+        } catch (JSONException exception) {
             return null;
         }
     }
@@ -730,7 +734,7 @@ public class JSONObject {
         final Object object = get(key);
         try {
             return object instanceof Number ? ((Number) object).doubleValue() : Double.parseDouble((String) object);
-        } catch (final Exception e) {
+        } catch (NumberFormatException e) {
             throw new JSONException("JSONObject[" + quote(key) + "] is not a number.");
         }
     }
@@ -748,7 +752,7 @@ public class JSONObject {
         final Object object = get(key);
         try {
             return object instanceof Number ? ((Number) object).intValue() : Integer.parseInt((String) object);
-        } catch (final Exception e) {
+        } catch (NumberFormatException e) {
             throw new JSONException("JSONObject[" + quote(key) + "] is not an int.");
         }
     }
@@ -800,7 +804,7 @@ public class JSONObject {
         final Object object = get(key);
         try {
             return object instanceof Number ? ((Number) object).longValue() : Long.parseLong((String) object);
-        } catch (final Exception e) {
+        } catch (NumberFormatException e) {
             throw new JSONException("JSONObject[" + quote(key) + "] is not a long.");
         }
     }
@@ -949,7 +953,7 @@ public class JSONObject {
     public boolean optBoolean(final String key, final boolean defaultValue) {
         try {
             return getBoolean(key);
-        } catch (final Exception e) {
+        } catch (JSONException e) {
             return defaultValue;
         }
     }
@@ -978,7 +982,7 @@ public class JSONObject {
     public double optDouble(final String key, final double defaultValue) {
         try {
             return getDouble(key);
-        } catch (final Exception e) {
+        } catch (JSONException e) {
             return defaultValue;
         }
     }
@@ -1007,7 +1011,7 @@ public class JSONObject {
     public int optInt(final String key, final int defaultValue) {
         try {
             return getInt(key);
-        } catch (final Exception e) {
+        } catch (JSONException e) {
             return defaultValue;
         }
     }
@@ -1062,7 +1066,7 @@ public class JSONObject {
     public long optLong(final String key, final long defaultValue) {
         try {
             return getLong(key);
-        } catch (final Exception e) {
+        } catch (JSONException e) {
             return defaultValue;
         }
     }
@@ -1123,7 +1127,8 @@ public class JSONObject {
                         }
                     }
                 }
-            } catch (final Exception ignore) {}
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ignore) {
+            }
         }
     }
     
@@ -1365,7 +1370,7 @@ public class JSONObject {
     public String toString() {
         try {
             return this.toString(0);
-        } catch (final Exception e) {
+        } catch (JSONException e) {
             return null;
         }
     }
@@ -1471,7 +1476,7 @@ public class JSONObject {
         protected final Object clone() {
             try {
                 return super.clone();
-            } catch (final Exception e) {
+            } catch (CloneNotSupportedException e) {
                 return this;
             }
         }

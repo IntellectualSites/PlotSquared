@@ -440,7 +440,7 @@ public class Area extends SubCommand {
                 }
                 RegionWrapper region = area.getRegion();
                 Location center = new Location(area.worldname, region.minX + (region.maxX - region.minX) / 2, 0, region.minZ + (region.maxZ - region.minZ) / 2);
-                center.setY(WorldUtil.IMP.getHeighestBlock(area.worldname, center.getX(), center.getZ()));
+                center.setY(WorldUtil.IMP.getHighestBlock(area.worldname, center.getX(), center.getZ()));
                 plr.teleport(center);
                 return true;
             }

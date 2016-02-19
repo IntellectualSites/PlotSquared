@@ -664,11 +664,11 @@ public class BukkitChunkManager extends ChunkManager {
         SetQueue.IMP.queue.sendChunk(world, Collections.singletonList(loc));
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer pp = entry.getValue();
-            Location ploc = pp.getLocation();
-            if (!ploc.getChunkLoc().equals(loc)) {
+            Location pLoc = pp.getLocation();
+            if (!pLoc.getChunkLoc().equals(loc)) {
                 continue;
             }
-            PlotBlock plotblock = WorldUtil.IMP.getBlock(ploc);
+            PlotBlock plotblock = WorldUtil.IMP.getBlock(pLoc);
             if (plotblock.id != 0) {
                 Plot plot = pp.getCurrentPlot();
                 pp.teleport(plot.getDefaultHome());

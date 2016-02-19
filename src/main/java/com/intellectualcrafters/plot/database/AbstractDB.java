@@ -20,6 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,14 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
 
@@ -190,7 +190,7 @@ public interface AbstractDB {
     void setAlias(final Plot plot, final String alias);
     
     /**
-     * Purgle a plot
+     * Purge a plot
      *
      * @param uniqueIds list of plot id (db) to be purged
      */

@@ -1,23 +1,21 @@
 package com.plotsquared.sponge.events;
 
+import com.intellectualcrafters.plot.object.Plot;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 
 import com.intellectualcrafters.plot.object.PlotId;
 
 public class PlotDeleteEvent extends AbstractEvent {
-    private final PlotId id;
-    private final String world;
-    
+    private final Plot plot;
+
     /**
      * PlotDeleteEvent: Called when a plot is deleted
      *
-     * @param world The world in which the plot was deleted
-     * @param id    The ID of the plot that was deleted
+     * @param plot    The plot that was deleted
      */
-    public PlotDeleteEvent(final String world, final PlotId id) {
-        this.id = id;
-        this.world = world;
+    public PlotDeleteEvent(Plot plot) {
+        this.plot = plot;
     }
     
     /**
@@ -26,7 +24,7 @@ public class PlotDeleteEvent extends AbstractEvent {
      * @return PlotId
      */
     public PlotId getPlotId() {
-        return id;
+        return plot.getId();
     }
     
     /**
@@ -35,7 +33,7 @@ public class PlotDeleteEvent extends AbstractEvent {
      * @return String
      */
     public String getWorld() {
-        return world;
+        return plot.getArea().worldname;
     }
     
     @Override

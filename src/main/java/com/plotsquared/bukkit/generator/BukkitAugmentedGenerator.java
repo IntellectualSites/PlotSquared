@@ -1,23 +1,22 @@
 package com.plotsquared.bukkit.generator;
 
-import java.util.Random;
-
+import com.intellectualcrafters.plot.generator.AugmentedUtils;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 
-import com.intellectualcrafters.plot.generator.AugmentedUtils;
+import java.util.Random;
 
 public class BukkitAugmentedGenerator extends BlockPopulator {
     
     private static BukkitAugmentedGenerator generator;
     
-    private BukkitAugmentedGenerator() {};
-    
+    private BukkitAugmentedGenerator() {}
+
     public static BukkitAugmentedGenerator get(World world) {
-        for (BlockPopulator poplator : world.getPopulators()) {
-            if (poplator instanceof BukkitAugmentedGenerator) {
-                return (BukkitAugmentedGenerator) poplator;
+        for (BlockPopulator populator : world.getPopulators()) {
+            if (populator instanceof BukkitAugmentedGenerator) {
+                return (BukkitAugmentedGenerator) populator;
             }
         }
         if (generator == null) {

@@ -20,25 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import java.awt.Rectangle;
-import java.awt.geom.Area;
-import java.awt.geom.PathIterator;
-import java.io.File;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
@@ -59,6 +40,25 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
+
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The plot class
@@ -1089,7 +1089,7 @@ public class Plot {
             final Location bot = this.getBottomAbs();
             final Location loc = new Location(bot.getWorld(), bot.getX() + home.x, bot.getY() + home.y, bot.getZ() + home.z, home.yaw, home.pitch);
             if (WorldUtil.IMP.getBlock(loc).id != 0) {
-                loc.setY(Math.max(WorldUtil.IMP.getHeighestBlock(this.area.worldname, loc.getX(), loc.getZ()), bot.getY()));
+                loc.setY(Math.max(WorldUtil.IMP.getHighestBlock(this.area.worldname, loc.getX(), loc.getZ()), bot.getY()));
             }
             return loc;
         }
@@ -1134,7 +1134,7 @@ public class Plot {
                 x = bot.getX() + this.area.DEFAULT_HOME.x;
                 z = bot.getZ() + this.area.DEFAULT_HOME.z;
             }
-            final int y = WorldUtil.IMP.getHeighestBlock(plot.area.worldname, x, z);
+            final int y = WorldUtil.IMP.getHighestBlock(plot.area.worldname, x, z);
             return new Location(plot.area.worldname, x, y + 1, z);
         }
         // Side
@@ -1142,7 +1142,7 @@ public class Plot {
         final int x = ((largest.maxX - largest.minX) / 2) + largest.minX;
         final int z = largest.minZ - 1;
         final PlotManager manager = plot.getManager();
-        final int y = Math.max(WorldUtil.IMP.getHeighestBlock(plot.area.worldname, x, z), manager.getSignLoc(plot.area, plot).getY());
+        final int y = Math.max(WorldUtil.IMP.getHighestBlock(plot.area.worldname, x, z), manager.getSignLoc(plot.area, plot).getY());
         return new Location(plot.area.worldname, x, y + 1, z);
     }
     
@@ -1933,7 +1933,7 @@ public class Plot {
      * 3 = west<br>
      * @param max The max number of merges to do
      * @param uuid The UUID it is allowed to merge with
-     * @param removeRoads Wether to remove roads
+     * @param removeRoads Whether to remove roads
      * @return true if a merge takes place
      */
     public boolean autoMerge(final int dir, int max, final UUID uuid, final boolean removeRoads) {
@@ -2355,7 +2355,7 @@ public class Plot {
     }
     
     /**
-     * Get all the corners of the plot (supports non-recangular shapes)<br> 
+     * Get all the corners of the plot (supports non-rectangular shapes)<br>
      * @return
      */
     public List<Location> getAllCorners() {

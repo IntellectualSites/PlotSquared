@@ -93,7 +93,7 @@ public class Auto extends SubCommand {
                     if (args.length > 1) {
                         schematic = args[1];
                     }
-                } catch (final Exception e) {
+                } catch (NumberFormatException e) {
                     size_x = 1;
                     size_z = 1;
                     schematic = args[0];

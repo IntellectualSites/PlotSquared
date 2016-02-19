@@ -30,7 +30,7 @@ public abstract class WorldUtil {
     
     public abstract PlotBlock getBlock(Location location);
     
-    public abstract int getHeighestBlock(String world, int x, int z);
+    public abstract int getHighestBlock(String world, int x, int z);
     
     public abstract boolean addItems(String world, PlotItem item);
     

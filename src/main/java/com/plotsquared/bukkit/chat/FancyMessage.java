@@ -2,6 +2,24 @@ package com.plotsquared.bukkit.chat;
 
 import static com.plotsquared.bukkit.chat.TextualComponent.rawText;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.Achievement;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Statistic;
+import org.bukkit.Statistic.Type;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -17,25 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
-import org.bukkit.Achievement;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Statistic;
-import org.bukkit.Statistic.Type;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonWriter;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerializable;
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
 
 /**
  * Represents a formattable message. Such messages can use elements such as colors, formatting codes, hover and click data, and other features provided by the vanilla Minecraft <a href="http://minecraft.gamepedia.com/Tellraw#Raw_JSON_Text">JSON message formatter</a>.
@@ -662,8 +661,11 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             }
         }
         
-        // Since the method is so simple, and all the obfuscated methods have the same name, it's easier to reimplement 'IChatBaseComponent a(String)' than to reflectively call it
-        // Of course, the implementation may change, but fuzzy matches might break with signature changes
+        /*
+        Since the method is so simple, and all the obfuscated methods have the same name, it's easier to reimplement 'IChatBaseComponent a(String)'
+         than to reflectively call it
+        Of course, the implementation may change, but fuzzy matches might break with signature changes
+        */
         final Object serializedChatComponent = fromJsonMethod.invoke(nmsChatSerializerGsonInstance, json, Reflection.getNMSClass("IChatBaseComponent"));
         
         return nmsPacketPlayOutChatConstructor.newInstance(serializedChatComponent);
@@ -699,7 +701,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
      * Serialization of this message by using this message will include (in this order for each message part):
      * <ol>
      * <li>The color of each message part.</li>
-     * <li>The applicable stylizations for each message part.</li>
+     * <li>The applicable stylization for each message part.</li>
      * <li>The core text of the message part.</li>
      * </ol>
      * The primary omissions are tooltips and clickable actions. Consequently, this method should be used only as a last resort.
@@ -748,7 +750,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
     
     /**
-     * Deserializes a JSON-represented message from a mapping of key-value pairs.
+     * Deserialize a JSON-represented message from a mapping of key-value pairs.
      * This is called by the Bukkit serialization API.
      * It is not intended for direct public API consumption.
      * @param serialized The key-value mapping which represents a fancy message.
@@ -773,10 +775,10 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     private static JsonParser _stringParser = new JsonParser();
     
     /**
-     * Deserializes a fancy message from its JSON representation. This JSON representation is of the format of
+     * Deserialize a fancy message from its JSON representation. This JSON representation is of the format of
      * that returned by {@link #toJSONString()}, and is compatible with vanilla inputs.
      * @param json The JSON string which represents a fancy message.
-     * @return A {@code FancyMessage} representing the parameterized JSON message.
+     * @return A {@code FancyMessage} representing the parametrized JSON message.
      */
     public static FancyMessage deserialize(final String json) {
         final JsonObject serialized = _stringParser.parse(json).getAsJsonObject();

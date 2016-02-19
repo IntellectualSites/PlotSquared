@@ -2,16 +2,6 @@ package com.plotsquared.bukkit.util.block;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -23,6 +13,15 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 public class FastQueue_1_7 extends SlowQueue {
 
@@ -91,7 +90,7 @@ public class FastQueue_1_7 extends SlowQueue {
     }
 
     /**
-     * This should be overriden by any specialized queues 
+     * This should be overridden by any specialized queues
      * @param pc
      */
     @Override
@@ -144,7 +143,7 @@ public class FastQueue_1_7 extends SlowQueue {
     }
 
     /**
-     * This should be overriden by any specialized queues 
+     * This should be overridden by any specialized queues
      * @param wrap
      */
     @Override
@@ -165,7 +164,7 @@ public class FastQueue_1_7 extends SlowQueue {
     }
 
     /**
-     * This should be overriden by any specialized queues 
+     * This should be overridden by any specialized queues
      * @param world
      * @param locs
      */
