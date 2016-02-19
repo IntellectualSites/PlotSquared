@@ -1,5 +1,9 @@
 package com.intellectualcrafters.configuration.file;
 
+import com.intellectualcrafters.configuration.Configuration;
+import com.intellectualcrafters.configuration.InvalidConfigurationException;
+import com.intellectualcrafters.configuration.MemoryConfiguration;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,55 +15,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
-import com.intellectualcrafters.configuration.Configuration;
-import com.intellectualcrafters.configuration.InvalidConfigurationException;
-import com.intellectualcrafters.configuration.MemoryConfiguration;
 
 /**
  * This is a base class for all File based implementations of {@link
  * Configuration}
  */
 public abstract class FileConfiguration extends MemoryConfiguration {
-    /**
-     * This value specified that the system default encoding should be
-     * completely ignored, as it cannot handle the ASCII character set, or it
-     * is a strict-subset of UTF8 already (plain ASCII).
-     *
-     * @deprecated temporary compatibility measure
-     */
-    @Deprecated
-    public static final boolean UTF8_OVERRIDE;
-    /**
-     * This value specifies if the system default encoding is unicode, but
-     * cannot parse standard ASCII.
-     *
-     * @deprecated temporary compatibility measure
-     */
-    @Deprecated
-    public static final boolean UTF_BIG;
-    /**
-     * This value specifies if the system supports unicode.
-     *
-     * @deprecated temporary compatibility measure
-     */
-    @Deprecated
-    public static final boolean SYSTEM_UTF;
-    static {
-        final byte[] testBytes = Base64Coder.decode("ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX4NCg==");
-        final String testString = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\r\n";
-        final Charset defaultCharset = Charset.defaultCharset();
-        final String resultString = new String(testBytes, defaultCharset);
-        final boolean trueUTF = defaultCharset.name().contains("UTF");
-        UTF8_OVERRIDE = !testString.equals(resultString) || defaultCharset.equals(Charset.forName("US-ASCII"));
-        SYSTEM_UTF = trueUTF || UTF8_OVERRIDE;
-        UTF_BIG = trueUTF && UTF8_OVERRIDE;
-    }
-    
+
     /**
      * Creates an empty {@link FileConfiguration} with no default values.
      */
@@ -100,8 +63,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
         
         final String data = saveToString();
 
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file),
-                UTF8_OVERRIDE && !UTF_BIG ? StandardCharsets.UTF_8 : Charset.defaultCharset())) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             writer.write(data);
         }
     }
@@ -146,9 +108,6 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * If the file cannot be loaded for any reason, an exception will be
      * thrown.
      * <p>
-     * This will attempt to use the {@link Charset#defaultCharset()} for
-     * files, unless {@link #UTF8_OVERRIDE} but not {@link #UTF_BIG} is
-     * specified.
      *
      * @param file File to load from.
      * @throws FileNotFoundException Thrown when the given file cannot be
@@ -165,7 +124,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
         
         final FileInputStream stream = new FileInputStream(file);
         
-        load(new InputStreamReader(stream, UTF8_OVERRIDE && !UTF_BIG ? StandardCharsets.UTF_8 : Charset.defaultCharset()));
+        load(new InputStreamReader(stream, StandardCharsets.UTF_8));
     }
     
     /**
@@ -175,8 +134,6 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * leaving only settings and defaults, and the new values will be loaded
      * from the given stream.
      * <p>
-     * This will attempt to use the {@link Charset#defaultCharset()}, unless
-     * {@link #UTF8_OVERRIDE} or {@link #UTF_BIG} is specified.
      *
      * @param stream Stream to load from
      * @throws IOException Thrown when the given file cannot be read.
@@ -192,7 +149,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
             throw new NullPointerException("Stream cannot be null");
         }
         
-        load(new InputStreamReader(stream, UTF8_OVERRIDE ? StandardCharsets.UTF_8 : Charset.defaultCharset()));
+        load(new InputStreamReader(stream, StandardCharsets.UTF_8));
     }
     
     /**
