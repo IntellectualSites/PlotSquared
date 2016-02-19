@@ -1,22 +1,6 @@
 package com.plotsquared.sponge.listener;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Predicate;
-
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Ambient;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Explosive;
-import org.bukkit.entity.Minecart;
-import org.bukkit.entity.Monster;
-
-import com.avaje.ebean.Transaction;
+import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -42,7 +26,48 @@ import com.plotsquared.listener.PlotListener;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import com.plotsquared.sponge.util.SpongeUtil;
-import com.sk89q.worldedit.extent.Extent;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.Transform;
+import org.spongepowered.api.entity.explosive.Explosive;
+import org.spongepowered.api.entity.explosive.PrimedTNT;
+import org.spongepowered.api.entity.living.Ambient;
+import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.entity.living.animal.Animal;
+import org.spongepowered.api.entity.living.monster.Monster;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.vehicle.Boat;
+import org.spongepowered.api.entity.vehicle.minecart.Minecart;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.action.LightningEvent;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.block.GrowBlockEvent;
+import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.block.MoveBlockEvent;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.command.SendCommandEvent;
+import org.spongepowered.api.event.entity.BreedEntityEvent;
+import org.spongepowered.api.event.entity.DisplaceEntityEvent;
+import org.spongepowered.api.event.entity.SpawnEntityEvent;
+import org.spongepowered.api.event.message.MessageEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.event.world.ExplosionEvent;
+import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.extent.Extent;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 public class MainListener {
     
@@ -123,12 +148,9 @@ public class MainListener {
     //    }
     
     public <T> T getCause(Cause cause, Class<T> clazz) {
-        Optional<?> root = cause.root();
-        if (root.isPresent()) {
-            Object source = root.get();
-            if (clazz.isInstance(source)) {
-                return (T) source;
-            }
+        Object root = cause.root();
+        if (clazz.isInstance(root)) {
+            return (T) root;
         }
         return null;
     }
@@ -137,13 +159,13 @@ public class MainListener {
     public void onCommand(final BreedEntityEvent.Breed event) {
         final Location loc = SpongeUtil.getLocation(event.getTargetEntity());
         final String world = loc.getWorld();
-        final PlotArea plotworld = PS.get().getPlotArea(world);
+        final PlotArea plotworld = PS.get().getPlotAreaByString(world);
         if (plotworld == null) {
             return;
         }
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = loc.getPlot();
         if (plot == null) {
-            if (MainUtil.isPlotRoad(loc)) {
+            if (loc.isPlotRoad()) {
                 event.setCancelled(true);
             }
             return;
@@ -156,7 +178,7 @@ public class MainListener {
     @Listener
     public void onMobSpawn(final SpawnEntityEvent event) {
         World world = event.getTargetWorld();
-        final PlotArea plotworld = PS.get().getPlotArea(world.getName());
+        final PlotArea plotworld = PS.get().getPlotAreaByString(world.getName());
         if (plotworld == null) {
             return;
         }
@@ -169,9 +191,9 @@ public class MainListener {
                     return true;
                 }
                 final Location loc = SpongeUtil.getLocation(entity);
-                final Plot plot = MainUtil.getPlot(loc);
+                final Plot plot = loc.getPlot();
                 if (plot == null) {
-                    if (MainUtil.isPlotRoad(loc)) {
+                    if (loc.isPlotRoad()) {
                         return false;
                     }
                     return true;
@@ -202,7 +224,7 @@ public class MainListener {
                             return false;
                         }
                         if (mobs == null) {
-                            mobs = MainUtil.countEntities(plot);
+                            mobs = plot.countEntities();
                         }
                         if (mobs[3] >= cap) {
                             return false;
@@ -216,7 +238,7 @@ public class MainListener {
                                 return false;
                             }
                             if (mobs == null) {
-                                mobs = MainUtil.countEntities(plot);
+                                mobs = plot.countEntities();
                             }
                             if (mobs[1] >= cap) {
                                 return false;
@@ -231,7 +253,7 @@ public class MainListener {
                                 return false;
                             }
                             if (mobs == null) {
-                                mobs = MainUtil.countEntities(plot);
+                                mobs = plot.countEntities();
                             }
                             if (mobs[2] >= cap) {
                                 return false;
@@ -248,7 +270,7 @@ public class MainListener {
                             return false;
                         }
                         if (mobs == null) {
-                            mobs = MainUtil.countEntities(plot);
+                            mobs = plot.countEntities();
                         }
                         if (mobs[4] >= cap) {
                             return false;
@@ -262,7 +284,7 @@ public class MainListener {
                         return false;
                     }
                     if (mobs == null) {
-                        mobs = MainUtil.countEntities(plot);
+                        mobs = plot.countEntities();
                     }
                     if (mobs[0] >= cap) {
                         return false;
@@ -286,7 +308,7 @@ public class MainListener {
                     return;
                 }
                 if (Settings.USE_PLOTME_ALIAS) {
-                    SpongeMain.THIS.getGame().getCommandDispatcher().process(source, ("plots " + event.getArguments()).trim());
+                    SpongeMain.THIS.getGame().getCommandManager().process(source, ("plots " + event.getArguments()).trim());
                 } else {
                     source.sendMessage(SpongeMain.THIS.getText(C.NOT_USING_PLOTME.s()));
                 }
@@ -304,9 +326,9 @@ public class MainListener {
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
         Location loc = SpongeUtil.getLocation(worldname, first.getOriginal().getPosition());
-        Plot plot = MainUtil.getPlot(loc);
+        Plot plot = loc.getPlot();
         if (plot == null) {
-            if (!MainUtil.isPlotAreaAbs(loc)) {
+            if (loc.getPlotAbs() == null ) {
                 return;
             }
             event.setCancelled(true);
@@ -316,7 +338,7 @@ public class MainListener {
             
             @Override
             public boolean test(org.spongepowered.api.world.Location<World> loc) {
-                if (MainUtil.isPlotRoad(SpongeUtil.getLocation(worldname, loc))) {
+                if (SpongeUtil.getLocation(worldname, loc).isPlotRoad()) {
                     return false;
                 }
                 return true;
@@ -342,7 +364,7 @@ public class MainListener {
     public void printCause(String method, Cause cause) {
         System.out.println(method + ": " + cause.toString());
         System.out.println(method + ": " + cause.getClass());
-        System.out.println(method + ": " + (cause.root().isPresent() ? cause.root().get() : null));
+        System.out.println(method + ": " + (cause.root()));
     }
     
     @Listener
@@ -356,17 +378,17 @@ public class MainListener {
         if (!PS.get().hasPlotArea(world)) {
             return;
         }
-        final PlotArea plotworld = PS.get().getPlotArea(world);
+        final PlotArea plotworld = PS.get().getPlotAreaByString(world);
         final PlotPlayer plr = SpongeUtil.getPlayer(player);
         if (!plotworld.PLOT_CHAT && ((plr.getMeta("chat") == null) || !(Boolean) plr.getMeta("chat"))) {
             return;
         }
         final Location loc = SpongeUtil.getLocation(player);
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = loc.getPlot();
         if (plot == null) {
             return;
         }
-        final Text message = event.getMessage();
+        final Text message = event.getMessage().orElse(Text.EMPTY);
         
         // TODO use display name rather than username
         //  - Getting displayname currently causes NPE, so wait until sponge fixes that
@@ -374,12 +396,12 @@ public class MainListener {
         final String sender = player.getName();
         final PlotId id = plot.getId();
         final String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
-        final Text forcedMessage = event.getMessage();
+        final Text forcedMessage = event.getMessage().orElse(Text.EMPTY);
         //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer user = entry.getValue();
             String toSend;
-            if (plot.equals(MainUtil.getPlot(user.getLocation()))) {
+            if (plot.equals(user.getLocation().getPlot())) {
                 toSend = newMessage;
             } else if (Permissions.hasPermission(user, C.PERMISSION_COMMANDS_CHAT)) {
                 ((SpongePlayer) user).player.sendMessage(forcedMessage);
@@ -396,9 +418,9 @@ public class MainListener {
                 } else {
                     prefix = message;
                 }
-                components.add(Texts.of(part));
+                components.add(Text.of(part));
             }
-            ((SpongePlayer) user).player.sendMessage(Texts.join(components));
+            ((SpongePlayer) user).player.sendMessage(Text.join(components));
         }
         event.setMessage(null);
     }
@@ -424,7 +446,7 @@ public class MainListener {
             event.setCancelled(true);
             return;
         }
-        if (originPlot == null && !MainUtil.isPlotAreaAbs(current)) {
+        if (originPlot == null && current.getPlotAbs() == null /*May not work*/) {
             return;
         }
         if (!FlagManager.isPlotFlagTrue(currentPlot, "explosion")) {
@@ -466,12 +488,7 @@ public class MainListener {
     public void onBlockBreak(final ChangeBlockEvent.Decay event) {
         onBlockChange(event);
     }
-    
-    @Listener
-    public void onBlockBreak(final ChangeBlockEvent.Fluid event) {
-        onBlockChange(event);
-    }
-    
+
     @Listener
     public void onBlockBreak(final ChangeBlockEvent.Grow event) {
         onBlockChange(event);
@@ -499,9 +516,9 @@ public class MainListener {
         Transaction<BlockSnapshot> first = transactions.get(0);
         BlockSnapshot pos = first.getOriginal();
         Location loc = SpongeUtil.getLocation(worldname, pos.getPosition());
-        Plot plot = MainUtil.getPlot(loc);
+        Plot plot = loc.getPlot();
         if (plot == null) {
-            if (!MainUtil.isPlotAreaAbs(loc)) {
+            if (loc.getPlotAbs() == null) {
                 return;
             }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
@@ -536,7 +553,7 @@ public class MainListener {
                 Location loc = SpongeUtil.getLocation(worldname, l);
                 Plot plot = loc.getPlot();
                 if (plot == null) {
-                    if (!MainUtil.isPlotAreaAbs(loc)) {
+                    if (loc.getPlotAbs() == null) {
                         return true;
                     }
                     if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
@@ -583,9 +600,9 @@ public class MainListener {
         Transaction<BlockSnapshot> first = transactions.get(0);
         BlockSnapshot pos = first.getOriginal();
         Location loc = SpongeUtil.getLocation(worldname, pos.getPosition());
-        Plot plot = MainUtil.getPlot(loc);
+        Plot plot = loc.getPlot();
         if (plot == null) {
-            if (!MainUtil.isPlotAreaAbs(loc)) {
+            if (loc.getPlotAbs() == null) {
                 return;
             }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
@@ -620,7 +637,7 @@ public class MainListener {
                 Location loc = SpongeUtil.getLocation(worldname, l);
                 Plot plot = loc.getPlot();
                 if (plot == null) {
-                    if (!MainUtil.isPlotAreaAbs(loc)) {
+                    if (loc.getPlotAbs() == null) {
                         return true;
                     }
                     if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
@@ -663,10 +680,10 @@ public class MainListener {
         }
         org.spongepowered.api.world.Location<World> l = target.get();
         Location loc = SpongeUtil.getLocation(l);
-        Plot plot = MainUtil.getPlot(loc);
+        Plot plot = loc.getPlot();
         PlotPlayer pp = SpongeUtil.getPlayer(player);
         if (plot == null) {
-            if (!MainUtil.isPlotAreaAbs(loc)) {
+            if (loc.getPlotAbs() == null) {
                 return;
             }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD)) {
@@ -726,12 +743,12 @@ public class MainListener {
             }, 20);
         }
         final Location loc = SpongeUtil.getLocation(player);
-        final Plot plot = MainUtil.getPlot(loc);
+        final Plot plot = loc.getPlot();
         if (plot == null) {
             return;
         }
         if (Settings.TELEPORT_ON_LOGIN) {
-            MainUtil.teleportPlayer(pp, pp.getLocation(), plot);
+            pp.teleport(loc);
             MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
         }
         PlotListener.plotEntry(pp, plot);
@@ -764,11 +781,11 @@ public class MainListener {
             pp.setMeta("location", SpongeUtil.getLocation(player));
             final World world = (World) extent;
             final String worldname = ((World) extent).getName();
-            final PlotArea plotworld = PS.get().getPlotArea(worldname);
+            final PlotArea plotworld = PS.get().getPlotAreaByString(worldname);
             if (plotworld == null) {
                 return;
             }
-            final PlotManager plotManager = PS.get().getPlotManager(worldname);
+            final PlotManager plotManager = PS.get().getPlotManager(PS.get().getPlot(plotworld, plotworld.getMin()));
             final PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
             final Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
@@ -777,7 +794,7 @@ public class MainListener {
                 }
                 if (!PlotListener.plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
-                    if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
+                    if (lastPlot.equals(SpongeUtil.getLocation(worldname, from).getPlot())) {
                         event.setCancelled(true);
                     } else {
                         event.setToTransform(new Transform<>(world.getSpawnLocation()));
@@ -787,10 +804,10 @@ public class MainListener {
             } else if ((lastPlot != null) && id.equals(lastPlot.getId())) {
                 return;
             } else {
-                final Plot plot = MainUtil.getPlot(worldname, id);
+                final Plot plot = PS.get().getPlot(PS.get().getPlotAreaByString(worldname), id);
                 if (!PlotListener.plotEntry(pp, plot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
-                    if (!plot.getBasePlot(false).equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
+                    if (!plot.getBasePlot(false).equals(SpongeUtil.getLocation(worldname, from).getPlot())) {
                         event.setCancelled(true);
                     } else {
                         event.setToTransform(new Transform<>(world.getSpawnLocation()));
@@ -798,19 +815,17 @@ public class MainListener {
                     return;
                 }
             }
-            final Integer border = MainUtil.worldBorder.get(worldname);
-            if (border != null) {
-                if (x2 > border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(border - 4, pos.getY(), pos.getZ()));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                } else if (x2 < -border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(-border + 4, pos.getY(), pos.getZ()));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                }
+            final Integer border = plotworld.getBorder();
+            if (x2 > border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(border - 4, pos.getY(), pos.getZ()));
+                event.setToTransform(new Transform(to));
+                MainUtil.sendMessage(pp, C.BORDER);
+            } else if (x2 < -border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(-border + 4, pos.getY(), pos.getZ()));
+                event.setToTransform(new Transform(to));
+                MainUtil.sendMessage(pp, C.BORDER);
             }
             return;
         }
@@ -826,20 +841,20 @@ public class MainListener {
             pp.setMeta("location", SpongeUtil.getLocation(player));
             final World world = (World) extent;
             final String worldname = ((World) extent).getName();
-            final PlotArea plotworld = PS.get().getPlotArea(worldname);
+            final PlotArea plotworld = PS.get().getPlotAreaByString(worldname);
             if (plotworld == null) {
                 return;
             }
-            final PlotManager plotManager = PS.get().getPlotManager(worldname);
+            final PlotManager plotManager = PS.get().getPlotManager(PS.get().getPlot(plotworld, plotworld.getMin()));
             final PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
-            final Plot lastPlot = (Plot) pp.getMeta("lastplot");
+            final Plot lastPlot = pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
                     return;
                 }
                 if (!PlotListener.plotExit(pp, lastPlot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
-                    if (lastPlot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
+                    if (lastPlot.equals(SpongeUtil.getLocation(worldname, from).getPlot())) {
                         event.setCancelled(true);
                     } else {
                         event.setToTransform(new Transform<>(world.getSpawnLocation()));
@@ -849,10 +864,10 @@ public class MainListener {
             } else if ((lastPlot != null) && id.equals(lastPlot.getId())) {
                 return;
             } else {
-                final Plot plot = MainUtil.getPlot(worldname, id);
+                final Plot plot = PS.get().getPlot(PS.get().getPlotAreaByString(worldname), id);
                 if (!PlotListener.plotEntry(pp, plot)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
-                    if (!plot.equals(MainUtil.getPlot(SpongeUtil.getLocation(worldname, from)))) {
+                    if (!plot.equals(SpongeUtil.getLocation(worldname, from).getPlot())) {
                         event.setCancelled(true);
                     } else {
                         event.setToTransform(new Transform<>(world.getSpawnLocation()));
@@ -860,19 +875,17 @@ public class MainListener {
                     return;
                 }
             }
-            final Integer border = MainUtil.worldBorder.get(worldname);
-            if (border != null) {
-                if (z2 > border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), border - 4));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                } else if (z2 < -border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), -border + 4));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                }
+            final Integer border = plotworld.getBorder();
+            if (z2 > border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), border - 4));
+                event.setToTransform(new Transform(to));
+                MainUtil.sendMessage(pp, C.BORDER);
+            } else if (z2 < -border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), -border + 4));
+                event.setToTransform(new Transform(to));
+                MainUtil.sendMessage(pp, C.BORDER);
             }
         }
     }
