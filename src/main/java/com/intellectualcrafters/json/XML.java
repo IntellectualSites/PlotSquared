@@ -235,9 +235,7 @@ public class XML {
         if ("null".equalsIgnoreCase(string)) {
             return JSONObject.NULL;
         }
-        // If it might be a number, try converting it, first as a Long, and then
-        // as a
-        // Double. If that doesn't work, return the string.
+        //If it might be a number, try converting it, first as a Long, and then as a Double. If that doesn't work, return the string.
         try {
             final char initial = string.charAt(0);
             if ((initial == '-') || ((initial >= '0') && (initial <= '9'))) {
@@ -246,13 +244,14 @@ public class XML {
                     return value;
                 }
             }
-        } catch (final Exception ignore) {
+        } catch (NumberFormatException ignore) {
             try {
                 final Double value = new Double(string);
                 if (value.toString().equals(string)) {
                     return value;
                 }
-            } catch (final Exception ignoreAlso) {}
+            } catch (NumberFormatException ignoreAlso) {
+            }
         }
         return string;
     }

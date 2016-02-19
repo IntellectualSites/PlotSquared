@@ -163,7 +163,7 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public int getHeighestBlock(final String world, final int x, final int z) {
+    public int getHighestBlock(final String world, final int x, final int z) {
         return getWorld(world).getHighestBlockAt(x, z).getY();
     }
 

@@ -58,7 +58,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         try {
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_plots`");
             r = stmt.executeQuery();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             PS.debug("========= Table does not exist =========");
             e.printStackTrace();
             PS.debug("=======================================");
@@ -114,9 +114,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                             final byte[] bytes = r.getBytes("ownerid");
                             if (bytes != null) {
                                 owner = UUID.nameUUIDFromBytes(bytes);
-                                if (owner != null) {
-                                    UUIDHandler.add(new StringWrapper(name), owner);
-                                }
+                                UUIDHandler.add(new StringWrapper(name), owner);
                             }
                         } catch (final Exception e) {
                             e.printStackTrace();
@@ -148,7 +146,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             PS.log(" - " + plugin + "core_denied");
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_denied`");
             r = stmt.executeQuery();
-            
+
             while (r.next()) {
                 final int key = r.getInt("plot_id");
                 final Plot plot = plots.get(key);
@@ -159,11 +157,11 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 final UUID denied = UUID.fromString(r.getString("player"));
                 plot.getDenied().add(denied);
             }
-            
+
             PS.log(" - " + plugin + "core_allowed");
             stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_allowed`");
             r = stmt.executeQuery();
-            
+
             while (r.next()) {
                 final int key = r.getInt("plot_id");
                 final Plot plot = plots.get(key);
@@ -176,8 +174,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             }
             r.close();
             stmt.close();
-            
-        } catch (final Exception e) {
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         final HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
