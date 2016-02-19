@@ -1,14 +1,9 @@
 package com.plotsquared.sponge.util;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.event.EventManager;
-
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -30,6 +25,11 @@ import com.plotsquared.sponge.events.PlotFlagRemoveEvent;
 import com.plotsquared.sponge.events.PlotMergeEvent;
 import com.plotsquared.sponge.events.PlotRateEvent;
 import com.plotsquared.sponge.events.PlotUnlinkEvent;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.EventManager;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class SpongeEventUtil extends EventUtil {
     
@@ -54,13 +54,13 @@ public class SpongeEventUtil extends EventUtil {
     }
     
     @Override
-    public boolean callClear(final String world, final PlotId id) {
-        return callEvent(new PlotClearEvent(world, id));
+    public boolean callClear(final Plot plot) {
+        return callEvent(new PlotClearEvent(plot));
     }
     
     @Override
-    public void callDelete(final String world, final PlotId id) {
-        callEvent(new PlotDeleteEvent(world, id));
+    public void callDelete(Plot plot) {
+        callEvent(new PlotDeleteEvent(plot));
     }
     
     @Override
@@ -74,13 +74,13 @@ public class SpongeEventUtil extends EventUtil {
     }
     
     @Override
-    public boolean callMerge(final String world, final Plot plot, final ArrayList<PlotId> plots) {
-        return callEvent(new PlotMergeEvent(SpongeUtil.getWorld(world), plot, plots));
+    public boolean callMerge(final Plot plot, final ArrayList<PlotId> plots) {
+        return callEvent(new PlotMergeEvent(SpongeUtil.getWorld(plot.getArea().worldname), plot, plots));
     }
     
     @Override
-    public boolean callUnlink(final String world, final ArrayList<PlotId> plots) {
-        return callEvent(new PlotUnlinkEvent(SpongeUtil.getWorld(world), plots));
+    public boolean callUnlink(final PlotArea area, final ArrayList<PlotId> plots) {
+        return callEvent(new PlotUnlinkEvent(SpongeUtil.getWorld(area.worldname), plots));
     }
     
     @Override
