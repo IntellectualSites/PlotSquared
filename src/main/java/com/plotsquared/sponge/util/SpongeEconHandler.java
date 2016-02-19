@@ -1,51 +1,63 @@
 package com.plotsquared.sponge.util;
 
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
+import org.spongepowered.api.service.economy.EconomyService;
+import org.spongepowered.api.service.economy.account.UniqueAccount;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 
 public class SpongeEconHandler extends EconHandler {
     
-    private Object TE_SERVICE;
-    private Object EL_SERVICE;
+    private EconomyService econ;
 
-    public SpongeEconHandler() {
-        try {
-            Class<?> clazz = Class.forName("com.erigitic.service.TEService");
-            this.TE_SERVICE = SpongeMain.THIS.getGame().getServiceManager().provide(clazz).get();
-
-        } catch (Exception e) {
-            try {
-                Class<?> clazz = Class.forName("me.Flibio.EconomyLite.API.EconomyLiteAPI");
-                this.EL_SERVICE = SpongeMain.THIS.getGame().getServiceManager().provide(clazz).get();
-            } catch (Exception e2) {
-                PS.log("No economy service found! (EconomyLite, TotalEconomy)");
-            }
+    @Listener
+    public void onChangeServiceProvider(ChangeServiceProviderEvent event) {
+        if (event.getService().equals(EconomyService.class)) {
+            this.econ = (EconomyService) event.getNewProviderRegistration().getProvider();
         }
     }
 
     @Override
     public void withdrawMoney(PlotPlayer player, double amount) {
-        UUID uuid = ((SpongePlayer) player).player.getUniqueId();
+        if (econ != null) {
+            Optional<UniqueAccount> uOpt = econ.getAccount(player.getUUID());
+            if (uOpt.isPresent()) {
+                UniqueAccount acc = uOpt.get();
+                acc.withdraw(econ.getDefaultCurrency(), new BigDecimal(amount), Cause.of("PlotSquared"));
+            }
+        }
     }
     
     @Override
     public void depositMoney(PlotPlayer player, double amount) {
-        UUID uuid = ((SpongePlayer) player).player.getUniqueId();
+        if (econ != null) {
+            Optional<UniqueAccount> uOpt = econ.getAccount(player.getUUID());
+            if (uOpt.isPresent()) {
+                UniqueAccount acc = uOpt.get();
+                acc.deposit(econ.getDefaultCurrency(), new BigDecimal(amount), Cause.of("PlotSquared"));
+            }
+        }
     }
     
     @Override
     public void depositMoney(OfflinePlotPlayer player, double amount) {
-        UUID uuid = player.getUUID();
-        
+        if (econ != null) {
+            Optional<UniqueAccount> uOpt = econ.getAccount(player.getUUID());
+            if (uOpt.isPresent()) {
+                UniqueAccount acc = uOpt.get();
+                acc.deposit(econ.getDefaultCurrency(), new BigDecimal(amount), Cause.of("PlotSquared"));
+            }
+        }
     }
     
     @Override
@@ -62,6 +74,19 @@ public class SpongeEconHandler extends EconHandler {
         }
         // TODO offline
         return false;
+    }
+    
+    @Override
+    public double getBalance(PlotPlayer player) {
+        if (econ != null) {
+            Optional<UniqueAccount> uOpt = econ.getAccount(player.getUUID());
+            if (uOpt.isPresent()) {
+                UniqueAccount acc = uOpt.get();
+                BigDecimal balance = acc.getBalance(econ.getDefaultCurrency());
+                return balance.doubleValue();
+            }
+        }
+        return 0;
     }
     
 }

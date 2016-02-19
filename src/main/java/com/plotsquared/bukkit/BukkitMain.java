@@ -359,7 +359,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 }
             }
         }, 20);
-        return (ChunkGenerator) result.specify(world);
+        return (ChunkGenerator) result.specify();
     }
     
     @Override
@@ -690,7 +690,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator) {
+    public GeneratorWrapper<?> wrapPlotGenerator(IndependentPlotGenerator generator) {
         return new BukkitPlotGenerator(generator);
     }
     

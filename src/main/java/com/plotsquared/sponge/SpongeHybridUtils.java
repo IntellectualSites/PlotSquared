@@ -23,7 +23,7 @@ public class SpongeHybridUtils extends HybridUtils {
             for (int x = x1; x <= x2; x++) {
                 for (int z = z1; z <= z2; z++) {
                     final BlockState state = world.getBlock(x, y, z);
-                    final PlotBlock block = SpongeMain.THIS.getPlotBlock(state);
+                    final PlotBlock block = SpongeUtil.getPlotBlock(state);
                     boolean same = false;
                     for (final PlotBlock p : blocks) {
                         if (block.id == p.id) {

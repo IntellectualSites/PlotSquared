@@ -1,22 +1,19 @@
 package com.plotsquared.sponge;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.generator.PlotGenerator;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.plotsquared.sponge.generator.AugmentedPopulator;
-import com.plotsquared.sponge.generator.SpongeBasicGen;
-import com.plotsquared.sponge.generator.SpongeGeneratorWrapper;
-import com.plotsquared.sponge.generator.SpongePlotGenerator;
-import com.plotsquared.sponge.util.SpongeUtil;
+import java.io.IOException;
+
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.WorldGenerator;
 
-import java.io.IOException;
-import java.util.Map.Entry;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.PlotGenerator;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.plotsquared.sponge.generator.SpongePlotGenerator;
+import com.plotsquared.sponge.util.SpongeUtil;
 
 public class SpongeSetupUtils extends SetupUtils {
     
@@ -25,9 +22,9 @@ public class SpongeSetupUtils extends SetupUtils {
         if (!SetupUtils.generators.isEmpty()) {
             return;
         }
+        SetupUtils.generators.put("PlotSquared", new SpongePlotGenerator(new HybridGen()));
         // TODO get external world generators
-        final String testWorld = "CheckingPlotSquaredGenerator";
-        SetupUtils.generators.put("PlotSquared", new SpongeGeneratorWrapper(testWorld, new SpongeBasicGen(testWorld)));
+        throw new UnsupportedOperationException("TODO FETCH EXTERNAL WorldGenerationModifiers");
     }
     
     @Override
@@ -40,15 +37,7 @@ public class SpongeSetupUtils extends SetupUtils {
             return null;
         }
         final WorldGenerator generator = world.getWorldGenerator();
-        if (!(generator instanceof SpongePlotGenerator)) {
-            return null;
-        }
-        for (final Entry<String, PlotGenerator<?>> entry : generators.entrySet()) {
-            if (entry.getValue().generator.getClass().getName().equals(generator.getClass().getName())) {
-                return entry.getKey();
-            }
-        }
-        return null;
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
     @Override
@@ -76,12 +65,8 @@ public class SpongeSetupUtils extends SetupUtils {
         } catch (final IOException e) {
             e.printStackTrace();
         }
-        SpongeMain.THIS.createWorldFromConfig(world);
-        return object.world;
-    }
-    
-    @Override
-    public void removePopulator(final String world, final PlotCluster cluster) {
-        AugmentedPopulator.removePopulator(world, cluster);
+        // TODO FIXME
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET: Create a new world here");
+        //        return object.world;
     }
 }

@@ -12,10 +12,11 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.sponge.SpongeMain;
 import com.sk89q.worldedit.blocks.BlockType;
 
-public class SpongeBlockManager extends BlockManager {
+public class SpongeWorldUtil extends WorldUtil {
     
     @Override
     public boolean isBlockSolid(final PlotBlock block) {

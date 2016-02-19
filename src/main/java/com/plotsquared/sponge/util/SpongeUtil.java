@@ -1,15 +1,24 @@
 package com.plotsquared.sponge.util;
 
+import java.lang.reflect.Field;
+import java.util.Locale;
 import java.util.Optional;
 
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.translation.Translatable;
+import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.biome.BiomeType;
+import org.spongepowered.api.world.biome.BiomeTypes;
 import org.spongepowered.api.world.extent.Extent;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -25,6 +34,60 @@ public class SpongeUtil {
         return new Location(world, pos.getX(), pos.getY(), pos.getZ());
     }
     
+    private static BiomeType[] biomes;
+    
+    public static BiomeType getBiome(int index) {
+        if (biomes == null) {
+            try {
+                Field[] fields = BiomeTypes.class.getFields();
+                biomes = new BiomeType[fields.length];
+                for (int i = 0; i < fields.length; i++) {
+                    biomes[i] = (BiomeType) fields[i].get(null);
+                }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return biomes[index];
+    }
+    
+    public static Text text(String m) {
+        return Text.of(m);
+    }
+    
+    public static Translation getTranslation(final String m) {
+        return new Translatable() {
+            @Override
+            public Translation getTranslation() {
+                return new Translation() {
+                    
+                    @Override
+                    public String getId() {
+                        return m;
+                    }
+                    
+                    @Override
+                    public String get(final Locale l, final Object... args) {
+                        return m;
+                    }
+                    
+                    @Override
+                    public String get(final Locale l) {
+                        return m;
+                    }
+                };
+            }
+        }.getTranslation();
+    }
+
+    public static BlockState getBlockState(int id, int data) {
+        
+    }
+    
+    public static PlotBlock getPlotBlock(BlockState state) {
+        
+    }
+
     public static Location getLocation(final org.spongepowered.api.world.Location<World> block) {
         return getLocation(block.getExtent().getName(), block);
     }

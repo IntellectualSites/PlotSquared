@@ -1,5 +1,14 @@
 package com.plotsquared.sponge;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.world.World;
+
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.IntTag;
@@ -16,14 +25,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.sponge.util.SpongeUtil;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.world.World;
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 public class SpongeSchematicHandler extends SchematicHandler {
     
@@ -144,10 +145,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                                 final int index = i2 + rx;
                                                 
                                                 final BlockState state = worldObj.getBlock(x, y, z);
-                                                PlotBlock block = SpongeMain.THIS.getPlotBlock(state);
-                                                if (block == null) {
-                                                    block = SpongeMain.THIS.registerBlock(state);
-                                                }
+                                                PlotBlock block = SpongeUtil.getPlotBlock(state);
                                                 final int id = block.id;
                                                 switch (id) {
                                                     case 0:
@@ -278,6 +276,13 @@ public class SpongeSchematicHandler extends SchematicHandler {
                 });
             }
         });
+    }
+    
+    @Override
+    public void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schem) {
+        // TODO Auto-generated method stub
+        // This method should place the compound tag at a location e.g. chest contents
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
 }
