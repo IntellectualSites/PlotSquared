@@ -11,8 +11,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.util.SpongeUtil;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
 import org.spongepowered.api.data.value.mutable.Value;
@@ -97,8 +97,7 @@ public class SpongePlayer extends PlotPlayer {
             hasPerm.add(perm);
             return true;
         }
-        final boolean value = player.hasPermission(perm);
-        return value;
+        return player.hasPermission(perm);
     }
     
     @Override
@@ -282,12 +281,12 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void kick(final String message) {
-        player.kick(SpongeMain.THIS.getText(message));
+        player.kick(Text.of(message));
     }
     
     @Override
     public boolean isBanned() {
-        BanService service = SpongeMain.THIS.getGame().getServiceManager().provide(BanService.class).get();
+        BanService service = Sponge.getServiceManager().provide(BanService.class).get();
         return service.isBanned(player.getProfile());
     }
 }

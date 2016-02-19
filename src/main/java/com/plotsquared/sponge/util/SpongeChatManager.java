@@ -1,32 +1,32 @@
 package com.plotsquared.sponge.util;
 
-import org.spongepowered.api.text.action.TextActions;
-
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.plotsquared.sponge.object.SpongePlayer;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 
-public class SpongeChatManager extends ChatManager<TextBuilder> {
+public class SpongeChatManager extends ChatManager<Text.Builder> {
     
     @Override
-    public TextBuilder builder() {
-        return Texts.builder();
+    public Text.Builder builder() {
+        return Text.builder();
     }
     
     @Override
     public void color(final PlotMessage m, final String color) {
-        m.$(this).color(Texts.of(color).getColor());
+        m.$(this).color(Text.of(color).getColor());
     }
     
     @Override
     public void tooltip(final PlotMessage m, final PlotMessage... tooltips) {
-        final TextBuilder builder = Texts.builder();
+        final Text.Builder builder = Text.builder();
         boolean lb = false;
         for (final PlotMessage tooltip : tooltips) {
             if (lb) {
-                builder.append(Texts.of("\n"));
+                builder.append(Text.of("\n"));
             }
             builder.append(tooltip.$(this).build());
             lb = true;
@@ -42,13 +42,13 @@ public class SpongeChatManager extends ChatManager<TextBuilder> {
     
     @Override
     public void text(final PlotMessage m, final String text) {
-        m.$(this).append(Texts.of(text));
+        m.$(this).append(Text.of(text));
     }
     
     @Override
     public void send(final PlotMessage m, final PlotPlayer player) {
         if (ConsolePlayer.isConsole(player)) {
-            player.sendMessage(Texts.legacy().to(m.$(this).build()));
+            player.sendMessage(m.$(this).build().toPlain());
         } else {
             ((SpongePlayer) player).player.sendMessage(m.$(this).build());
         }
