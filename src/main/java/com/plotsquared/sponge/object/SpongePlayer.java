@@ -1,19 +1,5 @@
 package com.plotsquared.sponge.object;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.UUID;
-
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
-import org.spongepowered.api.data.value.mutable.Value;
-import org.spongepowered.api.effect.sound.SoundTypes;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.entity.living.player.gamemode.GameModes;
-import org.spongepowered.api.service.ban.BanService;
-import org.spongepowered.api.text.chat.ChatTypes;
-
 import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;
@@ -27,6 +13,20 @@ import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.util.SpongeUtil;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
+import org.spongepowered.api.data.value.mutable.Value;
+import org.spongepowered.api.effect.sound.SoundTypes;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.gamemode.GameMode;
+import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.service.ban.BanService;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.chat.ChatTypes;
+
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.UUID;
 
 public class SpongePlayer extends PlotPlayer {
     
@@ -54,9 +54,9 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public long getPreviousLogin() {
-        final Value<Date> data = player.getJoinData().lastPlayed();
+        final Value<Instant> data = player.getJoinData().lastPlayed();
         if (data.exists()) {
-            return last = data.get().getSeconds() * 1000;
+            return last = data.get().getEpochSecond() * 1000;
         }
         return 0;
     }
@@ -103,7 +103,7 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void sendMessage(final String message) {
-        player.sendMessage(ChatTypes.CHAT, Texts.of(message));
+        player.sendMessage(ChatTypes.CHAT, Text.of(message));
     }
     
     @Override
@@ -288,6 +288,6 @@ public class SpongePlayer extends PlotPlayer {
     @Override
     public boolean isBanned() {
         BanService service = SpongeMain.THIS.getGame().getServiceManager().provide(BanService.class).get();
-        return service.isBanned(player);
+        return service.isBanned(player.getProfile());
     }
 }
