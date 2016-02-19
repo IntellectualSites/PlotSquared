@@ -34,7 +34,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
@@ -103,7 +102,7 @@ public interface AbstractDB {
 
     void removePersistentMeta(UUID uuid, String key);
 
-    void getPersistentMeta(PlotPlayer player, RunnableVal<Map<String, byte[]>> result);
+    void getPersistentMeta(UUID uuid, RunnableVal<Map<String, byte[]>> result);
 
     /**
      * Create plot settings

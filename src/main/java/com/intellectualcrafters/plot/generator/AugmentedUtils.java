@@ -1,6 +1,9 @@
 package com.intellectualcrafters.plot.generator;
 
+import java.util.Set;
+
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.LazyResult;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -9,8 +12,6 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-
-import java.util.Set;
 
 public class AugmentedUtils {
     
@@ -22,9 +23,17 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static void generate(String world, int cx, int cz) {
+    public static void generate(final String world, final int cx, final int cz, LazyResult<PlotChunk<?>> lazyChunk) {
         if (!enabled) {
             return;
+        }
+        if (lazyChunk == null) {
+            lazyChunk = new LazyResult<PlotChunk<?>>() {
+                @Override
+                public PlotChunk<?> create() {
+                    return SetQueue.IMP.queue.getChunk(SetQueue.IMP.new ChunkWrapper(world, cx, cz));
+                }
+            };
         }
         final int bx = cx << 4;
         final int bz = cz << 4;
@@ -35,7 +44,6 @@ public class AugmentedUtils {
         }
         final PseudoRandom r = new PseudoRandom();
         r.state = (cx << 16) | (cz & 0xFFFF);;
-        PlotChunk<?> cache_chunk = null;
         ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world, cx, cz);
         for (final PlotArea area : areas) {
             if (area.TYPE == 0) {
@@ -48,10 +56,7 @@ public class AugmentedUtils {
             if (generator == null) {
                 continue;
             }
-            if (cache_chunk == null) {
-                cache_chunk = SetQueue.IMP.queue.getChunk(wrap);
-            }
-            final PlotChunk<?> result = cache_chunk;
+            final PlotChunk<?> result = lazyChunk.getOrCreate();
             final PlotChunk<?> primaryMask;
             // coords
             int bxx = Math.max(0, area.getRegion().minX - bx);
@@ -154,9 +159,9 @@ public class AugmentedUtils {
             }
             generator.generateChunk(secondaryMask, area, r);
         }
-        if (cache_chunk != null) {
-            cache_chunk.addToQueue();
-            cache_chunk.flush(false);
+        if (lazyChunk.get() != null) {
+            lazyChunk.get().addToQueue();
+            lazyChunk.get().flush(false);
         }
     }
 }

@@ -11,9 +11,11 @@ public abstract class EconHandler {
         if (ConsolePlayer.isConsole(player)) {
             return Double.MAX_VALUE;
         }
-        return Double.NaN;
+        return getBalance(player);
     }
     
+    public abstract double getBalance(PlotPlayer player);
+
     public abstract void withdrawMoney(final PlotPlayer player, final double amount);
     
     public abstract void depositMoney(final PlotPlayer player, final double amount);

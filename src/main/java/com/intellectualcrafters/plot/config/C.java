@@ -31,7 +31,7 @@ import java.util.Set;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandCaller;
 
@@ -393,7 +393,6 @@ public enum C {
     /*
      * trim
      */
-    TRIM_SYNTAX("Use /plot trim <all|x;y> <world>", "Trim"),
     TRIM_IN_PROGRESS("A world trim task is already in progress!", "Trim"),
     NOT_VALID_HYBRID_PLOT_WORLD("The hybrid plot manager is required to perform this action", "Trim"),
     /*
@@ -611,8 +610,11 @@ public enum C {
      * Direction
      */
     DIRECTION("$1Current direction: %dir%", "Help"),
-    GRANTED_PLOTS("$1You've got $2%s $1grants left", "Grants"),
-    GRANTED_PLOT("$1You granted 1 plot to $2%s", "Grants"),
+    /*
+     * Grant
+     */
+    GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants"),
+    GRANTED_PLOT("$1You granted %s0 plot to $2%s1", "Grants"),
     GRANTED_PLOT_FAILED("$1Grant failed: $2%s", "Grants"),
     /*
      * Custom
@@ -693,7 +695,7 @@ public enum C {
     }
     
     public static String format(final C c, final Object... args) {
-        return format(c.s, args);
+        return (c.usePrefix() ? C.PREFIX.s() : "") + format(c.s, args);
     }
     
     public static String color(final String string) {
@@ -801,10 +803,15 @@ public enum C {
     }
     
     public void send(final CommandCaller plr, final String... args) {
+        send(plr, (Object[]) args);
+    }
+    
+    public void send(final CommandCaller plr, final Object... args) {
+        String msg = format(this, args);
         if (plr == null) {
-            MainUtil.sendConsoleMessage(this, args);
+            ConsolePlayer.getConsole().sendMessage(msg);
         } else {
-            plr.sendMessage(this, args);
+            plr.sendMessage(msg);
         }
     }
 }

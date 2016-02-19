@@ -54,7 +54,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotCluster;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
@@ -2421,16 +2420,17 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void addPersistentMeta(final UUID uuid, final String key, final byte[] meta, final boolean delete) {
+    public void addPersistentMeta(final UUID uuid, final String key, final byte[] meta, final boolean replace) {
         addPlayerTask(uuid, new UniqueStatement("addPersistentMeta") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                if (delete) {
-                    stmt.setString(1, uuid.toString());
-                    stmt.setString(2, key);
+                Blob blob = connection.createBlob();
+                blob.setBytes(1, meta);
+                if (replace) {
+                    stmt.setBlob(1, blob);
+                    stmt.setString(2, uuid.toString());
+                    stmt.setString(3, key);
                 } else {
-                    Blob blob = connection.createBlob();
-                    blob.setBytes(1, meta);
                     stmt.setString(1, uuid.toString());
                     stmt.setString(2, key);
                     stmt.setBlob(3, blob);
@@ -2439,8 +2439,8 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public PreparedStatement get() throws SQLException {
-                if (delete) {
-                    return connection.prepareStatement("DELETE FROM `" + prefix + "player_meta` WHERE `uuid` = ? AND `key` = ?");
+                if (replace) {
+                    return connection.prepareStatement("UPDATE `" + prefix + "player_meta` SET `value` = ? WHERE `uuid` = ? AND `key` = ?");
                 } else {
                     return connection.prepareStatement("INSERT INTO `" + prefix + "player_meta`(`uuid`, `key`, `value`) VALUES(?, ? ,?)");
                 }
@@ -2465,11 +2465,11 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void getPersistentMeta(final PlotPlayer player, final RunnableVal<Map<String, byte[]>> result) {
-        addPlayerTask(player.getUUID(), new UniqueStatement("getPersistentMeta") {
+    public void getPersistentMeta(final UUID uuid, final RunnableVal<Map<String, byte[]>> result) {
+        addPlayerTask(uuid, new UniqueStatement("getPersistentMeta") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                stmt.setString(1, player.getUUID().toString());
+                stmt.setString(1, uuid.toString());
             }
 
             @Override

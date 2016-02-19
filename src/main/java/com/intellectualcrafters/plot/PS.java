@@ -1294,7 +1294,6 @@ public class PS {
     
     public Collection<Plot> getPlots(final String world) {
         final HashSet<Plot> set = new HashSet<>();
-        foreachPlotArea(null);
         foreachPlotArea(world, new RunnableVal<PlotArea>() {
             @Override
             public void run(PlotArea value) {
@@ -2436,6 +2435,21 @@ public class PS {
         }
     }
     
+    public void foreachPlotRaw(final RunnableVal<Plot> runnable) {
+        for (PlotArea area : plotareas) {
+            for (Plot plot : area.getPlots()) {
+                runnable.run(plot);
+            }
+        }
+        if (plots_tmp != null) {
+            for (Entry<String, HashMap<PlotId, Plot>> entry : plots_tmp.entrySet()) {
+                for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                    runnable.run(entry2.getValue());
+                }
+            }
+        }
+    }
+
     public void foreachBasePlot(RunnableVal<Plot> run) {
         for (PlotArea area : plotareas) {
             area.foreachBasePlot(run);

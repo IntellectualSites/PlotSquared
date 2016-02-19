@@ -1,5 +1,9 @@
 package com.intellectualcrafters.plot.util;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
+
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
@@ -8,10 +12,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
 
 public class UUIDHandler {
     
@@ -107,6 +107,13 @@ public class UUIDHandler {
         return implementation.getPlayer(name);
     }
     
+    public static UUID getUUIDFromString(String nameOrUUIDString) {
+        if (nameOrUUIDString.length() > 16) {
+            return UUID.fromString(nameOrUUIDString);
+        }
+        return UUIDHandler.getUUID(nameOrUUIDString, null);
+    }
+
     public static UUID getUUID(final String name, final RunnableVal<UUID> ifFetch) {
         return implementation.getUUID(name, ifFetch);
     }

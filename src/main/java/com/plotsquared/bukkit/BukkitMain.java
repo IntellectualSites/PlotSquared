@@ -375,9 +375,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void registerInventoryEvents() {
-        
         // Part of PlayerEvents - can be moved if necessary
-        
     }
     
     @Override
@@ -486,7 +484,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             }
             return new BukkitPlotGenerator(world, gen);
         } else {
-            return new BukkitPlotGenerator(world, new HybridGen());
+            return new BukkitPlotGenerator(new HybridGen());
         }
     }
     
@@ -654,11 +652,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } else if (obj instanceof String) {
             return UUIDHandler.getPlayer((String) obj);
         } else if (obj instanceof UUID) {
-            PlotPlayer player = UUIDHandler.getPlayer((UUID) obj);
-            if (player == null) {
-                return BukkitUtil.getPlayer(Bukkit.getOfflinePlayer((UUID) obj));
-            }
-            return player;
+            return UUIDHandler.getPlayer((UUID) obj);
         }
         return null;
     }
@@ -697,7 +691,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator) {
-        return new BukkitPlotGenerator(world, generator);
+        return new BukkitPlotGenerator(generator);
     }
     
     @Override

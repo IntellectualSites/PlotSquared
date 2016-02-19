@@ -21,12 +21,9 @@
 package com.intellectualcrafters.plot.commands;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,7 +44,6 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
@@ -158,7 +154,7 @@ public class DebugExec extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer player, final String... args) {
-        final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "trim-check");
+        final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen");
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             String script;
@@ -313,46 +309,6 @@ public class DebugExec extends SubCommand {
                     MainUtil.sendMessage(player, "GMT: " + date.toGMTString());
                     MainUtil.sendMessage(player, "Local: " + date.toLocaleString());
                     return true;
-                case "trim-check":
-                    if (args.length != 2) {
-                        MainUtil.sendMessage(player, "Use /plot debugexec trim-check <world>");
-                        MainUtil.sendMessage(player, "&7 - Generates a list of regions to trim");
-                        return MainUtil.sendMessage(player, "&7 - Run after plot expiry has run");
-                    }
-                    final String world = args[1];
-                    if (!WorldUtil.IMP.isWorld(world) || !PS.get().hasPlotArea(args[1])) {
-                        return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
-                    }
-                    final ArrayList<ChunkLoc> empty = new ArrayList<>();
-                    final boolean result = Trim.getTrimRegions(empty, world, new Runnable() {
-                        @Override
-                        public void run() {
-                            Trim.sendMessage("Processing is complete! Here's how many chunks would be deleted:");
-                            Trim.sendMessage(" - MCA #: " + empty.size());
-                            Trim.sendMessage(" - CHUNKS: " + empty.size() * 1024 + " (max)");
-                            Trim.sendMessage("Exporting log for manual approval...");
-                            final File file = new File(PS.get().IMP.getDirectory() + File.separator + "trim.txt");
-                            try {
-                                PrintWriter writer = new PrintWriter(file);
-                                for (final ChunkLoc loc : empty) {
-                                    writer.println(world + "/region/r." + loc.x + "." + loc.z + ".mca");
-                                }
-                                writer.close();
-                                Trim.sendMessage("File saved to 'plugins/PlotSquared/trim.txt'");
-                            } catch (final FileNotFoundException e) {
-                                e.printStackTrace();
-                                Trim.sendMessage("File failed to save! :(");
-                            }
-                            Trim.sendMessage("How to get the chunk coords from a region file:");
-                            Trim.sendMessage(" - Locate the x,z values for the region file (the two numbers which are separated by a dot)");
-                            Trim.sendMessage(" - Multiply each number by 32; this gives you the starting position");
-                            Trim.sendMessage(" - Add 31 to each number to get the end position");
-                        }
-                    });
-                    if (!result) {
-                        MainUtil.sendMessage(player, "Trim task already started!");
-                    }
-                    return result;
                 case "h":
                 case "he":
                 case "?":

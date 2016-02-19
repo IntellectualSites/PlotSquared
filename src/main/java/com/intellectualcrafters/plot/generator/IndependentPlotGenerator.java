@@ -61,8 +61,8 @@ public abstract class IndependentPlotGenerator {
      * @param <T>
      * @return
      */
-    public <T> GeneratorWrapper<T> specify(String world) {
-        return (GeneratorWrapper<T>) PS.get().IMP.wrapPlotGenerator(world, this);
+    public <T> GeneratorWrapper<T> specify() {
+        return (GeneratorWrapper<T>) PS.get().IMP.wrapPlotGenerator(this);
     }
     
     @Override

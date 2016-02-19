@@ -131,8 +131,8 @@ public class Area extends SubCommand {
                                             if (area.TERRAIN != 3) {
                                                 ChunkManager.largeRegionTask(world, region, new RunnableVal<ChunkLoc>() {
                                                     @Override
-                                                    public void run(ChunkLoc value) {
-                                                        AugmentedUtils.generate(world, value.x, value.z);
+                                                    public void run(final ChunkLoc value) {
+                                                        AugmentedUtils.generate(world, value.x, value.z, null);
                                                     }
                                                 }, null);
                                             }
@@ -415,7 +415,7 @@ public class Area extends SubCommand {
                 ChunkManager.largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<ChunkLoc>() {
                     @Override
                     public void run(ChunkLoc value) {
-                        AugmentedUtils.generate(area.worldname, value.x, value.z);
+                        AugmentedUtils.generate(area.worldname, value.x, value.z, null);
                     }
                 }, null);
                 return true;

@@ -20,6 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
@@ -31,13 +38,6 @@ import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Flag Manager Utility
@@ -100,13 +100,13 @@ public class FlagManager {
         PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override
             public void run(PlotArea value) {
-                final Flag flag = ((HashMap<String, Flag>) value.DEFAULT_FLAGS.clone()).get(af.getKey());
+                final Flag flag = value.DEFAULT_FLAGS.get(af.getKey());
                 if (flag != null) {
                     flag.setKey(af);
                 }
             }
         });
-        PS.get().foreachPlot(new RunnableVal<Plot>() {
+        PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
             @Override
             public void run(Plot value) {
                 final Flag flag = value.getFlags().get(af.getKey());
@@ -115,11 +115,12 @@ public class FlagManager {
                 }
             }
         });
-        if (getFlag(af.getKey()) == null && flags.add(af)) {
-            if (reserved) {
-                reserveFlag(af.getKey());
-            }
-            return true;
+        if (flags.remove(af)) {
+            PS.debug("(Replaced existing flag)");
+        }
+        flags.add(af);
+        if (reserved) {
+            reserveFlag(af.getKey());
         }
         return false;
     }

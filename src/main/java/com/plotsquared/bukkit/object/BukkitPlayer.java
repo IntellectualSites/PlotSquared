@@ -1,14 +1,7 @@
 package com.plotsquared.bukkit.object;
 
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotGamemode;
-import com.intellectualcrafters.plot.util.PlotWeather;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.util.BukkitUtil;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -18,7 +11,14 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.UUID;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.bukkit.util.BukkitUtil;
 
 public class BukkitPlayer extends PlotPlayer {
     
@@ -102,11 +102,6 @@ public class BukkitPlayer extends PlotPlayer {
     }
     
     @Override
-    public void sendMessage(final C c, final String... args) {
-        MainUtil.sendMessage(this, c, args);
-    }
-    
-    @Override
     public void teleport(final Location loc) {
         if (Math.abs(loc.getX()) >= 30000000 || Math.abs(loc.getZ()) >= 30000000) {
             return;
@@ -145,7 +140,6 @@ public class BukkitPlayer extends PlotPlayer {
     
     @Override
     public boolean getAttribute(String key) {
-
         if (!hasPersistentMeta(key)) {
             return false;
         }    

@@ -1,5 +1,11 @@
 package com.intellectualcrafters.plot.util;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
@@ -8,12 +14,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public abstract class ChunkManager {
     
@@ -206,11 +206,11 @@ public abstract class ChunkManager {
     
     public abstract void regenerateChunk(final String world, final ChunkLoc loc);
     
-    public void deleteRegionFiles(String world, List<ChunkLoc> chunks) {
+    public void deleteRegionFiles(String world, Collection<ChunkLoc> chunks) {
         deleteRegionFiles(world, chunks, null);
     }
     
-    public void deleteRegionFiles(final String world, final List<ChunkLoc> chunks, final Runnable whenDone) {
+    public void deleteRegionFiles(final String world, final Collection<ChunkLoc> chunks, final Runnable whenDone) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -222,9 +222,7 @@ public abstract class ChunkManager {
                         file.delete();
                     }
                 }
-                if (whenDone != null) {
-                    whenDone.run();
-                }
+                TaskManager.runTask(whenDone);
             }
         });
     }

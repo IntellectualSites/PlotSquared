@@ -422,7 +422,7 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     public void populatePersistentMetaMap() {
-        DBFunc.dbManager.getPersistentMeta(this, new RunnableVal<Map<String, byte[]>>() {
+        DBFunc.dbManager.getPersistentMeta(getUUID(), new RunnableVal<Map<String, byte[]>>() {
             @Override
             public void run(Map<String, byte[]> value) {
                 PlotPlayer.this.metaMap = value;

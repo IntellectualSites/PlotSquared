@@ -5,9 +5,7 @@ import java.util.UUID;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
-import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 
@@ -73,11 +71,6 @@ public class ConsolePlayer extends PlotPlayer {
     @Override
     public void sendMessage(final String message) {
         PS.log(message);
-    }
-    
-    @Override
-    public void sendMessage(final C c, final String... args) {
-        MainUtil.sendMessage(this, c, args);
     }
     
     @Override

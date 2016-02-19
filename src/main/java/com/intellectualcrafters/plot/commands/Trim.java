@@ -20,20 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.WorldUtil;
-import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,19 +28,34 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.RunnableVal2;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.WorldUtil;
+import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
 command = "trim",
 permission = "plots.admin",
 description = "Delete unmodified portions of your plotworld",
-usage = "/plot trim",
+usage = "/plot trim <world> [regenerate]",
 requiredType = RequiredType.CONSOLE,
 category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
     
-    public static boolean TASK = false;
     public static ArrayList<Plot> expired = null;
-    private static int TASK_ID = 0;
     
     public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
         if (Trim.TASK) {
@@ -110,114 +111,127 @@ public class Trim extends SubCommand {
         return true;
     }
     
-    public static boolean getTrimRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
-        if (Trim.TASK) {
+    /**
+     * Runs the result task with the parameters (viable, nonViable).<br>
+     * @param world
+     * @param result (viable = .mcr to trim, nonViable = .mcr keep)
+     * @return
+     */
+    public static boolean getTrimRegions(final String world, final RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>> result) {
+        if (result == null) {
             return false;
         }
-        System.currentTimeMillis();
-        sendMessage("Collecting region data...");
+        MainUtil.sendMessage(null, "Collecting region data...");
         final ArrayList<Plot> plots = new ArrayList<>();
         plots.addAll(PS.get().getPlots(world));
-        final HashSet<ChunkLoc> chunks = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
-        sendMessage(" - MCA #: " + chunks.size());
-        sendMessage(" - CHUNKS: " + (chunks.size() * 1024) + " (max)");
-        sendMessage(" - TIME ESTIMATE: " + (chunks.size() / 1200) + " minutes");
-        Trim.TASK_ID = TaskManager.runTaskRepeat(new Runnable() {
+        result.value1 = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
+        result.value2 = new HashSet<ChunkLoc>();
+        MainUtil.sendMessage(null, " - MCA #: " + result.value1.size());
+        MainUtil.sendMessage(null, " - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
+        MainUtil.sendMessage(null, " - TIME ESTIMATE: 12 Parsecs");
+        TaskManager.objectTask(plots, new RunnableVal<Plot>() {
             @Override
-            public void run() {
-                final long start = System.currentTimeMillis();
-                while ((System.currentTimeMillis() - start) < 50) {
-                    if (plots.isEmpty()) {
-                        empty.addAll(chunks);
-                        Trim.TASK = false;
-                        TaskManager.runTaskAsync(whenDone);
-                        PS.get().TASK.cancelTask(Trim.TASK_ID);
-                        return;
-                    }
-                    final Plot plot = plots.remove(0);
-                    
-                    final Location pos1 = plot.getBottom();
-                    final Location pos2 = plot.getTop();
-                    
-                    final int ccx1 = (pos1.getX() >> 9);
-                    final int ccz1 = (pos1.getZ() >> 9);
-                    final int ccx2 = (pos2.getX() >> 9);
-                    final int ccz2 = (pos2.getZ() >> 9);
-                    
-                    for (int x = ccx1; x <= ccx2; x++) {
-                        for (int z = ccz1; z <= ccz2; z++) {
-                            chunks.remove(new ChunkLoc(x, z));
+            public void run(Plot plot) {
+                final Location pos1 = plot.getBottom();
+                final Location pos2 = plot.getTop();
+                final int ccx1 = (pos1.getX() >> 9);
+                final int ccz1 = (pos1.getZ() >> 9);
+                final int ccx2 = (pos2.getX() >> 9);
+                final int ccz2 = (pos2.getZ() >> 9);
+                for (int x = ccx1; x <= ccx2; x++) {
+                    for (int z = ccz1; z <= ccz2; z++) {
+                        ChunkLoc loc = new ChunkLoc(x, z);
+                        if (result.value1.remove(loc)) {
+                            result.value2.add(loc);
                         }
                     }
                 }
             }
-        }, 20);
-        Trim.TASK = true;
+        }, result);
         return true;
     }
     
-    public static void deleteChunks(final String world, final ArrayList<ChunkLoc> chunks, final Runnable whenDone) {
-        ChunkManager.manager.deleteRegionFiles(world, chunks, whenDone);
-    }
-    
-    public static void sendMessage(final String message) {
-        ConsolePlayer.getConsole().sendMessage("&3PlotSquared -> World trim&8: &7" + message);
-    }
-    
-    public PlotId getId(final String id) {
-        try {
-            final String[] split = id.split(";");
-            return new PlotId(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-        } catch (final Exception e) {
-            return null;
-        }
-    }
-    
+    private static volatile boolean TASK = false;
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        if (args.length == 1) {
-            final String arg = args[0].toLowerCase();
-            final PlotId id = getId(arg);
-            if (id != null) {
-                MainUtil.sendMessage(plr, "/plot trim x;z &l<world>");
-                return false;
-            }
-            if (arg.equals("all")) {
-                MainUtil.sendMessage(plr, "/plot trim all &l<world>");
-                return false;
-            }
-            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
+        if (args.length == 0) {
+            C.COMMAND_SYNTAX.send(plr, getUsage());
             return false;
         }
-        if (args.length != 2) {
-            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
-            return false;
-        }
-        final String arg = args[0].toLowerCase();
-        if (!arg.equals("all")) {
-            MainUtil.sendMessage(plr, C.TRIM_SYNTAX);
-            return false;
-        }
-        final String world = args[1];
+        final String world = args[0];
         if (!WorldUtil.IMP.isWorld(world) || (!PS.get().hasPlotArea(world))) {
             MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }
         if (Trim.TASK) {
-            sendMessage(C.TRIM_IN_PROGRESS.s());
+            C.TRIM_IN_PROGRESS.send(plr);
             return false;
         }
-        sendMessage(C.TASK_START.s());
-        final ArrayList<ChunkLoc> empty = new ArrayList<>();
-        getTrimRegions(empty, world, new Runnable() {
+        Trim.TASK = true;
+        final boolean regen = args.length == 2 ? Boolean.parseBoolean(args[1]) : false;
+        getTrimRegions(world, new RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>>() {
             @Override
-            public void run() {
-                deleteChunks(world, empty, new Runnable() {
-                    @Override
-                    public void run() {
-                        ConsolePlayer.getConsole().sendMessage("$1Trim task complete!");
-                    }
-                });
+            public void run(final Set<ChunkLoc> viable, final Set<ChunkLoc> nonViable) {
+                Runnable regenTask;
+                if (regen) {
+                    regenTask = new Runnable() {
+                        @Override
+                        public void run() {
+                            if (nonViable.size() == 0) {
+                                Trim.TASK = false;
+                                plr.sendMessage("Trim done!");
+                                return;
+                            }
+                            Iterator<ChunkLoc> iter = nonViable.iterator();
+                            ChunkLoc mcr = iter.next();
+                            iter.remove();
+                            int cbx = mcr.x << 5;
+                            int cbz = mcr.z << 5;
+                            // get all 1024 chunks
+                            HashSet<ChunkLoc> chunks = new HashSet<>();
+                            for (int x = cbx; x < cbx + 32; x++) {
+                                for (int z = cbz; z < cbz + 32; z++) {
+                                    ChunkLoc loc = new ChunkLoc(x, z);
+                                    chunks.add(loc);
+                                }
+                            }
+                            int bx = cbx << 4;
+                            int bz = cbz << 4;
+                            RegionWrapper region = new RegionWrapper(bx, bx + 511, bz, bz + 511);
+                            for (Plot plot : PS.get().getPlots(world)) {
+                                Location bot = plot.getBottomAbs();
+                                Location top = plot.getExtendedTopAbs();
+                                RegionWrapper plotReg = new RegionWrapper(bot.getX(), top.getX(), bot.getZ(), top.getZ());
+                                if (!region.intersects(plotReg)) {
+                                    continue;
+                                }
+                                for (int x = plotReg.minX >> 4; x <= plotReg.maxX >> 4; x++) {
+                                    for (int z = plotReg.minZ >> 4; z <= plotReg.maxZ >> 4; z++) {
+                                        ChunkLoc loc = new ChunkLoc(x, z);
+                                        chunks.remove(loc);
+                                    }
+                                }
+                            }
+                            TaskManager.objectTask(chunks, new RunnableVal<ChunkLoc>() {
+                                @Override
+                                public void run(ChunkLoc value) {
+                                    ChunkManager.manager.regenerateChunk(world, value);
+                                }
+                            }, this);
+                        }
+                    };
+                }
+                else {
+                    regenTask = new Runnable() {
+                        @Override
+                        public void run() {
+                            Trim.TASK = false;
+                        }
+                    };
+                }
+                ChunkManager.manager.deleteRegionFiles(world, viable, regenTask);
+
             }
         });
         return true;

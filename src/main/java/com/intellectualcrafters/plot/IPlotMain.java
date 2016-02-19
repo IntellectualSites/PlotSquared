@@ -213,7 +213,7 @@ public interface IPlotMain {
     /**
      * 
      */
-    GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator);
+    GeneratorWrapper<?> wrapPlotGenerator(IndependentPlotGenerator generator);
     
     /**
      * Register the chunk processor which will clean out chunks that have too many blockstates or entities

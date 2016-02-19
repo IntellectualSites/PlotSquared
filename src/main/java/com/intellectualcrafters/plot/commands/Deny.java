@@ -35,7 +35,7 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "deny", aliases = { "d" }, description = "Deny a user from a plot", usage = "/plot deny <player>", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "deny", aliases = { "d", "ban" }, description = "Deny a user from a plot", usage = "/plot deny <player>", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
 public class Deny extends SubCommand {
     
     public Deny() {

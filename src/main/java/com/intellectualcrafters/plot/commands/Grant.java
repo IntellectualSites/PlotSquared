@@ -1,78 +1,60 @@
 package com.intellectualcrafters.plot.commands;
 
+import java.util.UUID;
+
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.ByteArrayUtilities;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.util.UUID;
 
 @CommandDeclaration(
         command = "grant",
         category = CommandCategory.CLAIMING,
-        usage = "/plot grant <check|add> [...]",
+ usage = "/plot grant <check|add> [player]",
         permission = "plots.grant",
         requiredType = RequiredType.NONE
 )
 public class Grant extends SubCommand {
-
-    void grantPlayer(PlotPlayer plr, String enteredName) {
-        PlotPlayer player;
-        if (enteredName.length() > 16) {
-            player = PlotPlayer.wrap(UUID.fromString(enteredName));
-        } else {
-            player = UUIDHandler.getPlayer(enteredName);
-        }
-        if (player == null) {
-            sendMessage(plr, C.GRANTED_PLOT_FAILED, "Player not found");
-        } else {
-            int n = 1;
-            if (player.hasPersistentMeta("grantedPlots")) {
-                n += ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
-            }
-            player.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(n));
-            sendMessage(plr, C.GRANTED_PLOT, enteredName);
-        }
-    }
-
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] arguments) {
-        if (plr == null || plr instanceof ConsolePlayer) {
-            if (arguments.length != 1) {
-                MainUtil.sendMessage(null, "Usage: /plot grant <Player>");
-            } else {
-                grantPlayer(null, arguments[0]);
-                return true;
-            }
-        } else {
-            if (arguments.length < 1) {
-                arguments = new String[] { "check" };
-            }
-            switch (arguments[0]) {
-                case "check": {
-                    int grantedPlots = 0;
-                    if (plr.hasPersistentMeta("grantedPlots")) {
-                        grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
-                    }
-                    return sendMessage(plr, C.GRANTED_PLOTS, "" + grantedPlots);
+    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        final String arg0 = args[0].toLowerCase();
+        switch (arg0) {
+            case "add":
+            case "check":
+                if (Permissions.hasPermission(plr, "plots.grant." + arg0)) {
+                    C.NO_PERMISSION.send(plr, "plots.grant." + arg0);
+                    return false;
                 }
-                case "add": {
-                    if (!plr.hasPermission("plots.grant.add")) {
-                        return sendMessage(plr, C.NO_PERMISSION, "plots.grant.add");
+                if (args.length > 2) {
+                    break;
+                }
+                final UUID uuid = args.length == 2 ? UUIDHandler.getUUIDFromString(args[1]) : plr.getUUID();
+                if (uuid == null) {
+                    C.INVALID_PLAYER.send(plr, args[1]);
+                    return false;
+                }
+                MainUtil.getPersistentMeta(uuid, "grantedPlots", new RunnableVal<byte[]>() {
+                    @Override
+                    public void run(byte[] array) {
+                        if (arg0.equals("check")) { // check
+                            int granted = array == null ? 0 : ByteArrayUtilities.bytesToInteger(array);
+                            C.GRANTED_PLOTS.send(plr, granted);
+                        } else { // add
+                            int amount = 1 + (array == null ? 0 : ByteArrayUtilities.bytesToInteger(array));
+                            boolean replace = array != null;
+                            DBFunc.dbManager.addPersistentMeta(uuid, "grantedPlots", ByteArrayUtilities.integerToBytes(amount), replace);
+                        }
                     }
-                    if (arguments.length < 2) {
-                        plr.sendMessage("&cUsage: /plot grant add <player>");
-                    } else {
-                        grantPlayer(plr, arguments[1]);
-                    }
-                } break;
-                default: return onCommand(plr, new String[] { "check" });
-            }
+                });
+                return true;
         }
-        return true;
+        C.COMMAND_SYNTAX.send(plr, getUsage());
+        return false;
     }
 
 }

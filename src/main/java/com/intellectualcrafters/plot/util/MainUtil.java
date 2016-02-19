@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -525,14 +526,11 @@ public class MainUtil {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                String msg = c.s();
-                if (args.length != 0) {
-                    msg = C.format(c, args);
-                }
-                if (plr != null) {
-                    plr.sendMessage(c.usePrefix() ? C.PREFIX.s() + msg : msg);
+                String m = C.format(c, args);
+                if (plr == null) {
+                    ConsolePlayer.getConsole().sendMessage(m);
                 } else {
-                    ConsolePlayer.getConsole().sendMessage((c.usePrefix() ? C.PREFIX.s() : "") + msg);
+                    plr.sendMessage(m);
                 }
             }
         });
@@ -711,5 +709,19 @@ public class MainUtil {
             }
         }
         return list.toString();
+    }
+    
+    public static void getPersistentMeta(final UUID uuid, final String key, final RunnableVal<byte[]> result) {
+        PlotPlayer pp = UUIDHandler.getPlayer(uuid);
+        if (pp != null) {
+            result.run(pp.getPersistentMeta(key));
+        } else {
+            DBFunc.dbManager.getPersistentMeta(uuid, new RunnableVal<Map<String, byte[]>>() {
+                @Override
+                public void run(Map<String, byte[]> value) {
+                    result.run(value.get(key));
+                }
+            });
+        }
     }
 }
