@@ -51,6 +51,22 @@ public class ReflectionUtils {
         preClassM += "." + version;
     }
     
+    public static <T> List<T> getStaticFields(Class clazz) {
+        ArrayList<T> list = new ArrayList<T>();
+        try {
+            Field[] fields = clazz.getFields();
+            for (int i = 0; i < fields.length; i++) {
+                Object value = fields[i].get(null);
+                try {
+                list.add((T) value);
+                } catch (ClassCastException e) {}
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static Class<?> getNmsClass(final String name) {
         final String className = "net.minecraft.server." + version + "." + name;
         return getClass(className);

@@ -32,7 +32,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
         final SpongePlayer sp = (SpongePlayer) inv.player;
         final Player player = sp.player;
 
-        final CustomInventory inventory = SpongeMain.THIS.getGame().getRegistry().createBuilder(CustomInventory.Builder.class).name(SpongeMain.THIS.getTranslation(inv.getTitle()).getTranslation()).size(inv.size).build();
+        final CustomInventory inventory = SpongeMain.THIS.getGame().getRegistry().createBuilder(CustomInventory.Builder.class).name(SpongeUtil.getTranslation(inv.getTitle())).size(inv.size).build();
         final PlotItemStack[] items = inv.getItems();
         for (int i = 0; i < (inv.size * 9); i++) {
             final PlotItemStack item = items[i];

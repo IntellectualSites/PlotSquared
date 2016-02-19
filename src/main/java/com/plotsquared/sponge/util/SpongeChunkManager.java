@@ -14,17 +14,10 @@ import org.spongepowered.api.world.World;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 
 public class SpongeChunkManager extends ChunkManager {
-    
-    @Override
-    public void setChunk(final ChunkWrapper loc, final PlotBlock[][] result) {
-        // TODO Auto-generated method stub
-    }
     
     @Override
     public int[] countEntities(final Plot plot) {
@@ -95,12 +88,6 @@ public class SpongeChunkManager extends ChunkManager {
     }
     
     @Override
-    public boolean regenerateRegion(final Location pos1, final Location pos2, final Runnable whenDone) {
-        TaskManager.runTask(whenDone);
-        return false;
-    }
-    
-    @Override
     public void clearAllEntities(final Location pos1, final Location pos2) {
         final String worldname = pos1.getWorld();
         final World world = SpongeUtil.getWorld(worldname);
@@ -137,6 +124,12 @@ public class SpongeChunkManager extends ChunkManager {
         if (chunk.isPresent()) {
             worldObj.unloadChunk(chunk.get());
         }
+    }
+    
+    @Override
+    public boolean regenerateRegion(Location pos1, Location pos2, boolean ignoreAugment, Runnable whenDone) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
 }

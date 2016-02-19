@@ -67,7 +67,6 @@ import com.plotsquared.sponge.util.SpongeMetrics;
 import com.plotsquared.sponge.util.SpongeTaskManager;
 import com.plotsquared.sponge.util.SpongeTitleManager;
 import com.plotsquared.sponge.util.SpongeUtil;
-import com.plotsquared.sponge.util.SpongeWorldUtil;
 import com.plotsquared.sponge.util.block.FastQueue;
 import com.plotsquared.sponge.util.block.SlowQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
@@ -421,7 +420,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     
     @Override
     public WorldUtil initWorldUtil() {
-        return new SpongeWorldUtil();
+        return new SpongeUtil();
     }
     
     @Override
