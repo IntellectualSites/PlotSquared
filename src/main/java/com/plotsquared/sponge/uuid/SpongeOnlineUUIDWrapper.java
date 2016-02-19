@@ -69,4 +69,9 @@ public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
+    @Override
+    public OfflinePlotPlayer getOfflinePlayer(String name) {
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    }
+    
 }

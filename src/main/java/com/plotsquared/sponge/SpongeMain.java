@@ -1,6 +1,7 @@
 package com.plotsquared.sponge;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -447,7 +448,10 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     
     @Override
     public List<String> getPluginIds() {
-        // TODO Auto-generated method stub
-        return null;
+        ArrayList<String> names = new ArrayList<>();
+        for (PluginContainer plugin : game.getPluginManager().getPlugins()) {
+            names.add(plugin.getName() + ";" + plugin.getVersion() + ":" + true);
+        }
+        return names;
     }
 }

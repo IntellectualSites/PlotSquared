@@ -90,4 +90,9 @@ public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
         // TODO FIXME
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
+    
+    @Override
+    public OfflinePlotPlayer getOfflinePlayer(String name) {
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    }
 }
