@@ -1,13 +1,5 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.Settings;
@@ -20,6 +12,14 @@ import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandCaller;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The PlotPlayer class<br>
@@ -213,10 +213,10 @@ public abstract class PlotPlayer implements CommandCaller {
     ////////////// PARTIALLY IMPLEMENTED ///////////
     /**
      * Get the player's last recorded location or null if they don't any plot relevant location
-     * @return
+     * @return The location
      */
     public Location getLocation() {
-        final Location loc = (Location) getMeta("location");
+        final Location loc = getMeta("location");
         if (loc != null) {
             return loc;
         }

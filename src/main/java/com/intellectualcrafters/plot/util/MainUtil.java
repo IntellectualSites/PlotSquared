@@ -20,16 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.regex.Matcher;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -47,6 +37,16 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.regex.Matcher;
 
 /**
  * plot functions
@@ -633,13 +633,13 @@ public class MainUtil {
         final Flag descriptionFlag = FlagManager.getPlotFlagRaw(plot, "description");
         final String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
         
-        final String flags = StringMan.replaceFromMap(
-        "$2"
-                + (!StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "").isEmpty() ?
-                StringMan.join(FlagManager.getPlotFlags(
-
-                plot.getArea(), plot.getSettings(), true)
-        .values(), "$1, $2") : C.NONE.s()), C.replacements);
+        final String flags;
+        if (!StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "").isEmpty()) {
+            flags = StringMan.replaceFromMap(
+                    "$2" + StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "$1, $2"), C.replacements);
+        } else {
+            flags = StringMan.replaceFromMap("$2" + C.NONE.s(), C.replacements);
+        }
         final boolean build = plot.isAdded(player.getUUID());
         
         final String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());

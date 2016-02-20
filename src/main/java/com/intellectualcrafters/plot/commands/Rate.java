@@ -46,15 +46,15 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "rate",
-permission = "plots.rate",
-description = "Rate the plot",
-usage = "/plot rate [#|next]",
-aliases = { "rt" },
-category = CommandCategory.INFO,
-requiredType = RequiredType.NONE)
+        command = "rate",
+        permission = "plots.rate",
+        description = "Rate the plot",
+        usage = "/plot rate [#|next]",
+        aliases = {"rt"},
+        category = CommandCategory.INFO,
+        requiredType = RequiredType.NONE)
 public class Rate extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] args) {
         if (args.length == 1) {
@@ -64,13 +64,13 @@ public class Rate extends SubCommand {
                     @Override
                     public int compare(final Plot p1, final Plot p2) {
                         double v1 = 0;
-                        double v2 = 0;
-                        if (p1.getSettings().ratings != null) {
+                        if (!p1.getRatings().isEmpty()) {
                             for (final Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
                                 v1 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
-                        if (p2.getSettings().ratings != null) {
+                        double v2 = 0;
+                        if (!p2.getRatings().isEmpty()) {
                             for (final Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
                                 v2 -= 11 - entry.getValue().getAverageRating();
                             }
@@ -83,10 +83,8 @@ public class Rate extends SubCommand {
                 });
                 final UUID uuid = player.getUUID();
                 for (final Plot p : plots) {
-                    if ((!Settings.REQUIRE_DONE || p.getFlags().containsKey("done"))
-                    && p.isBasePlot()
-                    && ((p.getSettings().ratings == null) || !p.getSettings().ratings.containsKey(uuid))
-                    && !p.isAdded(uuid)) {
+                    if ((!Settings.REQUIRE_DONE || p.getFlags().containsKey("done")) && p.isBasePlot() && (p.getRatings().isEmpty() || !p.getRatings()
+                            .containsKey(uuid)) && !p.isAdded(uuid)) {
                         p.teleportPlayer(player);
                         MainUtil.sendMessage(player, C.RATE_THIS);
                         return true;
@@ -116,7 +114,7 @@ public class Rate extends SubCommand {
             final Runnable run = new Runnable() {
                 @Override
                 public void run() {
-                    if (plot.getSettings().ratings.containsKey(player.getUUID())) {
+                    if (plot.getRatings().containsKey(player.getUUID())) {
                         sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
                         return;
                     }
@@ -171,7 +169,7 @@ public class Rate extends SubCommand {
                     });
                     return true;
                 }
-                plot.getSettings().ratings = new HashMap<UUID, Integer>();
+                plot.getSettings().ratings = new HashMap<>();
             }
             run.run();
             return true;
@@ -218,7 +216,7 @@ public class Rate extends SubCommand {
                 });
                 return true;
             }
-            plot.getSettings().ratings = new HashMap<UUID, Integer>();
+            plot.getSettings().ratings = new HashMap<>();
         }
         run.run();
         return true;

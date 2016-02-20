@@ -20,17 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -45,6 +34,17 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @CommandDeclaration(
 command = "trim",
@@ -125,7 +125,7 @@ public class Trim extends SubCommand {
         final ArrayList<Plot> plots = new ArrayList<>();
         plots.addAll(PS.get().getPlots(world));
         result.value1 = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
-        result.value2 = new HashSet<ChunkLoc>();
+        result.value2 = new HashSet<>();
         MainUtil.sendMessage(null, " - MCA #: " + result.value1.size());
         MainUtil.sendMessage(null, " - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
         MainUtil.sendMessage(null, " - TIME ESTIMATE: 12 Parsecs");
@@ -169,7 +169,7 @@ public class Trim extends SubCommand {
             return false;
         }
         Trim.TASK = true;
-        final boolean regen = args.length == 2 ? Boolean.parseBoolean(args[1]) : false;
+        final boolean regen = args.length == 2 && Boolean.parseBoolean(args[1]);
         getTrimRegions(world, new RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>>() {
             @Override
             public void run(final Set<ChunkLoc> viable, final Set<ChunkLoc> nonViable) {
@@ -178,7 +178,7 @@ public class Trim extends SubCommand {
                     regenTask = new Runnable() {
                         @Override
                         public void run() {
-                            if (nonViable.size() == 0) {
+                            if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
                                 plr.sendMessage("Trim done!");
                                 return;

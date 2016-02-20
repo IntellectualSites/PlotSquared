@@ -53,11 +53,12 @@ public class PlotId {
         if (string == null) {
             return null;
         }
-        int x, y;
         final String[] parts = string.split(";");
         if (parts.length < 2) {
             return null;
         }
+        int x;
+        int y;
         try {
             x = Integer.parseInt(parts[0]);
             y = Integer.parseInt(parts[1]);
