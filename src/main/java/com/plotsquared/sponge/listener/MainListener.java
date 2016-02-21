@@ -1,14 +1,31 @@
 package com.plotsquared.sponge.listener;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Predicate;
-
+import com.flowpowered.math.vector.Vector3d;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.listener.PlotListener;
+import com.plotsquared.sponge.SpongeMain;
+import com.plotsquared.sponge.object.SpongePlayer;
+import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Transaction;
@@ -43,32 +60,14 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
 
-import com.flowpowered.math.vector.Vector3d;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.listener.PlotListener;
-import com.plotsquared.sponge.SpongeMain;
-import com.plotsquared.sponge.object.SpongePlayer;
-import com.plotsquared.sponge.util.SpongeUtil;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 public class MainListener {
     
@@ -307,7 +306,7 @@ public class MainListener {
     public void onCommand(final SendCommandEvent event) {
         switch (event.getCommand().toLowerCase()) {
             case "plotme": {
-                Player source = this.<Player> getCause(event.getCause(), Player.class);
+                Player source = this.getCause(event.getCause(), Player.class);
                 if (source == null) {
                     return;
                 }
@@ -374,7 +373,7 @@ public class MainListener {
     @Listener
     public void onChat(final MessageEvent event) {
         // TODO
-        Player player = this.<Player> getCause(event.getCause(), Player.class);
+        Player player = this.getCause(event.getCause(), Player.class);
         if (player == null) {
             return;
         }
@@ -504,7 +503,7 @@ public class MainListener {
     
     @Listener
     public void onBlockBreak(final ChangeBlockEvent.Break event) {
-        Player player = this.<Player> getCause(event.getCause(), Player.class);
+        Player player = this.getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);
             return;
@@ -588,7 +587,7 @@ public class MainListener {
     
     @Listener
     public void onBlockPlace(final ChangeBlockEvent.Place event) {
-        Player player = this.<Player> getCause(event.getCause(), Player.class);
+        Player player = this.getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);
             return;
@@ -672,7 +671,7 @@ public class MainListener {
     
     @Listener
     public void onBlockInteract(final InteractBlockEvent.Secondary event) {
-        final Player player = this.<Player> getCause(event.getCause(), Player.class);
+        final Player player = this.getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);
             return;
@@ -770,17 +769,13 @@ public class MainListener {
     
     @Listener
     public void onMove(final DisplaceEntityEvent.TargetPlayer event) {
-        final org.spongepowered.api.world.Location from = event.getFromTransform().getLocation();
-        org.spongepowered.api.world.Location to = event.getToTransform().getLocation();
+        final org.spongepowered.api.world.Location<World> from = event.getFromTransform().getLocation();
+        org.spongepowered.api.world.Location<World> to = event.getToTransform().getLocation();
         int x2;
         if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
             final Player player = event.getTargetEntity();
             final PlotPlayer pp = SpongeUtil.getPlayer(player);
             final Extent extent = to.getExtent();
-            if (!(extent instanceof World)) {
-                pp.deleteMeta("location");
-                return;
-            }
             pp.setMeta("location", SpongeUtil.getLocation(player));
             final World world = (World) extent;
             final String worldname = ((World) extent).getName();
@@ -790,7 +785,7 @@ public class MainListener {
             }
             final PlotManager plotManager = PS.get().getPlotManager(PS.get().getPlot(plotworld, plotworld.getMin()));
             final PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
-            final Plot lastPlot = (Plot) pp.getMeta("lastplot");
+            final Plot lastPlot = pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
                     return;
@@ -819,18 +814,16 @@ public class MainListener {
                 }
             }
             final Integer border = plotworld.getBorder();
-            if (border != null) {
-                if (x2 > border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(border - 4, pos.getY(), pos.getZ()));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                } else if (x2 < -border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(-border + 4, pos.getY(), pos.getZ()));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                }
+            if (x2 > border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(border - 4, pos.getY(), pos.getZ()));
+                event.setToTransform(new Transform<>(to));
+                MainUtil.sendMessage(pp, C.BORDER);
+            } else if (x2 < -border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(-border + 4, pos.getY(), pos.getZ()));
+                event.setToTransform(new Transform<>(to));
+                MainUtil.sendMessage(pp, C.BORDER);
             }
             return;
         }
@@ -839,10 +832,6 @@ public class MainListener {
             final Player player = event.getTargetEntity();
             final PlotPlayer pp = SpongeUtil.getPlayer(player);
             final Extent extent = to.getExtent();
-            if (!(extent instanceof World)) {
-                pp.deleteMeta("location");
-                return;
-            }
             pp.setMeta("location", SpongeUtil.getLocation(player));
             final World world = (World) extent;
             final String worldname = ((World) extent).getName();
@@ -881,18 +870,16 @@ public class MainListener {
                 }
             }
             final Integer border = plotworld.getBorder();
-            if (border != null) {
-                if (z2 > border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), border - 4));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                } else if (z2 < -border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), -border + 4));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                }
+            if (z2 > border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), border - 4));
+                event.setToTransform(new Transform<>(to));
+                MainUtil.sendMessage(pp, C.BORDER);
+            } else if (z2 < -border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), -border + 4));
+                event.setToTransform(new Transform<>(to));
+                MainUtil.sendMessage(pp, C.BORDER);
             }
         }
     }

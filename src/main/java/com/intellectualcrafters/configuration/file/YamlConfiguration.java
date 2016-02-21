@@ -100,7 +100,6 @@ public class YamlConfiguration extends FileConfiguration {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public String saveToString() {
         yamlOptions.setIndent(options().indent());
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);

@@ -20,6 +20,23 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -43,23 +60,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
 
 /**
 
@@ -477,8 +477,7 @@ public class SQLManager implements AbstractDB {
                                 final ArrayList<UUIDPair> denied = new ArrayList<>();
 
                                 // Populating structures
-                                final PreparedStatement stmt = connection.prepareStatement(GET_ALL_PLOTS);
-                                try (ResultSet result = stmt.executeQuery()) {
+                                try (PreparedStatement stmt = connection.prepareStatement(GET_ALL_PLOTS); ResultSet result = stmt.executeQuery()) {
                                     while (result.next()) {
                                         final int id = result.getInt("id");
                                         final int x = result.getInt("plot_id_x");
@@ -2069,31 +2068,30 @@ public class SQLManager implements AbstractDB {
         addGlobalTask(new Runnable() {
             @Override
             public void run() {
-                try {
-                    PreparedStatement stmt =
-                            connection.prepareStatement("SELECT `id`, `plot_id_x`, `plot_id_z` FROM `" + prefix + "plot` WHERE `world` = ?");
-                    stmt.setString(1, area.toString());
-                    final ResultSet r = stmt.executeQuery();
-                    final Set<Integer> ids = new HashSet<>();
-                    while (r.next()) {
-                        PlotId plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
-                        if (plots.contains(plot_id)) {
-                            ids.add(r.getInt("id"));
+                    try (PreparedStatement stmt = connection
+                            .prepareStatement("SELECT `id`, `plot_id_x`, `plot_id_z` FROM `" + prefix + "plot` WHERE `world` = ?")) {
+                        stmt.setString(1, area.toString());
+                        Set<Integer> ids;
+                        try (ResultSet r = stmt.executeQuery()) {
+                            ids = new HashSet<>();
+                            while (r.next()) {
+                                PlotId plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
+                                if (plots.contains(plot_id)) {
+                                    ids.add(r.getInt("id"));
+                                }
+                            }
                         }
+                        purgeIds(ids);
+                    } catch (final SQLException e) {
+                        e.printStackTrace();
+                        PS.debug("&c[ERROR] " + "FAILED TO PURGE AREA '" + area + "'!");
                     }
-                    purgeIds(ids);
-                    stmt.close();
-                    r.close();
                     for (final Iterator<PlotId> iter = plots.iterator(); iter.hasNext();) {
                         final PlotId plotId = iter.next();
                         iter.remove();
                         final PlotId id = new PlotId(plotId.x, plotId.y);
                         area.removePlot(id);
                     }
-                } catch (final SQLException e) {
-                    e.printStackTrace();
-                    PS.debug("&c[ERROR] " + "FAILED TO PURGE AREA '" + area + "'!");
-                }
             }
         });
     }
@@ -2335,17 +2333,16 @@ public class SQLManager implements AbstractDB {
     @Override
     public HashMap<UUID, Integer> getRatings(final Plot plot) {
         final HashMap<UUID, Integer> map = new HashMap<>();
-        try {
-            final PreparedStatement statement = connection.prepareStatement("SELECT `rating`, `player` FROM `" + prefix + "plot_rating` WHERE `plot_plot_id` = ? ");
+        try (PreparedStatement statement = connection
+                .prepareStatement("SELECT `rating`, `player` FROM `" + prefix + "plot_rating` WHERE `plot_plot_id` = ? ")) {
             statement.setInt(1, getId(plot));
-            final ResultSet set = statement.executeQuery();
-            while (set.next()) {
-                final UUID uuid = UUID.fromString(set.getString("player"));
-                final int rating = set.getInt("rating");
-                map.put(uuid, rating);
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    final UUID uuid = UUID.fromString(set.getString("player"));
+                    final int rating = set.getInt("rating");
+                    map.put(uuid, rating);
+                }
             }
-            statement.close();
-            set.close();
         } catch (final SQLException e) {
             PS.debug("&7[WARN] " + "Failed to fetch rating for plot " + plot.getId().toString());
             e.printStackTrace();
@@ -2478,7 +2475,7 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(PreparedStatement stmt) throws SQLException {}
+            public void execute(PreparedStatement stmt) {}
 
             @Override
             public void addBatch(PreparedStatement stmt) throws SQLException {
@@ -2505,7 +2502,7 @@ public class SQLManager implements AbstractDB {
         final LinkedHashMap<String, Set<PlotCluster>> newClusters = new LinkedHashMap<>();
         final HashMap<Integer, PlotCluster> clusters = new HashMap<>();
         try {
-            HashSet<String> areas = new HashSet<>();;
+            HashSet<String> areas = new HashSet<>();
             if (PS.get().config.contains("worlds")) {
                 ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds");
                 if (worldSection != null) {

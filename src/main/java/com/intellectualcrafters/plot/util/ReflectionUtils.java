@@ -55,11 +55,12 @@ public class ReflectionUtils {
         ArrayList<T> list = new ArrayList<T>();
         try {
             Field[] fields = clazz.getFields();
-            for (int i = 0; i < fields.length; i++) {
-                Object value = fields[i].get(null);
+            for (Field field : fields) {
+                Object value = field.get(null);
                 try {
-                list.add((T) value);
-                } catch (ClassCastException e) {}
+                    list.add((T) value);
+                } catch (ClassCastException e) {
+                }
             }
         } catch (Throwable e) {
             e.printStackTrace();

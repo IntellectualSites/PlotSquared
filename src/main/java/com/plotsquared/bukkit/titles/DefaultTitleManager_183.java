@@ -1,14 +1,14 @@
 package com.plotsquared.bukkit.titles;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 /**
  * [ PlotSquared DefaultTitleManager by Maxim Van de Wynckel ]
@@ -36,7 +36,7 @@ public class DefaultTitleManager_183 {
     private int stayTime = -1;
     private int fadeOutTime = -1;
     private boolean ticks = false;
-    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
     
     /**
      * Create a new 1.8 title
@@ -252,7 +252,7 @@ public class DefaultTitleManager_183 {
             "{text:\"" + ChatColor.translateAlternateColorCodes('&', title) + "\",color:" + titleColor.name().toLowerCase() + "}");
             packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[0], serialized);
             sendPacket.invoke(connection, packet);
-            if (subtitle != "") {
+            if (!subtitle.isEmpty()) {
                 // Send subtitle if present
                 serialized = getMethod(nmsChatSerializer, "a", String.class).invoke(null,
                 "{text:\"" + ChatColor.translateAlternateColorCodes('&', subtitle) + "\",color:" + subtitleColor.name().toLowerCase() + "}");
@@ -365,9 +365,7 @@ public class DefaultTitleManager_183 {
     
     private Class<?> getNMSClass(final String className) throws ClassNotFoundException {
         final String fullName = "net.minecraft.server." + getVersion() + className;
-        Class<?> clazz = null;
-        clazz = Class.forName(fullName);
-        return clazz;
+        return Class.forName(fullName);
     }
     
     private Field getField(final Class<?> clazz, final String name) {
@@ -392,10 +390,10 @@ public class DefaultTitleManager_183 {
     }
     
     private boolean ClassListEqual(final Class<?>[] l1, final Class<?>[] l2) {
-        boolean equal = true;
         if (l1.length != l2.length) {
             return false;
         }
+        boolean equal = true;
         for (int i = 0; i < l1.length; i++) {
             if (l1[i] != l2[i]) {
                 equal = false;

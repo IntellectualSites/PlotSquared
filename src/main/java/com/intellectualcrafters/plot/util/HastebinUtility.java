@@ -23,22 +23,23 @@ public class HastebinUtility {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", USER_AGENT);
         connection.setDoOutput(true);
-        
-        final DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-        outputStream.write(string.getBytes());
-        outputStream.flush();
-        outputStream.close();
-        
-        final BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String inputLine;
-        final StringBuilder response = new StringBuilder();
-        
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
+
+        try (DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
+            outputStream.write(string.getBytes());
+            outputStream.flush();
         }
-        in.close();
-        
-        final Matcher matcher = PATTERN.matcher(response.toString());
+
+        StringBuilder response;
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            response = new StringBuilder();
+
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+        }
+
+        Matcher matcher = PATTERN.matcher(response.toString());
         if (matcher.matches()) {
             return "http://hastebin.com/" + matcher.group(1);
         } else {

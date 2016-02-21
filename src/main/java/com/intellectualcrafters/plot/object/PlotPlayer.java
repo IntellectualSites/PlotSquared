@@ -64,7 +64,7 @@ public abstract class PlotPlayer implements CommandCaller {
      */
     public void setMeta(final String key, final Object value) {
         if (meta == null) {
-            meta = new ConcurrentHashMap<String, Object>();
+            meta = new ConcurrentHashMap<>();
         }
         meta.put(key, value);
     }

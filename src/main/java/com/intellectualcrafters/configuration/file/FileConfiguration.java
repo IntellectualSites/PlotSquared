@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -126,32 +125,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
         
         load(new InputStreamReader(stream, StandardCharsets.UTF_8));
     }
-    
-    /**
-     * Loads this {@link FileConfiguration} from the specified stream.
-     * <p>
-     * All the values contained within this configuration will be removed,
-     * leaving only settings and defaults, and the new values will be loaded
-     * from the given stream.
-     * <p>
-     *
-     * @param stream Stream to load from
-     * @throws IOException Thrown when the given file cannot be read.
-     * @throws InvalidConfigurationException Thrown when the given file is not
-     *     a valid Configuration.
-     * @throws IllegalArgumentException Thrown when stream is null.
-     * @deprecated This does not consider encoding
-     * @see #load(Reader)
-     */
-    @Deprecated
-    public void load(final InputStream stream) throws IOException, InvalidConfigurationException {
-        if (stream == null) {
-            throw new NullPointerException("Stream cannot be null");
-        }
-        
-        load(new InputStreamReader(stream, StandardCharsets.UTF_8));
-    }
-    
+
     /**
      * Loads this {@link FileConfiguration} from the specified reader.
      * <p>

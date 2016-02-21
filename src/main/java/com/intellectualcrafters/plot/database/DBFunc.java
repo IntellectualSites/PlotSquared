@@ -20,6 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.comment.PlotComment;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -29,14 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 /**
  * Database Functions
@@ -68,7 +68,6 @@ public class DBFunc {
      * @param r
      * @param name
      * @return
-     * @throws SQLException
      */
     public static boolean hasColumn(final ResultSet r, final String name) {
         try {
@@ -365,7 +364,6 @@ public class DBFunc {
     }
     
     /**
-     * @param world
      * @param cluster
      */
     public static void createCluster(final PlotCluster cluster) {
@@ -374,7 +372,8 @@ public class DBFunc {
     
     /**
      * @param current
-     * @param resize
+     * @param min
+     * @param max
      */
     public static void resizeCluster(final PlotCluster current, final PlotId min, PlotId max) {
         dbManager.resizeCluster(current, min, max);

@@ -1,12 +1,8 @@
 package com.plotsquared.sponge;
 
-import java.io.IOException;
-
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.gen.WorldGenerator;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.PlotGenerator;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -14,6 +10,11 @@ import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.SetupUtils;
 import com.plotsquared.sponge.generator.SpongePlotGenerator;
 import com.plotsquared.sponge.util.SpongeUtil;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.gen.WorldGenerator;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class SpongeSetupUtils extends SetupUtils {
     
@@ -23,7 +24,6 @@ public class SpongeSetupUtils extends SetupUtils {
             return;
         }
         SetupUtils.generators.put("PlotSquared", new SpongePlotGenerator(new HybridGen()));
-        // TODO get external world generators
         throw new UnsupportedOperationException("TODO FETCH EXTERNAL WorldGenerationModifiers");
     }
     
@@ -37,7 +37,16 @@ public class SpongeSetupUtils extends SetupUtils {
             return null;
         }
         final WorldGenerator generator = world.getWorldGenerator();
-        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+        if (!(generator instanceof SpongePlotGenerator)) {
+            return null;
+        }
+        for (final Map.Entry<String, GeneratorWrapper<?>> entry : generators.entrySet()) {
+            GeneratorWrapper<?> current = entry.getValue();
+            if (current.equals(generator)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
     
     @Override
