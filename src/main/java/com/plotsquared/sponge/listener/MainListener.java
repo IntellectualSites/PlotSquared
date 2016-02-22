@@ -783,7 +783,7 @@ public class MainListener {
             if (plotworld == null) {
                 return;
             }
-            final PlotManager plotManager = PS.get().getPlotManager(PS.get().getPlot(plotworld, plotworld.getMin()));
+            final PlotManager plotManager = PS.get().getPlot(plotworld, plotworld.getMin()).getManager();
             final PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
             final Plot lastPlot = pp.getMeta("lastplot");
             if (id == null) {
@@ -839,7 +839,7 @@ public class MainListener {
             if (plotworld == null) {
                 return;
             }
-            final PlotManager plotManager = PS.get().getPlotManager(PS.get().getPlot(plotworld, plotworld.getMin()));
+            final PlotManager plotManager = PS.get().getPlot(plotworld, plotworld.getMin()).getManager();
             final PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
             final Plot lastPlot = pp.getMeta("lastplot");
             if (id == null) {

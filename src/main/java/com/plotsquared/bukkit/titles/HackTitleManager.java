@@ -34,7 +34,7 @@ public class HackTitleManager {
     private int stayTime = -1;
     private int fadeOutTime = -1;
     private boolean ticks = false;
-    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
     
     /**
      * Create a new 1.8 title

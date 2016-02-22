@@ -49,13 +49,13 @@ public class HastebinUtility {
     
     public static String upload(final File file) throws IOException {
         final StringBuilder content = new StringBuilder();
-        final BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line;
-        int i = 0;
-        while ((line = reader.readLine()) != null && i++ < 1000) {
-            content.append(line).append("\n");
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            int i = 0;
+            while ((line = reader.readLine()) != null && i++ < 1000) {
+                content.append(line).append("\n");
+            }
         }
-        reader.close();
         return upload(content.toString());
     }
     

@@ -1,8 +1,5 @@
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.IOException;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -12,6 +9,9 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.io.File;
+import java.io.IOException;
 
 @CommandDeclaration(
 command = "debugpaste",
@@ -32,7 +32,7 @@ public class DebugPaste extends SubCommand {
                     String latestLOG;
                     try {
                         latestLOG = HastebinUtility.upload(new File(PS.get().IMP.getDirectory(), "../../logs/latest.log"));
-                    } catch (final Exception e) {
+                    } catch (IOException e) {
                         MainUtil.sendMessage(plr, "&clatest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }

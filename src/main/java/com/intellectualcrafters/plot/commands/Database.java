@@ -1,11 +1,5 @@
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.database.MySQL;
@@ -18,6 +12,13 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.io.File;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 @CommandDeclaration(
 command = "database",
@@ -93,7 +94,7 @@ public class Database extends SubCommand {
                     implementation = new SQLite(file.getPath());
                     final SQLManager manager = new SQLManager(implementation, (args.length == 3) ? args[2] : "", true);
                     final HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
-                    plots = new ArrayList<Plot>();
+                    plots = new ArrayList<>();
                     for (final Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
                         String areaname = entry.getKey();
                         PlotArea pa = PS.get().getPlotAreaByString(areaname);
@@ -107,15 +108,14 @@ public class Database extends SubCommand {
                                 PS.get().updatePlot(plot);
                                 plots.add(entry2.getValue());
                             }
-                        }
-                        else {
+                        } else {
                             HashMap<PlotId, Plot> plotmap = PS.get().plots_tmp.get(areaname);
                             if (plotmap == null) {
                                 plotmap = new HashMap<>();
                                 PS.get().plots_tmp.put(areaname, plotmap);
                             }
                             plotmap.putAll(entry.getValue());
-                        } 
+                        }
                     }
                     DBFunc.createPlotsAndData(plots, new Runnable() {
                         @Override
@@ -152,7 +152,7 @@ public class Database extends SubCommand {
                 final SQLManager manager = new SQLManager(implementation, prefix, true);
                 insertPlots(manager, plots, player);
                 return true;
-            } catch (final Exception e) {
+            } catch (ClassNotFoundException | SQLException e) {
                 MainUtil.sendMessage(player, "$1Failed to save plots, read stacktrace for info");
                 MainUtil.sendMessage(player, "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
                 e.printStackTrace();
@@ -160,7 +160,7 @@ public class Database extends SubCommand {
                 MainUtil.sendMessage(player, "$1Please make sure you are using the correct arguments!");
                 return false;
             }
-        } catch (final Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
             MainUtil.sendMessage(player, "$1Failed to open connection, read stacktrace for info");
             MainUtil.sendMessage(player, "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
             e.printStackTrace();

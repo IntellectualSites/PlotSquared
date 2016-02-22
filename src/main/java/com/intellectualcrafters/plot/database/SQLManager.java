@@ -115,7 +115,8 @@ public class SQLManager implements AbstractDB {
      *
      * @param database
      * @param p prefix
-     * @throws Exception
+     * @throws SQLException
+     * @throws ClassNotFoundException
      */
     public SQLManager(final Database database, final String p, final boolean debug) throws SQLException, ClassNotFoundException {
         // Private final
@@ -198,18 +199,18 @@ public class SQLManager implements AbstractDB {
             task = new UniqueStatement(plot.hashCode() + "") {
 
                 @Override
-                public PreparedStatement get() throws SQLException {
+                public PreparedStatement get() {
                     return null;
                 }
 
                 @Override
-                public void set(final PreparedStatement stmt) throws SQLException {}
+                public void set(final PreparedStatement stmt) {}
 
                 @Override
-                public void addBatch(final PreparedStatement stmt) throws SQLException {}
+                public void addBatch(final PreparedStatement stmt) {}
 
                 @Override
-                public void execute(final PreparedStatement stmt) throws SQLException {}
+                public void execute(final PreparedStatement stmt) {}
 
             };
         }
@@ -229,18 +230,18 @@ public class SQLManager implements AbstractDB {
             task = new UniqueStatement(uuid.hashCode() + "") {
 
                 @Override
-                public PreparedStatement get() throws SQLException {
+                public PreparedStatement get() {
                     return null;
                 }
 
                 @Override
-                public void set(final PreparedStatement stmt) throws SQLException {}
+                public void set(final PreparedStatement stmt) {}
 
                 @Override
-                public void addBatch(final PreparedStatement stmt) throws SQLException {}
+                public void addBatch(final PreparedStatement stmt) {}
 
                 @Override
-                public void execute(final PreparedStatement stmt) throws SQLException {}
+                public void execute(final PreparedStatement stmt) {}
 
             };
         }
@@ -257,18 +258,18 @@ public class SQLManager implements AbstractDB {
             task = new UniqueStatement(cluster.hashCode() + "") {
 
                 @Override
-                public PreparedStatement get() throws SQLException {
+                public PreparedStatement get() {
                     return null;
                 }
 
                 @Override
-                public void set(final PreparedStatement stmt) throws SQLException {}
+                public void set(final PreparedStatement stmt) {}
 
                 @Override
-                public void addBatch(final PreparedStatement stmt) throws SQLException {}
+                public void addBatch(final PreparedStatement stmt) {}
 
                 @Override
-                public void execute(final PreparedStatement stmt) throws SQLException {}
+                public void execute(final PreparedStatement stmt) {}
 
             };
         }
@@ -1010,7 +1011,7 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(final PreparedStatement stmt) throws SQLException {
+            public void execute(final PreparedStatement stmt) {
 
             }
 
@@ -1614,7 +1615,7 @@ public class SQLManager implements AbstractDB {
         final HashMap<String, HashMap<PlotId, Plot>> newplots = new HashMap<>();
         final HashMap<Integer, Plot> plots = new HashMap<>();
         try {
-            HashSet<String> areas = new HashSet<>();;
+            HashSet<String> areas = new HashSet<>();
             if (PS.get().config.contains("worlds")) {
                 ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds");
                 if (worldSection != null) {
@@ -2187,27 +2188,28 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(final PreparedStatement stmt) throws SQLException {}
+            public void execute(final PreparedStatement stmt) {}
 
             @Override
             public void addBatch(final PreparedStatement statement) throws SQLException {
                 final ArrayList<PlotComment> comments = new ArrayList<>();
-                final ResultSet set = statement.executeQuery();
-                while (set.next()) {
-                    final String sender = set.getString("sender");
-                    final String world = set.getString("world");
-                    final int hash = set.getInt("hashcode");
-                    PlotId id;
-                    if (hash != 0) {
-                        id = PlotId.unpair(hash);
-                    } else {
-                        id = null;
+                try (ResultSet set = statement.executeQuery()) {
+                    while (set.next()) {
+                        final String sender = set.getString("sender");
+                        final String world = set.getString("world");
+                        final int hash = set.getInt("hashcode");
+                        PlotId id;
+                        if (hash != 0) {
+                            id = PlotId.unpair(hash);
+                        } else {
+                            id = null;
+                        }
+                        final String msg = set.getString("comment");
+                        final long timestamp = set.getInt("timestamp") * 1000;
+                        PlotComment comment = new PlotComment(world, id, msg, sender, inbox, timestamp);
+                        comments.add(comment);
+                        whenDone.value = comments;
                     }
-                    final String msg = set.getString("comment");
-                    final long timestamp = set.getInt("timestamp") * 1000;
-                    PlotComment comment = new PlotComment(world, id, msg, sender, inbox, timestamp);
-                    comments.add(comment);
-                    whenDone.value = comments;
                 }
                 TaskManager.runTask(whenDone);
             }
@@ -2773,7 +2775,7 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(final PreparedStatement stmt) throws SQLException {
+            public void execute(final PreparedStatement stmt) {
 
             }
 
