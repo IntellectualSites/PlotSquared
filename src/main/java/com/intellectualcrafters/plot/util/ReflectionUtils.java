@@ -35,7 +35,6 @@ import java.util.List;
  */
 public class ReflectionUtils {
     
-    private static String version;
     /**
      * prefix of bukkit classes
      */
@@ -46,9 +45,10 @@ public class ReflectionUtils {
     private static String preClassM = "net.minecraft.server";
 
     public ReflectionUtils(final String version) {
-        ReflectionUtils.version = version;
-        preClassB += "." + version;
-        preClassM += "." + version;
+        if (version != null) {
+            preClassB += "." + version;
+            preClassM += "." + version;
+        }
     }
     
     public static <T> List<T> getStaticFields(Class clazz) {
@@ -66,14 +66,14 @@ public class ReflectionUtils {
         }
         return list;
     }
-
+    
     public static Class<?> getNmsClass(final String name) {
-        final String className = "net.minecraft.server." + version + "." + name;
+        final String className = preClassM + "." + name;
         return getClass(className);
     }
     
     public static Class<?> getCbClass(final String name) {
-        final String className = "org.bukkit.craftbukkit." + version + "." + name;
+        final String className = preClassB + "." + name;
         return getClass(className);
     }
     

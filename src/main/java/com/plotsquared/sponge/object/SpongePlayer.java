@@ -15,6 +15,7 @@ import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.service.ban.BanService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.commands.RequiredType;
@@ -99,7 +100,7 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void sendMessage(final String message) {
-        player.sendMessage(ChatTypes.CHAT, Text.of(message));
+        player.sendMessage(ChatTypes.CHAT, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(message));
     }
     
     @Override

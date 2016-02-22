@@ -1,12 +1,14 @@
 package com.plotsquared.sponge.util;
 
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.serializer.TextSerializers;
+
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChatManager;
 import com.plotsquared.sponge.object.SpongePlayer;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 
 public class SpongeChatManager extends ChatManager<Text.Builder> {
     
@@ -17,7 +19,7 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
     
     @Override
     public void color(final PlotMessage m, final String color) {
-        m.$(this).color(Text.of(color).getColor());
+        m.$(this).color(TextSerializers.LEGACY_FORMATTING_CODE.deserialize(color).getColor());
     }
     
     @Override

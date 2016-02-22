@@ -34,8 +34,7 @@ public class plugin extends SubCommand {
         MainUtil.sendMessage(plr, String.format("$2>> $1&lPlotSquared $2($1Version$2: $1%s$2)", StringMan.join(PS.get().IMP.getPluginVersion(), ".")));
         MainUtil.sendMessage(plr, "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92");
         MainUtil.sendMessage(plr, "$2>> $1&lWiki$2: $1https://github.com/IntellectualCrafters/PlotSquared/wiki");
-        MainUtil.sendMessage(plr,
-                "$2>> $1&lNewest Version$2: $1" + (PS.get().update == null ? StringMan.join(PS.get().IMP.getPluginVersion(), ".") : PS.get().update));
+        MainUtil.sendMessage(plr, "$2>> $1&lNewest Version$2: $1" + (PS.get().update == null ? StringMan.join(PS.get().IMP.getPluginVersion(), ".") : PS.get().update));
         return true;
     }
 }

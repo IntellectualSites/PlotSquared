@@ -1,12 +1,16 @@
-package com.plotsquared.sponge;
+package com.plotsquared.sponge.util;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.item.inventory.Carrier;
+import org.spongepowered.api.item.inventory.type.CarriedInventory;
 import org.spongepowered.api.world.World;
 
 import com.intellectualcrafters.jnbt.ByteArrayTag;
@@ -24,7 +28,6 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.sponge.util.SpongeUtil;
 
 public class SpongeSchematicHandler extends SchematicHandler {
     
@@ -253,8 +256,27 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                                     case 33:
                                                     case 151:
                                                     case 178: {
-                                                        // TODO wrap block state...
-                                                        // TODO add block state to map
+                                                        CompoundTag rawTag;
+                                                        if (state instanceof Carrier) {
+                                                            Carrier chest = (Carrier) state;
+                                                            CarriedInventory<? extends Carrier> inv = chest.getInventory();
+                                                            // TODO serialize inventory
+                                                            rawTag = null;
+                                                        } else {
+                                                            rawTag = null;
+                                                        }
+                                                        if (rawTag != null) {
+                                                            final Map<String, Tag> values = new HashMap<String, Tag>();
+                                                            for (final Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
+                                                                values.put(entry.getKey(), entry.getValue());
+                                                            }
+                                                            values.put("id", new StringTag("id", "Chest"));
+                                                            values.put("x", new IntTag("x", x));
+                                                            values.put("y", new IntTag("y", y));
+                                                            values.put("z", new IntTag("z", z));
+                                                            final CompoundTag tileEntityTag = new CompoundTag(values);
+                                                            tileEntities.add(tileEntityTag);
+                                                        }
                                                     }
                                                     default: {
                                                         blockData[index] = block.data;

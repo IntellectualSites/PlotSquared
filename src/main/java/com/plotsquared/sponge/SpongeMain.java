@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
@@ -62,8 +63,11 @@ import com.plotsquared.sponge.util.SpongeChunkManager;
 import com.plotsquared.sponge.util.SpongeCommand;
 import com.plotsquared.sponge.util.SpongeEconHandler;
 import com.plotsquared.sponge.util.SpongeEventUtil;
+import com.plotsquared.sponge.util.SpongeHybridUtils;
 import com.plotsquared.sponge.util.SpongeInventoryUtil;
 import com.plotsquared.sponge.util.SpongeMetrics;
+import com.plotsquared.sponge.util.SpongeSchematicHandler;
+import com.plotsquared.sponge.util.SpongeSetupUtils;
 import com.plotsquared.sponge.util.SpongeTaskManager;
 import com.plotsquared.sponge.util.SpongeTitleManager;
 import com.plotsquared.sponge.util.SpongeUtil;
@@ -77,8 +81,8 @@ import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
  * Created by robin on 01/11/2014
  */
 
-@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.0.0", dependencies = "before:WorldEdit,required-after:TotalEconomy")
-public class SpongeMain implements IPlotMain, PluginContainer {
+@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.3.0", dependencies = "before:WorldEdit")
+public class SpongeMain implements IPlotMain {
     public static SpongeMain THIS;
 
     @Inject
@@ -89,7 +93,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     private GameProfileManager resolver;
 
-    @Override
+    //    @Override
     public Logger getLogger() {
         return logger;
     }
@@ -103,6 +107,9 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     }
 
     public GameProfileManager getResolver() {
+        if (resolver == null) {
+            resolver = game.getServer().getGameProfileManager();
+        }
         return resolver;
     }
 
@@ -110,22 +117,22 @@ public class SpongeMain implements IPlotMain, PluginContainer {
         return THIS;
     }
 
-    @Override
+    //    @Override
     public String getId() {
         return "PlotSquared";
     }
 
-    @Override
+    //    @Override
     public Optional<Object> getInstance() {
         return Optional.<Object> of(THIS);
     }
 
-    @Override
+    //    @Override
     public String getName() {
         return "PlotSquared";
     }
 
-    @Override
+    //    @Override
     public String getVersion() {
         final int[] version = PS.get().getVersion();
         String result = "";
@@ -151,11 +158,9 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     public void onServerAboutToStart(final GameAboutToStartServerEvent event) {
         log("PlotSquared: Server init");
         THIS = this;
-        resolver = game.getServiceManager().provide(GameProfileManager.class).get();
+        new PS(this, "Sponge");
         server = game.getServer();
         game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new HybridGen().specify());
-        new PS(this, "Sponge");
-
     }
 
     @Override
@@ -212,7 +217,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     @Override
     public EconHandler getEconomyHandler() {
         SpongeEconHandler econ = new SpongeEconHandler();
-        game.getEventManager().registerListeners(this, econ);
+        Sponge.getEventManager().registerListeners(this, econ);
         return econ;
     }
 
@@ -258,7 +263,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public void registerPlayerEvents() {
-        game.getEventManager().registerListeners(this, new MainListener());
+        Sponge.getEventManager().registerListeners(this, new MainListener());
     }
 
     @Override
@@ -312,12 +317,12 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public void registerChunkProcessor() {
-        game.getEventManager().registerListeners(this, new ChunkProcessor());
+        Sponge.getEventManager().registerListeners(this, new ChunkProcessor());
     }
 
     @Override
     public void registerWorldEvents() {
-        game.getEventManager().registerListeners(this, new WorldEvents());
+        Sponge.getEventManager().registerListeners(this, new WorldEvents());
     }
 
     @Override
@@ -328,7 +333,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
     @Override
     public void startMetrics() {
         try {
-            final SpongeMetrics metrics = new SpongeMetrics(game, this);
+            final SpongeMetrics metrics = new SpongeMetrics(game, (PluginContainer) this);
             metrics.start();
             log(C.PREFIX.s() + "&6Metrics enabled.");
         } catch (final Exception e) {
@@ -398,7 +403,7 @@ public class SpongeMain implements IPlotMain, PluginContainer {
 
     @Override
     public String getNMSPackage() {
-        return "TODO";//TODO FIXME
+        return "";//TODO FIXME
     }
 
     @Override

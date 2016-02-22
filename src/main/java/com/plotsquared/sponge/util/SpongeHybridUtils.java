@@ -1,22 +1,19 @@
-package com.plotsquared.sponge;
+package com.plotsquared.sponge.util;
 
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.World;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.plotsquared.sponge.util.SpongeUtil;
 
 public class SpongeHybridUtils extends HybridUtils {
     
     @Override
     public int checkModified(final String worldname, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks) {
-        PS.debug("checkModified is not implemented");
         final World world = SpongeUtil.getWorld(worldname);
         int count = 0;
         for (int y = y1; y <= y2; y++) {
@@ -61,8 +58,7 @@ public class SpongeHybridUtils extends HybridUtils {
     
     @Override
     public void analyzeRegion(String world, RegionWrapper region, RunnableVal<PlotAnalysis> whenDone) {
-        // TODO Auto-generated method stub
-        whenDone.run();
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
 }

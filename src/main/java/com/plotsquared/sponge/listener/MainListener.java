@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import org.spongepowered.api.block.BlockSnapshot;
@@ -25,12 +26,9 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.vehicle.Boat;
 import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.action.LightningEvent;
+import org.spongepowered.api.event.action.InteractEvent;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.block.GrowBlockEvent;
-import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.event.block.MoveBlockEvent;
-import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.block.NotifyNeighborBlockEvent;
 import org.spongepowered.api.event.command.SendCommandEvent;
 import org.spongepowered.api.event.entity.BreedEntityEvent;
 import org.spongepowered.api.event.entity.DisplaceEntityEvent;
@@ -38,6 +36,7 @@ import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.ExplosionEvent;
+import org.spongepowered.api.event.world.ExplosionEvent.Detonate;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
@@ -96,71 +95,85 @@ public class MainListener {
      *  - Projectile
      *  - enderman harvest
      */
-    
-    //    @Listener
-    //    public void onFluidSpread(final NotifyNeighborBlockEvent event) {
-    //        onPhysics(event);
-    //    }
-    //    
-    //    @Listener
-    //    public void onFluidSpread(final NotifyNeighborBlockEvent.Burn event) {
-    //        onPhysics(event);
-    //    }
-    //    
-    //    @Listener
-    //    public void onFluidSpread(final NotifyNeighborBlockEvent.Ignite event) {
-    //        onPhysics(event);
-    //    }
-    //    
-    //    @Listener
-    //    public void onFluidSpread(final NotifyNeighborBlockEvent.Power event) {
-    //        // TODO redstone
-    //    }
-    //
-    //    public void onPhysics(final NotifyNeighborBlockEvent event) {
-    //        final AtomicBoolean cancelled = new AtomicBoolean(false);
-    //        final Map<Direction, org.spongepowered.api.world.Location<World>> relatives = event.getRelatives();
-    //        event.filterDirections(new Predicate<Direction>() {
-    //            
-    //            @Override
-    //            public boolean test(Direction dir) {
-    //                if (cancelled.get()) {
-    //                    return true;
-    //                }
-    //                org.spongepowered.api.world.Location<World> loc = relatives.get(dir);
-    //                com.intellectualcrafters.plot.object.Location plotloc = SpongeUtil.getLocation(loc.getExtent().getName(), loc);
-    //                Plot plot = MainUtil.getPlot(plotloc);
-    //                if (plot == null) {
-    //                    if (MainUtil.isPlotAreaAbs(plotloc)) {
-    //                        cancelled.set(true);
-    //                        return false;
-    //                    }
-    //                    cancelled.set(true);
-    //                    return true;
-    //                }
-    //                org.spongepowered.api.world.Location<World> relative = loc.getRelative(dir);
-    //                com.intellectualcrafters.plot.object.Location relLoc = SpongeUtil.getLocation(relative.getExtent().getName(), relative);
-    //                if (plot.equals(MainUtil.getPlot(relLoc))) {
-    //                    return true;
-    //                }
-    //                return false;
-    //            }
-    //        });
-    //    }
-    
-    public <T> T getCause(Cause cause, Class<T> clazz) {
-        Optional<?> root = Optional.of(cause.root());
-        if (root.isPresent()) {
-            Object source = root.get();
-            if (clazz.isInstance(source)) {
-                return (T) source;
+
+    @Listener
+    public void onCommand(final SendCommandEvent event) {
+        switch (event.getCommand().toLowerCase()) {
+            case "plotme": {
+                Player source = SpongeUtil.<Player> getCause(event.getCause(), Player.class);
+                if (source == null) {
+                    return;
+                }
+                if (Settings.USE_PLOTME_ALIAS) {
+                    SpongeMain.THIS.getGame().getCommandManager().process(source, ("plots " + event.getArguments()).trim());
+                } else {
+                    source.sendMessage(SpongeUtil.text(C.NOT_USING_PLOTME.s()));
+                }
+                event.setCancelled(true);
             }
         }
-        return null;
     }
     
     @Listener
-    public void onCommand(final BreedEntityEvent.Breed event) {
+    public void onChat(final MessageEvent event) {
+        // TODO
+        Player player = SpongeUtil.<Player> getCause(event.getCause(), Player.class);
+        if (player == null) {
+            return;
+        }
+        final String world = player.getWorld().getName();
+        if (!PS.get().hasPlotArea(world)) {
+            return;
+        }
+        final PlotArea plotworld = PS.get().getPlotAreaByString(world);
+        final PlotPlayer plr = SpongeUtil.getPlayer(player);
+        if (!plotworld.PLOT_CHAT && ((plr.getMeta("chat") == null) || !(Boolean) plr.getMeta("chat"))) {
+            return;
+        }
+        final Location loc = SpongeUtil.getLocation(player);
+        final Plot plot = loc.getPlot();
+        if (plot == null) {
+            return;
+        }
+        final Text message = event.getMessage().orElse(Text.EMPTY);
+        
+        // TODO use display name rather than username
+        //  - Getting displayname currently causes NPE, so wait until sponge fixes that
+        
+        final String sender = player.getName();
+        final PlotId id = plot.getId();
+        final String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
+        final Text forcedMessage = event.getMessage().orElse(Text.EMPTY);
+        //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
+        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+            PlotPlayer user = entry.getValue();
+            String toSend;
+            if (plot.equals(user.getLocation().getPlot())) {
+                toSend = newMessage;
+            } else if (Permissions.hasPermission(user, C.PERMISSION_COMMANDS_CHAT)) {
+                ((SpongePlayer) user).player.sendMessage(forcedMessage);
+                continue;
+            } else {
+                continue;
+            }
+            final String[] split = (toSend + " ").split("%msg%");
+            final List<Text> components = new ArrayList<>();
+            Text prefix = null;
+            for (final String part : split) {
+                if (prefix != null) {
+                    components.add(prefix);
+                } else {
+                    prefix = message;
+                }
+                components.add(Text.of(part));
+            }
+            ((SpongePlayer) user).player.sendMessage(Text.join(components));
+        }
+        event.setMessage(null);
+    }
+    
+    @Listener
+    public void onBreedEntity(final BreedEntityEvent.Breed event) {
         final Location loc = SpongeUtil.getLocation(event.getTargetEntity());
         final String world = loc.getWorld();
         final PlotArea plotworld = PS.get().getPlotAreaByString(world);
@@ -178,17 +191,14 @@ public class MainListener {
             event.setCancelled(true);
         }
     }
-    
-    @Listener
-    public void onMobSpawn(final SpawnEntityEvent event) {
+
+    public void onSpawnEntity(SpawnEntityEvent event) throws Exception {
         World world = event.getTargetWorld();
         final PlotArea plotworld = PS.get().getPlotAreaByString(world.getName());
         if (plotworld == null) {
             return;
         }
-        List<Entity> entities = event.getEntities();
         event.filterEntities(new Predicate<Entity>() {
-            
             @Override
             public boolean test(Entity entity) {
                 if (entity instanceof Player) {
@@ -302,26 +312,135 @@ public class MainListener {
             }
         });
     }
-    
+
+    public void onNotifyNeighborBlock(NotifyNeighborBlockEvent event) throws Exception {
+        final AtomicBoolean cancelled = new AtomicBoolean(false);
+        SpongeUtil.printCause("physics", event.getCause());
+        //        PlotArea area = plotloc.getPlotArea();
+        //        event.filterDirections(new Predicate<Direction>() {
+        //            
+        //            @Override
+        //            public boolean test(Direction dir) {
+        //                if (cancelled.get()) {
+        //                    return true;
+        //                }
+        //                org.spongepowered.api.world.Location<World> loc = relatives.get(dir);
+        //                com.intellectualcrafters.plot.object.Location plotloc = SpongeUtil.getLocation(loc.getExtent().getName(), loc);
+        //                if (area == null) {
+        //                    return true;
+        //                }
+        //                plot = area.get
+        //                Plot plot = plotloc.getPlot();
+        //                if (plot == null) {
+        //                    if (MainUtil.isPlotAreaAbs(plotloc)) {
+        //                        cancelled.set(true);
+        //                        return false;
+        //                    }
+        //                    cancelled.set(true);
+        //                    return true;
+        //                }
+        //                org.spongepowered.api.world.Location<World> relative = loc.getRelative(dir);
+        //                com.intellectualcrafters.plot.object.Location relLoc = SpongeUtil.getLocation(relative.getExtent().getName(), relative);
+        //                if (plot.equals(MainUtil.getPlot(relLoc))) {
+        //                    return true;
+        //                }
+        //                return false;
+        //            }
+        //        });
+    }
+
     @Listener
-    public void onCommand(final SendCommandEvent event) {
-        switch (event.getCommand().toLowerCase()) {
-            case "plotme": {
-                Player source = this.<Player> getCause(event.getCause(), Player.class);
-                if (source == null) {
-                    return;
-                }
-                if (Settings.USE_PLOTME_ALIAS) {
-                    SpongeMain.THIS.getGame().getCommandManager().process(source, ("plots " + event.getArguments()).trim());
-                } else {
-                    source.sendMessage(SpongeUtil.text(C.NOT_USING_PLOTME.s()));
-                }
-                event.setCancelled(true);
+    public void onInteract(InteractEvent event) throws Exception {
+        final Player player = SpongeUtil.<Player> getCause(event.getCause(), Player.class);
+        if (player == null) {
+            event.setCancelled(true);
+            return;
+        }
+        Optional<Vector3d> target = event.getInteractionPoint();
+        if (!target.isPresent()) {
+            return;
+        }
+        Location loc = SpongeUtil.getLocation(player.getWorld().getName(), target.get());
+        org.spongepowered.api.world.Location l = SpongeUtil.getLocation(loc);
+        Plot plot = loc.getPlot();
+        PlotPlayer pp = SpongeUtil.getPlayer(player);
+        if (plot == null) {
+            if (loc.getPlotAbs() == null) {
+                return;
             }
+            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD)) {
+                event.setCancelled(true);
+                return;
+            }
+            return;
+        }
+        if (!plot.hasOwner()) {
+            if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
+                return;
+            }
+            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_UNOWNED);
+            event.setCancelled(true);
+            return;
+        }
+        if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
+            return;
+        } else {
+            final Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
+            if ((flag != null) && ((HashSet<PlotBlock>) flag.getValue()).contains(SpongeUtil.getPlotBlock(l.getBlock()))) {
+                return;
+            }
+            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_OTHER);
+            event.setCancelled(true);
+            return;
         }
     }
     
-    public void onBlockChange(ChangeBlockEvent event) {
+    @Listener
+    public void onExplosion(ExplosionEvent e) throws Exception {
+        if (e instanceof ExplosionEvent.Detonate) {
+            ExplosionEvent.Detonate event = (Detonate) e;
+            final World world = event.getTargetWorld();
+            final String worldname = world.getName();
+            if (!PS.get().hasPlotArea(worldname)) {
+                return;
+            }
+            Optional<Explosive> source = event.getExplosion().getSourceExplosive();
+            if (!source.isPresent()) {
+                event.setCancelled(true);
+                return;
+            }
+            Explosive tnt = source.get();
+            Location origin = SpongeUtil.getLocation(worldname, tnt.getRotation());
+            Plot originPlot = origin.getPlot();
+            Location current = SpongeUtil.getLocation(tnt);
+            final Plot currentPlot = current.getPlot();
+            if (!Objects.equals(originPlot, currentPlot)) {
+                event.setCancelled(true);
+                return;
+            }
+            if (originPlot == null && current.getPlotAbs() == null) {
+                return;
+            }
+            if (!FlagManager.isPlotFlagTrue(currentPlot, "explosion")) {
+                event.setCancelled(true);
+                return;
+            }
+            event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
+                @Override
+                public boolean test(org.spongepowered.api.world.Location<World> loc) {
+                    return currentPlot.equals(SpongeUtil.getLocation(loc.getExtent().getName(), loc).getPlot());
+                }
+            });
+            event.filterEntities(new Predicate<Entity>() {
+                @Override
+                public boolean test(Entity entity) {
+                    return currentPlot.equals(SpongeUtil.getLocation(entity).getPlot());
+                }
+            });
+        }
+    }
+    
+    public void onChangeBlock(ChangeBlockEvent event) {
         final World world = event.getTargetWorld();
         final String worldname = world.getName();
         if (!PS.get().hasPlotArea(worldname)) {
@@ -332,7 +451,7 @@ public class MainListener {
         Location loc = SpongeUtil.getLocation(worldname, first.getOriginal().getPosition());
         Plot plot = loc.getPlot();
         if (plot == null) {
-            if (loc.getPlotAbs() == null ) {
+            if (loc.getPlotAbs() == null) {
                 return;
             }
             event.setCancelled(true);
@@ -349,162 +468,25 @@ public class MainListener {
             }
         });
     }
-    
-    @Listener
-    public void onBlockMove(final MoveBlockEvent event) {
-        onBlockChange(event);
-    }
-    
-    @Listener
-    public void onFloraGrow(final GrowBlockEvent event) {
-        onBlockChange(event);
-    }
-    
-    @Listener
-    public void onLightning(final LightningEvent.Strike event) {
-        onBlockChange(event);
-    }
-    
-    public void printCause(String method, Cause cause) {
-        System.out.println(method + ": " + cause.toString());
-        System.out.println(method + ": " + cause.getClass());
-        System.out.println(method + ": " + (cause.root()));
-    }
-    
-    @Listener
-    public void onChat(final MessageEvent event) {
-        // TODO
-        Player player = this.<Player> getCause(event.getCause(), Player.class);
-        if (player == null) {
-            return;
-        }
-        final String world = player.getWorld().getName();
-        if (!PS.get().hasPlotArea(world)) {
-            return;
-        }
-        final PlotArea plotworld = PS.get().getPlotAreaByString(world);
-        final PlotPlayer plr = SpongeUtil.getPlayer(player);
-        if (!plotworld.PLOT_CHAT && ((plr.getMeta("chat") == null) || !(Boolean) plr.getMeta("chat"))) {
-            return;
-        }
-        final Location loc = SpongeUtil.getLocation(player);
-        final Plot plot = loc.getPlot();
-        if (plot == null) {
-            return;
-        }
-        final Text message = event.getMessage().orElse(Text.EMPTY);
-        
-        // TODO use display name rather than username
-        //  - Getting displayname currently causes NPE, so wait until sponge fixes that
-        
-        final String sender = player.getName();
-        final PlotId id = plot.getId();
-        final String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
-        final Text forcedMessage = event.getMessage().orElse(Text.EMPTY);
-        //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
-        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            PlotPlayer user = entry.getValue();
-            String toSend;
-            if (plot.equals(user.getLocation().getPlot())) {
-                toSend = newMessage;
-            } else if (Permissions.hasPermission(user, C.PERMISSION_COMMANDS_CHAT)) {
-                ((SpongePlayer) user).player.sendMessage(forcedMessage);
-                continue;
-            } else {
-                continue;
-            }
-            final String[] split = (toSend + " ").split("%msg%");
-            final List<Text> components = new ArrayList<>();
-            Text prefix = null;
-            for (final String part : split) {
-                if (prefix != null) {
-                    components.add(prefix);
-                } else {
-                    prefix = message;
-                }
-                components.add(Text.of(part));
-            }
-            ((SpongePlayer) user).player.sendMessage(Text.join(components));
-        }
-        event.setMessage(null);
-    }
-    
-    @Listener
-    public void onBigBoom(final ExplosionEvent.Detonate event) {
-        final World world = event.getTargetWorld();
-        final String worldname = world.getName();
-        if (!PS.get().hasPlotArea(worldname)) {
-            return;
-        }
-        Optional<Explosive> source = event.getExplosion().getSourceExplosive();
-        if (!source.isPresent()) {
-            event.setCancelled(true);
-            return;
-        }
-        Explosive tnt = source.get();
-        Location origin = SpongeUtil.getLocation(worldname, tnt.getRotation());
-        Plot originPlot = origin.getPlot();
-        Location current = SpongeUtil.getLocation(tnt);
-        final Plot currentPlot = current.getPlot();
-        if (!Objects.equals(originPlot, currentPlot)) {
-            event.setCancelled(true);
-            return;
-        }
-        if (originPlot == null && current.getPlotAbs() == null) {
-            return;
-        }
-        if (!FlagManager.isPlotFlagTrue(currentPlot, "explosion")) {
-            event.setCancelled(true);
-            return;
-        }
-        event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
-            @Override
-            public boolean test(org.spongepowered.api.world.Location<World> loc) {
-                return currentPlot.equals(SpongeUtil.getLocation(loc.getExtent().getName(), loc).getPlot());
-            }
-        });
-        event.filterEntities(new Predicate<Entity>() {
-            @Override
-            public boolean test(Entity entity) {
-                return currentPlot.equals(SpongeUtil.getLocation(entity).getPlot());
-            }
-        });
-    }
-    
-    //    @Listener
-    //    public void onChunkPreGenerator(final ChunkPreGenerateEvent event) {
-    //        final org.spongepowered.api.world.Chunk chunk = event.getChunk();
-    //        final World world = chunk.getWorld();
-    //        final String worldname = world.getName();
-    //        if (MainUtil.worldBorder.containsKey(worldname)) {
-    //            final int border = MainUtil.getBorder(worldname);
-    //            final Vector3i min = world.getBlockMin();
-    //            final int x = Math.abs(min.getX());
-    //            final int z = Math.abs(min.getZ());
-    //            if ((x > border) || (z > border)) {
-    //                // TODO cancel this chunk from loading
-    //                // - Currently not possible / this event doesn't seem to be called
-    //            }
-    //        }
-    //    }
-    
+
     @Listener
     public void onBlockBreak(final ChangeBlockEvent.Decay event) {
-        onBlockChange(event);
+        onChangeBlock(event);
     }
+    
     @Listener
     public void onBlockBreak(final ChangeBlockEvent.Grow event) {
-        onBlockChange(event);
+        onChangeBlock(event);
     }
     
     @Listener
     public void onBlockBreak(final ChangeBlockEvent.Modify event) {
-        onBlockChange(event);
+        onChangeBlock(event);
     }
     
     @Listener
     public void onBlockBreak(final ChangeBlockEvent.Break event) {
-        Player player = this.<Player> getCause(event.getCause(), Player.class);
+        Player player = SpongeUtil.<Player> getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);
             return;
@@ -588,7 +570,7 @@ public class MainListener {
     
     @Listener
     public void onBlockPlace(final ChangeBlockEvent.Place event) {
-        Player player = this.<Player> getCause(event.getCause(), Player.class);
+        Player player = SpongeUtil.<Player> getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);
             return;
@@ -671,52 +653,6 @@ public class MainListener {
     }
     
     @Listener
-    public void onBlockInteract(final InteractBlockEvent.Secondary event) {
-        final Player player = this.<Player> getCause(event.getCause(), Player.class);
-        if (player == null) {
-            event.setCancelled(true);
-            return;
-        }
-        Optional<org.spongepowered.api.world.Location<World>> target = event.getTargetBlock().getLocation();
-        if (!target.isPresent()) {
-            return;
-        }
-        org.spongepowered.api.world.Location<World> l = target.get();
-        Location loc = SpongeUtil.getLocation(l);
-        Plot plot = loc.getPlot();
-        PlotPlayer pp = SpongeUtil.getPlayer(player);
-        if (plot == null) {
-            if (loc.getPlotAbs() == null) {
-                return;
-            }
-            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD)) {
-                event.setCancelled(true);
-                return;
-            }
-            return;
-        }
-        if (!plot.hasOwner()) {
-            if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
-                return;
-            }
-            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_UNOWNED);
-            event.setCancelled(true);
-            return;
-        }
-        if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
-            return;
-        } else {
-            final Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
-            if ((flag != null) && ((HashSet<PlotBlock>) flag.getValue()).contains(SpongeUtil.getPlotBlock(l.getBlock()))) {
-                return;
-            }
-            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_OTHER);
-            event.setCancelled(true);
-            return;
-        }
-    }
-    
-    @Listener
     public void onConnect(final ClientConnectionEvent.Login event) {
         GameProfile profile = event.getProfile();
         if (profile == null) {
@@ -764,16 +700,12 @@ public class MainListener {
         pp.unregister();
     }
     
-    public int getInt(final double value) {
-        return (int) (value < 0 ? value - 1 : value);
-    }
-    
     @Listener
     public void onMove(final DisplaceEntityEvent.TargetPlayer event) {
         final org.spongepowered.api.world.Location from = event.getFromTransform().getLocation();
         org.spongepowered.api.world.Location to = event.getToTransform().getLocation();
         int x2;
-        if (getInt(from.getX()) != (x2 = getInt(to.getX()))) {
+        if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
             final Player player = event.getTargetEntity();
             final PlotPlayer pp = SpongeUtil.getPlayer(player);
             final Extent extent = to.getExtent();
@@ -789,7 +721,7 @@ public class MainListener {
                 return;
             }
             final PlotManager plotManager = PS.get().getPlotManager(PS.get().getPlot(plotworld, plotworld.getMin()));
-            final PlotId id = plotManager.getPlotId(plotworld, x2, 0, getInt(to.getZ()));
+            final PlotId id = plotManager.getPlotId(plotworld, x2, 0, MathMan.roundInt(to.getZ()));
             final Plot lastPlot = (Plot) pp.getMeta("lastplot");
             if (id == null) {
                 if (lastPlot == null) {
@@ -835,7 +767,7 @@ public class MainListener {
             return;
         }
         int z2;
-        if (getInt(from.getZ()) != (z2 = getInt(to.getZ()))) {
+        if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
             final Player player = event.getTargetEntity();
             final PlotPlayer pp = SpongeUtil.getPlayer(player);
             final Extent extent = to.getExtent();

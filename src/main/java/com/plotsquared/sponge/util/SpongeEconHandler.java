@@ -3,13 +3,13 @@ package com.plotsquared.sponge.util;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -22,8 +22,13 @@ public class SpongeEconHandler extends EconHandler {
     public SpongeEconHandler() {
         if (Sponge.getServiceManager().isRegistered(EconomyService.class)) {
             econ = Sponge.getServiceManager().provide(EconomyService.class).get();
-        } else {
-            PS.log("No economy service was registered.");
+        }
+    }
+    
+    @Listener
+    public void onChangeServiceProvider(ChangeServiceProviderEvent event) {
+        if (event.getService().equals(EconomyService.class)) {
+            econ = (EconomyService) event.getNewProviderRegistration().getProvider();
         }
     }
 
@@ -33,6 +38,7 @@ public class SpongeEconHandler extends EconHandler {
             Optional<UniqueAccount> accOpt = econ.getAccount(player.getUUID());
             if (accOpt.isPresent()) {
                 UniqueAccount acc = accOpt.get();
+
                 acc.withdraw(econ.getDefaultCurrency(), new BigDecimal(amount), Cause.of("PlotSquared"));
             }
         }
@@ -63,7 +69,7 @@ public class SpongeEconHandler extends EconHandler {
     @Override
     public void setPermission(String world, String player, String perm, boolean value) {
         // TODO Auto-generated method stub
-        throw new NotImplementedException("TODO/WIP/NOT IMPLEMENTED!");
+        throw new UnsupportedOperationException("TODO/WIP/NOT IMPLEMENTED!");
     }
     
     @Override

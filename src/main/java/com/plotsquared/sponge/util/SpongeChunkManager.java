@@ -74,9 +74,11 @@ public class SpongeChunkManager extends ChunkManager {
     @Override
     public void regenerateChunk(final String world, final ChunkLoc loc) {
         final World worldObj = SpongeUtil.getWorld(world);
-        final Optional<Chunk> chunk = worldObj.getChunk(loc.x << 4, 0, loc.z << 4);
-        if (chunk.isPresent()) {
-            // TODO regenerate chunk
+        final Optional<Chunk> chunkOpt = worldObj.getChunk(loc.x << 4, 0, loc.z << 4);
+        if (chunkOpt.isPresent()) {
+            Chunk chunk = chunkOpt.get();
+            // TODO FIXME
+            throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
         }
     }
     
@@ -114,7 +116,7 @@ public class SpongeChunkManager extends ChunkManager {
     @Override
     public void swap(Location bot1, Location top1, Location bot2, Location top2, Runnable whenDone) {
         // TODO swap region
-        
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
     @Override

@@ -1,6 +1,8 @@
 package com.plotsquared.sponge.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.translation.Translatable;
 import org.spongepowered.api.text.translation.Translation;
@@ -27,6 +30,7 @@ import org.spongepowered.api.world.extent.Extent;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -35,6 +39,7 @@ import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.sponge.SpongeMain;
@@ -59,6 +64,24 @@ public class SpongeUtil extends WorldUtil {
         return biomes[biomeMap.get(biome.toUpperCase())];
     }
     
+    public static <T> T getCause(Cause cause, Class<T> clazz) {
+        Optional<?> root = Optional.of(cause.root());
+        if (root.isPresent()) {
+            Object source = root.get();
+            if (clazz.isInstance(source)) {
+                return (T) source;
+            }
+        }
+        return null;
+    }
+
+    public static void printCause(String method, Cause cause) {
+        System.out.println(method + ": " + cause.toString());
+        System.out.println(method + ": " + cause.getClass());
+        System.out.println(method + ": " + StringMan.getString(cause.all()));
+        System.out.println(method + ": " + (cause.root()));
+    }
+
     public static void initBiomeCache() {
         try {
             Field[] fields = BiomeTypes.class.getFields();
@@ -112,12 +135,61 @@ public class SpongeUtil extends WorldUtil {
         }.getTranslation();
     }
 
-    public static BlockState getBlockState(int id, int data) {
-        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    private static HashMap<BlockState, PlotBlock> stateMap;
+    private static BlockState[] stateArray;
+    
+    private static void initBlockCache() {
+        try {
+            PS.debug("Caching block id/data: Please wait...");
+            stateArray = new BlockState[Character.MAX_VALUE];
+            stateMap = new HashMap<>();
+            Class<?> classBlock = Class.forName("net.minecraft.block.Block");
+            Class<?> classBlockState = Class.forName("net.minecraft.block.state.IBlockState");
+            Method[] blockMethods = classBlock.getDeclaredMethods();
+            Method methodGetByCombinedId = null;
+            for (Method method : blockMethods) {
+                Class<?> result = method.getReturnType();
+                Class<?>[] param = method.getParameterTypes();
+                int paramCount = param.length;
+                boolean isStatic = Modifier.isStatic(method.getModifiers());
+                if (methodGetByCombinedId == null) {
+                    if (isStatic && result == classBlockState && paramCount == 1 && param[0] == int.class) {
+                        methodGetByCombinedId = method;
+                        continue;
+                    }
+                }
+            }
+            for (int i = 0; i < Character.MAX_VALUE; i++) {
+                try {
+                    BlockState state = (BlockState) methodGetByCombinedId.invoke(null, i);
+                    if (state.getType() == BlockTypes.AIR) {
+                        continue;
+                    }
+                    int id = i & 0xFFF;
+                    int data = i >> 12 & 0xF;
+                    PlotBlock plotBlock = new PlotBlock((short) id, (byte) data);
+                    stateArray[i] = state;
+                    stateMap.put(state, plotBlock);
+                } catch (Throwable e) {}
+            }
+            PS.debug("Done!");
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
     
+    public static BlockState getBlockState(int id, int data) {
+        if (stateArray == null) {
+            initBlockCache();
+        }
+        return stateArray[id + (data << 12)];
+    }
+
     public static PlotBlock getPlotBlock(BlockState state) {
-        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+        if (stateMap == null) {
+            initBlockCache();
+        }
+        return stateMap.get(state);
     }
 
     public static Location getLocation(final org.spongepowered.api.world.Location<World> block) {
@@ -165,7 +237,7 @@ public class SpongeUtil extends WorldUtil {
         if (world == last) {
             return lastWorld;
         }
-        final Optional<World> optional = SpongeMain.THIS.getServer().getWorld(world);
+        final Optional<World> optional = Sponge.getServer().getWorld(world);
         if (!optional.isPresent()) {
             return null;
         }

@@ -438,9 +438,14 @@ public class Area extends SubCommand {
                     C.NOT_VALID_PLOT_WORLD.send(plr, args[1]);
                     return false;
                 }
-                RegionWrapper region = area.getRegion();
-                Location center = new Location(area.worldname, region.minX + (region.maxX - region.minX) / 2, 0, region.minZ + (region.maxZ - region.minZ) / 2);
-                center.setY(WorldUtil.IMP.getHighestBlock(area.worldname, center.getX(), center.getZ()));
+                Location center;
+                if (area.TYPE != 2) {
+                    center = WorldUtil.IMP.getSpawn(area.worldname);
+                } else {
+                    RegionWrapper region = area.getRegion();
+                    center = new Location(area.worldname, region.minX + (region.maxX - region.minX) / 2, 0, region.minZ + (region.maxZ - region.minZ) / 2);
+                    center.setY(WorldUtil.IMP.getHighestBlock(area.worldname, center.getX(), center.getZ()));
+                }
                 plr.teleport(center);
                 return true;
             }

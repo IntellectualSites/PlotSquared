@@ -20,6 +20,15 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import org.apache.commons.lang.mutable.MutableInt;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -36,14 +45,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
-import org.apache.commons.lang.mutable.MutableInt;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 @CommandDeclaration(
         command = "rate",
@@ -83,7 +84,7 @@ public class Rate extends SubCommand {
                 });
                 final UUID uuid = player.getUUID();
                 for (final Plot p : plots) {
-                    if ((!Settings.REQUIRE_DONE || p.getFlags().containsKey("done")) && p.isBasePlot() && (p.getRatings().isEmpty() || !p.getRatings()
+                    if ((!Settings.REQUIRE_DONE || p.getFlags().containsKey("done")) && p.isBasePlot() && (p.hasRatings() || !p.getRatings()
                             .containsKey(uuid)) && !p.isAdded(uuid)) {
                         p.teleportPlayer(player);
                         MainUtil.sendMessage(player, C.RATE_THIS);
