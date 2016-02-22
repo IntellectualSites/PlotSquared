@@ -24,6 +24,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +52,36 @@ public class ReflectionUtils {
         }
     }
     
+    public static Method findMethod(Class<?> clazz, boolean isStatic, Class<?> returnType, Class... types) {
+        System.out.println("CLASS: " + clazz + " | " + isStatic + " | " + returnType + " | " + types.length);
+        loop: for (Method method : clazz.getMethods()) {
+            Class<?> result = method.getReturnType();
+            Class<?>[] param = method.getParameterTypes();
+            int paramCount = param.length;
+            boolean stc = Modifier.isStatic(method.getModifiers());
+            if (stc == isStatic && result == returnType && types.length == paramCount) {
+                for (int i = 0; i < types.length; i++) {
+                    if (types[i] != param[i]) {
+                        continue loop;
+                    }
+                }
+                method.setAccessible(true);
+                return method;
+            }
+        }
+        throw new RuntimeException("no such method");
+    }
+    
+    public static Field findField(Class<?> clazz, Class<?> fieldClass) {
+        for (Field field : clazz.getFields()) {
+            if (field.getClass() == fieldClass) {
+                field.setAccessible(true);
+                return field;
+            }
+        }
+        return null;
+    }
+
     public static <T> List<T> getStaticFields(Class clazz) {
         ArrayList<T> list = new ArrayList<T>();
         try {

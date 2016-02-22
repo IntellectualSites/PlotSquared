@@ -20,6 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.regex.Matcher;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -38,21 +48,24 @@ import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.regex.Matcher;
-
 /**
  * plot functions
  *
  */
 public class MainUtil {
+    
+    /**
+     * 
+     * @deprecated
+     * @param loc
+     * @return
+     */
+    @Deprecated
+    public static PlotId getPlotId(Location loc) {
+        PlotArea area = loc.getPlotArea();
+        return area == null ? null : area.getPlotManager().getPlotId(area, loc.getX(), loc.getY(), loc.getZ());
+    }
+
     /**
      * If the NMS code for sending chunk updates is functional<br>
      *  - E.g. If using an older version of Bukkit, or before the plugin is updated to 1.5<br>
