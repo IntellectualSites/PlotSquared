@@ -697,7 +697,7 @@ public class Plot {
             if (current.getDenied().add(uuid)) {
                 DBFunc.setDenied(current, uuid);
             }
-        };
+        }
     }
     
     /**
@@ -1575,14 +1575,24 @@ public class Plot {
     public boolean removeDenied(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (final UUID other : new HashSet<>(this.denied)) {
-                result = result || removeDenied(other);
+            for (final UUID other : getDenied()) {
+                result = result || rmvDenied(other);
             }
             return result;
         }
-        return removeDenied(uuid);
+        return rmvDenied(uuid);
     }
-    
+
+    private boolean rmvDenied(UUID uuid) {
+        for (Plot current : this.getConnectedPlots()) {
+            if (current.getDenied().remove(uuid)) {
+                DBFunc.removeDenied(current, uuid);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
     /**
      * Remove a helper (use DBFunc as well)<br>
      * Using the * uuid will remove all users
@@ -1591,14 +1601,25 @@ public class Plot {
     public boolean removeTrusted(final UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (final UUID other : new HashSet<>(this.trusted)) {
-                result = result || removeTrusted(other);
+            for (final UUID other : getTrusted()) {
+                result = result || rmvTrusted(other);
             }
             return result;
         }
-        return removeTrusted(uuid);
+        return rmvTrusted(uuid);
     }
-    
+
+    private boolean rmvTrusted(UUID uuid) {
+        for (Plot plot : this.getConnectedPlots()) {
+            if (plot.getTrusted().remove(uuid)) {
+                DBFunc.removeTrusted(plot, uuid);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Remove a trusted user (use DBFunc as well)<br>
      * Using the * uuid will remove all users
@@ -1611,13 +1632,24 @@ public class Plot {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
             for (final UUID other : new HashSet<>(this.members)) {
-                result = result || removeMember(other);
+                result = result || rmvMember(other);
             }
             return result;
         }
-        return removeMember(uuid);
+        return rmvMember(uuid);
     }
-    
+
+    private boolean rmvMember(UUID uuid) {
+        for (Plot current : this.getConnectedPlots()) {
+            if (current.getMembers().remove(uuid)) {
+                DBFunc.removeMember(current, uuid);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Export the plot as a schematic to the configured output directory
      * @return

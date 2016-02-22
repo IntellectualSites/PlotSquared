@@ -101,7 +101,8 @@ public class DefaultTitleManager {
      *            Fade out time
      * @throws ClassNotFoundException
      */
-    public DefaultTitleManager(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime) throws ClassNotFoundException {
+    public DefaultTitleManager(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime)
+            throws ClassNotFoundException {
         this.title = title;
         this.subtitle = subtitle;
         this.fadeInTime = fadeInTime;
@@ -255,21 +256,22 @@ public class DefaultTitleManager {
             final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
             final Object[] actions = packetActions.getEnumConstants();
             final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-            Object packet = packetTitle.getConstructor(packetActions, chatBaseComponent, Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(actions[2], null, fadeInTime * (ticks ? 1 : 20),
-            stayTime * (ticks ? 1 : 20), fadeOutTime * (ticks ? 1 : 20));
+            Object packet = packetTitle.getConstructor(packetActions, chatBaseComponent, Integer.TYPE, Integer.TYPE, Integer.TYPE)
+                    .newInstance(actions[2], null, fadeInTime * (ticks ? 1 : 20),
+                            stayTime * (ticks ? 1 : 20), fadeOutTime * (ticks ? 1 : 20));
             // Send if set
             if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1) {
                 sendPacket.invoke(connection, packet);
             }
             // Send title
             Object serialized = getMethod(nmsChatSerializer, "a", String.class).invoke(null,
-            "{text:\"" + ChatColor.translateAlternateColorCodes('&', title) + "\",color:" + titleColor.name().toLowerCase() + "}");
+                    "{text:\"" + ChatColor.translateAlternateColorCodes('&', title) + "\",color:" + titleColor.name().toLowerCase() + "}");
             packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[0], serialized);
             sendPacket.invoke(connection, packet);
             if (!subtitle.isEmpty()) {
                 // Send subtitle if present
                 serialized = getMethod(nmsChatSerializer, "a", String.class).invoke(null,
-                "{text:\"" + ChatColor.translateAlternateColorCodes('&', subtitle) + "\",color:" + subtitleColor.name().toLowerCase() + "}");
+                        "{text:\"" + ChatColor.translateAlternateColorCodes('&', subtitle) + "\",color:" + subtitleColor.name().toLowerCase() + "}");
                 packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[1], serialized);
                 sendPacket.invoke(connection, packet);
             }
@@ -278,7 +280,8 @@ public class DefaultTitleManager {
 
     /**
      * Broadcast the title to all players
-     * @throws Exception
+     * @throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,
+    SecurityException
      */
     public void broadcast()
             throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,

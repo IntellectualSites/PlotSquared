@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -34,6 +32,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.HashSet;
 
 @CommandDeclaration(
 command = "delete",
@@ -85,8 +85,7 @@ public class Delete extends SubCommand {
                 });
                 if (result) {
                     plot.addRunning();
-                }
-                else {
+                } else {
                     MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
                 }
             }

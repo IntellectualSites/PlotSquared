@@ -1,14 +1,13 @@
 package com.intellectualcrafters.configuration.file;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import com.intellectualcrafters.configuration.serialization.ConfigurationSerialization;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class YamlConstructor extends SafeConstructor {
     
@@ -26,7 +25,7 @@ public class YamlConstructor extends SafeConstructor {
             final Map<?, ?> raw = (Map<?, ?>) super.construct(node);
             
             if (raw.containsKey(ConfigurationSerialization.SERIALIZED_TYPE_KEY)) {
-                final Map<String, Object> typed = new LinkedHashMap<String, Object>(raw.size());
+                final Map<String, Object> typed = new LinkedHashMap<>(raw.size());
                 for (final Map.Entry<?, ?> entry : raw.entrySet()) {
                     typed.put(entry.getKey().toString(), entry.getValue());
                 }

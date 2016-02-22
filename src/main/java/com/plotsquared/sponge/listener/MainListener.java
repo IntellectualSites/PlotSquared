@@ -702,17 +702,13 @@ public class MainListener {
     
     @Listener
     public void onMove(final DisplaceEntityEvent.TargetPlayer event) {
-        final org.spongepowered.api.world.Location from = event.getFromTransform().getLocation();
-        org.spongepowered.api.world.Location to = event.getToTransform().getLocation();
+        final org.spongepowered.api.world.Location<World> from = event.getFromTransform().getLocation();
+        org.spongepowered.api.world.Location<World> to = event.getToTransform().getLocation();
         int x2;
         if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
             final Player player = event.getTargetEntity();
             final PlotPlayer pp = SpongeUtil.getPlayer(player);
             final Extent extent = to.getExtent();
-            if (!(extent instanceof World)) {
-                pp.deleteMeta("location");
-                return;
-            }
             pp.setMeta("location", SpongeUtil.getLocation(player));
             final World world = (World) extent;
             final String worldname = ((World) extent).getName();
@@ -751,18 +747,16 @@ public class MainListener {
                 }
             }
             final Integer border = plotworld.getBorder();
-            if (border != null) {
-                if (x2 > border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(border - 4, pos.getY(), pos.getZ()));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                } else if (x2 < -border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(-border + 4, pos.getY(), pos.getZ()));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                }
+            if (x2 > border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(border - 4, pos.getY(), pos.getZ()));
+                event.setToTransform(new Transform<>(to));
+                MainUtil.sendMessage(pp, C.BORDER);
+            } else if (x2 < -border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(-border + 4, pos.getY(), pos.getZ()));
+                event.setToTransform(new Transform<>(to));
+                MainUtil.sendMessage(pp, C.BORDER);
             }
             return;
         }
@@ -771,10 +765,6 @@ public class MainListener {
             final Player player = event.getTargetEntity();
             final PlotPlayer pp = SpongeUtil.getPlayer(player);
             final Extent extent = to.getExtent();
-            if (!(extent instanceof World)) {
-                pp.deleteMeta("location");
-                return;
-            }
             pp.setMeta("location", SpongeUtil.getLocation(player));
             final World world = (World) extent;
             final String worldname = ((World) extent).getName();
@@ -782,7 +772,7 @@ public class MainListener {
             if (plotworld == null) {
                 return;
             }
-            final PlotManager plotManager = PS.get().getPlotManager(PS.get().getPlot(plotworld, plotworld.getMin()));
+            final PlotManager plotManager = PS.get().getPlot(plotworld, plotworld.getMin()).getManager();
             final PlotId id = plotManager.getPlotId(plotworld, x2, 0, z2);
             final Plot lastPlot = pp.getMeta("lastplot");
             if (id == null) {
@@ -813,18 +803,16 @@ public class MainListener {
                 }
             }
             final Integer border = plotworld.getBorder();
-            if (border != null) {
-                if (z2 > border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), border - 4));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                } else if (z2 < -border) {
-                    final Vector3d pos = to.getPosition();
-                    to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), -border + 4));
-                    event.setToTransform(new Transform(to));
-                    MainUtil.sendMessage(pp, C.BORDER);
-                }
+            if (z2 > border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), border - 4));
+                event.setToTransform(new Transform<>(to));
+                MainUtil.sendMessage(pp, C.BORDER);
+            } else if (z2 < -border) {
+                final Vector3d pos = to.getPosition();
+                to = to.setPosition(new Vector3d(pos.getX(), pos.getY(), -border + 4));
+                event.setToTransform(new Transform<>(to));
+                MainUtil.sendMessage(pp, C.BORDER);
             }
         }
     }

@@ -14,9 +14,7 @@ import com.sk89q.worldedit.command.tool.Tool;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
-import com.sk89q.worldedit.extent.AbstractDelegateExtent;
-import com.sk89q.worldedit.extent.ChangeSetExtent;
-import com.sk89q.worldedit.extent.MaskingExtent;
+import com.sk89q.worldedit.extent.*;
 import com.sk89q.worldedit.extent.reorder.MultiStageReorder;
 import com.sk89q.worldedit.extent.world.FastModeExtent;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
@@ -50,7 +48,7 @@ public class WESubscriber {
                     MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
                 }
                 if (PS.get().hasPlotArea(world)) {
-                    event.setExtent(new NullExtent());
+                    event.setExtent(new com.sk89q.worldedit.extent.NullExtent());
                 }
                 return;
             }
@@ -99,22 +97,20 @@ public class WESubscriber {
                             final ExtentWrapper wrapper = new ExtentWrapper(event.getExtent());
                             event.setExtent(wrapper);
                             field.set(extent, new ProcessedWEExtent(world, mask, max, new FastModeExtent(worldObj, true), wrapper));
+                        } else if (fast) {
+                            event.setExtent(new ExtentWrapper(extent));
                         } else {
-                            if (fast) {
-                                event.setExtent(new ExtentWrapper(extent));
+                            ExtentWrapper wrapper;
+                            if (maskextent != null) {
+                                wrapper = new ExtentWrapper(maskextent);
+                                field.set(maskextent, history);
+                                event.setExtent(wrapper);
                             } else {
-                                ExtentWrapper wrapper;
-                                if (maskextent != null) {
-                                    wrapper = new ExtentWrapper(maskextent);
-                                    field.set(maskextent, history);
-                                    event.setExtent(wrapper);
-                                } else {
-                                    wrapper = new ExtentWrapper(history);
-                                    event.setExtent(wrapper);
-                                }
-                                field.set(history, reorder);
-                                field.set(reorder, new ProcessedWEExtent(world, mask, max, new FastModeExtent(worldObj, true), wrapper));
+                                wrapper = new ExtentWrapper(history);
+                                event.setExtent(wrapper);
                             }
+                            field.set(history, reorder);
+                            field.set(reorder, new ProcessedWEExtent(world, mask, max, new FastModeExtent(worldObj, true), wrapper));
                         }
                         return;
                     } catch (IllegalAccessException | SecurityException | NoSuchFieldException | IllegalArgumentException e) {

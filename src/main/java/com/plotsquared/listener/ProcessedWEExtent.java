@@ -1,8 +1,5 @@
 package com.plotsquared.listener;
 
-import java.lang.reflect.Field;
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -14,10 +11,12 @@ import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
-import com.sk89q.worldedit.extent.AbstractDelegateExtent;
-import com.sk89q.worldedit.extent.Extent;
+import com.sk89q.worldedit.extent.*;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
+
+import java.lang.reflect.Field;
+import java.util.HashSet;
 
 public class ProcessedWEExtent extends AbstractDelegateExtent {
     private final HashSet<RegionWrapper> mask;
@@ -95,7 +94,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                             try {
                                 final Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
                                 field.setAccessible(true);
-                                field.set(parent, new NullExtent());
+                                field.set(parent, new com.sk89q.worldedit.extent.NullExtent());
                             } catch (final Exception e) {
                                 e.printStackTrace();
                             }
@@ -117,7 +116,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                             try {
                                 final Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
                                 field.setAccessible(true);
-                                field.set(parent, new NullExtent());
+                                field.set(parent, new com.sk89q.worldedit.extent.NullExtent());
                             } catch (final Exception e) {
                                 e.printStackTrace();
                             }

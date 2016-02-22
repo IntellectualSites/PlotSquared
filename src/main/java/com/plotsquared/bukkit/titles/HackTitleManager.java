@@ -1,13 +1,14 @@
 package com.plotsquared.bukkit.titles;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Minecraft 1.8 Title
@@ -33,7 +34,7 @@ public class HackTitleManager {
     private int stayTime = -1;
     private int fadeOutTime = -1;
     private boolean ticks = false;
-    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
     
     /**
      * Create a new 1.8 title
@@ -244,7 +245,7 @@ public class HackTitleManager {
             "{text:\"" + ChatColor.translateAlternateColorCodes('&', title) + "\",color:" + titleColor.name().toLowerCase() + "}");
             packet = packetTitle.getConstructor(packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[0], serialized);
             sendPacket.invoke(connection, packet);
-            if (subtitle != "") {
+            if (!subtitle.isEmpty()) {
                 // Send subtitle if present
                 serialized = getMethod(nmsChatSerializer, "a", String.class).invoke(null,
                 "{text:\"" + ChatColor.translateAlternateColorCodes('&', subtitle) + "\",color:" + subtitleColor.name().toLowerCase() + "}");
@@ -313,8 +314,7 @@ public class HackTitleManager {
         final Object handle = getHandle(player);
         final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
         final Object networkManager = getValue("networkManager", connection);
-        final Integer version = (Integer) getMethod("getVersion", networkManager.getClass()).invoke(networkManager);
-        return version;
+        return (Integer) getMethod("getVersion", networkManager.getClass()).invoke(networkManager);
     }
     
     /**
@@ -336,7 +336,8 @@ public class HackTitleManager {
     private Class<?> getClass(final String namespace) {
         try {
             return Class.forName(namespace);
-        } catch (final Exception e) {}
+        } catch (ClassNotFoundException e) {
+        }
         return null;
     }
     
@@ -378,7 +379,7 @@ public class HackTitleManager {
     private Object getHandle(final Object obj) {
         try {
             return getMethod("getHandle", obj.getClass()).invoke(obj);
-        } catch (final Exception e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         }
@@ -397,15 +398,12 @@ public class HackTitleManager {
     
     private String getVersion() {
         final String name = Bukkit.getServer().getClass().getPackage().getName();
-        final String version = name.substring(name.lastIndexOf('.') + 1) + ".";
-        return version;
+        return name.substring(name.lastIndexOf('.') + 1) + ".";
     }
     
     private Class<?> getNMSClass(final String className) throws ClassNotFoundException {
         final String fullName = "net.minecraft.server." + getVersion() + className;
-        Class<?> clazz = null;
-        clazz = Class.forName(fullName);
-        return clazz;
+        return Class.forName(fullName);
     }
     
     private Field getField(final Class<?> clazz, final String name) {
@@ -413,7 +411,7 @@ public class HackTitleManager {
             final Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
             return field;
-        } catch (final Exception e) {
+        } catch (SecurityException | NoSuchFieldException e) {
             e.printStackTrace();
             return null;
         }
@@ -430,10 +428,10 @@ public class HackTitleManager {
     }
     
     private boolean ClassListEqual(final Class<?>[] l1, final Class<?>[] l2) {
-        boolean equal = true;
         if (l1.length != l2.length) {
             return false;
         }
+        boolean equal = true;
         for (int i = 0; i < l1.length; i++) {
             if (l1[i] != l2[i]) {
                 equal = false;

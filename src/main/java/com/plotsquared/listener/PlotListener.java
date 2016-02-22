@@ -20,10 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.listener;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
@@ -44,6 +40,10 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 /**
 
 
@@ -54,7 +54,7 @@ public class PlotListener {
         if (plot.isDenied(pp.getUUID()) && !Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
             return false;
         }
-        final Plot last = (Plot) pp.getMeta("lastplot");
+        final Plot last = pp.getMeta("lastplot");
         if ((last != null) && !last.getId().equals(plot.getId())) {
             plotExit(pp, last);
         }
@@ -83,11 +83,8 @@ public class PlotListener {
                 } else {
                     greeting = "";
                 }
-                if (greeting != null) {
-                    
-                }
                 final Flag enter = flags.get("notify-enter");
-                if ((enter != null) && ((Boolean) enter.getValue())) {
+                if (enter != null && (Boolean) enter.getValue()) {
                     if (!Permissions.hasPermission(pp, "plots.flag.notify-enter.bypass")) {
                         for (final UUID uuid : plot.getOwners()) {
                             final PlotPlayer owner = UUIDHandler.getPlayer(uuid);
@@ -128,9 +125,9 @@ public class PlotListener {
                 final Flag musicFlag = flags.get("music");
                 if (musicFlag != null) {
                     final Integer id = (Integer) musicFlag.getValue();
-                    if (((id >= 2256) && (id <= 2267)) || (id == 0)) {
+                    if ((id >= 2256 && id <= 2267) || (id == 0)) {
                         final Location loc = pp.getLocation();
-                        final Location lastLoc = (Location) pp.getMeta("music");
+                        final Location lastLoc = pp.getMeta("music");
                         if (lastLoc != null) {
                             pp.playMusic(lastLoc, 0);
                             if (id == 0) {
@@ -145,7 +142,7 @@ public class PlotListener {
                         }
                     }
                 } else {
-                    final Location lastLoc = (Location) pp.getMeta("music");
+                    final Location lastLoc = pp.getMeta("music");
                     if (lastLoc != null) {
                         pp.deleteMeta("music");
                         pp.playMusic(lastLoc, 0);
@@ -162,7 +159,7 @@ public class PlotListener {
                     TaskManager.runTaskLaterAsync(new Runnable() {
                         @Override
                         public void run() {
-                            final Plot lastPlot = (Plot) pp.getMeta("lastplot");
+                            final Plot lastPlot = pp.getMeta("lastplot");
                             if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
                                 final Map<String, String> replacements = new HashMap<>();
                                 replacements.put("%x%", lastPlot.getId().x + "");
@@ -223,7 +220,7 @@ public class PlotListener {
             }
             if (FlagManager.getPlotFlagRaw(plot, "fly") != null) {
                 final PlotGamemode gamemode = pp.getGamemode();
-                if ((gamemode == PlotGamemode.SURVIVAL) || (gamemode == PlotGamemode.ADVENTURE)) {
+                if (gamemode == PlotGamemode.SURVIVAL || (gamemode == PlotGamemode.ADVENTURE)) {
                     pp.setFlight(false);
                 }
             }
@@ -233,7 +230,7 @@ public class PlotListener {
             if (FlagManager.getPlotFlagRaw(plot, "weather") != null) {
                 pp.setWeather(PlotWeather.RESET);
             }
-            final Location lastLoc = (Location) pp.getMeta("music");
+            final Location lastLoc = pp.getMeta("music");
             if (lastLoc != null) {
                 pp.deleteMeta("music");
                 pp.playMusic(lastLoc, 0);

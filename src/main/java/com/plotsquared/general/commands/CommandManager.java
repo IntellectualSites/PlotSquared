@@ -1,14 +1,14 @@
 package com.plotsquared.general.commands;
 
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.util.Permissions;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.util.Permissions;
 
 public class CommandManager<T extends CommandCaller> {
     
@@ -98,8 +98,7 @@ public class CommandManager<T extends CommandCaller> {
             args = new String[parts.length - 1];
             System.arraycopy(parts, 1, args, 0, args.length);
         }
-        Command<T> cmd = null;
-        cmd = commands.get(command);
+        Command<T> cmd = commands.get(command);
         if (cmd == null) {
             return CommandHandlingOutput.NOT_FOUND;
         }

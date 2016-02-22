@@ -58,7 +58,7 @@ public class Load extends SubCommand {
         
         if (args.length != 0) {
             if (args.length == 1) {
-                final List<String> schematics = (List<String>) plr.getMeta("plot_schematics");
+                final List<String> schematics = plr.getMeta("plot_schematics");
                 if (schematics == null) {
                     // No schematics found:
                     MainUtil.sendMessage(plr, C.LOAD_NULL);
@@ -113,7 +113,7 @@ public class Load extends SubCommand {
         
         // list schematics
         
-        final List<String> schematics = (List<String>) plr.getMeta("plot_schematics");
+        final List<String> schematics = plr.getMeta("plot_schematics");
         if (schematics == null) {
             plot.addRunning();
             TaskManager.runTaskAsync(new Runnable() {
@@ -136,7 +136,7 @@ public class Load extends SubCommand {
     }
     
     public void displaySaves(final PlotPlayer player, final int page) {
-        final List<String> schematics = (List<String>) player.getMeta("plot_schematics");
+        final List<String> schematics = player.getMeta("plot_schematics");
         for (int i = 0; i < Math.min(schematics.size(), 32); i++) {
             try {
                 final String schem = schematics.get(i);
@@ -165,33 +165,28 @@ public class Load extends SubCommand {
     
     public String secToTime(long time) {
         final StringBuilder toreturn = new StringBuilder();
-        int years = 0;
-        int weeks = 0;
-        int days = 0;
-        int hours = 0;
-        int minutes = 0;
         if (time >= 33868800) {
-            years = (int) (time / 33868800);
+            int years = (int) (time / 33868800);
             time -= years * 33868800;
             toreturn.append(years + "y ");
         }
         if (time >= 604800) {
-            weeks = (int) (time / 604800);
+            int weeks = (int) (time / 604800);
             time -= weeks * 604800;
             toreturn.append(weeks + "w ");
         }
         if (time >= 86400) {
-            days = (int) (time / 86400);
+            int days = (int) (time / 86400);
             time -= days * 86400;
             toreturn.append(days + "d ");
         }
         if (time >= 3600) {
-            hours = (int) (time / 3600);
+            int hours = (int) (time / 3600);
             time -= hours * 3600;
             toreturn.append(hours + "h ");
         }
         if (time >= 60) {
-            minutes = (int) (time / 60);
+            int minutes = (int) (time / 60);
             time -= minutes * 60;
             toreturn.append(minutes + "m ");
         }

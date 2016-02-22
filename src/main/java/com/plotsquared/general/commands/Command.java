@@ -17,7 +17,7 @@ public abstract class Command<E extends CommandCaller> extends CommandManager {
     private Set<String> aliases = new HashSet<>();
     private CommandCategory category;
     private int hash;
-    
+
     public Command() {
         super(null, new ArrayList<Command>());
     }
