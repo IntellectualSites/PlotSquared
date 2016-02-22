@@ -2,7 +2,6 @@ package com.plotsquared.sponge.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -143,31 +142,14 @@ public class SpongeUtil extends WorldUtil {
             PS.debug("Caching block id/data: Please wait...");
             stateArray = new BlockState[Character.MAX_VALUE];
             stateMap = new HashMap<>();
-            Class<?> classBlock = Class.forName("net.minecraft.block.Block");
-            Class<?> classBlockState = Class.forName("net.minecraft.block.state.IBlockState");
-            Method[] blockMethods = classBlock.getDeclaredMethods();
-            Method methodGetByCombinedId = null;
-            for (Method method : blockMethods) {
-                Class<?> result = method.getReturnType();
-                Class<?>[] param = method.getParameterTypes();
-                int paramCount = param.length;
-                boolean isStatic = Modifier.isStatic(method.getModifiers());
-                if (methodGetByCombinedId == null) {
-                    if (isStatic && result == classBlockState && paramCount == 1 && param[0] == int.class) {
-                        methodGetByCombinedId = method;
-                        continue;
-                    }
-                }
-            }
+            Method methodGetByCombinedId = ReflectionUtils.findMethod(Class.forName("net.minecraft.block.Block"), true, Class.forName("net.minecraft.block.state.IBlockState"), int.class);
             for (int i = 0; i < Character.MAX_VALUE; i++) {
                 try {
                     BlockState state = (BlockState) methodGetByCombinedId.invoke(null, i);
                     if (state.getType() == BlockTypes.AIR) {
                         continue;
                     }
-                    int id = i & 0xFFF;
-                    int data = i >> 12 & 0xF;
-                    PlotBlock plotBlock = new PlotBlock((short) id, (byte) data);
+                    PlotBlock plotBlock = new PlotBlock((short) (i & 0xFFF), (byte) (i >> 12 & 0xF));
                     stateArray[i] = state;
                     stateMap.put(state, plotBlock);
                 } catch (Throwable e) {}
