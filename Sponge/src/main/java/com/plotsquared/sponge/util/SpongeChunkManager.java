@@ -1,10 +1,15 @@
 package com.plotsquared.sponge.util;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.animal.Animal;
@@ -22,9 +27,7 @@ public class SpongeChunkManager extends ChunkManager {
     public int[] countEntities(final Plot plot) {
         final Location pos1 = plot.getBottomAbs();
         final Location pos2 = plot.getTopAbs();
-        
-        final String worldname = pos1.getWorld();
-        final World world = SpongeUtil.getWorld(worldname);
+        final World world = SpongeUtil.getWorld(pos1.getWorld());
         final int bx = pos1.getX();
         final int bz = pos1.getZ();
         final int tx = pos2.getX();
@@ -69,12 +72,37 @@ public class SpongeChunkManager extends ChunkManager {
     
     @Override
     public void regenerateChunk(final String world, final ChunkLoc loc) {
-        final World worldObj = SpongeUtil.getWorld(world);
-        final Optional<Chunk> chunkOpt = worldObj.getChunk(loc.x << 4, 0, loc.z << 4);
+        final World spongeWorld = SpongeUtil.getWorld(world);
+        final net.minecraft.world.World nmsWorld = (net.minecraft.world.World) spongeWorld;
+        final Optional<Chunk> chunkOpt = spongeWorld.getChunk(loc.x, 0, loc.z);
         if (chunkOpt.isPresent()) {
-            Chunk chunk = chunkOpt.get();
-            // TODO FIXME
-            throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+            try {
+                Chunk spongeChunk = chunkOpt.get();
+                IChunkProvider provider = nmsWorld.getChunkProvider();
+                if (!(provider instanceof ChunkProviderServer)) {
+                    PS.debug("Not valid world generator for: " + world);
+                    return;
+                }
+                ChunkProviderServer chunkProvider = (ChunkProviderServer) provider;
+                long pos = loc.x & 4294967295L | (loc.z & 4294967295L) << 32;
+                net.minecraft.world.chunk.Chunk mcChunk = (net.minecraft.world.chunk.Chunk) spongeChunk;
+                if (provider.chunkExists(loc.x, loc.z)) {
+                    mcChunk = chunkProvider.loadChunk(loc.x, loc.z);
+                    mcChunk.onChunkUnload();
+                }
+                Set<Long> set = (Set<Long>) chunkProvider.getClass().getDeclaredField("droppedChunksSet").get(chunkProvider);
+                set.remove(pos);
+                chunkProvider.id2ChunkMap.remove(pos);
+                mcChunk = provider.provideChunk(loc.x, loc.z);
+                chunkProvider.id2ChunkMap.add(pos, mcChunk);
+                chunkProvider.loadedChunks.add(mcChunk);
+                if (mcChunk != null) {
+                    mcChunk.onChunkLoad();
+                    mcChunk.populateChunk(chunkProvider, chunkProvider, loc.x, loc.z);
+                }
+            } catch (Throwable e){
+                e.printStackTrace();
+            }
         }
     }
     
