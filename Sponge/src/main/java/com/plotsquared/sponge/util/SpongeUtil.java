@@ -1,32 +1,5 @@
 package com.plotsquared.sponge.util;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.block.tileentity.Sign;
-import org.spongepowered.api.block.tileentity.TileEntity;
-import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
-import org.spongepowered.api.data.value.mutable.ListValue;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.translation.Translatable;
-import org.spongepowered.api.text.translation.Translation;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.biome.BiomeType;
-import org.spongepowered.api.world.biome.BiomeTypes;
-import org.spongepowered.api.world.extent.Extent;
-
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.PS;
@@ -43,6 +16,36 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
+import net.minecraft.block.Block;
+import net.minecraft.world.biome.BiomeGenBase;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.Sign;
+import org.spongepowered.api.block.tileentity.TileEntity;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
+import org.spongepowered.api.data.property.block.SolidCubeProperty;
+import org.spongepowered.api.data.value.mutable.ListValue;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.translation.Translatable;
+import org.spongepowered.api.text.translation.Translation;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.biome.BiomeType;
+import org.spongepowered.api.world.biome.BiomeTypes;
+import org.spongepowered.api.world.extent.Extent;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 public class SpongeUtil extends WorldUtil {
     
@@ -92,23 +95,16 @@ public class SpongeUtil extends WorldUtil {
                 biomeMap.put(name, i);
                 biomes[i] = (BiomeType) field.get(null);
             }
-            
+
         } catch (IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
     public static BiomeType getBiome(int index) {
-        if (biomes == null) {
-            initBiomeCache();
-        }
-        return biomes[index];
+        return (BiomeType) BiomeGenBase.getBiome(index);
     }
-    
-    public static Text text(String m) {
-        return Text.of(m);
-    }
-    
+
     public static Translation getTranslation(final String m) {
         return new Translatable() {
             @Override
@@ -161,10 +157,7 @@ public class SpongeUtil extends WorldUtil {
     }
     
     public static BlockState getBlockState(int id, int data) {
-        if (stateArray == null) {
-            initBlockCache();
-        }
-        return stateArray[id + (data << 12)];
+        return (BlockState) Block.getBlockById(id).getStateFromMeta(data);
     }
 
     public static PlotBlock getPlotBlock(BlockState state) {
@@ -213,10 +206,9 @@ public class SpongeUtil extends WorldUtil {
     }
     
     private static World lastWorld;
-    private static String last;
-    
+
     public static World getWorld(final String world) {
-        if (world == last) {
+        if (world.equals(lastWorld.getName())) {
             return lastWorld;
         }
         final Optional<World> optional = Sponge.getServer().getWorld(world);
@@ -238,12 +230,11 @@ public class SpongeUtil extends WorldUtil {
     public static String getWorldName(final org.spongepowered.api.world.Location origin) {
         final Extent extent = origin.getExtent();
         if (extent == lastWorld) {
-            return last;
+            return lastWorld.getName();
         }
         if (extent instanceof World) {
             lastWorld = (World) extent;
-            last = ((World) extent).getName();
-            return last;
+            return lastWorld.getName();
         }
         return null;
     }
@@ -267,15 +258,18 @@ public class SpongeUtil extends WorldUtil {
     @Override
     public boolean isBlockSolid(final PlotBlock block) {
         final BlockState state = SpongeUtil.getBlockState(block.id, block.data);
-        final BlockType type = state.getType();
-        // TODO check if solid;
-        return true;
+        Optional<SolidCubeProperty> property = state.getType().getProperty(SolidCubeProperty.class);
+        if (property.isPresent()) {
+            return property.get().getValue();
+        } else {
+            return false;
+        }
     }
     
     @Override
     public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
-            
+
             double match;
             short id;
             byte data;
@@ -290,21 +284,23 @@ public class SpongeUtil extends WorldUtil {
                 id = Short.parseShort(split[0]);
                 match = 0;
             } else {
-                List<BlockType> types = ReflectionUtils.<BlockType> getStaticFields(BlockTypes.class);
-                final StringComparison<BlockType>.ComparisonResult comparison = new StringComparison<BlockType>(name, types.toArray(new BlockType[types.size()])) {
-                    @Override
-                    public String getString(final BlockType type) {
-                        return type.getId();
-                    };
-                }.getBestMatchAdvanced();
+                List<BlockType> types = ReflectionUtils.<BlockType>getStaticFields(BlockTypes.class);
+                final StringComparison<BlockType>.ComparisonResult comparison =
+                        new StringComparison<BlockType>(name, types.toArray(new BlockType[types.size()])) {
+                            @Override
+                            public String getString(final BlockType type) {
+                                return type.getId();
+                            }
+                        }.getBestMatchAdvanced();
                 match = comparison.match;
                 id = SpongeUtil.getPlotBlock(comparison.best.getDefaultState()).id;
             }
             final PlotBlock block = new PlotBlock(id, data);
             final StringComparison<PlotBlock> outer = new StringComparison<PlotBlock>();
             return outer.new ComparisonResult(match, block);
-            
-        } catch (final Exception e) {}
+
+        } catch (NumberFormatException e) {
+        }
         return null;
     }
     
@@ -368,7 +364,7 @@ public class SpongeUtil extends WorldUtil {
             return null;
         }
         final Sign sign = (Sign) tile;
-        final Optional<SignData> optional = sign.getOrCreate(SignData.class);
+        final Optional<SignData> optional = sign.get(SignData.class);
         if (!optional.isPresent()) {
             return null;
         }
@@ -398,7 +394,7 @@ public class SpongeUtil extends WorldUtil {
         }
         for (int y = 255; y > 0; y--) {
             final BlockState block = world.getBlock(x, y, z);
-            if ((block != null) && (block.getType() != BlockTypes.AIR)) {
+            if (block.getType() != BlockTypes.AIR) {
                 return y + 1;
             }
         }
@@ -422,19 +418,7 @@ public class SpongeUtil extends WorldUtil {
         for (int i = 0; i < 4; i++) {
             text.add(Text.of(lines[i]));
         }
-        try {
-            final Optional<SignData> optional = sign.getOrCreate(SignData.class);
-            if (optional.isPresent()) {
-                final SignData offering = optional.get();
-                offering.lines().set(0, Text.of(lines[0]));
-                offering.lines().set(1, Text.of(lines[1]));
-                offering.lines().set(2, Text.of(lines[2]));
-                offering.lines().set(3, Text.of(lines[3]));
-                sign.offer(offering);
-            }
-        } catch (final NullPointerException e) {
-            e.printStackTrace();
-        }
+        sign.offer(Keys.SIGN_LINES, text);
     }
     
     @Override

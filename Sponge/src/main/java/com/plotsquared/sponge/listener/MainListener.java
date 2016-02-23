@@ -1,15 +1,31 @@
 package com.plotsquared.sponge.listener;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
-
+import com.flowpowered.math.vector.Vector3d;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.plotsquared.listener.PlotListener;
+import com.plotsquared.sponge.SpongeMain;
+import com.plotsquared.sponge.object.SpongePlayer;
+import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Transaction;
@@ -42,32 +58,15 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
 
-import com.flowpowered.math.vector.Vector3d;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.listener.PlotListener;
-import com.plotsquared.sponge.SpongeMain;
-import com.plotsquared.sponge.object.SpongePlayer;
-import com.plotsquared.sponge.util.SpongeUtil;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 public class MainListener {
     
@@ -107,7 +106,7 @@ public class MainListener {
                 if (Settings.USE_PLOTME_ALIAS) {
                     SpongeMain.THIS.getGame().getCommandManager().process(source, ("plots " + event.getArguments()).trim());
                 } else {
-                    source.sendMessage(SpongeUtil.text(C.NOT_USING_PLOTME.s()));
+                    source.sendMessage(Text.of(C.NOT_USING_PLOTME.s()));
                 }
                 event.setCancelled(true);
             }
@@ -655,9 +654,6 @@ public class MainListener {
     @Listener
     public void onConnect(final ClientConnectionEvent.Login event) {
         GameProfile profile = event.getProfile();
-        if (profile == null) {
-            return;
-        }
         if (profile.getName().equals("PlotSquared") || profile.getUniqueId().equals(DBFunc.everyone) || DBFunc.everyone.equals(UUIDHandler.getUUID(profile.getName(), null))) {
             event.setCancelled(true);
         }
