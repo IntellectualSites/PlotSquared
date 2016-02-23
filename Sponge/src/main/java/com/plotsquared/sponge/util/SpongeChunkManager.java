@@ -1,9 +1,10 @@
 package com.plotsquared.sponge.util;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.TaskManager;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.animal.Animal;
@@ -11,11 +12,9 @@ import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.TaskManager;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class SpongeChunkManager extends ChunkManager {
     
@@ -31,29 +30,26 @@ public class SpongeChunkManager extends ChunkManager {
         final int tx = pos2.getX();
         final int tz = pos2.getZ();
         final int[] count = new int[6];
-        world.getEntities(new Predicate<Entity>() {
-            @Override
-            public boolean test(final Entity entity) {
-                final org.spongepowered.api.world.Location loc = entity.getLocation();
-                final int x = loc.getBlockX();
-                if ((x >= bx) && (x <= tx)) {
-                    final int z = loc.getBlockZ();
-                    if ((z >= bz) && (z <= tz)) {
-                        count[0]++;
-                        if (entity instanceof Living) {
-                            count[3]++;
-                            if (entity instanceof Animal) {
-                                count[1]++;
-                            } else if (entity instanceof Monster) {
-                                count[2]++;
-                            }
-                        } else {
-                            count[4]++;
+        world.getEntities(entity -> {
+            final org.spongepowered.api.world.Location loc = entity.getLocation();
+            final int x = loc.getBlockX();
+            if ((x >= bx) && (x <= tx)) {
+                final int z = loc.getBlockZ();
+                if ((z >= bz) && (z <= tz)) {
+                    count[0]++;
+                    if (entity instanceof Living) {
+                        count[3]++;
+                        if (entity instanceof Animal) {
+                            count[1]++;
+                        } else if (entity instanceof Monster) {
+                            count[2]++;
                         }
+                    } else {
+                        count[4]++;
                     }
                 }
-                return false;
             }
+            return false;
         });
         
         return count;
