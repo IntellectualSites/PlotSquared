@@ -3,6 +3,9 @@
 *.cmd
 *.sh
 *.prefs
+Sponge/build
+Core/build
+Bukkit/build
 
 ### Maven ###
 /target/lib
@@ -59,6 +62,7 @@ hs_err_pid*
 # Gradle:
 # .idea/gradle.xml
 # .idea/libraries
+.gradle
 
 # Mongo Explorer plugin:
 # .idea/mongoSettings.xml
