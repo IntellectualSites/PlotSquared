@@ -1,0 +1,4 @@
+rootProject.name = 'PlotSquared'
+
+include 'Core', 'Bukkit', 'Sponge'
+
