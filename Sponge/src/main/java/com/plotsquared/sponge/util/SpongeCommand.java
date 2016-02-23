@@ -3,6 +3,9 @@ package com.plotsquared.sponge.util;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.plotsquared.general.commands.Command;
 import com.plotsquared.sponge.SpongeMain;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -11,11 +14,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class SpongeCommand implements CommandCallable {
     
@@ -38,10 +37,43 @@ public class SpongeCommand implements CommandCallable {
     }
     
     @Override
-    public List<String> getSuggestions(final CommandSource cmd, final String string) throws CommandException {
-        // TODO Auto-generated method stub
-        return new ArrayList<>(Collections.singletonList("TEST"));
-    }
+    public List<String> getSuggestions(final CommandSource source, final String string) throws CommandException {
+        if (!(source instanceof Player)) {
+            return null;
+        }
+        final PlotPlayer player = SpongeUtil.getPlayer((Player) source);
+        String[] split = string.split(" ");
+        if (split.length < 2) {
+            return Collections.singletonList("plots");
+        }
+        if (split.length > 2) {
+            return null;
+        }
+        final Set<String> tabOptions = new HashSet<>();
+        final String arg = split[1].toLowerCase();
+        ArrayList<String> labels = new ArrayList<>();
+        for (final Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands()) {
+            final String label = cmd.getCommand();
+            HashSet<String> aliases = new HashSet<>(cmd.getAliases());
+            aliases.add(label);
+            for (String alias : aliases) {
+                labels.add(alias);
+                if (alias.startsWith(arg)) {
+                    if (Permissions.hasPermission(player, cmd.getPermission())) {
+                        tabOptions.add(label);
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        String best = new StringComparison<>(arg, labels).getBestMatch();
+        tabOptions.add(best);
+        if (!tabOptions.isEmpty()) {
+            return new ArrayList<>(tabOptions);
+        }
+        return null;
+}
     
     @Override
     public boolean testPermission(final CommandSource cmd) {

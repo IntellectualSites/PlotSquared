@@ -206,16 +206,19 @@ public class SpongeUtil extends WorldUtil {
     }
     
     private static World lastWorld;
+    private static String last;
 
     public static World getWorld(final String world) {
-        if (world.equals(lastWorld.getName())) {
+        if (StringMan.isEqual(world, last)) {
             return lastWorld;
         }
         final Optional<World> optional = Sponge.getServer().getWorld(world);
         if (!optional.isPresent()) {
-            return null;
+            last = null;
+            return lastWorld = null;
         }
-        return optional.get();
+        last = world;
+        return lastWorld = optional.get();
     }
     
     public static void removePlayer(final String player) {

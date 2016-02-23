@@ -74,7 +74,7 @@ public class ReflectionUtils {
     
     public static Field findField(Class<?> clazz, Class<?> fieldClass) {
         for (Field field : clazz.getFields()) {
-            if (field.getClass() == fieldClass) {
+            if (fieldClass == field.getType() || fieldClass.isAssignableFrom(field.getType())) {
                 field.setAccessible(true);
                 return field;
             }

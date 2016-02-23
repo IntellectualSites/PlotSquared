@@ -69,7 +69,7 @@ public class SpongeChunkManager extends ChunkManager {
         // TODO save world;
         return super.getChunkChunks(world);
     }
-    
+
     @Override
     public void regenerateChunk(final String world, final ChunkLoc loc) {
         final World spongeWorld = SpongeUtil.getWorld(world);
@@ -83,22 +83,31 @@ public class SpongeChunkManager extends ChunkManager {
                     PS.debug("Not valid world generator for: " + world);
                     return;
                 }
-                ChunkProviderServer chunkProvider = (ChunkProviderServer) provider;
-                long pos = loc.x & 4294967295L | (loc.z & 4294967295L) << 32;
+
+                ChunkProviderServer chunkServer = (ChunkProviderServer) provider;
+                IChunkProvider chunkProvider = chunkServer.serverChunkGenerator;
+
+                long pos = ChunkCoordIntPair.chunkXZ2Int(loc.x, loc.z);
+                System.out.println((loc.x & 4294967295L | (loc.z & 4294967295L) << 32) + ":" + pos);
                 net.minecraft.world.chunk.Chunk mcChunk = (net.minecraft.world.chunk.Chunk) spongeChunk;
-                if (provider.chunkExists(loc.x, loc.z)) {
-                    mcChunk = chunkProvider.loadChunk(loc.x, loc.z);
+                if (chunkServer.chunkExists(loc.x, loc.z)) {
+                    mcChunk = chunkServer.loadChunk(loc.x, loc.z);
                     mcChunk.onChunkUnload();
                 }
-                Set<Long> set = (Set<Long>) chunkProvider.getClass().getDeclaredField("droppedChunksSet").get(chunkProvider);
+//                Set<Long> set = (Set<Long>) chunkProvider.getClass().getDeclaredField("droppedChunksSet").get(chunkProvider);
+                Set<Long> set = (Set<Long>) ReflectionUtils.findField(chunkServer.getClass(), Set.class).get(chunkServer);
                 set.remove(pos);
-                chunkProvider.id2ChunkMap.remove(pos);
-                mcChunk = provider.provideChunk(loc.x, loc.z);
-                chunkProvider.id2ChunkMap.add(pos, mcChunk);
-                chunkProvider.loadedChunks.add(mcChunk);
+                chunkServer.id2ChunkMap.remove(pos);
+                mcChunk = chunkProvider.provideChunk(loc.x, loc.z);
+                chunkServer.id2ChunkMap.add(pos, mcChunk);
+                chunkServer.loadedChunks.add(mcChunk);
                 if (mcChunk != null) {
                     mcChunk.onChunkLoad();
                     mcChunk.populateChunk(chunkProvider, chunkProvider, loc.x, loc.z);
+                    System.out.println("WORKED?");
+                }
+                else {
+                    PS.debug("CHUNK IS NULL!?");
                 }
             } catch (Throwable e){
                 e.printStackTrace();
