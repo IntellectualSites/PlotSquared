@@ -34,8 +34,6 @@ repositories {
     }
 }
 
-version = "3.2.27"
-
 minecraft {
     version = "1.8.9-11.15.1.1742"
     mappings = "snapshot_20160204"

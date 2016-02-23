@@ -9,7 +9,7 @@ buildscript {
     }
 }
 group = 'com.intellectualcrafters'
-version = '3.2.27'
+version = '3.3.0'
 
 description = """PlotSquared"""
 
