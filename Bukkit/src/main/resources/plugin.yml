@@ -1,6 +1,6 @@
-name: $name
+name: PlotSquared
 main: com.plotsquared.bukkit.BukkitMain
-version: $version
+version: 3.3.0
 load: STARTUP
 description: >
              Easy, yet powerful Plot World generation and management.
