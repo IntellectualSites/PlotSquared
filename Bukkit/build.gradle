@@ -7,16 +7,6 @@ dependencies {
     compile 'net.milkbowl.vault:VaultAPI:1.5'
 }
 
-processResources {
-    from('src/main/resources') {
-        include 'plugin.yml'
-        expand(
-                name: project.parent.name,
-                version: project.parent.version
-        )
-    }
-}
-
 shadowJar {
     dependencies {
         include(dependency(':Core'))
