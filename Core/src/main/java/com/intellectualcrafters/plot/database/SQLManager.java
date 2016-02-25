@@ -2998,7 +2998,6 @@ public class SQLManager implements AbstractDB {
             if (!map.isEmpty()) {
                 for (final Entry<PlotId, Plot> entry2 : map.entrySet()) {
                     Plot plot = entry2.getValue();
-                    System.out.println("Plot: " + plot + " | " + worldname);
                     PS.debug("$1Plot was deleted: " + entry2.getValue() + "// TODO implement this when sure safe");
                 }
             }

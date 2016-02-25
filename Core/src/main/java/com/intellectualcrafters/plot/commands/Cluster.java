@@ -20,28 +20,20 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "cluster",
@@ -163,8 +155,6 @@ public class Cluster extends SubCommand {
                 // Add any existing plots to the current cluster
                 for (final Plot plot : plots) {
                     if (plot.hasOwner()) {
-                        final Flag flag = new Flag(FlagManager.getFlag("cluster"), cluster);
-                        FlagManager.addPlotFlag(plot, flag);
                         if (!cluster.isAdded(plot.owner)) {
                             cluster.invited.add(plot.owner);
                             DBFunc.setInvited(cluster, plot.owner);
@@ -288,12 +278,6 @@ public class Cluster extends SubCommand {
                 if ((current + cluster.getArea()) > allowed) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
                     return false;
-                }
-                for (final Plot plot : removed) {
-                    FlagManager.removePlotFlag(plot, "cluster");
-                }
-                for (final Plot plot : newplots) {
-                    FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("cluster"), cluster));
                 }
                 // resize cluster
                 DBFunc.resizeCluster(cluster, pos1, pos2);

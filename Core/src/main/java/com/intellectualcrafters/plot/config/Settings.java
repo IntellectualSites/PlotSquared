@@ -25,7 +25,9 @@ import java.util.List;
 
 /**
  * Updater and DB settings
- *
+ *
+
+
  */
 public class Settings {
     public static boolean USE_SQLUUIDHANDLER = false;
@@ -156,11 +158,12 @@ public class Settings {
     /**
      * The delay (in seconds) before teleportation commences
      */
-    public static int TELEPORT_DELAY;
+    public static int TELEPORT_DELAY = 0;
     /**
      * Auto clear enabled
      */
     public static boolean AUTO_CLEAR = false;
+    public static boolean AUTO_CLEAR_CONFIRMATION = true; // TODO FIXME
     /**
      * Days until a plot gets cleared
      */
@@ -194,7 +197,8 @@ public class Settings {
     
     /**
      * Database settings
-     *
+     *
+
      */
     public static class DB {
         /**

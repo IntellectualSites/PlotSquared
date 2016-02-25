@@ -2046,6 +2046,7 @@ public class PS {
         options.put("clear.auto.calibration.data_sd", 0);
         options.put("clear.auto.calibration.air_sd", 0);
         options.put("clear.auto.calibration.variety_sd", 0);
+        options.put("clear.auto.confirmation", Settings.AUTO_CLEAR_CONFIRMATION); // TODO FIXME
 
         final int keep = config.getInt("clear.keep-if-modified");
         final int ignore = config.getInt("clear.ignore-if-modified");
@@ -2090,7 +2091,7 @@ public class PS {
 
         // Teleportation
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
-        options.put("teleport.delay", 0);
+        options.put("teleport.delay", Settings.TELEPORT_DELAY);
 
         // WorldEdit
         options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
@@ -2177,6 +2178,7 @@ public class PS {
         PlotAnalysis.MODIFIERS.data_sd = config.getInt("clear.auto.calibration.data_sd");
         PlotAnalysis.MODIFIERS.air_sd = config.getInt("clear.auto.calibration.air_sd");
         PlotAnalysis.MODIFIERS.variety_sd = config.getInt("clear.auto.calibration.variety_sd");
+        Settings.AUTO_CLEAR_CONFIRMATION = config.getBoolean("clear.auto.confirmation"); // TODO FIXME
 
         // Done
         Settings.REQUIRE_DONE = config.getBoolean("approval.ratings.require-done");
