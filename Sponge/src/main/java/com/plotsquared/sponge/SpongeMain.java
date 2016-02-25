@@ -1,30 +1,5 @@
 package com.plotsquared.sponge;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.spongepowered.api.Game;
-import org.spongepowered.api.Server;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
-import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
-import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.profile.GameProfileManager;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.gen.GenerationPopulator;
-import org.spongepowered.api.world.gen.WorldGenerator;
-import org.spongepowered.api.world.gen.WorldGeneratorModifier;
-
 import com.google.inject.Inject;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
@@ -38,44 +13,38 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.ChatManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.PlotQueue;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.generator.SpongePlotGenerator;
 import com.plotsquared.sponge.listener.ChunkProcessor;
 import com.plotsquared.sponge.listener.MainListener;
 import com.plotsquared.sponge.listener.WorldEvents;
-import com.plotsquared.sponge.util.KillRoadMobs;
-import com.plotsquared.sponge.util.SpongeChatManager;
-import com.plotsquared.sponge.util.SpongeChunkManager;
-import com.plotsquared.sponge.util.SpongeCommand;
-import com.plotsquared.sponge.util.SpongeEconHandler;
-import com.plotsquared.sponge.util.SpongeEventUtil;
-import com.plotsquared.sponge.util.SpongeHybridUtils;
-import com.plotsquared.sponge.util.SpongeInventoryUtil;
-import com.plotsquared.sponge.util.SpongeMetrics;
-import com.plotsquared.sponge.util.SpongeSchematicHandler;
+import com.plotsquared.sponge.util.*;
 import com.plotsquared.sponge.util.SpongeSetupUtils;
-import com.plotsquared.sponge.util.SpongeTaskManager;
-import com.plotsquared.sponge.util.SpongeTitleManager;
-import com.plotsquared.sponge.util.SpongeUtil;
 import com.plotsquared.sponge.util.block.FastQueue;
 import com.plotsquared.sponge.util.block.SlowQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
+import org.slf4j.Logger;
+import org.spongepowered.api.Game;
+import org.spongepowered.api.Server;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.profile.GameProfileManager;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.gen.GenerationPopulator;
+import org.spongepowered.api.world.gen.WorldGenerator;
+import org.spongepowered.api.world.gen.WorldGeneratorModifier;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * Created by robin on 01/11/2014
@@ -173,7 +142,7 @@ public class SpongeMain implements IPlotMain {
             logger.info(message);
             return;
         }
-        server.getConsole().sendMessage(Text.of(message));
+        server.getConsole().sendMessage(SpongeUtil.getText(message));
     }
 
     @Override
@@ -415,6 +384,7 @@ public class SpongeMain implements IPlotMain {
     public PlotQueue initPlotQueue() {
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
             try {
+                MainUtil.canSendChunk = true;
                 return new FastQueue();
             } catch (Throwable e) {
                 e.printStackTrace();

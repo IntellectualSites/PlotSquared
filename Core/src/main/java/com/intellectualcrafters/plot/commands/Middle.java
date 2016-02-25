@@ -31,9 +31,6 @@ public class Middle extends SubCommand {
         if (!plot.hasOwner()) {
             return sendMessage(player, C.PLOT_UNOWNED);
         }
-        if (!player.hasPermission("plots.middle")) {
-            return sendMessage(player, C.NO_PERMISSION, "plots.middle");
-        }
         player.teleport(plot.getCenter());
         return true;
     }

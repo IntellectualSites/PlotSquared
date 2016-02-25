@@ -53,7 +53,6 @@ public class ReflectionUtils {
     }
     
     public static Method findMethod(Class<?> clazz, boolean isStatic, Class<?> returnType, Class... types) {
-        System.out.println("CLASS: " + clazz + " | " + isStatic + " | " + returnType + " | " + types.length);
         loop: for (Method method : clazz.getMethods()) {
             Class<?> result = method.getReturnType();
             Class<?>[] param = method.getParameterTypes();

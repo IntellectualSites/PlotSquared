@@ -1,10 +1,5 @@
 package com.intellectualcrafters.plot.commands;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Set;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -12,25 +7,14 @@ import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotMessage;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.RunnableVal3;
-import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.CmdConfirm;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Set;
 
 @CommandDeclaration(
 command = "area",
@@ -166,6 +150,7 @@ public class Area extends SubCommand {
                             PlotArea area = areas.iterator().next();
                             pa.TYPE = area.TYPE;
                         }
+                        pa.SIZE = (short) (pa.PLOT_WIDTH + pa.ROAD_WIDTH);
                         for (int i = 2; i < args.length; i++) {
                             String[] pair = args[i].split("=");
                             if (pair.length != 2) {

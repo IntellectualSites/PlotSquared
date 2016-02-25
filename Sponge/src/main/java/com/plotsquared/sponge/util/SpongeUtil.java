@@ -3,17 +3,13 @@ package com.plotsquared.sponge.util;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.ReflectionUtils;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import net.minecraft.block.Block;
@@ -32,6 +28,7 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.text.translation.Translatable;
 import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.world.World;
@@ -41,11 +38,7 @@ import org.spongepowered.api.world.extent.Extent;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 public class SpongeUtil extends WorldUtil {
     
@@ -103,6 +96,10 @@ public class SpongeUtil extends WorldUtil {
 
     public static BiomeType getBiome(int index) {
         return (BiomeType) BiomeGenBase.getBiome(index);
+    }
+
+    public static Text getText(String m) {
+        return TextSerializers.LEGACY_FORMATTING_CODE.deserialize(C.color(m));
     }
 
     public static Translation getTranslation(final String m) {
@@ -348,8 +345,6 @@ public class SpongeUtil extends WorldUtil {
     
     @Override
     public Location getSpawn(final String world) {
-        final World worldObj = SpongeUtil.getWorld(world);
-        worldObj.getSpawnLocation();
         final Location result = SpongeUtil.getLocation(world, SpongeUtil.getWorld(world).getSpawnLocation());
         result.setY(getHighestBlock(world, result.getX(), result.getZ()));
         return result;
@@ -419,7 +414,7 @@ public class SpongeUtil extends WorldUtil {
         final Sign sign = (Sign) tile;
         final List<Text> text = new ArrayList<>(4);
         for (int i = 0; i < 4; i++) {
-            text.add(Text.of(lines[i]));
+            text.add(SpongeUtil.getText(lines[i]));
         }
         sign.offer(Keys.SIGN_LINES, text);
     }

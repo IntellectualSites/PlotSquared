@@ -1,8 +1,14 @@
 package com.plotsquared.sponge.generator;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.flowpowered.math.vector.Vector2i;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
+import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.ReflectionUtils;
+import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.world.WorldCreationSettings;
 import org.spongepowered.api.world.biome.BiomeGenerationSettings;
@@ -14,15 +20,8 @@ import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
-import com.flowpowered.math.vector.Vector2i;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.generator.GeneratorWrapper;
-import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.ReflectionUtils;
-import com.plotsquared.sponge.util.SpongeUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWrapper<WorldGeneratorModifier> {
     
@@ -93,6 +92,7 @@ public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWra
             BiomeGenerationSettings biomeSettings = wg.getBiomeSettings(type);
             biomeSettings.getGenerationPopulators().clear();
             biomeSettings.getPopulators().clear();
+            biomeSettings.getGroundCoverLayers().clear();
     }
         wg.getGenerationPopulators().clear();
         wg.getPopulators().clear();

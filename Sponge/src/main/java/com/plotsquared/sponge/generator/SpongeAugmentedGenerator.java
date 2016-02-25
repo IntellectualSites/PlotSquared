@@ -1,13 +1,5 @@
 package com.plotsquared.sponge.generator;
 
-import java.util.List;
-
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.ImmutableBiomeArea;
-import org.spongepowered.api.world.extent.MutableBlockVolume;
-import org.spongepowered.api.world.gen.GenerationPopulator;
-import org.spongepowered.api.world.gen.WorldGenerator;
-
 import com.flowpowered.math.vector.Vector3i;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
 import com.intellectualcrafters.plot.object.LazyResult;
@@ -15,6 +7,13 @@ import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.plotsquared.sponge.util.SpongeUtil;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
+import org.spongepowered.api.world.extent.MutableBlockVolume;
+import org.spongepowered.api.world.gen.GenerationPopulator;
+import org.spongepowered.api.world.gen.WorldGenerator;
+
+import java.util.List;
 
 public class SpongeAugmentedGenerator implements GenerationPopulator {
     
@@ -59,7 +58,7 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
                     }
                     @Override
                     public void setBiome(int x, int z, int biome) {
-                        world.setBiome(bx + x, bz + z, null);
+                        System.out.println("TODO set biome: " + biome); // TODO FIXME
                     }
                     @Override
                     public PlotChunk clone() {
@@ -69,6 +68,10 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
                     public PlotChunk shallowClone() {
                         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
                     }
+                    @Override
+                    public void addToQueue() {}
+                    @Override
+                    public void flush(boolean fixLighting) {}
                 };
             }
         });

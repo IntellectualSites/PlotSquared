@@ -22,7 +22,7 @@ public class GenChunk extends PlotChunk<Chunk> {
 
     public GenChunk(Chunk chunk, ChunkWrapper wrap) {
         super(wrap);
-        if ((this.chunk = chunk) == null) {
+        if ((this.chunk = chunk) == null && wrap != null) {
             World world = BukkitUtil.getWorld(wrap.world);
             if (world != null) {
                 chunk = world.getChunkAt(wrap.x, wrap.z);

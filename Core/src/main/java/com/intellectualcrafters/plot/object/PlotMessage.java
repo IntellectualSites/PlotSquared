@@ -5,10 +5,10 @@ import com.intellectualcrafters.plot.util.ChatManager;
 
 public class PlotMessage {
     
-    private final Object builder;
+    private Object builder;
     
     public PlotMessage() {
-        builder = ChatManager.manager.builder();
+        reset(ChatManager.manager);
     }
     
     public <T> T $(final ChatManager<T> manager) {
@@ -18,6 +18,10 @@ public class PlotMessage {
     public PlotMessage(final String text) {
         this();
         text(text);
+    }
+
+    public <T> T reset(ChatManager<T> manager) {
+        return (T) (builder = manager.builder());
     }
     
     public PlotMessage text(final String text) {

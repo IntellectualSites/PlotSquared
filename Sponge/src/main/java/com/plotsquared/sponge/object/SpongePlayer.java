@@ -1,22 +1,5 @@
 package com.plotsquared.sponge.object;
 
-import java.time.Instant;
-import java.util.HashSet;
-import java.util.UUID;
-
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
-import org.spongepowered.api.data.value.mutable.Value;
-import org.spongepowered.api.effect.sound.SoundTypes;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.entity.living.player.gamemode.GameModes;
-import org.spongepowered.api.service.ban.BanService;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.chat.ChatTypes;
-import org.spongepowered.api.text.serializer.TextSerializers;
-
 import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.Settings;
@@ -27,6 +10,21 @@ import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.sponge.util.SpongeUtil;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
+import org.spongepowered.api.data.value.mutable.Value;
+import org.spongepowered.api.effect.sound.SoundTypes;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.gamemode.GameMode;
+import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.service.ban.BanService;
+import org.spongepowered.api.text.chat.ChatTypes;
+import org.spongepowered.api.text.serializer.TextSerializers;
+
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.UUID;
 
 public class SpongePlayer extends PlotPlayer {
     
@@ -278,7 +276,7 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void kick(final String message) {
-        player.kick(Text.of(message));
+        player.kick(SpongeUtil.getText(message));
     }
     
     @Override

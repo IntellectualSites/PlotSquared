@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.sponge.SpongeMain;
 import org.spongepowered.api.command.CommandCallable;
@@ -20,20 +21,22 @@ public class SpongeCommand implements CommandCallable {
     
     @Override
     public CommandResult process(final CommandSource cmd, final String string) throws CommandException {
-        final String id = cmd.getIdentifier();
-        PlotPlayer pp;
-        try {
-            final UUID uuid = UUID.fromString(id);
-            final Player player = SpongeMain.THIS.getServer().getPlayer(uuid).get();
-            pp = SpongeUtil.getPlayer(player);
-        } catch (final Exception e) {
-            pp = ConsolePlayer.getConsole();
-        }
-        if (MainCommand.onCommand(pp, cmd.getName(), string.isEmpty() ? new String[]{} : string.split(" "))) {
-            return CommandResult.success();
-        } else {
-            return CommandResult.empty();
-        }
+        TaskManager.runTask(new Runnable() {
+            @Override
+            public void run() {
+                final String id = cmd.getIdentifier();
+                PlotPlayer pp;
+                try {
+                    final UUID uuid = UUID.fromString(id);
+                    final Player player = SpongeMain.THIS.getServer().getPlayer(uuid).get();
+                    pp = SpongeUtil.getPlayer(player);
+                } catch (final Exception e) {
+                    pp = ConsolePlayer.getConsole();
+                }
+                MainCommand.onCommand(pp, cmd.getName(), string.isEmpty() ? new String[]{} : string.split(" "));
+            }
+        });
+        return CommandResult.success();
     }
     
     @Override
@@ -43,14 +46,14 @@ public class SpongeCommand implements CommandCallable {
         }
         final PlotPlayer player = SpongeUtil.getPlayer((Player) source);
         String[] split = string.split(" ");
-        if (split.length < 2) {
+        if (split.length < 1) {
             return Collections.singletonList("plots");
         }
-        if (split.length > 2) {
-            return null;
+        if (split.length > 1) {
+            return Collections.emptyList();
         }
         final Set<String> tabOptions = new HashSet<>();
-        final String arg = split[1].toLowerCase();
+        final String arg = split[0].toLowerCase();
         ArrayList<String> labels = new ArrayList<>();
         for (final Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands()) {
             final String label = cmd.getCommand();
@@ -72,7 +75,7 @@ public class SpongeCommand implements CommandCallable {
         if (!tabOptions.isEmpty()) {
             return new ArrayList<>(tabOptions);
         }
-        return null;
+        return Collections.emptyList();
 }
     
     @Override

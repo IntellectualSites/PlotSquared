@@ -1,16 +1,17 @@
 package com.plotsquared.bukkit.listeners;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
+import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.object.BukkitLazyBlock;
+import com.plotsquared.bukkit.object.BukkitPlayer;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.listener.PlayerBlockEventType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,64 +20,17 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Hanging;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockGrowEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.block.EntityBlockFormEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.world.StructureGrowEvent;
@@ -89,34 +43,9 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotHandler;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotInventory;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.RegExUtil;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.bukkit.object.BukkitLazyBlock;
-import com.plotsquared.bukkit.object.BukkitPlayer;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.listener.PlayerBlockEventType;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots
@@ -462,10 +391,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
             final Player player = event.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(player);
-
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
-
             // Set last location
             Location loc = BukkitUtil.getLocation(to);
             pp.setMeta("location", loc);
@@ -867,6 +794,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return;
                 }
             }
+            return;
         }
         final Plot plot = area.getOwnedPlot(loc);
         if (plot == null) {
@@ -982,6 +910,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     blocks.remove(i);
                 }
             }
+            return;
         } else {
             Plot origin = area.getOwnedPlot(loc);
             if (origin == null) {
@@ -1104,11 +1033,11 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 if (eventType != null && !player.isSneaking()) {
                     break;
                 }
-                Material type = hand == null ? null : hand.getType();
-                int id = type == null ? 0 : type.getId();
+                Material type = (hand == null) ? null : hand.getType();
+                int id = (type == null) ? 0 : type.getId();
                 if (id == 0) {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
-                    lb = new BukkitLazyBlock(id, block);
+                    lb = new BukkitLazyBlock(0, block);
                     break;
                 } else if (id < 198) {
                     loc = BukkitUtil.getLocation(block.getRelative(event.getBlockFace()).getLocation());

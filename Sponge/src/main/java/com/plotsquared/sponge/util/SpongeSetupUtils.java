@@ -1,11 +1,14 @@
 package com.plotsquared.sponge.util;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Objects;
-
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.ConfigurationNode;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.plotsquared.sponge.generator.SpongePlotGenerator;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
@@ -16,15 +19,11 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.storage.WorldProperties;
 
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.ConfigurationNode;
-import com.intellectualcrafters.plot.generator.GeneratorWrapper;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.plotsquared.sponge.generator.SpongePlotGenerator;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 public class SpongeSetupUtils extends SetupUtils {
     
@@ -148,9 +147,9 @@ public class SpongeSetupUtils extends SetupUtils {
             WorldCreationSettings settings = Sponge.getRegistry().createBuilder(Builder.class)
             .name(object.world)
             .loadsOnStartup(true)
-            .keepsSpawnLoaded(false)
+            .keepsSpawnLoaded(true)
             .dimension(DimensionTypes.OVERWORLD)
-            .generator(GeneratorTypes.FLAT)
+            .generator(GeneratorTypes.OVERWORLD)
             .usesMapFeatures(false)
             .enabled(true)
             .generatorModifiers(wgm)
@@ -162,7 +161,7 @@ public class SpongeSetupUtils extends SetupUtils {
             WorldCreationSettings settings = Sponge.getRegistry().createBuilder(Builder.class)
             .name(object.world)
             .loadsOnStartup(true)
-            .keepsSpawnLoaded(false)
+            .keepsSpawnLoaded(true)
             .dimension(DimensionTypes.OVERWORLD)
             .generator(GeneratorTypes.OVERWORLD)
             .usesMapFeatures(true)

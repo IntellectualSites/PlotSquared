@@ -119,7 +119,6 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                     int xxb = X << 4;
                                     int zzb = Z << 4;
                                     if (!worldObj.getChunk(xxb, 1, zzb).isPresent() && !worldObj.loadChunk(xxb, 1, zzb, false).isPresent()) {
-                                        System.out.println("COULD NOT LOAD CHUNK AT: " + chunk.x + "," + chunk.z);
                                         continue;
                                     }
                                     int xxt = xxb + 15;

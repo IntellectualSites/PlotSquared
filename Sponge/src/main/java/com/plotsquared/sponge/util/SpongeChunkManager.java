@@ -6,6 +6,7 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -17,6 +18,8 @@ import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -83,19 +86,27 @@ public class SpongeChunkManager extends ChunkManager {
                     PS.debug("Not valid world generator for: " + world);
                     return;
                 }
-
                 ChunkProviderServer chunkServer = (ChunkProviderServer) provider;
                 IChunkProvider chunkProvider = chunkServer.serverChunkGenerator;
 
                 long pos = ChunkCoordIntPair.chunkXZ2Int(loc.x, loc.z);
-                System.out.println((loc.x & 4294967295L | (loc.z & 4294967295L) << 32) + ":" + pos);
                 net.minecraft.world.chunk.Chunk mcChunk = (net.minecraft.world.chunk.Chunk) spongeChunk;
                 if (chunkServer.chunkExists(loc.x, loc.z)) {
                     mcChunk = chunkServer.loadChunk(loc.x, loc.z);
                     mcChunk.onChunkUnload();
                 }
-//                Set<Long> set = (Set<Long>) chunkProvider.getClass().getDeclaredField("droppedChunksSet").get(chunkProvider);
-                Set<Long> set = (Set<Long>) ReflectionUtils.findField(chunkServer.getClass(), Set.class).get(chunkServer);
+                Field fieldDroppedChunksSet;
+                try {
+                    fieldDroppedChunksSet = chunkServer.getClass().getField("field_73248_b");
+                } catch (Throwable t) {
+                    try {
+                        fieldDroppedChunksSet = chunkServer.getClass().getField("droppedChunksSet");
+                    }
+                    catch (Throwable t2) {
+                        fieldDroppedChunksSet = ReflectionUtils.findField(chunkServer.getClass(), Set.class);
+                    }
+                }
+                Set<Long> set = (Set<Long>) fieldDroppedChunksSet.get(chunkServer);
                 set.remove(pos);
                 chunkServer.id2ChunkMap.remove(pos);
                 mcChunk = chunkProvider.provideChunk(loc.x, loc.z);
@@ -104,7 +115,7 @@ public class SpongeChunkManager extends ChunkManager {
                 if (mcChunk != null) {
                     mcChunk.onChunkLoad();
                     mcChunk.populateChunk(chunkProvider, chunkProvider, loc.x, loc.z);
-                    System.out.println("WORKED?");
+                    SetQueue.IMP.queue.sendChunk(world, Arrays.asList(loc));
                 }
                 else {
                     PS.debug("CHUNK IS NULL!?");
