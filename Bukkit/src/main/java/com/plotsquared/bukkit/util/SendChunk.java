@@ -129,7 +129,9 @@ public class SendChunk {
         final World myworld = Bukkit.getWorld(worldname);
         final ArrayList<Chunk> chunks = new ArrayList<>();
         for (final ChunkLoc loc : locs) {
-            chunks.add(myworld.getChunkAt(loc.x, loc.z));
+            if (myworld.isChunkLoaded(loc.x, loc.z)) {
+                chunks.add(myworld.getChunkAt(loc.x, loc.z));
+            }
         }
         sendChunk(chunks);
     }

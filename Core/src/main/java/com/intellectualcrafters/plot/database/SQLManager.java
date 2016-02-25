@@ -25,38 +25,15 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -2423,16 +2400,14 @@ public class SQLManager implements AbstractDB {
         addPlayerTask(uuid, new UniqueStatement("addPersistentMeta") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                Blob blob = connection.createBlob();
-                blob.setBytes(1, meta);
                 if (replace) {
-                    stmt.setBlob(1, blob);
+                    stmt.setBytes(1, meta);
                     stmt.setString(2, uuid.toString());
                     stmt.setString(3, key);
                 } else {
                     stmt.setString(1, uuid.toString());
                     stmt.setString(2, key);
-                    stmt.setBlob(3, blob);
+                    stmt.setBytes(3, meta);
                 }
             }
 
@@ -2487,8 +2462,7 @@ public class SQLManager implements AbstractDB {
 
                 while (resultSet.next()) {
                     String key = resultSet.getString("key");
-                    Blob rawValue = resultSet.getBlob("value");
-                    byte[] bytes = rawValue.getBytes(1, (int) rawValue.length());
+                    byte[] bytes = resultSet.getBytes("value");
                     metaMap.put(key, bytes);
                 }
 
@@ -3019,9 +2993,12 @@ public class SQLManager implements AbstractDB {
         }
 
         for (final Entry<String, HashMap<PlotId, Plot>> entry : database.entrySet()) {
+            String worldname = entry.getKey();
             final HashMap<PlotId, Plot> map = entry.getValue();
             if (!map.isEmpty()) {
                 for (final Entry<PlotId, Plot> entry2 : map.entrySet()) {
+                    Plot plot = entry2.getValue();
+                    System.out.println("Plot: " + plot + " | " + worldname);
                     PS.debug("$1Plot was deleted: " + entry2.getValue() + "// TODO implement this when sure safe");
                 }
             }

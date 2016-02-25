@@ -304,20 +304,30 @@ public abstract class PlotPlayer implements CommandCaller {
      *  - For session only data use meta
      * @param key
      */
-    public abstract void setAttribute(final String key);
-    
+    public void setAttribute(final String key) {
+        setPersistentMeta("attrib_" + key, new byte[]{(byte) 1});
+    }
+
+
     /**
      * The attribute will be either true or false
      * @param key
      */
-    public abstract boolean getAttribute(final String key);
+    public boolean getAttribute(final String key) {
+        if (!hasPersistentMeta("attrib_" + key)) {
+            return false;
+        }
+        return getPersistentMeta("attrib_" + key)[0] == 1;
+    }
     
     /**
      * Remove an attribute from a player
      * @param key
      */
-    public abstract void removeAttribute(final String key);
-    
+    public void removeAttribute(final String key) {
+        removePersistentMeta("attrib_" + key);
+    }
+
     /**
      * Set the player's local weather
      * @param weather

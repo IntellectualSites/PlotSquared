@@ -5,7 +5,6 @@ import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -145,33 +144,6 @@ public class SpongePlayer extends PlotPlayer {
     public void saveData() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-    }
-    
-    @Override
-    public void setAttribute(String key) {
-        key = "plotsquared_user_attributes." + key;
-        if ((EconHandler.manager == null) || player.hasPermission("plotsquared_user_attributes.*")) {
-            setMeta(key, true);
-            return;
-        }
-        EconHandler.manager.setPermission(getName(), key, true);
-    }
-    
-    @Override
-    public boolean getAttribute(String key) {
-        key = "plotsquared_user_attributes." + key;
-        if ((EconHandler.manager == null) || player.hasPermission("plotsquared_user_attributes.*")) {
-            final Object v = getMeta(key);
-            return v == null ? false : (Boolean) v;
-        }
-        return player.hasPermission(key);
-    }
-    
-    @Override
-    public void removeAttribute(String key) {
-        key = "plotsquared_user_attributes." + key;
-        EconHandler.manager.setPermission(getName(), key, false);
-        deleteMeta(key);
     }
     
     @Override

@@ -113,7 +113,7 @@ public class Purge extends SubCommand {
                 }
             }
         }
-        final HashSet<Integer> toDelete = new HashSet<>();
+        final HashSet<Plot> toDelete = new HashSet<>();
         for (Plot plot : PS.get().getBasePlots()) {
             if (world != null && !plot.getArea().worldname.equalsIgnoreCase(world)) {
                 continue;
@@ -134,10 +134,7 @@ public class Purge extends SubCommand {
                 continue;
             }
             for (Plot current : plot.getConnectedPlots()) {
-                final int DBid = DBFunc.getId(current);
-                if (DBid != Integer.MAX_VALUE) {
-                    toDelete.add(DBid);
-                }
+                toDelete.add(current);
             }
         }
         if (PS.get().plots_tmp != null) {
@@ -160,10 +157,7 @@ public class Purge extends SubCommand {
                     if (unknown && UUIDHandler.getName(plot.owner) != null) {
                         continue;
                     }
-                    final int DBid = DBFunc.getId(plot);
-                    if (DBid != Integer.MAX_VALUE) {
-                        toDelete.add(DBid);
-                    }
+                    toDelete.add(plot);
                 }
             }
         }
@@ -175,8 +169,16 @@ public class Purge extends SubCommand {
         CmdConfirm.addPending(plr, cmd, new Runnable() {
             @Override
             public void run() {
-                DBFunc.purgeIds(toDelete);
-                C.PURGE_SUCCESS.send(plr, toDelete.size() + "");
+                HashSet<Integer> ids = new HashSet<Integer>();
+                for (Plot plot : toDelete) {
+                    if (plot.temp != Integer.MAX_VALUE) {
+                        ids.add(plot.temp);
+                        PlotArea area = plot.getArea();
+                        plot.getArea().removePlot(plot.getId());
+                    }
+                }
+                DBFunc.purgeIds(ids);
+                C.PURGE_SUCCESS.send(plr, ids.size() + "/" + (toDelete.size()));
             }
         });
         return true;

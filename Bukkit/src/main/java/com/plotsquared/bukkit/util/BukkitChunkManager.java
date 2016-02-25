@@ -1075,7 +1075,9 @@ public class BukkitChunkManager extends ChunkManager {
         final Set<Chunk> chunks = new HashSet<>();
         for (int X = bx; X <= tx; X++) {
             for (int Z = bz; Z <= tz; Z++) {
-                chunks.add(world.getChunkAt(X, Z));
+                if (world.isChunkLoaded(X, Z)) {
+                    chunks.add(world.getChunkAt(X, Z));
+                }
             }
         }
 
