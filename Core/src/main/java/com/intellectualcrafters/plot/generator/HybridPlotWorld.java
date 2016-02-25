@@ -97,6 +97,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             case 180:
                 data = wrap(data, 0);
                 data = wrap(data, 4);
+                data = wrap(data, 8);
+                data = wrap(data, 16);
                 return data;
 
             case 26:
