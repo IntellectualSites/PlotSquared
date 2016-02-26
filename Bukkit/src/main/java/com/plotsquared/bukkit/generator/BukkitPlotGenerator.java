@@ -20,33 +20,27 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.generator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.generator.GeneratorWrapper;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotChunk;
+import com.intellectualcrafters.plot.util.SetQueue;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.block.GenChunk;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.generator.GeneratorWrapper;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotChunk;
-import com.intellectualcrafters.plot.util.SetQueue;
-import com.plotsquared.bukkit.listeners.WorldEvents;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.bukkit.util.block.GenChunk;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
     
@@ -96,7 +90,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             throw new IllegalArgumentException("ChunkGenerator: " + cg.getClass().getName() + " is already a BukkitPlotGenerator!");
         }
         this.full = false;
-        WorldEvents.lastWorld = world;
         PS.get().debug("BukkitPlotGenerator does not fully support: " + cg);
         platformGenerator = cg;
         plotGenerator = new IndependentPlotGenerator() {
@@ -205,7 +198,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     public List<BlockPopulator> getDefaultPopulators(final World world) {
         try {
             if (!loaded) {
-                final String name = WorldEvents.getName(world);
+                final String name = world.getName();
                 PS.get().loadWorld(name, this);
                 Set<PlotArea> areas = PS.get().getPlotAreas(name);
                 if (!areas.isEmpty()) {
@@ -265,7 +258,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     public void generate(World world, int cx, int cz, GenChunk result) {
         // Load if improperly loaded
         if (!loaded) {
-            final String name = WorldEvents.getName(world);
+            final String name = world.getName();
             PS.get().loadWorld(name, this);
             loaded = true;
         }

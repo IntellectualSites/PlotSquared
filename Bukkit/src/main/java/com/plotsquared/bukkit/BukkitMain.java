@@ -1,30 +1,5 @@
 package com.plotsquared.bukkit;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-import org.bukkit.World;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.IPlotMain;
 import com.intellectualcrafters.plot.PS;
@@ -37,67 +12,40 @@ import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.ChatManager;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ConsoleColors;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotQueue;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.commands.DebugUUID;
 import com.plotsquared.bukkit.database.plotme.ClassicPlotMeConnector;
 import com.plotsquared.bukkit.database.plotme.LikePlotMeConverter;
 import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.bukkit.listeners.ChunkListener;
-import com.plotsquared.bukkit.listeners.ForceFieldListener;
-import com.plotsquared.bukkit.listeners.PlayerEvents;
-import com.plotsquared.bukkit.listeners.PlayerEvents_1_8;
-import com.plotsquared.bukkit.listeners.PlayerEvents_1_8_3;
-import com.plotsquared.bukkit.listeners.PlotPlusListener;
-import com.plotsquared.bukkit.listeners.WorldEvents;
+import com.plotsquared.bukkit.listeners.*;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
 import com.plotsquared.bukkit.titles.DefaultTitle;
-import com.plotsquared.bukkit.util.BukkitChatManager;
-import com.plotsquared.bukkit.util.BukkitChunkManager;
-import com.plotsquared.bukkit.util.BukkitCommand;
-import com.plotsquared.bukkit.util.BukkitEconHandler;
-import com.plotsquared.bukkit.util.BukkitEventUtil;
-import com.plotsquared.bukkit.util.BukkitHybridUtils;
-import com.plotsquared.bukkit.util.BukkitInventoryUtil;
-import com.plotsquared.bukkit.util.BukkitPlainChatManager;
-import com.plotsquared.bukkit.util.BukkitSchematicHandler;
-import com.plotsquared.bukkit.util.BukkitSetupUtils;
-import com.plotsquared.bukkit.util.BukkitTaskManager;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.bukkit.util.Metrics;
-import com.plotsquared.bukkit.util.SendChunk;
-import com.plotsquared.bukkit.util.SetGenCB;
+import com.plotsquared.bukkit.util.*;
 import com.plotsquared.bukkit.util.block.FastQueue_1_7;
 import com.plotsquared.bukkit.util.block.FastQueue_1_8;
 import com.plotsquared.bukkit.util.block.FastQueue_1_8_3;
 import com.plotsquared.bukkit.util.block.SlowQueue;
-import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
-import com.plotsquared.bukkit.uuid.FileUUIDHandler;
-import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
-import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
-import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
+import com.plotsquared.bukkit.uuid.*;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
@@ -346,19 +294,10 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
-        WorldEvents.lastWorld = world;
         final HybridGen result = new HybridGen();
         if (!PS.get().setupPlotWorld(world, id, result)) {
             return null;
         }
-        TaskManager.runTaskLater(new Runnable() {
-            @Override
-            public void run() {
-                if ((WorldEvents.lastWorld != null) && WorldEvents.lastWorld.equals(world)) {
-                    WorldEvents.lastWorld = null;
-                }
-            }
-        }, 20);
         return (ChunkGenerator) result.specify();
     }
     

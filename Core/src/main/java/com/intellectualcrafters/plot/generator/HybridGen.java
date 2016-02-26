@@ -1,15 +1,11 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.PlotChunk;
+
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class HybridGen extends IndependentPlotGenerator {
 
@@ -80,7 +76,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         result.setBlock(x, y, z, hpw.ROAD_BLOCK);
                     }
                     if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                        HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(x, z));
+                        HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
                         if (map != null) {
                             for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
                                 result.setBlock(x, entry.getKey(), z, entry.getValue());
@@ -96,7 +92,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hpw.ROAD_BLOCK);
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(x, z));
+                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
                             if (map != null) {
                                 for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
                                     result.setBlock(x, entry.getKey(), z, entry.getValue());
@@ -111,7 +107,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
                             result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK);
                         } else {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(x, z));
+                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
                             if (map != null) {
                                 for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
                                     result.setBlock(x, entry.getKey(), z, entry.getValue());
@@ -128,7 +124,7 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hpw.ROAD_BLOCK);
                         }
                         if (hpw.ROAD_SCHEMATIC_ENABLED) {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(x, z));
+                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
                             if (map != null) {
                                 for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
                                     result.setBlock(x, entry.getKey(), z, entry.getValue());
@@ -143,7 +139,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
                             result.setBlock(x, hpw.WALL_HEIGHT + 1, z, hpw.WALL_BLOCK);
                         } else {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(x, z));
+                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
                             if (map != null) {
                                 for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
                                     result.setBlock(x, entry.getKey(), z, entry.getValue());
@@ -157,7 +153,7 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK[random.random(hpw.TOP_BLOCK.length)]);
                         if (hpw.PLOT_SCHEMATIC) {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(x, z));
+                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
                             if (map != null) {
                                 for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
                                     result.setBlock(x, entry.getKey(), z, entry.getValue());

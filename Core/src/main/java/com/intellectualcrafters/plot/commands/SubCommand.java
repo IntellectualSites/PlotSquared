@@ -68,7 +68,7 @@ public abstract class SubCommand extends com.plotsquared.general.commands.Comman
             max = c.size();
         }
         // Send the header
-        header = header.replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%amount%", totalPages + "").replaceAll("%word%", "all");
+        header = header.replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%amount%", c.size() + "").replaceAll("%word%", "all");
         MainUtil.sendMessage(player, header);
         // Send the page content
         final List<T> subList = c.subList(page * size, max);

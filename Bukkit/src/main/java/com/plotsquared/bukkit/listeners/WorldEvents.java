@@ -13,20 +13,10 @@ import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 
 public class WorldEvents implements Listener {
     
-    public static String lastWorld = null;
-    
-    public static String getName(final World world) {
-        if ((lastWorld != null) && !lastWorld.equals("CheckingPlotSquaredGenerator")) {
-            return lastWorld;
-        } else {
-            return world.getName();
-        }
-    }
-    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public static void onWorldInit(final WorldInitEvent event) {
         final World world = event.getWorld();
-        final String name = getName(world);
+        final String name = world.getName();
         final ChunkGenerator gen = world.getGenerator();
         if (gen instanceof GeneratorWrapper) {
             PS.get().loadWorld(name, (GeneratorWrapper<?>) gen);
@@ -35,6 +25,5 @@ public class WorldEvents implements Listener {
                 PS.get().loadWorld(name, new BukkitPlotGenerator(name, gen));
             }
         }
-        lastWorld = null;
     }
 }

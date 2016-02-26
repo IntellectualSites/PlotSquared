@@ -616,19 +616,17 @@ public class PS {
         globalAreas.add(plotarea);
         plotareas = globalAreas.toArray(new PlotArea[globalAreas.size()]);
         plotareamap.put(plotarea.worldname, localAreas.toArray(new PlotArea[localAreas.size()]));
-        if (plotarea.TYPE == 2) {
-            QuadMap<PlotArea> map = plotareagrid.get(plotarea.worldname);
-            if (map == null) {
-                map = new QuadMap<PlotArea>(Integer.MAX_VALUE, 0, 0) {
-                    @Override
-                    public RegionWrapper getRegion(PlotArea value) {
-                        return value.getRegion();
-                    }
-                };
-                plotareagrid.put(plotarea.worldname, map);
-            }
-            map.add(plotarea);
+        QuadMap<PlotArea> map = plotareagrid.get(plotarea.worldname);
+        if (map == null) {
+            map = new QuadMap<PlotArea>(Integer.MAX_VALUE, 0, 0) {
+                @Override
+                public RegionWrapper getRegion(PlotArea value) {
+                    return value.getRegion();
+                }
+            };
+            plotareagrid.put(plotarea.worldname, map);
         }
+        map.add(plotarea);
     }
     
     /**
@@ -1354,7 +1352,9 @@ public class PS {
      * @param baseGenerator The generator for that world, or null if no generator
      */
     public void loadWorld(final String world, final GeneratorWrapper<?> baseGenerator) {
+        System.out.println("LOADING WORLD!? " + world);
         if (world.equals("CheckingPlotSquaredGenerator")) {
+            System.out.println("IS CHECK" + world);
             return;
         }
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
@@ -1383,11 +1383,13 @@ public class PS {
                         pg = primaryGenerator.getPlotGenerator();
                     }
                     else {
+                        System.out.println("NO GENERATOR?! " + world);
                         return;
                     }
                 }
             }
             else {
+                System.out.println("NO WORLD SECTION?! " + world);
                 return;
             }
             // Conventional plot generator
@@ -1413,7 +1415,9 @@ public class PS {
             pg.initialize(plotArea);
             plotArea.setupBorder();
         } else {
+            System.out.println("NOT TYPE 0 " + world);
             if (!worlds.contains(world)) {
+                System.out.println("WORLD DOESN'T EXIST " + world);
                 return;
             }
             ConfigurationSection areasSection = worldSection.getConfigurationSection("areas");
@@ -1465,6 +1469,7 @@ public class PS {
                     for (PlotArea area : toLoad) {
                         addPlotArea(area);
                     }
+                    System.out.println("ADDED BY CLUSTER! " + world);
                     return;
                 }
                 GeneratorWrapper<?> areaGen = IMP.getGenerator(world, gen_string);
@@ -1485,6 +1490,7 @@ public class PS {
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
+                System.out.println("ADDED BY AUG! " + world);
                 return;
             }
             if (type == 1) {
@@ -1560,6 +1566,7 @@ public class PS {
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
+                System.out.println("ADDED BY PART! " + world);
             }
         }
     }

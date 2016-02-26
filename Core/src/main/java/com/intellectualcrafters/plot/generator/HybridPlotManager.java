@@ -85,7 +85,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         final Location top = getPlotTopLocAbs(hpw, id);
         final Location pos1 = new Location(plotworld.worldname, top.getX() + 1, 0, bot.getZ() - 1);
         final Location pos2 = new Location(plotworld.worldname, bot.getX(), 255, top.getZ() + 1);
-        createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
+        createSchemAbs(hpw, pos1, pos2, 0, true);
         return true;
     }
     
@@ -104,7 +104,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 final HashMap<Integer, PlotBlock> blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
                 if (clear) {
                     for (short y = (short) (height); y <= (height + hpw.SCHEMATIC_HEIGHT); y++) {
-                        SetQueue.IMP.setBlock(hpw.worldname, x, y + y, z, 0);
+                        SetQueue.IMP.setBlock(hpw.worldname, x, y, z, 0);
                     }
                 }
                 if (blocks != null) {
@@ -129,7 +129,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         final Location top = getPlotTopLocAbs(hpw, id);
         final Location pos1 = new Location(plotworld.worldname, bot.getX() - 1, 0, top.getZ() + 1);
         final Location pos2 = new Location(plotworld.worldname, top.getX() + 1, 255, bot.getZ());
-        createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
+        createSchemAbs(hpw, pos1, pos2, 0, true);
         return true;
     }
     
@@ -146,7 +146,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         final Location pos2 = getPlotBottomLocAbs(hpw, id2);
         pos1.setY(0);
         pos2.setY(256);
-        createSchemAbs(hpw, pos1, pos2, hpw.ROAD_HEIGHT, true);
+        createSchemAbs(hpw, pos1, pos2, 0, true);
         return true;
     }
     
@@ -214,7 +214,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!plotworld.PLOT_SCHEMATIC) {
             return;
         }
-        createSchemAbs(plotworld, l1, l2, plotworld.PLOT_HEIGHT, false);
+        createSchemAbs(plotworld, l1, l2, 0, false);
     }
-    
 }

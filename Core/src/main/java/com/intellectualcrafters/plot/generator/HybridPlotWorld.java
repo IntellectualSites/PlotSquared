@@ -98,7 +98,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 data = wrap(data, 0);
                 data = wrap(data, 4);
                 data = wrap(data, 8);
-                data = wrap(data, 16);
+                data = wrap(data, 12);
                 return data;
 
             case 26:
@@ -225,7 +225,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         final short id = ids[index];
                         final byte data = datas[index];
                         if (id != 0) {
-                            addOverlayBlock((short) (x + shift + oddshift + center_shift_x), y, (short) (z + shift + oddshift + center_shift_z), id,
+                            addOverlayBlock((short) (x + shift + oddshift + center_shift_x), (short) (y + PLOT_HEIGHT), (short) (z + shift + oddshift + center_shift_z), id,
                                     data, false);
                         }
                     }
@@ -241,10 +241,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     final short x = (short) item.x;
                     final short z = (short) item.z;
                     int pair = MathMan.pair(x, z);
-                    HashSet<PlotItem> v = G_SCH_STATE.putIfAbsent(pair, new HashSet<PlotItem>());
-                    if (v != null) {
-                        v.add(item);
+
+
+                    HashSet<PlotItem> existing = G_SCH_STATE.get(pair);
+                    if (existing == null) {
+                        existing = new HashSet<>();
+                        G_SCH_STATE.put(pair, existing);
                     }
+                    existing.add(item);
                 }
             }
         }
@@ -278,8 +282,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     final short id = ids1[index];
                     final byte data = datas1[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), y, (short) (z + shift + oddshift), id, data, false);
-                        addOverlayBlock((short) (z + shift + oddshift), y, (short) (x - shift), id, data, true);
+                        addOverlayBlock((short) (x - shift), (short) (y + ROAD_HEIGHT), (short) (z + shift + oddshift), id, data, false);
+                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + ROAD_HEIGHT), (short) (x - shift), id, data, true);
                     }
                 }
             }
@@ -291,7 +295,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     final short id = ids2[index];
                     final byte data = datas2[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), y, (short) (z - shift), id, data, false);
+                        addOverlayBlock((short) (x - shift), (short) (y + ROAD_HEIGHT), (short) (z - shift), id, data, false);
                     }
                 }
             }
@@ -307,15 +311,16 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         if (rotate) {
             final byte newdata = rotate(id, data);
-            if (data == 0 && newdata == 0) {
-                return;
+            if (data != 0 || newdata != 0) {
+                data = newdata;
             }
-            data = newdata;
         }
-        int pair = MathMan.pair(x, y);
-        HashMap<Integer, PlotBlock> v = G_SCH.putIfAbsent(pair, new HashMap<Integer, PlotBlock>());
-        if (v != null) {
-            v.put((int) y, new PlotBlock(id, data));
+        int pair = MathMan.pair(x, z);
+        HashMap<Integer, PlotBlock> existing = G_SCH.get(pair);
+        if (existing == null) {
+            existing = new HashMap<>();
+            G_SCH.put(pair, existing);
         }
+        existing.put((int) y, new PlotBlock(id, data));
     }
 }

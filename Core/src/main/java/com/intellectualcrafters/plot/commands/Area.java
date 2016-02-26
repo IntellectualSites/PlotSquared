@@ -335,7 +335,7 @@ public class Area extends SubCommand {
                         break;
                     case 2:
                         if (MathMan.isInteger(args[1])) {
-                            page = Integer.parseInt(args[1]);
+                            page = Integer.parseInt(args[1]) - 1;
                             break;
                         }
                     default:
