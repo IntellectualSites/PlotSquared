@@ -1,16 +1,34 @@
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-
 dependencies {
     compile project(':Core')
     compile 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
     compile 'net.milkbowl.vault:VaultAPI:1.5'
 }
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+processResources {
+    from('src/main/resources') {
+        include 'plugin.yml'
+        expand(
+            name: project.parent.name,
+            version: project.parent.version
+        )
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
 shadowJar {
     dependencies {
         include(dependency(':Core'))
     }
+    archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
 }
 
-build.dependsOn(shadowJar)
+shadowJar.doLast {
+    task ->
+    ant.checksum file: task.archivePath
+}
+
+build.dependsOn(shadowJar);
