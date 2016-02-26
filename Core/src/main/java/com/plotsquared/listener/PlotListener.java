@@ -51,6 +51,7 @@ import java.util.UUID;
 public class PlotListener {
     
     public static boolean plotEntry(final PlotPlayer pp, final Plot plot) {
+        System.out.println("POLOT ENTRY");
         if (plot.isDenied(pp.getUUID()) && !Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
             return false;
         }
@@ -58,7 +59,7 @@ public class PlotListener {
         if ((last != null) && !last.getId().equals(plot.getId())) {
             plotExit(pp, last);
         }
-        pp.setMeta("lastplot", plot.getBasePlot(false));
+        pp.setMeta("lastplot", plot);
         EventUtil.manager.callEntry(pp, plot);
         if (plot.hasOwner()) {
             final HashMap<String, Flag> flags = FlagManager.getPlotFlags(plot);

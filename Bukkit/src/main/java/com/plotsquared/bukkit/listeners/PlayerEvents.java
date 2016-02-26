@@ -401,7 +401,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 pp.deleteMeta("lastplot");
                 return;
             }
-            Plot now = area.getPlotAbs(loc);
+            Plot now = area.getPlot(loc);
             final Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot)) {
@@ -440,20 +440,17 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
             final Player player = event.getPlayer();
             final PlotPlayer pp = BukkitUtil.getPlayer(player);
-
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
-
             // Set last location
             Location loc = BukkitUtil.getLocation(to);
             pp.setMeta("location", loc);
-
             PlotArea area = loc.getPlotArea();
             if (area == null) {
                 pp.deleteMeta("lastplot");
                 return;
             }
-            Plot now = area.getPlotAbs(loc);
+            Plot now = area.getPlot(loc);
             final Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot)) {
