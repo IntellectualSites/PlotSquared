@@ -146,6 +146,7 @@ permissions:
       plots.save: true
       plots.done: true
       plots.continue: true
+      plots.middle: true
   plots.worldedit.bypass:
     default: false
   plots.gamemode.bypass:
