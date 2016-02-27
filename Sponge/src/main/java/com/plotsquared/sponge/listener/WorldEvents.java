@@ -21,7 +21,7 @@ public class WorldEvents {
             SpongeTerrainGen stg = (SpongeTerrainGen) terrain;
             PS.get().loadWorld(name, stg.parent);
         }
-        else if (PS.get().config.contains("worlds." + name)) {
+        else {
             PS.get().loadWorld(name, null);
         }
     }

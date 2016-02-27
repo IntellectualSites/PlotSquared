@@ -20,6 +20,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.database.plotme;
 
+import com.intellectualcrafters.configuration.MemorySection;
+import com.intellectualcrafters.configuration.file.FileConfiguration;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.generator.HybridGen;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -34,22 +50,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-
-import com.intellectualcrafters.configuration.file.FileConfiguration;
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.generator.HybridGen;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 
 /**
  * Created 2014-08-17 for PlotSquared
@@ -109,10 +109,12 @@ public class LikePlotMeConverter {
                 YamlConfiguration yml = YamlConfiguration.loadConfiguration(genConfig);
                 for (String key : yml.getKeys(true)) {
                     if (!plotConfig.contains(key)) {
-                        plotConfig.set(key, yml.get(key));
+                        Object value = yml.get(key);
+                        if (!(value instanceof MemorySection)) {
+                            plotConfig.set(key, value);
+                        }
                     }
                 }
-                genConfig.delete();
             }
         }
         catch (Exception e) {

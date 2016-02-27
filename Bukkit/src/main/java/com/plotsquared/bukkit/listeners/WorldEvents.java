@@ -21,9 +21,7 @@ public class WorldEvents implements Listener {
         if (gen instanceof GeneratorWrapper) {
             PS.get().loadWorld(name, (GeneratorWrapper<?>) gen);
         } else {
-            if (PS.get().config.contains("worlds." + name)) {
-                PS.get().loadWorld(name, new BukkitPlotGenerator(name, gen));
-            }
+            PS.get().loadWorld(name, new BukkitPlotGenerator(name, gen));
         }
     }
 }

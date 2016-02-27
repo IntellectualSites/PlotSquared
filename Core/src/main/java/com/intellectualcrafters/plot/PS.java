@@ -47,6 +47,12 @@ public class PS {
     
     // protected static:
     private static PS instance;
+    private HashSet<Integer> plotareaHashCheck = new HashSet<Integer>();
+    private boolean plotareaHasCollision = false;
+    /**
+     * All plot areas (quick global access)
+     */
+    private PlotArea[] plotareas = new PlotArea[0];
     /**
      * All plot areas mapped by world (quick world access)
      */
@@ -68,10 +74,6 @@ public class PS {
     public TaskManager TASK;
     public WorldEdit worldedit;
     public URL update;
-    /**
-     * All plot areas (quick global access)
-     */
-    private PlotArea[] plotareas = new PlotArea[0];
     // private:
     private File storageFile;
     private File FILE = null; // This file
@@ -384,7 +386,7 @@ public class PS {
                 int hash = world.hashCode();
                 for (PlotArea area : plotareas) {
                     if (hash == area.worldhash) {
-                        if (area.contains(loc.getX(), loc.getZ()) && world.equals(area.worldname)) {
+                        if (area.contains(loc.getX(), loc.getZ()) && (!plotareaHasCollision || world.equals(area.worldname))) {
                             return area;
                         }
                     }
@@ -511,7 +513,7 @@ public class PS {
                 int hash = world.hashCode();
                 for (PlotArea area : plotareas) {
                     if (hash == area.worldhash) {
-                        if (area.contains(loc.getX(), loc.getZ()) && world.equals(area.worldname)) {
+                        if (area.contains(loc.getX(), loc.getZ()) && (!plotareaHasCollision || world.equals(area.worldname))) {
                             return area;
                         }
                     }
@@ -1230,7 +1232,7 @@ public class PS {
                 return false;
             case 1:
                 PlotArea a = plotareas[0];
-                return world.hashCode() == a.worldhash && a.worldname.equals(world);
+                return world.hashCode() == a.worldhash && (!plotareaHasCollision || a.worldname.equals(world));
             case 2:
             case 3:
             case 4:
@@ -1240,7 +1242,7 @@ public class PS {
             case 8:
                 int hash = world.hashCode();
                 for (PlotArea area : plotareas) {
-                    if (area.worldhash == hash && area.worldname.equals(world)) {
+                    if (area.worldhash == hash && (!plotareaHasCollision || area.worldname.equals(world))) {
                         return true;
                     }
                 }
@@ -1354,6 +1356,9 @@ public class PS {
     public void loadWorld(final String world, final GeneratorWrapper<?> baseGenerator) {
         if (world.equals("CheckingPlotSquaredGenerator")) {
             return;
+        }
+        if (!plotareaHasCollision && !plotareaHashCheck.add(world.hashCode())) {
+            plotareaHasCollision = true;
         }
         final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
         final String path = "worlds." + world;

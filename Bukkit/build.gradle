@@ -25,6 +25,7 @@ shadowJar {
         include(dependency(':Core'))
     }
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
+    destinationDir = file '../target'
 }
 shadowJar.doLast {
     task ->

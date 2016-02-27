@@ -24,16 +24,8 @@ import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
@@ -50,23 +42,6 @@ category = CommandCategory.DEBUG,
 requiredType = RequiredType.CONSOLE,
 permission = "plots.debugclaimtest")
 public class DebugClaimTest extends SubCommand {
-    
-    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport) {
-        return claimPlot(player, plot, teleport, "");
-    }
-    
-    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic) {
-        final boolean result = EventUtil.manager.callClaim(player, plot, false);
-        if (result) {
-            plot.create(player.getUUID(), true);
-            plot.setSign(player.getName());
-            MainUtil.sendMessage(player, C.CLAIMED);
-            if (teleport) {
-                plot.teleportPlayer(player);
-            }
-        }
-        return !result;
-    }
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {

@@ -2,3 +2,4 @@ dependencies {
     compile 'org.yaml:snakeyaml:1.16'
 }
 jar.archiveName="PlotSquared-API-${parent.version}.jar"
+jar.destinationDir = file '../target'

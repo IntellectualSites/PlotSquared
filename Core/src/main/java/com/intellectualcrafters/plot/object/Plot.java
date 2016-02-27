@@ -785,9 +785,9 @@ public class Plot {
                     } else {
                         for (final Plot current : plots) {
                             manager.claimPlot(Plot.this.area, current);
-                            SetQueue.IMP.addTask(run);
                         }
                     }
+                    SetQueue.IMP.addTask(run);
                     return;
                 }
                 final Plot current = queue.poll();
@@ -1041,6 +1041,7 @@ public class Plot {
         for (Plot current : getConnectedPlots()) {
             getArea().removePlot(getId());
             DBFunc.delete(current);
+            current.owner = null;
             current.settings = null;
         }
         return true;
