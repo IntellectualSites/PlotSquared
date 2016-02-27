@@ -1056,9 +1056,12 @@ public class Plot {
     }
     
     public Location getCenter() {
-        final Location top = this.getTop();
-        final Location bot = this.getBottom();
-        return new Location(this.area.worldname, (top.getX() + bot.getX()) / 2, (top.getY() + bot.getY()) / 2, (top.getZ() + bot.getZ()) / 2);
+        Location[] corners = getCorners();
+        final Location top = corners[0];
+        final Location bot = corners[1];
+        Location loc = new Location(this.area.worldname, (top.getX() + bot.getX()) / 2, (top.getY() + bot.getY()) / 2, (top.getZ() + bot.getZ()) / 2);
+        loc.setY(WorldUtil.IMP.getHighestBlock(top.getWorld(), loc.getX(), loc.getY()));
+        return loc;
     }
     
     /**
@@ -1510,7 +1513,7 @@ public class Plot {
      */
     @Deprecated
     public Location getTop() {
-        return this.getCorners()[0];
+        return this.getCorners()[1];
     }
     
     /**

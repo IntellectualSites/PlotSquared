@@ -54,7 +54,7 @@ public class Unlink extends SubCommand {
         }
         final boolean createRoad;
         if (args.length != 0) {
-            if (args.length != 1 || StringMan.isEqualIgnoreCaseToAny(args[1], "true", "false")) {
+            if (args.length != 1 || StringMan.isEqualIgnoreCaseToAny(args[0], "true", "false")) {
                 C.COMMAND_SYNTAX.send(plr, getUsage());
                 return false;
             }

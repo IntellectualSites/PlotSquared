@@ -19,8 +19,6 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    jar.enabled = false;
-
     dependencies {
         compile(group: 'com.sk89q', name: 'worldedit', version:'6.0.0-SNAPSHOT') {
             exclude(module: 'bukkit-classloader-check')

@@ -18,14 +18,14 @@ processResources {
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
-
+// We only want the shadow jar produced
+jar.enabled = false
 shadowJar {
     dependencies {
         include(dependency(':Core'))
     }
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
 }
-
 shadowJar.doLast {
     task ->
     ant.checksum file: task.archivePath

@@ -51,7 +51,6 @@ import java.util.UUID;
 public class PlotListener {
     
     public static boolean plotEntry(final PlotPlayer pp, final Plot plot) {
-        System.out.println("POLOT ENTRY");
         if (plot.isDenied(pp.getUUID()) && !Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
             return false;
         }

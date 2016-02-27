@@ -30,11 +30,7 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.SetQueue;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,20 +72,21 @@ public class HybridPlotManager extends ClassicPlotManager {
     public boolean createRoadEast(final PlotArea plotworld, final Plot plot) {
         super.createRoadEast(plotworld, plot);
         final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-            return true;
-        }
         final PlotId id = plot.getId();
         final PlotId id2 = new PlotId(id.x + 1, id.y);
         final Location bot = getPlotBottomLocAbs(hpw, id2);
         final Location top = getPlotTopLocAbs(hpw, id);
         final Location pos1 = new Location(plotworld.worldname, top.getX() + 1, 0, bot.getZ() - 1);
         final Location pos2 = new Location(plotworld.worldname, bot.getX(), 255, top.getZ() + 1);
+        MainUtil.resetBiome(plotworld, pos1, pos2);
+        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
+            return true;
+        }
         createSchemAbs(hpw, pos1, pos2, 0, true);
         return true;
     }
-    
-    public void createSchemAbs(final HybridPlotWorld hpw, final Location pos1, final Location pos2, final int height, final boolean clear) {
+
+    private void createSchemAbs(final HybridPlotWorld hpw, final Location pos1, final Location pos2, final int height, final boolean clear) {
         final int size = hpw.SIZE;
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             short absX = (short) ((x - hpw.ROAD_OFFSET_X) % (size));
@@ -120,15 +117,16 @@ public class HybridPlotManager extends ClassicPlotManager {
     public boolean createRoadSouth(final PlotArea plotworld, final Plot plot) {
         super.createRoadSouth(plotworld, plot);
         final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-            return true;
-        }
         final PlotId id = plot.getId();
         final PlotId id2 = new PlotId(id.x, id.y + 1);
         final Location bot = getPlotBottomLocAbs(hpw, id2);
         final Location top = getPlotTopLocAbs(hpw, id);
         final Location pos1 = new Location(plotworld.worldname, bot.getX() - 1, 0, top.getZ() + 1);
         final Location pos2 = new Location(plotworld.worldname, top.getX() + 1, 255, bot.getZ());
+        MainUtil.resetBiome(plotworld, pos1, pos2);
+        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
+            return true;
+        }
         createSchemAbs(hpw, pos1, pos2, 0, true);
         return true;
     }
@@ -137,15 +135,16 @@ public class HybridPlotManager extends ClassicPlotManager {
     public boolean createRoadSouthEast(final PlotArea plotworld, final Plot plot) {
         super.createRoadSouthEast(plotworld, plot);
         final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
-            return true;
-        }
         final PlotId id = plot.getId();
         final PlotId id2 = new PlotId(id.x + 1, id.y + 1);
         final Location pos1 = getPlotTopLocAbs(hpw, id).add(1, 0, 1);
         final Location pos2 = getPlotBottomLocAbs(hpw, id2);
         pos1.setY(0);
         pos2.setY(256);
+        createSchemAbs(hpw, pos1, pos2, 0, true);
+        if (!hpw.ROAD_SCHEMATIC_ENABLED) {
+            return true;
+        }
         createSchemAbs(hpw, pos1, pos2, 0, true);
         return true;
     }

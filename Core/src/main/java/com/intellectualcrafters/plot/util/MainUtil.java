@@ -20,33 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.regex.Matcher;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
 
 /**
  * plot functions
@@ -118,6 +102,22 @@ public class MainUtil {
                 }
             }
         }
+    }
+
+    /**
+     * Resets the biome if it was modified
+     * @param area
+     * @param pos1
+     * @param pos2
+     * @return true if any changes were made
+     */
+    public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
+        String biome = WorldUtil.IMP.getBiomeList()[area.PLOT_BIOME];
+        if (!StringMan.isEqual(WorldUtil.IMP.getBiome(area.worldname, (pos1.getX() + pos2.getX()) / 2, (pos1.getZ() + pos2.getZ()) / 2), biome)) {
+            MainUtil.setBiome(area.worldname, pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(), biome);
+            return true;
+        }
+        return false;
     }
     
     /**
