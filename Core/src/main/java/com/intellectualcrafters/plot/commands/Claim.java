@@ -93,14 +93,13 @@ public class Claim extends SubCommand {
         }
         final int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(loc.getWorld());
         boolean removeGrantedPlot = false;
+        int grants = 0;
         if (currentPlots >= plr.getAllowedPlots()) {
             if (plr.hasPersistentMeta("grantedPlots")) {
-                int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
-                if (grantedPlots < 1) {
+                grants = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
+                if (grants <= 0) {
                     plr.removePersistentMeta("grantedPlots");
                     return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
-                } else {
-                    removeGrantedPlot = true;
                 }
             } else {
                 return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
@@ -120,10 +119,14 @@ public class Claim extends SubCommand {
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
-        if (removeGrantedPlot) {
-            int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
-            plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grantedPlots - 1));
-            sendMessage(plr, C.REMOVED_GRANTED_PLOT, "1", "" + (grantedPlots - 1));
+        if (grants > 0) {
+            if (grants == 1) {
+                plr.removePersistentMeta("grantedPlots");
+            }
+            else {
+                plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grants - 1));
+            }
+            sendMessage(plr, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }
         if (!schematic.equals("")) {
             if (world.SCHEMATIC_CLAIM_SPECIFY) {

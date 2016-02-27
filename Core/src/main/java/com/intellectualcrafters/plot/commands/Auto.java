@@ -111,27 +111,28 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-        int removeGrants = 0;
         final int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(plotarea.worldname);
         final int diff = currentPlots - plr.getAllowedPlots();
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
                 MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
-            } else {
-                if (plr.hasPersistentMeta("grantedPlots")) {
-                    int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
-                    if (grantedPlots < size_x * size_z) {
-                        plr.removePersistentMeta("grantedPlots");
-                        return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
-                    } else {
-                        removeGrants = size_x * size_z;
-                    }
+            } else if (plr.hasPersistentMeta("grantedPlots")) {
+                int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
+                if (grantedPlots - diff < size_x * size_z) {
+                    plr.removePersistentMeta("grantedPlots");
+                    return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
                 } else {
-                    MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                    int left = grantedPlots - diff - (size_x * size_z);
+                    if (left == 0) {
+                        plr.removePersistentMeta("grantedPlots");
+                    }
+                    else {
+                        plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(left));
+                    }
+                    sendMessage(plr, C.REMOVED_GRANTED_PLOT, "" + left, "" + (grantedPlots - left));
                 }
-            }
-            if (removeGrants == 0) {
-                return false;
+            } else {
+                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
             }
         }
         if ((EconHandler.manager != null) && plotarea.USE_ECONOMY) {
@@ -145,11 +146,6 @@ public class Auto extends SubCommand {
                 EconHandler.manager.withdrawMoney(plr, cost);
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
-        }
-        if (removeGrants > 0) {
-            int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
-            plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grantedPlots - removeGrants));
-            sendMessage(plr, C.REMOVED_GRANTED_PLOT, "" + removeGrants, "" + (grantedPlots - removeGrants));
         }
         if (schematic != null && !schematic.equals("")) {
             if (!plotarea.SCHEMATICS.contains(schematic.toLowerCase())) {

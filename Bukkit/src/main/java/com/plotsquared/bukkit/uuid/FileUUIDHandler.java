@@ -173,6 +173,9 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 for (UUID uuid : uuids) {
                     try {
                         final File file = new File(playerdataFolder + File.separator + uuid.toString() + ".dat");
+                        if (!file.exists()) {
+                            continue;
+                        }
                         final ByteSource is = com.google.common.io.Files.asByteSource(file);
                         final NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
                         final NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
