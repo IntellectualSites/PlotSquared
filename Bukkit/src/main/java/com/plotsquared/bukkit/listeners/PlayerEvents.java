@@ -753,14 +753,16 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChange(final BlockFromToEvent e) {
-        final Block b = e.getBlock();
-        Location loc = BukkitUtil.getLocation(b.getLocation());
-        PlotArea area = loc.getPlotArea();
+        Block from = e.getBlock();
+        Block to = e.getToBlock();
+        Location tloc = BukkitUtil.getLocation(to.getLocation());
+        PlotArea area = tloc.getPlotArea();
         if (area == null) {
             return;
         }
-        Plot plot = area.getOwnedPlot(loc);
-        if (plot == null || FlagManager.isPlotFlagTrue(plot, "disable-physics")) {
+        Plot plot = area.getOwnedPlot(tloc);
+        Location floc = BukkitUtil.getLocation(from.getLocation());
+        if (!area.contains(floc.getX(), floc.getZ()) || !Objects.equals(plot, area.getOwnedPlot(floc)) || (plot != null && FlagManager.isPlotFlagTrue(plot, "disable-physics"))) {
             e.setCancelled(true);
         }
     }
