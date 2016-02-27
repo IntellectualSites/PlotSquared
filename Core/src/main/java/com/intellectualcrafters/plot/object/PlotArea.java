@@ -20,18 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -42,13 +30,12 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.GridPlotWorld;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotGamemode;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.area.QuadMap;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Jesse Boyd
@@ -424,13 +411,16 @@ public abstract class PlotArea {
         return StringMan.isEqual(loc.getWorld(), worldname) && (getRegionAbs() == null || region.isIn(loc.getX(), loc.getZ()));
     }
     
-    public Set<Plot> getPlotsAbs(UUID uuid) {
-        HashSet<Plot> plots = new HashSet<>();
-        for (Plot plot : plots) {
-            if (plot.owner.equals(uuid)) {
-                plots.add(plot);
+    public Set<Plot> getPlotsAbs(final UUID uuid) {
+        final HashSet<Plot> plots = new HashSet<>();
+        foreachPlotAbs(new RunnableVal<Plot>() {
+            @Override
+            public void run(Plot value) {
+                if (value.owner.equals(uuid)) {
+                    plots.add(value);
+                }
             }
-        }
+        });
         return plots;
     }
     
@@ -574,6 +564,13 @@ public abstract class PlotArea {
             }
         }
         return plots;
+    }
+
+    public void foreachPlotAbs(RunnableVal<Plot> run) {
+        for (Entry<PlotId, Plot> entry : plots.entrySet()) {
+            run.run(entry.getValue());
+        }
+
     }
     
     public void foreachBasePlot(RunnableVal<Plot> run) {
