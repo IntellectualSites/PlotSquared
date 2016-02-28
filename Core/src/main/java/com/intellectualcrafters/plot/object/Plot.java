@@ -769,25 +769,30 @@ public class Plot {
                     final Runnable run = new Runnable() {
                         @Override
                         public void run() {
-                            if (finished.incrementAndGet() >= plots.size()) {
-                                for (final RegionWrapper region : regions) {
-                                    final Location[] corners = region.getCorners(Plot.this.area.worldname);
-                                    ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
-                                }
-                                TaskManager.runTask(whenDone);
+                            for (final RegionWrapper region : regions) {
+                                final Location[] corners = region.getCorners(Plot.this.area.worldname);
+                                ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
                             }
+                            TaskManager.runTask(whenDone);
                         }
                     };
                     if (isDelete) {
                         for (final Plot current : plots) {
-                            manager.unclaimPlot(Plot.this.area, current, run);
+                            manager.unclaimPlot(Plot.this.area, current, new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (finished.incrementAndGet() >= plots.size()) {
+                                        run.run();
+                                    }
+                                }
+                            });
                         }
                     } else {
                         for (final Plot current : plots) {
                             manager.claimPlot(Plot.this.area, current);
                         }
+                        SetQueue.IMP.addTask(run);
                     }
-                    SetQueue.IMP.addTask(run);
                     return;
                 }
                 final Plot current = queue.poll();

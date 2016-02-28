@@ -116,6 +116,7 @@ public class Auto extends SubCommand {
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
                 MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
+                return false;
             } else if (plr.hasPersistentMeta("grantedPlots")) {
                 int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
                 if (grantedPlots - diff < size_x * size_z) {
@@ -133,6 +134,7 @@ public class Auto extends SubCommand {
                 }
             } else {
                 MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                return false;
             }
         }
         if ((EconHandler.manager != null) && plotarea.USE_ECONOMY) {

@@ -288,6 +288,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         // Set the result data
         result.result = new short[16][];
         result.result_data = new byte[16][];
+        result.grid = grid;
         // Catch any exceptions (as exceptions usually thrown 
         try {
             // Fill the result data
