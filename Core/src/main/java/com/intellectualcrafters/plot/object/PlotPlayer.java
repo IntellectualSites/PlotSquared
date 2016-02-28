@@ -460,4 +460,6 @@ public abstract class PlotPlayer implements CommandCaller {
     public boolean hasPersistentMeta(String key) {
         return metaMap.containsKey(key);
     }
+
+    public abstract void stopSpectating();
 }

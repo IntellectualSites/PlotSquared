@@ -1,13 +1,13 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.PlotWeather;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer {
     
@@ -152,7 +152,9 @@ public class ConsolePlayer extends PlotPlayer {
     
     @Override
     public void kick(final String message) {}
-    
+
+    @Override public void stopSpectating() {}
+
     @Override
     public boolean isBanned() {
         return false;

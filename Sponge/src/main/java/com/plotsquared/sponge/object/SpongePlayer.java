@@ -142,7 +142,6 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public void saveData() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
@@ -250,7 +249,11 @@ public class SpongePlayer extends PlotPlayer {
     public void kick(final String message) {
         player.kick(SpongeUtil.getText(message));
     }
-    
+
+    @Override public void stopSpectating() {
+        //Not Implemented
+    }
+
     @Override
     public boolean isBanned() {
         BanService service = Sponge.getServiceManager().provide(BanService.class).get();

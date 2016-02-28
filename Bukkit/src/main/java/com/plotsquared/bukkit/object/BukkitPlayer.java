@@ -215,7 +215,13 @@ public class BukkitPlayer extends PlotPlayer {
     public void kick(final String message) {
         player.kickPlayer(message);
     }
-    
+
+    @Override public void stopSpectating() {
+        if (getGamemode() == PlotGamemode.SPECTATOR) {
+            player.setSpectatorTarget(null);
+        }
+    }
+
     @Override
     public boolean isBanned() {
         return player.isBanned();

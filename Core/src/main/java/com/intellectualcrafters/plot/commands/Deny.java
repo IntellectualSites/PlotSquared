@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -30,10 +28,13 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.PlotGamemode;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.UUID;
 
 @CommandDeclaration(command = "deny", aliases = { "d", "ban" }, description = "Deny a user from a plot", usage = "/plot deny <player>", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
 public class Deny extends SubCommand {
@@ -101,6 +102,9 @@ public class Deny extends SubCommand {
         }
         if (pp.hasPermission("plots.admin.entry.denied")) {
             return;
+        }
+        if (pp.getGamemode() == PlotGamemode.SPECTATOR) {
+            pp.stopSpectating();
         }
         pp.teleport(WorldUtil.IMP.getSpawn(pp.getLocation().getWorld()));
         MainUtil.sendMessage(pp, C.YOU_GOT_DENIED);
