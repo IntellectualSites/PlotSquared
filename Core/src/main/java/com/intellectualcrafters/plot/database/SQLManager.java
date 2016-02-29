@@ -1954,19 +1954,11 @@ public class SQLManager implements AbstractDB {
     
     @Override
     public void setFlags(final Plot plot, final Collection<Flag> flags) {
-        final StringBuilder flag_string = new StringBuilder();
-        int i = 0;
-        for (final Flag flag : flags) {
-            if (i != 0) {
-                flag_string.append(",");
-            }
-            flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
-            i++;
-        }
+        final String flag_string = FlagManager.toString(flags);
         addPlotTask(plot, new UniqueStatement("setFlags") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
-                stmt.setString(1, flag_string.toString());
+                stmt.setString(1, flag_string);
                 stmt.setInt(2, getId(plot));
             }
 

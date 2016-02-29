@@ -9,7 +9,7 @@ import java.util.Map;
  * The {@code TAG_Compound} tag.
  */
 public final class CompoundTag extends Tag {
-    private final Map<String, Tag> value;
+    private Map<String, Tag> value;
     
     /**
      * Creates the tag with an empty name.
@@ -56,7 +56,13 @@ public final class CompoundTag extends Tag {
      * @return the new compound tag
      */
     public CompoundTag setValue(final Map<String, Tag> value) {
-        return new CompoundTag(getName(), value);
+        if (value == null) {
+            this.value = Collections.unmodifiableMap(new HashMap<String, Tag>());
+        }
+        else {
+            this.value = Collections.unmodifiableMap(value);
+        }
+        return this;
     }
     
     /**

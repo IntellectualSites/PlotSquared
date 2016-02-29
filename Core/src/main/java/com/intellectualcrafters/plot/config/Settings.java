@@ -187,6 +187,7 @@ public class Settings {
     /**
      * Command confirmation
      */
+    public static boolean CONFIRM_SETOWNER = true;
     public static boolean CONFIRM_CLEAR = true;
     public static boolean CONFIRM_DELETE = true;
     public static boolean CONFIRM_UNLINK = true;

@@ -23,21 +23,11 @@ package com.intellectualcrafters.plot.flag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.PlotSettings;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Flag Manager Utility
@@ -123,6 +113,19 @@ public class FlagManager {
             reserveFlag(af.getKey());
         }
         return false;
+    }
+
+    public static String toString(Collection<Flag> flags) {
+        final StringBuilder flag_string = new StringBuilder();
+        int i = 0;
+        for (final Flag flag : flags) {
+            if (i != 0) {
+                flag_string.append(",");
+            }
+            flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
+            i++;
+        }
+        return flag_string.toString();
     }
     
     public static Flag getSettingFlag(final PlotArea area, final PlotSettings settings, final String id) {

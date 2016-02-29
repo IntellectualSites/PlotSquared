@@ -20,10 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.util.StringMan;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import com.intellectualcrafters.plot.util.StringMan;
 
 public class Flag implements Cloneable {
     private AbstractFlag key;

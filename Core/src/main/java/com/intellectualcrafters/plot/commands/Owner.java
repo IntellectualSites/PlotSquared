@@ -24,9 +24,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.HashSet;
@@ -43,7 +41,7 @@ requiredType = RequiredType.NONE)
 public class Owner extends SetCommand {
     
     @Override
-    public boolean set(PlotPlayer plr, Plot plot, String value) {
+    public boolean set(final PlotPlayer plr, final Plot plot, String value) {
         HashSet<Plot> plots = plot.getConnectedPlots();
         UUID uuid = null;
         String name = null;
@@ -75,7 +73,7 @@ public class Owner extends SetCommand {
             C.ALREADY_OWNER.send(plr);
             return false;
         }
-        PlotPlayer other = UUIDHandler.getPlayer(uuid);
+        final PlotPlayer other = UUIDHandler.getPlayer(uuid);
         if (!Permissions.hasPermission(plr, "plots.admin.command.setowner")) {
             if (other == null) {
                 C.INVALID_PLAYER_OFFLINE.send(plr, value);
@@ -88,12 +86,23 @@ public class Owner extends SetCommand {
                 return false;
             }
         }
-        
-        plot.setOwner(uuid);
-        plot.setSign(name);
-        MainUtil.sendMessage(plr, C.SET_OWNER);
-        if (other != null) {
-            MainUtil.sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
+        final String finalName = name;
+        final UUID finalUUID = uuid;
+        Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                plot.setOwner(finalUUID);
+                plot.setSign(finalName);
+                MainUtil.sendMessage(plr, C.SET_OWNER);
+                if (other != null) {
+                    MainUtil.sendMessage(other, C.NOW_OWNER, plot.getArea() + ";" + plot.getId());
+                }
+            }
+        };
+        if (Settings.CONFIRM_SETOWNER && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
+            CmdConfirm.addPending(plr, "/plot set owner " + value, run);
+        } else {
+            TaskManager.runTask(run);
         }
         return true;
     }

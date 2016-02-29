@@ -6,6 +6,7 @@ import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONException;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
 import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
@@ -119,6 +120,17 @@ public abstract class SchematicHandler {
                     return;
                 }
                 try {
+                    // Set flags
+                    if (plot.hasOwner()) {
+                        Map<String, Tag> flags = schematic.getFlags();
+                        if (!flags.isEmpty()) {
+                            for (Map.Entry<String, Tag> entry : flags.entrySet()) {
+                                plot.setFlag(entry.getKey(), StringTag.class.cast(entry.getValue()).getValue());
+                            }
+
+                        }
+                    }
+
                     final Dimension demensions = schematic.getSchematicDimension();
                     final int WIDTH = demensions.getX();
                     final int LENGTH = demensions.getZ();
@@ -362,6 +374,12 @@ public abstract class SchematicHandler {
         final short height = ShortTag.class.cast(tagMap.get("Height")).getValue();
         final byte[] block_sml = ByteArrayTag.class.cast(tagMap.get("Blocks")).getValue();
         final byte[] data = ByteArrayTag.class.cast(tagMap.get("Data")).getValue();
+        final Map<String, Tag> flags;
+        if (tagMap.containsKey("Flags")) {
+            flags = CompoundTag.class.cast(tagMap.get("Flags")).getValue();
+        } else {
+            flags = null;
+        }
         
         final short[] block = new short[block_sml.length];
         for (int i = 0; i < block.length; i++) {
@@ -392,7 +410,7 @@ public abstract class SchematicHandler {
         //        Schematic schem = new Schematic(collection, dimension, file);
         
         final Dimension dimensions = new Dimension(width, height, length);
-        final Schematic schem = new Schematic(block, data, dimensions);
+        final Schematic schem = new Schematic(block, data, dimensions, flags);
         
         // Slow
         try {
@@ -632,8 +650,24 @@ public abstract class SchematicHandler {
     
     public abstract void getCompoundTag(final String world, Set<RegionWrapper> regions, final RunnableVal<CompoundTag> whenDone);
     
-    public void getCompoundTag(Plot plot, final RunnableVal<CompoundTag> whenDone) {
-        getCompoundTag(plot.getArea().worldname, plot.getRegions(), whenDone);
+    public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {
+        getCompoundTag(plot.getArea().worldname, plot.getRegions(), new RunnableVal<CompoundTag>() {
+            @Override
+            public void run(CompoundTag value) {
+                if (plot.getFlags().size() > 0) {
+                    HashMap<String, Tag> flagMap = new HashMap<>();
+                    for (Map.Entry<String, Flag> entry : plot.getFlags().entrySet()) {
+                        String key = entry.getKey();
+                        flagMap.put(key, new StringTag(key, entry.getValue().getValueString()));
+                    }
+                    CompoundTag tag = new CompoundTag("Flags", flagMap);
+                    HashMap<String, Tag> map = new HashMap<String, Tag>(value.getValue());
+                    map.put("Flags", tag);
+                    value.setValue(map);
+                    whenDone.run(value);
+                }
+            }
+        });
     }
     
     /**
@@ -675,14 +709,24 @@ public abstract class SchematicHandler {
         // Lossy but fast
         private final short[] ids;
         private final byte[] datas;
+        private Map<String, Tag> flags;
 
         private final Dimension schematicDimension;
         private HashSet<PlotItem> items;
 
-        public Schematic(final short[] i, final byte[] b, final Dimension d) {
+        public Schematic(final short[] i, final byte[] b, final Dimension d, Map<String, Tag> flags) {
             ids = i;
             datas = b;
             schematicDimension = d;
+            setFlags(flags);
+        }
+
+        public Map<String, Tag> getFlags() {
+            return flags;
+        }
+
+        public void setFlags(Map<String, Tag> flags) {
+            this.flags = flags == null ? new HashMap<String, Tag>() : flags;
         }
 
         /**
@@ -767,7 +811,7 @@ public abstract class SchematicHandler {
                     }
                 }
             }
-            return new Schematic(ids2, datas2, new Dimension(width, height, length));
+            return new Schematic(ids2, datas2, new Dimension(width, height, length), null);
         }
 
         public void save(final File file) {

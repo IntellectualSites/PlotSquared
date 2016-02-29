@@ -2007,6 +2007,7 @@ public class PS {
 
         final Map<String, Object> options = new HashMap<>();
         // Command confirmation
+        options.put("confirmation.setowner", Settings.CONFIRM_SETOWNER);
         options.put("confirmation.clear", Settings.CONFIRM_CLEAR);
         options.put("confirmation.delete", Settings.CONFIRM_DELETE);
         options.put("confirmation.unlink", Settings.CONFIRM_UNLINK);
@@ -2136,6 +2137,7 @@ public class PS {
         }
 
         // Command confirmation
+        Settings.CONFIRM_SETOWNER = config.getBoolean("confirmation.setowner");
         Settings.CONFIRM_CLEAR = config.getBoolean("confirmation.clear");
         Settings.CONFIRM_DELETE = config.getBoolean("confirmation.delete");
         Settings.CONFIRM_UNLINK = config.getBoolean("confirmation.unlink");
