@@ -31,12 +31,14 @@ import com.plotsquared.listener.PlotListener;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -105,7 +107,23 @@ public class PlotPlusListener extends PlotListener implements Listener {
             }
         }, 0l, 20l);
     }
-    
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onMelt(final BlockFadeEvent event) {
+        final BlockState state = event.getNewState();
+
+        if (state.getType() != Material.WATER && state.getType() != Material.STATIONARY_WATER) {
+            return;
+        }
+        final Plot plot = BukkitUtil.getLocation(state.getLocation()).getOwnedPlot();
+        if (plot == null) {
+            return;
+        }
+        if (!FlagManager.isBooleanFlag(plot, "ice-melt", false)) {
+            event.setCancelled(true);
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(final BlockDamageEvent event) {
         final Player player = event.getPlayer();
