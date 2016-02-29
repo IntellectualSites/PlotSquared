@@ -299,9 +299,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             displayHelp(player, category, help_index, cmd);
             return true;
         }
-        if (args[0].contains(":")) {
-            args[0] = args[0].replaceFirst(":", " ");
-        }
         String fullCmd = StringMan.join(args, " ");
         getInstance().handle(player, cmd + " " + fullCmd);
         // Restore location
@@ -453,10 +450,6 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             final boolean result = cmd.onCommand(plr, args);
             if (!result) {
                 cmd.getUsage();
-                // Unecessary!
-                //                if (usage != null && !usage.isEmpty()) {
-                //                    MainUtil.sendMessage(plr, usage);
-                //                }
                 return CommandHandlingOutput.WRONG_USAGE;
             }
         } catch (final Throwable t) {
