@@ -1729,7 +1729,7 @@ public class PS {
                     parent.mkdirs();
                 }
                 MainUtil.sendMessage(sender, "$2 - Output: " + newJar);
-                if (newJar.delete()) {
+                if (!newJar.delete()) {
                     MainUtil.sendMessage(sender, "Failed to update PlotSquared");
                     MainUtil.sendMessage(sender, "Jar file failed to delete.");
                     MainUtil.sendMessage(sender, " - Please update manually");
