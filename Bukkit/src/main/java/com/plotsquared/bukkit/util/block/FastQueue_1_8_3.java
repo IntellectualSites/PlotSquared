@@ -49,11 +49,8 @@ public class FastQueue_1_8_3 extends SlowQueue {
     private final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
     private final RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
     public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
-    private RefMethod methodGetHandlePlayer;
     private RefMethod methodGetHandleChunk;
     private RefConstructor MapChunk;
-    private RefField connection;
-    private RefMethod send;
     private RefMethod methodInitLighting;
     private RefConstructor classBlockPositionConstructor;
     private RefConstructor classChunkSectionConstructor;
@@ -64,12 +61,9 @@ public class FastQueue_1_8_3 extends SlowQueue {
     private RefMethod methodGetIdArray;
 
     public FastQueue_1_8_3() throws NoSuchMethodException, RuntimeException {
-        methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
         methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         methodInitLighting = classChunk.getMethod("initLighting");
         MapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
-        connection = classEntityPlayer.getField("playerConnection");
-        send = classConnection.getMethod("sendPacket", classPacket.getRealClass());
         classBlockPositionConstructor = classBlockPosition.getConstructor(int.class, int.class, int.class);
         methodX = classWorld.getMethod("x", classBlockPosition.getRealClass());
         fieldSections = classChunk.getField("sections");
