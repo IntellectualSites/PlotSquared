@@ -9,7 +9,12 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.ReflectionUtils;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import net.minecraft.block.Block;
@@ -29,7 +34,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
-import org.spongepowered.api.text.translation.Translatable;
 import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
@@ -38,7 +42,11 @@ import org.spongepowered.api.world.extent.Extent;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 public class SpongeUtil extends WorldUtil {
     
@@ -103,28 +111,23 @@ public class SpongeUtil extends WorldUtil {
     }
 
     public static Translation getTranslation(final String m) {
-        return new Translatable() {
+        return new Translation() {
+
             @Override
-            public Translation getTranslation() {
-                return new Translation() {
-                    
-                    @Override
-                    public String getId() {
-                        return m;
-                    }
-                    
-                    @Override
-                    public String get(final Locale l, final Object... args) {
-                        return m;
-                    }
-                    
-                    @Override
-                    public String get(final Locale l) {
-                        return m;
-                    }
-                };
+            public String getId() {
+                return m;
             }
-        }.getTranslation();
+
+            @Override
+            public String get(final Locale l, final Object... args) {
+                return m;
+            }
+
+            @Override
+            public String get(final Locale l) {
+                return m;
+            }
+        };
     }
 
     private static HashMap<BlockState, PlotBlock> stateMap;

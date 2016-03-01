@@ -246,7 +246,7 @@ public class ConfigurationSerialization {
 
         final SerializableAs alias = clazz.getAnnotation(SerializableAs.class);
 
-        if ((alias != null) && (alias.value() != null)) {
+        if (alias != null) {
             return alias.value();
         }
 

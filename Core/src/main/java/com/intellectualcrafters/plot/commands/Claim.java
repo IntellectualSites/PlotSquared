@@ -92,7 +92,6 @@ public class Claim extends SubCommand {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
         final int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(loc.getWorld());
-        boolean removeGrantedPlot = false;
         int grants = 0;
         if (currentPlots >= plr.getAllowedPlots()) {
             if (plr.hasPersistentMeta("grantedPlots")) {

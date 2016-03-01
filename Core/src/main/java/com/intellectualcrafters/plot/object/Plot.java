@@ -357,7 +357,7 @@ public class Plot {
      */
     public HashSet<UUID> getOwners() {
         if (owner == null) {
-            return new HashSet<UUID>();
+            return new HashSet<>();
         }
         if (isMerged()) {
             HashSet<Plot> plots = getConnectedPlots();
@@ -910,16 +910,15 @@ public class Plot {
             });
             return;
         }
-        final String rename = name == null ? "unknown" : name;
         final PlotManager manager = this.area.getPlotManager();
         if (this.area.ALLOW_SIGNS) {
             final Location loc = manager.getSignLoc(this.area, this);
             final String id = this.id.x + ";" + this.id.y;
             final String[] lines = new String[] {
             C.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id),
-            C.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll("%plr%", rename),
-            C.OWNER_SIGN_LINE_3.formatted().replaceAll("%id%", id).replaceAll("%plr%", rename),
-            C.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll("%plr%", rename) };
+            C.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll("%plr%", name),
+            C.OWNER_SIGN_LINE_3.formatted().replaceAll("%id%", id).replaceAll("%plr%", name),
+            C.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll("%plr%", name) };
             WorldUtil.IMP.setSign(this.area.worldname, loc.getX(), loc.getY(), loc.getZ(), lines);
         }
     }
@@ -1242,7 +1241,7 @@ public class Plot {
      */
     public void setSign() {
         if (this.owner == null) {
-            this.setSign(null);
+            this.setSign("unknown");
             return;
         }
         this.setSign(UUIDHandler.getName(this.owner));

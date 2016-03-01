@@ -464,20 +464,14 @@ public class SQLManager implements AbstractDB {
                                         final Plot plot = plotMap.get(plotId);
                                         if (plot != null) {
                                             settings.add(new SettingsPair(id, plot.getSettings()));
-                                            if (plot.getDenied() != null) {
-                                                for (final UUID uuid : plot.getDenied()) {
-                                                    denied.add(new UUIDPair(id, uuid));
-                                                }
+                                            for (final UUID uuid : plot.getDenied()) {
+                                                denied.add(new UUIDPair(id, uuid));
                                             }
-                                            if (plot.getMembers() != null) {
-                                                for (final UUID uuid : plot.getMembers()) {
-                                                    trusted.add(new UUIDPair(id, uuid));
-                                                }
+                                            for (final UUID uuid : plot.getMembers()) {
+                                                trusted.add(new UUIDPair(id, uuid));
                                             }
-                                            if (plot.getTrusted() != null) {
-                                                for (final UUID uuid : plot.getTrusted()) {
-                                                    helpers.add(new UUIDPair(id, uuid));
-                                                }
+                                            for (final UUID uuid : plot.getTrusted()) {
+                                                helpers.add(new UUIDPair(id, uuid));
                                             }
                                         }
                                     }

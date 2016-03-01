@@ -65,10 +65,6 @@ public class Condense extends SubCommand {
                     MainUtil.sendMessage(plr, "TASK ALREADY STARTED");
                     return false;
                 }
-                if (args.length == 2) {
-                    MainUtil.sendMessage(plr, "/plot condense " + area.toString() + " start <radius>");
-                    return false;
-                }
                 if (!MathMan.isInteger(args[2])) {
                     MainUtil.sendMessage(plr, "INVALID RADIUS");
                     return false;
