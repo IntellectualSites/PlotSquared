@@ -31,13 +31,7 @@ import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.object.RunnableVal3;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringComparison;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.ArrayList;
@@ -92,6 +86,9 @@ public class list extends SubCommand {
         }
         if (Permissions.hasPermission(player, "plots.list.done")) {
             args.add("done");
+        }
+        if (Permissions.hasPermission(player, "plots.list.expired")) {
+            args.add("expired");
         }
         if (Permissions.hasPermission(player, "plots.list.fuzzy")) {
             args.add("fuzzy <search...>");
@@ -161,6 +158,14 @@ public class list extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>(PS.get().getPlots(world));
+                break;
+            }
+            case "expired": {
+                if (!Permissions.hasPermission(plr, "plots.list.expired")) {
+                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.expired");
+                    return false;
+                }
+                plots = ExpireManager.IMP == null ? new ArrayList<Plot>() : new ArrayList<>(ExpireManager.IMP.getPendingExpired());
                 break;
             }
             case "area": {

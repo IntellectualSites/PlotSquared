@@ -668,11 +668,8 @@ public class BukkitChunkManager extends ChunkManager {
             if (!pLoc.getChunkLoc().equals(loc)) {
                 continue;
             }
-            PlotBlock plotblock = WorldUtil.IMP.getBlock(pLoc);
-            if (plotblock.id != 0) {
-                Plot plot = pp.getCurrentPlot();
-                pp.teleport(plot.getDefaultHome());
-            }
+            pLoc.setY(WorldUtil.IMP.getHighestBlock(world, pLoc.getX(), pLoc.getZ()));
+            pp.teleport(pLoc);
         }
     }
 
@@ -996,20 +993,7 @@ public class BukkitChunkManager extends ChunkManager {
         final int tx = pos2.getX();
         final int tz = pos2.getZ();
         for (final Entity entity : entities) {
-            if (entity instanceof Player) {
-                final org.bukkit.Location loc = entity.getLocation();
-                if (loc.getX() >= bx && loc.getX() <= tx && loc.getZ() >= bz && loc.getZ() <= tz) {
-                    final Player player = (Player) entity;
-                    final PlotPlayer pp = BukkitUtil.getPlayer(player);
-                    final Plot plot = pp.getCurrentPlot();
-                    if (plot != null) {
-                        final Location plotHome = plot.getDefaultHome();
-                        if (pp.getLocation().getY() <= plotHome.getY()) {
-                            pp.teleport(plotHome);
-                        }
-                    }
-                }
-            } else {
+            if (!(entity instanceof Player)) {
                 final org.bukkit.Location loc = entity.getLocation();
                 if (loc.getX() >= bx && loc.getX() <= tx && loc.getZ() >= bz && loc.getZ() <= tz) {
                     entity.remove();

@@ -119,6 +119,61 @@ public class MainUtil {
         }
         return false;
     }
+
+    public static long timeToSec(String string) {
+        if (MathMan.isInteger(string)) {
+            return Long.parseLong(string);
+        }
+        if (string == null) {
+            return 0;
+        }
+        string = string.toLowerCase().trim().toLowerCase();
+        if (string.equalsIgnoreCase("false")) {
+            return 0;
+        }
+        String[] split = string.split(" ");
+        long time = 0;
+        for (int i = 0; i < split.length; i++) {
+            String value = split[i];
+            int nums = Integer.parseInt(value.replaceAll("[^\\d]", ""));
+            String letters = value.replaceAll("[^a-z]", "");
+            switch (letters) {
+                case "week":
+                case "weeks":
+                case "wks":
+                case "w": {
+                    time += 604800 * nums;
+                }
+                case "days":
+                case "day":
+                case "d": {
+                    time += 86400 * nums;
+                }
+                case "hour":
+                case "hr":
+                case "hrs":
+                case "hours":
+                case "h": {
+                    time += 3600 * nums;
+                }
+                case "minutes":
+                case "minute":
+                case "mins":
+                case "min":
+                case "m": {
+                    time += 60 * nums;
+                }
+                case "seconds":
+                case "second":
+                case "secs":
+                case "sec":
+                case "s":{
+                    time += nums;
+                }
+            }
+        }
+        return time;
+    }
     
     /**
      * Hashcode of a boolean array.<br>

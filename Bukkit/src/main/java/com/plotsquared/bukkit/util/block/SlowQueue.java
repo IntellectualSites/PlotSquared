@@ -123,6 +123,9 @@ public class SlowQueue implements PlotQueue<Chunk> {
                 final int z = MainUtil.z_loc[i][j];
                 Block block = chunk.getBlock(x, y, z);
                 PlotBlock newBlock = result2[j];
+                if (newBlock == null) {
+                    continue;
+                }
                 switch (newBlock.id) {
                     case -1:
                         if (block.getData() == newBlock.data) {

@@ -163,7 +163,7 @@ public class Settings {
      * Auto clear enabled
      */
     public static boolean AUTO_CLEAR = false;
-    public static boolean AUTO_CLEAR_CONFIRMATION = true; // TODO FIXME
+    public static boolean AUTO_CLEAR_CONFIRMATION = false;
     /**
      * Days until a plot gets cleared
      */

@@ -369,11 +369,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
             try {
                 return new FastQueue_1_8_3();
-            } catch (NoSuchMethodException | RuntimeException e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 try {
                     return new FastQueue_1_8();
-                } catch (NoSuchMethodException e2) {
+                } catch (Throwable e2) {
                     e2.printStackTrace();
                     return new SlowQueue();
                 }
@@ -381,7 +381,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         try {
             return new FastQueue_1_7();
-        } catch (NoSuchMethodException e) {
+        } catch (Throwable e) {
+            e.printStackTrace();
             return new SlowQueue();
         }
     }

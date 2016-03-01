@@ -2,6 +2,7 @@ package com.plotsquared.bukkit.uuid;
 
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
+import com.google.common.io.InputSupplier;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -9,17 +10,14 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.NbtFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -102,12 +100,14 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 final UUID uuid = UUID.fromString(s);
                                 if (check || all.remove(uuid)) {
                                     final File file = new File(playerdataFolder + File.separator + current);
-                                    final ByteSource is = com.google.common.io.Files.asByteSource(file);
+                                    final InputSupplier<FileInputStream> is = com.google.common.io.Files.newInputStreamSupplier(file);
                                     final NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
                                     final NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
                                     final String name = (String) bukkit.get("lastKnownName");
                                     final long last = (long) bukkit.get("lastPlayed");
-                                    ExpireManager.dates.put(uuid, last);
+                                    if (ExpireManager.IMP != null) {
+                                        ExpireManager.IMP.storeDate(uuid, last);
+                                    }
                                     toAdd.put(new StringWrapper(name), uuid);
                                 }
                             } catch (final Exception e) {
@@ -190,7 +190,9 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 uuid = new UUID(most, least);
                             }
                         }
-                        ExpireManager.dates.put(uuid, last);
+                        if (ExpireManager.IMP != null) {
+                            ExpireManager.IMP.storeDate(uuid, last);
+                        }
                         toAdd.put(new StringWrapper(name), uuid);
                     } catch (final Throwable e) {
                         PS.debug(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
@@ -210,7 +212,9 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             final StringWrapper wrap = new StringWrapper(name);
                             final UUID uuid = uuidWrapper.getUUID(op);
                             toAdd.put(wrap, uuid);
-                            ExpireManager.dates.put(uuid, last);
+                            if (ExpireManager.IMP != null) {
+                                ExpireManager.IMP.storeDate(uuid, last);
+                            }
                         }
                     }
                 }

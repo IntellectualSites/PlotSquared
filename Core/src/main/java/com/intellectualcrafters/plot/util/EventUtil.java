@@ -1,23 +1,16 @@
 package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.object.*;
+import com.plotsquared.listener.PlayerBlockEventType;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
-
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.LazyBlock;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotCluster;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.Rating;
-import com.plotsquared.listener.PlayerBlockEventType;
 
 public abstract class EventUtil {
     
@@ -52,7 +45,31 @@ public abstract class EventUtil {
     public abstract void callTrusted(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
     
     public abstract void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
-    
+
+    public void doJoinTask(final PlotPlayer pp) {
+        if (ExpireManager.IMP != null) {
+            ExpireManager.IMP.handleJoin(pp);
+        }
+        if (PS.get().worldedit != null) {
+            if (pp.getAttribute("worldedit")) {
+                MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASSED);
+            }
+        }
+        if (PS.get().update != null && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
+            MainUtil.sendMessage(pp, "&6An update for PlotSquared is available: &7/plot update");
+        }
+        final Plot plot = pp.getCurrentPlot();
+        if (Settings.TELEPORT_ON_LOGIN && plot != null) {
+            TaskManager.runTask(new Runnable() {
+                @Override
+                public void run() {
+                    plot.teleportPlayer(pp);
+                }
+            });
+            MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
+        }
+    }
+
     public boolean checkPlayerBlockEvent(final PlotPlayer pp, final PlayerBlockEventType type, final Location loc, final LazyBlock block, boolean notifyPerms) {
         PlotArea area = PS.get().getPlotAreaAbs(loc);
         Plot plot = area != null ? area.getPlot(loc) : null;

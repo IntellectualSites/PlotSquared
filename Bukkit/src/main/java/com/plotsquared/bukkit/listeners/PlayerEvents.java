@@ -343,14 +343,11 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
 
         Location loc = pp.getLocation();
         PlotArea area = loc.getPlotArea();
-        final Plot plot;
         if (area != null) {
-            plot = area.getPlot(loc);
+            Plot plot = area.getPlot(loc);
             if (plot != null) {
                 plotEntry(pp, plot);
             }
-        } else {
-            plot = null;
         }
         // Delayed
 
@@ -361,24 +358,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 if (!player.hasPlayedBefore() && player.isOnline()) {
                     player.saveData();
                 }
-                ExpireManager.dates.put(uuid, System.currentTimeMillis());
-                if (BukkitMain.worldEdit != null) {
-                    if (pp.getAttribute("worldedit")) {
-                        MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASSED);
-                    }
-                }
-                if (PS.get().update != null && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
-                    MainUtil.sendMessage(pp, "&6An update for PlotSquared is available: &7/plot update");
-                }
-                if (Settings.TELEPORT_ON_LOGIN && plot != null) {
-                    TaskManager.runTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            plot.teleportPlayer(pp);
-                        }
-                    });
-                    MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
-                }
+                EventUtil.manager.doJoinTask(pp);
             }
         }, 20);
     }

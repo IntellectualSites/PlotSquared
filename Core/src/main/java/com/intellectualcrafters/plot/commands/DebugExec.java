@@ -20,23 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
-
 import com.google.common.io.Files;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -44,31 +27,17 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotAnalysis;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.ExpireManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.SchematicHandler;
-import com.intellectualcrafters.plot.util.SetupUtils;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import javax.script.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.util.*;
 
 @CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = "exec",
         category = CommandCategory.DEBUG)
@@ -204,12 +173,9 @@ public class DebugExec extends SubCommand {
                     }, threshold);
                     return true;
                 case "stop-expire":
-                    if (ExpireManager.task != -1) {
-                        PS.get().TASK.cancelTask(ExpireManager.task);
-                    } else {
+                    if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
                         return MainUtil.sendMessage(player, "Task already halted");
                     }
-                    ExpireManager.task = -1;
                     return MainUtil.sendMessage(player, "Cancelled task.");
                 case "remove-flag":
                     if (args.length != 2) {
@@ -254,41 +220,20 @@ public class DebugExec extends SubCommand {
                     MainUtil.sendMessage(player, "&cCancelling task... (please wait)");
                     return true;
                 case "start-expire":
-                    if (ExpireManager.task == -1) {
-                        ExpireManager.runTask();
+                    if (ExpireManager.IMP == null) {
+                        ExpireManager.IMP = new ExpireManager();
+                    }
+                    boolean result;
+                    if (Settings.AUTO_CLEAR_CONFIRMATION) {
+                        result = ExpireManager.IMP.runConfirmedTask();
+                    } else {
+                        result = ExpireManager.IMP.runAutomatedTask();
+                    }
+                    if (result) {
+                        return MainUtil.sendMessage(player, "Started plot expiry task");
                     } else {
                         return MainUtil.sendMessage(player, "Plot expiry task already started");
                     }
-                    return MainUtil.sendMessage(player, "Started plot expiry task");
-                case "update-expired":
-                    if (args.length > 1) {
-                        PlotArea area = PS.get().getPlotAreaByString(args[1]);
-                        if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
-                            C.NOT_VALID_PLOT_WORLD.send(player, args[1]);
-                            return false;
-                        }
-                        MainUtil.sendMessage(player, "Updating expired plot list");
-                        ExpireManager.updateExpired(area);
-                        return true;
-                    }
-                    return MainUtil.sendMessage(player, "Use /plot debugexec update-expired <world>");
-                case "show-expired":
-                    if (args.length > 1) {
-                        final String world = args[1];
-                        if (!WorldUtil.IMP.isWorld(world)) {
-                            return MainUtil.sendMessage(player, "Invalid world: " + args[1]);
-                        }
-                        if (!ExpireManager.expiredPlots.containsKey(args[1])) {
-                            return MainUtil.sendMessage(player, "No task for world: " + args[1]);
-                        }
-                        MainUtil.sendMessage(player, "Expired plots (" + ExpireManager.expiredPlots.get(args[1]).size() + "):");
-                        for (final Plot plot : ExpireManager.expiredPlots.get(args[1])) {
-                            MainUtil.sendMessage(player,
-                            " - " + plot.getArea() + ";" + plot.getId().x + ";" + plot.getId().y + ";" + UUIDHandler.getName(plot.owner) + " : " + ExpireManager.dates.get(plot.owner));
-                        }
-                        return true;
-                    }
-                    return MainUtil.sendMessage(player, "Use /plot debugexec show-expired <world>");
                 case "seen":
                     if (args.length != 2) {
                         return MainUtil.sendMessage(player, "Use /plot debugexec seen <player>");

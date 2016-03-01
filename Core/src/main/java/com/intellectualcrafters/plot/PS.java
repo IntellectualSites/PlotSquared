@@ -168,12 +168,15 @@ public class PS {
                                     }
                                 }
                             }
-                            
                             // Auto clearing
                             if (Settings.AUTO_CLEAR) {
-                                ExpireManager.runTask();
+                                ExpireManager.IMP = new ExpireManager();
+                                if (Settings.AUTO_CLEAR_CONFIRMATION) {
+                                    ExpireManager.IMP.runConfirmedTask();
+                                } else {
+                                    ExpireManager.IMP.runAutomatedTask();
+                                }
                             }
-                            
                             // PlotMe
                             if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
                                 TaskManager.runTaskLater(new Runnable() {
@@ -1893,7 +1896,7 @@ public class PS {
      */
     public void setupDefaultFlags() {
         final List<String> booleanFlags = Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles", "pve", "pvp",
-        "no-worldedit", "redstone", "keep");
+        "no-worldedit", "redstone");
         final List<String> intervalFlags = Arrays.asList("feed", "heal");
         final List<String> stringFlags = Arrays.asList("greeting", "farewell");
         final List<String> intFlags = Arrays.asList("misc-cap", "entity-cap", "mob-cap", "animal-cap", "hostile-cap", "vehicle-cap", "music");
@@ -1937,6 +1940,26 @@ public class PS {
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("blocked-cmds", new FlagValue.StringListValue()));
         FlagManager.addFlag(new AbstractFlag("ice-melt", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("keep") {
+            @Override
+            public Object parseValueRaw(final String value) {
+                if (MathMan.isInteger(value)) {
+                    return Long.parseLong(value);
+                }
+                switch (value.toLowerCase()) {
+                    case "true":
+                        return true;
+                    case "false":
+                        return false;
+                    default:
+                        return (MainUtil.timeToSec(value) * 1000) + System.currentTimeMillis();
+                }
+            }
+            @Override
+            public String getValueDesc() {
+                return "Flag value must a timestamp or a boolean";
+            }
+        });
         FlagManager.addFlag(new AbstractFlag("gamemode") {
 
             @Override

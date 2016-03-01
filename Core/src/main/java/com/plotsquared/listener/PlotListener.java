@@ -29,16 +29,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.AbstractTitle;
-import com.intellectualcrafters.plot.util.CommentManager;
-import com.intellectualcrafters.plot.util.EventUtil;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.PlotGamemode;
-import com.intellectualcrafters.plot.util.PlotWeather;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +48,9 @@ public class PlotListener {
         final Plot last = pp.getMeta("lastplot");
         if ((last != null) && !last.getId().equals(plot.getId())) {
             plotExit(pp, last);
+        }
+        if (ExpireManager.IMP != null) {
+            ExpireManager.IMP.handleEntry(pp, plot);
         }
         pp.setMeta("lastplot", plot);
         EventUtil.manager.callEntry(pp, plot);

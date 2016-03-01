@@ -1048,6 +1048,9 @@ public class Plot {
             DBFunc.delete(current);
             current.owner = null;
             current.settings = null;
+            for (PlotPlayer pp : current.getPlayersInPlot()) {
+                PlotListener.plotEntry(pp, current);
+            }
         }
         return true;
     }
@@ -1066,7 +1069,7 @@ public class Plot {
         final Location top = corners[0];
         final Location bot = corners[1];
         Location loc = new Location(this.area.worldname, (top.getX() + bot.getX()) / 2, (top.getY() + bot.getY()) / 2, (top.getZ() + bot.getZ()) / 2);
-        loc.setY(WorldUtil.IMP.getHighestBlock(top.getWorld(), loc.getX(), loc.getY()));
+        loc.setY(1 + Math.max(WorldUtil.IMP.getHighestBlock(area.worldname, loc.getX(), loc.getZ()), getManager().getSignLoc(area, this).getY()));
         return loc;
     }
     
@@ -1722,7 +1725,7 @@ public class Plot {
             return false;
         }
         final Plot other = (Plot) obj;
-        return (this.hashCode() == other.hashCode()) && this.id.x.equals(other.id.x) && this.id.y.equals(other.id.y) && (this.area == other.area);
+        return (this.hashCode() == other.hashCode()) && this.id.equals(other.id) && (this.area == other.area);
     }
     
     /**

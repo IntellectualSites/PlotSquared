@@ -44,6 +44,11 @@ public abstract class HybridUtils {
     public abstract void analyzeRegion(final String world, final RegionWrapper region, final RunnableVal<PlotAnalysis> whenDone);
 
     public void analyzePlot(final Plot origin, final RunnableVal<PlotAnalysis> whenDone) {
+        PlotAnalysis existing = origin.getComplexity();
+        if (existing != null) {
+            whenDone.run(existing);
+            return;
+        }
         final ArrayDeque<RegionWrapper> zones = new ArrayDeque<>(origin.getRegions());
         final ArrayList<PlotAnalysis> analysis = new ArrayList<>();
         Runnable run = new Runnable() {

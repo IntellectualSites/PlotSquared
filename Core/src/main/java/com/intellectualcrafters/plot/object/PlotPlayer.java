@@ -382,7 +382,9 @@ public abstract class PlotPlayer implements CommandCaller {
             }
         }
         String name = getName();
-        ExpireManager.dates.put(getUUID(), System.currentTimeMillis());
+        if (ExpireManager.IMP != null) {
+            ExpireManager.IMP.storeDate(getUUID(), System.currentTimeMillis());
+        }
         UUIDHandler.getPlayers().remove(name);
         PS.get().IMP.unregister(this);
     }

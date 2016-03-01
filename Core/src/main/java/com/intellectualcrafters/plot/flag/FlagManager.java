@@ -32,8 +32,6 @@ import java.util.*;
 /**
  * Flag Manager Utility
  *
-
-
  */
 public class FlagManager {
     

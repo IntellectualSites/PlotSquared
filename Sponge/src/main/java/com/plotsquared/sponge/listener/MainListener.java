@@ -656,24 +656,7 @@ public class MainListener {
         TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
-                ExpireManager.dates.put(uuid, System.currentTimeMillis());
-                if (PS.get().worldedit != null) {
-                    if (pp.getAttribute("worldedit")) {
-                        MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASSED);
-                    }
-                }
-                if (PS.get().update != null && Permissions.hasPermission(pp, C.PERMISSION_ADMIN_UPDATE) && Settings.UPDATE_NOTIFICATIONS) {
-                    MainUtil.sendMessage(pp, "&6An update for PlotSquared is available: &7/plot update");
-                }
-                if (Settings.TELEPORT_ON_LOGIN && plot != null) {
-                    TaskManager.runTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            plot.teleportPlayer(pp);
-                        }
-                    });
-                    MainUtil.sendMessage(pp, C.TELEPORTED_TO_ROAD);
-                }
+                EventUtil.manager.doJoinTask(pp);
             }
         }, 20);
     }
