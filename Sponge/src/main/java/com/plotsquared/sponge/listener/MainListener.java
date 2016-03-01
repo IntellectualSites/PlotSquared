@@ -214,9 +214,7 @@ public class MainListener {
                         if (cap == 0) {
                             return false;
                         }
-                        if (mobs == null) {
-                            mobs = plot.countEntities();
-                        }
+                        mobs = plot.countEntities();
                         if (mobs[3] >= cap) {
                             return false;
                         }
@@ -260,9 +258,7 @@ public class MainListener {
                         if (cap == 0) {
                             return false;
                         }
-                        if (mobs == null) {
-                            mobs = plot.countEntities();
-                        }
+                        mobs = plot.countEntities();
                         if (mobs[4] >= cap) {
                             return false;
                         }

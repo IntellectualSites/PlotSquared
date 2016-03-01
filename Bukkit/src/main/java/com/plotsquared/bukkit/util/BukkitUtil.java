@@ -158,9 +158,6 @@ public class BukkitUtil extends WorldUtil {
     public int getBiomeFromString(final String biomeStr) {
         try {
             final Biome biome = Biome.valueOf(biomeStr.toUpperCase());
-            if (biome == null) {
-                return -1;
-            }
             return Arrays.asList(Biome.values()).indexOf(biome);
         } catch (final IllegalArgumentException e) {
             return -1;

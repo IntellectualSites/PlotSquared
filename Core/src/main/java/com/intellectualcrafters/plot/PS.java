@@ -8,7 +8,11 @@ import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.*;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.Database;
+import com.intellectualcrafters.plot.database.MySQL;
+import com.intellectualcrafters.plot.database.SQLManager;
+import com.intellectualcrafters.plot.database.SQLite;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.FlagValue;
@@ -16,22 +20,67 @@ import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotFilter;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.AbstractTitle;
+import com.intellectualcrafters.plot.util.ChatManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.CommentManager;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.ReflectionUtils;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -44,10 +93,10 @@ import java.util.zip.ZipInputStream;
  * @author boy0001 | Empire92
  */
 public class PS {
-    
+
     // protected static:
     private static PS instance;
-    private HashSet<Integer> plotareaHashCheck = new HashSet<Integer>();
+    private HashSet<Integer> plotareaHashCheck = new HashSet<>();
     private boolean plotareaHasCollision = false;
     /**
      * All plot areas (quick global access)
@@ -81,9 +130,8 @@ public class PS {
     private String PLATFORM = null;
     private String LAST_VERSION;
     private Database database;
-    private Connection connection;
     private Thread thread;
-    
+
     /**
      * Initialize PlotSquared with the desired Implementation class
      * @param imp_class
@@ -135,7 +183,7 @@ public class PS {
                 WorldEdit.getInstance().getEventBus().register(new WESubscriber());
                 MainCommand.getInstance().createCommand(new WE_Anywhere());
             }
-            
+
             // Events
             IMP.registerCommands();
             IMP.registerPlayerEvents();
@@ -162,7 +210,7 @@ public class PS {
                         @Override
                         public void run() {
                             for (final Plot plot : getPlots()) {
-                                if ((plot.hasOwner()) && (plot.temp != -1)) {
+                                if (plot.hasOwner() && (plot.temp != -1)) {
                                     if (UUIDHandler.getName(plot.owner) == null) {
                                         UUIDHandler.implementation.unknown.add(plot.owner);
                                     }
@@ -180,7 +228,7 @@ public class PS {
                             // PlotMe
                             if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
                                 TaskManager.runTaskLater(new Runnable() {
-                                    
+
                                     @Override
                                     public void run() {
                                         if (IMP.initPlotMeConverter()) {
@@ -217,12 +265,12 @@ public class PS {
             AbstractTitle.TITLE_CLASS = IMP.initTitleManager();
             // Chat
             ChatManager.manager = IMP.initChatManager();
-            
+
             // Check for updates
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
-                    final URL url = getUpdate();
+                    final URL url = Updater.getUpdate();
                     if (url != null) {
                         update = url;
                     } else if ((LAST_VERSION != null) && !StringMan.join(VERSION, ".").equals(LAST_VERSION)) {
@@ -230,7 +278,7 @@ public class PS {
                     }
                 }
             });
-            
+
             // World generators:
             final ConfigurationSection section = config.getConfigurationSection("worlds");
             if (section != null) {
@@ -259,7 +307,7 @@ public class PS {
                     }
                 }, 1);
             }
-            
+
             // Copy files
             copyFile("automerge.js", "scripts");
             copyFile("town.template", "templates");
@@ -273,7 +321,7 @@ public class PS {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Get the instance of PlotSquared
      *
@@ -282,7 +330,7 @@ public class PS {
     public static PS get() {
         return instance;
     }
-    
+
     /**
      * Log a message to the IPlotMain logger
      *
@@ -292,7 +340,7 @@ public class PS {
     public static void log(final Object message) {
         get().IMP.log(StringMan.getString(message));
     }
-    
+
     public static void stacktrace() {
         System.err.println(StringMan.join(new Exception().getStackTrace(), "\n\tat "));
     }
@@ -335,8 +383,9 @@ public class PS {
     }
 
     /**
-     * Get the platform this is running on (Bukkit, Sponge)
-     * @return
+     * <p>Get the server platform this plugin is running on this is running on.
+     * This will be either <b>Bukkit</b> or <b>Sponge</b></p>
+     * @return The server platform
      */
     public String getPlatform() {
         return PLATFORM;
@@ -346,12 +395,12 @@ public class PS {
      * Get the database object
      *
      * @return Database object
-     * @see #getConnection() Get the database connection
+     * @see Database#getConnection() To get the database connection
      */
     public Database getDatabase() {
         return database;
     }
-    
+
     /**
      * Update the global reference
      * to a plot object
@@ -361,7 +410,7 @@ public class PS {
     public boolean updatePlot(final Plot plot) {
         return plot.getArea().addPlot(plot);
     }
-    
+
     /**
      * Get the relevant plot area for a location.<br>
      *  - If there is only one plot area globally that will be returned<br>
@@ -426,7 +475,7 @@ public class PS {
                 }
         }
     }
-    
+
     public PlotArea getPlotArea(String world, String id) {
         PlotArea[] areas = plotareamap.get(world);
         if (areas == null) {
@@ -445,7 +494,7 @@ public class PS {
             return null;
         }
     }
-    
+
     public PlotArea getPlotAreaAbs(String world, String id) {
         PlotArea[] areas = plotareamap.get(world);
         if (areas == null) {
@@ -485,7 +534,7 @@ public class PS {
             return null;
         }
     }
-    
+
     public Set<PlotArea> getPlotAreas(String world, RegionWrapper region) {
         QuadMap<PlotArea> areas = plotareagrid.get(world);
         return areas != null ? areas.get(region) : new HashSet<PlotArea>();
@@ -494,7 +543,7 @@ public class PS {
     /**
      * Get the plot area which contains a location.<br>
      *  - If the plot area does not contain a location, null will be returned
-     * 
+     *
      * @param loc
      * @return
      */
@@ -558,7 +607,7 @@ public class PS {
     public PlotManager getPlotManager(Plot plot) {
         return plot.getArea().manager;
     }
-    
+
     public PlotManager getPlotManager(Location loc) {
         PlotArea pa = getPlotAreaAbs(loc);
         return pa != null ? pa.manager : null;
@@ -633,7 +682,7 @@ public class PS {
         }
         map.add(plotarea);
     }
-    
+
     /**
      * Remove a plot world reference
      *
@@ -653,7 +702,7 @@ public class PS {
         }
         setPlotsTmp(area);
     }
-    
+
     public void removePlotAreas(String world) {
         for (PlotArea area : getPlotAreas(world)) {
             removePlotArea(area);
@@ -677,7 +726,7 @@ public class PS {
         }
         clusters_tmp.put(area.toString(), area.getClusters());
     }
-    
+
     public Set<PlotCluster> getClusters(String world) {
         HashSet<PlotCluster> set = new HashSet<>();
         if (Settings.ENABLE_CLUSTERS) {
@@ -813,7 +862,7 @@ public class PS {
         result.addAll(overflow);
         return result;
     }
-    
+
     /**
      * Sort plots by hashcode
      * @param plots
@@ -867,7 +916,7 @@ public class PS {
         }
         return result;
     }
-    
+
     /**
      * Sort plots by creation timestamp
      * @param input
@@ -1037,7 +1086,7 @@ public class PS {
             return result;
         }
     }
-    
+
     /**
      * @deprecated Unchecked, use {@link #sortPlots(Collection, SortType, PlotArea)}  instead which will in turn call this
      * @param input
@@ -1130,7 +1179,7 @@ public class PS {
         }
         return toReturn;
     }
-    
+
     /**
      * Get all the plots owned by a player name
      * @param world
@@ -1152,7 +1201,7 @@ public class PS {
         final UUID uuid = UUIDHandler.getUUID(player, null);
         return getPlots(area, uuid);
     }
-    
+
     /**
      * Get all plots by a PlotPlayer
      * @param world
@@ -1163,7 +1212,7 @@ public class PS {
         final UUID uuid = player.getUUID();
         return getPlots(world, uuid);
     }
-    
+
     /**
      * Get all plots by a PlotPlayer
      * @param area
@@ -1174,7 +1223,7 @@ public class PS {
         final UUID uuid = player.getUUID();
         return getPlots(area, uuid);
     }
-    
+
     /**
      * Get all plots by a UUID in a world
      * @param world
@@ -1192,7 +1241,7 @@ public class PS {
         }
         return new HashSet<>(myplots);
     }
-    
+
     /**
      * Get all plots by a UUID in an area
      * @param area
@@ -1210,7 +1259,7 @@ public class PS {
         }
         return new HashSet<>(myplots);
     }
-    
+
     /**
      * Use {@link #hasPlotArea(String)}<br>
      * Note: Worlds may have more than one plot area
@@ -1254,7 +1303,7 @@ public class PS {
                 return plotareamap.containsKey(world);
         }
     }
-    
+
     public Collection<Plot> getPlots(final String world) {
         final HashSet<Plot> set = new HashSet<>();
         foreachPlotArea(world, new RunnableVal<PlotArea>() {
@@ -1265,15 +1314,15 @@ public class PS {
         });
         return set;
     }
-    
+
     public Collection<Plot> getPlots(final PlotArea area) {
         return area == null ? new HashSet<Plot>() : area.getPlots();
     }
-    
+
     public Plot getPlot(PlotArea area, final PlotId id) {
         return area == null ? null : (id == null ? null : area.getPlot(id));
     }
-    
+
     /**
      * Get the plots for a PlotPlayer
      * @param player
@@ -1282,7 +1331,7 @@ public class PS {
     public Set<Plot> getPlots(final PlotPlayer player) {
         return getPlots(player.getUUID());
     }
-    
+
     /**
      * Get the plots for a UUID
      * @param uuid
@@ -1300,7 +1349,7 @@ public class PS {
         });
         return new HashSet<>(myplots);
     }
-    
+
     /**
      * Get the plots for a UUID
      * @param uuid
@@ -1318,7 +1367,7 @@ public class PS {
         });
         return new HashSet<>(myplots);
     }
-    
+
     /**
      * Unregister a plot from local memory (does not call DB)
      * @param plot
@@ -1343,7 +1392,7 @@ public class PS {
         }
         return false;
     }
-    
+
     /**
      * This method is called by the PlotGenerator class normally<br>
      *  - Initializes the PlotArea and PlotManager classes<br>
@@ -1569,7 +1618,7 @@ public class PS {
             }
         }
     }
-    
+
     /**
      * Setup the configuration for a plot world based on world arguments<br>
      * e.g. /mv create <world> normal -g PlotSquared:<args>
@@ -1654,86 +1703,42 @@ public class PS {
         }
         return true;
     }
-    
+
     public boolean canUpdate(final String current, final String other) {
         final String s1 = normalisedVersion(current);
         final String s2 = normalisedVersion(other);
         final int cmp = s1.compareTo(s2);
         return cmp < 0;
     }
-    
+
     public String normalisedVersion(final String version) {
-        return normalisedVersion(version, ".", 4);
-    }
-    
-    public String normalisedVersion(final String version, final String sep, final int maxWidth) {
-        final String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
+        final String[] split = Pattern.compile(".", Pattern.LITERAL).split(version);
         final StringBuilder sb = new StringBuilder();
         for (final String s : split) {
-            sb.append(String.format("%" + maxWidth + 's', s));
+            sb.append(String.format("%" + 4 + 's', s));
         }
         return sb.toString();
     }
-    
-    /**
-     * Gets the default update URL, or null if the plugin is up to date
-     * @return
-     */
-    public URL getUpdate() {
-        final String pom = "https://raw.githubusercontent.com/IntellectualSites/PlotSquared/master/pom.xml";
-        try {
-            final URL page = new URL(pom);
-            final URLConnection con = page.openConnection();
-            final String agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1";
-            con.addRequestProperty("User-Agent", agent);
-            String line;
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-                while ((line = in.readLine()) != null) {
-                    line = line.trim();
-                    if (line.startsWith("<version>")) {
-                        line = line.replaceAll("[^\\d.]", "");
-                        break;
-                    }
-                }
-            }
-            if (!canUpdate(config.getString("version"), line)) {
-                PS.debug("&7PlotSquared is already up to date!");
-                return null;
-            }
-            String dl = "https://raw.githubusercontent.com/IntellectualSites/PlotSquared/master/target/PlotSquared-${PLATFORM}.jar";
-            dl = dl.replaceAll(Pattern.quote("${PLATFORM}"), getPlatform());
-            log("&6PlotSquared v" + line + " is available:");
-            log("&8 - &3Use: &7/plot update");
-            log("&8 - &3Or: &7" + dl);
-            return new URL(dl);
-        } catch (IOException e) {
-            e.printStackTrace();
-            log("&dCould not check for updates (0)");
-            log("&7 - Manually check for updates: " + pom);
-        }
-        return null;
-    }
-    
+
     public boolean update(final PlotPlayer sender, final URL url) {
-        if (url == null) {
-            return false;
-        }
         try {
             final String name = FILE.getName();
             final File newJar = new File("plugins/update/" + name);
             MainUtil.sendMessage(sender, "$1Downloading from provided URL: &7" + url);
-            MainUtil.sendMessage(sender, "$2 - User-Agent: " + "Mozilla/4.0");
             final URLConnection con = url.openConnection();
-            con.addRequestProperty("User-Agent", "Mozilla/4.0");
-            final InputStream stream = con.getInputStream();
-            final File parent = newJar.getParentFile();
-            if (!parent.exists()) {
-                parent.mkdirs();
+            try (InputStream stream = con.getInputStream()) {
+                final File parent = newJar.getParentFile();
+                if (!parent.exists()) {
+                    parent.mkdirs();
+                }
+                MainUtil.sendMessage(sender, "$2 - Output: " + newJar);
+                if (!newJar.delete()) {
+                    MainUtil.sendMessage(sender, "Failed to update PlotSquared");
+                    MainUtil.sendMessage(sender, "Jar file failed to delete.");
+                    MainUtil.sendMessage(sender, " - Please update manually");
+                }
+                Files.copy(stream, newJar.toPath());
             }
-            MainUtil.sendMessage(sender, "$2 - Output: " + newJar);
-            newJar.delete();
-            Files.copy(stream, newJar.toPath());
-            stream.close();
             MainUtil.sendMessage(sender, "$1The update will take effect when the server is restarted next");
             return true;
         } catch (IOException e) {
@@ -1745,15 +1750,7 @@ public class PS {
         }
         return false;
     }
-    
-    /**
-     * Get the database connection
-     * @return The database connection
-     */
-    public Connection getConnection() {
-        return connection;
-    }
-    
+
     /**
      * Copy a file from inside the jar to a location
      * @param file Name of the file inside PlotSquared.jar
@@ -1806,7 +1803,7 @@ public class PS {
             log("&cCould not save " + file);
         }
     }
-    
+
     private Map<String, Map<PlotId, Plot>> getPlotsRaw() {
         HashMap<String, Map<PlotId, Plot>> map = new HashMap<>();
         for (PlotArea area : plotareas) {
@@ -1888,7 +1885,7 @@ public class PS {
             IMP.disable();
         }
     }
-    
+
     /**
      * Setup the default flags for PlotSquared<br>
      *  - Create the flags
@@ -2019,7 +2016,7 @@ public class PS {
         });
         FlagManager.addFlag(new AbstractFlag("description", new FlagValue.StringValue()), true);
     }
-    
+
     /**
      * Setup the default configuration (settings.yml)
      */
@@ -2279,7 +2276,7 @@ public class PS {
         Settings.MERGE_REMOVES_ROADS = config.getBoolean("merge.remove-terrain");
         Settings.AUTO_PURGE = config.getBoolean("auto-purge", false);
     }
-    
+
     /**
      * Setup all configuration files<br>
      *  - Config: settings.yml<br>
@@ -2340,7 +2337,7 @@ public class PS {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Setup the storage file (load + save missing nodes)
      */
@@ -2371,11 +2368,11 @@ public class PS {
         Settings.DB.SQLITE_DB = storage.getString("sqlite.db");
         Settings.DB.PREFIX = storage.getString("prefix");
     }
-    
+
     /**
      * Show startup debug information
      */
-    public void showDebug() {
+    private void showDebug() {
         if (Settings.DEBUG) {
             final Map<String, String> settings = new HashMap<>();
             settings.put("Kill Road Mobs", "" + Settings.KILL_ROAD_MOBS);
@@ -2392,7 +2389,7 @@ public class PS {
             }
         }
     }
-    
+
     /**
      * Setup the style.yml file
      */
@@ -2409,7 +2406,7 @@ public class PS {
             }
         }
     }
-    
+
     /**
      * Get the java version
      * @return Java version as a double
@@ -2417,13 +2414,13 @@ public class PS {
     public double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
-    
+
     public void foreachPlotArea(RunnableVal<PlotArea> runnable) {
         for (PlotArea area : plotareas) {
             runnable.run(area);
         }
     }
-    
+
     public void foreachPlot(final RunnableVal<Plot> runnable) {
         for (PlotArea area : plotareas) {
             for (Plot plot : area.getPlots()) {
@@ -2431,7 +2428,7 @@ public class PS {
             }
         }
     }
-    
+
     public void foreachPlotRaw(final RunnableVal<Plot> runnable) {
         for (PlotArea area : plotareas) {
             for (Plot plot : area.getPlots()) {
@@ -2488,7 +2485,7 @@ public class PS {
         Collections.addAll(set, plotareas);
         return set;
     }
-    
+
     /**
      * @deprecated Since worlds can have multiple plot areas
      * @return Set of world names
@@ -2501,7 +2498,7 @@ public class PS {
         }
         return set;
     }
-    
+
     public boolean isAugmented(String world) {
         PlotArea[] areas = plotareamap.get(world);
         if (areas == null) {

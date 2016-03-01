@@ -157,7 +157,6 @@ public class ChunkListener implements Listener {
         final int z = Z << 4;
         final int x2 = x + 15;
         final int z2 = z + 15;
-        Thread thread = new Thread();
         Plot plot = new Location(world, x, 1, z).getOwnedPlotAbs();
         if (plot != null && plot.hasOwner()) {
             return false;

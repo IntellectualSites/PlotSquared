@@ -203,9 +203,6 @@ public class Location implements Cloneable, Comparable<Location> {
     
     @Override
     public int compareTo(final Location o) {
-        if (o == null) {
-            throw new NullPointerException("Specified object was null");
-        }
         if (x == o.getX() && y == o.getY() || z == o.getZ()) {
             return 0;
         }

@@ -12,6 +12,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 @CommandDeclaration(
 command = "debugpaste",
@@ -41,7 +42,7 @@ public class DebugPaste extends SubCommand {
                     b.append("links.settings_yml: '").append(settingsYML).append("'\n");
                     b.append("links.latest_log: '").append(latestLOG).append("'\n");
                     b.append("\n# YAAAS! Now let us move on to the server info\n");
-                    b.append("version.server: '").append(PS.get().IMP.getServerVersion()).append("'\n");
+                    b.append("version.server: '").append(Arrays.toString(PS.get().IMP.getServerVersion())).append("'\n");
                     b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper() + ";" + !Settings.OFFLINE_MODE).append("\n");
                     b.append("plugins:");
                     for (String id : PS.get().IMP.getPluginIds()) {
