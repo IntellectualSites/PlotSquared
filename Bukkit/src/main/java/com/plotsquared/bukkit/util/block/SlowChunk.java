@@ -11,7 +11,6 @@ public class SlowChunk extends PlotChunk<Chunk> {
 
     public PlotBlock[][] result = new PlotBlock[16][];
     public int[][] biomes;
-    private PlotBlock lastBlock;
     public SlowChunk(ChunkWrapper chunk) {
         super(chunk);
     }
@@ -35,11 +34,7 @@ public class SlowChunk extends PlotChunk<Chunk> {
         if (result[y >> 4] == null) {
             result[y >> 4] = new PlotBlock[4096];
         }
-        if (id == lastBlock.id && data == lastBlock.data) {
-            result[MainUtil.CACHE_I[x][y][z]][MainUtil.CACHE_J[x][y][z]] = lastBlock;
-        } else {
-            result[MainUtil.CACHE_I[x][y][z]][MainUtil.CACHE_J[x][y][z]] = new PlotBlock((short) id, data);
-        }
+        result[MainUtil.CACHE_I[x][y][z]][MainUtil.CACHE_J[x][y][z]] = new PlotBlock((short) id, data);
     }
 
     @Override
