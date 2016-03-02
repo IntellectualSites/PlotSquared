@@ -22,7 +22,7 @@ import com.plotsquared.bukkit.database.plotme.PlotMeConnector_017;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.listeners.*;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
-import com.plotsquared.bukkit.titles.DefaultTitle;
+import com.plotsquared.bukkit.titles.DefaultTitle_19;
 import com.plotsquared.bukkit.util.*;
 import com.plotsquared.bukkit.util.block.*;
 import com.plotsquared.bukkit.uuid.*;
@@ -471,7 +471,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             Settings.TITLES = false;
             FlagManager.removeFlag(FlagManager.getFlag("titles"));
         } else {
-            AbstractTitle.TITLE_CLASS = new DefaultTitle();
+            AbstractTitle.TITLE_CLASS = new DefaultTitle_19();
             if (wrapper instanceof DefaultUUIDWrapper || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
                 Settings.TWIN_MODE_UUID = true;
             }

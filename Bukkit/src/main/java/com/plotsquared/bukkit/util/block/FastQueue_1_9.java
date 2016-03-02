@@ -396,7 +396,11 @@ public class FastQueue_1_9 extends SlowQueue {
     }
 
     public boolean isSolid(int i) {
-        return i != 0 && Material.getMaterial(i).isOccluding();
+        if (i != 0) {
+            Material material = Material.getMaterial(i);
+            return material != null &&  Material.getMaterial(i).isOccluding();
+        }
+        return false;
     }
 
     public int getId(int[][] sections, int x, int y, int z) {
