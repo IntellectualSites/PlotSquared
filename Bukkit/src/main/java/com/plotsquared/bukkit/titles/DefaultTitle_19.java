@@ -15,9 +15,9 @@ public class DefaultTitle_19 extends AbstractTitle {
             TaskManager.runTaskLater(new Runnable() {
                 @Override
                 public void run() {
-                    playerObj.resetTitle();
+                    playerObj.sendTitle("","");
                 }
-            }, delay);
+            }, delay * 20);
         }
         catch (Throwable e) {
             AbstractTitle.TITLE_CLASS = new DefaultTitle();
