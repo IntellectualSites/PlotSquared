@@ -52,7 +52,7 @@ public class Updater {
             if (downloadURL.equals(name)) {
                 try {
                     String version = release.getString("name");
-                    URL url = new URL(asset.getString("downloadUrl"));
+                    URL url = new URL(asset.getString("browser_download_url"));
                     if (!PS.get().canUpdate(PS.get().config.getString("version"), version)) {
                         PS.debug("&7PlotSquared is already up to date!");
                         return null;
