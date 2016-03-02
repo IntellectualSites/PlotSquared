@@ -96,6 +96,8 @@ public abstract class SchematicHandler {
         });
         return true;
     }
+
+
     
     /**
      * Paste a schematic
@@ -107,7 +109,7 @@ public abstract class SchematicHandler {
      *
      * @return boolean true if succeeded
      */
-    public void paste(final Schematic schematic, final Plot plot, final int x_offset, final int z_offset, final RunnableVal<Boolean> whenDone) {
+    public void paste(final Schematic schematic, final Plot plot, final int x_offset, final int y_offset, final int z_offset, final boolean autoHeight, final RunnableVal<Boolean> whenDone) {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
@@ -147,18 +149,23 @@ public abstract class SchematicHandler {
                     final short[] ids = schematic.ids;
                     final byte[] datas = schematic.datas;
                     // Calculate the optimal height to paste the schematic at
-                    final int y_offset;
-                    if (HEIGHT >= 256) {
-                        y_offset = 0;
-                    } else {
-                        PlotArea pw = plot.getArea();
-                        if (pw instanceof ClassicPlotWorld) {
-                            y_offset = ((ClassicPlotWorld) pw).PLOT_HEIGHT;
+                    final int y_offset_actual;
+                    if (autoHeight) {
+                        if (HEIGHT >= 256) {
+                            y_offset_actual = y_offset;
                         } else {
-                            y_offset = MainUtil.getHeighestBlock(plot.getArea().worldname, region.minX + 1, region.minZ + 1);
+                            PlotArea pw = plot.getArea();
+                            if (pw instanceof ClassicPlotWorld) {
+                                y_offset_actual = y_offset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
+                            } else {
+                                y_offset_actual = y_offset + MainUtil.getHeighestBlock(plot.getArea().worldname, region.minX + 1, region.minZ + 1);
+                            }
                         }
                     }
-                    final Location pos1 = new Location(plot.getArea().worldname, region.minX + x_offset, y_offset, region.minZ + z_offset);
+                    else {
+                        y_offset_actual = y_offset;
+                    }
+                    final Location pos1 = new Location(plot.getArea().worldname, region.minX + x_offset, y_offset_actual, region.minZ + z_offset);
                     final Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
                     // TODO switch to ChunkManager.chunkTask(pos1, pos2, task, whenDone, allocate);
                     final int p1x = pos1.getX();
@@ -203,7 +210,7 @@ public abstract class SchematicHandler {
                                 // Paste schematic here
 
                                 for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
-                                    final int yy = y_offset + ry;
+                                    final int yy = y_offset_actual + ry;
                                     if (yy > 255) {
                                         continue;
                                     }

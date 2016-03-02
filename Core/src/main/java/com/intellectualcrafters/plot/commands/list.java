@@ -132,7 +132,7 @@ public class list extends SubCommand {
                     return false;
                 }
                 sort = false;
-                plots = PS.get().sortPlotsByTemp(PS.get().getPlots(plr));
+                plots = PS.get().sortPlotsByTemp(PS.get().getBasePlots(plr));
                 break;
             }
             case "shared": {

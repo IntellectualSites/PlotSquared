@@ -20,14 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
@@ -38,6 +30,8 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.*;
 
 @CommandDeclaration(
 command = "visit",
@@ -83,11 +77,11 @@ public class Visit extends SubCommand {
                 final UUID user = UUIDHandler.getCachedUUID(args[0], null);
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
-                    unsorted = PS.get().getPlots(player);
+                    unsorted = PS.get().getBasePlots(player);
                     break;
                 }
                 if (user != null) {
-                    unsorted = PS.get().getPlots(user);
+                    unsorted = PS.get().getBasePlots(user);
                 } else if (PS.get().getPlotAreaByString(args[0]) != null) {
                     unsorted = PS.get().getPlotAreaByString(args[0]).getPlots();
                 } else {

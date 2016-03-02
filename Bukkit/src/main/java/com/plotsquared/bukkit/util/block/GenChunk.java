@@ -34,7 +34,7 @@ public class GenChunk extends PlotChunk<Chunk> {
     @Override
     public Chunk getChunkAbs() {
         ChunkWrapper wrap = getChunkWrapper();
-        if (wrap.x != chunk.getX() || wrap.z != chunk.getZ()) {
+        if (chunk == null || wrap.x != chunk.getX() || wrap.z != chunk.getZ()) {
             chunk = BukkitUtil.getWorld(wrap.world).getChunkAt(wrap.x, wrap.z);
         }
         return chunk;
@@ -65,9 +65,14 @@ public class GenChunk extends PlotChunk<Chunk> {
             modified = true;
             result[i] = v = new short[4096];
         }
-        v[MainUtil.CACHE_J[y][x][z]] = (short) id;
+        int j = MainUtil.CACHE_J[y][x][z];
+        v[j] = (short) id;
         if (data != 0) {
-            getChunk().getBlock(x, y, z).setData(data);
+            byte[] vd = result_data[i];
+            if (vd == null) {
+                result_data[i] = vd = new byte[4096];
+            }
+            vd[j] = data;
         }
     }
 

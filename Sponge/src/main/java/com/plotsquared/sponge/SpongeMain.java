@@ -50,7 +50,7 @@ import java.util.*;
  * Created by robin on 01/11/2014
  */
 
-@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.3.0", dependencies = "before:WorldEdit")
+@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.3.1", dependencies = "before:WorldEdit")
 public class SpongeMain implements IPlotMain {
     public static SpongeMain THIS;
 

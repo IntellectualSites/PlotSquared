@@ -1332,6 +1332,10 @@ public class PS {
         return getPlots(player.getUUID());
     }
 
+    public Set<Plot> getBasePlots(final PlotPlayer player) {
+        return getBasePlots(player.getUUID());
+    }
+
     /**
      * Get the plots for a UUID
      * @param uuid
@@ -1343,6 +1347,19 @@ public class PS {
             @Override
             public void run(Plot value) {
                 if (value.isOwnerAbs(uuid)) {
+                    myplots.add(value);
+                }
+            }
+        });
+        return new HashSet<>(myplots);
+    }
+
+    public Set<Plot> getBasePlots(final UUID uuid) {
+        final ArrayList<Plot> myplots = new ArrayList<>();
+        foreachBasePlot(new RunnableVal<Plot>() {
+            @Override
+            public void run(Plot value) {
+                if (value.isOwner(uuid)) {
                     myplots.add(value);
                 }
             }

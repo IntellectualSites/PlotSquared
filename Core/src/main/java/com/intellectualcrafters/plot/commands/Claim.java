@@ -64,7 +64,7 @@ public class Claim extends SubCommand {
                         sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
                     }
                 }
-                SchematicHandler.manager.paste(sch, plot, 0, 0, new RunnableVal<Boolean>() {
+                SchematicHandler.manager.paste(sch, plot, 0, 0, 0, true, new RunnableVal<Boolean>() {
                     @Override
                     public void run(Boolean value) {
                         if (value) {

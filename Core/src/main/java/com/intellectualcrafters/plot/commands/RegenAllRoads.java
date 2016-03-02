@@ -61,7 +61,7 @@ public class RegenAllRoads extends SubCommand {
             return false;
         }
         PlotArea area = PS.get().getPlotAreaByString(args[0]);
-        if (area == null || WorldUtil.IMP.isWorld(area.worldname)) {
+        if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
             C.NOT_VALID_PLOT_WORLD.send(plr, args[0]);
             return false;
         }

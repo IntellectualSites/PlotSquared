@@ -91,7 +91,7 @@ public class Load extends SubCommand {
                             sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
                             return;
                         }
-                        SchematicHandler.manager.paste(schematic, plot, 0, 0, new RunnableVal<Boolean>() {
+                        SchematicHandler.manager.paste(schematic, plot, 0, 0, 0, true, new RunnableVal<Boolean>() {
                             @Override
                             public void run(Boolean value) {
                                 plot.removeRunning();

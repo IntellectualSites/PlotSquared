@@ -409,7 +409,7 @@ public abstract class HybridUtils {
                             }
                             if (blocks != null) {
                                 for (Entry<Integer, PlotBlock> entry : blocks.entrySet()) {
-                                    SetQueue.IMP.setBlock(area.worldname, x + X + plotworld.ROAD_OFFSET_X, sy + entry.getKey(), z + Z + plotworld.ROAD_OFFSET_Z, entry.getValue());
+                                    SetQueue.IMP.setBlock(area.worldname, x + X + plotworld.ROAD_OFFSET_X, entry.getKey(), z + Z + plotworld.ROAD_OFFSET_Z, entry.getValue());
                                 }
                             }
                         }
