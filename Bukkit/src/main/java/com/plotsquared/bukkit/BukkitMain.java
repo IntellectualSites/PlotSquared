@@ -24,10 +24,7 @@ import com.plotsquared.bukkit.listeners.*;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
 import com.plotsquared.bukkit.titles.DefaultTitle;
 import com.plotsquared.bukkit.util.*;
-import com.plotsquared.bukkit.util.block.FastQueue_1_7;
-import com.plotsquared.bukkit.util.block.FastQueue_1_8;
-import com.plotsquared.bukkit.util.block.FastQueue_1_8_3;
-import com.plotsquared.bukkit.util.block.SlowQueue;
+import com.plotsquared.bukkit.util.block.*;
 import com.plotsquared.bukkit.uuid.*;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.*;
@@ -365,6 +362,15 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         } catch (final Throwable e) {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
+        }
+        if (PS.get().checkVersion(getServerVersion(), 1, 9, 0)) {
+            try {
+                return new FastQueue_1_9();
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+                return new SlowQueue();
+            }
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
             try {
