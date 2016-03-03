@@ -564,40 +564,40 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     iter.remove();
                 }
             }
-        } else {
-            Plot plot = area.getOwnedPlot(loc);
-            if (plot != null) {
-                if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
-                    List<MetadataValue> meta = event.getEntity().getMetadata("plot");
-                    Plot origin;
-                    if (meta.isEmpty()) {
-                        origin = plot;
-                    } else {
-                        origin = (Plot) meta.get(0).value();
-                    }
-                    if (lastRadius != 0) {
-                        final List<Entity> nearby = event.getEntity().getNearbyEntities(lastRadius, lastRadius, lastRadius);
-                        for (final Entity near : nearby) {
-                            if (near instanceof TNTPrimed || near.getType() == EntityType.MINECART_TNT) {
-                                if (!near.hasMetadata("plot")) {
-                                    near.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, plot));
-                                }
+            return;
+        }
+        Plot plot = area.getOwnedPlot(loc);
+        if (plot != null) {
+            if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
+                List<MetadataValue> meta = event.getEntity().getMetadata("plot");
+                Plot origin;
+                if (meta.isEmpty()) {
+                    origin = plot;
+                } else {
+                    origin = (Plot) meta.get(0).value();
+                }
+                if (lastRadius != 0) {
+                    final List<Entity> nearby = event.getEntity().getNearbyEntities(lastRadius, lastRadius, lastRadius);
+                    for (final Entity near : nearby) {
+                        if (near instanceof TNTPrimed || near.getType() == EntityType.MINECART_TNT) {
+                            if (!near.hasMetadata("plot")) {
+                                near.setMetadata("plot", new FixedMetadataValue((Plugin) PS.get().IMP, plot));
                             }
                         }
-                        lastRadius = 0;
                     }
-                    final Iterator<Block> iter = event.blockList().iterator();
-                    while (iter.hasNext()) {
-                        final Block b = iter.next();
-                        loc = BukkitUtil.getLocation(b.getLocation());
-                        if (!area.contains(loc.getX(), loc.getZ()) || !origin.equals(area.getOwnedPlot(loc))) {
-                            iter.remove();
-                        }
+                    lastRadius = 0;
+                }
+                final Iterator<Block> iter = event.blockList().iterator();
+                while (iter.hasNext()) {
+                    final Block b = iter.next();
+                    loc = BukkitUtil.getLocation(b.getLocation());
+                    if (!area.contains(loc.getX(), loc.getZ()) || !origin.equals(area.getOwnedPlot(loc))) {
+                        iter.remove();
                     }
                 }
-            } else {
-                event.setCancelled(true);
+                return;
             }
+            event.setCancelled(true);
         }
     }
     
