@@ -175,114 +175,111 @@ public class MainListener {
         if (plotworld == null) {
             return;
         }
-        event.filterEntities(new Predicate<Entity>() {
-            @Override
-            public boolean test(Entity entity) {
-                if (entity instanceof Player) {
-                    return true;
-                }
-                final Location loc = SpongeUtil.getLocation(entity);
-                final Plot plot = loc.getPlot();
-                if (plot == null) {
-                    if (loc.isPlotRoad()) {
-                        return false;
-                    }
-                    return true;
-                }
-                //        Player player = this.<Player> getCause(event.getCause());
-                // TODO selectively cancel depending on spawn reason
-                // - Not sure if possible to get spawn reason (since there are no callbacks)
-                //        if (player != null && !plotworld.SPAWN_EGGS) {
-                //            return false;
-                //            return true;
-                //        }
-                
-                if (entity.getType() == EntityTypes.ITEM) {
-                    if (FlagManager.isPlotFlagFalse(plot, "item-drop")) {
-                        return false;
-                    }
-                    return true;
-                }
-                int[] mobs = null;
-                if (entity instanceof Living) {
-                    if (!plotworld.MOB_SPAWNING) {
-                        return false;
-                    }
-                    final Flag mobCap = FlagManager.getPlotFlagRaw(plot, "mob-cap");
-                    if (mobCap != null) {
-                        final Integer cap = (Integer) mobCap.getValue();
-                        if (cap == 0) {
-                            return false;
-                        }
-                        mobs = plot.countEntities();
-                        if (mobs[3] >= cap) {
-                            return false;
-                        }
-                    }
-                    if ((entity instanceof Ambient) || (entity instanceof Animal)) {
-                        final Flag animalFlag = FlagManager.getPlotFlagRaw(plot, "animal-cap");
-                        if (animalFlag != null) {
-                            final int cap = ((Integer) animalFlag.getValue());
-                            if (cap == 0) {
-                                return false;
-                            }
-                            if (mobs == null) {
-                                mobs = plot.countEntities();
-                            }
-                            if (mobs[1] >= cap) {
-                                return false;
-                            }
-                        }
-                    }
-                    if (entity instanceof Monster) {
-                        final Flag monsterFlag = FlagManager.getPlotFlagRaw(plot, "hostile-cap");
-                        if (monsterFlag != null) {
-                            final int cap = ((Integer) monsterFlag.getValue());
-                            if (cap == 0) {
-                                return false;
-                            }
-                            if (mobs == null) {
-                                mobs = plot.countEntities();
-                            }
-                            if (mobs[2] >= cap) {
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-                }
-                if ((entity instanceof Minecart) || (entity instanceof Boat)) {
-                    final Flag vehicleFlag = FlagManager.getPlotFlagRaw(plot, "vehicle-cap");
-                    if (vehicleFlag != null) {
-                        final int cap = ((Integer) vehicleFlag.getValue());
-                        if (cap == 0) {
-                            return false;
-                        }
-                        mobs = plot.countEntities();
-                        if (mobs[4] >= cap) {
-                            return false;
-                        }
-                    }
-                }
-                final Flag entityCap = FlagManager.getPlotFlagRaw(plot, "entity-cap");
-                if (entityCap != null) {
-                    final Integer cap = (Integer) entityCap.getValue();
-                    if (cap == 0) {
-                        return false;
-                    }
-                    if (mobs == null) {
-                        mobs = plot.countEntities();
-                    }
-                    if (mobs[0] >= cap) {
-                        return false;
-                    }
-                }
-                if (entity instanceof PrimedTNT) {
-                    Vector3d pos = entity.getLocation().getPosition();
-                    entity.setRotation(new Vector3d(MathMan.roundInt(pos.getX()), MathMan.roundInt(pos.getY()), MathMan.roundInt(pos.getZ())));
+        event.filterEntities((Predicate<Entity>) entity -> {
+            if (entity instanceof Player) {
+                return true;
+            }
+            final Location loc = SpongeUtil.getLocation(entity);
+            final Plot plot = loc.getPlot();
+            if (plot == null) {
+                if (loc.isPlotRoad()) {
+                    return false;
                 }
                 return true;
             }
+            //        Player player = this.<Player> getCause(event.getCause());
+            // TODO selectively cancel depending on spawn reason
+            // - Not sure if possible to get spawn reason (since there are no callbacks)
+            //        if (player != null && !plotworld.SPAWN_EGGS) {
+            //            return false;
+            //            return true;
+            //        }
+
+            if (entity.getType() == EntityTypes.ITEM) {
+                if (FlagManager.isPlotFlagFalse(plot, "item-drop")) {
+                    return false;
+                }
+                return true;
+            }
+            int[] mobs = null;
+            if (entity instanceof Living) {
+                if (!plotworld.MOB_SPAWNING) {
+                    return false;
+                }
+                final Flag mobCap = FlagManager.getPlotFlagRaw(plot, "mob-cap");
+                if (mobCap != null) {
+                    final Integer cap = (Integer) mobCap.getValue();
+                    if (cap == 0) {
+                        return false;
+                    }
+                    mobs = plot.countEntities();
+                    if (mobs[3] >= cap) {
+                        return false;
+                    }
+                }
+                if ((entity instanceof Ambient) || (entity instanceof Animal)) {
+                    final Flag animalFlag = FlagManager.getPlotFlagRaw(plot, "animal-cap");
+                    if (animalFlag != null) {
+                        final int cap = ((Integer) animalFlag.getValue());
+                        if (cap == 0) {
+                            return false;
+                        }
+                        if (mobs == null) {
+                            mobs = plot.countEntities();
+                        }
+                        if (mobs[1] >= cap) {
+                            return false;
+                        }
+                    }
+                }
+                if (entity instanceof Monster) {
+                    final Flag monsterFlag = FlagManager.getPlotFlagRaw(plot, "hostile-cap");
+                    if (monsterFlag != null) {
+                        final int cap = ((Integer) monsterFlag.getValue());
+                        if (cap == 0) {
+                            return false;
+                        }
+                        if (mobs == null) {
+                            mobs = plot.countEntities();
+                        }
+                        if (mobs[2] >= cap) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            if ((entity instanceof Minecart) || (entity instanceof Boat)) {
+                final Flag vehicleFlag = FlagManager.getPlotFlagRaw(plot, "vehicle-cap");
+                if (vehicleFlag != null) {
+                    final int cap = ((Integer) vehicleFlag.getValue());
+                    if (cap == 0) {
+                        return false;
+                    }
+                    mobs = plot.countEntities();
+                    if (mobs[4] >= cap) {
+                        return false;
+                    }
+                }
+            }
+            final Flag entityCap = FlagManager.getPlotFlagRaw(plot, "entity-cap");
+            if (entityCap != null) {
+                final Integer cap = (Integer) entityCap.getValue();
+                if (cap == 0) {
+                    return false;
+                }
+                if (mobs == null) {
+                    mobs = plot.countEntities();
+                }
+                if (mobs[0] >= cap) {
+                    return false;
+                }
+            }
+            if (entity instanceof PrimedTNT) {
+                Vector3d pos = entity.getLocation().getPosition();
+                entity.setRotation(new Vector3d(MathMan.roundInt(pos.getX()), MathMan.roundInt(pos.getY()), MathMan.roundInt(pos.getZ())));
+            }
+            return true;
         });
     }
 

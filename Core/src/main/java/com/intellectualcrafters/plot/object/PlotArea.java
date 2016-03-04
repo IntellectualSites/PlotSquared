@@ -54,6 +54,7 @@ public abstract class PlotArea {
     public boolean AUTO_MERGE = false;
     public boolean ALLOW_SIGNS = true;
     public boolean MOB_SPAWNING = false;
+    public boolean MOB_SPAWNER_SPAWNING = false;
     public int PLOT_BIOME = 1;
     public boolean PLOT_CHAT = false;
     public boolean SCHEMATIC_CLAIM_SPECIFY = false;
@@ -198,6 +199,7 @@ public abstract class PlotArea {
             TYPE = config.getInt("generator.type");
         }
         MOB_SPAWNING = config.getBoolean("natural_mob_spawning");
+        MOB_SPAWNER_SPAWNING = config.getBoolean("mob_spawner_spawning");
         AUTO_MERGE = config.getBoolean("plot.auto_merge");
         MAX_PLOT_MEMBERS = config.getInt("limits.max-members");
         ALLOW_SIGNS = config.getBoolean("plot.create_signs");
@@ -292,6 +294,7 @@ public abstract class PlotArea {
     public void saveConfiguration(final ConfigurationSection config) {
         final HashMap<String, Object> options = new HashMap<>();
         options.put("natural_mob_spawning", MOB_SPAWNING);
+        options.put("mob_spawner_spawning", MOB_SPAWNER_SPAWNING);
         options.put("plot.auto_merge", AUTO_MERGE);
         options.put("plot.create_signs", ALLOW_SIGNS);
         options.put("plot.biome", "FOREST");

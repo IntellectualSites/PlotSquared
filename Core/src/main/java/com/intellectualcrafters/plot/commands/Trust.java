@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -33,6 +31,8 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "trust",
@@ -77,7 +77,6 @@ public class Trust extends SubCommand {
             MainUtil.sendMessage(plr, C.ALREADY_OWNER);
             return false;
         }
-        
         if (plot.getTrusted().contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;

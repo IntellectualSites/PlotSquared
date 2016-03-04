@@ -1132,6 +1132,12 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return;
                 }
                 break;
+            case SPAWNER:
+                if (!area.MOB_SPAWNER_SPAWNING) {
+                    event.setCancelled(true);
+                    return;
+                }
+                break;
         }
         final Plot plot = area.getOwnedPlotAbs(loc);
         if (plot == null) {

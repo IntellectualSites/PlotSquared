@@ -208,7 +208,7 @@ public class FlagManager {
     }
     
     public static Flag getSettingFlagAbs(final PlotSettings settings, final String flag) {
-        if (settings.flags == null || settings.flags.isEmpty()) {
+        if (settings.flags.isEmpty()) {
             return null;
         }
         return settings.flags.get(flag);
