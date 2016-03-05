@@ -20,15 +20,16 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
-import java.util.ArrayList;
-
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.WorldUtil;
 
+import java.util.ArrayList;
+
 /**
  * Main Configuration Utility
- *
+ *
+
  */
 public class Configuration {
     
@@ -124,14 +125,8 @@ public class Configuration {
     public static final SettingValue<PlotBlock> BLOCK = new SettingValue<PlotBlock>("BLOCK") {
         @Override
         public boolean validateValue(final String string) {
-            try {
-                final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
-                if ((value == null) || (value.match > 1)) {
-                    return false;
-                }
-                return true;
-            } catch (final Exception e) {}
-            return false;
+            final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
+            return !((value == null) || (value.match > 1));
         }
         
         @Override
@@ -159,7 +154,7 @@ public class Configuration {
                     }
                 }
                 return true;
-            } catch (final Exception e) {
+            } catch (NumberFormatException e) {
                 return false;
             }
         }
@@ -191,7 +186,8 @@ public class Configuration {
                     if ((result != null) && (result.match < 2)) {
                         values[i] = result.best;
                     }
-                } catch (final Exception e) {}
+                } catch (NumberFormatException e) {
+                }
             }
             final int gcd = gcd(counts);
             for (int i = 0; i < counts.length; i++) {

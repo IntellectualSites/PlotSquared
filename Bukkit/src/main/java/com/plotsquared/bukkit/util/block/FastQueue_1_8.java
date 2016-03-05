@@ -27,14 +27,14 @@ import java.util.Map.Entry;
 
 public class FastQueue_1_8 extends SlowQueue {
 
-    public final RefMethod methodInitLighting;
+    private final RefMethod methodInitLighting;
     private final RefClass classBlock = getRefClass("{nms}.Block");
     private final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
     private final RefClass classIBlockData = getRefClass("{nms}.IBlockData");
     private final RefClass classChunk = getRefClass("{nms}.Chunk");
     private final RefClass classWorld = getRefClass("{nms}.World");
     private final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
-    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
+    private HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     private RefMethod methodGetHandle;
     private RefMethod methodGetChunkAt;
     private RefMethod methodA;

@@ -1,14 +1,20 @@
 package com.plotsquared.bukkit.util.block;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod.RefExecutor;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
 import org.bukkit.Chunk;
@@ -20,14 +26,17 @@ import org.bukkit.block.Biome;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+import java.util.Set;
 
 public class FastQueue_1_8_3 extends SlowQueue {
 
-    public final SendChunk chunksender;
+    private final SendChunk chunksender;
     private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
     private final RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
     private final RefClass classPacket = getRefClass("{nms}.Packet");
@@ -39,7 +48,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
     private final RefField mustSave = classChunk.getField("mustSave");
     private final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
     private final RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
-    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
+    private HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     private RefMethod methodGetHandleChunk;
     private RefConstructor MapChunk;
     private RefMethod methodInitLighting;

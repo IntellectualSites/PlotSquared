@@ -25,19 +25,19 @@ import java.util.Map.Entry;
 
 public class FastQueue_1_7 extends SlowQueue {
 
-    public final RefClass classBlock = getRefClass("{nms}.Block");
-    public final RefClass classChunk = getRefClass("{nms}.Chunk");
-    public final RefClass classWorld = getRefClass("{nms}.World");
-    public final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
-    public final RefMethod methodGetHandle;
-    public final RefMethod methodGetChunkAt;
-    public final RefMethod methodA;
-    public final RefMethod methodGetById;
-    public final RefMethod methodInitLighting;
+    private final RefClass classBlock = getRefClass("{nms}.Block");
+    private final RefClass classChunk = getRefClass("{nms}.Chunk");
+    private final RefClass classWorld = getRefClass("{nms}.World");
+    private final RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
+    private final RefMethod methodGetHandle;
+    private final RefMethod methodGetChunkAt;
+    private final RefMethod methodA;
+    private final RefMethod methodGetById;
+    private final RefMethod methodInitLighting;
 
-    public final SendChunk chunksender;
+    private final SendChunk chunksender;
 
-    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
+    private HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
     public FastQueue_1_7() throws NoSuchMethodException, RuntimeException {
         methodGetHandle = classCraftWorld.getMethod("getHandle");
