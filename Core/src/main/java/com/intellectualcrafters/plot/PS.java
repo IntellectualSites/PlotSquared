@@ -145,7 +145,6 @@ public class PS {
             } else {
                 log(C.CONSOLE_PLEASE_ENABLE_METRICS);
             }
-            IMP.startMetrics();
             if (Settings.CHUNK_PROCESSOR) {
                 IMP.registerChunkProcessor();
             }
