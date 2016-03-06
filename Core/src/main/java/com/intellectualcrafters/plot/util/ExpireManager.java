@@ -40,20 +40,24 @@ public class ExpireManager {
 
     public void confirmExpiry(final PlotPlayer pp) {
         if (Settings.AUTO_CLEAR_CONFIRMATION && plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")) {
-            int num = plotsToDelete.size();
+            final int num = plotsToDelete.size();
             Iterator<Plot> iter = plotsToDelete.iterator();
             while (iter.hasNext()) {
-                Plot current = iter.next();
+                final Plot current = iter.next();
                 if (isExpired(current)) {
-                    final Plot plot = current;
-                    pp.teleport(plot.getCenter());
-                    PlotMessage msg = new PlotMessage()
-                            .text(num + " " + (num > 1 ? "plots are" : "plot is") + " expired:").color("$1").command("/plot list expired").tooltip("/plot list expired")
-//                    .text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
-                            .text("\n - ").color("$3").text("Delete this (/plot expired)").color("$2").command("/plot delete").tooltip("/plot delete")
-                            .text("\n - ").color("$3").text("Remind later (/plot set keep 1d)").color("$2").command("/plot set keep 1d").tooltip("/plot set keep 1d")
-                            .text("\n - ").color("$3").text("Keep this (/plot set keep true)").color("$2").command("/plot set keep true").tooltip("/plot set keep true");
-                    msg.send(pp);
+                    TaskManager.runTask(new Runnable() {
+                        @Override
+                        public void run() {
+                            pp.teleport(current.getCenter());
+                            PlotMessage msg = new PlotMessage()
+                                    .text(num + " " + (num > 1 ? "plots are" : "plot is") + " expired:").color("$1").command("/plot list expired").tooltip("/plot list expired")
+                                    //.text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
+                                    .text("\n - ").color("$3").text("Delete this (/plot expired)").color("$2").command("/plot delete").tooltip("/plot delete")
+                                    .text("\n - ").color("$3").text("Remind later (/plot set keep 1d)").color("$2").command("/plot set keep 1d").tooltip("/plot set keep 1d")
+                                    .text("\n - ").color("$3").text("Keep this (/plot set keep true)").color("$2").command("/plot set keep true").tooltip("/plot set keep true");
+                            msg.send(pp);
+                        }
+                    });
                     return;
                 }
             }
