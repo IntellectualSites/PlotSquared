@@ -74,7 +74,7 @@ public class Delete extends SubCommand {
                     public void run() {
                         plot.removeRunning();
                         if ((EconHandler.manager != null) && plotworld.USE_ECONOMY) {
-                            final double value = plotworld.SELL_PRICE * plots.size();
+                            final double value = plotworld.PRICES.get("sell") * plots.size();
                             if (value > 0d) {
                                 EconHandler.manager.depositMoney(plr, value);
                                 sendMessage(plr, C.ADDED_BALANCE, value + "");

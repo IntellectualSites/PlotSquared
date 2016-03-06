@@ -138,7 +138,7 @@ public class Auto extends SubCommand {
             }
         }
         if ((EconHandler.manager != null) && plotarea.USE_ECONOMY) {
-            double cost = plotarea.PLOT_PRICE;
+            double cost = plotarea.PRICES.get("claim");
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(plr) < cost) {

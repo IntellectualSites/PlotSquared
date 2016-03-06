@@ -63,9 +63,7 @@ public abstract class PlotArea {
     public List<String> SCHEMATICS = null;
     public HashMap<String, Flag> DEFAULT_FLAGS;
     public boolean USE_ECONOMY = false;
-    public double PLOT_PRICE = 100;
-    public double MERGE_PRICE = 100;
-    public double SELL_PRICE = 100;
+    public HashMap<String, Double> PRICES = new HashMap<>();
     public boolean SPAWN_EGGS = false;
     public boolean SPAWN_CUSTOM = true;
     public boolean SPAWN_BREEDING = false;
@@ -209,9 +207,10 @@ public abstract class PlotArea {
         SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
         SCHEMATICS = config.getStringList("schematic.schematics");
         USE_ECONOMY = config.getBoolean("economy.use") && EconHandler.manager != null;
-        PLOT_PRICE = config.getDouble("economy.prices.claim");
-        MERGE_PRICE = config.getDouble("economy.prices.merge");
-        SELL_PRICE = config.getDouble("economy.prices.sell");
+        ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
+        for (String key : priceSection.getKeys(false)) {
+            PRICES.put(key, priceSection.getDouble(key));
+        }
         PLOT_CHAT = config.getBoolean("chat.enabled");
         WORLD_BORDER = config.getBoolean("world.border");
         MAX_BUILD_HEIGHT = config.getInt("world.max_height");
@@ -303,9 +302,9 @@ public abstract class PlotArea {
         options.put("schematic.specify_on_claim", SCHEMATIC_CLAIM_SPECIFY);
         options.put("schematic.schematics", SCHEMATICS);
         options.put("economy.use", USE_ECONOMY);
-        options.put("economy.prices.claim", PLOT_PRICE);
-        options.put("economy.prices.merge", MERGE_PRICE);
-        options.put("economy.prices.sell", SELL_PRICE);
+        options.put("economy.prices.claim", 100);
+        options.put("economy.prices.merge", 100);
+        options.put("economy.prices.sell", 100);
         options.put("chat.enabled", PLOT_CHAT);
         options.put("flags.default", null);
         options.put("event.spawn.egg", SPAWN_EGGS);
@@ -700,7 +699,7 @@ public abstract class PlotArea {
     
     public boolean mergePlots(final PlotPlayer player, final ArrayList<PlotId> plotIds) {
         if (EconHandler.manager != null && USE_ECONOMY) {
-            final double cost = plotIds.size() * MERGE_PRICE;
+            final double cost = plotIds.size() * PRICES.getOrDefault("merge", 0d);
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(player) < cost) {
                     MainUtil.sendMessage(player, C.CANNOT_AFFORD_MERGE, "" + cost);

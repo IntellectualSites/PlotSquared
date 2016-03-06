@@ -88,9 +88,10 @@ public class Merge extends SubCommand {
             }
         }
         final PlotArea plotworld = plot.getArea();
-        if (EconHandler.manager != null && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d
-                && EconHandler.manager.getMoney(plr) < plotworld.MERGE_PRICE) {
-            sendMessage(plr, C.CANNOT_AFFORD_MERGE, plotworld.MERGE_PRICE + "");
+        final double price = plotworld.PRICES.get("merge");
+        if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d
+                && EconHandler.manager.getMoney(plr) < price) {
+            sendMessage(plr, C.CANNOT_AFFORD_MERGE, price + "");
             return false;
         }
         final int size = plot.getConnectedPlots().size();
@@ -122,9 +123,9 @@ public class Merge extends SubCommand {
                     terrain = "true".equalsIgnoreCase(args[1]);
                 }
                 if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
-                    if (EconHandler.manager != null && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
-                        EconHandler.manager.withdrawMoney(plr, plotworld.MERGE_PRICE);
-                        sendMessage(plr, C.REMOVED_BALANCE, plotworld.MERGE_PRICE + "");
+                    if (EconHandler.manager != null && price > 0d) {
+                        EconHandler.manager.withdrawMoney(plr, price);
+                        sendMessage(plr, C.REMOVED_BALANCE, price + "");
                     }
                     MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
                     return true;
@@ -152,9 +153,9 @@ public class Merge extends SubCommand {
             terrain = Settings.MERGE_REMOVES_ROADS;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
-            if (EconHandler.manager != null && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
-                EconHandler.manager.withdrawMoney(plr, plotworld.MERGE_PRICE);
-                sendMessage(plr, C.REMOVED_BALANCE, plotworld.MERGE_PRICE + "");
+            if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d) {
+                EconHandler.manager.withdrawMoney(plr, price);
+                sendMessage(plr, C.REMOVED_BALANCE, price + "");
             }
             MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
             return true;
@@ -187,13 +188,13 @@ public class Merge extends SubCommand {
                         sendMessage(accepter, C.MERGE_NOT_VALID);
                         return;
                     }
-                    if (EconHandler.manager != null && plotworld.USE_ECONOMY && plotworld.MERGE_PRICE > 0d) {
-                        if (EconHandler.manager.getMoney(plr) < plotworld.MERGE_PRICE) {
-                            sendMessage(plr, C.CANNOT_AFFORD_MERGE, plotworld.MERGE_PRICE + "");
+                    if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d) {
+                        if (EconHandler.manager.getMoney(plr) < price) {
+                            sendMessage(plr, C.CANNOT_AFFORD_MERGE, price + "");
                             return;
                         }
-                        EconHandler.manager.withdrawMoney(plr, plotworld.MERGE_PRICE);
-                        sendMessage(plr, C.REMOVED_BALANCE, plotworld.MERGE_PRICE + "");
+                        EconHandler.manager.withdrawMoney(plr, price);
+                        sendMessage(plr, C.REMOVED_BALANCE, price + "");
                     }
                     MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
                 }

@@ -1519,7 +1519,7 @@ public class PS {
             }
             for (String areaId : areasSection.getKeys(false)) {
                 log(C.PREFIX.s() + "&3 - " + areaId);
-                String[] split = areaId.split("-");
+                String[] split = areaId.split("(?<![;])-");
                 if (split.length != 3) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<pos1>-<pos2>`");
                 }

@@ -1595,7 +1595,7 @@ public class SQLManager implements AbstractDB {
                         ConfigurationSection areaSection = worldSection.getConfigurationSection(worldKey + ".areas");
                         if (areaSection != null) {
                             for (String areaKey : areaSection.getKeys(false)) {
-                                String[] split = areaKey.split("-");
+                                String[] split = areaKey.split("(?<![;])-");
                                 if (split.length == 3) {
                                     areas.add(worldKey + ";" + split[0]);
                                 }
@@ -2473,7 +2473,7 @@ public class SQLManager implements AbstractDB {
                         ConfigurationSection areaSection = worldSection.getConfigurationSection(worldKey + ".areas");
                         if (areaSection != null) {
                             for (String areaKey : areaSection.getKeys(false)) {
-                                String[] split = areaKey.split("-");
+                                String[] split = areaKey.split("(?<![;])-");
                                 if (split.length == 3) {
                                     areas.add(worldKey + ";" + split[0]);
                                 }
