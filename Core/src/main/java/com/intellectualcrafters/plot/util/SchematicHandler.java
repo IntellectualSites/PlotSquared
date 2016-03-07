@@ -450,13 +450,13 @@ public abstract class SchematicHandler {
      * @return schematic if found, else null
      */
     public Schematic getSchematic(final String name) {
-        final File parent = new File(PS.get().IMP.getDirectory() + File.separator + "schematics");
+        final File parent = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.SCHEMATIC_SAVE_PATH);
         if (!parent.exists()) {
             if (!parent.mkdir()) {
                 throw new RuntimeException("Could not create schematic parent directory");
             }
         }
-        final File file = new File(PS.get().IMP.getDirectory() + File.separator + "schematics" + File.separator + name + (name.endsWith(".schematic") ? "" : ".schematic"));
+        final File file = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.SCHEMATIC_SAVE_PATH + File.separator + name + (name.endsWith(".schematic") ? "" : ".schematic"));
         return getSchematic(file);
     }
     
@@ -616,9 +616,9 @@ public abstract class SchematicHandler {
             return false;
         }
         try {
-            final File tmp = new File(path);
+            final File tmp = MainUtil.getFile(PS.get().IMP.getDirectory(), path);
             tmp.getParentFile().mkdirs();
-            try (OutputStream stream = new FileOutputStream(path); NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream))) {
+            try (OutputStream stream = new FileOutputStream(tmp); NBTOutputStream output = new NBTOutputStream(new GZIPOutputStream(stream))) {
                 output.writeTag(tag);
             }
         } catch (final IOException e) {

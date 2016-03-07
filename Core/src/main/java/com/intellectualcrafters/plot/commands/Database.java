@@ -85,7 +85,7 @@ public class Database extends SubCommand {
                         MainUtil.sendMessage(player, "/plot database import [sqlite file] [prefix]");
                         return false;
                     }
-                    File file = new File(PS.get().IMP.getDirectory() + File.separator + args[1] + ".db");
+                    File file = MainUtil.getFile(PS.get().IMP.getDirectory(), (args[1].endsWith(".db")) ? args[1] : args[1] + ".db");
                     if (!file.exists()) {
                         MainUtil.sendMessage(player, "&6Database does not exist: " + file);
                         return false;

@@ -597,8 +597,8 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
                 return;
             }
-            event.setCancelled(true);
         }
+        event.setCancelled(true);
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

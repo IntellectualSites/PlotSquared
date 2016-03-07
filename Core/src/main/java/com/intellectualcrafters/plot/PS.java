@@ -1726,7 +1726,7 @@ public class PS {
             if (!output.exists()) {
                 output.mkdirs();
             }
-            final File newFile = new File((output + File.separator + folder + File.separator + file));
+            final File newFile = MainUtil.getFile(output, folder + File.separator + file);
             if (newFile.exists()) {
                 return;
             }
@@ -2063,6 +2063,9 @@ public class PS {
         options.put("approval.done.required-for-download", Settings.DOWNLOAD_REQUIRES_DONE);
 
         // Schematics
+        if (StringMan.isEqual(config.getString("schematic.save_path"), "plugins/PlotSquared/schematics")) {
+            config.set("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
+        }
         options.put("schematics.save_path", Settings.SCHEMATIC_SAVE_PATH);
         options.put("bo3.save_path", Settings.BO3_SAVE_PATH);
 
@@ -2177,6 +2180,8 @@ public class PS {
 
         // Schematics
         Settings.SCHEMATIC_SAVE_PATH = config.getString("schematics.save_path");
+
+
         Settings.BO3_SAVE_PATH = config.getString("bo3.save_path");
 
         // Web

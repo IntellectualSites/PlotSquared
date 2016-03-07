@@ -113,7 +113,7 @@ public class Settings {
     /**
      * Schematic Save Path
      */
-    public static String SCHEMATIC_SAVE_PATH = "plugins/PlotSquared/schematics";
+    public static String SCHEMATIC_SAVE_PATH = "schematics";
     /**
      * BO3 Save Path
      */

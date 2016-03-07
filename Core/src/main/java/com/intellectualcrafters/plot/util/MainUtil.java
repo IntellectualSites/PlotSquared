@@ -28,6 +28,8 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.*;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -415,6 +417,13 @@ public class MainUtil {
      */
     public static void update(final String world, final ChunkLoc loc) {
         SetQueue.IMP.queue.sendChunk(world, Collections.singletonList(loc));
+    }
+
+    public static File getFile(File base, String path) {
+        if (Paths.get(path).isAbsolute()) {
+            return new File(path);
+        }
+        return new File(base, path);
     }
 
     /**

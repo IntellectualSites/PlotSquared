@@ -185,9 +185,9 @@ public class BO3Handler {
             }
             File bo3File;
             if ((bo3.getLoc().x == 0) && (bo3.getLoc().z == 0)) {
-                bo3File = new File(base.getParentFile(), bo3.getName() + ".bo3");
+                bo3File = MainUtil.getFile(base.getParentFile(), bo3.getName() + ".bo3");
             } else {
-                bo3File = new File(base.getParentFile(), bo3.getName() + "_" + bo3.getLoc().x + "_" + bo3.getLoc().z + ".bo3");
+                bo3File = MainUtil.getFile(base.getParentFile(), bo3.getName() + "_" + bo3.getLoc().x + "_" + bo3.getLoc().z + ".bo3");
             }
             bo3File.createNewFile();
             Files.write(bo3File.toPath(), StringMan.join(lines, System.getProperty("line.separator")).getBytes(), StandardOpenOption.WRITE);
@@ -199,7 +199,7 @@ public class BO3Handler {
     }
     
     public static File getBaseFile(final String category) {
-        final File base = new File(PS.get().IMP.getDirectory(), Settings.BO3_SAVE_PATH + File.separator + category + File.separator + "base.yml");
+        final File base = MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.BO3_SAVE_PATH + File.separator + category + File.separator + "base.yml");
         if (!base.exists()) {
             PS.get().copyFile("base.yml", Settings.BO3_SAVE_PATH + File.separator + category);
         }

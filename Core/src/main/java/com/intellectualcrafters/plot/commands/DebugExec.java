@@ -269,7 +269,7 @@ public class DebugExec extends SubCommand {
                 case "addcmd":
                     try {
                         final String cmd = StringMan.join(Files
-                                        .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]),
+                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]),
                                                 StandardCharsets.UTF_8),
                                 System.getProperty("line.separator"));
                         final Command<PlotPlayer> subcommand = new Command<PlotPlayer>(args[1].split("\\.")[0]) {
@@ -298,7 +298,7 @@ public class DebugExec extends SubCommand {
                     async = true;
                 case "run":
                     try {
-                        script = StringMan.join(Files.readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8),
+                        script = StringMan.join(Files.readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8),
                         System.getProperty("line.separator"));
                         if (args.length > 2) {
                             final HashMap<String, String> replacements = new HashMap<>();
