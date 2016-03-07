@@ -414,28 +414,28 @@ public abstract class PlotArea {
     }
     
     public Set<Plot> getPlotsAbs(final UUID uuid) {
-        final HashSet<Plot> plots = new HashSet<>();
+        final HashSet<Plot> myplots = new HashSet<>();
         foreachPlotAbs(new RunnableVal<Plot>() {
             @Override
             public void run(Plot value) {
                 if (value.owner.equals(uuid)) {
-                    plots.add(value);
+                    myplots.add(value);
                 }
             }
         });
-        return plots;
+        return myplots;
     }
     
     public Set<Plot> getPlots(UUID uuid) {
-        HashSet<Plot> plots = new HashSet<>();
+        HashSet<Plot> myplots = new HashSet<>();
         for (Plot plot : getPlots()) {
             if (plot.isBasePlot()) {
                 if (plot.isOwner(uuid)) {
-                    plots.add(plot);
+                    myplots.add(plot);
                 }
             }
         }
-        return plots;
+        return myplots;
     }
     
     public Set<Plot> getPlots(PlotPlayer player) {
@@ -558,14 +558,14 @@ public abstract class PlotArea {
     }
     
     public Set<Plot> getBasePlots() {
-        HashSet<Plot> plots = new HashSet<>(getPlots());
-        Iterator<Plot> iter = plots.iterator();
+        HashSet<Plot> myplots = new HashSet<>(getPlots());
+        Iterator<Plot> iter = myplots.iterator();
         while (iter.hasNext()) {
             if (!iter.next().isBasePlot()) {
                 iter.remove();
             }
         }
-        return plots;
+        return myplots;
     }
 
     public void foreachPlotAbs(RunnableVal<Plot> run) {

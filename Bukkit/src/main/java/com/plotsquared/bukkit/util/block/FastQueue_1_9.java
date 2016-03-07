@@ -1,20 +1,14 @@
 package com.plotsquared.bukkit.util.block;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.PlotChunk;
+import com.intellectualcrafters.plot.util.*;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod.RefExecutor;
-import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
 import org.bukkit.Chunk;
@@ -26,13 +20,10 @@ import org.bukkit.block.Biome;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_9 extends SlowQueue {
 
@@ -456,13 +447,17 @@ public class FastQueue_1_9 extends SlowQueue {
      * @param locs
      */
     @Override
-    public void sendChunk(String world, Collection<ChunkLoc> locs) {
+    public void sendChunk(final String world, final Collection<ChunkLoc> locs) {
         World worldObj = BukkitUtil.getWorld(world);
         for (ChunkLoc loc : locs) {
             ChunkWrapper wrapper = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
-            if (!toUpdate.containsKey(wrapper)) {
-                toUpdate.put(wrapper, worldObj.getChunkAt(loc.x, loc.z));
-            }
+            toUpdate.remove(wrapper);
         }
+        TaskManager.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                chunksender.sendChunk(world, locs);
+            }
+        }, 1);
     }
 }

@@ -21,18 +21,25 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.Collections;
 
 @CommandDeclaration(command = "plugin", permission = "plots.use", description = "Show plugin information", aliases = { "version" }, category = CommandCategory.INFO)
 public class plugin extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
+        Location loc = plr.getLocation();
+        ChunkLoc cl = loc.getChunkLoc();
+        SetQueue.IMP.queue.sendChunk(loc.getWorld(), Collections.singletonList(cl));
+
         MainUtil.sendMessage(plr, String.format("$2>> $1&lPlotSquared $2($1Version$2: $1%s$2)", StringMan.join(PS.get().IMP.getPluginVersion(), ".")));
         MainUtil.sendMessage(plr, "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92");
         MainUtil.sendMessage(plr, "$2>> $1&lWiki$2: $1https://github.com/IntellectualCrafters/PlotSquared/wiki");

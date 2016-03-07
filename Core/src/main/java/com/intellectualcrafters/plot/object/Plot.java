@@ -431,6 +431,9 @@ public class Plot {
     }
     
     public void setArea(final PlotArea area) {
+        if (this.getArea() == area) {
+            return;
+        }
         if (this.getArea() != null) {
             this.area.removePlot(this.id);
         }
@@ -1167,8 +1170,9 @@ public class Plot {
         if (baseSettings.getRatings().containsKey(uuid)) {
             return false;
         }
-        baseSettings.getRatings().put(uuid, rating.getAggregate());
-        DBFunc.setRating(base, uuid, this.temp);
+        int aggregate = rating.getAggregate();
+        baseSettings.getRatings().put(uuid, aggregate);
+        DBFunc.setRating(base, uuid, aggregate);
         return true;
     }
     
@@ -1258,6 +1262,45 @@ public class Plot {
      */
     public boolean create() {
         return this.create(this.owner, true);
+    }
+
+    public boolean claim(final PlotPlayer pp, boolean teleport, String schematic) {
+        if (!canClaim(pp)) {
+            return false;
+        }
+        final boolean result = EventUtil.manager.callClaim(pp, this, false);
+        if (!result || !create(pp.getUUID(), true)) {
+            return false;
+        }
+        setSign(pp.getName());
+        MainUtil.sendMessage(pp, C.CLAIMED);
+        if (teleport) {
+            teleportPlayer(pp);
+        }
+        final PlotArea plotworld = getArea();
+        if (plotworld.SCHEMATIC_ON_CLAIM) {
+            SchematicHandler.Schematic sch;
+            if (schematic.isEmpty()) {
+                sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
+            } else {
+                sch = SchematicHandler.manager.getSchematic(schematic);
+                if (sch == null) {
+                    sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
+                }
+            }
+            SchematicHandler.manager.paste(sch, this, 0, 0, 0, true, new RunnableVal<Boolean>() {
+                @Override
+                public void run(Boolean value) {
+                    if (value) {
+                        MainUtil.sendMessage(pp, C.SCHEMATIC_PASTE_SUCCESS);
+                    } else {
+                        MainUtil.sendMessage(pp, C.SCHEMATIC_PASTE_FAILED);
+                    }
+                }
+            });
+        }
+        plotworld.getPlotManager().claimPlot(plotworld, this);
+        return true;
     }
     
     /**
@@ -2697,7 +2740,6 @@ public class Plot {
                     DBFunc.setDenied(other, denied);
                 }
             }
-            PS.get().updatePlot(other);
         }
         // copy terrain
         final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(this.getRegions());

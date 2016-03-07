@@ -171,7 +171,7 @@ public class Auto extends SubCommand {
                 final PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
                 Plot current = plotarea.getPlotAbs(currentId);
                 if (current.canClaim(plr)) {
-                    Claim.claimPlot(plr, current, true, true);
+                    current.claim(plr, true, null);
                     return true;
                 }
                 id = getNextPlotId(id, 1);
@@ -185,7 +185,7 @@ public class Auto extends SubCommand {
             while (!br) {
                 Plot plot = plotarea.getPlotAbs(getLastPlotId(plotarea));
                 if (plot.canClaim(plr)) {
-                    Claim.claimPlot(plr, plot, true, true);
+                    plot.claim(plr, true, null);
                     br = true;
                 }
                 plotarea.setMeta("lastPlot", getNextPlotId(plot.getId(), 1));
@@ -200,7 +200,7 @@ public class Auto extends SubCommand {
                         for (int j = start.y; j <= end.y; j++) {
                             Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
                             final boolean teleport = ((i == end.x) && (j == end.y));
-                            Claim.claimPlot(plr, plot, teleport, true);
+                            plot.claim(plr, teleport, null);
                         }
                     }
                     if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), Settings.MERGE_REMOVES_ROADS, true)) {

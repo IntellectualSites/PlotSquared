@@ -125,7 +125,7 @@ public class SendChunk {
         }
     }
 
-    public void sendChunk(final String worldname, final List<ChunkLoc> locs) {
+    public void sendChunk(final String worldname, final Collection<ChunkLoc> locs) {
         final World myworld = Bukkit.getWorld(worldname);
         final ArrayList<Chunk> chunks = new ArrayList<>();
         for (final ChunkLoc loc : locs) {

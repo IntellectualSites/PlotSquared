@@ -22,9 +22,13 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
-import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.ByteArrayUtilities;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -36,50 +40,6 @@ requiredType = RequiredType.NONE,
 permission = "plots.claim",
 usage = "/plot claim")
 public class Claim extends SubCommand {
-    
-    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final boolean auto) {
-        return claimPlot(player, plot, teleport, "", auto);
-    }
-    
-    public static boolean claimPlot(final PlotPlayer player, final Plot plot, final boolean teleport, final String schematic, final boolean auto) {
-        if (plot.hasOwner() || plot.isMerged()) {
-            return false;
-        }
-        final boolean result = EventUtil.manager.callClaim(player, plot, false);
-        if (result) {
-            plot.create(player.getUUID(), true);
-            plot.setSign(player.getName());
-            MainUtil.sendMessage(player, C.CLAIMED);
-            if (teleport) {
-                plot.teleportPlayer(player);
-            }
-            final PlotArea plotworld = plot.getArea();
-            if (plotworld.SCHEMATIC_ON_CLAIM) {
-                Schematic sch;
-                if (schematic.isEmpty()) {
-                    sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
-                } else {
-                    sch = SchematicHandler.manager.getSchematic(schematic);
-                    if (sch == null) {
-                        sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
-                    }
-                }
-                SchematicHandler.manager.paste(sch, plot, 0, 0, 0, true, new RunnableVal<Boolean>() {
-                    @Override
-                    public void run(Boolean value) {
-                        if (value) {
-                            MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
-                        } else {
-                            MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
-                        }
-                    }
-                });
-            }
-            plotworld.getPlotManager().claimPlot(plotworld, plot);
-        }
-        return result;
-    }
-    
     @Override
     public boolean onCommand(final PlotPlayer plr, final String... args) {
         String schematic = "";
@@ -137,6 +97,6 @@ public class Claim extends SubCommand {
                 }
             }
         }
-        return claimPlot(plr, plot, false, schematic, false) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
+        return plot.claim(plr, false, schematic) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
     }
 }

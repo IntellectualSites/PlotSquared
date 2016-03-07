@@ -31,6 +31,7 @@ import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+import com.plotsquared.listener.WEManager;
 
 import javax.script.*;
 import java.io.File;
@@ -100,6 +101,11 @@ public class DebugExec extends SubCommand {
         
         // Instances
         scope.put("PS", PS.get());
+        scope.put("SetQueue", SetQueue.IMP);
+        scope.put("ExpireManager", ExpireManager.IMP);
+        if (PS.get().worldedit != null) {
+            scope.put("WEManager", new WEManager());
+        }
         scope.put("TaskManager", PS.get().TASK);
         scope.put("TitleManager", AbstractTitle.TITLE_CLASS);
         scope.put("ConsolePlayer", ConsolePlayer.getConsole());

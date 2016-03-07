@@ -119,7 +119,7 @@ public class DebugClaimTest extends SubCommand {
                 }
             });
             for (final Plot plot : plots) {
-                PS.get().updatePlot(plot);
+                plot.create();
             }
             MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
         } else {

@@ -2,63 +2,19 @@ package com.plotsquared.bukkit.util;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
-import com.intellectualcrafters.plot.object.BlockLoc;
-import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotLoc;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.PlotChunk;
-import com.intellectualcrafters.plot.util.SetQueue;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.WorldUtil;
+import com.intellectualcrafters.plot.util.*;
 import com.plotsquared.bukkit.object.entity.EntityWrapper;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.SkullType;
-import org.bukkit.World;
-import org.bukkit.block.Banner;
-import org.bukkit.block.Beacon;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Chest;
-import org.bukkit.block.CommandBlock;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Dropper;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Hopper;
-import org.bukkit.block.Jukebox;
-import org.bukkit.block.NoteBlock;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
+import org.bukkit.*;
+import org.bukkit.block.*;
 import org.bukkit.block.banner.Pattern;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class BukkitChunkManager extends ChunkManager {
 
@@ -665,7 +621,7 @@ public class BukkitChunkManager extends ChunkManager {
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer pp = entry.getValue();
             Location pLoc = pp.getLocation();
-            if (!pLoc.getChunkLoc().equals(loc)) {
+            if (!StringMan.isEqual(world, pLoc.getWorld()) || !pLoc.getChunkLoc().equals(loc)) {
                 continue;
             }
             pLoc.setY(WorldUtil.IMP.getHighestBlock(world, pLoc.getX(), pLoc.getZ()));

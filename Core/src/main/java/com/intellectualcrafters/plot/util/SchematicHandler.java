@@ -671,8 +671,8 @@ public abstract class SchematicHandler {
                     HashMap<String, Tag> map = new HashMap<String, Tag>(value.getValue());
                     map.put("Flags", tag);
                     value.setValue(map);
-                    whenDone.run(value);
                 }
+                whenDone.run(value);
             }
         });
     }

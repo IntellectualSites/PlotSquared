@@ -357,16 +357,6 @@ public class PS {
     }
 
     /**
-     * Update the global reference
-     * to a plot object
-     *
-     * @param plot Plot Object to update
-     */
-    public boolean updatePlot(final Plot plot) {
-        return plot.getArea().addPlot(plot);
-    }
-
-    /**
      * Get the relevant plot area for a location.<br>
      *  - If there is only one plot area globally that will be returned<br>
      *  - If there is only one plot area in the world, it will return that<br>
@@ -705,12 +695,14 @@ public class PS {
             public void run(PlotArea value) {
                 for (final PlotFilter filter : filters) {
                     if (!filter.allowsArea(value)) {
+                        continue;
                     }
                 }
                 for (Entry<PlotId, Plot> entry2 : value.getPlotEntries()) {
                     Plot plot = entry2.getValue();
                     for (final PlotFilter filter : filters) {
                         if (!filter.allowsPlot(plot)) {
+                            continue;
                         }
                     }
                     set.add(plot);
@@ -771,7 +763,7 @@ public class PS {
             @Override
             public void run(PlotArea value) {
                 for (Plot plot : value.getPlots()) {
-                    if (plot.getMerged(0) || plot.getMerged(3)) {
+                    if (!plot.isBasePlot()) {
                         continue;
                     }
                     result.add(plot);

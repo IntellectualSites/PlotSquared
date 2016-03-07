@@ -105,7 +105,7 @@ public class Database extends SubCommand {
                                     MainUtil.sendMessage(player, "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
                                     continue;
                                 }
-                                PS.get().updatePlot(plot);
+                                plot.create();
                                 plots.add(entry2.getValue());
                             }
                         } else {

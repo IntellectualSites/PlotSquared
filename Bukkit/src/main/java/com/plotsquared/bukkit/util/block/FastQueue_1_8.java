@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.util.block;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -24,6 +22,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_8 extends SlowQueue {
 
@@ -376,9 +376,8 @@ public class FastQueue_1_8 extends SlowQueue {
         World worldObj = BukkitUtil.getWorld(world);
         for (ChunkLoc loc : locs) {
             ChunkWrapper wrapper = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
-            if (!toUpdate.containsKey(wrapper)) {
-                toUpdate.put(wrapper, worldObj.getChunkAt(loc.x, loc.z));
-            }
+            toUpdate.remove(wrapper);
         }
+        chunksender.sendChunk(world, locs);
     }
 }
