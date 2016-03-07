@@ -784,25 +784,21 @@ public class SQLManager implements AbstractDB {
                 stmt.setNull((i * 10) + 4, 4); // custom_time
                 stmt.setNull((i * 10) + 5, 4); // time
                 stmt.setNull((i * 10) + 6, 4); // deny_entry
-                if (pair.settings.getAlias().equals("")) {
+                if (pair.settings.getAlias().isEmpty()) {
                     stmt.setNull((i * 10) + 7, 4);
                 } else {
                     stmt.setString((i * 10) + 7, pair.settings.getAlias());
                 }
-                if (pair.settings.flags == null) {
-                    stmt.setNull((i * 10) + 8, 4);
-                } else {
-                    final StringBuilder flag_string = new StringBuilder();
-                    int k = 0;
-                    for (final Flag flag : pair.settings.flags.values()) {
-                        if (k != 0) {
-                            flag_string.append(",");
-                        }
-                        flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
-                        k++;
+                final StringBuilder flag_string = new StringBuilder();
+                int k = 0;
+                for (final Flag flag : pair.settings.flags.values()) {
+                    if (k != 0) {
+                        flag_string.append(",");
                     }
-                    stmt.setString((i * 10) + 8, flag_string.toString());
+                    flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
+                    k++;
                 }
+                stmt.setString((i * 10) + 8, flag_string.toString());
                 final boolean[] merged = pair.settings.getMerged();
                 int hash = MainUtil.hash(merged);
                 stmt.setInt((i * 10) + 9, hash);
@@ -829,20 +825,16 @@ public class SQLManager implements AbstractDB {
                 } else {
                     stmt.setString((i * 10) + 7, pair.settings.getAlias());
                 }
-                if (pair.settings.flags == null) {
-                    stmt.setNull((i * 10) + 8, 4);
-                } else {
-                    final StringBuilder flag_string = new StringBuilder();
-                    int k = 0;
-                    for (final Flag flag : pair.settings.flags.values()) {
-                        if (k != 0) {
-                            flag_string.append(",");
-                        }
-                        flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
-                        k++;
+                final StringBuilder flag_string = new StringBuilder();
+                int k = 0;
+                for (final Flag flag : pair.settings.flags.values()) {
+                    if (k != 0) {
+                        flag_string.append(",");
                     }
-                    stmt.setString((i * 10) + 8, flag_string.toString());
+                    flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
+                    k++;
                 }
+                stmt.setString((i * 10) + 8, flag_string.toString());
                 final boolean[] merged = pair.settings.getMerged();
                 int n = 0;
                 for (int j = 0; j < 4; ++j) {

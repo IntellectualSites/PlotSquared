@@ -87,7 +87,7 @@ public class Visit extends SubCommand {
                 } else {
                     final Plot plot = MainUtil.getPlotFromString(player, args[0], true);
                     if (plot != null) {
-                        unsorted = new HashSet<>(Collections.singletonList(plot.getBasePlot(false)));
+                        unsorted = Collections.singletonList(plot.getBasePlot(false));
                     }
                 }
                 break;
