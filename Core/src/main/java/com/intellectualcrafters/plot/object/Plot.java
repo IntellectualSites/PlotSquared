@@ -1182,7 +1182,7 @@ public class Plot {
     public void clearRatings() {
         final Plot base = this.getBasePlot(false);
         final PlotSettings baseSettings = base.getSettings();
-        if ((baseSettings.ratings != null) && !baseSettings.ratings.isEmpty()) {
+        if ((baseSettings.ratings != null) && !baseSettings.getRatings().isEmpty()) {
             DBFunc.deleteRatings(base);
             baseSettings.ratings = null;
         }
@@ -1196,10 +1196,10 @@ public class Plot {
     public HashMap<UUID, Rating> getRatings() {
         final Plot base = this.getBasePlot(false);
         final HashMap<UUID, Rating> map = new HashMap<>();
-        if (base.getSettings().ratings == null) {
+        if (!base.hasRatings()) {
             return map;
         }
-        for (final Entry<UUID, Integer> entry : base.getSettings().ratings.entrySet()) {
+        for (final Entry<UUID, Integer> entry : base.getSettings().getRatings().entrySet()) {
             map.put(entry.getKey(), new Rating(entry.getValue()));
         }
         return map;
@@ -1207,7 +1207,11 @@ public class Plot {
     
     public boolean hasRatings() {
         Plot base = this.getBasePlot(false);
-        return base.settings != null && base.settings.ratings != null;
+        if (base.settings != null && base.settings.ratings != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1946,6 +1950,8 @@ public class Plot {
                 final int index = caption.indexOf("%plr%");
                 if (index == -1) {
                     continue;
+                } else if (index < -1) {
+                    PS.debug("This should NEVER happen. Seriously, it's impossible.");
                 }
                 final String name = lines[i - 1].substring(index);
                 if (name.isEmpty()) {

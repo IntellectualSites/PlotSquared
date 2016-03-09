@@ -140,7 +140,7 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.shared");
                     return false;
                 }
-                plots = new ArrayList<Plot>();
+                plots = new ArrayList<>();
                 for (final Plot plot : PS.get().getPlots()) {
                     if (plot.getTrusted().contains(plr.getUUID()) || plot.getMembers().contains(plr.getUUID())) {
                         plots.add(plot);
@@ -177,7 +177,7 @@ public class list extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + world);
                     return false;
                 }
-                plots = area == null ? new ArrayList<Plot>() : new ArrayList<Plot>(area.getPlots());
+                plots = area == null ? new ArrayList<Plot>() : new ArrayList<>(area.getPlots());
                 break;
             }
             case "all": {
@@ -348,7 +348,7 @@ public class list extends SubCommand {
         }
         
         if (plots == null) {
-            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison<String>(args[0], new String[] { "mine", "shared", "world", "all" }).getBestMatch());
+            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
             return false;
         }
 
@@ -371,7 +371,7 @@ public class list extends SubCommand {
         if (sort) {
             plots = PS.get().sortPlots(plots, SortType.CREATION_DATE, area);
         }
-        this.<Plot> paginate(player, plots, pageSize, page, new RunnableVal3<Integer, Plot, PlotMessage>() {
+        this.paginate(player, plots, pageSize, page, new RunnableVal3<Integer, Plot, PlotMessage>() {
             @Override
             public void run(Integer i, Plot plot, PlotMessage message) {
                 String color;

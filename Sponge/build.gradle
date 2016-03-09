@@ -16,7 +16,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
     compile project(':Core')
-    compile 'org.spongepowered:spongeapi:3.1.0-SNAPSHOT'
+    compile 'org.spongepowered:spongeapi:4.0.3'
 }
 
 sourceCompatibility = 1.8

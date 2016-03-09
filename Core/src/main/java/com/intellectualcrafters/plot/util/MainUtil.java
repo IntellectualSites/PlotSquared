@@ -613,43 +613,7 @@ public class MainUtil {
         });
         return true;
     }
-    
-    /**
-     * Get the average rating for a plot
-     * @see Plot#getAverageRating()
-     * @param plot
-     * @return
-     */
-    public static double getAverageRating(final Plot plot) {
-        HashMap<UUID, Integer> rating;
-        if (plot.getSettings().ratings != null) {
-            rating = plot.getSettings().ratings;
-        } else if (Settings.CACHE_RATINGS) {
-            rating = new HashMap<>();
-        } else {
-            rating = DBFunc.getRatings(plot);
-        }
-        if (rating == null || rating.isEmpty()) {
-            return 0;
-        }
-        double val = 0;
-        int size = 0;
-        for (final Entry<UUID, Integer> entry : rating.entrySet()) {
-            int current = entry.getValue();
-            if (Settings.RATING_CATEGORIES == null || Settings.RATING_CATEGORIES.isEmpty()) {
-                val += current;
-                size++;
-            } else {
-                for (int i = 0; i < Settings.RATING_CATEGORIES.size(); i++) {
-                    val += current % 10 - 1;
-                    current /= 10;
-                    size++;
-                }
-            }
-        }
-        return val / size;
-    }
-    
+
     /**
      * If rating categories are enabled, get the average rating by category.<br>
      *  - The index corresponds to the index of the category in the config
@@ -755,7 +719,7 @@ public class MainUtil {
                         }
                         info = newInfo.replaceAll("%rating%", rating);
                     } else {
-                        info = newInfo.replaceAll("%rating%", String.format("%.1f", MainUtil.getAverageRating(plot)) + "/" + max);
+                        info = newInfo.replaceAll("%rating%", String.format("%.1f", plot.getAverageRating()) + "/" + max);
                     }
                     whenDone.run(info);
                 }

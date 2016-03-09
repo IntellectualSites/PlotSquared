@@ -1631,17 +1631,8 @@ public class SQLManager implements AbstractDB {
                         user = UUID.fromString(o);
                         uuids.put(o, user);
                     }
-                    Timestamp timestamp = null;
-                    try {
-                        timestamp = r.getTimestamp("timestamp");
-                    } catch (SQLException ignored) {
-                    }
-                    long time;
-                    if (timestamp == null) {
-                        time = plot_id.hashCode();
-                    } else {
-                        time = timestamp.getTime();
-                    }
+                    Timestamp timestamp = r.getTimestamp("timestamp");
+                    long time = timestamp.getTime();
                     Plot p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, null,
                             new boolean[]{false, false, false, false}, time, id);
                     HashMap<PlotId, Plot> map = newplots.get(areaid);

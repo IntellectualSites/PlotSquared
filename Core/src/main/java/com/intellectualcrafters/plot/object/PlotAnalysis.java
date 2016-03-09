@@ -84,7 +84,7 @@ public class PlotAnalysis {
                 PS.debug(" - $1Reducing " + plots.size() + " plots to those with sufficient data");
                 while (iter.hasNext()) {
                     final Plot plot = iter.next();
-                    if ((plot.getSettings().ratings == null) || (plot.getSettings().ratings.isEmpty())) {
+                    if ((plot.getSettings().ratings == null) || (plot.getSettings().getRatings().isEmpty())) {
                         iter.remove();
                     } else {
                         plot.addRunning();
@@ -125,7 +125,7 @@ public class PlotAnalysis {
                         for (; mi.intValue() < plots.size(); mi.incrementAndGet()) {
                             final int i = mi.intValue();
                             final Plot plot = plots.get(i);
-                            ratings[i] = (int) ((plot.getAverageRating() + plot.getSettings().ratings.size()) * 100);
+                            ratings[i] = (int) ((plot.getAverageRating() + plot.getSettings().getRatings().size()) * 100);
                             PS.debug(" | " + plot + " (rating) " + (ratings[i]));
                         }
                     }

@@ -94,7 +94,7 @@ public class MainListener {
     @Listener
     public void onChat(final MessageEvent event) {
         // TODO
-        Player player = SpongeUtil.<Player> getCause(event.getCause(), Player.class);
+        Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
             return;
         }
@@ -112,7 +112,7 @@ public class MainListener {
         if (plot == null) {
             return;
         }
-        final Text message = event.getMessage().orElse(Text.EMPTY);
+        final Text message = event.getMessage();
         
         // TODO use display name rather than username
         //  - Getting displayname currently causes NPE, so wait until sponge fixes that
@@ -120,7 +120,7 @@ public class MainListener {
         final String sender = player.getName();
         final PlotId id = plot.getId();
         final String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
-        final Text forcedMessage = event.getMessage().orElse(Text.EMPTY);
+        final Text forcedMessage = event.getMessage();
         //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer user = entry.getValue();
@@ -146,7 +146,7 @@ public class MainListener {
             }
             ((SpongePlayer) user).player.sendMessage(Text.join(components));
         }
-        event.setMessage(null);
+        event.clearMessage();
     }
     
     @Listener
@@ -321,7 +321,7 @@ public class MainListener {
 
     @Listener
     public void onInteract(InteractEvent event) throws Exception {
-        final Player player = SpongeUtil.<Player> getCause(event.getCause(), Player.class);
+        final Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);
             return;
@@ -455,7 +455,7 @@ public class MainListener {
     
     @Listener
     public void onBlockBreak(final ChangeBlockEvent.Break event) {
-        Player player = SpongeUtil.<Player> getCause(event.getCause(), Player.class);
+        Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
 //            SpongeUtil.printCause("break", event.getCause());
             return;
@@ -539,7 +539,7 @@ public class MainListener {
     
     @Listener
     public void onBlockPlace(final ChangeBlockEvent.Place event) {
-        Player player = SpongeUtil.<Player> getCause(event.getCause(), Player.class);
+        Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
 //            SpongeUtil.printCause("place", event.getCause());
             return;

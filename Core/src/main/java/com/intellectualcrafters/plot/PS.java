@@ -1098,7 +1098,7 @@ public class PS {
                 }
             }
         }
-        ArrayList<PlotArea> areas = new ArrayList<>(Arrays.asList(plotareas));
+        List<PlotArea> areas = Arrays.asList(plotareas);
         Collections.sort(areas, new Comparator<PlotArea>() {
             @Override
             public int compare(final PlotArea a, final PlotArea b) {

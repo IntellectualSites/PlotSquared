@@ -1,11 +1,11 @@
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.config.Settings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
-import com.intellectualcrafters.plot.config.Settings;
 
 public class Rating {
     
@@ -22,15 +22,15 @@ public class Rating {
         ratingMap = new HashMap<>();
         if ((Settings.RATING_CATEGORIES != null) && (Settings.RATING_CATEGORIES.size() > 1)) {
             if (value < 10) {
-                for (int i = 0; i < Settings.RATING_CATEGORIES.size(); i++) {
-                    ratingMap.put(Settings.RATING_CATEGORIES.get(i), value);
+                for (String ratingCategory : Settings.RATING_CATEGORIES) {
+                    ratingMap.put(ratingCategory, value);
                 }
                 changed = true;
                 return;
             }
-            for (int i = 0; i < Settings.RATING_CATEGORIES.size(); i++) {
-                ratingMap.put(Settings.RATING_CATEGORIES.get(i), (value % 10) - 1);
-                value /= 10;
+            for (String ratingCategory : Settings.RATING_CATEGORIES) {
+                ratingMap.put(ratingCategory, (value % 10) - 1);
+                value = value / 10;
             }
         } else {
             ratingMap.put(null, value);

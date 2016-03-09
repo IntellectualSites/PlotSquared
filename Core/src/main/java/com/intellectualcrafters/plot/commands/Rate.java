@@ -20,13 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -43,6 +36,13 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 @CommandDeclaration(
         command = "rate",
@@ -129,9 +129,7 @@ public class Rate extends SubCommand {
                                 close();
                                 final int rV = rating.getValue();
                                 final Rating result = EventUtil.manager.callRating(player, plot, new Rating(rV));
-                                plot.getSettings().ratings.put(player.getUUID(), result.getAggregate());
-                                DBFunc.setRating(plot, player.getUUID(), rV);
-                                sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
+                                plot.addRating(player.getUUID(), result);
                                 sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
                                 return false;
                             }
@@ -193,14 +191,12 @@ public class Rate extends SubCommand {
         final Runnable run = new Runnable() {
             @Override
             public void run() {
-                if (plot.getSettings().ratings.containsKey(uuid)) {
+                if (plot.getRatings().containsKey(uuid)) {
                     sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
                     return;
                 }
                 final Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
-                final int resultVal = result.getAggregate();
-                plot.getSettings().ratings.put(uuid, resultVal);
-                DBFunc.setRating(plot, uuid, resultVal);
+                plot.addRating(uuid,result);
                 sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
             }
         };
