@@ -699,7 +699,7 @@ public abstract class PlotArea {
     
     public boolean mergePlots(final PlotPlayer player, final ArrayList<PlotId> plotIds) {
         if (EconHandler.manager != null && USE_ECONOMY) {
-            final double cost = plotIds.size() * PRICES.getOrDefault("merge", 0d);
+            final double cost = plotIds.size() * (PRICES.containsKey("merge") ? PRICES.get("merge") : 0);
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(player) < cost) {
                     MainUtil.sendMessage(player, C.CANNOT_AFFORD_MERGE, "" + cost);
