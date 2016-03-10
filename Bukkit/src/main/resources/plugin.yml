@@ -151,3 +151,5 @@ permissions:
     default: false
   plots.gamemode.bypass:
     default: op
+  plots.confirm.bypass:
+    default: false
