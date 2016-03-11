@@ -20,11 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
@@ -38,6 +33,11 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
 
 @CommandDeclaration(
 command = "setup",
@@ -132,14 +132,13 @@ public class Setup extends SubCommand {
                 object.type = allTypes.indexOf(args[0].toLowerCase());
                 final GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
                 if (object.type == 0) {
-                    object.current = 7;
+                    object.current = 6;
                     if (object.step == null) {
                         object.plotManager = object.setupGenerator;
                         object.step = SetupUtils.generators.get(object.plotManager).getPlotGenerator().getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null).getSettingNodes();
                         SetupUtils.generators.get(object.plotManager).getPlotGenerator().processSetup(object);
                     }
                     if (object.step.length == 0) {
-                        object.current = 7;
                         MainUtil.sendMessage(plr, "&6What do you want your world to be called?");
                         object.setup_index = 0;
                         return true;

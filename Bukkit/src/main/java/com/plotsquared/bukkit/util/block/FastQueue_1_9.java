@@ -338,45 +338,47 @@ public class FastQueue_1_9 extends SlowQueue {
                     continue;
                 }
                 final int[] array = bc.getIdArray(j);
-                int l = PseudoRandom.random.random(2);
-                for (int k = 0; k < array.length; k++) {
-                    final int i = array[k];
-                    if (i < 16) {
-                        continue;
-                    }
-                    final short id = (short) (i >> 4);
-                    switch (id) { // Lighting
-                        default:
-                            if (!fixAll) {
-                                continue;
-                            }
-                            if ((k & 1) == l) {
-                                l = 1 - l;
-                                continue;
-                            }
-                        case 10:
-                        case 11:
-                        case 39:
-                        case 40:
-                        case 50:
-                        case 51:
-                        case 62:
-                        case 74:
-                        case 76:
-                        case 89:
-                        case 122:
-                        case 124:
-                        case 130:
-                        case 138:
-                        case 169:
-                            final int x = MainUtil.x_loc[j][k];
-                            final int y = MainUtil.y_loc[j][k];
-                            final int z = MainUtil.z_loc[j][k];
-                            if (isSurrounded(bc.getIdArrays(), x, y, z)) {
-                                continue;
-                            }
-                            final Object pos = classBlockPositionConstructor.create(X + x, y, Z + z);
-                            relight.call(pos);
+                if (array != null) {
+                    int l = PseudoRandom.random.random(2);
+                    for (int k = 0; k < array.length; k++) {
+                        final int i = array[k];
+                        if (i < 16) {
+                            continue;
+                        }
+                        final short id = (short) (i >> 4);
+                        switch (id) { // Lighting
+                            default:
+                                if (!fixAll) {
+                                    continue;
+                                }
+                                if ((k & 1) == l) {
+                                    l = 1 - l;
+                                    continue;
+                                }
+                            case 10:
+                            case 11:
+                            case 39:
+                            case 40:
+                            case 50:
+                            case 51:
+                            case 62:
+                            case 74:
+                            case 76:
+                            case 89:
+                            case 122:
+                            case 124:
+                            case 130:
+                            case 138:
+                            case 169:
+                                final int x = MainUtil.x_loc[j][k];
+                                final int y = MainUtil.y_loc[j][k];
+                                final int z = MainUtil.z_loc[j][k];
+                                if (isSurrounded(bc.getIdArrays(), x, y, z)) {
+                                    continue;
+                                }
+                                final Object pos = classBlockPositionConstructor.create(X + x, y, Z + z);
+                                relight.call(pos);
+                        }
                     }
                 }
             }

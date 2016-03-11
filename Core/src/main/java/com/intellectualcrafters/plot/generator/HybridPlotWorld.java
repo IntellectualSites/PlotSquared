@@ -27,11 +27,13 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
+import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -191,12 +193,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     public void setupSchematics() {
         G_SCH = new HashMap<>();
-        final String schem1Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/sideroad";
-        final String schem2Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/intersection";
-        final String schem3Str = "GEN_ROAD_SCHEMATIC/" + worldname + "/plot";
-        final Schematic schem1 = SchematicHandler.manager.getSchematic(schem1Str);
-        final Schematic schem2 = SchematicHandler.manager.getSchematic(schem2Str);
-        final Schematic schem3 = SchematicHandler.manager.getSchematic(schem3Str);
+        final File schem1File = MainUtil.getFile(PS.get().IMP.getDirectory(),"schematics/GEN_ROAD_SCHEMATIC/" + worldname + "/sideroad.schematic");
+        final File schem2File = MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + worldname + "/intersection.schematic");
+        final File schem3File = MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + worldname + "/plot.schematic");
+        final Schematic schem1 = SchematicHandler.manager.getSchematic(schem1File);
+        final Schematic schem2 = SchematicHandler.manager.getSchematic(schem2File);
+        final Schematic schem3 = SchematicHandler.manager.getSchematic(schem3File);
         final int shift = ROAD_WIDTH / 2;
         int oddshift = 0;
         if ((ROAD_WIDTH & 1) != 0) {

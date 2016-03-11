@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.listeners;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -35,25 +33,30 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 public class ChunkListener implements Listener {
-    
-    private final RefClass classChunk = getRefClass("{nms}.Chunk");
-    private final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-    private final RefField mustSave = classChunk.getField("mustSave");
-    private Chunk lastChunk = null;
+
     private RefMethod methodGetHandleChunk;
-    
+    private RefClass classChunk;
+    private RefClass classCraftChunk;
+    private RefField mustSave;
+    private Chunk lastChunk;
+
     
     public ChunkListener() {
-        RefMethod method;
-        try {
-            method = classCraftChunk.getMethod("getHandle");
-        } catch (final Exception e) {
-            method = null;
-            e.printStackTrace();
+        if (Settings.CHUNK_PROCESSOR_GC || Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE) {
+            try {
+                this.classChunk = getRefClass("{nms}.Chunk");
+                this.classCraftChunk = getRefClass("{cb}.CraftChunk");
+                this.mustSave = classChunk.getField("mustSave");
+                this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
+            } catch (Throwable e) {
+                PS.debug("PlotSquared/Server not compatible for chunk processor trim/gc");
+                Settings.CHUNK_PROCESSOR_GC = false;
+                Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE = false;
+            }
         }
-        methodGetHandleChunk = method;
-        
         if (!Settings.CHUNK_PROCESSOR_GC) {
             return;
         }

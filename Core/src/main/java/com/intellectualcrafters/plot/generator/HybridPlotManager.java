@@ -22,14 +22,7 @@ package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.Template;
-import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.FileBytes;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.*;
 
 import java.io.File;
@@ -46,19 +39,18 @@ public class HybridPlotManager extends ClassicPlotManager {
     public void exportTemplate(final PlotArea plotworld) throws IOException {
         final HashSet<FileBytes> files = new HashSet<>(
                 Collections.singletonList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
-        final String psRoot = PS.get().IMP.getDirectory() + File.separator;
         final String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
         final String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
         try {
-            final File sideroad = new File(psRoot + dir + "sideroad.schematic");
+            final File sideroad = MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "sideroad.schematic");
             if (sideroad.exists()) {
                 files.add(new FileBytes(newDir + "sideroad.schematic", Files.readAllBytes(sideroad.toPath())));
             }
-            final File intersection = new File(psRoot + dir + "intersection.schematic");
+            final File intersection = MainUtil.getFile(PS.get().IMP.getDirectory(), "intersection.schematic");
             if (intersection.exists()) {
                 files.add(new FileBytes(newDir + "intersection.schematic", Files.readAllBytes(intersection.toPath())));
             }
-            final File plot = new File(psRoot + dir + "plot.schematic");
+            final File plot = MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "plot.schematic");
             if (plot.exists()) {
                 files.add(new FileBytes(newDir + "plot.schematic", Files.readAllBytes(plot.toPath())));
             }

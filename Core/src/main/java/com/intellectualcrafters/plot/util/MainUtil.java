@@ -356,13 +356,15 @@ public class MainUtil {
                 }
                 return null;
             }
-            return player.getLocation().getPlotAbs();
+            return player.getCurrentPlot();
         }
         PlotArea area;
         if (player != null) {
-            area = player.getApplicablePlotArea();
-        }
-        else {
+            area = PS.get().getPlotAreaByString(arg);
+            if (area == null) {
+                area = player.getApplicablePlotArea();
+            }
+        } else {
             area = ConsolePlayer.getConsole().getApplicablePlotArea();
         }
         final String[] split = arg.split(";|,");
@@ -376,24 +378,22 @@ public class MainUtil {
         } else if (split.length == 2) {
             id = PlotId.fromString(arg);
         } else {
-            PlotArea tmp = PS.get().getPlotAreaByString(arg);
+            Collection<Plot> plots;
             if (area == null) {
-                if (message) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
-                }
-                return null;
+                plots = PS.get().getPlots();
             } else {
-                for (final Plot p : area.getPlots()) {
-                    final String name = p.getAlias();
-                    if (!name.isEmpty() && StringMan.isEqualIgnoreCase(name, arg)) {
-                        return p;
-                    }
-                }
-                if (message) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
-                }
-                return null;
+                plots = area.getPlots();
             }
+            for (final Plot p : plots) {
+                final String name = p.getAlias();
+                if (!name.isEmpty() && StringMan.isEqualIgnoreCase(name, arg)) {
+                    return p;
+                }
+            }
+            if (message) {
+                MainUtil.sendMessage(player, C.NOT_VALID_PLOT_ID);
+            }
+            return null;
         }
         if (id == null) {
             if (message) {

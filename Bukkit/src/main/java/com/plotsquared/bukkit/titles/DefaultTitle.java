@@ -4,8 +4,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 
-import java.lang.reflect.InvocationTargetException;
-
 public class DefaultTitle extends AbstractTitle {
 
     @Override
@@ -13,8 +11,7 @@ public class DefaultTitle extends AbstractTitle {
         try {
             final DefaultTitleManager title = new DefaultTitleManager(head, sub, in, delay, out);
             title.send(((BukkitPlayer) player).player);
-        } catch (ClassNotFoundException | InvocationTargetException | SecurityException | NoSuchMethodException | InstantiationException |
-                IllegalArgumentException | IllegalAccessException e) {
+        } catch (Throwable e) {
             AbstractTitle.TITLE_CLASS = new DefaultTitle_183();
             AbstractTitle.TITLE_CLASS.sendTitle(player, head, sub, in, delay, out);
         }

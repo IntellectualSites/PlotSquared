@@ -62,7 +62,7 @@ public abstract class SchematicHandler {
                 if (outputDir == null) {
                     directory = Settings.SCHEMATIC_SAVE_PATH;
                 } else {
-                    directory = outputDir.getPath();
+                    directory = outputDir.getAbsolutePath();
                 }
                 final Runnable THIS = this;
                 SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
@@ -827,7 +827,7 @@ public abstract class SchematicHandler {
                 ids2[i] = (byte) ids[i];
             }
             CompoundTag tag = createTag(ids2, datas, schematicDimension);
-            SchematicHandler.this.save(tag, file.toString());
+            SchematicHandler.this.save(tag, file.getAbsolutePath());
         }
     }
 

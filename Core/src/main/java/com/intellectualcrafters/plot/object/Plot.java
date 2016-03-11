@@ -361,10 +361,11 @@ public class Plot {
         }
         if (isMerged()) {
             HashSet<Plot> plots = getConnectedPlots();
-            final HashSet<UUID> owners = new HashSet<UUID>(2);
+            Plot[] array = plots.toArray(new Plot[plots.size()]);
+            final HashSet<UUID> owners = new HashSet<UUID>(1);
             UUID last = owner;
             owners.add(owner);
-            for (Plot current : plots) {
+            for (Plot current : array) {
                 if (last == null || current.owner.getMostSignificantBits() != last.getMostSignificantBits()) {
                     owners.add(current.owner);
                     last = current.owner;
@@ -1953,7 +1954,11 @@ public class Plot {
                 } else if (index < -1) {
                     PS.debug("This should NEVER happen. Seriously, it's impossible.");
                 }
-                final String name = lines[i - 1].substring(index);
+                String line = lines[i-1];
+                if (line.length() <= index) {
+                    return null;
+                }
+                final String name = line.substring(index);
                 if (name.isEmpty()) {
                     return null;
                 }

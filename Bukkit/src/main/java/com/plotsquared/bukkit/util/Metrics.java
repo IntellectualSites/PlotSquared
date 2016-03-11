@@ -20,7 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.util;
 
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -65,14 +64,6 @@ public class Metrics {
      */
     private final Set<Graph> graphs = Collections.synchronizedSet(new HashSet<Graph>());
     /**
-     * The plugin configuration file
-     */
-    private final YamlConfiguration configuration;
-    /**
-     * The plugin configuration file
-     */
-    private final File configurationFile;
-    /**
      * Unique server id
      */
     private final String guid;
@@ -90,21 +81,8 @@ public class Metrics {
             throw new IllegalArgumentException("Plugin cannot be null");
         }
         this.plugin = plugin;
-        // load the config
-        configurationFile = getConfigFile();
-        configuration = YamlConfiguration.loadConfiguration(configurationFile);
-        // add some defaults
-        configuration.addDefault("opt-out", false);
-        configuration.addDefault("guid", UUID.randomUUID().toString());
-        configuration.addDefault("debug", false);
-        // Do we need to create the file?
-        if (configuration.get("guid", null) == null) {
-            configuration.options().header("http://mcstats.org").copyDefaults(true);
-            configuration.save(configurationFile);
-        }
-        // Load the guid then
-        guid = configuration.getString("guid");
-        debug = configuration.getBoolean("debug", false);
+        guid = UUID.randomUUID().toString();
+        debug = false;
     }
 
     /**
@@ -276,6 +254,7 @@ public class Metrics {
                     // Each post thereafter will be a ping
                     firstPost = false;
                 } catch (final IOException e) {
+                    e.printStackTrace();
                     if (debug) {
                         Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
                     }
@@ -350,6 +329,7 @@ public class Metrics {
                 playersOnline = ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class<?>[0]).invoke(null)).length;
             }
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+            ex.printStackTrace();
         }
         // END server software specific section -- all code below does not use
         // any code outside of this class / Java
@@ -435,32 +415,41 @@ public class Metrics {
         if (debug) {
             PS.debug("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
         }
-        // Write the data
-        String response;
-        try (OutputStream os = connection.getOutputStream();
-             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-            os.write(compressed);
-            os.flush();
-            // Now read the response
-            response = reader.readLine();
-        }
-        if (response == null || response.startsWith("ERR") || response.startsWith("7")) {
-            if (response == null) {
-                response = "null";
-            } else if (response.startsWith("7")) {
-                response = response.substring(response.startsWith("7,") ? 2 : 1);
+        try {
+            try (OutputStream os = connection.getOutputStream()) {
+                os.write(compressed);
+                os.flush();
             }
-            throw new IOException(response);
-        } else {
-            // Is this the first update this hour?
-            if ("1".equals(response) || response.contains("This is your first update this hour")) {
-                synchronized (graphs) {
-                    for (final Graph graph : graphs) {
-                        for (final Plotter plotter : graph.getPlotters()) {
-                            plotter.reset();
+            String response;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                response = reader.readLine();
+                if (debug) {
+                    PS.debug("[Metrics] Response for " + pluginName + ": " + response);
+                }
+            }
+            if (response == null || response.startsWith("ERR") || response.startsWith("7")) {
+                if (response == null) {
+                    response = "null";
+                } else if (response.startsWith("7")) {
+                    response = response.substring(response.startsWith("7,") ? 2 : 1);
+                }
+                throw new IOException(response);
+            } else {
+                // Is this the first update this hour?
+                if ("1".equals(response) || response.contains("This is your first update this hour")) {
+                    synchronized (graphs) {
+                        for (final Graph graph : graphs) {
+                            for (final Plotter plotter : graph.getPlotters()) {
+                                plotter.reset();
+                            }
                         }
                     }
                 }
+            }
+        }
+        catch (Exception e) {
+            if (debug) {
+                e.printStackTrace();
             }
         }
     }

@@ -1,17 +1,12 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.LazyResult;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotBlock;
-import com.intellectualcrafters.plot.object.PlotManager;
-import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.*;
 import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
+
+import java.util.Set;
 
 public class AugmentedUtils {
     
@@ -23,9 +18,9 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static void generate(final String world, final int cx, final int cz, LazyResult<PlotChunk<?>> lazyChunk) {
+    public static boolean generate(final String world, final int cx, final int cz, LazyResult<PlotChunk<?>> lazyChunk) {
         if (!enabled) {
-            return;
+            return false;
         }
         if (lazyChunk == null) {
             lazyChunk = new LazyResult<PlotChunk<?>>() {
@@ -40,14 +35,15 @@ public class AugmentedUtils {
         RegionWrapper region = new RegionWrapper(bx, bx + 15, bz, bz + 15);
         Set<PlotArea> areas = PS.get().getPlotAreas(world, region);
         if (areas.isEmpty()) {
-            return;
+            return false;
         }
         final PseudoRandom r = new PseudoRandom();
-        r.state = (cx << 16) | (cz & 0xFFFF);;
+        r.state = (cx << 16) | (cz & 0xFFFF);
         ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world, cx, cz);
+        boolean toReturn = false;
         for (final PlotArea area : areas) {
             if (area.TYPE == 0) {
-                return;
+                return false;
             }
             if (area.TERRAIN == 3) {
                 continue;
@@ -59,12 +55,13 @@ public class AugmentedUtils {
             final PlotChunk<?> result = lazyChunk.getOrCreate();
             final PlotChunk<?> primaryMask;
             // coords
-            int bxx = Math.max(0, area.getRegion().minX - bx);
-            int bzz = Math.max(0, area.getRegion().minZ - bz);
-            int txx = Math.min(15, area.getRegion().maxX - bx);
-            int tzz = Math.min(15, area.getRegion().maxZ - bz);
+            int bxx,bzz,txx,tzz;
             // gen
             if (area.TYPE == 2) {
+                bxx = Math.max(0, area.getRegion().minX - bx);
+                bzz = Math.max(0, area.getRegion().minZ - bz);
+                txx = Math.min(15, area.getRegion().maxX - bx);
+                tzz = Math.min(15, area.getRegion().maxZ - bz);
                 primaryMask = new PlotChunk<Object>(wrap) {
                     @Override
                     public Object getChunkAbs() {
@@ -96,6 +93,8 @@ public class AugmentedUtils {
                     }
                 };
             } else {
+                bxx = bzz = 0;
+                txx = tzz = 15;
                 primaryMask = result;
             }
             PlotChunk<?> secondaryMask;
@@ -120,6 +119,8 @@ public class AugmentedUtils {
                 }
                 if (!has) {
                     continue;
+                } else {
+                    toReturn = true;
                 }
                 secondaryMask = new PlotChunk<Object>(wrap) {
                     @Override
@@ -156,6 +157,7 @@ public class AugmentedUtils {
                         }
                     }
                 }
+                toReturn = true;
             }
             generator.generateChunk(secondaryMask, area, r);
         }
@@ -163,5 +165,6 @@ public class AugmentedUtils {
             lazyChunk.get().addToQueue();
             lazyChunk.get().flush(false);
         }
+        return toReturn;
     }
 }
