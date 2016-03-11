@@ -11,34 +11,18 @@ is to provide a lag-free and smooth experience.
 
 ### Server Owner
 * [Spigot Page](https://www.spigotmc.org/resources/plotsquared.1177/)
-* [WebChat/IRC](http://webchat.esper.net/?nick=&channels=IntellectualCrafters&fg_color=000&fg_sec_color=000&bg_color=FFF)
+* [WebChat/IRC]: #IntellectualCrafters on irc.esper.net
 * [Wiki](https://github.com/intellectualcrafters/plotsquared/wiki)
 * [Website](http://plotsquared.com)
 
 ### Developer Resources
-* *Outdated* [JavaDocs](http://empcraft.com/plotsquared/doc/)
-* [Build Server](http://ci.xephi.fr/job/PlotSquared/)
-* [Maven Repo](http://ci.xephi.fr/plugin/repository/everything/)
-
-
-# Maven
-We're now on maven! (Unofficial Maven Repo)
-```xml
-<!-- Repository -->
-<repository>
-    <id>xephi-repo</id>
-    <url>http://ci.xephi.fr/plugin/repository/everything/</url>
-</repository>
-<!-- Dependency -->
-<dependency>
-  <groupId>com.intellectualcrafters</groupId>
-  <artifactId>plotsquared</artifactId>
-  <version>3.2.27-SNAPSHOT</version>
-</dependency>
-```
+* [JavaDocs]  Link Temporarily Unavailable 
+* [Build Server]  Link Temporarily Unavailable 
+* [Maven Repo] Link Temporarily Unavailable 
 
 # Building
-Build the project using your favourite compiler (maven is the recommended way to build), then package the jar using `mvn package`. 
+Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
+If you prefer to use maven, a `pom.xml` file is provided for working with the Bukkit part of the plugin.
 
 # Contributing
 Feel free to contribute, if you feel like you can improve the plugin in any way. Make sure to test your code before sending it away from us, as committing broken code will block you from future contribution.
@@ -53,3 +37,5 @@ Feel free to contribute, if you feel like you can improve the plugin in any way.
 * [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
 * [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
+
+[WebChat/IRC]: http://webchat.esper.net/?nick=&channels=IntellectualCrafters&fg_color=000&fg_sec_color=000&bg_color=FFF
