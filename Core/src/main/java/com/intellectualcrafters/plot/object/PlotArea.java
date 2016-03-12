@@ -97,7 +97,13 @@ public abstract class PlotArea {
         }
         this.worldhash = worldname.hashCode();
     }
-    
+
+    /**
+     * Create a new PlotArea object with no functionality/information<br>
+     *     - Mainly used during startup before worlds are created as a temporary object
+     * @param world
+     * @return
+     */
     public static PlotArea createGeneric(String world) {
         return new PlotArea(world, null, null, null, null) {
             @Override
@@ -108,8 +114,9 @@ public abstract class PlotArea {
     }
 
     /**
-     * Returns the region for this PlotArea
-     * @return
+     * Returns the region for this PlotArea or a RegionWrapper encompassing the whole world if none exists
+     * @NotNull
+     * @return RegionWrapper
      */
     public RegionWrapper getRegion() {
         region = getRegionAbs();
@@ -118,7 +125,12 @@ public abstract class PlotArea {
         }
         return region;
     }
-    
+
+    /**
+     * Returns the region for this PlotArea
+     * @Nullable
+     * @return RegionWrapper or null if no applicable region
+     */
     public RegionWrapper getRegionAbs() {
         if (region == null) {
             if (min != null) {
@@ -146,6 +158,11 @@ public abstract class PlotArea {
         return max == null ? new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE) : max;
     }
 
+    /**
+     * Get the implementation independent generator for this area
+     * @Nullable
+     * @return
+     */
     public IndependentPlotGenerator getGenerator() {
         return generator;
     }
@@ -169,6 +186,11 @@ public abstract class PlotArea {
         return clusters == null ? new HashSet<PlotCluster>() : clusters.getAll();
     }
 
+    /**
+     * Check if a PlotArea is compatible (move/copy etc)
+     * @param plotarea
+     * @return
+     */
     public boolean isCompatible(PlotArea plotarea) {
         final ConfigurationSection section = PS.get().config.getConfigurationSection("worlds");
         for (final ConfigurationNode setting : plotarea.getSettingNodes()) {
@@ -358,7 +380,12 @@ public abstract class PlotArea {
      * @return ConfigurationNode[]
      */
     public abstract ConfigurationNode[] getSettingNodes();
-    
+
+    /**
+     * Get the Plot at a location
+     * @param loc
+     * @return Plot
+     */
     public Plot getPlotAbs(Location loc) {
         PlotId pid = manager.getPlotId(this, loc.getX(), loc.getY(), loc.getZ());
         if (pid == null) {
@@ -366,7 +393,12 @@ public abstract class PlotArea {
         }
         return getPlotAbs(pid);
     }
-    
+
+    /**
+     * Get the base plot at a location
+     * @param loc
+     * @return base Plot
+     */
     public Plot getPlot(Location loc) {
         PlotId pid = manager.getPlotId(this, loc.getX(), loc.getY(), loc.getZ());
         if (pid == null) {
@@ -374,7 +406,12 @@ public abstract class PlotArea {
         }
         return getPlot(pid);
     }
-    
+
+    /**
+     * Get the base owned plot at a location
+     * @param loc
+     * @return base Plot or null
+     */
     public Plot getOwnedPlot(Location loc) {
         PlotId pid = manager.getPlotId(this, loc.getX(), loc.getY(), loc.getZ());
         if (pid == null) {
@@ -383,7 +420,12 @@ public abstract class PlotArea {
         Plot plot = plots.get(pid);
         return plot == null ? null : plot.getBasePlot(false);
     }
-    
+
+    /**
+     * Get the owned plot at a location
+     * @param loc
+     * @return Plot or null
+     */
     public Plot getOwnedPlotAbs(Location loc) {
         PlotId pid = manager.getPlotId(this, loc.getX(), loc.getY(), loc.getZ());
         if (pid == null) {
@@ -391,7 +433,12 @@ public abstract class PlotArea {
         }
         return plots.get(pid);
     }
-    
+
+    /**
+     * Get the owned Plot at a PlotId
+     * @param id
+     * @return Plot or null
+     */
     public Plot getOwnedPlotAbs(PlotId id) {
         return plots.get(id);
     }
@@ -688,7 +735,7 @@ public abstract class PlotArea {
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
                 final PlotId id = new PlotId(x, y);
-                final Plot plot = getPlot(id);
+                final Plot plot = getPlotAbs(id);
                 if (!plot.canClaim(player)) {
                     return false;
                 }

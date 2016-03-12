@@ -1,13 +1,13 @@
 package com.plotsquared.sponge.uuid;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
+
+import java.util.UUID;
 
 public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
     
@@ -35,7 +35,7 @@ public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
     public OfflinePlotPlayer getOfflinePlayer(final UUID uuid) {
         String name;
         try {
-            name = SpongeMain.THIS.getResolver().get(uuid, true).get().getName();
+            name = SpongeMain.THIS.getResolver().get(uuid, true).get().getName().orElse(null);
         } catch (final Exception e) {
             name = null;
         }

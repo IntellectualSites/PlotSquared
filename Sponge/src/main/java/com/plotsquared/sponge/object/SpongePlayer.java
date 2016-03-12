@@ -131,7 +131,7 @@ public class SpongePlayer extends PlotPlayer {
     @Override
     public void setCompassTarget(final Location loc) {
         final TargetedLocationData target = player.getOrCreate(TargetedLocationData.class).get();
-        target.set(Keys.TARGETED_LOCATION, SpongeUtil.getLocation(loc));
+        target.set(Keys.TARGETED_LOCATION, SpongeUtil.getLocation(loc).getPosition());
     }
     
     @Override

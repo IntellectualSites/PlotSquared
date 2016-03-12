@@ -68,7 +68,7 @@ public class Buy extends SubCommand {
             }
         } else {
             plot = loc.getPlotAbs();
-            plots = plot.getConnectedPlots();
+            plots = plot != null ? plot.getConnectedPlots() : null;
         }
         if (plots == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);

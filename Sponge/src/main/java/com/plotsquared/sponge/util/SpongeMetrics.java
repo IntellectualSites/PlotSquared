@@ -28,6 +28,8 @@ package com.plotsquared.sponge.util;
  * either expressed or implied, of anybody else.
  */
 
+import com.google.inject.Inject;
+import com.intellectualcrafters.plot.PS;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -42,17 +44,12 @@ import java.net.URLEncoder;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPOutputStream;
-
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-
 import org.spongepowered.api.Game;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
-
-import com.google.inject.Inject;
-import com.intellectualcrafters.plot.PS;
 
 public class SpongeMetrics {
 
@@ -404,7 +401,7 @@ public class SpongeMetrics {
         // Server software specific section
         final String pluginName = plugin.getName();
         final boolean onlineMode = game.getServer().getOnlineMode(); // TRUE if online mode is enabled
-        final String pluginVersion = plugin.getVersion();
+        final String pluginVersion = plugin.getVersion().get();
         // TODO no visible way to get MC version at the moment
         // TODO added by game.getPlatform().getMinecraftVersion() -- impl in 2.1
         final String serverVersion = String.format("%s %s", "Sponge", game.getPlatform().getMinecraftVersion());

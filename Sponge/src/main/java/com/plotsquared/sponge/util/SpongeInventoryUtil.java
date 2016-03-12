@@ -1,7 +1,11 @@
 package com.plotsquared.sponge.util;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.object.PlotInventory;
+import com.intellectualcrafters.plot.object.PlotItemStack;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.plotsquared.sponge.SpongeMain;
+import com.plotsquared.sponge.object.SpongePlayer;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
@@ -11,12 +15,7 @@ import org.spongepowered.api.item.inventory.custom.CustomInventory;
 import org.spongepowered.api.item.inventory.property.SlotIndex;
 import org.spongepowered.api.item.inventory.type.CarriedInventory;
 
-import com.intellectualcrafters.plot.object.PlotInventory;
-import com.intellectualcrafters.plot.object.PlotItemStack;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.InventoryUtil;
-import com.plotsquared.sponge.SpongeMain;
-import com.plotsquared.sponge.object.SpongePlayer;
+import java.util.ArrayList;
 
 public class SpongeInventoryUtil extends InventoryUtil {
 
@@ -41,7 +40,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
             }
         }
         inv.player.setMeta("inventory", inv);
-        player.openInventory(inventory);
+        player.openInventory(inventory, SpongeUtil.CAUSE);
     }
 
     public ItemStack getItem(final PlotItemStack item) {
@@ -56,7 +55,7 @@ public class SpongeInventoryUtil extends InventoryUtil {
         }
         inv.player.deleteMeta("inventory");
         final SpongePlayer sp = (SpongePlayer) inv.player;
-        sp.player.closeInventory();
+        sp.player.closeInventory(SpongeUtil.CAUSE);
     }
 
     @Override

@@ -24,11 +24,11 @@ public class PlotId {
     /**
      * x value
      */
-    public Integer x;
+    public int x;
     /**
      * y value
      */
-    public Integer y;
+    public int y;
     private int hash;
     
     /**
@@ -68,10 +68,25 @@ public class PlotId {
         return new PlotId(x, y);
     }
 
+    /**
+     * Get the PlotId from the HashCode<br>
+     * Note: Only accurate for small x,z values (short)
+     * @param hash
+     * @return
+     */
     public static PlotId unpair(int hash) {
         return new PlotId(hash >> 16, hash & 0xFFFF);
     }
 
+    /**
+     * Get the PlotId in a relative direction
+     * 0 = north<br>
+     * 1 = east<br>
+     * 2 = south<br>
+     * 3 = west<br>
+     * @param direction
+     * @return PlotId
+     */
     public PlotId getRelative(final int direction) {
         switch (direction) {
             case 0:
@@ -85,7 +100,13 @@ public class PlotId {
         }
         return this;
     }
-    
+
+    /**
+     * Get the PlotId in a relative location
+     * @param x
+     * @param y
+     * @return PlotId
+     */
     public PlotId getRelative(int x, int y) {
         return new PlotId(this.x + x, this.y + y);
     }
@@ -98,18 +119,31 @@ public class PlotId {
         if (obj == null) {
             return false;
         }
+        if (this.hashCode() != obj.hashCode()) {
+            return false;
+        }
         if (getClass() != obj.getClass()) {
             return false;
         }
         final PlotId other = (PlotId) obj;
-        return ((x.equals(other.x)) && (y.equals(other.y)));
+        return x == other.x && y == other.y;
     }
-    
+
+    /**
+     * e.g.
+     * 5;-6
+     * @return
+     */
     @Override
     public String toString() {
         return x + ";" + y;
     }
-    
+
+    /**
+     * The PlotId object caches the hashcode for faster mapping/fetching/sorting<br>
+     *     - Recalculation is required if the x/y values change
+     * TODO maybe make x/y values private and add this to the mutators
+     */
     public void recalculateHash() {
         hash = 0;
         hashCode();

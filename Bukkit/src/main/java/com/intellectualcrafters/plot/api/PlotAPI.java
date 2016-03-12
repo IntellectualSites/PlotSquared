@@ -53,14 +53,18 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * PlotSquared API
- *
-
-
- * @version API 2.0
- *
+ * PlotSquared API<br>
+ * <br>
+ * @version API 3.3.1
+ * <br>
+ * Useful classes:<br>
+ * @see BukkitUtil
+ * @see PlotPlayer
+ * @see Plot
+ * @see com.intellectualcrafters.plot.object.Location
+ * @see PlotArea
+ * @see PS
  */
-
 public class PlotAPI {
     
     /**

@@ -58,7 +58,7 @@ public class Auto extends SubCommand {
                 return new PlotId(id.x + 1, id.y);
             }
         } else {
-            if (id.x.equals(id.y) && (id.x > 0)) {
+            if (id.x == id.y && (id.x > 0)) {
                 return new PlotId(id.x, id.y + step);
             }
             if (id.x == absX) {
@@ -159,6 +159,7 @@ public class Auto extends SubCommand {
                 return true;
             }
         }
+        // TODO handle type 2 the same as normal worlds!
         if (plotarea.TYPE == 2) {
             final PlotId bot = plotarea.getMin();
             final PlotId top = plotarea.getMax();
@@ -180,34 +181,26 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_FREE_PLOTS);
             return false;
         }
+        plotarea.setMeta("lastPlot", new PlotId(0, 0));
         boolean br = false;
-        if ((size_x == 1) && (size_z == 1)) {
-            while (!br) {
-                Plot plot = plotarea.getPlotAbs(getLastPlotId(plotarea));
-                if (plot.canClaim(plr)) {
-                    plot.claim(plr, true, null);
-                    br = true;
-                }
-                plotarea.setMeta("lastPlot", getNextPlotId(plot.getId(), 1));
-            }
-        } else {
-            while (!br) {
-                final PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
-                final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
-                plotarea.setMeta("lastPlot", start);
-                if (plotarea.canClaim(plr, start, end)) {
-                    for (int i = start.x; i <= end.x; i++) {
-                        for (int j = start.y; j <= end.y; j++) {
-                            Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
-                            final boolean teleport = ((i == end.x) && (j == end.y));
-                            plot.claim(plr, teleport, null);
-                        }
+        while (true) {
+            final PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
+            final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
+            plotarea.setMeta("lastPlot", start);
+            if (plotarea.canClaim(plr, start, end)) {
+                for (int i = start.x; i <= end.x; i++) {
+                    for (int j = start.y; j <= end.y; j++) {
+                        Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
+                        final boolean teleport = ((i == end.x) && (j == end.y));
+                        plot.claim(plr, teleport, null);
                     }
+                }
+                if ((size_x != 1) || (size_z != 1)) {
                     if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), Settings.MERGE_REMOVES_ROADS, true)) {
                         return false;
                     }
-                    br = true;
                 }
+                break;
             }
         }
         plotarea.setMeta("lastPlot", new PlotId(0, 0));

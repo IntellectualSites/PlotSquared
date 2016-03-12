@@ -45,7 +45,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * The plot class
+ * The plot class<br>
+ * [IMPORTANT]
+ *  - Unclaimed plots will not have persistent information.
+ *  - Any information set/modified in an unclaimed object may not be reflected in other instances
+ *  - Using the `new` operator will create an unclaimed plot instance
+ *  - Use the methods from the PlotArea/PS/Location etc to get existing plots
  */
 @SuppressWarnings("javadoc")
 public class Plot {
@@ -211,7 +216,13 @@ public class Plot {
         this.timestamp = timestamp;
         this.temp = temp;
     }
-    
+
+    /**
+     * Get a plot from a string e.g. [area];[id]
+     * @param defaultArea If no area is specified
+     * @param string plot id/area + id
+     * @return New or existing plot object
+     */
     public static Plot fromString(final PlotArea defaultArea, final String string) {
         final String[] split = string.split(";|,");
         if (split.length == 2) {
@@ -430,7 +441,13 @@ public class Plot {
     public PlotArea getArea() {
         return this.area;
     }
-    
+
+    /**
+     * Assign this plot to a plot area.<br>
+     * (Mostly used during startup when worlds are being created)<br>
+     * Note: Using this when it doesn't make sense will result in strange behavior
+     * @param area
+     */
     public void setArea(final PlotArea area) {
         if (this.getArea() == area) {
             return;
@@ -497,7 +514,7 @@ public class Plot {
         this.origin = this;
         PlotId min = this.id;
         for (final Plot plot : this.getConnectedPlots()) {
-            if ((plot.id.y < min.y) || (plot.id.y.equals(min.y) && (plot.id.x < min.x))) {
+            if ((plot.id.y < min.y) || (plot.id.y == min.y && plot.id.x < min.x)) {
                 this.origin = plot;
                 min = plot.id;
             }
@@ -1022,7 +1039,12 @@ public class Plot {
         }
         return value;
     }
-    
+
+    /**
+     * Decrement the number of tracked tasks this plot is running<br>
+     *     - Used to track/limit the number of things a player can do on the plot at once
+     * @return previous number of tasks (int)
+     */
     public int removeRunning() {
         final int value = this.getRunning();
         if (value < 2) {
@@ -1036,12 +1058,22 @@ public class Plot {
         }
         return value;
     }
-    
+
+    /**
+     * Get the number of tracked running tasks for this plot<br>
+     *     - Used to track/limit the number of things a player can do on the plot at once
+     * @return number of tasks (int)
+     */
     public int getRunning() {
         final Integer value = (Integer) this.getMeta("running");
         return value == null ? 0 : value;
     }
-    
+
+    /**
+     * Unclaim the plot (does not modify terrain)<br>
+     *      - Changes made to this plot will not be reflected in unclaimed plot objects<br>
+     * @return
+     */
     public boolean unclaim() {
         if (owner == null) {
             return false;
@@ -1759,7 +1791,7 @@ public class Plot {
             }
         });
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -1776,8 +1808,10 @@ public class Plot {
     }
     
     /**
-     * Get the plot hashcode
-     *
+     * Get the plot hashcode<br>
+     * Note: The hashcode is unique if:<br>
+     *     - Plots are in the same world<br>
+     *     - The x,z coordinates are between Short.MIN_VALUE and Short.MAX_VALUE<br>
      * @return integer.
      */
     @Override
@@ -1853,7 +1887,7 @@ public class Plot {
             if (value) {
                 final Plot other = this.getRelative(direction).getBasePlot(false);
                 if (!other.equals(this.getBasePlot(false))) {
-                    final Plot base = (other.id.y < this.id.y) || (other.id.y.equals(this.id.y) && (other.id.x < this.id.x)) ? other : this.origin;
+                    final Plot base = (other.id.y < this.id.y) || (other.id.y == this.id.y && (other.id.x < this.id.x)) ? other : this.origin;
                     this.origin.origin = base;
                     other.origin = base;
                     this.origin = base;
@@ -1919,7 +1953,12 @@ public class Plot {
         }
         return this.settings.getPosition();
     }
-    
+
+    /**
+     * Check if a plot can be claimed
+     * @param player
+     * @return
+     */
     public boolean canClaim(final PlotPlayer player) {
         if (Settings.ENABLE_CLUSTERS) {
             final PlotCluster cluster = this.getCluster();
@@ -1929,9 +1968,14 @@ public class Plot {
                 }
             }
         }
-        return this.guessOwner() == null;
+        return this.guessOwner() == null && !isMerged();
     }
-    
+
+    /**
+     * Guess the owner of a plot either by the value in memory, or the sign data<br>
+     * Note: Recovering from sign information is useful if e.g. PlotMe conversion wasn't successful
+     * @return UUID
+     */
     public UUID guessOwner() {
         if (this.hasOwner()) {
             return this.owner;
@@ -2137,7 +2181,10 @@ public class Plot {
             this.addDenied(uuid);
         }
     }
-    
+
+    /**
+     * Remove the SE road (only effects terrain)
+     */
     public void removeRoadSouthEast() {
         if ((this.area.TYPE != 0) && (this.area.TERRAIN > 1)) {
             if (this.area.TERRAIN == 3) {
@@ -2153,11 +2200,28 @@ public class Plot {
             this.area.getPlotManager().removeRoadSouthEast(this.area, this);
         }
     }
-    
+
+    /**
+     * Get the plot in a relative location<br>
+     * Note: May be null if the partial plot area does not include the relative location
+     * @param x
+     * @param y
+     * @return Plot
+     */
     public Plot getRelative(final int x, final int y) {
         return this.area.getPlotAbs(this.id.getRelative(x, y));
     }
-    
+
+    /**
+     * Get the plot in a relative direction<br>
+     * 0 = north<br>
+     * 1 = east<br>
+     * 2 = south<br>
+     * 3 = west<br>
+     * Note: May be null if the partial plot area does not include the relative location
+     * @param direction
+     * @return
+     */
     public Plot getRelative(final int direction) {
         return this.area.getPlotAbs(this.id.getRelative(direction));
     }
@@ -2427,7 +2491,11 @@ public class Plot {
         }
         return max;
     }
-    
+
+    /**
+     * Do the plot entry tasks for each player in the plot<br>
+     *  - Usually called when the plot state changes (unclaimed/claimed/flag change etc)
+     */
     public void reEnter() {
         TaskManager.runTaskLater(new Runnable() {
             @Override
@@ -2564,7 +2632,7 @@ public class Plot {
      */
     public void mergePlot(Plot lesserPlot, final boolean removeRoads) {
         Plot greaterPlot = this;
-        if (lesserPlot.getId().x.equals(greaterPlot.getId().x)) {
+        if (lesserPlot.getId().x == greaterPlot.getId().x) {
             if (lesserPlot.getId().y > greaterPlot.getId().y) {
                 final Plot tmp = lesserPlot;
                 lesserPlot = greaterPlot;

@@ -1,17 +1,16 @@
 package com.plotsquared.sponge.uuid;
 
-import java.util.Collection;
-import java.util.UUID;
-
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.profile.GameProfile;
-
 import com.google.common.base.Charsets;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.SpongeMain;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.profile.GameProfile;
+
+import java.util.Collection;
+import java.util.UUID;
 
 public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
     
@@ -36,7 +35,7 @@ public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
             try {
                 final GameProfile profile = SpongeMain.THIS.getResolver().get(uuid).get();
                 if (profile != null) {
-                    name = profile.getName();
+                    name = profile.getName().orElse(null);
                 }
             } catch (final Exception e) {
                 e.printStackTrace();
@@ -44,9 +43,12 @@ public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
         }
         if (name == null) {
             for (final GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles()) {
-                if (getUUID(profile.getName()).equals(uuid)) {
-                    name = profile.getName();
-                    break;
+                String tmp = profile.getName().orElse(null);
+                if (tmp != null) {
+                    if (getUUID(name).equals(uuid)) {
+                        name = tmp;
+                        break;
+                    }
                 }
             }
         }

@@ -8,6 +8,11 @@ import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.PlotChunk;
 
+/**
+ * This class allows for implementation independent world generation<br>
+ *     - Sponge/Bukkit API<br><br>
+ * Use the specify method to get the generator for that platform.
+ */
 public abstract class IndependentPlotGenerator {
     
     /**

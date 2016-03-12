@@ -32,6 +32,7 @@ import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.text.translation.Translation;
@@ -49,7 +50,9 @@ import java.util.Locale;
 import java.util.Optional;
 
 public class SpongeUtil extends WorldUtil {
-    
+
+    public static Cause CAUSE = Cause.of(NamedCause.source("PlotSquared"));
+
     public static Location getLocation(final Entity player) {
         final String world = player.getWorld().getName();
         final org.spongepowered.api.world.Location loc = player.getLocation();

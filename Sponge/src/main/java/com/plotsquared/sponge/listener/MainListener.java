@@ -120,7 +120,6 @@ public class MainListener {
         final String sender = player.getName();
         final PlotId id = plot.getId();
         final String newMessage = StringMan.replaceAll(C.PLOT_CHAT_FORMAT.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
-        final Text forcedMessage = event.getMessage();
         //        String forcedMessage = StringMan.replaceAll(C.PLOT_CHAT_FORCED.s(), "%plot_id%", id.x + ";" + id.y, "%sender%", sender);
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer user = entry.getValue();
@@ -128,7 +127,7 @@ public class MainListener {
             if (plot.equals(user.getLocation().getPlot())) {
                 toSend = newMessage;
             } else if (Permissions.hasPermission(user, C.PERMISSION_COMMANDS_CHAT)) {
-                ((SpongePlayer) user).player.sendMessage(forcedMessage);
+                ((SpongePlayer) user).player.sendMessage(message);
                 continue;
             } else {
                 continue;
@@ -146,7 +145,7 @@ public class MainListener {
             }
             ((SpongePlayer) user).player.sendMessage(Text.join(components));
         }
-        event.clearMessage();
+        event.setMessage(null);
     }
     
     @Listener

@@ -44,13 +44,16 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by robin on 01/11/2014
  */
 
-@Plugin(id = "PlotSquared", name = "PlotSquared", version = "3.3.1", dependencies = "before:WorldEdit")
+@Plugin(id = "com.plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.", url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.1")
 public class SpongeMain implements IPlotMain {
     public static SpongeMain THIS;
 
@@ -84,33 +87,6 @@ public class SpongeMain implements IPlotMain {
 
     public SpongeMain getPlugin() {
         return THIS;
-    }
-
-    //    @Override
-    public String getId() {
-        return "PlotSquared";
-    }
-
-    //    @Override
-    public Optional<Object> getInstance() {
-        return Optional.<Object> of(THIS);
-    }
-
-    //    @Override
-    public String getName() {
-        return "PlotSquared";
-    }
-
-    //    @Override
-    public String getVersion() {
-        final int[] version = PS.get().getVersion();
-        String result = "";
-        String prefix = "";
-        for (final int i : version) {
-            result += prefix + i;
-            prefix = ".";
-        }
-        return result;
     }
 
     @Listener
@@ -163,8 +139,8 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public int[] getPluginVersion() {
-        final PluginContainer plugin = game.getPluginManager().getPlugin("PlotSquared").get();
-        final String version = plugin.getVersion();
+        PluginContainer plugin = game.getPluginManager().fromInstance(this).get();
+        String version = plugin.getVersion().get();
         log("Checking plugin version: PlotSquared: ");
         final String[] split = version.split("\\.");
         return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), (split.length == 3) ? Integer.parseInt(split[2]) : 0 };
