@@ -14,7 +14,7 @@ import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 public class WorldEvents implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public static void onWorldInit(final WorldInitEvent event) {
+    public void onWorldInit(final WorldInitEvent event) {
         final World world = event.getWorld();
         final String name = world.getName();
         final ChunkGenerator gen = world.getGenerator();
