@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
@@ -32,8 +30,9 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "info", aliases = { "i" }, description = "Display plot info", usage = "/plot info <id>",
-        category = CommandCategory.INFO)
+import java.util.UUID;
+
+@CommandDeclaration(command = "info", aliases = "i", description = "Display plot info", usage = "/plot info <id>", category = CommandCategory.INFO)
 public class Info extends SubCommand {
     
     @Override
@@ -73,7 +72,7 @@ public class Info extends SubCommand {
             plot = player.getCurrentPlot();
         }
         if (plot == null) {
-            MainUtil.sendMessage(player, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(player, C.NOT_IN_PLOT.s());
             return false;
         }
         if (arg != null) {
@@ -116,8 +115,8 @@ public class Info extends SubCommand {
         boolean trustedEveryone;
         // Wildcard player {added}
         {
-            containsEveryone = (plot.getTrusted() != null) && plot.getTrusted().contains(DBFunc.everyone);
-            trustedEveryone = (plot.getMembers() != null) && plot.getMembers().contains(DBFunc.everyone);
+            containsEveryone = plot.getTrusted().contains(DBFunc.everyone);
+            trustedEveryone = plot.getMembers().contains(DBFunc.everyone);
         }
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {

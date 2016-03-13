@@ -41,7 +41,6 @@ import com.plotsquared.general.commands.CommandManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -53,8 +52,7 @@ import java.util.List;
 public class MainCommand extends CommandManager<PlotPlayer> {
     
     private static MainCommand instance;
-    private HashMap<String, Command<PlotPlayer>> setCommands;
-    
+
     private MainCommand() {
         super(null, new ArrayList<Command<PlotPlayer>>());
         instance = this;
@@ -282,8 +280,8 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                                 break;
                             }
                             // Save meta
-                            loc = (Location) player.getMeta("location");
-                            plot = (Plot) player.getMeta("lastplot");
+                            loc = player.getMeta("location");
+                            plot = player.getMeta("lastplot");
                             tp = true;
                             // Set loc
                             player.setMeta("location", newPlot.getBottomAbs());
@@ -320,7 +318,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
     public int getMatch(String[] args, Command<PlotPlayer> cmd) {
         int count = 0;
         String perm = cmd.getPermission();
-        HashSet<String> desc = new HashSet<String>();
+        HashSet<String> desc = new HashSet<>();
         for (String alias : cmd.getAliases()) {
             if (alias.startsWith(args[0])) {
                 count += 5;

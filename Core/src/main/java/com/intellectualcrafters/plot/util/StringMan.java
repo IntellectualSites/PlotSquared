@@ -44,7 +44,7 @@ public class StringMan {
         if (obj == null) {
             return "null";
         }
-        if (obj.getClass() == String.class) {
+        if (obj instanceof String) {
             return (String) obj;
         }
         if (obj.getClass().isArray()) {
