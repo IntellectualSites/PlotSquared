@@ -57,7 +57,7 @@ import java.util.UUID;
  *
 
  */
-@SuppressWarnings({ "deprecation" })
+@SuppressWarnings("deprecation")
 public class PlotPlusListener extends PlotListener implements Listener {
     private final static HashMap<String, Interval> feedRunnable = new HashMap<>();
     private final static HashMap<String, Interval> healRunnable = new HashMap<>();
@@ -120,6 +120,9 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         if (!FlagManager.isBooleanFlag(plot, "ice-melt", false)) {
+            event.setCancelled(true);
+        }
+        if (FlagManager.isPlotFlagFalse(plot, "snow-melt")) {
             event.setCancelled(true);
         }
     }
