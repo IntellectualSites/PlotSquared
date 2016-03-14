@@ -27,6 +27,16 @@ import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -42,13 +52,11 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.ThrownPotion;
@@ -106,17 +114,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots
@@ -1374,6 +1371,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             case COW:
             case SNOWMAN:
             case BAT:
+            case HORSE:
                 // animal
                 return checkEntity(plot, "entity-cap", "mob-cap", "animal-cap");
             case BLAZE:
@@ -1397,12 +1395,6 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             case SHULKER:
                 // monster
                 return checkEntity(plot, "entity-cap", "mob-cap", "hostile-cap");
-            case HORSE:
-                Horse horse = ((Horse) entity);
-                if (horse.getVariant().equals(Horse.Variant.SKELETON_HORSE) && entity.getPassenger() instanceof Skeleton) {
-                    return checkEntity(plot, "entity-cap", "mob-cap", "hostile-cap");
-                }
-                return checkEntity(plot, "entity-cap", "mob-cap", "animal-cap");
             default:
                 if (entity instanceof LivingEntity) {
                     if (entity instanceof Animals) {
