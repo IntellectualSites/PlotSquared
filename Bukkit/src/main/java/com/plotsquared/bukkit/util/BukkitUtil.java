@@ -5,9 +5,17 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.bukkit.object.BukkitPlayer;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -17,7 +25,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.*;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Sandstone;
+import org.bukkit.material.Step;
+import org.bukkit.material.Tree;
+import org.bukkit.material.WoodenStep;
+import org.bukkit.material.Wool;
 
 import java.util.Arrays;
 import java.util.List;
@@ -282,7 +295,7 @@ public class BukkitUtil extends WorldUtil {
         final World world = getWorld(loc.getWorld());
         final Block block = world.getBlockAt(loc.getX(), loc.getY(), loc.getZ());
         if (block == null) {
-            return new PlotBlock((short) 0, (byte) 0);
+            return PlotBlock.EVERYTHING;
         }
         return new PlotBlock((short) block.getTypeId(), block.getData());
     }
