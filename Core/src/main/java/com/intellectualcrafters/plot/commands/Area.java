@@ -7,8 +7,24 @@ import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.generator.AugmentedUtils;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotMessage;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.RunnableVal3;
+import com.intellectualcrafters.plot.object.SetupObject;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.CmdConfirm;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.io.IOException;
@@ -16,14 +32,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
-@CommandDeclaration(
-command = "area",
-permission = "plots.area",
-category = CommandCategory.ADMINISTRATION,
-requiredType = RequiredType.NONE,
-description = "Create a new PlotArea",
-aliases = { "world" },
-usage = "/plot area <create|info|list|tp|regen>")
+@CommandDeclaration(command = "area", permission = "plots.area", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE,
+        description = "Create a new PlotArea", aliases = "world", usage = "/plot area <create|info|list|tp|regen>")
 public class Area extends SubCommand {
     
     @Override
@@ -48,7 +58,7 @@ public class Area extends SubCommand {
                     case 2: {
                         switch (args[1].toLowerCase()) {
                             case "pos1": { // Set position 1
-                                HybridPlotWorld area = plr.<HybridPlotWorld> getMeta("area_create_area");
+                                HybridPlotWorld area = plr.getMeta("area_create_area");
                                 if (area == null) {
                                     C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
                                     return false;
@@ -61,13 +71,13 @@ public class Area extends SubCommand {
                                 return true;
                             }
                             case "pos2": { // Set position 2 and finish creation for type=2 (partial)
-                                final HybridPlotWorld area = plr.<HybridPlotWorld> getMeta("area_create_area");
+                                final HybridPlotWorld area = plr.getMeta("area_create_area");
                                 if (area == null) {
                                     C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
                                     return false;
                                 }
                                 Location pos1 = plr.getLocation();
-                                Location pos2 = plr.<Location> getMeta("area_pos1");
+                                Location pos2 = plr.getMeta("area_pos1");
                                 int dx = Math.abs(pos1.getX() - pos2.getX());
                                 int dz = Math.abs(pos1.getZ() - pos2.getZ());
                                 int numx = Math.max(1, (dx + 1 + area.ROAD_WIDTH + (area.SIZE / 2)) / area.SIZE);

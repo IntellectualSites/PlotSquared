@@ -2069,7 +2069,7 @@ public class Plot {
             }
             visited.add(current);
             Set<Plot> plots;
-            if ((max >= 0) && ((dir == -1) || (dir == 0)) && !current.getMerged(0)) {
+            if ((dir == -1 || (dir == 0)) && !current.getMerged(0)) {
                 final Plot other = current.getRelative(0);
                 if ((other != null)
                 && other.isOwner(uuid)

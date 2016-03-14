@@ -2577,7 +2577,8 @@ public class SQLManager implements AbstractDB {
                             try {
                                 BlockLoc loc = BlockLoc.fromString(pos);
                                 cluster.settings.setPosition(loc);
-                            } catch (final Exception e) {}
+                            } catch (final Exception ignored) {
+                            }
                     }
                     final Integer m = r.getInt("merged");
                     final boolean[] merged = new boolean[4];

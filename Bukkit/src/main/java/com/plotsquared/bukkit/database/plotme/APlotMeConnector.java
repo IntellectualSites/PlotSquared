@@ -1,18 +1,17 @@
 package com.plotsquared.bukkit.database.plotme;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import com.intellectualcrafters.configuration.file.FileConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
 
 public abstract class APlotMeConnector {
     public abstract Connection getPlotMeConnection(final String plugin, final FileConfiguration plotConfig, final String dataFolder);
@@ -69,35 +68,14 @@ public abstract class APlotMeConnector {
     
     public void setMerged(final HashMap<String, HashMap<PlotId, boolean[]>> merges, final String world, final PlotId id, final int direction) {
         final HashMap<PlotId, boolean[]> plots = merges.get(world);
-        PlotId id2;
-        switch (direction) {
-            case 0: {
-                id2 = new PlotId(id.x, id.y);
-                break;
-            }
-            case 1: {
-                id2 = new PlotId(id.x, id.y);
-                break;
-            }
-            case 2: {
-                id2 = new PlotId(id.x, id.y);
-                break;
-            }
-            case 3: {
-                id2 = new PlotId(id.x, id.y);
-                break;
-            }
-            default: {
-                return;
-            }
-        }
+        PlotId id2 = new PlotId(id.x, id.y);
         boolean[] merge1;
-        boolean[] merge2;
         if (plots.containsKey(id)) {
             merge1 = plots.get(id);
         } else {
             merge1 = new boolean[] { false, false, false, false };
         }
+        boolean[] merge2;
         if (plots.containsKey(id2)) {
             merge2 = plots.get(id2);
         } else {

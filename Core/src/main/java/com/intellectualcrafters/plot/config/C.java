@@ -20,6 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
+import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.file.YamlConfiguration;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.plotsquared.general.commands.CommandCaller;
+
 import java.io.File;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -27,13 +34,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import com.intellectualcrafters.configuration.ConfigurationSection;
-import com.intellectualcrafters.configuration.file.YamlConfiguration;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.plotsquared.general.commands.CommandCaller;
 
 /**
  * Captions class.
@@ -655,9 +655,7 @@ public enum C {
      */
     C(final String d, final boolean prefix, final String cat) {
         this.d = d;
-        if (s == null) {
-            s = d;
-        }
+        this.s = d;
         this.prefix = prefix;
         this.cat = cat.toLowerCase();
     }

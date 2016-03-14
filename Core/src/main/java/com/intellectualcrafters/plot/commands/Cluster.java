@@ -24,7 +24,13 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -35,13 +41,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(
-command = "cluster",
-aliases = { "clusters" },
-category = CommandCategory.ADMINISTRATION,
-requiredType = RequiredType.NONE,
-permission = "plots.cluster",
-description = "Manage a plot cluster")
+@CommandDeclaration(command = "cluster", aliases = "clusters", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE,
+        permission = "plots.cluster", description = "Manage a plot cluster")
 public class Cluster extends SubCommand {
     
     @Override
@@ -379,7 +380,6 @@ public class Cluster extends SubCommand {
                 for (final Plot plot : new ArrayList<>(PS.get().getPlots(plr.getLocation().getWorld(), uuid))) {
                     final PlotCluster current = plot.getCluster();
                     if ((current != null) && current.equals(cluster)) {
-                        plr.getLocation().getWorld();
                         plot.unclaim();
                     }
                 }

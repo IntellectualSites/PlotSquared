@@ -1,41 +1,22 @@
 package com.intellectualcrafters.plot.object;
 
-import java.util.HashSet;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.MainUtil;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 public class PlotCluster {
     public PlotArea area;
     public PlotSettings settings;
     public UUID owner;
-    public HashSet<UUID> helpers = new HashSet<UUID>();
-    public HashSet<UUID> invited = new HashSet<UUID>();
+    public HashSet<UUID> helpers = new HashSet<>();
+    public HashSet<UUID> invited = new HashSet<>();
+    public int temp;
     private PlotId pos1;
     private PlotId pos2;
     private RegionWrapper region;
-    
-    public int temp;
 
-    public PlotId getP1() {
-        return pos1;
-    }
-    
-    public PlotId getP2() {
-        return pos2;
-    }
-    
-    public void setP1(final PlotId id) {
-        pos1 = id;
-        setRegion();
-    }
-    
-    public void setP2(final PlotId id) {
-        pos2 = id;
-        setRegion();
-    }
-    
     public PlotCluster(final PlotArea area, final PlotId pos1, final PlotId pos2, final UUID owner) {
         this.area = area;
         this.pos1 = pos1;
@@ -53,6 +34,24 @@ public class PlotCluster {
         this.owner = owner;
         settings = new PlotSettings();
         this.temp = temp;
+        setRegion();
+    }
+
+    public PlotId getP1() {
+        return pos1;
+    }
+
+    public void setP1(final PlotId id) {
+        pos1 = id;
+        setRegion();
+    }
+
+    public PlotId getP2() {
+        return pos2;
+    }
+
+    public void setP2(final PlotId id) {
+        pos2 = id;
         setRegion();
     }
     
@@ -82,6 +81,14 @@ public class PlotCluster {
      */
     public int getArea() {
         return ((1 + pos2.x) - pos1.x) * ((1 + pos2.y) - pos1.y);
+    }
+
+    public void setArea(PlotArea plotarea) {
+        if (this.area != null) {
+            this.area.removeCluster(this);
+        }
+        this.area = plotarea;
+        plotarea.addCluster(this);
     }
     
     @Override
@@ -136,7 +143,7 @@ public class PlotCluster {
         final PlotId top = getP2();
         return new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
     }
-    
+
     public Plot getCenterPlot() {
         return area.getPlotAbs(getCenterPlotId());
     }
@@ -153,14 +160,6 @@ public class PlotCluster {
     
     public boolean intersects(PlotId pos1, PlotId pos2) {
         return (pos1.x <= this.pos2.x) && (pos2.x >= this.pos1.x) && (pos1.y <= this.pos2.y) && (pos2.y >= this.pos1.y);
-    }
-    
-    public void setArea(PlotArea plotarea) {
-        if (this.area != null) {
-            this.area.removeCluster(this);
-        }
-        this.area = plotarea;
-        plotarea.addCluster(this);
     }
     
     public boolean contains(final PlotId id) {

@@ -1,24 +1,56 @@
 package com.intellectualcrafters.plot.util;
 
 import com.google.common.collect.Lists;
-import com.intellectualcrafters.jnbt.*;
+import com.intellectualcrafters.jnbt.ByteArrayTag;
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.jnbt.IntTag;
+import com.intellectualcrafters.jnbt.ListTag;
+import com.intellectualcrafters.jnbt.NBTInputStream;
+import com.intellectualcrafters.jnbt.NBTOutputStream;
+import com.intellectualcrafters.jnbt.ShortTag;
+import com.intellectualcrafters.jnbt.StringTag;
+import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONException;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -35,7 +67,7 @@ public abstract class SchematicHandler {
             return false;
         }
         exportAll = true;
-        final ArrayList<Plot> plots = new ArrayList<Plot>(collection);
+        final ArrayList<Plot> plots = new ArrayList<>(collection);
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
@@ -661,14 +693,14 @@ public abstract class SchematicHandler {
         getCompoundTag(plot.getArea().worldname, plot.getRegions(), new RunnableVal<CompoundTag>() {
             @Override
             public void run(CompoundTag value) {
-                if (plot.getFlags().size() > 0) {
+                if (!plot.getFlags().isEmpty()) {
                     HashMap<String, Tag> flagMap = new HashMap<>();
                     for (Map.Entry<String, Flag> entry : plot.getFlags().entrySet()) {
                         String key = entry.getKey();
                         flagMap.put(key, new StringTag(key, entry.getValue().getValueString()));
                     }
                     CompoundTag tag = new CompoundTag("Flags", flagMap);
-                    HashMap<String, Tag> map = new HashMap<String, Tag>(value.getValue());
+                    HashMap<String, Tag> map = new HashMap<>(value.getValue());
                     map.put("Flags", tag);
                     value.setValue(map);
                 }
@@ -716,9 +748,8 @@ public abstract class SchematicHandler {
         // Lossy but fast
         private final short[] ids;
         private final byte[] datas;
-        private Map<String, Tag> flags;
-
         private final Dimension schematicDimension;
+        private Map<String, Tag> flags;
         private HashSet<PlotItem> items;
 
         public Schematic(final short[] i, final byte[] b, final Dimension d, Map<String, Tag> flags) {

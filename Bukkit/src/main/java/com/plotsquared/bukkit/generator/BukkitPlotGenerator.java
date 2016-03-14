@@ -24,7 +24,11 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.PlotChunk;
@@ -48,9 +52,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     private final PseudoRandom random = new PseudoRandom();
     private final IndependentPlotGenerator plotGenerator;
     private final List<BlockPopulator> populators = new ArrayList<>();
+    private final ChunkGenerator platformGenerator;
+    private final boolean full;
     private boolean loaded = false;
-    private ChunkGenerator platformGenerator;
-    private boolean full;
 
     public BukkitPlotGenerator(IndependentPlotGenerator generator) {
         this.plotGenerator = generator;
@@ -58,11 +62,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         populators.add(new BlockPopulator() {
             @Override
             public void populate(World world, Random r, Chunk c) {
-                if (!(chunkSetter instanceof GenChunk)) {
-                    PS.debug("Current PlotChunk is not relevant to population?");
-                    PS.stacktrace();
-                    return;
-                }
                 GenChunk result = (GenChunk) chunkSetter;
                 if (result.result_data != null) {
                     for (int i = 0; i < result.result_data.length; i++) {
@@ -90,7 +89,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             throw new IllegalArgumentException("ChunkGenerator: " + cg.getClass().getName() + " is already a BukkitPlotGenerator!");
         }
         this.full = false;
-        PS.get().debug("BukkitPlotGenerator does not fully support: " + cg);
+        PS.debug("BukkitPlotGenerator does not fully support: " + cg);
         platformGenerator = cg;
         plotGenerator = new IndependentPlotGenerator() {
             @Override
@@ -229,11 +228,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     
     @Override
     public ChunkData generateChunkData(World world, Random random, int cx, int cz, BiomeGrid grid) {
-        if (!(chunkSetter instanceof GenChunk)) {
-            PS.debug("Current PlotChunk is not relevant to generation?");
-            PS.stacktrace();
-            return null;
-        }
         GenChunk result = (GenChunk) chunkSetter;
         // Set the chunk location
         result.setChunkWrapper(SetQueue.IMP.new ChunkWrapper(world.getName(), cx, cz));
@@ -278,10 +272,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     
     @Override
     public short[][] generateExtBlockSections(final World world, final Random r, final int cx, final int cz, final BiomeGrid grid) {
-        if (!(chunkSetter instanceof GenChunk)) {
-            PS.stacktrace();
-            return new short[16][];
-        }
         GenChunk result = (GenChunk) chunkSetter;
         // Set the chunk location
         result.setChunkWrapper(SetQueue.IMP.new ChunkWrapper(world.getName(), cx, cz));

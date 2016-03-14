@@ -94,12 +94,12 @@ public class Condense extends SubCommand {
                     int size = sizes.get(i);
                     ArrayList<Plot> array = buckets[size];
                     if (array == null) {
-                        array = new ArrayList<Plot>();
+                        array = new ArrayList<>();
                         buckets[size] = array;
                     }
                     array.add(plot);
                 }
-                final ArrayList<Plot> allPlots = new ArrayList<Plot>(plots.size());
+                final ArrayList<Plot> allPlots = new ArrayList<>(plots.size());
                 for (int i = buckets.length - 1; i >= 0; i--) {
                     ArrayList<Plot> array = buckets[i];
                     if (array != null) {

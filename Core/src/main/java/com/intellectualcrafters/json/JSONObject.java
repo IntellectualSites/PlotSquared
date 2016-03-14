@@ -452,7 +452,7 @@ public class JSONObject {
                         return d;
                     }
                 } else {
-                    final Long myLong = new Long(string);
+                    final Long myLong = Long.valueOf(string);
                     if (string.equals(myLong.toString())) {
                         if (myLong == myLong.intValue()) {
                             return myLong.intValue();

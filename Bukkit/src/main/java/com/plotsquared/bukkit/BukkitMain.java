@@ -623,10 +623,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             PS.get().loadWorld(worldname, (BukkitPlotGenerator) gen);
         } else if (gen != null) {
             PS.get().loadWorld(worldname, new BukkitPlotGenerator(worldname, gen));
-        } else {
-            if (PS.get().config.contains("worlds." + worldname)) {
-                PS.get().loadWorld(worldname, null);
-            }
+        } else if (PS.get().config.contains("worlds." + worldname)) {
+            PS.get().loadWorld(worldname, null);
         }
     }
     

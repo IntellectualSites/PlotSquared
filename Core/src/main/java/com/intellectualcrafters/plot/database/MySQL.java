@@ -20,13 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.database;
 
+import com.intellectualcrafters.plot.PS;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import com.intellectualcrafters.plot.PS;
 
 /**
  * Connects to and uses a MySQL database
@@ -103,8 +103,9 @@ public class MySQL extends Database {
         if (checkConnection()) {
             openConnection();
         }
-        final Statement statement = connection.createStatement();
-        return statement.executeQuery(query);
+        try (Statement statement = connection.createStatement()) {
+            return statement.executeQuery(query);
+        }
     }
     
     @Override
@@ -112,7 +113,8 @@ public class MySQL extends Database {
         if (checkConnection()) {
             openConnection();
         }
-        final Statement statement = connection.createStatement();
-        return statement.executeUpdate(query);
+        try (Statement statement = connection.createStatement()) {
+            return statement.executeUpdate(query);
+        }
     }
 }
