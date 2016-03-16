@@ -89,8 +89,7 @@ public class Merge extends SubCommand {
         }
         final PlotArea plotworld = plot.getArea();
         final double price = plotworld.PRICES.get("merge");
-        if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d
-                && EconHandler.manager.getMoney(plr) < price) {
+        if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d && EconHandler.manager.getMoney(plr) < price) {
             sendMessage(plr, C.CANNOT_AFFORD_MERGE, price + "");
             return false;
         }
@@ -123,7 +122,7 @@ public class Merge extends SubCommand {
                     terrain = "true".equalsIgnoreCase(args[1]);
                 }
                 if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
-                    if (EconHandler.manager != null && price > 0d) {
+                    if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d) {
                         EconHandler.manager.withdrawMoney(plr, price);
                         sendMessage(plr, C.REMOVED_BALANCE, price + "");
                     }

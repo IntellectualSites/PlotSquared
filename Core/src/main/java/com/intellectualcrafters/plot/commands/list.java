@@ -31,7 +31,14 @@ import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.intellectualcrafters.plot.object.RunnableVal3;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.StringComparison;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.ArrayList;
@@ -97,7 +104,7 @@ public class list extends SubCommand {
     }
     
     public void noArgs(final PlotPlayer plr) {
-        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + getArgumentList(plr));
+        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + Arrays.toString(getArgumentList(plr)));
     }
     
     @Override
@@ -228,10 +235,9 @@ public class list extends SubCommand {
                     @Override
                     public int compare(final Plot p1, final Plot p2) {
                         double v1 = 0;
-                        double v2 = 0;
-                        final int p1s = p1.getSettings().ratings != null ? p1.getSettings().ratings.size() : 0;
-                        final int p2s = p2.getSettings().ratings != null ? p2.getSettings().ratings.size() : 0;
-                        if ((p1.getSettings().ratings != null) && (p1s > 0)) {
+                        final int p1s = p1.getSettings().getRatings().size();
+                        final int p2s = p2.getRatings().size();
+                        if (!p1.getSettings().getRatings().isEmpty()) {
                             for (final Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
                                 final double av = entry.getValue().getAverageRating();
                                 v1 += av * av;
@@ -239,7 +245,8 @@ public class list extends SubCommand {
                             v1 /= p1s;
                             v1 += p1s;
                         }
-                        if ((p2.getSettings().ratings != null) && (p2s > 0)) {
+                        double v2 = 0;
+                        if (!p2.getSettings().getRatings().isEmpty()) {
                             for (final Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
                                 final double av = entry.getValue().getAverageRating();
                                 v2 += av * av;
@@ -414,14 +421,5 @@ public class list extends SubCommand {
             }
         }, "/plot list " + args[0], C.PLOT_LIST_HEADER_PAGED.s());
     }
-    
-    private String getArgumentList(final String[] strings) {
-        final StringBuilder builder = new StringBuilder();
-        String prefix = "";
-        for (final String s : strings) {
-            builder.append(prefix + s);
-            prefix = " | ";
-        }
-        return builder.toString();
-    }
+
 }

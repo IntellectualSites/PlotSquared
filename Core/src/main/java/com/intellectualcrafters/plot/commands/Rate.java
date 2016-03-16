@@ -44,14 +44,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(
-        command = "rate",
-        permission = "plots.rate",
-        description = "Rate the plot",
-        usage = "/plot rate [#|next]",
-        aliases = {"rt"},
-        category = CommandCategory.INFO,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "rate", permission = "plots.rate", description = "Rate the plot", usage = "/plot rate [#|next]", aliases = "rt",
+        category = CommandCategory.INFO, requiredType = RequiredType.NONE)
 public class Rate extends SubCommand {
 
     @Override
@@ -221,21 +215,23 @@ public class Rate extends SubCommand {
 
         private int value;
 
-        public MutableInt(int i) {
+        MutableInt(int i) {
             value = i;
         }
-        public void increment() {
+
+        void increment() {
             value++;
         }
-        public void decrement() {
+
+        void decrement() {
             value--;
         }
 
-        public int getValue() {
+        int getValue() {
             return value;
         }
 
-        public void add(Number v) {
+        void add(Number v) {
             this.value += v.intValue();
         }
     }

@@ -8,18 +8,19 @@ import java.util.Iterator;
  * @author JSON.org
  * @version 2014-05-03
  */
-public class XML {
-    public static final Character AMP = '&';
-    public static final Character APOS = '\'';
-    public static final Character BANG = '!';
-    public static final Character EQ = '=';
-    public static final Character GT = '>';
-    public static final Character LT = '<';
-    public static final Character QUEST = '?';
-    public static final Character QUOT = '"';
-    public static final Character SLASH = '/';
-    
-    public static String escape(final String string) {
+class XML {
+
+    static final Character AMP = '&';
+    static final Character APOS = '\'';
+    static final Character BANG = '!';
+    static final Character EQ = '=';
+    static final Character GT = '>';
+    static final Character LT = '<';
+    static final Character QUEST = '?';
+    static final Character QUOT = '"';
+    static final Character SLASH = '/';
+
+    static String escape(final String string) {
         final StringBuilder sb = new StringBuilder(string.length());
         for (int i = 0, length = string.length(); i < length; i++) {
             final char c = string.charAt(i);
@@ -53,14 +54,13 @@ public class XML {
      *
      * @throws JSONException
      */
-    public static void noSpace(final String string) throws JSONException {
-        int i;
+    static void noSpace(final String string) throws JSONException {
         final int length = string.length();
         if (length == 0) {
             throw new JSONException("Empty string.");
         }
-        for (i = 0; i < length; i += 1) {
-            if (Character.isWhitespace(string.charAt(i))) {
+        for (char c : string.toCharArray()) {
+            if (Character.isWhitespace(c)) {
                 throw new JSONException("'" + string + "' contains a space character.");
             }
         }
@@ -78,12 +78,6 @@ public class XML {
      * @throws JSONException
      */
     private static boolean parse(final XMLTokener x, final JSONObject context, final String name) throws JSONException {
-        char c;
-        int i;
-        JSONObject jsonobject = null;
-        String string;
-        String tagName;
-        Object token;
         // Test for and skip past these forms:
         // <!-- ... -->
         // <! ... >
@@ -93,10 +87,11 @@ public class XML {
         // <>
         // <=
         // <<
-        token = x.nextToken();
+        Object token = x.nextToken();
         // <!
+        String string;
         if (token == BANG) {
-            c = x.next();
+            char c = x.next();
             if (c == '-') {
                 if (x.next() == '-') {
                     x.skipPast("-->");
@@ -116,7 +111,7 @@ public class XML {
                 }
                 throw x.syntaxError("Expected 'CDATA['");
             }
-            i = 1;
+            int i = 1;
             do {
                 token = x.nextMeta();
                 if (token == null) {
@@ -149,9 +144,9 @@ public class XML {
             throw x.syntaxError("Misshaped tag");
             // Open tag <
         } else {
-            tagName = (String) token;
+            String tagName = (String) token;
             token = null;
-            jsonobject = new JSONObject();
+            JSONObject jsonobject = new JSONObject();
             for (;;) {
                 if (token == null) {
                     token = x.nextToken();
@@ -225,7 +220,7 @@ public class XML {
      *
      * @return A simple JSON value.
      */
-    public static Object stringToValue(final String string) {
+    static Object stringToValue(final String string) {
         if ("true".equalsIgnoreCase(string)) {
             return Boolean.TRUE;
         }
@@ -292,12 +287,8 @@ public class XML {
         final StringBuilder sb = new StringBuilder();
         int i;
         JSONArray ja;
-        JSONObject jo;
-        String key;
-        Iterator<String> keys;
         int length;
         String string;
-        Object value;
         if (object instanceof JSONObject) {
             // Emit <tagName>
             if (tagName != null) {
@@ -306,11 +297,11 @@ public class XML {
                 sb.append('>');
             }
             // Loop thru the keys.
-            jo = (JSONObject) object;
-            keys = jo.keys();
+            JSONObject jo = (JSONObject) object;
+            Iterator<String> keys = jo.keys();
             while (keys.hasNext()) {
-                key = keys.next();
-                value = jo.opt(key);
+                String key = keys.next();
+                Object value = jo.opt(key);
                 if (value == null) {
                     value = "";
                 }
@@ -378,7 +369,7 @@ public class XML {
                 }
                 return sb.toString();
             } else {
-                string = (object == null) ? "null" : escape(object.toString());
+                string = escape(object.toString());
                 return (tagName == null) ? "\"" + string + "\"" :
                         (string.isEmpty()) ? "<" + tagName + "/>" : "<" + tagName + ">" + string + "</" + tagName + ">";
             }

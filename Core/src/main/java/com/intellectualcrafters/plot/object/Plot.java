@@ -29,18 +29,34 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.BO3Handler;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.io.File;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -61,11 +77,9 @@ public class Plot {
     private static HashSet<Plot> connected_cache;
     private static HashSet<RegionWrapper> regions_cache;
     /**
-     * plot ID
-     * Direct access is Deprecated: use getId()
+     * The {@link PlotId}
      */
-    @Deprecated
-    public final PlotId id;
+    private final PlotId id;
     /**
      * plot owner
      * (Merged plots can have multiple owners)
@@ -73,39 +87,6 @@ public class Plot {
      */
     @Deprecated
     public UUID owner;
-    /**
-     * Plot creation timestamp (not accurate if the plot was created before this was implemented)<br>
-     *  - Milliseconds since the epoch<br>
-     * Direct access is Deprecated: use {@link #getTimestamp() getTimestamp}
-     */
-    @Deprecated
-    public long timestamp;
-    /**
-     * List of trusted (with plot permissions)
-     * Direct access is Deprecated: use getTrusted()
-     */
-    @Deprecated
-    public HashSet<UUID> trusted;
-    /**
-     * List of members users (with plot permissions)
-     * Direct access is Deprecated: use getMembers()
-     */
-    @Deprecated
-    public HashSet<UUID> members;
-    /**
-     * List of denied players
-     * Direct access is Deprecated: use getDenied()
-     */
-    @Deprecated
-    public HashSet<UUID> denied;
-    /**
-     * External settings class<br>
-     *  - Please favor the methods over direct access to this class<br>
-     *  - The methods are more likely to be left unchanged from version changes<br>
-     *  Direct access is Deprecated: use getSettings()
-     */
-    @Deprecated
-    public PlotSettings settings;
     /**
      * Has the plot changed since the last save cycle?
      */
@@ -119,8 +100,30 @@ public class Plot {
     @Deprecated
     public int temp;
     /**
-     * plot world
-     * Direct access is Deprecated: use getWorld()
+     * Plot creation timestamp (not accurate if the plot was created before this was implemented)<br>
+     *  - Milliseconds since the epoch<br>
+     */
+    private long timestamp;
+    /**
+     * List of trusted (with plot permissions)
+     */
+    private HashSet<UUID> trusted;
+    /**
+     * List of members users (with plot permissions)
+     */
+    private HashSet<UUID> members;
+    /**
+     * List of denied players
+     */
+    private HashSet<UUID> denied;
+    /**
+     * External settings class<br>
+     *  - Please favor the methods over direct access to this class<br>
+     *  - The methods are more likely to be left unchanged from version changes<br>
+     */
+    private PlotSettings settings;
+    /**
+     * The {@link PlotArea}
      */
     private PlotArea area;
     /**
@@ -486,10 +489,7 @@ public class Plot {
      * @return
      */
     public boolean isBasePlot() {
-        if ((this.settings == null) || !this.isMerged()) {
-            return true;
-        }
-        return this.equals(this.getBasePlot(false));
+        return !this.isMerged() || this.equals(this.getBasePlot(false));
     }
     
     /**
@@ -530,10 +530,7 @@ public class Plot {
      * @return
      */
     public boolean isMerged() {
-        if (this.settings == null) {
-            return false;
-        }
-        return this.settings.getMerged(0) || this.settings.getMerged(2) || this.settings.getMerged(1) || this.settings.getMerged(3);
+        return getSettings().getMerged(0) || getSettings().getMerged(2) || getSettings().getMerged(1) || getSettings().getMerged(3);
     }
     
     /**
@@ -567,40 +564,41 @@ public class Plot {
      * @return true if merged in that direction
      */
     public boolean getMerged(final int direction) {
-        if (this.settings == null) {
-            return false;
-        }
-        switch (direction) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-                return this.settings.getMerged(direction);
-            case 7:
-                int i = direction - 4;
-                int i2 = 0;
-                if (this.settings.getMerged(i2)) {
-                    if (this.settings.getMerged(i)) {
-                        if (this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)) {
-                            if (this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i)) {
-                                return true;
+        if (isMerged()) {
+            switch (direction) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    return this.getSettings().getMerged(direction);
+                case 7:
+                    int i = direction - 4;
+                    int i2 = 0;
+                    if (this.getSettings().getMerged(i2)) {
+                        if (this.getSettings().getMerged(i)) {
+                            if (this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)) {
+                                if (this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i)) {
+                                    return true;
+                                }
                             }
                         }
                     }
-                }
-                return false;
-            case 4:
-            case 5:
-            case 6:
-                i = direction - 4;
-                i2 = direction - 3;
-                return this.settings.getMerged(i2)
-                && this.settings.getMerged(i)
-                && this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)
-                && this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i);
-                
+                    return false;
+                case 4:
+                case 5:
+                case 6:
+                    i = direction - 4;
+                    i2 = direction - 3;
+                    return this.getSettings().getMerged(i2)
+                            && this.getSettings().getMerged(i)
+                            && this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)
+                            && this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i);
+
+            }
+            return false;
+        } else {
+            return false;
         }
-        return false;
     }
     
     /**
@@ -1132,16 +1130,12 @@ public class Plot {
      */
     public void setHome(final BlockLoc loc) {
         final BlockLoc pos = this.getSettings().getPosition();
-        if ((((pos == null) || pos.equals(new BlockLoc(0, 0, 0))) && (loc == null)) || ((pos != null) && pos.equals(loc))) {
+        if (pos.equals(new BlockLoc(0, 0, 0)) && loc == null || pos.equals(loc)) {
             return;
         }
         final Plot plot = this.getBasePlot(false);
         plot.getSettings().setPosition(loc);
-        if (plot.getSettings().getPosition() == null) {
-            DBFunc.setPosition(plot, "");
-        } else {
-            DBFunc.setPosition(plot, this.getSettings().getPosition().toString());
-        }
+        DBFunc.setPosition(plot, this.getSettings().getPosition().toString());
     }
     
     /**
@@ -1240,11 +1234,7 @@ public class Plot {
     
     public boolean hasRatings() {
         Plot base = this.getBasePlot(false);
-        if (base.settings != null && base.settings.ratings != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return base.settings != null && base.settings.ratings != null;
     }
 
     /**
@@ -1368,7 +1358,7 @@ public class Plot {
         this.getDenied().clear();
         this.settings = new PlotSettings();
         if (this.area.addPlot(this)) {
-            DBFunc.createPlotAndSettings(Plot.this, new Runnable() {
+            DBFunc.createPlotAndSettings(this, new Runnable() {
                 @Override
                 public void run() {
                     final PlotArea plotworld = Plot.this.area;
@@ -1910,10 +1900,7 @@ public class Plot {
      * @return boolean [ north, east, south, west ]
      */
     public boolean[] getMerged() {
-        if (this.settings == null) {
-            return new boolean[] { false, false, false, false };
-        }
-        return this.settings.getMerged();
+        return this.getSettings().getMerged();
     }
     
     /**
@@ -1948,10 +1935,7 @@ public class Plot {
      * @return
      */
     public BlockLoc getPosition() {
-        if (this.settings == null) {
-            return new BlockLoc(0, 0, 0);
-        }
-        return this.settings.getPosition();
+        return this.getSettings().getPosition();
     }
 
     /**
@@ -2085,7 +2069,7 @@ public class Plot {
             }
             visited.add(current);
             Set<Plot> plots;
-            if ((max >= 0) && ((dir == -1) || (dir == 0)) && !current.getMerged(0)) {
+            if ((dir == -1 || (dir == 0)) && !current.getMerged(0)) {
                 final Plot other = current.getRelative(0);
                 if ((other != null)
                 && other.isOwner(uuid)
@@ -2256,10 +2240,10 @@ public class Plot {
                 PS.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(owner)) {
                     tmp.getSettings().setMerged(2, true);
-                    DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
                     this.getSettings().setMerged(0, false);
-                    DBFunc.setMerged(this, this.settings.getMerged());
+                    DBFunc.setMerged(this, this.getSettings().getMerged());
                 }
             }
             queuecache.add(tmp);
@@ -2272,10 +2256,10 @@ public class Plot {
                 PS.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(owner)) {
                     tmp.getSettings().setMerged(3, true);
-                    DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
                     this.getSettings().setMerged(1, false);
-                    DBFunc.setMerged(this, this.settings.getMerged());
+                    DBFunc.setMerged(this, this.getSettings().getMerged());
                 }
             }
             queuecache.add(tmp);
@@ -2288,10 +2272,10 @@ public class Plot {
                 PS.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(owner)) {
                     tmp.getSettings().setMerged(0, true);
-                    DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
                     this.getSettings().setMerged(2, false);
-                    DBFunc.setMerged(this, this.settings.getMerged());
+                    DBFunc.setMerged(this, this.getSettings().getMerged());
                 }
             }
             queuecache.add(tmp);
@@ -2304,10 +2288,10 @@ public class Plot {
                 PS.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(owner)) {
                     tmp.getSettings().setMerged(1, true);
-                    DBFunc.setMerged(tmp, tmp.settings.getMerged());
+                    DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
                 } else {
                     this.getSettings().setMerged(3, false);
-                    DBFunc.setMerged(this, this.settings.getMerged());
+                    DBFunc.setMerged(this, this.getSettings().getMerged());
                 }
             }
             queuecache.add(tmp);
@@ -2324,6 +2308,9 @@ public class Plot {
             connected_cache.add(current);
             queuecache.remove(current);
             merged = current.getMerged();
+            for (int i = 0; i < 5; i++) {
+
+            }
             if (merged[0]) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(0));
                 if ((tmp != null) && !queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
@@ -2794,7 +2781,7 @@ public class Plot {
         for (final Plot plot : plots) {
             final Plot other = plot.getRelative(offset.x, offset.y);
             other.create(other.owner, false);
-            if ((plot.getFlags() != null) && !plot.getFlags().isEmpty()) {
+            if (!plot.getFlags().isEmpty()) {
                 other.getSettings().flags = plot.getFlags();
                 DBFunc.setFlags(other, plot.getFlags().values());
             }

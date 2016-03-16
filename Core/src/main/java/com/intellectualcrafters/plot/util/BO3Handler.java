@@ -95,7 +95,7 @@ public class BO3Handler {
                     BO3 bo3 = map.get(loc);
                     for (int y = 1; y < height; y++) {
                         final PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, y, z));
-                        if ((block != null) && !contains(cpw.MAIN_BLOCK, block)) {
+                        if (!contains(cpw.MAIN_BLOCK, block)) {
                             if (bo3 == null) {
                                 bo3 = new BO3(alias, loc);
                                 map.put(loc, bo3);
@@ -105,7 +105,7 @@ public class BO3Handler {
                         }
                     }
                     final PlotBlock floor = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, height, z));
-                    if ((floor != null) && !contains(cpw.TOP_BLOCK, floor)) {
+                    if (!contains(cpw.TOP_BLOCK, floor)) {
                         if (bo3 == null) {
                             bo3 = new BO3(alias, loc);
                             map.put(loc, bo3);
@@ -115,7 +115,7 @@ public class BO3Handler {
                     }
                     for (int y = height + 1; y < 256; y++) {
                         final PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, y, z));
-                        if ((block != null) && (block.id != 0)) {
+                        if (block.id != 0) {
                             if (bo3 == null) {
                                 bo3 = new BO3(alias, loc);
                                 map.put(loc, bo3);

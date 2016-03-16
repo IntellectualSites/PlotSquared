@@ -44,7 +44,7 @@ public class StringMan {
         if (obj == null) {
             return "null";
         }
-        if (obj.getClass() == String.class) {
+        if (obj instanceof String) {
             return (String) obj;
         }
         if (obj.getClass().isArray()) {
@@ -124,7 +124,7 @@ public class StringMan {
     public static boolean isAlphanumericUnd(final String str) {
         for (int i = 0; i < str.length(); i++) {
             final char c = str.charAt(i);
-            if ((c < 0x30) || ((c >= 0x3a) && (c <= 0x40)) || ((c > 0x5a) && (c <= 0x60)) || (c > 0x7a) || (c == '_')) {
+            if (c < 0x30 || (c >= 0x3a) && (c <= 0x40) || (c > 0x5a) && (c <= 0x60) || (c > 0x7a)) {
                 return false;
             }
         }

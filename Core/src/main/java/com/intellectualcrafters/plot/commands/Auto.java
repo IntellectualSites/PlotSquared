@@ -32,14 +32,8 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-command = "auto",
-permission = "plots.auto",
-category = CommandCategory.CLAIMING,
-requiredType = RequiredType.NONE,
-description = "Claim the nearest plot",
-aliases = { "a" },
-usage = "/plot auto [length,width]")
+@CommandDeclaration(command = "auto", permission = "plots.auto", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE,
+        description = "Claim the nearest plot", aliases = "a", usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
     
     public static PlotId getNextPlotId(final PlotId id, final int step) {
@@ -149,7 +143,7 @@ public class Auto extends SubCommand {
                 sendMessage(plr, C.REMOVED_BALANCE, cost + "");
             }
         }
-        if (schematic != null && !schematic.equals("")) {
+        if (schematic != null && !schematic.isEmpty()) {
             if (!plotarea.SCHEMATICS.contains(schematic.toLowerCase())) {
                 sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;

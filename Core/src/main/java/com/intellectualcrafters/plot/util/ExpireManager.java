@@ -7,7 +7,14 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotMessage;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.RunnableVal2;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,7 +27,7 @@ public class ExpireManager {
     public static ExpireManager IMP;
 
     private static HashSet<Plot> plotsToDelete;
-    private ConcurrentHashMap<UUID, Long> dates_cache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Long> dates_cache = new ConcurrentHashMap<>();
     /**
      * 0 = stopped, 1 = stopping, 2 = running
      */
@@ -154,7 +161,7 @@ public class ExpireManager {
                     }
                     return;
                 }
-                if (plots.size() == 0) {
+                if (plots.isEmpty()) {
                     running = 3;
                     TaskManager.runTaskLater(new Runnable() {
                         @Override
@@ -165,7 +172,6 @@ public class ExpireManager {
                             }
                         }
                     }, 86400000);
-                    return;
                 } else {
                     TaskManager.runTaskLaterAsync(task, Settings.CLEAR_INTERVAL * 20);
                 }

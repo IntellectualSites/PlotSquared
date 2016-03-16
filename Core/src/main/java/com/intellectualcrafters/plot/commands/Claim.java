@@ -31,14 +31,8 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(
-command = "claim",
-aliases = { "c" },
-description = "Claim the current plot you're standing on",
-category = CommandCategory.CLAIMING,
-requiredType = RequiredType.NONE,
-permission = "plots.claim",
-usage = "/plot claim")
+@CommandDeclaration(command = "claim", aliases = "c", description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE, permission = "plots.claim", usage = "/plot claim")
 public class Claim extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String... args) {
@@ -87,7 +81,7 @@ public class Claim extends SubCommand {
             }
             sendMessage(plr, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }
-        if (!schematic.equals("")) {
+        if (!schematic.isEmpty()) {
             if (world.SCHEMATIC_CLAIM_SPECIFY) {
                 if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
                     return sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);

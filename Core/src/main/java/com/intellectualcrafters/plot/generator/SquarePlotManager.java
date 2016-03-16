@@ -115,9 +115,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 end = pathWidthLower + dpw.PLOT_WIDTH;
             }
             int dx;
-            int dz;
             int rx;
-            int rz;
             if (x < 0) {
                 dx = (x / size);
                 rx = size + (x % size);
@@ -125,6 +123,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 dx = (x / size) + 1;
                 rx = (x % size);
             }
+            int dz;
+            int rz;
             if (z < 0) {
                 dz = (z / size);
                 rz = size + (z % size);

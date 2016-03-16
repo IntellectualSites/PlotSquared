@@ -123,17 +123,9 @@ public class Settings {
      */
     public static int MAX_PLOTS = 127;
     /**
-     * WorldGuard region on claimed plots
-     */
-    public static boolean WORLDGUARD = false;
-    /**
      * metrics
      */
     public static boolean METRICS = true;
-    /**
-     * plot specific resource pack
-     */
-    public static String PLOT_SPECIFIC_RESOURCE_PACK = "";
     /**
      * Kill road mobs?
      */

@@ -25,15 +25,37 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.BlockLoc;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -1224,9 +1246,6 @@ public class SQLManager implements AbstractDB {
     
     @Override
     public void deleteSettings(final Plot plot) {
-        if (plot.settings == null) {
-            return;
-        }
         addPlotTask(plot, new UniqueStatement("delete_plot_settings") {
             @Override
             public void set(final PreparedStatement stmt) throws SQLException {
@@ -1669,10 +1688,7 @@ public class SQLManager implements AbstractDB {
                         }
                         final Plot plot = plots.get(id);
                         if (plot != null) {
-                            if (plot.getSettings().ratings == null) {
-                                plot.getSettings().ratings = new HashMap<>();
-                            }
-                            plot.getSettings().ratings.put(user, r.getInt("rating"));
+                            plot.getSettings().getRatings().put(user, r.getInt("rating"));
                         } else if (Settings.AUTO_PURGE) {
                             toDelete.add(id);
                         } else {
@@ -2561,7 +2577,8 @@ public class SQLManager implements AbstractDB {
                             try {
                                 BlockLoc loc = BlockLoc.fromString(pos);
                                 cluster.settings.setPosition(loc);
-                            } catch (final Exception e) {}
+                            } catch (final Exception ignored) {
+                            }
                     }
                     final Integer m = r.getInt("merged");
                     final boolean[] merged = new boolean[4];

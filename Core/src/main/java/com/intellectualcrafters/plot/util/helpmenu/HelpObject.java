@@ -6,16 +6,14 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.Command;
 
 public class HelpObject {
-    
-    private final Command _command;
+
     private final String _rendered;
     
     public HelpObject(final Command command, final String label) {
-        _command = command;
-        _rendered = StringMan.replaceAll(C.HELP_ITEM.s(), "%usage%", _command.getUsage().replaceAll("\\{label\\}", label), "[%alias%]",
-                !_command.getAliases().isEmpty() ? "(" + StringMan.join(_command.getAliases(), "|") + ")" : "", "%desc%", _command.getDescription(),
+        _rendered = StringMan.replaceAll(C.HELP_ITEM.s(), "%usage%", command.getUsage().replaceAll("\\{label\\}", label), "[%alias%]",
+                !command.getAliases().isEmpty() ? "(" + StringMan.join(command.getAliases(), "|") + ")" : "", "%desc%", command.getDescription(),
                 "%arguments%",
-        buildArgumentList(_command.getRequiredArguments()), "{label}", label);
+                buildArgumentList(command.getRequiredArguments()), "{label}", label);
     }
     
     @Override

@@ -34,6 +34,7 @@ import org.bukkit.util.Vector;
 
 public class EntityWrapper {
 
+    private final int hash;
     public EntityType type;
     public float yaw;
     public float pitch;
@@ -53,8 +54,6 @@ public class EntityWrapper {
     public TameableStats tamed;
     private HorseStats horse;
     private ArmorStandStats stand;
-    
-    private int hash;
     
     @SuppressWarnings("deprecation")
     public EntityWrapper(final org.bukkit.entity.Entity entity, final short depth) {
@@ -153,10 +152,7 @@ public class EntityWrapper {
             }
             // END MISC //
             // INVENTORY HOLDER //
-            case MINECART_CHEST: {
-                storeInventory((InventoryHolder) entity);
-                return;
-            }
+            case MINECART_CHEST:
             case MINECART_HOPPER: {
                 storeInventory((InventoryHolder) entity);
                 return;
@@ -508,10 +504,7 @@ public class EntityWrapper {
             }
             // END MISC //
             // INVENTORY HOLDER //
-            case MINECART_CHEST: {
-                restoreInventory((InventoryHolder) entity);
-                return entity;
-            }
+            case MINECART_CHEST:
             case MINECART_HOPPER: {
                 restoreInventory((InventoryHolder) entity);
                 return entity;
