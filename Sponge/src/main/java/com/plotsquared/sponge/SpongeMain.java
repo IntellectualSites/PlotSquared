@@ -13,14 +13,40 @@ import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.SetupObject;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.AbstractTitle;
+import com.intellectualcrafters.plot.util.ChatManager;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.InventoryUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotQueue;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.sponge.generator.SpongePlotGenerator;
 import com.plotsquared.sponge.listener.ChunkProcessor;
 import com.plotsquared.sponge.listener.MainListener;
 import com.plotsquared.sponge.listener.WorldEvents;
-import com.plotsquared.sponge.util.*;
+import com.plotsquared.sponge.util.KillRoadMobs;
+import com.plotsquared.sponge.util.SpongeChatManager;
+import com.plotsquared.sponge.util.SpongeChunkManager;
+import com.plotsquared.sponge.util.SpongeCommand;
+import com.plotsquared.sponge.util.SpongeEconHandler;
+import com.plotsquared.sponge.util.SpongeEventUtil;
+import com.plotsquared.sponge.util.SpongeHybridUtils;
+import com.plotsquared.sponge.util.SpongeInventoryUtil;
+import com.plotsquared.sponge.util.SpongeMetrics;
+import com.plotsquared.sponge.util.SpongeSchematicHandler;
 import com.plotsquared.sponge.util.SpongeSetupUtils;
+import com.plotsquared.sponge.util.SpongeTaskManager;
+import com.plotsquared.sponge.util.SpongeTitleManager;
+import com.plotsquared.sponge.util.SpongeUtil;
 import com.plotsquared.sponge.util.block.FastQueue;
 import com.plotsquared.sponge.util.block.SlowQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
@@ -138,12 +164,11 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
-    public int[] getPluginVersion() {
+    public String getPluginVersion() {
         PluginContainer plugin = game.getPluginManager().fromInstance(this).get();
         String version = plugin.getVersion().get();
         log("Checking plugin version: PlotSquared: ");
-        final String[] split = version.split("\\.");
-        return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), (split.length == 3) ? Integer.parseInt(split[2]) : 0 };
+        return version;
     }
 
     @Override
@@ -203,7 +228,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public void registerCommands() {
-        getGame().getCommandManager().register(THIS, new SpongeCommand(), new String[] { "plots", "p", "plot", "ps", "plotsquared", "p2", "2" });
+        getGame().getCommandManager().register(THIS, new SpongeCommand(), "plots", "p", "plot", "ps", "plotsquared", "p2", "2");
     }
 
     @Override

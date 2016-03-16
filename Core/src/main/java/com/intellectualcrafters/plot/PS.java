@@ -126,7 +126,7 @@ public class PS {
     // private:
     private File storageFile;
     private File FILE = null; // This file
-    private int[] VERSION = null;
+    private String VERSION = null;
     private String PLATFORM = null;
     private String LAST_VERSION;
     private Database database;
@@ -278,8 +278,8 @@ public class PS {
                     final URL url = Updater.getUpdate();
                     if (url != null) {
                         update = url;
-                    } else if ((LAST_VERSION != null) && !StringMan.join(VERSION, ".").equals(LAST_VERSION)) {
-                        log("&aThanks for updating from: " + LAST_VERSION + " to " + StringMan.join(VERSION, "."));
+                    } else if ((LAST_VERSION != null) && !VERSION.equals(LAST_VERSION)) {
+                        log("&aThanks for updating from: " + LAST_VERSION + " to " + VERSION);
                     }
                 }
             });
@@ -383,7 +383,7 @@ public class PS {
      * Get the current PlotSquared version
      * @return current version in config or null
      */
-    public int[] getVersion() {
+    public String getVersion() {
         return VERSION;
     }
 
@@ -2037,7 +2037,7 @@ public class PS {
      */
     public void setupConfig() {
         LAST_VERSION = config.getString("version");
-        config.set("version", StringMan.join(VERSION, "."));
+        config.set("version", VERSION);
         config.set("platform", PLATFORM);
 
         final Map<String, Object> options = new HashMap<>();
@@ -2362,7 +2362,7 @@ public class PS {
      * Setup the storage file (load + save missing nodes)
      */
     private void setupStorage() {
-        storage.set("version", StringMan.join(VERSION, "."));
+        storage.set("version", VERSION);
         final Map<String, Object> options = new HashMap<>(9);
         options.put("mysql.use", false);
         options.put("sqlite.use", true);
@@ -2414,7 +2414,7 @@ public class PS {
      * Setup the style.yml file
      */
     private void setupStyle() {
-        style.set("version", StringMan.join(VERSION, "."));
+        style.set("version", VERSION);
         final Map<String, Object> o = new HashMap<>();
         o.put("color.1", "6");
         o.put("color.2", "7");

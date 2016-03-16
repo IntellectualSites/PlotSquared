@@ -2308,9 +2308,6 @@ public class Plot {
             connected_cache.add(current);
             queuecache.remove(current);
             merged = current.getMerged();
-            for (int i = 0; i < 5; i++) {
-
-            }
             if (merged[0]) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(0));
                 if ((tmp != null) && !queuecache.contains(tmp) && !connected_cache.contains(tmp)) {

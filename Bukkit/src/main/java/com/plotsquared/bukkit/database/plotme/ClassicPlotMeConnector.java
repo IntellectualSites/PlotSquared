@@ -32,10 +32,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
     @Override
     public Connection getPlotMeConnection(final String plugin, final FileConfiguration plotConfig, final String dataFolder) {
         this.plugin = plugin.toLowerCase();
-        prefix = plotConfig.getString("mySQLprefix");
-        if (prefix == null) {
-            prefix = plugin.toLowerCase();
-        }
+        prefix = plotConfig.getString("mySQLprefix", plugin.toLowerCase());
         try {
             if (plotConfig.getBoolean("usemySQL")) {
                 final String user = plotConfig.getString("mySQLuname");

@@ -1,8 +1,5 @@
 package com.intellectualcrafters.plot;
 
-import java.io.File;
-import java.util.List;
-
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
@@ -19,6 +16,9 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.util.WorldUtil;
+
+import java.io.File;
+import java.util.List;
 
 public interface IPlotMain {
     
@@ -57,7 +57,7 @@ public interface IPlotMain {
      * Get the version of the PlotSquared being used
      * @return
      */
-    int[] getPluginVersion();
+    String getPluginVersion();
     
     /**
      * Get the version of Minecraft that is running

@@ -163,9 +163,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
     
     @Override
-    public int[] getPluginVersion() {
-        final String[] split = getDescription().getVersion().split("\\.");
-        return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]) };
+    public String getPluginVersion() {
+        return getDescription().getVersion();
     }
     
     @Override

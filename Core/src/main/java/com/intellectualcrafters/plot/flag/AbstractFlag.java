@@ -97,9 +97,6 @@ public class AbstractFlag {
     
     @Override
     public boolean equals(final Object other) {
-        if (other == null) {
-            return false;
-        }
         if (other == this) {
             return true;
         }
