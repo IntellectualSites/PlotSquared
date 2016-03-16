@@ -41,6 +41,7 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
@@ -56,6 +57,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -1412,16 +1414,35 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 return checkEntity(plot, "entity-cap");
         }
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockBurn(final BlockBurnEvent e) {
+        final Block b = e.getBlock();
+        final Location loc = BukkitUtil.getLocation(b.getLocation());
+
+        PlotArea area = loc.getPlotArea();
+        if (area == null) {
+            return;
+        }
+
+        final Plot plot = loc.getOwnedPlot();
+        if (plot == null || !FlagManager.isBooleanFlag(plot, "block-burn", false)) {
+            e.setCancelled(true);
+            return;
+        }
+
+    }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockIgnite(final BlockIgniteEvent e) {
         final Player player = e.getPlayer();
+        final Entity ent = e.getIgnitingEntity();
         final Block b = e.getBlock();
+        final BlockIgniteEvent.IgniteCause c = e.getCause();
         final Location loc;
         if (b != null) {
             loc = BukkitUtil.getLocation(b.getLocation());
         } else {
-            final Entity ent = e.getIgnitingEntity();
             if (ent != null) {
                 loc = BukkitUtil.getLocation(ent);
             } else if (player != null) {
@@ -1434,36 +1455,98 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (area == null) {
             return;
         }
-        if (e.getCause() == BlockIgniteEvent.IgniteCause.LIGHTNING) {
+        if (c == BlockIgniteEvent.IgniteCause.LIGHTNING) {
             e.setCancelled(true);
             return;
         }
-        if (player == null) {
-            e.setCancelled(true);
-            return;
-        }
-        final Player p = e.getPlayer();
+
         final Plot plot = area.getOwnedPlotAbs(loc);
-        if (plot == null) {
-            final PlotPlayer pp = BukkitUtil.getPlayer(p);
-            if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_ROAD);
-                e.setCancelled(true);
-            }
-        } else {
-            if (!plot.hasOwner()) {
-                final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
+        if (player != null) {
+            final PlotPlayer pp = BukkitUtil.getPlayer(player);
+            if (plot == null) {
+                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_ROAD)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_ROAD);
                     e.setCancelled(true);
                 }
             } else {
-                final PlotPlayer pp = BukkitUtil.getPlayer(p);
-                if (!plot.isAdded(pp.getUUID())) {
-                    if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                if (!plot.hasOwner()) {
+                    if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
                         e.setCancelled(true);
                     }
+                } else {
+                    if (!plot.isAdded(pp.getUUID())) {
+                        if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                            MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                            e.setCancelled(true);
+                        }
+                    } else if (!FlagManager.isPlotFlagTrue(plot, "block-ignition")) {
+                        e.setCancelled(true);
+                    }
+                }
+            }
+        }
+        else if (ent != null) {
+            if (plot == null || !FlagManager.isPlotFlagTrue(plot, "block-ignition")) {
+                e.setCancelled(true);
+                return;
+            }
+            if (c == BlockIgniteEvent.IgniteCause.FIREBALL) {
+                if (ent instanceof Fireball) {
+                    final Projectile fireball = (Fireball) ent;
+                    if (fireball.getShooter() instanceof Entity) {
+                        final Entity shooter = (Entity) fireball.getShooter();
+                        if (BukkitUtil.getLocation(shooter.getLocation()).getPlot() == null) {
+                            e.setCancelled(true);
+                            return;
+                        }
+                        if (!BukkitUtil.getLocationFull(shooter).getPlot().equals(plot)) {
+                            e.setCancelled(true);
+                            return;
+                        }
+                    } else if (fireball.getShooter() instanceof BlockProjectileSource) {
+                        final Block shooter = (Block) ((BlockProjectileSource) fireball.getShooter()).getBlock();
+                        if (BukkitUtil.getLocation(shooter.getLocation()).getPlot() == null) {
+                            e.setCancelled(true);
+                            return;
+                        }
+                        if (!BukkitUtil.getLocation(shooter.getLocation()).getPlot().equals(plot)) {
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                }
+            }
+
+        }
+        else if (e.getIgnitingBlock() != null) {
+            final Block igniter = e.getIgnitingBlock();
+            if (c == BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL) {
+                if (plot == null || !FlagManager.isPlotFlagTrue(plot, "block-ignition")) {
+                    e.setCancelled(true);
+                    return;
+                }
+                if (BukkitUtil.getLocation(igniter.getLocation()).getPlot() == null) {
+                    e.setCancelled(true);
+                    return;
+                }
+                if (!BukkitUtil.getLocation(igniter.getLocation()).getPlot().equals(plot)) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+            if (c == BlockIgniteEvent.IgniteCause.SPREAD || c == BlockIgniteEvent.IgniteCause.LAVA) {
+                if (plot == null || !FlagManager.isPlotFlagTrue(plot, "fire-spread")) {
+                    e.setCancelled(true);
+                    return;
+                }
+                if (BukkitUtil.getLocation(igniter.getLocation()).getPlot() == null) {
+                    e.setCancelled(true);
+                    return;
+                }
+                if (!BukkitUtil.getLocation(igniter.getLocation()).getPlot().equals(plot)) {
+                    e.setCancelled(true);
+                    return;
                 }
             }
         }
