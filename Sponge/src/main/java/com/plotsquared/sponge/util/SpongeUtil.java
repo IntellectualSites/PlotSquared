@@ -19,6 +19,7 @@ import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeGenBase;
+import org.apache.commons.lang3.NotImplementedException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
@@ -355,7 +356,20 @@ public class SpongeUtil extends WorldUtil {
         result.setY(getHighestBlock(world, result.getX(), result.getZ()));
         return result;
     }
-    
+
+    @Override
+    public void setSpawn(Location loc) {
+        World world = getWorld(loc.getWorld());
+        if (world != null) {
+            world.getProperties().setSpawnPosition(new Vector3i(loc.getX(), loc.getY(), loc.getZ()));
+        }
+    }
+
+    @Override
+    public void saveWorld(String worldname) {
+        throw new NotImplementedException("TODO WIP"); // TODO FIXME
+    }
+
     @Override
     public String[] getSign(final Location loc) {
         final World world = SpongeUtil.getWorld(loc.getWorld());

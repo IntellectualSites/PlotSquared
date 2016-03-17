@@ -3,6 +3,7 @@ package com.plotsquared.listener;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -14,13 +15,15 @@ import com.sk89q.worldedit.command.tool.Tool;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
-import com.sk89q.worldedit.extent.*;
+import com.sk89q.worldedit.extent.AbstractDelegateExtent;
+import com.sk89q.worldedit.extent.ChangeSetExtent;
+import com.sk89q.worldedit.extent.MaskingExtent;
 import com.sk89q.worldedit.extent.reorder.MultiStageReorder;
 import com.sk89q.worldedit.extent.world.FastModeExtent;
+import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
-
 import java.lang.reflect.Field;
 import java.util.HashSet;
 
@@ -39,18 +42,30 @@ public class WESubscriber {
         if (actor != null && actor.isPlayer()) {
             final String name = actor.getName();
             final PlotPlayer pp = PlotPlayer.wrap(name);
-            if (pp != null && pp.getAttribute("worldedit")) {
-                return;
-            }
-            final HashSet<RegionWrapper> mask = WEManager.getMask(pp);
-            if (mask.isEmpty()) {
-                if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
-                    MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
-                }
-                if (PS.get().hasPlotArea(world)) {
+            final HashSet<RegionWrapper> mask;
+            if (pp == null) {
+                Player player = (Player) actor;
+                Location loc = player.getLocation();
+                com.intellectualcrafters.plot.object.Location pLoc = new com.intellectualcrafters.plot.object.Location(player.getWorld().getName(), loc.getBlockX(), loc.getBlockX(), loc.getBlockZ());
+                Plot plot = pLoc.getPlot();
+                if (plot == null) {
                     event.setExtent(new com.sk89q.worldedit.extent.NullExtent());
+                    return;
                 }
+                mask = plot.getRegions();
+            } else if (pp.getAttribute("worldedit")) {
                 return;
+            } else {
+                mask = WEManager.getMask(pp);
+                if (mask.isEmpty()) {
+                    if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
+                        MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
+                    }
+                    if (PS.get().hasPlotArea(world)) {
+                        event.setExtent(new com.sk89q.worldedit.extent.NullExtent());
+                    }
+                    return;
+                }
             }
             if (Settings.CHUNK_PROCESSOR) {
                 if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {

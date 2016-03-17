@@ -64,19 +64,21 @@ public class Save extends SubCommand {
                         final String world = plot.getArea().toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
                         final String file = time + "_" + world + "_" + id.x + "_" + id.y + "_" + size + "_" + name;
                         final UUID uuid = plr.getUUID();
-                        
-                        final URL url = SchematicHandler.manager.upload(value, uuid, file);
-                        if (url == null) {
-                            MainUtil.sendMessage(plr, C.SAVE_FAILED);
-                            plot.removeRunning();
-                            return;
-                        }
-                        MainUtil.sendMessage(plr, C.SAVE_SUCCESS);
-                        final List<String> schematics = (List<String>) plr.getMeta("plot_schematics");
-                        if (schematics != null) {
-                            schematics.add(file);
-                        }
-                        plot.removeRunning();
+                        SchematicHandler.manager.upload(value, uuid, file, new RunnableVal<URL>() {
+                            @Override
+                            public void run(URL url) {
+                                plot.removeRunning();
+                                if (url == null) {
+                                    MainUtil.sendMessage(plr, C.SAVE_FAILED);
+                                    return;
+                                }
+                                MainUtil.sendMessage(plr, C.SAVE_SUCCESS);
+                                final List<String> schematics = (List<String>) plr.getMeta("plot_schematics");
+                                if (schematics != null) {
+                                    schematics.add(file);
+                                }
+                            }
+                        });
                     }
                 });
             }
