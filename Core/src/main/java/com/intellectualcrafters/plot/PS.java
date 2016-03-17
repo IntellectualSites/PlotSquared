@@ -126,9 +126,9 @@ public class PS {
     // private:
     private File storageFile;
     private File FILE = null; // This file
-    private String VERSION = null;
+    private int[] VERSION = null;
+    private int[] LAST_VERSION;
     private String PLATFORM = null;
-    private String LAST_VERSION;
     private Database database;
     private Thread thread;
 
@@ -278,8 +278,11 @@ public class PS {
                     final URL url = Updater.getUpdate();
                     if (url != null) {
                         update = url;
-                    } else if ((LAST_VERSION != null) && !VERSION.equals(LAST_VERSION)) {
-                        log("&aThanks for updating from: " + LAST_VERSION + " to " + VERSION);
+                    } else if (LAST_VERSION == null) {
+                        log("&aThanks for installing PlotSquared!");
+                    } else if (!PS.get().checkVersion(LAST_VERSION, VERSION)) {
+                        log("&aThanks for updating from " + StringMan.join(LAST_VERSION, ".") + " to " + StringMan.join(VERSION, ".") + "!");
+                        DBFunc.dbManager.updateTables(LAST_VERSION);
                     }
                 }
             });
@@ -366,16 +369,22 @@ public class PS {
         return this.thread == thread;
     }
 
-    public boolean checkVersion(final int[] version, final int major, final int minor, final int minor2) {
-        return (version[0] > major) || ((version[0] == major) && (version[1] > minor)) || ((version[0] == major) && (version[1] == minor) && (
-                version[2] >= minor2));
+    /**
+     * Check if `version` is >= `version2`
+     * @param version
+     * @param version2
+     * @return true if `version` is >= `version2`
+     */
+    public boolean checkVersion(final int[] version, int... version2) {
+        return (version[0] > version2[0]) || ((version[0] == version2[0]) && (version[1] > version2[1])) || ((version[0] == version2[0]) && (version[1] == version2[1]) && (
+                version[2] >= version2[2]));
     }
 
     /**
      * Get the last PlotSquared version
      * @return last version in config or null
      */
-    public String getLastVersion() {
+    public int[] getLastVersion() {
         return LAST_VERSION;
     }
 
@@ -383,7 +392,7 @@ public class PS {
      * Get the current PlotSquared version
      * @return current version in config or null
      */
-    public String getVersion() {
+    public int[] getVersion() {
         return VERSION;
     }
 
@@ -2039,8 +2048,13 @@ public class PS {
      * Setup the default configuration (settings.yml)
      */
     public void setupConfig() {
-        LAST_VERSION = config.getString("version");
-        config.set("version", VERSION);
+        String lastVersionString = config.getString("version");
+        if (lastVersionString != null) {
+            String[] split = lastVersionString.split("\\.");
+            LAST_VERSION = new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]) };
+        }
+
+        config.set("version", StringMan.join(VERSION, "."));
         config.set("platform", PLATFORM);
 
         final Map<String, Object> options = new HashMap<>();
@@ -2365,7 +2379,7 @@ public class PS {
      * Setup the storage file (load + save missing nodes)
      */
     private void setupStorage() {
-        storage.set("version", VERSION);
+        storage.set("version", StringMan.join(VERSION, "."));
         final Map<String, Object> options = new HashMap<>(9);
         options.put("mysql.use", false);
         options.put("sqlite.use", true);
@@ -2417,7 +2431,7 @@ public class PS {
      * Setup the style.yml file
      */
     private void setupStyle() {
-        style.set("version", VERSION);
+        style.set("version", StringMan.join(VERSION, "."));
         final Map<String, Object> o = new HashMap<>();
         o.put("color.1", "6");
         o.put("color.2", "7");

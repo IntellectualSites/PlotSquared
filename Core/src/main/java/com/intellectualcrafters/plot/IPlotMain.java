@@ -57,7 +57,7 @@ public interface IPlotMain {
      * Get the version of the PlotSquared being used
      * @return
      */
-    String getPluginVersion();
+    int[] getPluginVersion();
     
     /**
      * Get the version of Minecraft that is running

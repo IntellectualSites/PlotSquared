@@ -353,4 +353,6 @@ public interface AbstractDB {
     void close();
     
     void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max);
+
+    void updateTables(int[] oldVersion);
 }

@@ -173,7 +173,6 @@ public class SQLManager implements AbstractDB {
         CREATE_TIERS = "INSERT INTO `" + prefix + "plot_%tier%` (`plot_plot_id`, `user_uuid`) values ";
         CREATE_PLOT = "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) VALUES(?, ?, ?, ?, ?)";
         CREATE_CLUSTER = "INSERT INTO `" + prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
-        updateTables();
         createTables();
     }
 
@@ -1468,11 +1467,14 @@ public class SQLManager implements AbstractDB {
         return Integer.MAX_VALUE;
     }
 
-    public void updateTables() {
-        if (PS.get().getVersion().equals(PS.get().getLastVersion()) || (PS.get().getLastVersion() == null)) {
-            return;
-        }
+    public void updateTables(int[] oldVersion) {
         try {
+            if (MYSQL && !PS.get().checkVersion(oldVersion, 3, 3, 2)) {
+                try (Statement stmt = connection.createStatement()) {
+                    stmt.executeUpdate("ALTER TABLE `" + prefix + "plots` DROP INDEX `unique_alias`");
+                }
+                catch (SQLException ignore) {}
+            }
             final DatabaseMetaData data = connection.getMetaData();
             ResultSet rs = data.getColumns(null, null, prefix + "plot_comments", "plot_plot_id");
             if (rs.next()) {

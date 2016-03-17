@@ -164,11 +164,11 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
-    public String getPluginVersion() {
+    public int[] getPluginVersion() {
         PluginContainer plugin = game.getPluginManager().fromInstance(this).get();
         String version = plugin.getVersion().get();
-        log("Checking plugin version: PlotSquared: ");
-        return version;
+        final String[] split = version.split("\\.");
+        return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), (split.length == 3) ? Integer.parseInt(split[2]) : 0 };
     }
 
     @Override
