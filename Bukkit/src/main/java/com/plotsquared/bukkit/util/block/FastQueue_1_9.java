@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.util.block;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -17,22 +15,23 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_9 extends SlowQueue {
 
@@ -156,12 +155,11 @@ public class FastQueue_1_9 extends SlowQueue {
 
             final Object[] sections = (Object[]) sf.get(c);
             final HashMap<?, ?> tiles = (HashMap<?, ?>) tf.get(c);
-            final AbstractSet<?>[] entities = (AbstractSet<?>[]) entitySlices.get(c);
+            final Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
             Method xm = null;
             Method ym = null;
             Method zm = null;
-
             // Trim tiles
             final Set<Entry<?, ?>> entryset = (Set<Entry<?, ?>>) (Set<?>) tiles.entrySet();
             final Iterator<Entry<?, ?>> iter = entryset.iterator();
