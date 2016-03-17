@@ -2789,7 +2789,7 @@ public class Plot {
         // copy data
         for (final Plot plot : plots) {
             final Plot other = plot.getRelative(offset.x, offset.y);
-            other.create(other.owner, false);
+            other.create(plot.owner, false);
             if (!plot.getFlags().isEmpty()) {
                 other.getSettings().flags = plot.getFlags();
                 DBFunc.setFlags(other, plot.getFlags().values());
@@ -2799,19 +2799,19 @@ public class Plot {
             }
             if ((plot.members != null) && !plot.members.isEmpty()) {
                 other.members = plot.members;
-                for (final UUID member : other.members) {
+                for (final UUID member : plot.members) {
                     DBFunc.setMember(other, member);
                 }
             }
             if ((plot.trusted != null) && !plot.trusted.isEmpty()) {
                 other.trusted = plot.trusted;
-                for (final UUID trusted : other.trusted) {
+                for (final UUID trusted : plot.trusted) {
                     DBFunc.setTrusted(other, trusted);
                 }
             }
             if ((plot.denied != null) && !plot.denied.isEmpty()) {
                 other.denied = plot.denied;
-                for (final UUID denied : other.denied) {
+                for (final UUID denied : plot.denied) {
                     DBFunc.setDenied(other, denied);
                 }
             }

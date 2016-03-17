@@ -234,6 +234,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         // Set the result data
         result.cd = createChunkData(world);
         result.grid = grid;
+        result.result = null;
+        result.result_data = null;
         // Catch any exceptions (as exceptions usually thrown 
         try {
             // Fill the result data if necessary
@@ -259,9 +261,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         // Set random seed
         this.random.state = (cx << 16) | (cz & 0xFFFF);
         // Process the chunk
-        result.modified = false;
-        ChunkManager.preProcessChunk(result);
-        if (result.modified) {
+        if (ChunkManager.preProcessChunk(result)) {
             return;
         }
         PlotArea area = PS.get().getPlotArea(world.getName(), null);
@@ -279,6 +279,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         result.result = new short[16][];
         result.result_data = new byte[16][];
         result.grid = grid;
+        result.cd = null;
         // Catch any exceptions (as exceptions usually thrown 
         try {
             // Fill the result data

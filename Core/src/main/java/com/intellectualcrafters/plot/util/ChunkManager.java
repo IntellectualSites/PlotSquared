@@ -49,18 +49,22 @@ public abstract class ChunkManager {
         }
     }
     
-    public static void preProcessChunk(PlotChunk<?> chunk) {
+    public static boolean preProcessChunk(PlotChunk<?> chunk) {
         if (CURRENT_FORCE_CHUNK != null) {
             CURRENT_FORCE_CHUNK.run(chunk);
             CURRENT_FORCE_CHUNK = null;
+            return true;
         }
+        return false;
     }
     
-    public static void postProcessChunk(PlotChunk<?> chunk) {
+    public static boolean postProcessChunk(PlotChunk<?> chunk) {
         if (CURRENT_ADD_CHUNK != null) {
             CURRENT_ADD_CHUNK.run(chunk);
             CURRENT_ADD_CHUNK = null;
+            return true;
         }
+        return false;
     }
 
     public static void largeRegionTask(final String world, final RegionWrapper region, final RunnableVal<ChunkLoc> task, final Runnable whenDone) {

@@ -1,12 +1,11 @@
 package com.plotsquared.sponge.util.block;
 
-import org.spongepowered.api.world.Chunk;
-import org.spongepowered.api.world.extent.MutableBiomeArea;
-import org.spongepowered.api.world.extent.MutableBlockVolume;
-
 import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.plotsquared.sponge.util.SpongeUtil;
+import org.spongepowered.api.world.Chunk;
+import org.spongepowered.api.world.extent.MutableBiomeArea;
+import org.spongepowered.api.world.extent.MutableBlockVolume;
 
 public class GenChunk extends PlotChunk<Chunk> {
     
@@ -41,12 +40,17 @@ public class GenChunk extends PlotChunk<Chunk> {
     public void setBlock(int x, int y, int z, int id, byte data) {
         terain.setBlock(bx + x, y, bz + z, SpongeUtil.getBlockState(id, data));
     }
-    
+
+    @Override
+    public void setChunkWrapper(ChunkWrapper loc) {
+        super.setChunkWrapper(loc);
+    }
+
     @Override
     public PlotChunk clone() {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
-    
+
     @Override
     public PlotChunk shallowClone() {
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
