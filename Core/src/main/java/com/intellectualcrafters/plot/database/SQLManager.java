@@ -1559,17 +1559,17 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + prefix + column + "` IN ", size);
+                return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + column + "` IN ", size);
             }
 
             @Override
             public String getCreateSQLite(int size) {
-                return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + prefix + column + "` IN ", size);
+                return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + column + "` IN ", size);
             }
 
             @Override
             public String getCreateSQL() {
-                return "DELETE FROM `" + table + "` WHERE `" + prefix + column + "` = ?";
+                return "DELETE FROM `" + table + "` WHERE `" + column + "` = ?";
             }
 
             @Override
@@ -1662,7 +1662,7 @@ public class SQLManager implements AbstractDB {
                             if (Settings.AUTO_PURGE) {
                                 toDelete.add(id);
                             } else {
-                                PS.debug("&cPLOT " + id + " in `plot` is a duplicate. Delete this plot or set `auto-purge: true` in the settings.yml.");
+                                PS.debug("&cPLOT " + id + " in `" + prefix +  "plot` is a duplicate. Delete this plot or set `auto-purge: true` in the settings.yml.");
                             }
                             continue;
                         }
@@ -1673,7 +1673,7 @@ public class SQLManager implements AbstractDB {
                     }
                     plots.put(id, p);
                 }
-                deleteRows(toDelete, "plot", "id");
+                deleteRows(toDelete, prefix + "plot", "id");
             }
             if (Settings.CACHE_RATINGS) {
                 try (ResultSet r = stmt.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + prefix + "plot_rating`")) {
@@ -1695,7 +1695,7 @@ public class SQLManager implements AbstractDB {
                             PS.debug("&cENTRY " + id + " in `plot_rating` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
                         }
                     }
-                    deleteRows(toDelete, "plot_rating", "plot_plot_id");
+                    deleteRows(toDelete, prefix + "plot_rating", "plot_plot_id");
                 }
             }
 
@@ -1721,7 +1721,7 @@ public class SQLManager implements AbstractDB {
                         PS.debug("&cENTRY " + id + " in `plot_helpers` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
                     }
                 }
-                deleteRows(toDelete, "plot_helpers", "plot_plot_id");
+                deleteRows(toDelete, prefix + "plot_helpers", "plot_plot_id");
             }
 
             /*
@@ -1746,7 +1746,7 @@ public class SQLManager implements AbstractDB {
                         PS.debug("&cENTRY " + id + " in `plot_trusted` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
                     }
                 }
-                deleteRows(toDelete, "plot_trusted", "plot_plot_id");
+                deleteRows(toDelete, prefix + "plot_trusted", "plot_plot_id");
             }
 
             /*
@@ -1771,7 +1771,7 @@ public class SQLManager implements AbstractDB {
                         PS.debug("&cENTRY " + id + " in `plot_denied` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
                     }
                 }
-                deleteRows(toDelete, "plot_denied", "plot_plot_id");
+                deleteRows(toDelete, prefix + "plot_denied", "plot_plot_id");
             }
 
             try (ResultSet r = stmt.executeQuery("SELECT * FROM `" + prefix + "plot_settings`")) {
@@ -1850,7 +1850,7 @@ public class SQLManager implements AbstractDB {
                     }
                 }
                 stmt.close();
-                deleteRows(toDelete, "plot_settings", "plot_plot_id");
+                deleteRows(toDelete, prefix + "plot_settings", "plot_plot_id");
             }
             if (!plots.entrySet().isEmpty()) {
                 createEmptySettings(new ArrayList<>(plots.keySet()), null);
