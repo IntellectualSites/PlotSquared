@@ -1100,8 +1100,7 @@ public class SQLManager implements AbstractDB {
             + "  `flags` VARCHAR(512) DEFAULT NULL,"
             + "  `merged` INT(11) DEFAULT NULL,"
             + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
-            + "  PRIMARY KEY (`plot_plot_id`),"
-            + "  UNIQUE KEY `unique_alias` (`alias`)"
+            + "  PRIMARY KEY (`plot_plot_id`)"
             + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `"
             + prefix
