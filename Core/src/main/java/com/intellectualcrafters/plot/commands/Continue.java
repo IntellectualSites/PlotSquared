@@ -23,7 +23,6 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -40,8 +39,7 @@ public class Continue extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final Location loc = plr.getLocation();
-        final Plot plot = loc.getPlotAbs();
+        final Plot plot = plr.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -53,7 +51,8 @@ public class Continue extends SubCommand {
             MainUtil.sendMessage(plr, C.DONE_NOT_DONE);
             return false;
         }
-        if (Settings.DONE_COUNTS_TOWARDS_LIMIT && (plr.getAllowedPlots() >= plr.getPlotCount())) {
+        int size = plot.getConnectedPlots().size();
+        if (Settings.DONE_COUNTS_TOWARDS_LIMIT && (plr.getAllowedPlots() < plr.getPlotCount() + size)) {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.continue");
             return false;
         }

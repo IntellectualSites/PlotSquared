@@ -1,12 +1,19 @@
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.util.MainUtil;
+import java.io.File;
+
 public class BO3 {
     private final ChunkLoc chunk;
+    private final String world;
     private final StringBuilder blocks;
     private final StringBuilder children;
     private final String name;
     
-    public BO3(final String name, final ChunkLoc loc) {
+    public BO3(final String name, final String world, final ChunkLoc loc) {
+        this.world = world;
         this.name = name;
         chunk = loc;
         blocks = new StringBuilder();
@@ -20,6 +27,10 @@ public class BO3 {
     
     public ChunkLoc getLoc() {
         return chunk;
+    }
+
+    public String getWorld() {
+        return world;
     }
     
     public String getName() {
@@ -41,5 +52,13 @@ public class BO3 {
     
     public String getChildren() {
         return children.toString();
+    }
+
+    public File getFile() {
+        return MainUtil.getFile(PS.get().IMP.getDirectory(), Settings.BO3_SAVE_PATH + File.separator + getWorld() + File.separator + getFilename());
+    }
+
+    public String getFilename() {
+        return name + (((chunk.x == 0) && (chunk.z == 0)) ? "" : ("_" + chunk.x + "_" + chunk.z))  + ".bo3";
     }
 }

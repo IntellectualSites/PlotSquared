@@ -20,11 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-/**
+/**
+
  */
 public class PlotBlock {
-    
-    public static PlotBlock EVERYTHING = new PlotBlock((short) 0, (byte) 0);
+
+    public final static PlotBlock EVERYTHING = new PlotBlock((short) 0, (byte) 0);
     
     public final short id;
     public final byte data;

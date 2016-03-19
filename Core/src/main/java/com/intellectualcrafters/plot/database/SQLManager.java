@@ -173,18 +173,17 @@ public class SQLManager implements AbstractDB {
         CREATE_TIERS = "INSERT INTO `" + prefix + "plot_%tier%` (`plot_plot_id`, `user_uuid`) values ";
         CREATE_PLOT = "INSERT INTO `" + prefix + "plot`(`plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp`) VALUES(?, ?, ?, ?, ?)";
         CREATE_CLUSTER = "INSERT INTO `" + prefix + "cluster`(`pos1_x`, `pos1_z`, `pos2_x`, `pos2_z`, `owner`, `world`) VALUES(?, ?, ?, ?, ?, ?)";
-        updateTables();
         createTables();
     }
 
     public synchronized Queue<Runnable> getGlobalTasks() {
         return globalTasks;
     }
-    
+
     public synchronized Queue<Runnable> getNotifyTasks() {
         return notifyTasks;
     }
-    
+
     public synchronized void addPlotTask(Plot plot, UniqueStatement task) {
         if (plot == null) {
             plot = new Plot(null, new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE));
@@ -274,17 +273,17 @@ public class SQLManager implements AbstractDB {
         }
         tasks.add(task);
     }
-    
+
     public synchronized void addGlobalTask(final Runnable task) {
         getGlobalTasks().add(task);
     }
-    
+
     public synchronized void addNotifyTask(final Runnable task) {
         if (task != null) {
             getNotifyTasks().add(task);
         }
     }
-    
+
     public boolean sendBatch() {
         try {
             if (!getGlobalTasks().isEmpty()) {
@@ -426,11 +425,11 @@ public class SQLManager implements AbstractDB {
         }
         return false;
     }
-    
+
     public Connection getConnection() {
         return connection;
     }
-    
+
     /**
      * Set Plot owner
      *
@@ -454,7 +453,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void createPlotsAndData(final ArrayList<Plot> myList, final Runnable whenDone) {
         addGlobalTask(new Runnable() {
@@ -549,7 +548,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * Create a plot
      *
@@ -592,7 +591,7 @@ public class SQLManager implements AbstractDB {
         };
         setBulk(myList, mod, whenDone);
     }
-    
+
     /**
      * Create a plot
      *
@@ -655,7 +654,7 @@ public class SQLManager implements AbstractDB {
         };
         setBulk(myList, mod, whenDone);
     }
-    
+
     public <T> void setBulk(final ArrayList<T> objList, final StmtMod<T> mod, final Runnable whenDone) {
         final int size = objList.size();
         if (size == 0) {
@@ -774,7 +773,7 @@ public class SQLManager implements AbstractDB {
             whenDone.run();
         }
     }
-    
+
     public void createSettings(final ArrayList<SettingsPair> myList, final Runnable whenDone) {
         final StmtMod<SettingsPair> mod = new StmtMod<SettingsPair>() {
             @Override
@@ -885,7 +884,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     public void createEmptySettings(final ArrayList<Integer> myList, final Runnable whenDone) {
         final StmtMod<Integer> mod = new StmtMod<Integer>() {
             @Override
@@ -939,7 +938,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * Create a plot
      *
@@ -963,7 +962,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     public void commit() {
         try {
             if (CLOSED) {
@@ -977,7 +976,7 @@ public class SQLManager implements AbstractDB {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public void createPlotAndSettings(final Plot plot, final Runnable whenDone) {
         addPlotTask(plot, new UniqueStatement("createPlotAndSettings_" + plot.hashCode()) {
@@ -1022,7 +1021,7 @@ public class SQLManager implements AbstractDB {
         });
         addNotifyTask(whenDone);
     }
-    
+
     /**
      * Create tables
      *
@@ -1100,8 +1099,7 @@ public class SQLManager implements AbstractDB {
             + "  `flags` VARCHAR(512) DEFAULT NULL,"
             + "  `merged` INT(11) DEFAULT NULL,"
             + "  `position` VARCHAR(50) NOT NULL DEFAULT 'DEFAULT',"
-            + "  PRIMARY KEY (`plot_plot_id`),"
-            + "  UNIQUE KEY `unique_alias` (`alias`)"
+            + "  PRIMARY KEY (`plot_plot_id`)"
             + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
             stmt.addBatch("CREATE TABLE IF NOT EXISTS `"
             + prefix
@@ -1243,7 +1241,7 @@ public class SQLManager implements AbstractDB {
         stmt.clearBatch();
         stmt.close();
     }
-    
+
     @Override
     public void deleteSettings(final Plot plot) {
         addPlotTask(plot, new UniqueStatement("delete_plot_settings") {
@@ -1258,7 +1256,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void deleteHelpers(final Plot plot) {
         if (plot.getTrusted().isEmpty()) {
@@ -1276,7 +1274,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void deleteTrusted(final Plot plot) {
         if (plot.getMembers().isEmpty()) {
@@ -1294,7 +1292,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void deleteDenied(final Plot plot) {
         if (plot.getDenied().isEmpty()) {
@@ -1312,7 +1310,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void deleteComments(final Plot plot) {
         addPlotTask(plot, new UniqueStatement("delete_plot_comments") {
@@ -1328,7 +1326,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void deleteRatings(final Plot plot) {
         if (Settings.CACHE_RATINGS && plot.getSettings().getRatings().isEmpty()) {
@@ -1393,7 +1391,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public int getClusterId(final PlotCluster cluster) {
         if (cluster.temp > 0) {
@@ -1469,11 +1467,14 @@ public class SQLManager implements AbstractDB {
         return Integer.MAX_VALUE;
     }
 
-    public void updateTables() {
-        if (PS.get().getVersion().equals(PS.get().getLastVersion()) || (PS.get().getLastVersion() == null)) {
-            return;
-        }
+    public void updateTables(int[] oldVersion) {
         try {
+            if (MYSQL && !PS.get().checkVersion(oldVersion, 3, 3, 2)) {
+                try (Statement stmt = connection.createStatement()) {
+                    stmt.executeUpdate("ALTER TABLE `" + prefix + "plots` DROP INDEX `unique_alias`");
+                }
+                catch (SQLException ignore) {}
+            }
             final DatabaseMetaData data = connection.getMetaData();
             ResultSet rs = data.getColumns(null, null, prefix + "plot_comments", "plot_plot_id");
             if (rs.next()) {
@@ -1553,23 +1554,23 @@ public class SQLManager implements AbstractDB {
         }
 
     }
-    
+
     public void deleteRows(final ArrayList<Integer> rowIds, final String table, final String column) {
         setBulk(rowIds, new StmtMod<Integer>() {
 
             @Override
             public String getCreateMySQL(int size) {
-                return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + prefix + column + "` IN ", size);
+                return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + column + "` IN ", size);
             }
 
             @Override
             public String getCreateSQLite(int size) {
-                return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + prefix + column + "` IN ", size);
+                return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + column + "` IN ", size);
             }
 
             @Override
             public String getCreateSQL() {
-                return "DELETE FROM `" + table + "` WHERE `" + prefix + column + "` = ?";
+                return "DELETE FROM `" + table + "` WHERE `" + column + "` = ?";
             }
 
             @Override
@@ -1662,7 +1663,7 @@ public class SQLManager implements AbstractDB {
                             if (Settings.AUTO_PURGE) {
                                 toDelete.add(id);
                             } else {
-                                PS.debug("&cPLOT " + id + " in `plot` is a duplicate. Delete this plot or set `auto-purge: true` in the settings.yml.");
+                                PS.debug("&cPLOT " + id + " in `" + prefix +  "plot` is a duplicate. Delete this plot or set `auto-purge: true` in the settings.yml.");
                             }
                             continue;
                         }
@@ -1673,7 +1674,7 @@ public class SQLManager implements AbstractDB {
                     }
                     plots.put(id, p);
                 }
-                deleteRows(toDelete, "plot", "id");
+                deleteRows(toDelete, prefix + "plot", "id");
             }
             if (Settings.CACHE_RATINGS) {
                 try (ResultSet r = stmt.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + prefix + "plot_rating`")) {
@@ -1695,7 +1696,7 @@ public class SQLManager implements AbstractDB {
                             PS.debug("&cENTRY " + id + " in `plot_rating` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
                         }
                     }
-                    deleteRows(toDelete, "plot_rating", "plot_plot_id");
+                    deleteRows(toDelete, prefix + "plot_rating", "plot_plot_id");
                 }
             }
 
@@ -1721,7 +1722,7 @@ public class SQLManager implements AbstractDB {
                         PS.debug("&cENTRY " + id + " in `plot_helpers` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
                     }
                 }
-                deleteRows(toDelete, "plot_helpers", "plot_plot_id");
+                deleteRows(toDelete, prefix + "plot_helpers", "plot_plot_id");
             }
 
             /*
@@ -1746,7 +1747,7 @@ public class SQLManager implements AbstractDB {
                         PS.debug("&cENTRY " + id + " in `plot_trusted` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
                     }
                 }
-                deleteRows(toDelete, "plot_trusted", "plot_plot_id");
+                deleteRows(toDelete, prefix + "plot_trusted", "plot_plot_id");
             }
 
             /*
@@ -1771,7 +1772,7 @@ public class SQLManager implements AbstractDB {
                         PS.debug("&cENTRY " + id + " in `plot_denied` does not exist. Create this plot or set `auto-purge: true` in the settings.yml.");
                     }
                 }
-                deleteRows(toDelete, "plot_denied", "plot_plot_id");
+                deleteRows(toDelete, prefix + "plot_denied", "plot_plot_id");
             }
 
             try (ResultSet r = stmt.executeQuery("SELECT * FROM `" + prefix + "plot_settings`")) {
@@ -1850,7 +1851,7 @@ public class SQLManager implements AbstractDB {
                     }
                 }
                 stmt.close();
-                deleteRows(toDelete, "plot_settings", "plot_plot_id");
+                deleteRows(toDelete, prefix + "plot_settings", "plot_plot_id");
             }
             if (!plots.entrySet().isEmpty()) {
                 createEmptySettings(new ArrayList<>(plots.keySet()), null);
@@ -1891,7 +1892,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void swapPlots(final Plot p1, final Plot p2) {
         final int id1 = getId(p1);
@@ -1925,7 +1926,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void movePlot(final Plot original, final Plot newPlot) {
         addPlotTask(original, new UniqueStatement("movePlot") {
@@ -1944,7 +1945,7 @@ public class SQLManager implements AbstractDB {
         });
         addPlotTask(newPlot, null);
     }
-    
+
     @Override
     public void setFlags(final Plot plot, final Collection<Flag> flags) {
         final String flag_string = FlagManager.toString(flags);
@@ -1961,7 +1962,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setAlias(final Plot plot, final String alias) {
         addPlotTask(plot, new UniqueStatement("setAlias") {
@@ -1977,7 +1978,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     /**
      * Purge all plots with the following database IDs
      */
@@ -2025,7 +2026,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void purge(final PlotArea area, final Set<PlotId> plots) {
         addGlobalTask(new Runnable() {
@@ -2058,7 +2059,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setPosition(final Plot plot, final String position) {
         addPlotTask(plot, new UniqueStatement("setPosition") {
@@ -2074,7 +2075,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void removeComment(final Plot plot, final PlotComment comment) {
         addPlotTask(plot, new UniqueStatement("removeComment") {
@@ -2102,7 +2103,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void clearInbox(final Plot plot, final String inbox) {
         addPlotTask(plot, new UniqueStatement("clearInbox") {
@@ -2126,7 +2127,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void getComments(final Plot plot, final String inbox, final RunnableVal<List<PlotComment>> whenDone) {
         addPlotTask(plot, new UniqueStatement("getComments_" + plot) {
@@ -2177,7 +2178,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setComment(final Plot plot, final PlotComment comment) {
         addPlotTask(plot, new UniqueStatement("setComment") {
@@ -2197,7 +2198,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void removeTrusted(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("removeTrusted") {
@@ -2213,7 +2214,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void removeMember(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("removeMember") {
@@ -2229,7 +2230,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setTrusted(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("setTrusted") {
@@ -2245,7 +2246,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setMember(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("setMember") {
@@ -2261,7 +2262,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void removeDenied(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("removeDenied") {
@@ -2277,7 +2278,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setDenied(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("setDenied") {
@@ -2293,7 +2294,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public HashMap<UUID, Integer> getRatings(final Plot plot) {
         final HashMap<UUID, Integer> map = new HashMap<>();
@@ -2313,7 +2314,7 @@ public class SQLManager implements AbstractDB {
         }
         return map;
     }
-    
+
     @Override
     public void setRating(final Plot plot, final UUID rater, final int value) {
         addPlotTask(plot, new UniqueStatement("setRating") {
@@ -2330,7 +2331,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void delete(final PlotCluster cluster) {
         final int id = getClusterId(cluster);
@@ -2666,7 +2667,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setClusterName(final PlotCluster cluster, final String name) {
         addClusterTask(cluster, new UniqueStatement("setClusterName") {
@@ -2683,7 +2684,7 @@ public class SQLManager implements AbstractDB {
         });
         cluster.settings.setAlias(name);
     }
-    
+
     @Override
     public void removeHelper(final PlotCluster cluster, final UUID uuid) {
         addClusterTask(cluster, new UniqueStatement("removeHelper") {
@@ -2699,7 +2700,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setHelper(final PlotCluster cluster, final UUID uuid) {
         addClusterTask(cluster, new UniqueStatement("setHelper") {
@@ -2715,7 +2716,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void createCluster(final PlotCluster cluster) {
         addClusterTask(cluster, new UniqueStatement("createCluster_" + cluster.hashCode()) {
@@ -2761,7 +2762,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void resizeCluster(final PlotCluster current, PlotId min, PlotId max) {
         final PlotId pos1 = new PlotId(current.getP1().x, current.getP1().y);
@@ -2785,7 +2786,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setPosition(final PlotCluster cluster, final String position) {
         addClusterTask(cluster, new UniqueStatement("setPosition") {
@@ -2801,7 +2802,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void removeInvited(final PlotCluster cluster, final UUID uuid) {
         addClusterTask(cluster, new UniqueStatement("removeInvited") {
@@ -2817,7 +2818,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public void setInvited(final PlotCluster cluster, final UUID uuid) {
         addClusterTask(cluster, new UniqueStatement("setInvited") {
@@ -2833,14 +2834,14 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
-    
+
     @Override
     public boolean deleteTables() {
-        try {
+        try (Statement stmt = connection.createStatement();
+                PreparedStatement statement = connection.prepareStatement("DROP TABLE `" + prefix + "plot`")) {
             close();
             CLOSED = false;
             SQLManager.this.connection = database.forceConnection();
-            final Statement stmt = connection.createStatement();
             stmt.addBatch("DROP TABLE `" + prefix + "cluster_invited`");
             stmt.addBatch("DROP TABLE `" + prefix + "cluster_helpers`");
             stmt.addBatch("DROP TABLE `" + prefix + "cluster`");
@@ -2852,9 +2853,6 @@ public class SQLManager implements AbstractDB {
             stmt.addBatch("DROP TABLE `" + prefix + "plot_denied`");
             stmt.executeBatch();
             stmt.clearBatch();
-            stmt.close();
-
-            final PreparedStatement statement = connection.prepareStatement("DROP TABLE `" + prefix + "plot`");
             statement.executeUpdate();
             statement.close();
         } catch (ClassNotFoundException | SQLException e) {
@@ -2862,7 +2860,7 @@ public class SQLManager implements AbstractDB {
         }
         return true;
     }
-    
+
     @Override
     public void validateAllPlots(final Set<Plot> toValidate) {
         try {
@@ -2990,7 +2988,7 @@ public class SQLManager implements AbstractDB {
         }
         commit();
     }
-    
+
     @Override
     public void replaceWorld(final String oldWorld, final String newWorld, final PlotId min, final PlotId max) {
         addGlobalTask(new Runnable() {
@@ -3001,7 +2999,6 @@ public class SQLManager implements AbstractDB {
                         stmt.setString(1, newWorld);
                         stmt.setString(2, oldWorld);
                         stmt.executeUpdate();
-                        stmt.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -3009,14 +3006,12 @@ public class SQLManager implements AbstractDB {
                         stmt.setString(1, newWorld);
                         stmt.setString(2, oldWorld);
                         stmt.executeUpdate();
-                        stmt.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 } else {
                     try (PreparedStatement stmt = connection.prepareStatement("UPDATE `"
-                    + prefix
-                    + "plot` SET `world` = ? WHERE `world` = ? AND `plot_id_x` BETWEEN ? AND ? AND `plot_id_z` BETWEEN ? AND ?")) {
+                            + prefix + "plot` SET `world` = ? WHERE `world` = ? AND `plot_id_x` BETWEEN ? AND ? AND `plot_id_z` BETWEEN ? AND ?")) {
                         stmt.setString(1, newWorld);
                         stmt.setString(2, oldWorld);
                         stmt.setInt(3, min.x);
@@ -3024,7 +3019,6 @@ public class SQLManager implements AbstractDB {
                         stmt.setInt(5, min.y);
                         stmt.setInt(6, max.y);
                         stmt.executeUpdate();
-                        stmt.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -3038,7 +3032,6 @@ public class SQLManager implements AbstractDB {
                         stmt.setInt(5, min.x);
                         stmt.setInt(6, min.y);
                         stmt.executeUpdate();
-                        stmt.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -3071,14 +3064,13 @@ public class SQLManager implements AbstractDB {
                     stmt.executeUpdate(
                             "UPDATE `" + prefix + "plot_trusted` SET `user_uuid` = '" + now.toString() + "' WHERE `user_uuid` = '" + old.toString()
                                     + "'");
-                    stmt.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
         });
     }
-    
+
     @Override
     public void close() {
         try {

@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot;
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONObject;
 
+import com.intellectualcrafters.plot.util.StringMan;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -51,13 +52,15 @@ public class Updater {
             String name = asset.getString("name");
             if (downloadURL.equals(name)) {
                 try {
-                    String version = release.getString("name");
+                    String[] split = release.getString("name").split("\\.");
+                    int[] version = new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), (split.length == 3) ? Integer.parseInt(split[2]) : 0 };
                     URL url = new URL(asset.getString("browser_download_url"));
-                    if (!PS.get().canUpdate(PS.get().config.getString("version"), version)) {
+                    // If current version >= update
+                    if (PS.get().checkVersion(PS.get().getVersion(), version)) {
                         PS.debug("&7PlotSquared is already up to date!");
                         return null;
                     }
-                    log("&6PlotSquared " + version + " is available:");
+                    log("&6PlotSquared " + StringMan.join(split, ".") + " is available:");
                     log("&8 - &3Use: &7/plot update");
                     log("&8 - &3Or: &7" + downloadURL);
                     return url;

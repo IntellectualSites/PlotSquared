@@ -78,7 +78,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
@@ -91,8 +90,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -655,25 +652,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public String getNMSPackage() {
-        final Server server = Bukkit.getServer();
-        final Class<?> bukkitServerClass = server.getClass();
-        String[] pas = bukkitServerClass.getName().split("\\.");
-        if (pas.length == 5) {
-            return pas[3];
-        }
-        try {
-            final Method getHandle = bukkitServerClass.getDeclaredMethod("getHandle");
-            final Object handle = getHandle.invoke(server);
-            final Class handleServerClass = handle.getClass();
-            pas = handleServerClass.getName().split("\\.");
-            if (pas.length == 5) {
-                return pas[3];
-            }
-        } catch (IllegalAccessException | InvocationTargetException | SecurityException | NoSuchMethodException | IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-        PS.debug("Unknown NMS package: " + StringMan.getString(pas));
-        return "1_8_R3";
+        String name = Bukkit.getServer().getClass().getPackage().getName();
+        return name.substring(name.lastIndexOf('.') + 1);
     }
     
     @Override

@@ -564,43 +564,42 @@ public class Plot {
      * @return true if merged in that direction
      */
     public boolean getMerged(final int direction) {
-        if (isMerged()) {
-            switch (direction) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                    return this.getSettings().getMerged(direction);
-                case 7:
-                    int i = direction - 4;
-                    int i2 = 0;
-                    if (this.getSettings().getMerged(i2)) {
-                        if (this.getSettings().getMerged(i)) {
-                            if (this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)) {
-                                if (this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i)) {
-                                    return true;
-                                }
+        if (settings == null) {
+            return false;
+        }
+        switch (direction) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                return this.getSettings().getMerged(direction);
+            case 7:
+                int i = direction - 4;
+                int i2 = 0;
+                if (this.getSettings().getMerged(i2)) {
+                    if (this.getSettings().getMerged(i)) {
+                        if (this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)) {
+                            if (this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i)) {
+                                return true;
                             }
                         }
                     }
-                    return false;
-                case 4:
-                case 5:
-                case 6:
-                    i = direction - 4;
-                    i2 = direction - 3;
-                    return this.getSettings().getMerged(i2)
-                            && this.getSettings().getMerged(i)
-                            && this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)
-                            && this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i);
+                }
+                return false;
+            case 4:
+            case 5:
+            case 6:
+                i = direction - 4;
+                i2 = direction - 3;
+                return this.getSettings().getMerged(i2)
+                        && this.getSettings().getMerged(i)
+                        && this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)
+                        && this.area.getPlotAbs(this.id.getRelative(i2)).getMerged(i);
 
-            }
-            return false;
-        } else {
-            return false;
         }
+        return false;
     }
-    
+
     /**
      * Get the denied users
      * @return
@@ -1129,13 +1128,13 @@ public class Plot {
      * @param loc
      */
     public void setHome(final BlockLoc loc) {
-        final BlockLoc pos = this.getSettings().getPosition();
-        if (pos.equals(new BlockLoc(0, 0, 0)) && loc == null || pos.equals(loc)) {
+        final Plot plot = this.getBasePlot(false);
+        final BlockLoc pos = plot.getSettings().getPosition();
+        if (new BlockLoc(0, 0, 0).equals(loc)) {
             return;
         }
-        final Plot plot = this.getBasePlot(false);
         plot.getSettings().setPosition(loc);
-        DBFunc.setPosition(plot, this.getSettings().getPosition().toString());
+        DBFunc.setPosition(plot, plot.getSettings().getPosition().toString());
     }
     
     /**
@@ -1761,25 +1760,38 @@ public class Plot {
     }
     
     /**
-     * Upload the plot as a schematic to the configured web interface
+     * Upload the plot as a schematic to the configured web interface<br>
      * @param whenDone value will be null if uploading fails
      */
     public void upload(final RunnableVal<URL> whenDone) {
         SchematicHandler.manager.getCompoundTag(this, new RunnableVal<CompoundTag>() {
             @Override
             public void run(final CompoundTag value) {
-                TaskManager.runTaskAsync(new Runnable() {
-                    @Override
-                    public void run() {
-                        final URL url = SchematicHandler.manager.upload(value, null, null);
-                        if (whenDone != null) {
-                            whenDone.value = url;
-                        }
-                        TaskManager.runTask(whenDone);
-                    }
-                });
+                SchematicHandler.manager.upload(value, null, null, whenDone);
             }
         });
+    }
+
+    /**
+     * Upload this plot as a world file<br>
+     *  - The mca files are each 512x512, so depending on the plot size it may also download adjacent plots<br>
+     *  - Works best when (plot width + road width) % 512 == 0<br>
+     *  @see com.intellectualcrafters.plot.util.WorldUtil
+     * @param whenDone
+     */
+    public void uploadWorld(RunnableVal<URL> whenDone) {
+        WorldUtil.IMP.upload(this, null, null, whenDone);
+    }
+
+    /**
+     * Upload this plot as a BO3<br>
+     *     - May not work on non default generator<br>
+     *     - BO3 includes flags/ignores plot main/floor block<br>
+     * @see com.intellectualcrafters.plot.util.BO3Handler
+     * @param whenDone
+     */
+    public void uploadBO3(RunnableVal<URL> whenDone) {
+        BO3Handler.upload(this, null, null, whenDone);
     }
 
     @Override
@@ -2308,9 +2320,6 @@ public class Plot {
             connected_cache.add(current);
             queuecache.remove(current);
             merged = current.getMerged();
-            for (int i = 0; i < 5; i++) {
-
-            }
             if (merged[0]) {
                 tmp = current.area.getPlotAbs(current.id.getRelative(0));
                 if ((tmp != null) && !queuecache.contains(tmp) && !connected_cache.contains(tmp)) {
@@ -2780,7 +2789,7 @@ public class Plot {
         // copy data
         for (final Plot plot : plots) {
             final Plot other = plot.getRelative(offset.x, offset.y);
-            other.create(other.owner, false);
+            other.create(plot.owner, false);
             if (!plot.getFlags().isEmpty()) {
                 other.getSettings().flags = plot.getFlags();
                 DBFunc.setFlags(other, plot.getFlags().values());
@@ -2790,19 +2799,19 @@ public class Plot {
             }
             if ((plot.members != null) && !plot.members.isEmpty()) {
                 other.members = plot.members;
-                for (final UUID member : other.members) {
+                for (final UUID member : plot.members) {
                     DBFunc.setMember(other, member);
                 }
             }
             if ((plot.trusted != null) && !plot.trusted.isEmpty()) {
                 other.trusted = plot.trusted;
-                for (final UUID trusted : other.trusted) {
+                for (final UUID trusted : plot.trusted) {
                     DBFunc.setTrusted(other, trusted);
                 }
             }
             if ((plot.denied != null) && !plot.denied.isEmpty()) {
                 other.denied = plot.denied;
-                for (final UUID denied : other.denied) {
+                for (final UUID denied : plot.denied) {
                     DBFunc.setDenied(other, denied);
                 }
             }

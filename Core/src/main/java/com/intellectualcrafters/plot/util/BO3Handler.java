@@ -12,8 +12,13 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-
+import com.intellectualcrafters.plot.object.RunnableVal;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -22,16 +27,28 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class BO3Handler {
     
     /**
-     * @see #saveBO3(PlotPlayer, Plot)
+     * @see #saveBO3(PlotPlayer, Plot, RunnableVal)
      * @param plot
      * @return if successfully exported
      */
     public static boolean saveBO3(final Plot plot) {
         return saveBO3(null, plot);
+    }
+
+    public static boolean saveBO3(final PlotPlayer player, final Plot plot) {
+        return saveBO3(player, plot, new RunnableVal<BO3>() {
+            @Override
+            public void run(BO3 bo3) {
+                save(plot, bo3);
+            }
+        });
     }
     
     public static boolean contains(final PlotBlock[] blocks, final PlotBlock block) {
@@ -50,7 +67,10 @@ public class BO3Handler {
      * @param plot
      * @return
      */
-    public static boolean saveBO3(final PlotPlayer plr, final Plot plot) {
+    public static boolean saveBO3(final PlotPlayer plr, final Plot plot, RunnableVal<BO3> saveTask) {
+        if (saveTask == null) {
+            throw new IllegalArgumentException("Save task cannot be null!");
+        }
         final PlotArea plotworld = plot.getArea();
         if (!(plotworld instanceof ClassicPlotWorld) || (plotworld.TYPE != 0)) {
             MainUtil.sendMessage(plr, "BO3 exporting only supports type 0 classic generation.");
@@ -83,8 +103,8 @@ public class BO3Handler {
 
         boolean content = false;
         for (RegionWrapper region : regions) {
-            Location pos1 = new Location(plot.getArea().worldname, region.minX, region.minY, region.minZ);
-            Location pos2 = new Location(plot.getArea().worldname, region.maxX, region.maxY, region.maxZ);
+            Location pos1 = new Location(plotworld.worldname, region.minX, region.minY, region.minZ);
+            Location pos2 = new Location(plotworld.worldname, region.maxX, region.maxY, region.maxZ);
             for (int x = pos1.getX(); x <= pos2.getX(); x++) {
                 final int X = ((x + 7) - cx) >> 4;
                 final int xx = (x - cx) % 16;
@@ -97,7 +117,7 @@ public class BO3Handler {
                         final PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, y, z));
                         if (!contains(cpw.MAIN_BLOCK, block)) {
                             if (bo3 == null) {
-                                bo3 = new BO3(alias, loc);
+                                bo3 = new BO3(alias, plotworld.worldname, loc);
                                 map.put(loc, bo3);
                                 content = true;
                             }
@@ -107,7 +127,7 @@ public class BO3Handler {
                     final PlotBlock floor = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, height, z));
                     if (!contains(cpw.TOP_BLOCK, floor)) {
                         if (bo3 == null) {
-                            bo3 = new BO3(alias, loc);
+                            bo3 = new BO3(alias, plotworld.worldname, loc);
                             map.put(loc, bo3);
                             content = true;
                         }
@@ -117,7 +137,7 @@ public class BO3Handler {
                         final PlotBlock block = WorldUtil.IMP.getBlock(new Location(plot.getArea().worldname, x, y, z));
                         if (block.id != 0) {
                             if (bo3 == null) {
-                                bo3 = new BO3(alias, loc);
+                                bo3 = new BO3(alias, plotworld.worldname, loc);
                                 map.put(loc, bo3);
                                 content = true;
                             }
@@ -164,14 +184,78 @@ public class BO3Handler {
         }
         
         for (final Entry<ChunkLoc, BO3> entry : map.entrySet()) {
-            save(plot, entry.getValue());
+            saveTask.run(entry.getValue());
         }
         
         MainUtil.sendMessage(plr, "BO3 exporting was successful!");
         return true;
     }
-    
+
+    public static void upload(final Plot plot, final UUID uuid, final String file, final RunnableVal<URL> whenDone) {
+        if (plot == null) {
+            throw new IllegalArgumentException("Arguments may not be null!");
+        }
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (final ZipOutputStream zos = new ZipOutputStream(baos)) {
+            saveBO3(null, plot, new RunnableVal<BO3>() {
+                @Override
+                public void run(BO3 bo3) {
+                    try {
+                        final ZipEntry ze = new ZipEntry(bo3.getFilename());
+                        zos.putNextEntry(ze);
+                        write(zos, plot, bo3);
+                        zos.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            whenDone.run();
+            return;
+        }
+        MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
+            @Override
+            public void run(OutputStream output) {
+                try {
+                    output.write(baos.toByteArray());
+                    baos.flush();
+                    baos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, whenDone);
+    }
+
+    public static void write(OutputStream stream, final Plot plot, BO3 bo3) throws IOException {
+        File base = getBaseFile(bo3.getWorld());
+        final List<String> lines = Files.readAllLines(base.toPath(), StandardCharsets.UTF_8);
+        for (int i = 0; i < lines.size(); i++) {
+            final String line = lines.get(i).trim();
+            final String result = StringMan.replaceAll(line, "%owner%", MainUtil.getName(plot.owner), "%alias%", plot.toString(), "%blocks%", bo3.getBlocks(), "%branches%", bo3.getChildren(),
+                    "%flags%", StringMan.join(FlagManager.getPlotFlags(plot).values(), ","));
+            if (!StringMan.isEqual(result, line)) {
+                lines.set(i, result);
+            }
+        }
+        stream.write(StringMan.join(lines, System.getProperty("line.separator")).getBytes());
+    }
+
     public static boolean save(final Plot plot, final BO3 bo3) {
+        try {
+            File bo3File = bo3.getFile();
+            bo3File.createNewFile();
+            try (FileOutputStream fos = new FileOutputStream(bo3File)) {
+                write(fos, plot, bo3);
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
         final File base = getBaseFile(plot.getArea().worldname);
         try {
             final List<String> lines = Files.readAllLines(base.toPath(), StandardCharsets.UTF_8);

@@ -25,10 +25,11 @@ import com.intellectualcrafters.plot.util.StringMan;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class Flag implements Cloneable {
+public class Flag<T> implements Cloneable {
     private AbstractFlag key;
     private Object value;
-    
+    private String name;
+
     /**
      * Flag object used to store basic information for a Plot. Flags are a key/value pair. For a flag to be usable by a
      * player, you need to register it with PlotSquared.
@@ -58,6 +59,10 @@ public class Flag implements Cloneable {
     public Flag(final AbstractFlag key, final Object value) {
         this.key = key;
         this.value = value;
+    }
+
+    public Flag(String name) {
+        this.name = name;
     }
     
     /**
@@ -144,5 +149,9 @@ public class Flag implements Cloneable {
             e.printStackTrace();
         }
         return this;
+    }
+
+    public String getName() {
+        return name;
     }
 }

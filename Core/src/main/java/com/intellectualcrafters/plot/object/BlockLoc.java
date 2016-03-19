@@ -36,7 +36,7 @@ public class BlockLoc {
             return true;
         }
         if (obj == null) {
-            return false;
+            return x == 0 && y == 0 && z == 0;
         }
         if (getClass() != obj.getClass()) {
             return false;
@@ -47,7 +47,11 @@ public class BlockLoc {
     
     @Override
     public String toString() {
+        if (x == 0 && y == 0 && z == 0) {
+            return "";
+        }
         return x + "," + y + "," + z + "," + yaw + "," + pitch;
+
     }
     
     public static BlockLoc fromString(final String string) {

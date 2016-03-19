@@ -534,7 +534,7 @@ public class BukkitChunkManager extends ChunkManager {
                 }
             }
         }
-        final PlotLoc loc = new PlotLoc(x, z);
+        final PlotLoc loc = new PlotLoc(x + offset_x, z + offset_z);
         allblocks.put(loc, ids);
     }
 
@@ -633,133 +633,48 @@ public class BukkitChunkManager extends ChunkManager {
     public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
-
-        final int relCX = relX >> 4;
-        final int relCZ = relZ >> 4;
+        final Location pos4 = new Location(newPos.getWorld(), newPos.getX() + relX, 256, newPos.getZ() + relZ);
 
         final RegionWrapper region = new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
         final World oldWorld = Bukkit.getWorld(pos1.getWorld());
         final World newWorld = Bukkit.getWorld(newPos.getWorld());
         final String newWorldname = newWorld.getName();
         final List<ChunkLoc> chunks = new ArrayList<>();
-
+        initMaps();
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
             public void run(int[] value) {
-                initMaps();
-
                 final int bx = value[2];
                 final int bz = value[3];
-
                 final int tx = value[4];
                 final int tz = value[5];
-
-                // Load chunks
-                final ChunkLoc loc1 = new ChunkLoc(value[0], value[1]);
-                final ChunkLoc loc2 = new ChunkLoc(loc1.x + relCX, loc1.z + relCZ);
-                final Chunk c1 = oldWorld.getChunkAt(loc1.x, loc1.z);
-                final Chunk c2 = newWorld.getChunkAt(loc2.x, loc2.z);
-                c1.load(true);
-                c2.load(true);
-                chunks.add(loc2);
-                // entities
-                saveEntitiesIn(c1, region);
-                // copy chunk
-                setChunkInPlotArea(null, new RunnableVal<PlotChunk<?>>() {
-                    @Override
-                    public void run(PlotChunk<?> value) {
-                        for (int x = bx & 15; x <= (tx & 15); x++) {
-                            for (int z = bz & 15; z <= (tz & 15); z++) {
-                                for (int y = 1; y < 256; y++) {
-                                    Block block = c1.getBlock(x, y, z);
-                                    Material id = block.getType();
-                                    switch (id) {
-                                        case AIR:
-                                        case GRASS:
-                                        case COBBLESTONE:
-                                        case GRAVEL:
-                                        case GOLD_ORE:
-                                        case IRON_ORE:
-                                        case GLASS:
-                                        case LAPIS_ORE:
-                                        case LAPIS_BLOCK:
-                                        case WEB:
-                                        case DEAD_BUSH:
-                                        case YELLOW_FLOWER:
-                                        case BROWN_MUSHROOM:
-                                        case RED_MUSHROOM:
-                                        case GOLD_BLOCK:
-                                        case IRON_BLOCK:
-                                        case BRICK:
-                                        case TNT:
-                                        case BOOKSHELF:
-                                        case MOSSY_COBBLESTONE:
-                                        case OBSIDIAN:
-                                        case FIRE:
-                                        case REDSTONE_WIRE:
-                                        case DIAMOND_ORE:
-                                        case DIAMOND_BLOCK:
-                                        case WORKBENCH:
-                                        case SOIL:
-                                        case BEDROCK:
-                                        case WATER:
-                                        case STATIONARY_WATER:
-                                        case LAVA:
-                                        case STATIONARY_LAVA:
-                                        case REDSTONE_ORE:
-                                        case GLOWING_REDSTONE_ORE:
-                                        case SNOW:
-                                        case ICE:
-                                        case SNOW_BLOCK:
-                                        case CACTUS:
-                                        case CLAY:
-                                        case SUGAR_CANE_BLOCK:
-                                        case FENCE:
-                                        case NETHERRACK:
-                                        case SOUL_SAND:
-                                        case IRON_FENCE:
-                                        case THIN_GLASS:
-                                        case MELON_BLOCK:
-                                        case MYCEL:
-                                        case NETHER_BRICK:
-                                        case NETHER_FENCE:
-                                        case ENDER_STONE:
-                                        case DRAGON_EGG:
-                                        case EMERALD_ORE:
-                                        case EMERALD_BLOCK:
-                                        case SLIME_BLOCK:
-                                        case BARRIER:
-                                        case SEA_LANTERN:
-                                        case HAY_BLOCK:
-                                        case HARD_CLAY:
-                                        case COAL_BLOCK:
-                                        case PACKED_ICE:
-                                        case DOUBLE_STONE_SLAB2:
-                                        case STONE_SLAB2:
-                                        case SPRUCE_FENCE:
-                                        case BIRCH_FENCE:
-                                        case JUNGLE_FENCE:
-                                        case DARK_OAK_FENCE:
-                                        case ACACIA_FENCE:
-                                            value.setBlock(x, y, z, id.getId(), (byte) 0);
-                                            break;
-                                        default:
-                                            value.setBlock(x, y, z, id.getId(), block.getData());
-                                            break;
-                                    }
-                                }
-                            }
-                        }
+                final ChunkLoc loc = new ChunkLoc(value[0], value[1]);
+                final int cxx = loc.x << 4;
+                final int czz = loc.z << 4;
+                final Chunk chunk = oldWorld.getChunkAt(loc.x, loc.z);
+                saveEntitiesIn(chunk, region);
+                for (int x = bx & 15; x <= (tx & 15); x++) {
+                    for (int z = bz & 15; z <= (tz & 15); z++) {
+                        saveBlocks(oldWorld, 256, cxx + x, czz + z, relX, relZ, true);
                     }
-                }, newWorldname, loc2);
-                // restore chunk
-                restoreBlocks(newWorld, relX, relZ);
-                restoreEntities(newWorld, relX, relZ);
+                }
             }
         }, new Runnable() {
             @Override
             public void run() {
-                SetQueue.IMP.queue.sendChunk(newWorldname, chunks);
+                for (Entry<PlotLoc, PlotBlock[]> entry : allblocks.entrySet()) {
+                    PlotLoc loc = entry.getKey();
+                    PlotBlock[] blocks = entry.getValue();
+                    for (int y = 0; y < blocks.length; y++) {
+                        PlotBlock block = blocks[y];
+                        if (block != null) {
+                            SetQueue.IMP.setBlock(newWorldname, loc.x, y, loc.z, block);
+                        }
+                    }
+                }
+                while (SetQueue.IMP.forceChunkSet());
+                restoreBlocks(newWorld, 0, 0);
+                restoreEntities(newWorld, relX, relZ);
                 TaskManager.runTask(whenDone);
             }
         }, 5);

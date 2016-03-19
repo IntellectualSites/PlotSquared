@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class ExpireManager {
 
@@ -43,6 +44,11 @@ public class ExpireManager {
             plotsToDelete.remove(plot);
             confirmExpiry(pp);
         }
+    }
+
+    public long getTimestamp(UUID uuid) {
+        Long value = dates_cache.get(uuid);
+        return value == null ? 0 : value;
     }
 
     public void confirmExpiry(final PlotPlayer pp) {
@@ -233,8 +239,7 @@ public class ExpireManager {
                 }
                 if ((last = opp.getLastPlayed()) != 0) {
                     dates_cache.put(uuid, last);
-                }
-                else {
+                } else {
                     return false;
                 }
             }
@@ -242,7 +247,7 @@ public class ExpireManager {
                 return false;
             }
             final long compared = System.currentTimeMillis() - last;
-            if (compared >= (86400000l * Settings.AUTO_CLEAR_DAYS)) {
+            if (compared >= (TimeUnit.DAYS.toMillis(Settings.AUTO_CLEAR_DAYS))) {
                 return true;
             }
         }

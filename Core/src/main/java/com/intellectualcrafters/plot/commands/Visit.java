@@ -30,8 +30,12 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 @CommandDeclaration(
 command = "visit",
@@ -82,8 +86,6 @@ public class Visit extends SubCommand {
                 }
                 if (user != null) {
                     unsorted = PS.get().getBasePlots(user);
-                } else if (PS.get().getPlotAreaByString(args[0]) != null) {
-                    unsorted = PS.get().getPlotAreaByString(args[0]).getPlots();
                 } else {
                     final Plot plot = MainUtil.getPlotFromString(player, args[0], true);
                     if (plot != null) {

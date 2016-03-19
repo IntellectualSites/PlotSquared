@@ -26,12 +26,35 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.*;
-
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import java.io.File;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.regex.Matcher;
 
 /**
@@ -104,6 +127,86 @@ public class MainUtil {
                 }
             }
         }
+    }
+
+    public static void upload(UUID uuid, String file, String extension, final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
+        if (writeTask == null) {
+            PS.debug("&cWrite task cannot be null");
+            TaskManager.runTask(whenDone);
+            return;
+        }
+        final String filename;
+        final String website;
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+            website = Settings.WEB_URL + "upload.php?" + uuid;
+            filename = "plot." + extension;
+        } else {
+            website = Settings.WEB_URL + "save.php?" + uuid;
+            filename = file + "." + extension;
+        }
+        final URL url;
+        try {
+            url = new URL(Settings.WEB_URL + "?key=" + uuid + "&ip=" + Settings.WEB_IP + "&type=" + extension);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            whenDone.run();
+            return;
+        }
+        TaskManager.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final String boundary = Long.toHexString(System.currentTimeMillis());
+                    final URLConnection con = new URL(website).openConnection();
+                    con.setDoOutput(true);
+                    con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+                    try (OutputStream output = con.getOutputStream();
+                         PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
+                        final String CRLF = "\r\n";
+                        writer.append("--" + boundary).append(CRLF);
+                        writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
+                        writer.append("Content-Type: text/plain; charset=" + StandardCharsets.UTF_8.displayName()).append(CRLF);
+                        final String param = "value";
+                        writer.append(CRLF).append(param).append(CRLF).flush();
+                        writer.append("--" + boundary).append(CRLF);
+                        writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + filename + "\"").append(CRLF);
+                        writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(filename)).append(CRLF);
+                        writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+                        writer.append(CRLF).flush();
+                        writeTask.value = output;
+                        writeTask.run();
+                        output.flush();
+                        writer.append(CRLF).flush();
+                        writer.append("--" + boundary + "--").append(CRLF).flush();
+                    }
+//                    try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
+//                        final char[] buffer = new char[256];
+//                        final StringBuilder result = new StringBuilder();
+//                        while (true) {
+//                            final int r = response.read(buffer);
+//                            if (r < 0) {
+//                                break;
+//                            }
+//                            result.append(buffer, 0, r);
+//                        }
+//                        if (!result.toString().startsWith("Success")) {
+//                            PS.debug(result);
+//                        }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+                    final int responseCode = ((HttpURLConnection) con).getResponseCode();
+                    if (responseCode == 200) {
+                        whenDone.value = url;
+                    }
+                    TaskManager.runTask(whenDone);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    TaskManager.runTask(whenDone);
+                }
+            }
+        });
     }
 
     /**

@@ -163,6 +163,22 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
+    public void setSpawn(Location loc) {
+        World world = getWorld(loc.getWorld());
+        if (world != null) {
+            world.setSpawnLocation(loc.getX(), loc.getY(), loc.getZ());
+        }
+    }
+
+    @Override
+    public void saveWorld(String worldname) {
+        World world = getWorld(worldname);
+        if (world != null) {
+            world.save();
+        }
+    }
+
+    @Override
     public int getHighestBlock(final String world, final int x, final int z) {
         return getWorld(world).getHighestBlockAt(x, z).getY();
     }

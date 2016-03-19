@@ -374,13 +374,13 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 // ex. /p h:2 SomeUsername
                 // > /p h SomeUsername 2
                 String[] temp = label.split(":");
-                label = temp[0];
-
-                String[] tempArgs = new String[args.length + 1];
-                System.arraycopy(args, 0, tempArgs, 0, args.length);
-                tempArgs[tempArgs.length - 1] = temp[1];
-
-                args = tempArgs;
+                if (temp.length == 2) {
+                    label = temp[0];
+                    String[] tempArgs = new String[args.length + 1];
+                    System.arraycopy(args, 0, tempArgs, 0, args.length);
+                    tempArgs[tempArgs.length - 1] = temp[1];
+                    args = tempArgs;
+                }
             }
             cmd = getInstance().commands.get(label.toLowerCase());
         } else {

@@ -17,7 +17,6 @@ public class GenChunk extends PlotChunk<Chunk> {
     public short[][] result;
     public byte[][] result_data;
     public ChunkData cd;
-    public boolean modified = false;
     public BiomeGrid grid;
 
     public GenChunk(Chunk chunk, ChunkWrapper wrap) {
@@ -42,7 +41,6 @@ public class GenChunk extends PlotChunk<Chunk> {
 
     @Override
     public void setBiome(int x, int z, int biome) {
-        modified = true;
         grid.setBiome(x, z, biomes[biome]);
     }
 
@@ -55,14 +53,12 @@ public class GenChunk extends PlotChunk<Chunk> {
     @Override
     public void setBlock(int x, int y, int z, int id, byte data) {
         if (result == null) {
-            modified = true;
             cd.setBlock(x, y, z, id, data);
             return;
         }
         int i = MainUtil.CACHE_I[y][x][z];
         short[] v = result[i];
         if (v == null) {
-            modified = true;
             result[i] = v = new short[4096];
         }
         int j = MainUtil.CACHE_J[y][x][z];

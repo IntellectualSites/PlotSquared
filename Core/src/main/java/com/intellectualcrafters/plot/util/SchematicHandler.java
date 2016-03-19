@@ -24,7 +24,6 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,14 +33,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -566,72 +561,26 @@ public abstract class SchematicHandler {
         return null;
     }
     
-    public URL upload(final CompoundTag tag, UUID uuid, String file) {
+    public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (tag == null) {
             PS.debug("&cCannot save empty tag");
-            return null;
+            TaskManager.runTask(whenDone);
+            return;
         }
-        try {
-            String website;
-            if (uuid == null) {
-                uuid = UUID.randomUUID();
-                website = Settings.WEB_URL + "upload.php?" + uuid;
-                file = "plot";
-            } else {
-                website = Settings.WEB_URL + "save.php?" + uuid;
+        MainUtil.upload(uuid, file, "schematic", new RunnableVal<OutputStream>() {
+            @Override
+            public void run(OutputStream output) {
+                try {
+                    GZIPOutputStream gzip = new GZIPOutputStream(output, true);
+                    NBTOutputStream nos = new NBTOutputStream(gzip);
+                    nos.writeTag(tag);
+                    nos.flush();
+                    gzip.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            final String boundary = Long.toHexString(System.currentTimeMillis());
-            final URLConnection con = new URL(website).openConnection();
-            con.setDoOutput(true);
-            con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-            try (OutputStream output = con.getOutputStream();
-                    PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
-                final String CRLF = "\r\n";
-                writer.append("--" + boundary).append(CRLF);
-                writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
-                writer.append("Content-Type: text/plain; charset=" + StandardCharsets.UTF_8.displayName()).append(CRLF);
-                final String param = "value";
-                writer.append(CRLF).append(param).append(CRLF).flush();
-                writer.append("--" + boundary).append(CRLF);
-                writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + file + ".schematic" + "\"").append(CRLF);
-                writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(file + ".schematic")).append(CRLF);
-                writer.append("Content-Transfer-Encoding: binary").append(CRLF);
-                writer.append(CRLF).flush();
-                final GZIPOutputStream gzip = new GZIPOutputStream(output);
-                final NBTOutputStream nos = new NBTOutputStream(gzip);
-                nos.writeTag(tag);
-                gzip.finish();
-                nos.flush();
-                output.flush();
-                writer.append(CRLF).flush();
-                writer.append("--" + boundary + "--").append(CRLF).flush();
-                nos.close();
-            }
-//            try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
-//                final char[] buffer = new char[256];
-//                final StringBuilder result = new StringBuilder();
-//                while (true) {
-//                    final int r = response.read(buffer);
-//                    if (r < 0) {
-//                        break;
-//                    }
-//                    result.append(buffer, 0, r);
-//                }
-//                if (!result.toString().equals("The file plot.schematic has been uploaded.")) {
-//                    PS.debug(result);
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-            final int responseCode = ((HttpURLConnection) con).getResponseCode();
-            if (responseCode != 200) {
-                return null;
-            }
-            return new URL(Settings.WEB_URL + "?key=" + uuid + "&ip=" + Settings.WEB_IP);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        }, whenDone);
     }
     
     /**

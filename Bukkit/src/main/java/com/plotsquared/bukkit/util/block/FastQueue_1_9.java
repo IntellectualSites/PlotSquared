@@ -2,31 +2,40 @@ package com.plotsquared.bukkit.util.block;
 
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod.RefExecutor;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.Map.Entry;
 
 import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_9 extends SlowQueue {
 
+    final Object air;
     private final SendChunk chunksender;
     private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
     private final RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
@@ -41,25 +50,24 @@ public class FastQueue_1_9 extends SlowQueue {
     private final RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
     private final RefClass classBlock = getRefClass("{nms}.Block");
     private final RefClass classIBlockData = getRefClass("{nms}.IBlockData");
-    private HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
-    private RefMethod methodGetHandleChunk;
-    private RefConstructor MapChunk;
-    private RefMethod methodInitLighting;
-    private RefConstructor classBlockPositionConstructor;
-    private RefConstructor classChunkSectionConstructor;
-    private RefMethod methodW;
-    private RefMethod methodAreNeighborsLoaded;
-    private RefField fieldSections;
-    private RefField fieldWorld;
-    private RefMethod methodGetBlocks;
-    private RefMethod methodGetType;
-    private RefMethod methodSetType;
-    private RefMethod methodGetCombinedId;
-    private RefMethod methodGetByCombinedId;
-    final Object air;
+    private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
+    private final RefMethod methodGetHandleChunk;
+    private final RefConstructor MapChunk;
+    private final RefMethod methodInitLighting;
+    private final RefConstructor classBlockPositionConstructor;
+    private final RefConstructor classChunkSectionConstructor;
+    private final RefMethod methodW;
+    private final RefMethod methodAreNeighborsLoaded;
+    private final RefField fieldSections;
+    private final RefField fieldWorld;
+    private final RefMethod methodGetBlocks;
+    private final RefMethod methodGetType;
+    private final RefMethod methodSetType;
+    private final RefMethod methodGetCombinedId;
+    private final RefMethod methodGetByCombinedId;
 
 
-    public FastQueue_1_9() throws NoSuchMethodException, RuntimeException {
+    public FastQueue_1_9() throws RuntimeException {
         methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         methodInitLighting = classChunk.getMethod("initLighting");
         MapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
@@ -106,7 +114,7 @@ public class FastQueue_1_9 extends SlowQueue {
         if (!MainUtil.canSendChunk) {
             for (final Chunk chunk : chunks) {
                 chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
-                chunk.unload(true, false);
+                chunk.unload(true, true);
                 chunk.load();
             }
             return;
@@ -143,16 +151,15 @@ public class FastQueue_1_9 extends SlowQueue {
             final Field sf = clazz.getDeclaredField("sections");
             sf.setAccessible(true);
             final Field tf = clazz.getDeclaredField("tileEntities");
-            final Field ef = clazz.getDeclaredField("entitySlices");
+            final Field entitySlices = clazz.getDeclaredField("entitySlices");
 
             final Object[] sections = (Object[]) sf.get(c);
             final HashMap<?, ?> tiles = (HashMap<?, ?>) tf.get(c);
-            final List<?>[] entities = (List<?>[]) ef.get(c);
+            final Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
             Method xm = null;
             Method ym = null;
             Method zm = null;
-
             // Trim tiles
             final Set<Entry<?, ?>> entryset = (Set<Entry<?, ?>>) (Set<?>) tiles.entrySet();
             final Iterator<Entry<?, ?>> iter = entryset.iterator();
@@ -228,7 +235,7 @@ public class FastQueue_1_9 extends SlowQueue {
                             int x = MainUtil.x_loc[j][k];
                             int y = MainUtil.y_loc[j][k];
                             int z = MainUtil.z_loc[j][k];
-                            int id = (int) n;
+                            int id = n;
                             Object iblock = methodGetByCombinedId.call((int) n);
                             setType.call(x, y & 15, z, iblock);
                             continue;
@@ -292,7 +299,7 @@ public class FastQueue_1_9 extends SlowQueue {
             if (!chunk.isLoaded()) {
                 chunk.load(false);
             } else {
-                chunk.unload(true, false);
+                chunk.unload(true, true);
                 chunk.load(false);
             }
 

@@ -17,7 +17,12 @@ public class PlotLoc {
         result = (prime * result) + z;
         return result;
     }
-    
+
+    @Override
+    public String toString() {
+        return x + "," + z;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

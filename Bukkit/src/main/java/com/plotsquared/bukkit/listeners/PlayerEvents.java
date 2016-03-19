@@ -1196,6 +1196,9 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                     return;
                 }
                 break;
+            case BUILD_IRONGOLEM:
+            case BUILD_WITHER:
+            case BUILD_SNOWMAN:
             case CUSTOM:
                 if (!area.SPAWN_CUSTOM && entity.getType().getTypeId() != 30) {
                     event.setCancelled(true);
@@ -1505,7 +1508,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                             return;
                         }
                     } else if (fireball.getShooter() instanceof BlockProjectileSource) {
-                        final Block shooter = (Block) ((BlockProjectileSource) fireball.getShooter()).getBlock();
+                        final Block shooter = ((BlockProjectileSource) fireball.getShooter()).getBlock();
                         if (BukkitUtil.getLocation(shooter.getLocation()).getPlot() == null) {
                             e.setCancelled(true);
                             return;
