@@ -46,6 +46,11 @@ public class ExpireManager {
         }
     }
 
+    public long getTimestamp(UUID uuid) {
+        Long value = dates_cache.get(uuid);
+        return value == null ? 0 : value;
+    }
+
     public void confirmExpiry(final PlotPlayer pp) {
         if (Settings.AUTO_CLEAR_CONFIRMATION && plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")) {
             final int num = plotsToDelete.size();
