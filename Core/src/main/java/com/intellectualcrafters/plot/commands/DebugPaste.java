@@ -12,15 +12,9 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
-@CommandDeclaration(
-command = "debugpaste",
-aliases = { "dp" },
-usage = "/plot debugpaste",
-description = "Upload settings.yml & latest.log to HasteBin",
-permission = "plots.debugpaste",
-category = CommandCategory.DEBUG)
+@CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste", description = "Upload settings.yml & latest.log to HasteBin",
+        permission = "plots.debugpaste", category = CommandCategory.DEBUG)
 public class DebugPaste extends SubCommand {
     
     @Override
@@ -39,11 +33,12 @@ public class DebugPaste extends SubCommand {
                     }
                     final StringBuilder b = new StringBuilder();
                     b.append("# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your problem\n\n# We will start with some informational files\n");
-                    b.append("links.settings_yml: '").append(settingsYML).append("'\n");
-                    b.append("links.latest_log: '").append(latestLOG).append("'\n");
-                    b.append("\n# YAAAS! Now let us move on to the server info\n");
-                    b.append("version.server: '").append(Arrays.toString(PS.get().IMP.getServerVersion())).append("'\n");
-                    b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper() + ";" + !Settings.OFFLINE_MODE).append("\n");
+                    b.append("links.settings_yml: ").append(settingsYML).append("\n");
+                    b.append("links.latest_log: ").append(latestLOG).append("\n");
+                    b.append("\n# Server Information\n");
+                    int[] sVersion = PS.get().IMP.getServerVersion();
+                    b.append("version.server: ").append(sVersion[0]).append('.').append(sVersion[1]).append('.').append(sVersion[2]).append("\n");
+                    b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(";").append(!Settings.OFFLINE_MODE).append("\n");
                     b.append("plugins:");
                     for (String id : PS.get().IMP.getPluginIds()) {
                         String[] split = id.split(":");

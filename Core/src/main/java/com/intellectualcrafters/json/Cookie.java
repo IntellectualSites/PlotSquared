@@ -110,20 +110,15 @@ public class Cookie {
      */
     public static String toString(final JSONObject jo) throws JSONException {
         final StringBuilder sb = new StringBuilder();
-        sb.append(escape(jo.getString("name")));
-        sb.append("=");
-        sb.append(escape(jo.getString("value")));
+        sb.append(escape(jo.getString("name"))).append("=").append(escape(jo.getString("value")));
         if (jo.has("expires")) {
-            sb.append(";expires=");
-            sb.append(jo.getString("expires"));
+            sb.append(";expires=").append(jo.getString("expires"));
         }
         if (jo.has("domain")) {
-            sb.append(";domain=");
-            sb.append(escape(jo.getString("domain")));
+            sb.append(";domain=").append(escape(jo.getString("domain")));
         }
         if (jo.has("path")) {
-            sb.append(";path=");
-            sb.append(escape(jo.getString("path")));
+            sb.append(";path=").append(escape(jo.getString("path")));
         }
         if (jo.optBoolean("secure")) {
             sb.append(";secure");

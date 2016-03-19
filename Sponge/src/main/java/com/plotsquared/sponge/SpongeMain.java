@@ -317,15 +317,9 @@ public class SpongeMain implements IPlotMain {
         if (world == null) {
             // create world
             final ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldname);
-            String manager = worldConfig.getString("generator.plugin");
-            if (manager == null) {
-                manager = "PlotSquared";
-            }
-            String generator = worldConfig.getString("generator.init");
-            if (generator == null) {
-                generator = manager;
-            }
-            
+            String manager = worldConfig.getString("generator.plugin", "PlotSquared");
+            String generator = worldConfig.getString("generator.init", manager);
+
             final int type = worldConfig.getInt("generator.type");
             final int terrain = worldConfig.getInt("generator.terrain");
             final SetupObject setup = new SetupObject();

@@ -105,13 +105,7 @@ public final class Reflection {
     public synchronized static Object getHandle(final Object obj) {
         try {
             return getMethod(obj.getClass(), "getHandle").invoke(obj);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
             e.printStackTrace();
             return null;
         }

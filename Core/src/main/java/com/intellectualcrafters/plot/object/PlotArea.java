@@ -22,7 +22,6 @@ package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
@@ -30,11 +29,24 @@ import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.GridPlotWorld;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -128,7 +140,7 @@ public abstract class PlotArea {
 
     /**
      * Returns the region for this PlotArea
-     * @Nullable
+     *
      * @return RegionWrapper or null if no applicable region
      */
     public RegionWrapper getRegionAbs() {
@@ -160,7 +172,7 @@ public abstract class PlotArea {
 
     /**
      * Get the implementation independent generator for this area
-     * @Nullable
+     *
      * @return
      */
     public IndependentPlotGenerator getGenerator() {
@@ -230,8 +242,11 @@ public abstract class PlotArea {
         SCHEMATICS = config.getStringList("schematic.schematics");
         USE_ECONOMY = config.getBoolean("economy.use") && EconHandler.manager != null;
         ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
-        for (String key : priceSection.getKeys(false)) {
-            PRICES.put(key, priceSection.getDouble(key));
+        if (USE_ECONOMY) {
+            PRICES = new HashMap<>();
+            for (String key : priceSection.getKeys(false)) {
+                PRICES.put(key, priceSection.getDouble(key));
+            }
         }
         PLOT_CHAT = config.getBoolean("chat.enabled");
         WORLD_BORDER = config.getBoolean("world.border");
@@ -743,22 +758,7 @@ public abstract class PlotArea {
         }
         return true;
     }
-    
-    public boolean mergePlots(final PlotPlayer player, final ArrayList<PlotId> plotIds) {
-        if (EconHandler.manager != null && USE_ECONOMY) {
-            final double cost = plotIds.size() * (PRICES.containsKey("merge") ? PRICES.get("merge") : 0);
-            if (cost > 0d) {
-                if (EconHandler.manager.getMoney(player) < cost) {
-                    MainUtil.sendMessage(player, C.CANNOT_AFFORD_MERGE, "" + cost);
-                    return false;
-                }
-                EconHandler.manager.withdrawMoney(player, cost);
-                MainUtil.sendMessage(player, C.REMOVED_BALANCE, cost + "");
-            }
-        }
-        return mergePlots(plotIds, true, true);
-    }
-    
+
     public boolean removePlot(PlotId id) {
         return plots.remove(id) != null;
     }

@@ -316,7 +316,7 @@ public class ReflectionUtils {
                 } catch (final NoSuchMethodException ignored) {
                     return new RefMethod(clazz.getDeclaredMethod(name, classes));
                 }
-            } catch (final Exception e) {
+            } catch (NoSuchMethodException | SecurityException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -348,7 +348,7 @@ public class ReflectionUtils {
                 } catch (final NoSuchMethodException ignored) {
                     return new RefConstructor(clazz.getDeclaredConstructor(classes));
                 }
-            } catch (final Exception e) {
+            } catch (NoSuchMethodException | SecurityException e) {
                 throw new RuntimeException(e);
             }
         }

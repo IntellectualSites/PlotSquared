@@ -1,5 +1,10 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.plotsquared.general.commands.Command;
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -10,11 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.StringMan;
-import com.plotsquared.general.commands.Command;
 
 public class GenerateDocs {
     public static void main(final String[] args) {
@@ -145,7 +145,7 @@ public class GenerateDocs {
                 split = Arrays.copyOfRange(split, 1, split.length);
                 for (String method : split) {
                     String perm = method.split("[,|)]")[1].trim();
-                    if (!perm.toLowerCase().equals(perm)) {
+                    if (!perm.equalsIgnoreCase(perm)) {
                         if (perm.startsWith("C.")) {
                             perm = C.valueOf(perm.split("\\.")[1]).s();
                         }
@@ -178,7 +178,7 @@ public class GenerateDocs {
                 split = Arrays.copyOfRange(split, 1, split.length);
                 for (String method : split) {
                     String perm = method.split("[,|)]")[1].trim();
-                    if (!perm.toLowerCase().equals(perm)) {
+                    if (!perm.equalsIgnoreCase(perm)) {
                         if (perm.startsWith("C.")) {
                             perm = C.valueOf(perm.split("\\.")[1]).s();
                         }
