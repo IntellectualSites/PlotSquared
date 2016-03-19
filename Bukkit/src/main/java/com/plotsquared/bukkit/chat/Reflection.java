@@ -1,6 +1,6 @@
 package com.plotsquared.bukkit.chat;
 
-import org.bukkit.Bukkit;
+import com.intellectualcrafters.plot.PS;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +29,6 @@ public final class Reflection {
      * The map maps [types to maps of [method names to maps of [parameter types to method instances]]].
      */
     private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>> _loadedMethods = new HashMap<>();
-    private static String _versionString;
 
     private Reflection() {
 
@@ -41,16 +40,7 @@ public final class Reflection {
      * @return The version string of the OBC and NMS packages, <em>including the trailing dot</em>.
      */
     public synchronized static String getVersion() {
-        if (_versionString == null) {
-            if (Bukkit.getServer() == null) {
-                // The server hasn't started, static initializer call?
-                return null;
-            }
-            final String name = Bukkit.getServer().getClass().getPackage().getName();
-            _versionString = name.substring(name.lastIndexOf('.') + 1) + ".";
-        }
-
-        return _versionString;
+        return PS.get().IMP.getNMSPackage();
     }
     
     /**
@@ -162,13 +152,7 @@ public final class Reflection {
             field.setAccessible(true);
             loaded.put(name, field);
             return field;
-        } catch (NoSuchFieldException e) {
-            // Error loading
-            e.printStackTrace();
-            // Cache field as not existing
-            loaded.put(name, null);
-            return null;
-        } catch (SecurityException e) {
+        } catch (NoSuchFieldException | SecurityException e) {
             // Error loading
             e.printStackTrace();
             // Cache field as not existing
