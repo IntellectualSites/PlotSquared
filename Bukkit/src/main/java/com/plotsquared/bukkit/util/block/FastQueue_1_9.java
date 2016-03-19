@@ -114,7 +114,7 @@ public class FastQueue_1_9 extends SlowQueue {
         if (!MainUtil.canSendChunk) {
             for (final Chunk chunk : chunks) {
                 chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
-                chunk.unload(true, false);
+                chunk.unload(true, true);
                 chunk.load();
             }
             return;
@@ -299,7 +299,7 @@ public class FastQueue_1_9 extends SlowQueue {
             if (!chunk.isLoaded()) {
                 chunk.load(false);
             } else {
-                chunk.unload(true, false);
+                chunk.unload(true, true);
                 chunk.load(false);
             }
 
