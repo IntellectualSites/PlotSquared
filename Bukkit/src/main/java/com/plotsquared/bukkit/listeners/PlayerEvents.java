@@ -615,6 +615,11 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
+        if (PS.get().worldedit != null && pp.getAttribute("worldedit")) {
+            if (player.getItemInHand().getTypeId() == PS.get().worldedit.getConfiguration().wandItem) {
+                return;
+            }
+        }
         MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_ROAD);
         event.setCancelled(true);
     }
@@ -1164,6 +1169,11 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 break;
             default:
                 return;
+        }
+        if (PS.get().worldedit != null && pp.getAttribute("worldedit")) {
+            if (player.getItemInHand().getTypeId() == PS.get().worldedit.getConfiguration().wandItem) {
+                return;
+            }
         }
         if (!EventUtil.manager.checkPlayerBlockEvent(pp, eventType, loc, lb, true)) {
             event.setCancelled(true);
