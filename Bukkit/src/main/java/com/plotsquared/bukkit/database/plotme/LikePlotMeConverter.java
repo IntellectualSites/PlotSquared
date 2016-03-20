@@ -168,8 +168,7 @@ public class LikePlotMeConverter {
             mergeWorldYml(plugin, plotConfig);
             
             sendMessage("Connecting to " + plugin + " DB");
-            
-            int plotCount = 0;
+
             final ArrayList<Plot> createdPlots = new ArrayList<>();
             
             sendMessage("Collecting plot data");
@@ -195,6 +194,7 @@ public class LikePlotMeConverter {
                 }
             }
             final HashMap<String, HashMap<PlotId, Plot>> plots = connector.getPlotMePlots(connection);
+            int plotCount = 0;
             for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
                 plotCount += entry.getValue().size();
             }
@@ -234,25 +234,13 @@ public class LikePlotMeConverter {
                             plotsize = 32;
                         }
                         PS.get().config.set("worlds." + world + ".plot.size", plotsize);
-                        String wallblock = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".WallBlock"); //
-                        if (wallblock == null) {
-                            wallblock = "44";
-                        }
+                        String wallblock = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".WallBlock", "44"); //
                         PS.get().config.set("worlds." + world + ".wall.block", wallblock);
-                        String floor = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".PlotFloorBlock"); //
-                        if (floor == null) {
-                            floor = "2";
-                        }
+                        String floor = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".PlotFloorBlock", "2"); //
                         PS.get().config.set("worlds." + world + ".plot.floor", Collections.singletonList(floor));
-                        String filling = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".FillBlock"); //
-                        if (filling == null) {
-                            filling = "3";
-                        }
+                        String filling = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".FillBlock", "3"); //
                         PS.get().config.set("worlds." + world + ".plot.filling", Collections.singletonList(filling));
-                        String road = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".RoadMainBlock");
-                        if (road == null) {
-                            road = "5";
-                        }
+                        String road = PLOTME_DG_YML.getString("worlds." + plotMeWorldName + ".RoadMainBlock", "5");
                         PS.get().config.set("worlds." + world + ".road.block", road);
                         Integer height = PLOTME_DG_YML.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
                         if (height == 0) {

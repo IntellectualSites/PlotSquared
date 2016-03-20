@@ -71,14 +71,12 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             final PlotId id = new PlotId(r.getInt("plotX"), r.getInt("plotZ"));
             final String name = r.getString("owner");
             final String world = LikePlotMeConverter.getWorld(r.getString("world"));
-            if (!plots.containsKey(world)) {
-                if (merge) {
-                    final int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
-                    final int path = PS.get().config.getInt("worlds." + world + ".road.width");
-                    plotWidth.put(world, plot);
-                    roadWidth.put(world, path);
-                    merges.put(world, new HashMap<PlotId, boolean[]>());
-                }
+            if (!plots.containsKey(world) && merge) {
+                final int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
+                final int path = PS.get().config.getInt("worlds." + world + ".road.width");
+                plotWidth.put(world, plot);
+                roadWidth.put(world, path);
+                merges.put(world, new HashMap<PlotId, boolean[]>());
             }
             if (merge) {
                 final int tx = r.getInt("topX");

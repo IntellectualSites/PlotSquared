@@ -925,7 +925,6 @@ public class PS {
 
     @Deprecated
     public ArrayList<Plot> sortPlotsByTimestamp(final Collection<Plot> plots) {
-        List<Plot> unknown = new ArrayList<>();
         int hardmax = 256000;
         int max = 0;
         int overflowSize = 0;
@@ -1351,25 +1350,21 @@ public class PS {
             IndependentPlotGenerator pg;
             if (baseGenerator != null && baseGenerator.isFull()) {
                 pg = baseGenerator.getPlotGenerator();
-            }
-            else if (worldSection != null) {
+            } else if (worldSection != null) {
                 String secondaryGeneratorName = worldSection.getString("generator.plugin");
                 GeneratorWrapper<?> secondaryGenerator = IMP.getGenerator(world, secondaryGeneratorName);
                 if (secondaryGenerator != null && secondaryGenerator.isFull()) {
                     pg = secondaryGenerator.getPlotGenerator();
-                }
-                else {
+                } else {
                     String primaryGeneratorName = worldSection.getString("generator.init");
                     GeneratorWrapper<?> primaryGenerator = IMP.getGenerator(world, primaryGeneratorName);
                     if (primaryGenerator != null && primaryGenerator.isFull()) {
                         pg = primaryGenerator.getPlotGenerator();
-                    }
-                    else {
+                    } else {
                         return;
                     }
                 }
-            }
-            else {
+            } else {
                 return;
             }
             // Conventional plot generator
@@ -1405,10 +1400,7 @@ public class PS {
                     return;
                 }
                 log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
-                String gen_string = worldSection.getString("generator.plugin");
-                if (gen_string == null) {
-                    gen_string = "PlotSquared";
-                }
+                String gen_string = worldSection.getString("generator.plugin", "PlotSquared");
                 if (type == 2) {
                     Set<PlotCluster> clusters = clusters_tmp != null ? clusters_tmp.get(world) : new HashSet<PlotCluster>();
                     if (clusters == null) {
@@ -1505,10 +1497,7 @@ public class PS {
                         clone.set(key, worldSection.get(key));
                     }
                 }
-                String gen_string = clone.getString("generator.plugin");
-                if (gen_string == null) {
-                    gen_string = "PlotSquared";
-                }
+                String gen_string = clone.getString("generator.plugin", "PlotSquared");
                 GeneratorWrapper<?> areaGen = IMP.getGenerator(world, gen_string);
                 if (areaGen == null) {
                     throw new IllegalArgumentException("Invalid Generator: " + gen_string);

@@ -20,14 +20,14 @@ public abstract class PlotChunk<T> implements Cloneable {
     public PlotChunk(final ChunkWrapper chunk) {
         this.chunk = chunk;
     }
+
+    public ChunkWrapper getChunkWrapper() {
+        return this.chunk;
+    }
     
     public void setChunkWrapper(final ChunkWrapper loc) {
         this.chunk = loc;
         this.objChunk = null;
-    }
-    
-    public ChunkWrapper getChunkWrapper() {
-        return this.chunk;
     }
     
     public int getX() {
@@ -194,7 +194,7 @@ public abstract class PlotChunk<T> implements Cloneable {
     
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof PlotChunk)) {
+        if (!(obj instanceof PlotChunk)) {
             return false;
         }
         return chunk.equals(((PlotChunk) obj).chunk);

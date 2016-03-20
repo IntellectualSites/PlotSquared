@@ -97,14 +97,9 @@ public class SpongeChunkManager extends ChunkManager {
                 }
                 Field fieldDroppedChunksSet;
                 try {
-                    fieldDroppedChunksSet = chunkServer.getClass().getField("field_73248_b");
+                    fieldDroppedChunksSet = chunkServer.getClass().getField("droppedChunksSet");
                 } catch (Throwable t) {
-                    try {
-                        fieldDroppedChunksSet = chunkServer.getClass().getField("droppedChunksSet");
-                    }
-                    catch (Throwable t2) {
-                        fieldDroppedChunksSet = ReflectionUtils.findField(chunkServer.getClass(), Set.class);
-                    }
+                    fieldDroppedChunksSet = ReflectionUtils.findField(chunkServer.getClass(), Set.class);
                 }
                 Set<Long> set = (Set<Long>) fieldDroppedChunksSet.get(chunkServer);
                 set.remove(pos);

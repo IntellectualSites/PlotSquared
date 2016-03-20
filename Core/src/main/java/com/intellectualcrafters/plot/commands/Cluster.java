@@ -464,12 +464,12 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[2]);
                     return false;
                 }
-                if (args[1].toLowerCase().equals("add")) {
+                if (args[1].equalsIgnoreCase("add")) {
                     cluster.helpers.add(uuid);
                     DBFunc.setHelper(cluster, uuid);
                     return MainUtil.sendMessage(plr, C.CLUSTER_ADDED_HELPER);
                 }
-                if (args[1].toLowerCase().equals("remove")) {
+                if (args[1].equalsIgnoreCase("remove")) {
                     cluster.helpers.remove(uuid);
                     DBFunc.removeHelper(cluster, uuid);
                     return MainUtil.sendMessage(plr, C.CLUSTER_REMOVED_HELPER);

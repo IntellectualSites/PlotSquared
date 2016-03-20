@@ -20,16 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
@@ -46,6 +36,16 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 @CommandDeclaration(
 command = "template",
@@ -161,19 +161,12 @@ public class Template extends SubCommand {
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
-                String manager = worldConfig.getString("generator.plugin");
-                if (manager == null) {
-                    manager = "PlotSquared";
-                }
-                String generator = worldConfig.getString("generator.init");
-                if (generator == null) {
-                    generator = manager;
-                }
-                
-                final int type = worldConfig.getInt("generator.type");
-                final int terrain = worldConfig.getInt("generator.terrain");
-                
-                final SetupObject setup = new SetupObject();
+                String manager = worldConfig.getString("generator.plugin", "PlotSquared");
+                String generator = worldConfig.getString("generator.init", manager);
+                int type = worldConfig.getInt("generator.type");
+                int terrain = worldConfig.getInt("generator.terrain");
+
+                SetupObject setup = new SetupObject();
                 setup.plotManager = manager;
                 setup.setupGenerator = generator;
                 setup.type = type;

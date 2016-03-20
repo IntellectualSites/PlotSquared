@@ -319,11 +319,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                         final Location loc = entity.getLocation();
                                         if (BukkitUtil.getLocation(loc).isPlotRoad()) {
                                             final Entity passenger = entity.getPassenger();
-                                            if (!(passenger instanceof Player)) {
-                                                if (entity.getMetadata("keep").isEmpty()) {
-                                                    iter.remove();
-                                                    entity.remove();
-                                                }
+                                            if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
+                                                iter.remove();
+                                                entity.remove();
                                             }
                                         }
                                     }
@@ -585,15 +583,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (world == null) {
             // create world
             final ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldname);
-            String manager = worldConfig.getString("generator.plugin");
-            if (manager == null) {
-                manager = "PlotSquared";
-            }
-            String generator = worldConfig.getString("generator.init");
-            if (generator == null) {
-                generator = manager;
-            }
-            
+            String manager = worldConfig.getString("generator.plugin", "PlotSquared");
+            String generator = worldConfig.getString("generator.init", manager);
             final int type = worldConfig.getInt("generator.type");
             final int terrain = worldConfig.getInt("generator.terrain");
             final SetupObject setup = new SetupObject();

@@ -1,5 +1,7 @@
 package com.plotsquared.bukkit.util.block;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -15,6 +17,12 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,35 +32,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_9 extends SlowQueue {
 
-    final Object air;
+    private final Object air;
     private final SendChunk chunksender;
-    private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
-    private final RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-    private final RefClass classPacket = getRefClass("{nms}.Packet");
-    private final RefClass classConnection = getRefClass("{nms}.PlayerConnection");
-    private final RefClass classChunk = getRefClass("{nms}.Chunk");
-    private final RefClass classCraftPlayer = getRefClass("{cb}.entity.CraftPlayer");
-    private final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-    private final RefClass classWorld = getRefClass("{nms}.World");
-    private final RefField mustSave = classChunk.getField("mustSave");
-    private final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
-    private final RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
-    private final RefClass classBlock = getRefClass("{nms}.Block");
-    private final RefClass classIBlockData = getRefClass("{nms}.IBlockData");
     private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     private final RefMethod methodGetHandleChunk;
-    private final RefConstructor MapChunk;
     private final RefMethod methodInitLighting;
     private final RefConstructor classBlockPositionConstructor;
     private final RefConstructor classChunkSectionConstructor;
@@ -68,15 +54,21 @@ public class FastQueue_1_9 extends SlowQueue {
 
 
     public FastQueue_1_9() throws RuntimeException {
+        RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
+        RefClass classChunk = getRefClass("{nms}.Chunk");
         methodInitLighting = classChunk.getMethod("initLighting");
-        MapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+        RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
         classBlockPositionConstructor = classBlockPosition.getConstructor(int.class, int.class, int.class);
+        RefClass classWorld = getRefClass("{nms}.World");
         methodW = classWorld.getMethod("w", classBlockPosition.getRealClass());
         fieldSections = classChunk.getField("sections");
         fieldWorld = classChunk.getField("world");
+        RefClass classBlock = getRefClass("{nms}.Block");
+        RefClass classIBlockData = getRefClass("{nms}.IBlockData");
         methodGetCombinedId = classBlock.getMethod("getCombinedId", classIBlockData.getRealClass());
         methodGetByCombinedId = classBlock.getMethod("getByCombinedId", int.class);
+        RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
         methodGetBlocks = classChunkSection.getMethod("getBlocks");
         methodGetType = classChunkSection.getMethod("getType", int.class, int.class, int.class);
         methodSetType = classChunkSection.getMethod("setType", int.class, int.class, int.class, classIBlockData.getRealClass());
@@ -91,7 +83,7 @@ public class FastQueue_1_9 extends SlowQueue {
                     return;
                 }
                 int count = 0;
-                final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+                final ArrayList<Chunk> chunks = new ArrayList<>();
                 final Iterator<Entry<ChunkWrapper, Chunk>> i = toUpdate.entrySet().iterator();
                 while (i.hasNext() && (count < 128)) {
                     chunks.add(i.next().getValue());

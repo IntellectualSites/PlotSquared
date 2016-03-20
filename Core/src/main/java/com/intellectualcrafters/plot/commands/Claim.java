@@ -75,8 +75,7 @@ public class Claim extends SubCommand {
         if (grants > 0) {
             if (grants == 1) {
                 plr.removePersistentMeta("grantedPlots");
-            }
-            else {
+            } else {
                 plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grants - 1));
             }
             sendMessage(plr, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
