@@ -497,19 +497,19 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         UUIDWrapper wrapper;
         if (Settings.OFFLINE_MODE) {
             if (Settings.UUID_LOWERCASE) {
-                wrapper = (new LowerOfflineUUIDWrapper());
+                wrapper = new LowerOfflineUUIDWrapper();
             } else {
-                wrapper = (new OfflineUUIDWrapper());
+                wrapper = new OfflineUUIDWrapper();
             }
             Settings.OFFLINE_MODE = true;
         } else if (checkVersion) {
-            wrapper = (new DefaultUUIDWrapper());
+            wrapper = new DefaultUUIDWrapper();
             Settings.OFFLINE_MODE = false;
         } else {
             if (Settings.UUID_LOWERCASE) {
-                wrapper = (new LowerOfflineUUIDWrapper());
+                wrapper = new LowerOfflineUUIDWrapper();
             } else {
-                wrapper = (new OfflineUUIDWrapper());
+                wrapper = new OfflineUUIDWrapper();
             }
             Settings.OFFLINE_MODE = true;
         }

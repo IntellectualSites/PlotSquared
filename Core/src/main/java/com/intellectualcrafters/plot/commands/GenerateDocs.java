@@ -17,7 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GenerateDocs {
-    public static void main(final String[] args) {
+
+    public static void main(String[] args) {
         MainCommand.getInstance().addCommand(new WE_Anywhere());
         MainCommand.getInstance().addCommand(new Cluster());
         final ArrayList<Command<PlotPlayer>> commands = MainCommand.getInstance().getCommands();
@@ -39,8 +40,8 @@ public class GenerateDocs {
             printCommand(command);
         }
     }
-    
-    public static void printCommand(final Command<PlotPlayer> command) {
+
+    public static void printCommand(Command<PlotPlayer> command) {
         try {
             final String clazz = command.getClass().getSimpleName();
             final String name = command.getCommand();
@@ -129,8 +130,8 @@ public class GenerateDocs {
         return new ArrayList<>(usages);
     }
 
-    public static List<String> getPerms(final String cmd, final List<String> lines) {
-        final HashSet<String> perms = new HashSet<String>();
+    public static List<String> getPerms(String cmd, List<String> lines) {
+        final HashSet<String> perms = new HashSet<>();
         final Pattern p = Pattern.compile("\"([^\"]*)\"");
         final Pattern p2 = Pattern.compile("C.PERMISSION_\\s*(\\w+)");
         String last = null;
@@ -202,13 +203,13 @@ public class GenerateDocs {
         }
         return new ArrayList<>(perms);
     }
-    
-    public static String getComments(final List<String> lines) {
+
+    public static String getComments(List<String> lines) {
         final StringBuilder result = new StringBuilder();
         for (String line : lines) {
             line = line.trim();
             if (line.startsWith("/** ") || line.startsWith("*/ ") || line.startsWith("* ")) {
-                line = (line.replaceAll("/[*][*] ", "").replaceAll("[*]/ ", "").replaceAll("[*] ", "")).trim();
+                line = line.replaceAll("/[*][*] ", "").replaceAll("[*]/ ", "").replaceAll("[*] ", "").trim();
                 result.append(line + "\n");
             }
         }

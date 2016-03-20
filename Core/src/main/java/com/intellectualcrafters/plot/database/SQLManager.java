@@ -841,7 +841,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setNull((i * 10) + 4, 4); // custom_time
                 stmt.setNull((i * 10) + 5, 4); // time
                 stmt.setNull((i * 10) + 6, 4); // deny_entry
-                if (pair.settings.getAlias().equals("")) {
+                if (pair.settings.getAlias().isEmpty()) {
                     stmt.setNull((i * 10) + 7, 4);
                 } else {
                     stmt.setString((i * 10) + 7, pair.settings.getAlias());
@@ -909,7 +909,7 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setMySQL(final PreparedStatement stmt, final int i, final Integer id) throws SQLException {
-                stmt.setInt((i) + 1, id);
+                stmt.setInt(i + 1, id);
             }
 
             @Override
@@ -1467,7 +1467,7 @@ public class SQLManager implements AbstractDB {
         return Integer.MAX_VALUE;
     }
 
-    public void updateTables(int[] oldVersion) {
+    @Override public void updateTables(int[] oldVersion) {
         try {
             if (MYSQL && !PS.get().checkVersion(oldVersion, 3, 3, 2)) {
                 try (Statement stmt = connection.createStatement()) {
@@ -1575,12 +1575,12 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setMySQL(PreparedStatement stmt, int i, Integer obj) throws SQLException {
-                stmt.setInt((i) + 1, obj);
+                stmt.setInt(i + 1, obj);
             }
 
             @Override
             public void setSQLite(PreparedStatement stmt, int i, Integer obj) throws SQLException {
-                stmt.setInt((i) + 1, obj);
+                stmt.setInt(i + 1, obj);
             }
 
             @Override
@@ -2584,7 +2584,7 @@ public class SQLManager implements AbstractDB {
                     final Integer m = r.getInt("merged");
                     final boolean[] merged = new boolean[4];
                     for (int i = 0; i < 4; i++) {
-                        merged[3 - i] = ((m) & (1 << i)) != 0;
+                        merged[3 - i] = (m & (1 << i)) != 0;
                     }
                     cluster.settings.setMerged(merged);
                     String[] flags_string;

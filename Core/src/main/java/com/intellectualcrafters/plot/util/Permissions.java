@@ -1,11 +1,11 @@
 package com.intellectualcrafters.plot.util;
 
-import java.util.HashMap;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandCaller;
+
+import java.util.HashMap;
 
 /**
  * The Permissions class handles checking user permissions.<br>
@@ -34,7 +34,7 @@ public class Permissions {
         if (!Settings.PERMISSION_CACHING) {
             return hasPermission((CommandCaller) player, perm);
         }
-        HashMap<String, Boolean> map = (HashMap<String, Boolean>) player.getMeta("perm");
+        HashMap<String, Boolean> map = player.getMeta("perm");
         if (map != null) {
             Boolean result = map.get(perm);
             if (result != null) {
@@ -63,7 +63,7 @@ public class Permissions {
         final String[] nodes = perm.split("\\.");
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i <= (nodes.length - 1); i++) {
-            n.append(nodes[i] + ("."));
+            n.append(nodes[i] + ".");
             if (!perm.equals(n + C.PERMISSION_STAR.s())) {
                 if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
                     return true;
@@ -106,7 +106,7 @@ public class Permissions {
         final String[] nodes = stub.split("\\.");
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i] + ("."));
+            n.append(nodes[i] + ".");
             if (!stub.equals(n + C.PERMISSION_STAR.s())) {
                 if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
                     return Integer.MAX_VALUE;

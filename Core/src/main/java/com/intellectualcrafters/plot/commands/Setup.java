@@ -66,7 +66,7 @@ public class Setup extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         // going through setup
-        SetupObject object = (SetupObject) plr.getMeta("setup");
+        SetupObject object = plr.getMeta("setup");
         if (object == null) {
             object = new SetupObject();
             plr.setMeta("setup", object);

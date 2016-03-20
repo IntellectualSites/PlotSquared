@@ -18,9 +18,10 @@ import java.util.List;
 public class SpongeAugmentedGenerator implements GenerationPopulator {
     
     private static SpongeAugmentedGenerator generator;
-    
-    private SpongeAugmentedGenerator() {};
-    
+
+    private SpongeAugmentedGenerator() {
+    }
+
     public static SpongeAugmentedGenerator get(World world) {
         WorldGenerator wg = world.getWorldGenerator();
         List<GenerationPopulator> populators = wg.getGenerationPopulators();

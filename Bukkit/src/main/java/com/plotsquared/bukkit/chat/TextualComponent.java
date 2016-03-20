@@ -70,7 +70,7 @@ public abstract class TextualComponent implements Cloneable {
     }
 
     static boolean isTranslatableText(final TextualComponent component) {
-        return (component instanceof ComplexTextTypeComponent) && ((ComplexTextTypeComponent) component).getKey().equals("translate");
+        return (component instanceof ComplexTextTypeComponent) && component.getKey().equals("translate");
     }
 
     /**

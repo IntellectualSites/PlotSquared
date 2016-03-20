@@ -23,17 +23,16 @@ package com.intellectualcrafters.plot.generator;
 import com.intellectualcrafters.plot.object.PlotArea;
 
 public interface GeneratorWrapper<T> {
-    public IndependentPlotGenerator getPlotGenerator();
-    
-    public T getPlatformGenerator();
 
-    public void augment(PlotArea area);
-    
-    public boolean isFull();
-    
-    @Override
-    public String toString();
-    
-    @Override
-    public boolean equals(Object obj);
+    IndependentPlotGenerator getPlotGenerator();
+
+    T getPlatformGenerator();
+
+    void augment(PlotArea area);
+
+    boolean isFull();
+
+    @Override String toString();
+
+    @Override boolean equals(Object obj);
 }

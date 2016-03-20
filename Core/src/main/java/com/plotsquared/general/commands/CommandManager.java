@@ -85,10 +85,14 @@ public class CommandManager<T extends CommandCaller> {
     }
     
     public int handle(final T plr, String input) {
-        if ((initialCharacter != null) && !input.startsWith(initialCharacter + "")) {
+        if (initialCharacter != null && !input.startsWith(initialCharacter + "")) {
             return CommandHandlingOutput.NOT_COMMAND;
         }
-        input = initialCharacter == null ? input : input.substring(1);
+        if (initialCharacter == null) {
+            input = input;
+        } else {
+            input = input.substring(1);
+        }
         final String[] parts = input.split(" ");
         String[] args;
         final String command = parts[0].toLowerCase();

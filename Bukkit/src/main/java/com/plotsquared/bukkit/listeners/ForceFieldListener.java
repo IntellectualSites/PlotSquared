@@ -20,16 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.listeners;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
-
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -37,8 +27,18 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 
-/**
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+/**
+
  */
 public class ForceFieldListener implements Listener {
     private Set<PlotPlayer> getNearbyPlayers(final Player player, final Plot plot) {
@@ -73,17 +73,19 @@ public class ForceFieldListener implements Listener {
         Location oPlayerLocation = e.getLocation();
         final double playerX = playerLocation.getX(), playerY = playerLocation.getY(), playerZ = playerLocation.getZ(), oPlayerX = oPlayerLocation.getX(), oPlayerY = oPlayerLocation.getY(), oPlayerZ = oPlayerLocation
         .getZ();
-        double x = 0d, y = 0d, z = 0d;
+        double x = 0d;
         if (playerX < oPlayerX) {
             x = 1.0d;
         } else if (playerX > oPlayerX) {
             x = -1.0d;
         }
+        double y = 0d;
         if (playerY < oPlayerY) {
             y = 0.5d;
         } else if (playerY > oPlayerY) {
             y = -0.5d;
         }
+        double z = 0d;
         if (playerZ < oPlayerZ) {
             z = 1.0d;
         } else if (playerZ > oPlayerZ) {

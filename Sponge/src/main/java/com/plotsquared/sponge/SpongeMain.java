@@ -338,12 +338,8 @@ public class SpongeMain implements IPlotMain {
         GenerationPopulator gen = wg.getBaseGenerationPopulator();
         if (gen instanceof SpongePlotGenerator) {
             PS.get().loadWorld(worldname, (SpongePlotGenerator) gen);
-        } else if (gen != null) {
-            throw new UnsupportedOperationException("NOT IMPLEMENTED YET!");
         } else {
-            if (PS.get().config.contains("worlds." + worldname)) {
-                PS.get().loadWorld(worldname, null);
-            }
+            throw new UnsupportedOperationException("NOT IMPLEMENTED YET!");
         }
     }
 

@@ -765,10 +765,7 @@ public class Plot {
     }
     
     public boolean clear(final boolean checkRunning, final boolean isDelete, final Runnable whenDone) {
-        if (checkRunning && (this.getRunning() != 0)) {
-            return false;
-        }
-        if (!EventUtil.manager.callClear(this)) {
+        if (checkRunning && (this.getRunning() != 0) || !EventUtil.manager.callClear(this)) {
             return false;
         }
         final HashSet<RegionWrapper> regions = this.getRegions();

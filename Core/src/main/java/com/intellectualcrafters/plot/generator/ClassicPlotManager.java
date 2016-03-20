@@ -1,7 +1,5 @@
 package com.intellectualcrafters.plot.generator;
 
-import java.util.ArrayList;
-
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -11,6 +9,8 @@ import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetQueue;
+
+import java.util.ArrayList;
 
 /**
  * A plot manager with square plots which tessellate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot)
@@ -57,7 +57,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     
     @Override
     public boolean unclaimPlot(final PlotArea plotworld, final Plot plot, final Runnable whenDone) {
-        final ClassicPlotWorld dpw = ((ClassicPlotWorld) plotworld);
+        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         setWallFilling(dpw, plot.getId(), new PlotBlock[] { dpw.WALL_FILLING });
         if ((dpw.WALL_BLOCK.id != 0) || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
             setWall(dpw, plot.getId(), new PlotBlock[] { dpw.WALL_BLOCK });
@@ -142,7 +142,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         final PseudoRandom random = new PseudoRandom();
         if (!plot.getMerged(0)) {
             int z = bottom.getZ();
-            for (int x = bottom.getX(); x <= (top.getX()); x++) {
+            for (int x = bottom.getX(); x <= top.getX(); x++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= 255; y++) {
                     SetQueue.IMP.setBlock(plotworld.worldname, x, y, z, blocks[random.random(blocks.length)]);
                 }
@@ -150,7 +150,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         if (!plot.getMerged(3)) {
             int x = bottom.getX();
-            for (int z = bottom.getZ(); z <= (top.getZ()); z++) {
+            for (int z = bottom.getZ(); z <= top.getZ(); z++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= 255; y++) {
                     SetQueue.IMP.setBlock(plotworld.worldname, x, y, z, blocks[random.random(blocks.length)]);
                 }
@@ -159,7 +159,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         
         if (!plot.getMerged(2)) {
             int z = top.getZ();
-            for (int x = bottom.getX(); x <= (top.getX()); x++) {
+            for (int x = bottom.getX(); x <= top.getX(); x++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= 255; y++) {
                     SetQueue.IMP.setBlock(plotworld.worldname, x, y, z, blocks[random.random(blocks.length)]);
                 }
@@ -167,7 +167,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         if (!plot.getMerged(1)) {
             int x = top.getX();
-            for (int z = bottom.getZ(); z <= (top.getZ()); z++) {
+            for (int z = bottom.getZ(); z <= top.getZ(); z++) {
                 for (int y = dpw.PLOT_HEIGHT; y <= 255; y++) {
                     SetQueue.IMP.setBlock(plotworld.worldname, x, y, z, blocks[random.random(blocks.length)]);
                 }
@@ -194,7 +194,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         final PseudoRandom random = new PseudoRandom();
         if (!plot.getMerged(0)) {
             int z = bot.getZ();
-            for (int x = bot.getX(); x < (top.getX()); x++) {
+            for (int x = bot.getX(); x < top.getX(); x++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
                     SetQueue.IMP.setBlock(plotworld.worldname, x, y, z, blocks[random.random(blocks.length)]);
                 }
@@ -202,7 +202,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         if (!plot.getMerged(3)) {
             int x = bot.getX();
-            for (int z = bot.getZ(); z < (top.getZ()); z++) {
+            for (int z = bot.getZ(); z < top.getZ(); z++) {
                 for (int y = 1; y <= dpw.WALL_HEIGHT; y++) {
                     SetQueue.IMP.setBlock(plotworld.worldname, x, y, z, blocks[random.random(blocks.length)]);
                 }
@@ -239,13 +239,13 @@ public class ClassicPlotManager extends SquarePlotManager {
         final int y = dpw.WALL_HEIGHT + 1;
         if (!plot.getMerged(0)) {
             int z = bot.getZ();
-            for (int x = bot.getX(); x < (top.getX()); x++) {
+            for (int x = bot.getX(); x < top.getX(); x++) {
                 SetQueue.IMP.setBlock(plotworld.worldname, x, y, z, blocks[random.random(blocks.length)]);
             }
         }
         if (!plot.getMerged(3)) {
             int x = bot.getX();
-            for (int z = bot.getZ(); z < (top.getZ()); z++) {
+            for (int z = bot.getZ(); z < top.getZ(); z++) {
                 SetQueue.IMP.setBlock(plotworld.worldname, x, y, z, blocks[random.random(blocks.length)]);
             }
         }

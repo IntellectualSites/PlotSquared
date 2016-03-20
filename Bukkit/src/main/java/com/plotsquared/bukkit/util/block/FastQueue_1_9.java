@@ -227,10 +227,8 @@ public class FastQueue_1_9 extends SlowQueue {
                             int x = MainUtil.x_loc[j][k];
                             int y = MainUtil.y_loc[j][k];
                             int z = MainUtil.z_loc[j][k];
-                            int id = n;
                             Object iblock = methodGetByCombinedId.call((int) n);
                             setType.call(x, y & 15, z, iblock);
-                            continue;
                         }
                     }
                 }
@@ -317,7 +315,7 @@ public class FastQueue_1_9 extends SlowQueue {
 
             methodInitLighting.of(c).call();
 
-            if ((bc.getTotalRelight() == 0 && !fixAll)) {
+            if (bc.getTotalRelight() == 0 && !fixAll) {
                 return true;
             }
 

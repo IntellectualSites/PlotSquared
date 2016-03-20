@@ -109,7 +109,7 @@ public class Auto extends SubCommand {
         final int diff = currentPlots - plr.getAllowedPlots();
         if ((diff + (size_x * size_z)) > 0) {
             if (diff < 0) {
-                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
+                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
                 return false;
             } else if (plr.hasPersistentMeta("grantedPlots")) {
                 int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
@@ -185,7 +185,7 @@ public class Auto extends SubCommand {
                 for (int i = start.x; i <= end.x; i++) {
                     for (int j = start.y; j <= end.y; j++) {
                         Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
-                        final boolean teleport = ((i == end.x) && (j == end.y));
+                        final boolean teleport = (i == end.x) && (j == end.y);
                         plot.claim(plr, teleport, null);
                     }
                 }

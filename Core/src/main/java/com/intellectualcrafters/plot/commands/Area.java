@@ -318,7 +318,7 @@ public class Area extends SubCommand {
                     region = area.getRegion().toString();
                 } else {
                     name = area.worldname;
-                    percent = claimed == 0 ? 0 : (100d * claimed) / (Integer.MAX_VALUE);
+                    percent = claimed == 0 ? 0 : (100d * claimed) / Integer.MAX_VALUE;
                     region = "N/A";
                 }
                 String value = "&r$1NAME: " + name

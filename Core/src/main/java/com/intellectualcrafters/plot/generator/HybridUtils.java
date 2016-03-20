@@ -5,12 +5,32 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HybridUtils {
@@ -188,7 +208,7 @@ public abstract class HybridUtils {
                 if ((count.intValue() % 20) == 0) {
                     PS.debug("PROGRESS: " + ((100 * (2048 - chunks.size())) / 2048) + "%");
                 }
-                if ((regions.isEmpty()) && (chunks.isEmpty())) {
+                if (regions.isEmpty() && chunks.isEmpty()) {
                     HybridUtils.UPDATE = false;
                     PS.debug(C.PREFIX.s() + "Finished road conversion");
                     // CANCEL TASK
@@ -230,8 +250,8 @@ public abstract class HybridUtils {
                                         TaskManager.runTaskLater(task, 600);
                                         return;
                                     }
-                                    if ((((System.currentTimeMillis() - baseTime) - last.get()) < 1500) && (last.get() != 0)) {
-                                        while ((System.currentTimeMillis() < diff) && (!chunks.isEmpty())) {
+                                    if (((System.currentTimeMillis() - baseTime - last.get()) < 1500) && (last.get() != 0)) {
+                                        while ((System.currentTimeMillis() < diff) && !chunks.isEmpty()) {
                                             Iterator<ChunkLoc> iter = chunks.iterator();
                                             final ChunkLoc chunk = iter.next();
                                             iter.remove();
@@ -374,12 +394,12 @@ public abstract class HybridUtils {
                             final boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
                             final boolean lx = absX < plotworld.PATH_WIDTH_UPPER;
                             final boolean lz = absZ < plotworld.PATH_WIDTH_UPPER;
-                            condition = (!gx || !gz || !lx || !lz);
+                            condition = !gx || !gz || !lx || !lz;
                         }
                         if (condition) {
                             final int sy = plotworld.ROAD_HEIGHT;
                             final HashMap<Integer, PlotBlock> blocks = plotworld.G_SCH.get(MathMan.pair(absX, absZ));
-                            for (short y = (short) (plotworld.ROAD_HEIGHT); y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT + extend); y++) {
+                            for (short y = (short) plotworld.ROAD_HEIGHT; y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT + extend); y++) {
                                 SetQueue.IMP.setBlock(area.worldname, x + X + plotworld.ROAD_OFFSET_X, y, z + Z + plotworld.ROAD_OFFSET_Z, 0);
                             }
                             if (blocks != null) {
