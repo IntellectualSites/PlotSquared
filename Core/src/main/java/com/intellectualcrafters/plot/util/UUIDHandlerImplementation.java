@@ -14,7 +14,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,19 +28,19 @@ public abstract class UUIDHandlerImplementation {
     public UUIDWrapper uuidWrapper = null;
     public HashSet<UUID> unknown = new HashSet<>();
     private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
-    
+
     public UUIDHandlerImplementation(final UUIDWrapper wrapper) {
         uuidWrapper = wrapper;
         players = new ConcurrentHashMap<>();
     }
-    
+
     /**
      * If the UUID is not found, some commands can request to fetch the UUID when possible
      * @param name
      * @param ifFetch
      */
     public abstract void fetchUUID(final String name, final RunnableVal<UUID> ifFetch);
-    
+
     /**
      * Start UUID caching (this should be an async task)
      * Recommended to override this is you want to cache offline players
@@ -52,20 +51,20 @@ public abstract class UUIDHandlerImplementation {
         }
         return CACHED = true;
     }
-    
+
     public UUIDWrapper getUUIDWrapper() {
         return uuidWrapper;
     }
-    
+
     public void setUUIDWrapper(final UUIDWrapper wrapper) {
         uuidWrapper = wrapper;
     }
-    
+
     public void rename(final UUID uuid, final StringWrapper name) {
         uuidMap.inverse().remove(uuid);
         uuidMap.put(name, uuid);
     }
-    
+
     public void add(final BiMap<StringWrapper, UUID> toAdd) {
         if (uuidMap.isEmpty()) {
             uuidMap = toAdd;
@@ -86,9 +85,9 @@ public abstract class UUIDHandlerImplementation {
             }
             uuidMap.put(name, uuid);
         }
-        PS.debug(C.PREFIX.s() + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
+        PS.debug(C.PREFIX + "&6Cached a total of: " + uuidMap.size() + " UUIDs");
     }
-    
+
     public boolean add(final StringWrapper name, final UUID uuid) {
         if ((uuid == null)) {
             return false;
@@ -102,7 +101,7 @@ public abstract class UUIDHandlerImplementation {
             }
             return false;
         }
-        
+
         /*
          * lazy UUID conversion:
          *  - Useful if the person misconfigured the database, or settings before PlotMe conversion
@@ -165,25 +164,25 @@ public abstract class UUIDHandlerImplementation {
         }
         return true;
     }
-    
+
     public boolean uuidExists(final UUID uuid) {
         return uuidMap.containsValue(uuid);
     }
-    
+
     public BiMap<StringWrapper, UUID> getUUIDMap() {
         return uuidMap;
     }
-    
+
     public boolean nameExists(final StringWrapper wrapper) {
         return uuidMap.containsKey(wrapper);
     }
-    
+
     public void handleShutdown() {
         players.clear();
         uuidMap.clear();
         uuidWrapper = null;
     }
-    
+
     public String getName(final UUID uuid) {
         if (uuid == null) {
             return null;
@@ -200,7 +199,7 @@ public abstract class UUIDHandlerImplementation {
         }
         return null;
     }
-    
+
     public UUID getUUID(final String name, final RunnableVal<UUID> ifFetch) {
         if ((name == null) || (name.isEmpty())) {
             return null;
@@ -228,15 +227,15 @@ public abstract class UUIDHandlerImplementation {
         }
         return null;
     }
-    
+
     public UUID getUUID(final PlotPlayer player) {
         return uuidWrapper.getUUID(player);
     }
-    
+
     public UUID getUUID(final OfflinePlotPlayer player) {
         return uuidWrapper.getUUID(player);
     }
-    
+
     public PlotPlayer getPlayer(final UUID uuid) {
         String name = getName(uuid);
         if (name != null) {
@@ -244,13 +243,13 @@ public abstract class UUIDHandlerImplementation {
         }
         return null;
     }
-    
+
     public PlotPlayer getPlayer(final String name) {
         return players.get(name);
     }
-    
+
     public Map<String, PlotPlayer> getPlayers() {
         return players;
     }
-    
+
 }

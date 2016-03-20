@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class SQLUUIDHandler extends UUIDHandlerImplementation {
-    
+
     final String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
     final int MAX_REQUESTS = 500;
     final int INTERVAL = 12000;
@@ -56,13 +56,13 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         }
         startCaching(null);
     }
-    
+
     private Connection getConnection() {
         synchronized (_sqLite) {
             return _sqLite.getConnection();
         }
     }
-    
+
     @Override
     public boolean startCaching(final Runnable whenDone) {
         if (!super.startCaching(whenDone)) {
@@ -192,10 +192,10 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         });
         return true;
     }
-    
+
     @Override
     public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
-        PS.debug(C.PREFIX.s() + "UUID for '" + name + "' was null. We'll cache this from the mojang servers!");
+        PS.debug(C.PREFIX + "UUID for '" + name + "' was null. We'll cache this from the mojang servers!");
         if (ifFetch == null) {
             return;
         }
@@ -227,7 +227,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
             }
         });
     }
-    
+
     @Override
     public void handleShutdown() {
         super.handleShutdown();
@@ -237,7 +237,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
             throw new SQLUUIDHandlerException("Couldn't close database connection", e);
         }
     }
-    
+
     @Override
     public boolean add(final StringWrapper name, final UUID uuid) {
         // Ignoring duplicates
@@ -250,7 +250,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                         statement.setString(1, uuid.toString());
                         statement.setString(2, name.toString());
                         statement.execute();
-                        PS.debug(C.PREFIX.s() + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
+                        PS.debug(C.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
                     } catch (final SQLException e) {
                         e.printStackTrace();
                     }
@@ -260,7 +260,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         }
         return false;
     }
-    
+
     /**
      * This is useful for name changes
      */
@@ -275,7 +275,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     statement.setString(1, name.value);
                     statement.setString(2, uuid.toString());
                     statement.execute();
-                    PS.debug(C.PREFIX.s() + "Name change for '" + uuid + "' to '" + name.value + "'");
+                    PS.debug(C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + "'");
                 } catch (final SQLException e) {
                     e.printStackTrace();
                 }
