@@ -17,6 +17,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 dependencies {
     compile project(':Core')
     compile 'org.spongepowered:spongeapi:4.0.3'
+    compile 'org.mcstats.sponge:metrics:R8-SNAPSHOT'
 }
 
 sourceCompatibility = 1.8
@@ -30,6 +31,10 @@ repositories {
     maven {
         name = "Sponge"
         url = "https://repo.spongepowered.org/maven"
+    }
+    maven {
+        name = "Sponge Metrics"
+        url = "http://repo.mcstats.org/content/repositories/releases/"
     }
 }
 minecraft {
@@ -49,7 +54,9 @@ processResources {
 shadowJar {
     dependencies {
         include(dependency(':Core'))
+        include(dependency('org.mcstats.sponge:metrics:R8-SNAPSHOT'))
     }
+    relocate 'org.mcstats', 'com.plotsquared.stats'
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file '../target'
 }
