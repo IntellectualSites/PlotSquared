@@ -45,7 +45,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -66,21 +65,21 @@ import java.util.UUID;
  * @see PS
  */
 public class PlotAPI {
-    
+
     /**
      * Permission that allows for admin access, this permission node will allow the player to use any part of the
      * plugin, without limitations.
-     * @deprecated Use C.PERMISSION_ADMIN.s() instead
+     * @deprecated Use C.PERMISSION_ADMIN instead
      */
     @Deprecated
     public static final String ADMIN_PERMISSION = C.PERMISSION_ADMIN.s();
-    
+
     /**
      * @deprecated Use new PlotAPI() instead
      */
     @Deprecated
     public PlotAPI(final JavaPlugin plugin) {}
-    
+
     /**
      * @see PS
      *
@@ -93,7 +92,7 @@ public class PlotAPI {
      */
     @Deprecated
     public PlotAPI() {}
-    
+
     /**
      * Get all plots
      *
@@ -104,7 +103,7 @@ public class PlotAPI {
     public Set<Plot> getAllPlots() {
         return PS.get().getPlots();
     }
-    
+
     /**
      * Return all plots for a player
      *
@@ -115,7 +114,7 @@ public class PlotAPI {
     public Set<Plot> getPlayerPlots(final Player player) {
         return PS.get().getPlots(BukkitUtil.getPlayer(player));
     }
-    
+
     /**
      * Add a plot world
      *
@@ -125,7 +124,7 @@ public class PlotAPI {
     public void addPlotArea(final PlotArea plotArea) {
         PS.get().addPlotArea(plotArea);
     }
-    
+
     /**
      * @return main configuration
      *
@@ -134,7 +133,7 @@ public class PlotAPI {
     public YamlConfiguration getConfig() {
         return PS.get().config;
     }
-    
+
     /**
      * @return storage configuration
      *
@@ -143,7 +142,7 @@ public class PlotAPI {
     public YamlConfiguration getStorage() {
         return PS.get().storage;
     }
-    
+
     /**
      * Get the main class for this plugin <br> - Contains a lot of fields and methods - not very well organized <br>
      * Only use this if you really need it
@@ -155,7 +154,7 @@ public class PlotAPI {
     public PS getMain() {
         return PS.get();
     }
-    
+
     /**
      * ChunkManager class contains several useful methods<br>
      *  - Chunk deletion<br>
@@ -179,7 +178,7 @@ public class PlotAPI {
     public SetQueue getSetQueue() {
         return SetQueue.IMP;
     }
-    
+
     /**
      * UUIDWrapper class has basic methods for getting UUIDS (it's recommended to use the UUIDHandler class instead)
      *
@@ -190,7 +189,7 @@ public class PlotAPI {
     public UUIDWrapper getUUIDWrapper() {
         return UUIDHandler.getUUIDWrapper();
     }
-    
+
     /**
      * Do not use this. Instead use FlagManager.[method] in your code.
      *  - Flag related stuff
@@ -203,7 +202,7 @@ public class PlotAPI {
     public FlagManager getFlagManager() {
         return new FlagManager();
     }
-    
+
     /**
      * Do not use this. Instead use MainUtil.[method] in your code.
      *  - Basic plot management stuff
@@ -216,7 +215,7 @@ public class PlotAPI {
     public MainUtil getMainUtil() {
         return new MainUtil();
     }
-    
+
     /**
      * Do not use this. Instead use C.PERMISSION_[method] in your code.
      *  - Basic permission management stuff
@@ -235,7 +234,7 @@ public class PlotAPI {
         }
         return perms.toArray(new String[perms.size()]);
     }
-    
+
     /**
      * SchematicHandler class contains methods related to pasting, reading and writing schematics
      *
@@ -246,7 +245,7 @@ public class PlotAPI {
     public SchematicHandler getSchematicHandler() {
         return SchematicHandler.manager;
     }
-    
+
     /**
      * Use C.[caption] instead
      *
@@ -258,7 +257,7 @@ public class PlotAPI {
     public C[] getCaptions() {
         return C.values();
     }
-    
+
     /**
      * Get the plot manager for a world. - Most of these methods can be accessed through the MainUtil
      *
@@ -276,7 +275,7 @@ public class PlotAPI {
         }
         return getPlotManager(world.getName());
     }
-    
+
     public Set<PlotArea> getPlotAreas(World world) {
         if (world == null) {
             return new HashSet<>();
@@ -308,7 +307,7 @@ public class PlotAPI {
                 return null;
         }
     }
-    
+
     /**
      * Get the settings for a world (settings bundled in PlotArea class) - You will need to downcast for the specific
      * settings a Generator has. e.g. DefaultPlotWorld class implements PlotArea
@@ -327,7 +326,7 @@ public class PlotAPI {
         }
         return getWorldSettings(world.getName());
     }
-    
+
     /**
      * Get the settings for a world (settings bundled in PlotArea class)
      *
@@ -354,7 +353,7 @@ public class PlotAPI {
                 return null;
         }
     }
-    
+
     /**
      * Send a message to a player.
      *
@@ -367,7 +366,7 @@ public class PlotAPI {
     public void sendMessage(final Player player, final C c) {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), c);
     }
-    
+
     /**
      * Send a message to a player. - Supports color codes
      *
@@ -379,7 +378,7 @@ public class PlotAPI {
     public void sendMessage(final Player player, final String string) {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), string);
     }
-    
+
     /**
      * Send a message to the console. - Supports color codes
      *
@@ -390,7 +389,7 @@ public class PlotAPI {
     public void sendConsoleMessage(final String msg) {
         PS.log(msg);
     }
-    
+
     /**
      * Send a message to the console
      *
@@ -400,9 +399,9 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.config.C
      */
     public void sendConsoleMessage(final C c) {
-        sendConsoleMessage(c.s());
+        sendConsoleMessage(c);
     }
-    
+
     /**
      * Register a flag for use in plots
      *
@@ -414,7 +413,7 @@ public class PlotAPI {
     public void addFlag(final AbstractFlag flag) {
         FlagManager.addFlag(flag);
     }
-    
+
     /**
      * get all the currently registered flags
      *
@@ -426,7 +425,7 @@ public class PlotAPI {
     public AbstractFlag[] getFlags() {
         return FlagManager.getFlags().toArray(new AbstractFlag[FlagManager.getFlags().size()]);
     }
-    
+
     /**
      * Get a plot based on the ID
      *
@@ -449,7 +448,7 @@ public class PlotAPI {
         }
         return area.getPlot(new PlotId(x, z));
     }
-    
+
     /**
      * Get a plot based on the location
      *
@@ -465,7 +464,7 @@ public class PlotAPI {
         }
         return BukkitUtil.getLocation(l).getPlot();
     }
-    
+
     /**
      * Get a plot based on the player location
      *
@@ -479,7 +478,7 @@ public class PlotAPI {
     public Plot getPlot(final Player player) {
         return this.getPlot(player.getLocation());
     }
-    
+
     /**
      * Check whether or not a player has a plot
      *
@@ -493,7 +492,7 @@ public class PlotAPI {
     public boolean hasPlot(final World world, final Player player) {
         return getPlots(world, player, true) != null && getPlots(world, player, true).length > 0;
     }
-    
+
     /**
      * Get all plots for the player
      *
@@ -517,7 +516,7 @@ public class PlotAPI {
         }
         return pPlots.toArray(new Plot[pPlots.size()]);
     }
-    
+
     /**
      * Get all plots for the world
      *
@@ -536,7 +535,7 @@ public class PlotAPI {
         Collection<Plot> plots = PS.get().getPlots(world.getName());
         return plots.toArray(new Plot[plots.size()]);
     }
-    
+
     /**
      * Get all plot worlds
      *
@@ -548,7 +547,7 @@ public class PlotAPI {
         Set<String> plotWorldStrings = PS.get().getPlotWorldStrings();
         return plotWorldStrings.toArray(new String[plotWorldStrings.size()]);
     }
-    
+
     /**
      * Get if plot world
      *
@@ -562,7 +561,7 @@ public class PlotAPI {
     public boolean isPlotWorld(final World world) {
         return PS.get().hasPlotArea(world.getName());
     }
-    
+
     /**
      * Get plot locations
      *
@@ -578,7 +577,7 @@ public class PlotAPI {
     public Location[] getLocations(final Plot p) {
         return new Location[] { BukkitUtil.getLocation(p.getBottom()), BukkitUtil.getLocation(p.getTop()), BukkitUtil.getLocation(p.getHome()) };
     }
-    
+
     /**
      * Get home location
      *
@@ -591,7 +590,7 @@ public class PlotAPI {
     public Location getHomeLocation(final Plot p) {
         return BukkitUtil.getLocation(p.getHome());
     }
-    
+
     /**
      * Get Bottom Location (min, min, min)
      *
@@ -607,14 +606,14 @@ public class PlotAPI {
     public Location getBottomLocation(final Plot p) {
         return BukkitUtil.getLocation(p.getBottom());
     }
-    
+
     /**
      * Get Top Location (max, max, max)
      *
      * @param p Plot that you want to get the location for
      *
      * @return plot top location
-     * 
+     *
      * @deprecated As merged plots may not have a rectangular shape
      *
      * @see Plot
@@ -623,7 +622,7 @@ public class PlotAPI {
     public Location getTopLocation(final Plot p) {
         return BukkitUtil.getLocation(p.getTop());
     }
-    
+
     /**
      * Check whether or not a player is in a plot
      *
@@ -635,7 +634,7 @@ public class PlotAPI {
     public boolean isInPlot(final Player player) {
         return getPlot(player) != null;
     }
-    
+
     /**
      * Register a subcommand
      *
@@ -650,7 +649,7 @@ public class PlotAPI {
             MainCommand.getInstance().createCommand(c);
         }
     }
-    
+
     /**
      * Get the PlotSquared class
      *
@@ -661,7 +660,7 @@ public class PlotAPI {
     public PS getPlotSquared() {
         return PS.get();
     }
-    
+
     /**
      * Get the player plot count
      *
@@ -677,7 +676,7 @@ public class PlotAPI {
         }
         return BukkitUtil.getPlayer(player).getPlotCount(world.getName());
     }
-    
+
     /**
      * Get a collection containing the players plots
      *
@@ -696,7 +695,7 @@ public class PlotAPI {
         }
         return BukkitUtil.getPlayer(player).getPlots(world.getName());
     }
-    
+
     /**
      * Get the numbers of plots, which the player is able to build in
      *
@@ -709,7 +708,7 @@ public class PlotAPI {
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
         return pp.getAllowedPlots();
     }
-    
+
     /**
      * Get the PlotPlayer for a player<br>
      *  - The PlotPlayer is usually cached and will provide useful functions relating to players
@@ -722,7 +721,7 @@ public class PlotAPI {
     public PlotPlayer wrapPlayer(final Player player) {
         return PlotPlayer.wrap(player);
     }
-    
+
     /**
      * Get the PlotPlayer for a UUID (Please note that PlotSquared can be configured to provide different UUIDs than bukkit)
      *
@@ -734,7 +733,7 @@ public class PlotAPI {
     public PlotPlayer wrapPlayer(final UUID uuid) {
         return PlotPlayer.wrap(uuid);
     }
-    
+
     /**
      * Get the PlotPlayer for a username
      *
@@ -746,7 +745,7 @@ public class PlotAPI {
     public PlotPlayer wrapPlayer(final String player) {
         return PlotPlayer.wrap(player);
     }
-    
+
     /**
      * Get the PlotPlayer for an offline player<br>
      * Note that this will work if the player is offline, however not all functionality will work

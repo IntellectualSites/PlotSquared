@@ -29,8 +29,17 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.util.*;
-
+import com.intellectualcrafters.plot.util.AbstractTitle;
+import com.intellectualcrafters.plot.util.CommentManager;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotWeather;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,7 +49,7 @@ import java.util.UUID;
 
  */
 public class PlotListener {
-    
+
     public static boolean plotEntry(final PlotPlayer pp, final Plot plot) {
         if (plot.isDenied(pp.getUUID()) && !Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
             return false;
@@ -59,7 +68,7 @@ public class PlotListener {
             final int size = flags.size();
             boolean titles = Settings.TITLES;
             final String greeting;
-            
+
             if (size != 0) {
                 final Flag titleFlag = flags.get("titles");
                 if (titleFlag != null) {
@@ -115,7 +124,7 @@ public class PlotListener {
                 if (weatherFlag != null) {
                     pp.setWeather((PlotWeather) weatherFlag.getValue());
                 }
-                
+
                 final Flag musicFlag = flags.get("music");
                 if (musicFlag != null) {
                     final Integer id = (Integer) musicFlag.getValue();
@@ -174,7 +183,7 @@ public class PlotListener {
         }
         return true;
     }
-    
+
     public static boolean plotExit(final PlotPlayer pp, final Plot plot) {
         pp.deleteMeta("lastplot");
         EventUtil.manager.callLeave(pp, plot);

@@ -37,7 +37,7 @@ aliases = { "biome", "sb", "setb", "b" },
 category = CommandCategory.APPEARANCE,
 requiredType = RequiredType.NONE)
 public class Biome extends SetCommand {
-    
+
     @Override
     public boolean set(final PlotPlayer plr, final Plot plot, final String value) {
         final int biome = WorldUtil.IMP.getBiomeFromString(value);

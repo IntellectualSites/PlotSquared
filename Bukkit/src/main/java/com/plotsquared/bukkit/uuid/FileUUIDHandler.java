@@ -10,12 +10,15 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.NbtFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -28,16 +31,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class FileUUIDHandler extends UUIDHandlerImplementation {
-    
+
     public FileUUIDHandler(final UUIDWrapper wrapper) {
         super(wrapper);
     }
-    
+
     @Override
     public boolean startCaching(final Runnable whenDone) {
         return super.startCaching(whenDone) && cache(whenDone);
     }
-    
+
     public boolean cache(final Runnable whenDone) {
         final File container = Bukkit.getWorldContainer();
         final List<World> worlds = Bukkit.getWorlds();
@@ -50,7 +53,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                PS.debug(C.PREFIX.s() + "&6Starting player data caching for: " + world);
+                PS.debug(C.PREFIX + "&6Starting player data caching for: " + world);
                 final File uuidfile = new File(PS.get().IMP.getDirectory(), "uuids.txt");
                 if (uuidfile.exists()) {
                     try {
@@ -112,7 +115,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 }
                             } catch (final Exception e) {
                                 e.printStackTrace();
-                                PS.debug(C.PREFIX.s() + "Invalid playerdata: " + current);
+                                PS.debug(C.PREFIX + "Invalid playerdata: " + current);
                             }
                         }
                     }
@@ -150,7 +153,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 final UUID uuid = UUID.fromString(s);
                                 uuids.add(uuid);
                             } catch (final Exception e) {
-                                PS.debug(C.PREFIX.s() + "Invalid playerdata: " + current);
+                                PS.debug(C.PREFIX + "Invalid playerdata: " + current);
                             }
                         }
                         break;
@@ -195,7 +198,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         }
                         toAdd.put(new StringWrapper(name), uuid);
                     } catch (final Throwable e) {
-                        PS.debug(C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+                        PS.debug(C.PREFIX + "&6Invalid playerdata: " + uuid.toString() + ".dat");
                     }
                 }
                 for (final String name : names) {
@@ -226,7 +229,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
         });
         return true;
     }
-    
+
     @Override
     public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
         TaskManager.runTaskAsync(new Runnable() {
