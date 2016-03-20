@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HybridUtils {
-    
+
     public static HybridUtils manager;
     public static Set<ChunkLoc> regions;
     public static Set<ChunkLoc> chunks = new HashSet<>();
@@ -110,7 +110,7 @@ public abstract class HybridUtils {
     }
 
     public abstract int checkModified(final String world, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2, final PlotBlock[] blocks);
-    
+
     public final ArrayList<ChunkLoc> getChunks(final ChunkLoc region) {
         final ArrayList<ChunkLoc> chunks = new ArrayList<>();
         final int sx = region.x << 5;
@@ -122,7 +122,7 @@ public abstract class HybridUtils {
         }
         return chunks;
     }
-    
+
     /**
      * Checks all connected plots
      * @param plot
@@ -145,7 +145,7 @@ public abstract class HybridUtils {
             @Override
             public void run() {
                 if (zones.isEmpty()) {
-                    
+
                     TaskManager.runTask(whenDone);
                     return;
                 }
@@ -167,12 +167,12 @@ public abstract class HybridUtils {
                                 plot.getArea().worldname, bx, ex, cpw.PLOT_HEIGHT + 1, 255, bz, ez, new PlotBlock[] { new PlotBlock((short) 0, (byte) 0) });
                     }
                 }, this, 5);
-                
+
             }
         };
         run.run();
     }
-    
+
     public boolean scheduleRoadUpdate(final PlotArea area, final int extend) {
         if (HybridUtils.UPDATE) {
             return false;
@@ -181,7 +181,7 @@ public abstract class HybridUtils {
         final Set<ChunkLoc> regions = ChunkManager.manager.getChunkChunks(area.worldname);
         return scheduleRoadUpdate(area, regions, extend);
     }
-    
+
     public boolean scheduleRoadUpdate(final PlotArea area, final Set<ChunkLoc> rgs, final int extend) {
         HybridUtils.regions = rgs;
         HybridUtils.area = area;
@@ -210,7 +210,7 @@ public abstract class HybridUtils {
                 }
                 if (regions.isEmpty() && chunks.isEmpty()) {
                     HybridUtils.UPDATE = false;
-                    PS.debug(C.PREFIX.s() + "Finished road conversion");
+                    PS.debug(C.PREFIX + "Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
@@ -236,7 +236,7 @@ public abstract class HybridUtils {
                                     final long diff = System.currentTimeMillis() + 1;
                                     if (((System.currentTimeMillis() - baseTime - last.get()) > 2000) && (last.get() != 0)) {
                                         last.set(0);
-                                        PS.debug(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
+                                        PS.debug(C.PREFIX + "Detected low TPS. Rescheduling in 30s");
                                         Iterator<ChunkLoc> iter = chunks.iterator();
                                         final ChunkLoc chunk = iter.next();
                                         iter.remove();
@@ -294,7 +294,7 @@ public abstract class HybridUtils {
         });
         return true;
     }
-    
+
     public boolean setupRoadSchematic(final Plot plot) {
         final String world = plot.getArea().worldname;
         final Location bot = plot.getBottomAbs().subtract(1, 0, 1);
@@ -309,7 +309,7 @@ public abstract class HybridUtils {
         final int bz = sz - plotworld.ROAD_WIDTH;
         final int tz = sz - 1;
         final int ty = get_ey(world, sx, ex, bz, tz, sy);
-        
+
         final Set<RegionWrapper> sideroad = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ey, sz, ez)));
         final Set<RegionWrapper> intersection = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ty, bz, tz)));
 
@@ -331,9 +331,9 @@ public abstract class HybridUtils {
         });
         return true;
     }
-    
+
     public abstract int get_ey(final String world, final int sx, final int ex, final int sz, final int ez, final int sy);
-    
+
     public boolean regenerateRoad(final PlotArea area, final ChunkLoc chunk, int extend) {
         int x = chunk.x << 4;
         int z = chunk.z << 4;

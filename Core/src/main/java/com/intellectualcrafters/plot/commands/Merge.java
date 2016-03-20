@@ -33,7 +33,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -43,7 +42,7 @@ import java.util.UUID;
 public class Merge extends SubCommand {
     public final static String[] values = new String[] { "north", "east", "south", "west", "auto" };
     public final static String[] aliases = new String[] { "n", "e", "s", "w", "all" };
-    
+
     public static String direction(float yaw) {
         yaw = yaw / 90;
         final int i = Math.round(yaw);
@@ -65,7 +64,7 @@ public class Merge extends SubCommand {
                 return "";
         }
     }
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocationFull();
@@ -131,7 +130,7 @@ public class Merge extends SubCommand {
                 }
                 MainUtil.sendMessage(plr, C.NO_AVAILABLE_AUTOMERGE);
                 return false;
-                
+
             }
             for (int i = 0; i < values.length; i++) {
                 if (args[0].equalsIgnoreCase(values[i]) || args[0].equalsIgnoreCase(aliases[i])) {
@@ -165,7 +164,7 @@ public class Merge extends SubCommand {
             return false;
         }
         if (!Permissions.hasPermission(plr, C.PERMISSION_MERGE_OTHER)) {
-            MainUtil.sendMessage(plr, C.NO_PERMISSION, C.PERMISSION_MERGE_OTHER.s());
+            MainUtil.sendMessage(plr, C.NO_PERMISSION, C.PERMISSION_MERGE_OTHER);
             return false;
         }
         HashSet<UUID> uuids = adjacent.getOwners();

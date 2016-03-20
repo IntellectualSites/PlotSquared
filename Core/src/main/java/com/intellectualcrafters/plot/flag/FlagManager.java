@@ -23,22 +23,32 @@ package com.intellectualcrafters.plot.flag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.PlotSettings;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Flag Manager Utility
  *
  */
 public class FlagManager {
-    
+
     private final static HashSet<String> reserved = new HashSet<>();
-    
+
     private final static HashSet<AbstractFlag> flags = new HashSet<>();
-    
+
     /**
      * Reserve a flag so that it cannot be set by players
      * @param flag
@@ -46,7 +56,7 @@ public class FlagManager {
     public static void reserveFlag(final String flag) {
         reserved.add(flag);
     }
-    
+
     /**
      * Get if a flag is reserved
      * @param flag
@@ -55,7 +65,7 @@ public class FlagManager {
     public static boolean isReserved(final String flag) {
         return reserved.contains(flag);
     }
-    
+
     /**
      * Get the reserved flags
      * @return
@@ -63,7 +73,7 @@ public class FlagManager {
     public static HashSet<String> getReservedFlags() {
         return (HashSet<String>) reserved.clone();
     }
-    
+
     /**
      * Unreserve a flag
      * @param flag
@@ -71,7 +81,7 @@ public class FlagManager {
     public static void unreserveFlag(final String flag) {
         reserved.remove(flag);
     }
-    
+
     /**
      * Register an AbstractFlag with PlotSquared
      *
@@ -82,9 +92,9 @@ public class FlagManager {
     public static boolean addFlag(final AbstractFlag af) {
         return addFlag(af, false);
     }
-    
+
     public static boolean addFlag(final AbstractFlag af, final boolean reserved) {
-        PS.debug(C.PREFIX.s() + "&8 - Adding flag: &7" + af);
+        PS.debug(C.PREFIX + "&8 - Adding flag: &7" + af);
         PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override
             public void run(PlotArea value) {
@@ -125,7 +135,7 @@ public class FlagManager {
         }
         return flag_string.toString();
     }
-    
+
     public static Flag getSettingFlag(final PlotArea area, final PlotSettings settings, final String id) {
         Flag flag;
         if (settings.flags.isEmpty() || (flag = settings.flags.get(id)) == null) {
@@ -139,7 +149,7 @@ public class FlagManager {
         }
         return flag;
     }
-    
+
     public static boolean isBooleanFlag(final Plot plot, final String key, final boolean defaultValue) {
         final Flag flag = FlagManager.getPlotFlagRaw(plot, key);
         if (flag == null) {
@@ -151,7 +161,7 @@ public class FlagManager {
         }
         return defaultValue;
     }
-    
+
     /**
      * Get the value of a flag for a plot (respects flag defaults)
      * @param plot
@@ -177,7 +187,7 @@ public class FlagManager {
         }
         return getSettingFlag(plot.getArea(), plot.getSettings(), flag);
     }
-    
+
     public static boolean isPlotFlagTrue(final Plot plot, final String strFlag) {
         if (plot.owner == null) {
             return false;
@@ -185,7 +195,7 @@ public class FlagManager {
         final Flag flag = getPlotFlagRaw(plot, strFlag);
         return !(flag == null || !((Boolean) flag.getValue()));
     }
-    
+
     public static boolean isPlotFlagFalse(final Plot plot, final String strFlag) {
         if (plot.owner == null) {
             return false;
@@ -196,7 +206,7 @@ public class FlagManager {
         }
         return false;
     }
-    
+
     /**
      * Get the value of a flag for a plot (ignores flag defaults)
      * @param plot
@@ -206,14 +216,14 @@ public class FlagManager {
     public static Flag getPlotFlagAbs(final Plot plot, final String flag) {
         return getSettingFlagAbs(plot.getSettings(), flag);
     }
-    
+
     public static Flag getSettingFlagAbs(final PlotSettings settings, final String flag) {
         if (settings.flags.isEmpty()) {
             return null;
         }
         return settings.flags.get(flag);
     }
-    
+
     /**
      * Add a flag to a plot
      * @param origin
@@ -231,7 +241,7 @@ public class FlagManager {
         }
         return true;
     }
-    
+
     public static boolean addPlotFlagAbs(final Plot plot, final Flag flag) {
         final boolean result = EventUtil.manager.callFlagAdd(flag, plot);
         if (!result) {
@@ -240,14 +250,14 @@ public class FlagManager {
         plot.getFlags().put(flag.getKey(), flag);
         return true;
     }
-    
+
     public static boolean addClusterFlag(final PlotCluster cluster, final Flag flag) {
         getSettingFlag(cluster.area, cluster.settings, flag.getKey());
         cluster.settings.flags.put(flag.getKey(), flag);
         DBFunc.setFlags(cluster, cluster.settings.flags.values());
         return true;
     }
-    
+
     /**
      *
      * @param plot
@@ -259,7 +269,7 @@ public class FlagManager {
         }
         return getSettingFlags(plot.getArea(), plot.getSettings());
     }
-    
+
     public static HashMap<String, Flag> getPlotFlags(PlotArea area, final PlotSettings settings, final boolean ignorePluginflags) {
         final HashMap<String, Flag> flags = new HashMap<>();
         if (area != null && !area.DEFAULT_FLAGS.isEmpty()) {
@@ -275,14 +285,14 @@ public class FlagManager {
         } else {
             flags.putAll(settings.flags);
         }
-        
+
         return flags;
     }
-    
+
     public static HashMap<String, Flag> getSettingFlags(PlotArea area, final PlotSettings settings) {
         return getPlotFlags(area, settings, false);
     }
-    
+
     public static boolean removePlotFlag(final Plot plot, final String id) {
         final Flag flag = plot.getFlags().remove(id);
         if (flag == null) {
@@ -297,7 +307,7 @@ public class FlagManager {
         DBFunc.setFlags(plot, plot.getFlags().values());
         return true;
     }
-    
+
     public static boolean removeClusterFlag(final PlotCluster cluster, final String id) {
         final Flag flag = cluster.settings.flags.remove(id);
         if (flag == null) {
@@ -311,7 +321,7 @@ public class FlagManager {
         DBFunc.setFlags(cluster, cluster.settings.flags.values());
         return true;
     }
-    
+
     public static void setPlotFlags(final Plot origin, final Set<Flag> flags) {
         for (Plot plot : origin.getConnectedPlots()) {
             if (flags != null && !flags.isEmpty()) {
@@ -328,7 +338,7 @@ public class FlagManager {
             DBFunc.setFlags(plot, plot.getFlags().values());
         }
     }
-    
+
     public static void setClusterFlags(final PlotCluster cluster, final Set<Flag> flags) {
         if (flags != null && !flags.isEmpty()) {
             cluster.settings.flags.clear();
@@ -342,7 +352,7 @@ public class FlagManager {
         }
         DBFunc.setFlags(cluster, cluster.settings.flags.values());
     }
-    
+
     public static Flag[] removeFlag(final Flag[] flags, final String r) {
         final Flag[] f = new Flag[flags.length - 1];
         int index = 0;
@@ -353,7 +363,7 @@ public class FlagManager {
         }
         return f;
     }
-    
+
     public static Set<Flag> removeFlag(final Set<Flag> flags, final String r) {
         final HashSet<Flag> newflags = new HashSet<>();
         for (final Flag flag : flags) {
@@ -363,7 +373,7 @@ public class FlagManager {
         }
         return newflags;
     }
-    
+
     /**
      * Get a list of registered AbstractFlag objects
      *
@@ -372,7 +382,7 @@ public class FlagManager {
     public static HashSet<AbstractFlag> getFlags() {
         return flags;
     }
-    
+
     /**
      * Get a list of registered AbstractFlag objects based on player permissions
      *
@@ -389,7 +399,7 @@ public class FlagManager {
         }
         return returnFlags;
     }
-    
+
     /**
      * Get an AbstractFlag by a string Returns null if flag does not exist
      *
@@ -405,7 +415,7 @@ public class FlagManager {
         }
         return null;
     }
-    
+
     /**
      * Get an AbstractFlag by a string
      *
@@ -420,7 +430,7 @@ public class FlagManager {
         }
         return getFlag(string);
     }
-    
+
     /**
      * Remove a registered AbstractFlag
      *
@@ -431,7 +441,7 @@ public class FlagManager {
     public static boolean removeFlag(final AbstractFlag flag) {
         return flags.remove(flag);
     }
-    
+
     public static HashMap<String, Flag> parseFlags(final List<String> flagstrings) {
         final HashMap<String, Flag> map = new HashMap<>();
         for (final String key : flagstrings) {
