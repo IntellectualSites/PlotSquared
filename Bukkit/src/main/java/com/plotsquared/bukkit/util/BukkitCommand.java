@@ -73,7 +73,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         }
         final PlotPlayer player = BukkitUtil.getPlayer((Player) commandSender);
         if (strings.length < 1) {
-            if ((strings.length == 0) || "plots".startsWith(s)) {
+            if (strings.length == 0 || "plots".startsWith(s)) {
                 return Collections.singletonList("plots");
             }
         }

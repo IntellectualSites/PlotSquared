@@ -140,7 +140,7 @@ public class SpongeMain implements IPlotMain {
         if (!Settings.CONSOLE_COLOR) {
             message = message.replaceAll('\u00a7' + "[a-z|0-9]", "");
         }
-        if ((server == null) || (server.getConsole() == null)) {
+        if (server == null || server.getConsole() == null) {
             logger.info(message);
             return;
         }
@@ -168,7 +168,7 @@ public class SpongeMain implements IPlotMain {
         PluginContainer plugin = game.getPluginManager().fromInstance(this).get();
         String version = plugin.getVersion().get();
         final String[] split = version.split("\\.");
-        return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), (split.length == 3) ? Integer.parseInt(split[2]) : 0 };
+        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
     }
 
     @Override
@@ -176,7 +176,7 @@ public class SpongeMain implements IPlotMain {
         log("Checking minecraft version: Sponge: ");
         final String version = game.getPlatform().getMinecraftVersion().getName();
         final String[] split = version.split("\\.");
-        return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), (split.length == 3) ? Integer.parseInt(split[2]) : 0 };
+        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
     }
 
     @Override
@@ -337,12 +337,8 @@ public class SpongeMain implements IPlotMain {
         GenerationPopulator gen = wg.getBaseGenerationPopulator();
         if (gen instanceof SpongePlotGenerator) {
             PS.get().loadWorld(worldname, (SpongePlotGenerator) gen);
-        } else if (gen != null) {
-            throw new UnsupportedOperationException("NOT IMPLEMENTED YET!");
         } else {
-            if (PS.get().config.contains("worlds." + worldname)) {
-                PS.get().loadWorld(worldname, null);
-            }
+            throw new UnsupportedOperationException("NOT IMPLEMENTED YET!");
         }
     }
 

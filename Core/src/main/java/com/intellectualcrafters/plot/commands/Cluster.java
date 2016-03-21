@@ -102,7 +102,7 @@ public class Cluster extends SubCommand {
                 // check pos1 / pos2
                 PlotId pos1 = PlotId.fromString(args[2]);
                 PlotId pos2 = PlotId.fromString(args[3]);
-                if ((pos1 == null) || (pos2 == null)) {
+                if (pos1 == null || pos2 == null) {
                     MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
                 }
@@ -112,7 +112,7 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.ALIAS_IS_TAKEN);
                     return false;
                 }
-                if ((pos2.x < pos1.x) || (pos2.y < pos1.y)) {
+                if (pos2.x < pos1.x || pos2.y < pos1.y) {
                     PlotId tmp = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
                     pos2 = new PlotId(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
                     pos1 = tmp;
@@ -145,7 +145,7 @@ public class Cluster extends SubCommand {
                     current = plr.getPlayerClusterCount(plr.getLocation().getWorld());
                 }
                 final int allowed = Permissions.hasPermissionRange(plr, "plots.cluster", Settings.MAX_PLOTS);
-                if ((current + cluster.getArea()) > allowed) {
+                if (current + cluster.getArea() > allowed) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
                     return false;
                 }
@@ -172,7 +172,7 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.delete");
                     return false;
                 }
-                if ((args.length != 1) && (args.length != 2)) {
+                if (args.length != 1 && args.length != 2) {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster delete [name]");
                     return false;
                 }
@@ -218,11 +218,11 @@ public class Cluster extends SubCommand {
                 // check pos1 / pos2
                 PlotId pos1 = PlotId.fromString(args[1]);
                 PlotId pos2 = PlotId.fromString(args[2]);
-                if ((pos1 == null) || (pos2 == null)) {
+                if (pos1 == null || pos2 == null) {
                     MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_ID);
                     return false;
                 }
-                if ((pos2.x < pos1.x) || (pos2.y < pos1.y)) {
+                if (pos2.x < pos1.x || pos2.y < pos1.y) {
                     pos1 = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
                     pos2 = new PlotId(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
                 }
@@ -251,7 +251,7 @@ public class Cluster extends SubCommand {
                 }
                 final HashSet<Plot> existing = area.getPlotSelectionOwned(cluster.getP1(), cluster.getP2());
                 final HashSet<Plot> newplots = area.getPlotSelectionOwned(pos1, pos2);
-                final HashSet<Plot> removed = ((HashSet<Plot>) existing.clone());
+                final HashSet<Plot> removed = (HashSet<Plot>) existing.clone();
                 removed.removeAll(newplots);
                 // Check expand / shrink
                 if (!removed.isEmpty()) {
@@ -274,9 +274,9 @@ public class Cluster extends SubCommand {
                 } else {
                     current = plr.getPlayerClusterCount(plr.getLocation().getWorld());
                 }
-                current -= cluster.getArea() + (((1 + pos2.x) - pos1.x) * ((1 + pos2.y) - pos1.y));
+                current -= cluster.getArea() + (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
                 final int allowed = Permissions.hasPermissionRange(plr, "plots.cluster", Settings.MAX_PLOTS);
-                if ((current + cluster.getArea()) > allowed) {
+                if (current + cluster.getArea() > allowed) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster." + (current + cluster.getArea()));
                     return false;
                 }
@@ -379,7 +379,7 @@ public class Cluster extends SubCommand {
                 }
                 for (final Plot plot : new ArrayList<>(PS.get().getPlots(plr.getLocation().getWorld(), uuid))) {
                     final PlotCluster current = plot.getCluster();
-                    if ((current != null) && current.equals(cluster)) {
+                    if (current != null && current.equals(cluster)) {
                         plot.unclaim();
                     }
                 }
@@ -392,7 +392,7 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.leave");
                     return false;
                 }
-                if ((args.length != 1) && (args.length != 2)) {
+                if (args.length != 1 && args.length != 2) {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster leave [name]");
                     return false;
                 }
@@ -432,7 +432,7 @@ public class Cluster extends SubCommand {
                 MainUtil.sendMessage(plr, C.CLUSTER_REMOVED, cluster.getName());
                 for (final Plot plot : new ArrayList<>(PS.get().getPlots(plr.getLocation().getWorld(), uuid))) {
                     final PlotCluster current = plot.getCluster();
-                    if ((current != null) && current.equals(cluster)) {
+                    if (current != null && current.equals(cluster)) {
                         plr.getLocation().getWorld();
                         plot.unclaim();
                     }
@@ -515,7 +515,7 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.info");
                     return false;
                 }
-                if ((args.length != 1) && (args.length != 2)) {
+                if (args.length != 1 && args.length != 2) {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster info [name]");
                     return false;
                 }
@@ -543,7 +543,7 @@ public class Cluster extends SubCommand {
                     owner = "unknown";
                 }
                 final String name = cluster.getName();
-                final String size = ((cluster.getP2().x - cluster.getP1().x) + 1) + "x" + ((cluster.getP2().y - cluster.getP1().y) + 1);
+                final String size = (cluster.getP2().x - cluster.getP1().x + 1) + "x" + (cluster.getP2().y - cluster.getP1().y + 1);
                 final String rights = cluster.isAdded(plr.getUUID()) + "";
                 String message = C.CLUSTER_INFO.s();
                 message = message.replaceAll("%id%", id);
@@ -561,7 +561,7 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome");
                     return false;
                 }
-                if ((args.length != 1) && (args.length != 2)) {
+                if (args.length != 1 && args.length != 2) {
                     MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot cluster sethome");
                     return false;
                 }

@@ -259,7 +259,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             loaded = true;
         }
         // Set random seed
-        this.random.state = (cx << 16) | (cz & 0xFFFF);
+        this.random.state = cx << 16 | cz & 0xFFFF;
         // Process the chunk
         if (ChunkManager.preProcessChunk(result)) {
             return;
@@ -267,7 +267,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         PlotArea area = PS.get().getPlotArea(world.getName(), null);
         plotGenerator.generateChunk(chunkSetter, area, this.random);
         ChunkManager.postProcessChunk(result);
-        return;
     }
     
     @Override
@@ -316,6 +315,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         if (obj == null) {
             return false;
         }
-        return (toString().equals(obj.toString()) || toString().equals(obj.getClass().getName()));
+        return toString().equals(obj.toString()) || toString().equals(obj.getClass().getName());
     }
 }

@@ -27,15 +27,15 @@ public class RegionWrapper {
     }
     
     public boolean isIn(final int x, final int y, final int z) {
-        return ((x >= minX) && (x <= maxX) && (z >= minZ) && (z <= maxZ) && (y >= minY) && (y <= maxY));
+        return x >= minX && x <= maxX && z >= minZ && z <= maxZ && y >= minY && y <= maxY;
     }
     
     public boolean isIn(final int x, final int z) {
-        return ((x >= minX) && (x <= maxX) && (z >= minZ) && (z <= maxZ));
+        return x >= minX && x <= maxX && z >= minZ && z <= maxZ;
     }
     
     public boolean intersects(RegionWrapper other) {
-        return (other.minX <= this.maxX) && (other.maxX >= this.minX) && (other.minY <= this.maxY) && (other.maxY >= this.minY);
+        return other.minX <= this.maxX && other.maxX >= this.minX && other.minY <= this.maxY && other.maxY >= this.minY;
     }
 
     @Override

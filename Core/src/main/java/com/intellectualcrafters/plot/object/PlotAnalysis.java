@@ -70,7 +70,7 @@ public class PlotAnalysis {
             PS.debug("Calibration task already in progress!");
             return;
         }
-        if ((threshold <= 0) || (threshold >= 1)) {
+        if (threshold <= 0 || threshold >= 1) {
             PS.debug("Invalid threshold provided! (Cannot be 0 or 100 as then there's no point calibrating)");
             return;
         }
@@ -84,7 +84,7 @@ public class PlotAnalysis {
                 PS.debug(" - $1Reducing " + plots.size() + " plots to those with sufficient data");
                 while (iter.hasNext()) {
                     final Plot plot = iter.next();
-                    if ((plot.getSettings().ratings == null) || (plot.getSettings().getRatings().isEmpty())) {
+                    if (plot.getSettings().ratings == null || plot.getSettings().getRatings().isEmpty()) {
                         iter.remove();
                     } else {
                         plot.addRunning();
@@ -126,7 +126,7 @@ public class PlotAnalysis {
                             final int i = mi.intValue();
                             final Plot plot = plots.get(i);
                             ratings[i] = (int) ((plot.getAverageRating() + plot.getSettings().getRatings().size()) * 100);
-                            PS.debug(" | " + plot + " (rating) " + (ratings[i]));
+                            PS.debug(" | " + plot + " (rating) " + ratings[i]);
                         }
                     }
                 });
@@ -170,7 +170,7 @@ public class PlotAnalysis {
                     }
                 }
 
-                PS.debug(" - $1Waiting on plot rating thread: " + ((mi.intValue() * 100) / plots.size()) + "%");
+                PS.debug(" - $1Waiting on plot rating thread: " + mi.intValue() * 100 / plots.size() + "%");
                 try {
                     ratingAnalysis.join();
                 } catch (final InterruptedException e) {
@@ -212,7 +212,7 @@ public class PlotAnalysis {
                 final int[] variance_changes = square(sd_changes);
                 final int sum_changes = sum(variance_changes);
                 final double factor_changes = getCC(n, sum_changes);
-                PlotAnalysis.MODIFIERS.changes = factor_changes == 1 ? 0 : (int) ((factor_changes * 1000) / MathMan.getMean(changes));
+                PlotAnalysis.MODIFIERS.changes = factor_changes == 1 ? 0 : (int) (factor_changes * 1000 / MathMan.getMean(changes));
                 PS.debug(" - | changes " + factor_changes);
 
                 final int[] rank_faces = rank(faces);
@@ -220,7 +220,7 @@ public class PlotAnalysis {
                 final int[] variance_faces = square(sd_faces);
                 final int sum_faces = sum(variance_faces);
                 final double factor_faces = getCC(n, sum_faces);
-                PlotAnalysis.MODIFIERS.faces = factor_faces == 1 ? 0 : (int) ((factor_faces * 1000) / MathMan.getMean(faces));
+                PlotAnalysis.MODIFIERS.faces = factor_faces == 1 ? 0 : (int) (factor_faces * 1000 / MathMan.getMean(faces));
                 PS.debug(" - | faces " + factor_faces);
 
                 final int[] rank_data = rank(data);
@@ -228,7 +228,7 @@ public class PlotAnalysis {
                 final int[] variance_data = square(sd_data);
                 final int sum_data = sum(variance_data);
                 final double factor_data = getCC(n, sum_data);
-                PlotAnalysis.MODIFIERS.data = factor_data == 1 ? 0 : (int) ((factor_data * 1000) / MathMan.getMean(data));
+                PlotAnalysis.MODIFIERS.data = factor_data == 1 ? 0 : (int) (factor_data * 1000 / MathMan.getMean(data));
                 PS.debug(" - | data " + factor_data);
 
                 final int[] rank_air = rank(air);
@@ -236,7 +236,7 @@ public class PlotAnalysis {
                 final int[] variance_air = square(sd_air);
                 final int sum_air = sum(variance_air);
                 final double factor_air = getCC(n, sum_air);
-                PlotAnalysis.MODIFIERS.air = factor_air == 1 ? 0 : (int) ((factor_air * 1000) / MathMan.getMean(air));
+                PlotAnalysis.MODIFIERS.air = factor_air == 1 ? 0 : (int) (factor_air * 1000 / MathMan.getMean(air));
                 PS.debug(" - | air " + factor_air);
 
                 final int[] rank_variety = rank(variety);
@@ -244,7 +244,7 @@ public class PlotAnalysis {
                 final int[] variance_variety = square(sd_variety);
                 final int sum_variety = sum(variance_variety);
                 final double factor_variety = getCC(n, sum_variety);
-                PlotAnalysis.MODIFIERS.variety = factor_variety == 1 ? 0 : (int) ((factor_variety * 1000) / MathMan.getMean(variety));
+                PlotAnalysis.MODIFIERS.variety = factor_variety == 1 ? 0 : (int) (factor_variety * 1000 / MathMan.getMean(variety));
                 PS.debug(" - | variety " + factor_variety);
 
                 final int[] rank_changes_sd = rank(changes_sd);
@@ -252,7 +252,7 @@ public class PlotAnalysis {
                 final int[] variance_changes_sd = square(sd_changes_sd);
                 final int sum_changes_sd = sum(variance_changes_sd);
                 final double factor_changes_sd = getCC(n, sum_changes_sd);
-                PlotAnalysis.MODIFIERS.changes_sd = factor_changes_sd == 1 ? 0 : (int) ((factor_changes_sd * 1000) / MathMan.getMean(changes_sd));
+                PlotAnalysis.MODIFIERS.changes_sd = factor_changes_sd == 1 ? 0 : (int) (factor_changes_sd * 1000 / MathMan.getMean(changes_sd));
                 PS.debug(" - | changes_sd " + factor_changes_sd);
 
                 final int[] rank_faces_sd = rank(faces_sd);
@@ -260,7 +260,7 @@ public class PlotAnalysis {
                 final int[] variance_faces_sd = square(sd_faces_sd);
                 final int sum_faces_sd = sum(variance_faces_sd);
                 final double factor_faces_sd = getCC(n, sum_faces_sd);
-                PlotAnalysis.MODIFIERS.faces_sd = factor_faces_sd == 1 ? 0 : (int) ((factor_faces_sd * 1000) / MathMan.getMean(faces_sd));
+                PlotAnalysis.MODIFIERS.faces_sd = factor_faces_sd == 1 ? 0 : (int) (factor_faces_sd * 1000 / MathMan.getMean(faces_sd));
                 PS.debug(" - | faces_sd " + factor_faces_sd);
 
                 final int[] rank_data_sd = rank(data_sd);
@@ -268,7 +268,7 @@ public class PlotAnalysis {
                 final int[] variance_data_sd = square(sd_data_sd);
                 final int sum_data_sd = sum(variance_data_sd);
                 final double factor_data_sd = getCC(n, sum_data_sd);
-                PlotAnalysis.MODIFIERS.data_sd = factor_data_sd == 1 ? 0 : (int) ((factor_data_sd * 1000) / MathMan.getMean(data_sd));
+                PlotAnalysis.MODIFIERS.data_sd = factor_data_sd == 1 ? 0 : (int) (factor_data_sd * 1000 / MathMan.getMean(data_sd));
                 PS.debug(" - | data_sd " + factor_data_sd);
 
                 final int[] rank_air_sd = rank(air_sd);
@@ -276,7 +276,7 @@ public class PlotAnalysis {
                 final int[] variance_air_sd = square(sd_air_sd);
                 final int sum_air_sd = sum(variance_air_sd);
                 final double factor_air_sd = getCC(n, sum_air_sd);
-                PlotAnalysis.MODIFIERS.air_sd = factor_air_sd == 1 ? 0 : (int) ((factor_air_sd * 1000) / MathMan.getMean(air_sd));
+                PlotAnalysis.MODIFIERS.air_sd = factor_air_sd == 1 ? 0 : (int) (factor_air_sd * 1000 / MathMan.getMean(air_sd));
                 PS.debug(" - | air_sd " + factor_air_sd);
 
                 final int[] rank_variety_sd = rank(variety_sd);
@@ -284,7 +284,7 @@ public class PlotAnalysis {
                 final int[] variance_variety_sd = square(sd_variety_sd);
                 final int sum_variety_sd = sum(variance_variety_sd);
                 final double factor_variety_sd = getCC(n, sum_variety_sd);
-                PlotAnalysis.MODIFIERS.variety_sd = factor_variety_sd == 1 ? 0 : (int) ((factor_variety_sd * 1000) / MathMan.getMean(variety_sd));
+                PlotAnalysis.MODIFIERS.variety_sd = factor_variety_sd == 1 ? 0 : (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
                 PS.debug(" - | variety_sd " + factor_variety_sd);
 
                 final int[] complexity = new int[n];
@@ -303,7 +303,7 @@ public class PlotAnalysis {
                     }
                 }
                 int optimal_complexity = Integer.MAX_VALUE;
-                if ((min > 0) && (max < 102400)) { // If low size, use my fast ranking algorithm
+                if (min > 0 && max < 102400) { // If low size, use my fast ranking algorithm
                     final int[] rank_complexity = rank(complexity, max + 1);
                     for (int i = 0; i < n; i++) {
                         if (rank_complexity[i] == optimal_index) {
@@ -396,7 +396,7 @@ public class PlotAnalysis {
      * @return
      */
     public static double getCC(final int n, final int sum) {
-        return 1 - ((6 * (double) sum) / (n * ((n * n) - 1)));
+        return 1 - 6 * (double) sum / (n * (n * n - 1));
     }
     
     /**
@@ -519,7 +519,7 @@ public class PlotAnalysis {
             for (final Integer i : input) {
                 tmp = i / placement;
                 bucket[tmp % SIZE].add(i);
-                if (maxLength && (tmp > 0)) {
+                if (maxLength && tmp > 0) {
                     maxLength = false;
                 }
             }
@@ -542,16 +542,16 @@ public class PlotAnalysis {
         if (complexity != 0) {
             return complexity;
         }
-        complexity = ((changes) * MODIFIERS.changes)
-                + ((faces) * MODIFIERS.faces)
-                + ((data) * MODIFIERS.data)
-                + ((air) * MODIFIERS.air)
-                + ((variety) * MODIFIERS.variety)
-                + ((changes_sd) * MODIFIERS.changes_sd)
-                + ((faces_sd) * MODIFIERS.faces_sd)
-                + ((data_sd) * MODIFIERS.data_sd)
-                + ((air_sd) * MODIFIERS.air_sd)
-                + ((variety_sd) * MODIFIERS.variety_sd);
+        complexity = changes * MODIFIERS.changes
+                + faces * MODIFIERS.faces
+                + data * MODIFIERS.data
+                + air * MODIFIERS.air
+                + variety * MODIFIERS.variety
+                + changes_sd * MODIFIERS.changes_sd
+                + faces_sd * MODIFIERS.faces_sd
+                + data_sd * MODIFIERS.data_sd
+                + air_sd * MODIFIERS.air_sd
+                + variety_sd * MODIFIERS.variety_sd;
         return complexity;
     }
 }

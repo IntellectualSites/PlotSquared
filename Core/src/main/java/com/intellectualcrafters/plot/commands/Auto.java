@@ -52,7 +52,7 @@ public class Auto extends SubCommand {
                 return new PlotId(id.x + 1, id.y);
             }
         } else {
-            if (id.x == id.y && (id.x > 0)) {
+            if (id.x == id.y && id.x > 0) {
                 return new PlotId(id.x, id.y + step);
             }
             if (id.x == absX) {
@@ -81,7 +81,7 @@ public class Auto extends SubCommand {
                     final String[] split = args[0].split(",|;");
                     size_x = Integer.parseInt(split[0]);
                     size_z = Integer.parseInt(split[1]);
-                    if ((size_x < 1) || (size_z < 1)) {
+                    if (size_x < 1 || size_z < 1) {
                         MainUtil.sendMessage(plr, "&cError: size<=0");
                     }
                     if (args.length > 1) {
@@ -101,15 +101,15 @@ public class Auto extends SubCommand {
                 // return false;
             }
         }
-        if ((size_x * size_z) > Settings.MAX_AUTO_SIZE) {
+        if (size_x * size_z > Settings.MAX_AUTO_SIZE) {
             MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
         final int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(plotarea.worldname);
         final int diff = currentPlots - plr.getAllowedPlots();
-        if ((diff + (size_x * size_z)) > 0) {
+        if (diff + size_x * size_z > 0) {
             if (diff < 0) {
-                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, (-diff) + "");
+                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
                 return false;
             } else if (plr.hasPersistentMeta("grantedPlots")) {
                 int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
@@ -117,11 +117,10 @@ public class Auto extends SubCommand {
                     plr.removePersistentMeta("grantedPlots");
                     return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
                 } else {
-                    int left = grantedPlots - diff - (size_x * size_z);
+                    int left = grantedPlots - diff - size_x * size_z;
                     if (left == 0) {
                         plr.removePersistentMeta("grantedPlots");
-                    }
-                    else {
+                    } else {
                         plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(left));
                     }
                     sendMessage(plr, C.REMOVED_GRANTED_PLOT, "" + left, "" + (grantedPlots - left));
@@ -131,7 +130,7 @@ public class Auto extends SubCommand {
                 return false;
             }
         }
-        if ((EconHandler.manager != null) && plotarea.USE_ECONOMY) {
+        if (EconHandler.manager != null && plotarea.USE_ECONOMY) {
             double cost = plotarea.PRICES.get("claim");
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
@@ -159,7 +158,7 @@ public class Auto extends SubCommand {
             final PlotId top = plotarea.getMax();
             final PlotId origin = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
             PlotId id = new PlotId(0, 0);
-            final int width = Math.max((top.x - bot.x) + 1, (top.y - bot.y) + 1);
+            final int width = Math.max(top.x - bot.x + 1, top.y - bot.y + 1);
             final int max = width * width;
             //
             for (int i = 0; i <= max; i++) {
@@ -179,17 +178,17 @@ public class Auto extends SubCommand {
         boolean br = false;
         while (true) {
             final PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
-            final PlotId end = new PlotId((start.x + size_x) - 1, (start.y + size_z) - 1);
+            final PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);
             plotarea.setMeta("lastPlot", start);
             if (plotarea.canClaim(plr, start, end)) {
                 for (int i = start.x; i <= end.x; i++) {
                     for (int j = start.y; j <= end.y; j++) {
                         Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
-                        final boolean teleport = ((i == end.x) && (j == end.y));
+                        final boolean teleport = i == end.x && j == end.y;
                         plot.claim(plr, teleport, null);
                     }
                 }
-                if ((size_x != 1) || (size_z != 1)) {
+                if (size_x != 1 || size_z != 1) {
                     if (!plotarea.mergePlots(MainUtil.getPlotSelectionIds(start, end), Settings.MERGE_REMOVES_ROADS, true)) {
                         return false;
                     }

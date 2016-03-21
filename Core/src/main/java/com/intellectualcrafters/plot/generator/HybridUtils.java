@@ -5,12 +5,32 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.RegionWrapper;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.TaskManager;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HybridUtils {
@@ -95,8 +115,8 @@ public abstract class HybridUtils {
         final ArrayList<ChunkLoc> chunks = new ArrayList<>();
         final int sx = region.x << 5;
         final int sz = region.z << 5;
-        for (int x = sx; x < (sx + 32); x++) {
-            for (int z = sz; z < (sz + 32); z++) {
+        for (int x = sx; x < sx + 32; x++) {
+            for (int z = sz; z < sz + 32; z++) {
                 chunks.add(new ChunkLoc(x, z));
             }
         }
@@ -185,10 +205,10 @@ public abstract class HybridUtils {
                     return;
                 }
                 count.incrementAndGet();
-                if ((count.intValue() % 20) == 0) {
-                    PS.debug("PROGRESS: " + ((100 * (2048 - chunks.size())) / 2048) + "%");
+                if (count.intValue() % 20 == 0) {
+                    PS.debug("PROGRESS: " + 100 * (2048 - chunks.size()) / 2048 + "%");
                 }
-                if ((regions.isEmpty()) && (chunks.isEmpty())) {
+                if (regions.isEmpty() && chunks.isEmpty()) {
                     HybridUtils.UPDATE = false;
                     PS.debug(C.PREFIX.s() + "Finished road conversion");
                     // CANCEL TASK
@@ -214,7 +234,7 @@ public abstract class HybridUtils {
                                 }
                                 if (!chunks.isEmpty()) {
                                     final long diff = System.currentTimeMillis() + 1;
-                                    if (((System.currentTimeMillis() - baseTime - last.get()) > 2000) && (last.get() != 0)) {
+                                    if (System.currentTimeMillis() - baseTime - last.get() > 2000 && last.get() != 0) {
                                         last.set(0);
                                         PS.debug(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
                                         Iterator<ChunkLoc> iter = chunks.iterator();
@@ -230,8 +250,8 @@ public abstract class HybridUtils {
                                         TaskManager.runTaskLater(task, 600);
                                         return;
                                     }
-                                    if ((((System.currentTimeMillis() - baseTime) - last.get()) < 1500) && (last.get() != 0)) {
-                                        while ((System.currentTimeMillis() < diff) && (!chunks.isEmpty())) {
+                                    if (System.currentTimeMillis() - baseTime - last.get() < 1500 && last.get() != 0) {
+                                        while (System.currentTimeMillis() < diff && !chunks.isEmpty()) {
                                             Iterator<ChunkLoc> iter = chunks.iterator();
                                             final ChunkLoc chunk = iter.next();
                                             iter.remove();
@@ -253,8 +273,8 @@ public abstract class HybridUtils {
                                 PS.debug("&c[ERROR]&7 Could not update '" + area.worldname + "/region/r." + loc.x + "." + loc.z + ".mca' (Corrupt chunk?)");
                                 final int sx = loc.x << 5;
                                 final int sz = loc.z << 5;
-                                for (int x = sx; x < (sx + 32); x++) {
-                                    for (int z = sz; z < (sz + 32); z++) {
+                                for (int x = sx; x < sx + 32; x++) {
+                                    for (int z = sz; z < sz + 32; z++) {
                                         ChunkManager.manager.unloadChunk(area.worldname, new ChunkLoc(x, z), true, true);
                                     }
                                 }
@@ -280,7 +300,7 @@ public abstract class HybridUtils {
         final Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         final Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
-        final int sx = (bot.getX() - plotworld.ROAD_WIDTH) + 1;
+        final int sx = bot.getX() - plotworld.ROAD_WIDTH + 1;
         final int sz = bot.getZ() + 1;
         final int sy = plotworld.ROAD_HEIGHT;
         final int ex = bot.getX();
@@ -339,18 +359,18 @@ public abstract class HybridUtils {
         final PlotId id2 = manager.getPlotId(plotworld, ex, 0, ez);
         x -= plotworld.ROAD_OFFSET_X;
         z -= plotworld.ROAD_OFFSET_Z;
-        if ((id1 == null) || (id2 == null) || (id1 != id2)) {
+        if (id1 == null || id2 == null || id1 != id2) {
             final boolean result = ChunkManager.manager.loadChunk(area.worldname, chunk, false);
             if (result) {
                 if (id1 != null) {
                     final Plot p1 = area.getPlotAbs(id1);
-                    if ((p1 != null) && p1.hasOwner() && p1.isMerged()) {
+                    if (p1 != null && p1.hasOwner() && p1.isMerged()) {
                         toCheck = true;
                     }
                 }
-                if ((id2 != null) && !toCheck) {
+                if (id2 != null && !toCheck) {
                     final Plot p2 = area.getPlotAbs(id2);
-                    if ((p2 != null) && p2.hasOwner() && p2.isMerged()) {
+                    if (p2 != null && p2.hasOwner() && p2.isMerged()) {
                         toCheck = true;
                     }
                 }
@@ -374,12 +394,11 @@ public abstract class HybridUtils {
                             final boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
                             final boolean lx = absX < plotworld.PATH_WIDTH_UPPER;
                             final boolean lz = absZ < plotworld.PATH_WIDTH_UPPER;
-                            condition = (!gx || !gz || !lx || !lz);
+                            condition = !gx || !gz || !lx || !lz;
                         }
                         if (condition) {
-                            final int sy = plotworld.ROAD_HEIGHT;
                             final HashMap<Integer, PlotBlock> blocks = plotworld.G_SCH.get(MathMan.pair(absX, absZ));
-                            for (short y = (short) (plotworld.ROAD_HEIGHT); y <= (plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT + extend); y++) {
+                            for (short y = (short) plotworld.ROAD_HEIGHT; y <= plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT + extend; y++) {
                                 SetQueue.IMP.setBlock(area.worldname, x + X + plotworld.ROAD_OFFSET_X, y, z + Z + plotworld.ROAD_OFFSET_Z, 0);
                             }
                             if (blocks != null) {

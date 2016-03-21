@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -72,7 +73,7 @@ public class BO3Handler {
             throw new IllegalArgumentException("Save task cannot be null!");
         }
         final PlotArea plotworld = plot.getArea();
-        if (!(plotworld instanceof ClassicPlotWorld) || (plotworld.TYPE != 0)) {
+        if (!(plotworld instanceof ClassicPlotWorld) || plotworld.TYPE != 0) {
             MainUtil.sendMessage(plr, "BO3 exporting only supports type 0 classic generation.");
             return false;
         }
@@ -106,10 +107,10 @@ public class BO3Handler {
             Location pos1 = new Location(plotworld.worldname, region.minX, region.minY, region.minZ);
             Location pos2 = new Location(plotworld.worldname, region.maxX, region.maxY, region.maxZ);
             for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-                final int X = ((x + 7) - cx) >> 4;
+                final int X = x + 7 - cx >> 4;
                 final int xx = (x - cx) % 16;
                 for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                    final int Z = ((z + 7) - cz) >> 4;
+                    final int Z = z + 7 - cz >> 4;
                     final int zz = (z - cz) % 16;
                     final ChunkLoc loc = new ChunkLoc(X, Z);
                     BO3 bo3 = map.get(loc);
@@ -156,7 +157,7 @@ public class BO3Handler {
         for (final Entry<ChunkLoc, BO3> entry : map.entrySet()) {
             final ChunkLoc chunk = entry.getKey();
             final BO3 bo3 = entry.getValue();
-            if ((chunk.x == 0) && (chunk.z == 0)) {
+            if (chunk.x == 0 && chunk.z == 0) {
                 continue;
             }
             int x = chunk.x;
@@ -171,7 +172,7 @@ public class BO3Handler {
                 parentLoc = null;
                 for (final Entry<ChunkLoc, BO3> entry2 : map.entrySet()) {
                     final ChunkLoc other = entry2.getKey();
-                    if (((other.x == (chunk.x - 1)) && (other.z == chunk.z)) || ((other.z == (chunk.z - 1)) && (other.x == chunk.x))) {
+                    if (other.x == chunk.x - 1 && other.z == chunk.z || other.z == chunk.z - 1 && other.x == chunk.x) {
                         parentLoc = other;
                     }
                 }
@@ -268,7 +269,7 @@ public class BO3Handler {
                 }
             }
             File bo3File;
-            if ((bo3.getLoc().x == 0) && (bo3.getLoc().z == 0)) {
+            if (bo3.getLoc().x == 0 && bo3.getLoc().z == 0) {
                 bo3File = MainUtil.getFile(base.getParentFile(), bo3.getName() + ".bo3");
             } else {
                 bo3File = MainUtil.getFile(base.getParentFile(), bo3.getName() + "_" + bo3.getLoc().x + "_" + bo3.getLoc().z + ".bo3");

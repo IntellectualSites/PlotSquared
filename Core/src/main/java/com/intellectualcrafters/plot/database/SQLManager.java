@@ -136,7 +136,7 @@ public class SQLManager implements AbstractDB {
                         break;
                     }
                     // schedule reconnect
-                    if (MYSQL && ((System.currentTimeMillis() - last) > 550000)) {
+                    if (MYSQL && System.currentTimeMillis() - last > 550000) {
                         last = System.currentTimeMillis();
                         try {
                             close();
@@ -573,14 +573,14 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setMySQL(final PreparedStatement stmt, final int i, final UUIDPair pair) throws SQLException {
-                stmt.setInt((i * 2) + 1, pair.id);
-                stmt.setString((i * 2) + 2, pair.uuid.toString());
+                stmt.setInt(i * 2 + 1, pair.id);
+                stmt.setString(i * 2 + 2, pair.uuid.toString());
             }
 
             @Override
             public void setSQLite(final PreparedStatement stmt, final int i, final UUIDPair pair) throws SQLException {
-                stmt.setInt((i * 2) + 1, pair.id);
-                stmt.setString((i * 2) + 2, pair.uuid.toString());
+                stmt.setInt(i * 2 + 1, pair.id);
+                stmt.setString(i * 2 + 2, pair.uuid.toString());
             }
 
             @Override
@@ -617,29 +617,29 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setMySQL(final PreparedStatement stmt, final int i, final Plot plot) throws SQLException {
-                stmt.setInt((i * 5) + 1, plot.getId().x);
-                stmt.setInt((i * 5) + 2, plot.getId().y);
+                stmt.setInt(i * 5 + 1, plot.getId().x);
+                stmt.setInt(i * 5 + 2, plot.getId().y);
                 try {
-                    stmt.setString((i * 5) + 3, plot.owner.toString());
+                    stmt.setString(i * 5 + 3, plot.owner.toString());
                 } catch (SQLException e) {
-                    stmt.setString((i * 5) + 3, everyone.toString());
+                    stmt.setString(i * 5 + 3, everyone.toString());
                 }
-                stmt.setString((i * 5) + 4, plot.getArea().toString());
-                stmt.setTimestamp((i * 5) + 5, new Timestamp(plot.getTimestamp()));
+                stmt.setString(i * 5 + 4, plot.getArea().toString());
+                stmt.setTimestamp(i * 5 + 5, new Timestamp(plot.getTimestamp()));
             }
 
             @Override
             public void setSQLite(final PreparedStatement stmt, final int i, final Plot plot) throws SQLException {
-                stmt.setNull((i * 6) + 1, 4);
-                stmt.setInt((i * 6) + 2, plot.getId().x);
-                stmt.setInt((i * 6) + 3, plot.getId().y);
+                stmt.setNull(i * 6 + 1, 4);
+                stmt.setInt(i * 6 + 2, plot.getId().x);
+                stmt.setInt(i * 6 + 3, plot.getId().y);
                 try {
-                    stmt.setString((i * 6) + 4, plot.owner.toString());
+                    stmt.setString(i * 6 + 4, plot.owner.toString());
                 } catch (SQLException e1) {
-                    stmt.setString((i * 6) + 4, everyone.toString());
+                    stmt.setString(i * 6 + 4, everyone.toString());
                 }
-                stmt.setString((i * 6) + 5, plot.getArea().toString());
-                stmt.setTimestamp((i * 6) + 6, new Timestamp(plot.getTimestamp()));
+                stmt.setString(i * 6 + 5, plot.getArea().toString());
+                stmt.setTimestamp(i * 6 + 6, new Timestamp(plot.getTimestamp()));
             }
 
             @Override
@@ -685,7 +685,7 @@ public class SQLManager implements AbstractDB {
                     statement = mod.getCreateMySQL(subList.size());
                     preparedStmt = connection.prepareStatement(statement);
                 }
-                if ((subList.size() != last) || (((count % 5000) == 0) && (count > 0))) {
+                if (subList.size() != last || count % 5000 == 0 && count > 0) {
                     preparedStmt.executeBatch();
                     preparedStmt.close();
                     statement = mod.getCreateMySQL(subList.size());
@@ -728,7 +728,7 @@ public class SQLManager implements AbstractDB {
                     statement = mod.getCreateSQLite(subList.size());
                     preparedStmt = connection.prepareStatement(statement);
                 }
-                if ((subList.size() != last) || (((count % 5000) == 0) && (count > 0))) {
+                if (subList.size() != last || count % 5000 == 0 && count > 0) {
                     preparedStmt.executeBatch();
                     preparedStmt.clearParameters();
                     statement = mod.getCreateSQLite(subList.size());
@@ -799,16 +799,16 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setMySQL(final PreparedStatement stmt, final int i, final SettingsPair pair) throws SQLException {
-                stmt.setInt((i * 10) + 1, pair.id); // id
-                stmt.setNull((i * 10) + 2, 4); // biome
-                stmt.setNull((i * 10) + 3, 4); // rain
-                stmt.setNull((i * 10) + 4, 4); // custom_time
-                stmt.setNull((i * 10) + 5, 4); // time
-                stmt.setNull((i * 10) + 6, 4); // deny_entry
+                stmt.setInt(i * 10 + 1, pair.id); // id
+                stmt.setNull(i * 10 + 2, 4); // biome
+                stmt.setNull(i * 10 + 3, 4); // rain
+                stmt.setNull(i * 10 + 4, 4); // custom_time
+                stmt.setNull(i * 10 + 5, 4); // time
+                stmt.setNull(i * 10 + 6, 4); // deny_entry
                 if (pair.settings.getAlias().isEmpty()) {
-                    stmt.setNull((i * 10) + 7, 4);
+                    stmt.setNull(i * 10 + 7, 4);
                 } else {
-                    stmt.setString((i * 10) + 7, pair.settings.getAlias());
+                    stmt.setString(i * 10 + 7, pair.settings.getAlias());
                 }
                 final StringBuilder flag_string = new StringBuilder();
                 int k = 0;
@@ -819,10 +819,10 @@ public class SQLManager implements AbstractDB {
                     flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
                     k++;
                 }
-                stmt.setString((i * 10) + 8, flag_string.toString());
+                stmt.setString(i * 10 + 8, flag_string.toString());
                 final boolean[] merged = pair.settings.getMerged();
                 int hash = MainUtil.hash(merged);
-                stmt.setInt((i * 10) + 9, hash);
+                stmt.setInt(i * 10 + 9, hash);
                 final BlockLoc loc = pair.settings.getPosition();
                 String position;
                 if (loc.y == 0) {
@@ -830,21 +830,21 @@ public class SQLManager implements AbstractDB {
                 } else {
                     position = loc.x + "," + loc.y + "," + loc.z;
                 }
-                stmt.setString((i * 10) + 10, position);
+                stmt.setString(i * 10 + 10, position);
             }
 
             @Override
             public void setSQLite(final PreparedStatement stmt, final int i, final SettingsPair pair) throws SQLException {
-                stmt.setInt((i * 10) + 1, pair.id); // id
-                stmt.setNull((i * 10) + 2, 4); // biome
-                stmt.setNull((i * 10) + 3, 4); // rain
-                stmt.setNull((i * 10) + 4, 4); // custom_time
-                stmt.setNull((i * 10) + 5, 4); // time
-                stmt.setNull((i * 10) + 6, 4); // deny_entry
-                if (pair.settings.getAlias().equals("")) {
-                    stmt.setNull((i * 10) + 7, 4);
+                stmt.setInt(i * 10 + 1, pair.id); // id
+                stmt.setNull(i * 10 + 2, 4); // biome
+                stmt.setNull(i * 10 + 3, 4); // rain
+                stmt.setNull(i * 10 + 4, 4); // custom_time
+                stmt.setNull(i * 10 + 5, 4); // time
+                stmt.setNull(i * 10 + 6, 4); // deny_entry
+                if (pair.settings.getAlias().isEmpty()) {
+                    stmt.setNull(i * 10 + 7, 4);
                 } else {
-                    stmt.setString((i * 10) + 7, pair.settings.getAlias());
+                    stmt.setString(i * 10 + 7, pair.settings.getAlias());
                 }
                 final StringBuilder flag_string = new StringBuilder();
                 int k = 0;
@@ -855,13 +855,13 @@ public class SQLManager implements AbstractDB {
                     flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
                     k++;
                 }
-                stmt.setString((i * 10) + 8, flag_string.toString());
+                stmt.setString(i * 10 + 8, flag_string.toString());
                 final boolean[] merged = pair.settings.getMerged();
                 int n = 0;
                 for (int j = 0; j < 4; ++j) {
                     n = (n << 1) + (merged[j] ? 1 : 0);
                 }
-                stmt.setInt((i * 10) + 9, n);
+                stmt.setInt(i * 10 + 9, n);
                 final BlockLoc loc = pair.settings.getPosition();
                 String position;
                 if (loc.y == 0) {
@@ -869,7 +869,7 @@ public class SQLManager implements AbstractDB {
                 } else {
                     position = loc.x + "," + loc.y + "," + loc.z;
                 }
-                stmt.setString((i * 10) + 10, position);
+                stmt.setString(i * 10 + 10, position);
             }
 
             @Override
@@ -909,21 +909,21 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setMySQL(final PreparedStatement stmt, final int i, final Integer id) throws SQLException {
-                stmt.setInt((i) + 1, id);
+                stmt.setInt(i + 1, id);
             }
 
             @Override
             public void setSQLite(final PreparedStatement stmt, final int i, final Integer id) throws SQLException {
-                stmt.setInt((i * 10) + 1, id);
-                stmt.setNull((i * 10) + 2, 4);
-                stmt.setNull((i * 10) + 3, 4);
-                stmt.setNull((i * 10) + 4, 4);
-                stmt.setNull((i * 10) + 5, 4);
-                stmt.setNull((i * 10) + 6, 4);
-                stmt.setNull((i * 10) + 7, 4);
-                stmt.setNull((i * 10) + 8, 4);
-                stmt.setNull((i * 10) + 9, 4);
-                stmt.setString((i * 10) + 10, "DEFAULT");
+                stmt.setInt(i * 10 + 1, id);
+                stmt.setNull(i * 10 + 2, 4);
+                stmt.setNull(i * 10 + 3, 4);
+                stmt.setNull(i * 10 + 4, 4);
+                stmt.setNull(i * 10 + 5, 4);
+                stmt.setNull(i * 10 + 6, 4);
+                stmt.setNull(i * 10 + 7, 4);
+                stmt.setNull(i * 10 + 8, 4);
+                stmt.setNull(i * 10 + 9, 4);
+                stmt.setString(i * 10 + 10, "DEFAULT");
             }
 
             @Override
@@ -1417,7 +1417,7 @@ public class SQLManager implements AbstractDB {
             }
             stmt.close();
             r.close();
-            if ((c_id == Integer.MAX_VALUE) || (c_id == 0)) {
+            if (c_id == Integer.MAX_VALUE || c_id == 0) {
                 if (cluster.temp > 0) {
                     return cluster.temp;
                 }
@@ -1453,7 +1453,7 @@ public class SQLManager implements AbstractDB {
             }
             r.close();
             stmt.close();
-            if ((id == Integer.MAX_VALUE) || (id == 0)) {
+            if (id == Integer.MAX_VALUE || id == 0) {
                 if (plot.temp > 0) {
                     return plot.temp;
                 }
@@ -1575,12 +1575,12 @@ public class SQLManager implements AbstractDB {
 
             @Override
             public void setMySQL(PreparedStatement stmt, int i, Integer obj) throws SQLException {
-                stmt.setInt((i) + 1, obj);
+                stmt.setInt(i + 1, obj);
             }
 
             @Override
             public void setSQLite(PreparedStatement stmt, int i, Integer obj) throws SQLException {
-                stmt.setInt((i) + 1, obj);
+                stmt.setInt(i + 1, obj);
             }
 
             @Override
@@ -1801,7 +1801,7 @@ public class SQLManager implements AbstractDB {
                         final Integer m = r.getInt("merged");
                         final boolean[] merged = new boolean[4];
                         for (int i = 0; i < 4; i++) {
-                            merged[3 - i] = (m & (1 << i)) != 0;
+                            merged[3 - i] = (m & 1 << i) != 0;
                         }
                         plot.getSettings().setMerged(merged);
                         String[] flags_string;
@@ -2584,7 +2584,7 @@ public class SQLManager implements AbstractDB {
                     final Integer m = r.getInt("merged");
                     final boolean[] merged = new boolean[4];
                     for (int i = 0; i < 4; i++) {
-                        merged[3 - i] = ((m) & (1 << i)) != 0;
+                        merged[3 - i] = (m & 1 << i) != 0;
                     }
                     cluster.settings.setMerged(merged);
                     String[] flags_string;

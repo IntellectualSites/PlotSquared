@@ -1,18 +1,5 @@
 package com.plotsquared.bukkit.util;
 
-import java.util.HashSet;
-import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.ChunkGenerator.BiomeGrid;
-import org.bukkit.material.Directional;
-import org.bukkit.material.MaterialData;
-
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
@@ -23,6 +10,18 @@ import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.ChunkGenerator.BiomeGrid;
+import org.bukkit.material.Directional;
+import org.bukkit.material.MaterialData;
+
+import java.util.HashSet;
+import java.util.Random;
 
 public class BukkitHybridUtils extends HybridUtils {
 
@@ -72,8 +71,8 @@ public class BukkitHybridUtils extends HybridUtils {
                 final int ctz = tz >> 4;
                 final Random r = new Random();
                 MainUtil.initCache();
-                final int width = (tx - bx) + 1;
-                final int length = (tz - bz) + 1;
+                final int width = tx - bx + 1;
+                final int length = tz - bz + 1;
 
                 System.gc();
                 System.gc();
@@ -90,17 +89,17 @@ public class BukkitHybridUtils extends HybridUtils {
                                 final int X = value[0];
                                 final int Z = value[1];
                                 final short[][] result = gen.generateExtBlockSections(worldObj, r, X, Z, nullBiomeGrid);
-                                final int xb = ((X) << 4) - bx;
-                                final int zb = ((Z) << 4) - bz;
+                                final int xb = (X << 4) - bx;
+                                final int zb = (Z << 4) - bz;
                                 for (int i = 0; i < result.length; i++) {
                                     if (result[i] == null) {
                                         for (int j = 0; j < 4096; j++) {
                                             final int x = MainUtil.x_loc[i][j] + xb;
-                                            if ((x < 0) || (x >= width)) {
+                                            if (x < 0 || x >= width) {
                                                 continue;
                                             }
                                             final int z = MainUtil.z_loc[i][j] + zb;
-                                            if ((z < 0) || (z >= length)) {
+                                            if (z < 0 || z >= length) {
                                                 continue;
                                             }
                                             final int y = MainUtil.y_loc[i][j];
@@ -110,11 +109,11 @@ public class BukkitHybridUtils extends HybridUtils {
                                     }
                                     for (int j = 0; j < result[i].length; j++) {
                                         final int x = MainUtil.x_loc[i][j] + xb;
-                                        if ((x < 0) || (x >= width)) {
+                                        if (x < 0 || x >= width) {
                                             continue;
                                         }
                                         final int z = MainUtil.z_loc[i][j] + zb;
-                                        if ((z < 0) || (z >= length)) {
+                                        if (z < 0 || z >= length) {
                                             continue;
                                         }
                                         final int y = MainUtil.y_loc[i][j];
@@ -150,7 +149,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                                     } else {
                                                         // check vertices
                                                         // modifications_adjacent
-                                                        if ((x > 0) && (z > 0) && (y > 0) && (x < (width - 1)) && (z < (length - 1)) && (y < 255)) {
+                                                        if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1 && y < 255) {
                                                             if (newblocks[y - 1][x][z] == 0) {
                                                                 faces[i]++;
                                                             }
@@ -196,11 +195,11 @@ public class BukkitHybridUtils extends HybridUtils {
                                         analysis.air = (int) (MathMan.getMean(air) * 100);
                                         analysis.variety = (int) (MathMan.getMean(variety) * 100);
 
-                                        analysis.changes_sd = (int) (MathMan.getSD(changes, analysis.changes));
-                                        analysis.faces_sd = (int) (MathMan.getSD(faces, analysis.faces));
-                                        analysis.data_sd = (int) (MathMan.getSD(data, analysis.data));
-                                        analysis.air_sd = (int) (MathMan.getSD(air, analysis.air));
-                                        analysis.variety_sd = (int) (MathMan.getSD(variety, analysis.variety));
+                                        analysis.changes_sd = (int) MathMan.getSD(changes, analysis.changes);
+                                        analysis.faces_sd = (int) MathMan.getSD(faces, analysis.faces);
+                                        analysis.data_sd = (int) MathMan.getSD(data, analysis.data);
+                                        analysis.air_sd = (int) MathMan.getSD(air, analysis.air);
+                                        analysis.variety_sd = (int) MathMan.getSD(variety, analysis.variety);
                                         System.gc();
                                         System.gc();
                                         whenDone.value = analysis;
@@ -222,24 +221,24 @@ public class BukkitHybridUtils extends HybridUtils {
                         final int Z = value[1];
                         worldObj.loadChunk(X, Z);
                         int minX;
-                        int minZ;
-                        int maxX;
-                        int maxZ;
                         if (X == cbx) {
                             minX = bx & 15;
                         } else {
                             minX = 0;
                         }
+                        int minZ;
                         if (Z == cbz) {
                             minZ = bz & 15;
                         } else {
                             minZ = 0;
                         }
+                        int maxX;
                         if (X == ctx) {
                             maxX = tx & 15;
                         } else {
                             maxX = 16;
                         }
+                        int maxZ;
                         if (Z == ctz) {
                             maxZ = tz & 15;
                         } else {
@@ -249,8 +248,8 @@ public class BukkitHybridUtils extends HybridUtils {
                         final int cbx = X << 4;
                         final int cbz = Z << 4;
 
-                        final int xb = (cbx) - bx;
-                        final int zb = (cbz) - bz;
+                        final int xb = cbx - bx;
+                        final int zb = cbz - bz;
                         for (int x = minX; x <= maxX; x++) {
                             final int xx = cbx + x;
                             for (int z = minZ; z <= maxZ; z++) {
@@ -311,7 +310,7 @@ public class BukkitHybridUtils extends HybridUtils {
                 for (int y = sy; y < maxY; y++) {
                     if (y > ey) {
                         final Block block = world.getBlockAt(x, y, z);
-                        if (block.getTypeId() != 0) {
+                        if (!block.getType().equals(Material.AIR)) {
                             ey = y;
                         }
                     }

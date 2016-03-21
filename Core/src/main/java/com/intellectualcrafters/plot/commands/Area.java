@@ -80,8 +80,8 @@ public class Area extends SubCommand {
                                 Location pos2 = plr.getMeta("area_pos1");
                                 int dx = Math.abs(pos1.getX() - pos2.getX());
                                 int dz = Math.abs(pos1.getZ() - pos2.getZ());
-                                int numx = Math.max(1, (dx + 1 + area.ROAD_WIDTH + (area.SIZE / 2)) / area.SIZE);
-                                int numz = Math.max(1, (dz + 1 + area.ROAD_WIDTH + (area.SIZE / 2)) / area.SIZE);
+                                int numx = Math.max(1, (dx + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
+                                int numz = Math.max(1, (dz + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
                                 final int ddx = dx - (numx * area.SIZE - area.ROAD_WIDTH);
                                 final int ddz = dz - (numz * area.SIZE - area.ROAD_WIDTH);
                                 int bx = Math.min(pos1.getX(), pos2.getX()) + ddx;
@@ -318,7 +318,7 @@ public class Area extends SubCommand {
                     region = area.getRegion().toString();
                 } else {
                     name = area.worldname;
-                    percent = claimed == 0 ? 0 : (100d * claimed) / (Integer.MAX_VALUE);
+                    percent = claimed == 0 ? 0 : 100d * claimed / Integer.MAX_VALUE;
                     region = "N/A";
                 }
                 String value = "&r$1NAME: " + name

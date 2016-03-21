@@ -85,7 +85,7 @@ public class FastQueue_1_9 extends SlowQueue {
                 int count = 0;
                 final ArrayList<Chunk> chunks = new ArrayList<>();
                 final Iterator<Entry<ChunkWrapper, Chunk>> i = toUpdate.entrySet().iterator();
-                while (i.hasNext() && (count < 128)) {
+                while (i.hasNext() && count < 128) {
                     chunks.add(i.next().getValue());
                     i.remove();
                     count++;
@@ -180,7 +180,7 @@ public class FastQueue_1_9 extends SlowQueue {
 
             // Trim entities
             for (int i = 0; i < 16; i++) {
-                if ((entities[i] != null) && (fs.getCount(i) >= 4096)) {
+                if (entities[i] != null && fs.getCount(i) >= 4096) {
                     entities[i].clear();
                 }
             }
@@ -195,7 +195,7 @@ public class FastQueue_1_9 extends SlowQueue {
                     continue;
                 }
                 Object section = sections[j];
-                if ((section == null) || (fs.getCount(j) >= 4096)) {
+                if (section == null || fs.getCount(j) >= 4096) {
                     char[] array = new char[4096];
                     for (int i = 0; i < newArray.length; i++) {
                         int combined = newArray[i];
@@ -317,7 +317,7 @@ public class FastQueue_1_9 extends SlowQueue {
 
             methodInitLighting.of(c).call();
 
-            if ((bc.getTotalRelight() == 0 && !fixAll)) {
+            if (bc.getTotalRelight() == 0 && !fixAll) {
                 return true;
             }
 
@@ -333,7 +333,7 @@ public class FastQueue_1_9 extends SlowQueue {
                 if (section == null) {
                     continue;
                 }
-                if ((bc.getRelight(j) == 0 && !fixAll) || bc.getCount(j) == 0 || (bc.getCount(j) >= 4096 && bc.getAir(j) == 0)) {
+                if (bc.getRelight(j) == 0 && !fixAll || bc.getCount(j) == 0 || bc.getCount(j) >= 4096 && bc.getAir(j) == 0) {
                     continue;
                 }
                 final int[] array = bc.getIdArray(j);

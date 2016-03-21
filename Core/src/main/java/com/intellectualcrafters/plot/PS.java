@@ -208,7 +208,7 @@ public class PS {
                         @Override
                         public void run() {
                             for (final Plot plot : getPlots()) {
-                                if (plot.hasOwner() && (plot.temp != -1)) {
+                                if (plot.hasOwner() && plot.temp != -1) {
                                     if (UUIDHandler.getName(plot.owner) == null) {
                                         UUIDHandler.implementation.unknown.add(plot.owner);
                                     }
@@ -376,8 +376,8 @@ public class PS {
      * @return true if `version` is >= `version2`
      */
     public boolean checkVersion(final int[] version, int... version2) {
-        return (version[0] > version2[0]) || ((version[0] == version2[0]) && (version[1] > version2[1])) || ((version[0] == version2[0]) && (version[1] == version2[1]) && (
-                version[2] >= version2[2]));
+        return version[0] > version2[0] || version[0] == version2[0] && version[1] > version2[1] || version[0] == version2[0]
+                && version[1] == version2[1] && version[2] >= version2[2];
     }
 
     /**
@@ -518,7 +518,7 @@ public class PS {
         if (areas == null) {
             for (PlotArea area : plotareas) {
                 if (area.worldname.equalsIgnoreCase(split[0])) {
-                    if (area.id == null || (split.length == 2 && area.id.equalsIgnoreCase(split[1]))) {
+                    if (area.id == null || split.length == 2 && area.id.equalsIgnoreCase(split[1])) {
                         return area;
                     }
                 }
@@ -902,7 +902,7 @@ public class PS {
                 } else {
                     extra.add(plot);
                 }
-            } else if ((Math.abs(plot.getId().x) > 15446) || (Math.abs(plot.getId().y) > 15446)) {
+            } else if (Math.abs(plot.getId().x) > 15446 || Math.abs(plot.getId().y) > 15446) {
                 extra.add(plot);
             } else {
                 overflow.add(plot);
@@ -950,7 +950,7 @@ public class PS {
                 } else {
                     extra.add(plot);
                 }
-            } else if ((Math.abs(plot.getId().x) > 15446) || (Math.abs(plot.getId().y) > 15446)) {
+            } else if (Math.abs(plot.getId().x) > 15446 || Math.abs(plot.getId().y) > 15446) {
                 extra.add(plot);
             } else {
                 overflow.add(plot);
@@ -1011,7 +1011,7 @@ public class PS {
             for (final Plot i : input) {
                 int tmp = MathMan.getPositiveId(i.hashCode()) / placement;
                 bucket[tmp & 31].add(i);
-                if (maxLength && (tmp > 0)) {
+                if (maxLength && tmp > 0) {
                     maxLength = false;
                 }
             }
@@ -1062,7 +1062,7 @@ public class PS {
         Collections.sort(areas, new Comparator<PlotArea>() {
             @Override
             public int compare(final PlotArea a, final PlotArea b) {
-                if ((priorityArea != null) && StringMan.isEqual(a.toString(), b.toString())) {
+                if (priorityArea != null && StringMan.isEqual(a.toString(), b.toString())) {
                     return -1;
                 }
                 return a.hashCode() - b.hashCode();
@@ -1229,7 +1229,7 @@ public class PS {
     }
 
     public Plot getPlot(PlotArea area, final PlotId id) {
-        return area == null ? null : (id == null ? null : area.getPlot(id));
+        return area == null ? null : id == null ? null : area.getPlot(id);
     }
 
     /**
@@ -1338,7 +1338,7 @@ public class PS {
         if (!plotareaHasCollision && !plotareaHashCheck.add(world.hashCode())) {
             plotareaHasCollision = true;
         }
-        final Set<String> worlds = (config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>());
+        final Set<String> worlds = config.contains("worlds") ? config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>();
         final String path = "worlds." + world;
         ConfigurationSection worldSection = config.getConfigurationSection(path);
         int type = worldSection != null ? worldSection.getInt("generator.type") : 0;
@@ -1543,7 +1543,7 @@ public class PS {
      * @return boolean | if valid arguments were provided
      */
     public boolean setupPlotWorld(final String world, final String args, IndependentPlotGenerator generator) {
-        if ((args != null) && (!args.isEmpty())) {
+        if (args != null && !args.isEmpty()) {
             // save configuration
             final String[] split = args.split(",");
             final HybridPlotWorld plotworld = new HybridPlotWorld(world, null, generator, null, null);
@@ -1869,7 +1869,7 @@ public class PS {
                     case "false":
                         return false;
                     default:
-                        return (MainUtil.timeToSec(value) * 1000) + System.currentTimeMillis();
+                        return MainUtil.timeToSec(value) * 1000 + System.currentTimeMillis();
                 }
             }
             @Override
@@ -1999,7 +1999,7 @@ public class PS {
 
         final int keep = config.getInt("clear.keep-if-modified");
         final int ignore = config.getInt("clear.ignore-if-modified");
-        if ((keep > 0) || (ignore > 0)) {
+        if (keep > 0 || ignore > 0) {
             options.put("clear.auto.threshold", 1);
             options.put("clear.auto.enabled", false);
             log("&cIMPORTANT MESSAGE ABOUT THIS UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

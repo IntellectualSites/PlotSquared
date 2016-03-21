@@ -10,7 +10,7 @@ public abstract class AbstractTitle {
         if (ConsolePlayer.isConsole(player)) {
             return;
         }
-        if ((TITLE_CLASS != null) && !player.getAttribute("disabletitles")) {
+        if (TITLE_CLASS != null && !player.getAttribute("disabletitles")) {
             TITLE_CLASS.sendTitle(player, head, sub, 1, 2, 1);
         }
     }

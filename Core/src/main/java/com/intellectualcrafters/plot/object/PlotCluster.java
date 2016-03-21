@@ -64,11 +64,12 @@ public class PlotCluster {
     }
 
     public boolean isAdded(final UUID uuid) {
-        return (owner.equals(uuid) || invited.contains(uuid) || invited.contains(DBFunc.everyone) || helpers.contains(uuid) || helpers.contains(DBFunc.everyone));
+        return owner.equals(uuid) || invited.contains(uuid) || invited.contains(DBFunc.everyone) || helpers.contains(uuid) || helpers
+                .contains(DBFunc.everyone);
     }
     
     public boolean hasHelperRights(final UUID uuid) {
-        return (owner.equals(uuid) || helpers.contains(uuid) || helpers.contains(DBFunc.everyone));
+        return owner.equals(uuid) || helpers.contains(uuid) || helpers.contains(DBFunc.everyone);
     }
     
     public String getName() {
@@ -80,7 +81,7 @@ public class PlotCluster {
      * @return
      */
     public int getArea() {
-        return ((1 + pos2.x) - pos1.x) * ((1 + pos2.y) - pos1.y);
+        return (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
     }
 
     public void setArea(PlotArea plotarea) {
@@ -159,10 +160,10 @@ public class PlotCluster {
     }
     
     public boolean intersects(PlotId pos1, PlotId pos2) {
-        return (pos1.x <= this.pos2.x) && (pos2.x >= this.pos1.x) && (pos1.y <= this.pos2.y) && (pos2.y >= this.pos1.y);
+        return pos1.x <= this.pos2.x && pos2.x >= this.pos1.x && pos1.y <= this.pos2.y && pos2.y >= this.pos1.y;
     }
     
     public boolean contains(final PlotId id) {
-        return (pos1.x <= id.x) && (pos1.y <= id.y) && (pos2.x >= id.x) && (pos2.y >= id.y);
+        return pos1.x <= id.x && pos1.y <= id.y && pos2.x >= id.x && pos2.y >= id.y;
     }
 }

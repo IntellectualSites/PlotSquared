@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.object;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.util.MainUtil;
+
 import java.io.File;
 
 public class BO3 {
@@ -59,6 +60,6 @@ public class BO3 {
     }
 
     public String getFilename() {
-        return name + (((chunk.x == 0) && (chunk.z == 0)) ? "" : ("_" + chunk.x + "_" + chunk.z))  + ".bo3";
+        return name + (chunk.x == 0 && chunk.z == 0 ? "" : "_" + chunk.x + "_" + chunk.z) + ".bo3";
     }
 }

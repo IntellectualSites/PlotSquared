@@ -139,7 +139,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     
     @Override
     public void log(String message) {
-        if ((THIS != null) && (Bukkit.getServer().getConsoleSender() != null)) {
+        if (THIS != null && Bukkit.getServer().getConsoleSender() != null) {
             try {
                 message = C.color(message);
                 if (!Settings.CONSOLE_COLOR) {
@@ -377,7 +377,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
             BukkitMain.worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
             final String version = BukkitMain.worldEdit.getDescription().getVersion();
-            if ((version != null) && version.startsWith("5.")) {
+            if (version != null && version.startsWith("5.")) {
                 log("&cThis version of WorldEdit does not support PlotSquared.");
                 log("&cPlease use WorldEdit 6+ for masking support");
                 log("&c - http://builds.enginehub.org/job/worldedit");
@@ -461,7 +461,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 }
             }
         }, 20);
-        return (Bukkit.getPluginManager().getPlugin("PlotMe") != null) || (Bukkit.getPluginManager().getPlugin("AthionPlots") != null);
+        return Bukkit.getPluginManager().getPlugin("PlotMe") != null || Bukkit.getPluginManager().getPlugin("AthionPlots") != null;
     }
     
     @Override
@@ -470,7 +470,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             return null;
         }
         final Plugin gen_plugin = Bukkit.getPluginManager().getPlugin(name);
-        if ((gen_plugin != null) && gen_plugin.isEnabled()) {
+        if (gen_plugin != null && gen_plugin.isEnabled()) {
             ChunkGenerator gen = gen_plugin.getDefaultWorldGenerator(world, "");
             if (gen instanceof GeneratorWrapper<?>) {
                 return (GeneratorWrapper<?>) gen;
@@ -497,19 +497,19 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         UUIDWrapper wrapper;
         if (Settings.OFFLINE_MODE) {
             if (Settings.UUID_LOWERCASE) {
-                wrapper = (new LowerOfflineUUIDWrapper());
+                wrapper = new LowerOfflineUUIDWrapper();
             } else {
-                wrapper = (new OfflineUUIDWrapper());
+                wrapper = new OfflineUUIDWrapper();
             }
             Settings.OFFLINE_MODE = true;
         } else if (checkVersion) {
-            wrapper = (new DefaultUUIDWrapper());
+            wrapper = new DefaultUUIDWrapper();
             Settings.OFFLINE_MODE = false;
         } else {
             if (Settings.UUID_LOWERCASE) {
-                wrapper = (new LowerOfflineUUIDWrapper());
+                wrapper = new LowerOfflineUUIDWrapper();
             } else {
-                wrapper = (new OfflineUUIDWrapper());
+                wrapper = new OfflineUUIDWrapper();
             }
             Settings.OFFLINE_MODE = true;
         }

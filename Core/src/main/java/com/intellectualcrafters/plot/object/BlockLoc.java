@@ -19,14 +19,35 @@ public class BlockLoc {
     public BlockLoc(final int x, final int y, final int z) {
         this(x, y, z, 0f, 0f);
     }
+
+    public static BlockLoc fromString(final String string) {
+        final String[] parts = string.split(",");
+
+        float yaw, pitch;
+        if (parts.length == 3) {
+            yaw = 0f;
+            pitch = 0f;
+        }
+        if (parts.length == 5) {
+            yaw = Float.parseFloat(parts[3]);
+            pitch = Float.parseFloat(parts[4]);
+        } else {
+            return new BlockLoc(0, 0, 0);
+        }
+        final int x = Integer.parseInt(parts[0]);
+        final int y = Integer.parseInt(parts[1]);
+        final int z = Integer.parseInt(parts[2]);
+
+        return new BlockLoc(x, y, z, yaw, pitch);
+    }
     
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = (prime * result) + x;
-        result = (prime * result) + y;
-        result = (prime * result) + z;
+        result = prime * result + x;
+        result = prime * result + y;
+        result = prime * result + z;
         return result;
     }
     
@@ -42,7 +63,7 @@ public class BlockLoc {
             return false;
         }
         final BlockLoc other = (BlockLoc) obj;
-        return ((x == other.x) && (y == other.y) && (z == other.z));
+        return x == other.x && y == other.y && z == other.z;
     }
     
     @Override
@@ -52,26 +73,5 @@ public class BlockLoc {
         }
         return x + "," + y + "," + z + "," + yaw + "," + pitch;
 
-    }
-    
-    public static BlockLoc fromString(final String string) {
-        final String[] parts = string.split(",");
-        
-        float yaw, pitch;
-        if (parts.length == 3) {
-            yaw = 0f;
-            pitch = 0f;
-        }
-        if (parts.length == 5) {
-            yaw = Float.parseFloat(parts[3]);
-            pitch = Float.parseFloat(parts[4]);
-        } else {
-            return new BlockLoc(0, 0, 0);
-        }
-        final int x = Integer.parseInt(parts[0]);
-        final int y = Integer.parseInt(parts[1]);
-        final int z = Integer.parseInt(parts[2]);
-        
-        return new BlockLoc(x, y, z, yaw, pitch);
     }
 }

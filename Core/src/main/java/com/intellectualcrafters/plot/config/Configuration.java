@@ -126,13 +126,13 @@ public class Configuration {
         @Override
         public boolean validateValue(final String string) {
             final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
-            return !((value == null) || (value.match > 1));
+            return !(value == null || value.match > 1);
         }
         
         @Override
         public PlotBlock parseString(final String string) {
             final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
-            if ((value == null) || (value.match > 1)) {
+            if (value == null || value.match > 1) {
                 return null;
             }
             return value.best;
@@ -149,7 +149,7 @@ public class Configuration {
                         block = split[1];
                     }
                     final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(block);
-                    if ((value == null) || (value.match > 1)) {
+                    if (value == null || value.match > 1) {
                         return false;
                     }
                 }
@@ -183,7 +183,7 @@ public class Configuration {
                         }
                     }
                     final StringComparison<PlotBlock>.ComparisonResult result = WorldUtil.IMP.getClosestBlock(blocks[i]);
-                    if ((result != null) && (result.match < 2)) {
+                    if (result != null && result.match < 2) {
                         values[i] = result.best;
                     }
                 } catch (NumberFormatException e) {
@@ -192,7 +192,7 @@ public class Configuration {
             final int gcd = gcd(counts);
             for (int i = 0; i < counts.length; i++) {
                 final int num = counts[i];
-                for (int j = 0; j < (num / gcd); j++) {
+                for (int j = 0; j < num / gcd; j++) {
                     parsedvalues.add(values[i]);
                 }
             }

@@ -45,6 +45,5 @@ public class PlayerEvents_1_8_3 implements Listener {
                 iter.remove();
             }
         }
-        return;
     }
 }

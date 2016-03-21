@@ -47,6 +47,12 @@ import java.util.logging.Level;
  * </p>
  */
 public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<MessagePart>, ConfigurationSerializable {
+
+    private static final JsonParser _stringParser = new JsonParser();
+    private static Constructor<?> nmsPacketPlayOutChatConstructor;
+    // The ChatSerializer's instance of Gson
+    private static Object nmsChatSerializerGsonInstance;
+    private static Method fromJsonMethod;
     
     static {
         ConfigurationSerialization.registerClass(FancyMessage.class);
@@ -55,20 +61,6 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     private List<MessagePart> messageParts;
     private String jsonString;
     private boolean dirty;
-    
-    private static Constructor<?> nmsPacketPlayOutChatConstructor;
-    
-    @Override
-    public FancyMessage clone() throws CloneNotSupportedException {
-        final FancyMessage instance = (FancyMessage) super.clone();
-        instance.messageParts = new ArrayList<>(messageParts.size());
-        for (int i = 0; i < messageParts.size(); i++) {
-            instance.messageParts.add(i, messageParts.get(i).clone());
-        }
-        instance.dirty = false;
-        instance.jsonString = null;
-        return instance;
-    }
     
     /**
      * Creates a JSON message with text.
@@ -83,7 +75,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         messageParts.add(new MessagePart(firstPartText));
         jsonString = null;
         dirty = false;
-        
+
         if (nmsPacketPlayOutChatConstructor == null) {
             try {
                 nmsPacketPlayOutChatConstructor = Reflection.getNMSClass("PacketPlayOutChat").getDeclaredConstructor(Reflection.getNMSClass("IChatBaseComponent"));
@@ -103,6 +95,105 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         this((TextualComponent) null);
     }
     
+    /**
+     * Deserialize a JSON-represented message from a mapping of key-value pairs.
+     * This is called by the Bukkit serialization API.
+     * It is not intended for direct public API consumption.
+     * @param serialized The key-value mapping which represents a fancy message.
+     */
+    @SuppressWarnings("unchecked")
+    public static FancyMessage deserialize(final Map<String, Object> serialized) {
+        final FancyMessage msg = new FancyMessage();
+        msg.messageParts = (List<MessagePart>) serialized.get("messageParts");
+        msg.jsonString = serialized.containsKey("JSON") ? serialized.get("JSON").toString() : null;
+        msg.dirty = !serialized.containsKey("JSON");
+        return msg;
+    }
+
+    /**
+     * Deserialize a fancy message from its JSON representation. This JSON representation is of the format of
+     * that returned by {@link #toJSONString()}, and is compatible with vanilla inputs.
+     * @param json The JSON string which represents a fancy message.
+     * @return A {@code FancyMessage} representing the parametrized JSON message.
+     */
+    public static FancyMessage deserialize(final String json) {
+        final JsonObject serialized = _stringParser.parse(json).getAsJsonObject();
+        final JsonArray extra = serialized.getAsJsonArray("extra"); // Get the extra component
+        final FancyMessage returnVal = new FancyMessage();
+        returnVal.messageParts.clear();
+        for (final JsonElement mPrt : extra) {
+            final MessagePart component = new MessagePart();
+            final JsonObject messagePart = mPrt.getAsJsonObject();
+            for (final Map.Entry<String, JsonElement> entry : messagePart.entrySet()) {
+                // Deserialize text
+                if (TextualComponent.isTextKey(entry.getKey())) {
+                    // The map mimics the YAML serialization, which has a "key" field and one or more "value" fields
+                    final Map<String, Object> serializedMapForm = new HashMap<>(); // Must be object due to Bukkit serializer API compliance
+                    serializedMapForm.put("key", entry.getKey());
+                    if (entry.getValue().isJsonPrimitive()) {
+                        // Assume string
+                        serializedMapForm.put("value", entry.getValue().getAsString());
+                    } else {
+                        // Composite object, but we assume each element is a string
+                        for (final Map.Entry<String, JsonElement> compositeNestedElement : entry.getValue().getAsJsonObject().entrySet()) {
+                            serializedMapForm.put("value." + compositeNestedElement.getKey(), compositeNestedElement.getValue().getAsString());
+                        }
+                    }
+                    component.text = TextualComponent.deserialize(serializedMapForm);
+                } else if (MessagePart.stylesToNames.inverse().containsKey(entry.getKey())) {
+                    if (entry.getValue().getAsBoolean()) {
+                        component.styles.add(MessagePart.stylesToNames.inverse().get(entry.getKey()));
+                    }
+                } else if (entry.getKey().equals("color")) {
+                    component.color = ChatColor.valueOf(entry.getValue().getAsString().toUpperCase());
+                } else if (entry.getKey().equals("clickEvent")) {
+                    final JsonObject object = entry.getValue().getAsJsonObject();
+                    component.clickActionName = object.get("action").getAsString();
+                    component.clickActionData = object.get("value").getAsString();
+                } else if (entry.getKey().equals("hoverEvent")) {
+                    final JsonObject object = entry.getValue().getAsJsonObject();
+                    component.hoverActionName = object.get("action").getAsString();
+                    if (object.get("value").isJsonPrimitive()) {
+                        // Assume string
+                        component.hoverActionData = new JsonString(object.get("value").getAsString());
+                    } else {
+                        // Assume composite type
+                        // The only composite type we currently store is another FancyMessage
+                        // Therefore, recursion time!
+                        component.hoverActionData =
+                                deserialize(object.get("value").toString() /* This should properly serialize the JSON object as a JSON string */);
+                    }
+                } else if (entry.getKey().equals("insertion")) {
+                    component.insertionData = entry.getValue().getAsString();
+                } else if (entry.getKey().equals("with")) {
+                    for (final JsonElement object : entry.getValue().getAsJsonArray()) {
+                        if (object.isJsonPrimitive()) {
+                            component.translationReplacements.add(new JsonString(object.getAsString()));
+                        } else {
+                            // Only composite type stored in this array is - again - FancyMessages
+                            // Recurse within this function to parse this as a translation replacement
+                            component.translationReplacements.add(deserialize(object.toString()));
+                        }
+                    }
+                }
+            }
+            returnVal.messageParts.add(component);
+        }
+        return returnVal;
+    }
+
+    @Override
+    public FancyMessage clone() throws CloneNotSupportedException {
+        final FancyMessage instance = (FancyMessage) super.clone();
+        instance.messageParts = new ArrayList<>(messageParts.size());
+        for (int i = 0; i < messageParts.size(); i++) {
+            instance.messageParts.add(i, messageParts.get(i).clone());
+        }
+        instance.dirty = false;
+        instance.jsonString = null;
+        return instance;
+    }
+
     /**
      * Sets the text of the current editing component to a value.
      * @param text The new text of the current editing component.
@@ -283,7 +374,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         if (type == Type.UNTYPED) {
             throw new IllegalArgumentException("That statistic needs no additional parameter!");
         }
-        if (((type == Type.BLOCK) && item.isBlock()) || (type == Type.ENTITY)) {
+        if (type == Type.BLOCK && item.isBlock() || type == Type.ENTITY) {
             throw new IllegalArgumentException("Wrong parameter type for that statistic - needs " + type + "!");
         }
         try {
@@ -382,6 +473,24 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         return this;
     }
     
+    /*
+
+    /**
+     * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the
+      * message.
+     * @param replacements The replacements, in order, that will be used in the language-specific message.
+     * @return This builder instance.
+     *//* ------------
+       public FancyMessage translationReplacements(final Iterable<? extends CharSequence> replacements){
+       for(CharSequence str : replacements){
+       latest().translationReplacements.add(new JsonString(str));
+       }
+
+       return this;
+       }
+
+       */
+
     /**
      * Set the behavior of the current editing component to display raw text when the client hovers over the text.
      * <p>Tooltips do not inherit display characteristics, such as color and styles, from the message component on which they are applied.</p>
@@ -392,7 +501,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lines.length; i++) {
             builder.append(lines[i]);
-            if (i != (lines.length - 1)) {
+            if (i != lines.length - 1) {
                 builder.append('\n');
             }
         }
@@ -408,9 +517,9 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
      */
     public FancyMessage formattedTooltip(final FancyMessage text) {
         for (final MessagePart component : text.messageParts) {
-            if ((component.clickActionData != null) && (component.clickActionName != null)) {
+            if (component.clickActionData != null && component.clickActionName != null) {
                 throw new IllegalArgumentException("The tooltip text cannot have click data.");
-            } else if ((component.hoverActionData != null) && (component.hoverActionName != null)) {
+            } else if (component.hoverActionData != null && component.hoverActionName != null) {
                 throw new IllegalArgumentException("The tooltip text cannot have a tooltip.");
             }
         }
@@ -429,23 +538,23 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             onHover(null, null); // Clear tooltip
             return this;
         }
-        
+
         final FancyMessage result = new FancyMessage();
         result.messageParts.clear(); // Remove the one existing text component that exists by default, which destabilizes the object
-        
+
         for (int i = 0; i < lines.length; i++) {
             try {
                 for (final MessagePart component : lines[i]) {
-                    if ((component.clickActionData != null) && (component.clickActionName != null)) {
+                    if (component.clickActionData != null && component.clickActionName != null) {
                         throw new IllegalArgumentException("The tooltip text cannot have click data.");
-                    } else if ((component.hoverActionData != null) && (component.hoverActionName != null)) {
+                    } else if (component.hoverActionData != null && component.hoverActionName != null) {
                         throw new IllegalArgumentException("The tooltip text cannot have a tooltip.");
                     }
                     if (component.hasText()) {
                         result.messageParts.add(component.clone());
                     }
                 }
-                if (i != (lines.length - 1)) {
+                if (i != lines.length - 1) {
                     result.messageParts.add(new MessagePart(rawText("\n")));
                 }
             } catch (final CloneNotSupportedException e) {
@@ -476,26 +585,9 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
             latest().translationReplacements.add(new JsonString(str));
         }
         dirty = true;
-        
+
         return this;
     }
-    
-    /*
-
-    /**
-     * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
-     * @param replacements The replacements, in order, that will be used in the language-specific message.
-     * @return This builder instance.
-     *//* ------------
-       public FancyMessage translationReplacements(final Iterable<? extends CharSequence> replacements){
-       for(CharSequence str : replacements){
-       latest().translationReplacements.add(new JsonString(str));
-       }
-
-       return this;
-       }
-
-       */
     
     /**
      * If the text is a translatable key, and it has replaceable values, this function can be used to set the replacements that will be used in the message.
@@ -504,9 +596,9 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
      */
     public FancyMessage translationReplacements(final FancyMessage... replacements) {
         Collections.addAll(latest().translationReplacements, replacements);
-        
+
         dirty = true;
-        
+
         return this;
     }
     
@@ -557,7 +649,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         dirty = true;
         return this;
     }
-    
+
     @Override
     public void writeJson(final JsonWriter writer) throws IOException {
         if (messageParts.size() == 1) {
@@ -577,7 +669,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
      * @return The JSON string representing this object.
      */
     public String toJSONString() {
-        if (!dirty && (jsonString != null)) {
+        if (!dirty && jsonString != null) {
             return jsonString;
         }
         final StringWriter string = new StringWriter();
@@ -626,30 +718,26 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         }
     }
     
-    // The ChatSerializer's instance of Gson
-    private static Object nmsChatSerializerGsonInstance;
-    private static Method fromJsonMethod;
-    
     private Object createChatPacket(final String json) throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,
     ClassNotFoundException {
         if (nmsChatSerializerGsonInstance == null) {
             // Find the field and its value, completely bypassing obfuscation
             Class<?> chatSerializerClazz;
-            
+
             final String version = Reflection.getVersion();
             final double majorVersion = Double.parseDouble(version.replace('_', '.').substring(1, 4));
             final int lesserVersion = Integer.parseInt(version.substring(6, 7));
-            
-            if ((majorVersion < 1.8) || ((majorVersion == 1.8) && (lesserVersion == 1))) {
+
+            if (majorVersion < 1.8 || majorVersion == 1.8 && lesserVersion == 1) {
                 chatSerializerClazz = Reflection.getNMSClass("ChatSerializer");
             } else {
                 chatSerializerClazz = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
             }
-            
+
             if (chatSerializerClazz == null) {
                 throw new ClassNotFoundException("Can't find the ChatSerializer class");
             }
-            
+
             for (final Field declaredField : chatSerializerClazz.getDeclaredFields()) {
                 if (Modifier.isFinal(declaredField.getModifiers()) && Modifier.isStatic(declaredField.getModifiers()) && declaredField.getType().getName().endsWith("Gson")) {
                     // We've found our field
@@ -660,14 +748,14 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
                 }
             }
         }
-        
+
         /*
         Since the method is so simple, and all the obfuscated methods have the same name, it's easier to reimplement 'IChatBaseComponent a(String)'
          than to reflectively call it
         Of course, the implementation may change, but fuzzy matches might break with signature changes
         */
         final Object serializedChatComponent = fromJsonMethod.invoke(nmsChatSerializerGsonInstance, json, Reflection.getNMSClass("IChatBaseComponent"));
-        
+
         return nmsPacketPlayOutChatConstructor.newInstance(serializedChatComponent);
     }
     
@@ -750,98 +838,10 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
     
     /**
-     * Deserialize a JSON-represented message from a mapping of key-value pairs.
-     * This is called by the Bukkit serialization API.
-     * It is not intended for direct public API consumption.
-     * @param serialized The key-value mapping which represents a fancy message.
-     */
-    @SuppressWarnings("unchecked")
-    public static FancyMessage deserialize(final Map<String, Object> serialized) {
-        final FancyMessage msg = new FancyMessage();
-        msg.messageParts = (List<MessagePart>) serialized.get("messageParts");
-        msg.jsonString = serialized.containsKey("JSON") ? serialized.get("JSON").toString() : null;
-        msg.dirty = !serialized.containsKey("JSON");
-        return msg;
-    }
-    
-    /**
      * <b>Internally called method. Not for API consumption.</b>
      */
     @Override
     public Iterator<MessagePart> iterator() {
         return messageParts.iterator();
-    }
-    
-    private static JsonParser _stringParser = new JsonParser();
-    
-    /**
-     * Deserialize a fancy message from its JSON representation. This JSON representation is of the format of
-     * that returned by {@link #toJSONString()}, and is compatible with vanilla inputs.
-     * @param json The JSON string which represents a fancy message.
-     * @return A {@code FancyMessage} representing the parametrized JSON message.
-     */
-    public static FancyMessage deserialize(final String json) {
-        final JsonObject serialized = _stringParser.parse(json).getAsJsonObject();
-        final JsonArray extra = serialized.getAsJsonArray("extra"); // Get the extra component
-        final FancyMessage returnVal = new FancyMessage();
-        returnVal.messageParts.clear();
-        for (final JsonElement mPrt : extra) {
-            final MessagePart component = new MessagePart();
-            final JsonObject messagePart = mPrt.getAsJsonObject();
-            for (final Map.Entry<String, JsonElement> entry : messagePart.entrySet()) {
-                // Deserialize text
-                if (TextualComponent.isTextKey(entry.getKey())) {
-                    // The map mimics the YAML serialization, which has a "key" field and one or more "value" fields
-                    final Map<String, Object> serializedMapForm = new HashMap<>(); // Must be object due to Bukkit serializer API compliance
-                    serializedMapForm.put("key", entry.getKey());
-                    if (entry.getValue().isJsonPrimitive()) {
-                        // Assume string
-                        serializedMapForm.put("value", entry.getValue().getAsString());
-                    } else {
-                        // Composite object, but we assume each element is a string
-                        for (final Map.Entry<String, JsonElement> compositeNestedElement : entry.getValue().getAsJsonObject().entrySet()) {
-                            serializedMapForm.put("value." + compositeNestedElement.getKey(), compositeNestedElement.getValue().getAsString());
-                        }
-                    }
-                    component.text = TextualComponent.deserialize(serializedMapForm);
-                } else if (MessagePart.stylesToNames.inverse().containsKey(entry.getKey())) {
-                    if (entry.getValue().getAsBoolean()) {
-                        component.styles.add(MessagePart.stylesToNames.inverse().get(entry.getKey()));
-                    }
-                } else if (entry.getKey().equals("color")) {
-                    component.color = ChatColor.valueOf(entry.getValue().getAsString().toUpperCase());
-                } else if (entry.getKey().equals("clickEvent")) {
-                    final JsonObject object = entry.getValue().getAsJsonObject();
-                    component.clickActionName = object.get("action").getAsString();
-                    component.clickActionData = object.get("value").getAsString();
-                } else if (entry.getKey().equals("hoverEvent")) {
-                    final JsonObject object = entry.getValue().getAsJsonObject();
-                    component.hoverActionName = object.get("action").getAsString();
-                    if (object.get("value").isJsonPrimitive()) {
-                        // Assume string
-                        component.hoverActionData = new JsonString(object.get("value").getAsString());
-                    } else {
-                        // Assume composite type
-                        // The only composite type we currently store is another FancyMessage
-                        // Therefore, recursion time!
-                        component.hoverActionData = deserialize(object.get("value").toString() /* This should properly serialize the JSON object as a JSON string */);
-                    }
-                } else if (entry.getKey().equals("insertion")) {
-                    component.insertionData = entry.getValue().getAsString();
-                } else if (entry.getKey().equals("with")) {
-                    for (final JsonElement object : entry.getValue().getAsJsonArray()) {
-                        if (object.isJsonPrimitive()) {
-                            component.translationReplacements.add(new JsonString(object.getAsString()));
-                        } else {
-                            // Only composite type stored in this array is - again - FancyMessages
-                            // Recurse within this function to parse this as a translation replacement
-                            component.translationReplacements.add(deserialize(object.toString()));
-                        }
-                    }
-                }
-            }
-            returnVal.messageParts.add(component);
-        }
-        return returnVal;
     }
 }
