@@ -363,7 +363,7 @@ public class JSONObject {
     }
     
     public static Writer quote(final String string, final Writer w) throws IOException {
-        if ((string == null) || (string.isEmpty())) {
+        if ((string == null) || string.isEmpty()) {
             w.write("\"\"");
             return w;
         }
@@ -427,7 +427,7 @@ public class JSONObject {
      */
     public static Object stringToValue(final String string) {
         Double d;
-        if (string.equals("")) {
+        if (string.isEmpty()) {
             return string;
         }
         if (string.equalsIgnoreCase("true")) {
@@ -1115,7 +1115,7 @@ public class JSONObject {
                     } else if (name.startsWith("is")) {
                         key = name.substring(2);
                     }
-                    if ((!key.isEmpty()) && Character.isUpperCase(key.charAt(0)) && (method.getParameterTypes().length == 0)) {
+                    if (!key.isEmpty() && Character.isUpperCase(key.charAt(0)) && (method.getParameterTypes().length == 0)) {
                         if (key.length() == 1) {
                             key = key.toLowerCase();
                         } else if (!Character.isUpperCase(key.charAt(1))) {

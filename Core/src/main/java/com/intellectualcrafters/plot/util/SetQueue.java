@@ -179,7 +179,7 @@ public class SetQueue {
                 return false;
             }
             final ChunkWrapper other = (ChunkWrapper) obj;
-            return ((x == other.x) && (z == other.z) && (StringMan.isEqual(world, other.world)));
+            return (x == other.x) && (z == other.z) && StringMan.isEqual(world, other.world);
         }
         
         @Override

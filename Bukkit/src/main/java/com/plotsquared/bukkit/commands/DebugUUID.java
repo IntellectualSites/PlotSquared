@@ -42,7 +42,6 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -63,16 +62,16 @@ usage = "/plot uuidconvert <lower|offline|online>",
 requiredType = RequiredType.CONSOLE,
 category = CommandCategory.DEBUG)
 public class DebugUUID extends SubCommand {
-    
+
     public DebugUUID() {
         requiredArguments = new Argument[] { Argument.String };
     }
-    
+
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] args) {
         final UUIDWrapper currentUUIDWrapper = UUIDHandler.getUUIDWrapper();
         final UUIDWrapper newWrapper;
-        
+
         switch (args[0].toLowerCase()) {
             case "lower":
                 newWrapper = new LowerOfflineUUIDWrapper();
@@ -104,7 +103,7 @@ public class DebugUUID extends SubCommand {
             MainUtil.sendMessage(player, "&7Retype the command with the override parameter when ready :)");
             return false;
         }
-        
+
         if (currentUUIDWrapper.getClass().getCanonicalName().equals(newWrapper.getClass().getCanonicalName())) {
             MainUtil.sendMessage(player, "&cUUID mode already in use!");
             return false;
@@ -114,14 +113,14 @@ public class DebugUUID extends SubCommand {
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             entry.getValue().kick("PlotSquared UUID conversion has been initiated. You may reconnect when finished.");
         }
-        
+
         MainUtil.sendMessage(player, "&7 - Initializing map");
 
         final HashMap<UUID, UUID> uCMap = new HashMap<>();
         final HashMap<UUID, UUID> uCReverse = new HashMap<>();
-        
+
         MainUtil.sendMessage(player, "&7 - Collecting playerdata");
-        
+
         final HashSet<String> worlds = new HashSet<>();
         worlds.add(WorldUtil.IMP.getMainWorld());
         worlds.add("world");
@@ -142,7 +141,7 @@ public class DebugUUID extends SubCommand {
                         final UUID uuid = UUID.fromString(s);
                         uuids.add(uuid);
                     } catch (final Exception e) {
-                        MainUtil.sendMessage(player, C.PREFIX.s() + "Invalid playerdata: " + current);
+                        MainUtil.sendMessage(player, C.PREFIX + "Invalid playerdata: " + current);
                     }
                 }
             final File playersFolder = new File(worldname + File.separator + "players");
@@ -158,7 +157,7 @@ public class DebugUUID extends SubCommand {
                 }
             }
         }
-        
+
         MainUtil.sendMessage(player, "&7 - Populating map");
         UUID uuid2;
         final UUIDWrapper wrapper = new DefaultUUIDWrapper();
@@ -172,7 +171,7 @@ public class DebugUUID extends SubCommand {
                     uCReverse.put(uuid2, uuid);
                 }
             } catch (final Throwable e) {
-                MainUtil.sendMessage(player, C.PREFIX.s() + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+                MainUtil.sendMessage(player, C.PREFIX + "&6Invalid playerdata: " + uuid.toString() + ".dat");
             }
         }
         for (final String name : names) {
@@ -204,7 +203,7 @@ public class DebugUUID extends SubCommand {
                 MainUtil.sendMessage(player, "&a - Successfully repopulated");
             }
         }
-        
+
         MainUtil.sendMessage(player, "&7 - Replacing cache");
         TaskManager.runTaskAsync(new Runnable() {
             @Override
@@ -215,9 +214,9 @@ public class DebugUUID extends SubCommand {
                         UUIDHandler.add(new StringWrapper(name), entry.getValue());
                     }
                 }
-                
+
                 MainUtil.sendMessage(player, "&7 - Scanning for applicable files (uuids.txt)");
-                
+
                 final File file = new File(PS.get().IMP.getDirectory(), "uuids.txt");
                 if (file.exists()) {
                     try {
@@ -250,12 +249,12 @@ public class DebugUUID extends SubCommand {
                         e.printStackTrace();
                     }
                 }
-                
+
                 MainUtil.sendMessage(player, "&7 - Replacing wrapper");
                 UUIDHandler.setUUIDWrapper(newWrapper);
-                
+
                 MainUtil.sendMessage(player, "&7 - Updating plot objects");
-                
+
                 for (final Plot plot : PS.get().getPlots()) {
                     final UUID value = uCMap.get(plot.owner);
                     if (value != null) {
@@ -265,13 +264,13 @@ public class DebugUUID extends SubCommand {
                     plot.getMembers().clear();
                     plot.getDenied().clear();
                 }
-                
+
                 MainUtil.sendMessage(player, "&7 - Deleting database");
                 final AbstractDB database = DBFunc.dbManager;
                 final boolean result = database.deleteTables();
-                
+
                 MainUtil.sendMessage(player, "&7 - Creating tables");
-                
+
                 try {
                     database.createTables();
                     if (!result) {
@@ -294,7 +293,7 @@ public class DebugUUID extends SubCommand {
                     e.printStackTrace();
                     return;
                 }
-                
+
                 if (newWrapper instanceof OfflineUUIDWrapper) {
                     PS.get().config.set("UUID.force-lowercase", false);
                     PS.get().config.set("UUID.offline", true);
@@ -307,9 +306,9 @@ public class DebugUUID extends SubCommand {
                 } catch (IOException e) {
                     MainUtil.sendMessage(player, "Could not save configuration. It will need to be manuall set!");
                 }
-                
+
                 MainUtil.sendMessage(player, "&7 - Populating tables");
-                
+
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -322,7 +321,7 @@ public class DebugUUID extends SubCommand {
                         });
                     }
                 });
-                
+
                 MainUtil.sendMessage(player, "&aIt is now safe for players to join");
                 MainUtil.sendMessage(player, "&cConversion is still in progress, you will be notified when it is complete");
             }

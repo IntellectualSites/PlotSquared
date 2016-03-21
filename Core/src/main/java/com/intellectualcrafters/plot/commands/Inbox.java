@@ -44,7 +44,7 @@ requiredType = RequiredType.NONE)
 public class Inbox extends SubCommand {
     
     public void displayComments(final PlotPlayer player, final List<PlotComment> oldComments, int page) {
-        if ((oldComments == null) || (oldComments.isEmpty())) {
+        if ((oldComments == null) || oldComments.isEmpty()) {
             MainUtil.sendMessage(player, C.INBOX_EMPTY);
             return;
         }
@@ -65,10 +65,10 @@ public class Inbox extends SubCommand {
         }
         final StringBuilder string = new StringBuilder();
         string.append(StringMan.replaceAll(C.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur", page + 1, "%max", totalPages + 1, "%word", "all") + "\n");
-        PlotComment c;
+
         // This might work xD
-        for (int x = (page * 12); x < max; x++) {
-            c = comments[x];
+        for (int x = page * 12; x < max; x++) {
+            PlotComment c = comments[x];
             String color;
             if (player.getName().equals(c.senderName)) {
                 color = "&a";
@@ -152,12 +152,11 @@ public class Inbox extends SubCommand {
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
                         @Override
                         public void run(List<PlotComment> value) {
-                            final List<PlotComment> comments = value;
-                            if (index > comments.size()) {
+                            if (index > value.size()) {
                                 sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
                                 return;
                             }
-                            final PlotComment comment = comments.get(index - 1);
+                            final PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
                             plot.getSettings().removeComment(comment);
                             MainUtil.sendMessage(player, C.COMMENT_REMOVED, comment.comment);
@@ -199,8 +198,7 @@ public class Inbox extends SubCommand {
         if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
             @Override
             public void run(List<PlotComment> value) {
-                final List<PlotComment> comments = value;
-                displayComments(player, comments, page);
+                displayComments(player, value, page);
             }
         })) {
             if (plot == null) {

@@ -86,7 +86,7 @@ public class SpongeUtil extends WorldUtil {
         System.out.println(method + ": " + cause.toString());
         System.out.println(method + ": " + cause.getClass());
         System.out.println(method + ": " + StringMan.getString(cause.all()));
-        System.out.println(method + ": " + (cause.root()));
+        System.out.println(method + ": " + cause.root());
     }
 
     public static void initBiomeCache() {
@@ -291,7 +291,7 @@ public class SpongeUtil extends WorldUtil {
                 id = Short.parseShort(split[0]);
                 match = 0;
             } else {
-                List<BlockType> types = ReflectionUtils.<BlockType>getStaticFields(BlockTypes.class);
+                List<BlockType> types = ReflectionUtils.getStaticFields(BlockTypes.class);
                 final StringComparison<BlockType>.ComparisonResult comparison =
                         new StringComparison<BlockType>(name, types.toArray(new BlockType[types.size()])) {
                             @Override

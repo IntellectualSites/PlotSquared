@@ -24,6 +24,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -166,7 +167,8 @@ public abstract class SchematicHandler {
                     final int HEIGHT = demensions.getY();
                     // Validate dimensions
                     RegionWrapper region = plot.getLargestRegion();
-                    if ((((region.maxX - region.minX + x_offset) + 1) < WIDTH) || (((region.maxZ - region.minZ + z_offset) + 1) < LENGTH) || (HEIGHT > 256)) {
+                    if (((region.maxX - region.minX + x_offset + 1) < WIDTH) || ((region.maxZ - region.minZ + z_offset + 1) < LENGTH) || (HEIGHT
+                            > 256)) {
                         PS.debug("Schematic is too large");
                         PS.debug("(" + WIDTH + "," + LENGTH + "," + HEIGHT + ") is bigger than (" + (region.maxX - region.minX) + "," + (region.maxZ - region.minZ) + ",256)");
                         TaskManager.runTask(whenDone);
@@ -451,7 +453,7 @@ public abstract class SchematicHandler {
             final List<Tag> blockStates = ListTag.class.cast(tagMap.get("TileEntities")).getValue();
             for (final Tag stateTag : blockStates) {
                 try {
-                    final CompoundTag ct = ((CompoundTag) stateTag);
+                    final CompoundTag ct = (CompoundTag) stateTag;
                     final Map<String, Tag> state = ct.getValue();
                     final short x = IntTag.class.cast(state.get("x")).getValue().shortValue();
                     final short y = IntTag.class.cast(state.get("y")).getValue().shortValue();
@@ -782,15 +784,15 @@ public abstract class SchematicHandler {
             int dz = schematicDimension.getZ();
 
             for (int y = y1; y <= y2; y++) {
-                int yy = y >= 0 ? (y < dy ? y : y - dy) : y + dy;
+                int yy = y >= 0 ? y < dy ? y : y - dy : y + dy;
                 int i1 = yy * dx * dz;
                 int j1 = (y - y1) * width * length;
                 for (int z = z1; z <= z2; z++) {
-                    int zz = z >= 0 ? (z < dz ? z : z - dz) : z + dz;
+                    int zz = z >= 0 ? z < dz ? z : z - dz : z + dz;
                     int i2 = i1 + zz * dx;
                     int j2 = j1 + (z - z1) * width;
                     for (int x = x1; x <= x2; x++) {
-                        int xx = x >= 0 ? (x < dx ? x : x - dx) : x + dx;
+                        int xx = x >= 0 ? x < dx ? x : x - dx : x + dx;
                         int i3 = i2 + xx;
                         int j3 = j2 + (x - x1);
                         ids2[j3] = ids[i3];

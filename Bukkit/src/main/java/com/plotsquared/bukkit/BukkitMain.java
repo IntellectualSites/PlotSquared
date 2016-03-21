@@ -87,7 +87,6 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,12 +96,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
-    
+
     public static BukkitMain THIS;
     public static WorldEditPlugin worldEdit;
-    
+
     private int[] version;
-    
+
     @Override
     public int[] getServerVersion() {
         if (version == null) {
@@ -123,20 +122,20 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         return version;
     }
-    
+
     @Override
     public void onEnable() {
         THIS = this;
         new PS(this, "Bukkit");
     }
-    
+
     @Override
     public void onDisable() {
         PS.get().disable();
         Bukkit.getScheduler().cancelTasks(this);
         THIS = null;
     }
-    
+
     @Override
     public void log(String message) {
         if (THIS != null && Bukkit.getServer().getConsoleSender() != null) {
@@ -151,20 +150,20 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         System.out.println(ConsoleColors.fromString(message));
     }
-    
+
     @Override
     public void disable() {
         if (THIS != null) {
             onDisable();
         }
     }
-    
+
     @Override
     public int[] getPluginVersion() {
         final String[] split = getDescription().getVersion().split("\\.");
         return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]) };
     }
-    
+
     @Override
     public void registerCommands() {
         final BukkitCommand bcmd = new BukkitCommand();
@@ -174,25 +173,25 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         plotCommand.setTabCompleter(bcmd);
         MainCommand.getInstance().addCommand(new DebugUUID());
     }
-    
+
     @Override
     public File getDirectory() {
         return getDataFolder();
     }
-    
+
     @Override
     public File getWorldContainer() {
         return Bukkit.getWorldContainer();
     }
-    
+
     @Override
     public TaskManager getTaskManager() {
         return new BukkitTaskManager();
     }
-    
+
     @Override
     public void runEntityTask() {
-        log(C.PREFIX.s() + "KillAllEntities started.");
+        log(C.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
@@ -335,7 +334,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             }
         }, 20);
     }
-    
+
     @Override
     final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
         final HybridGen result = new HybridGen();
@@ -344,7 +343,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         return (ChunkGenerator) result.specify();
     }
-    
+
     @Override
     public void registerPlayerEvents() {
         getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
@@ -355,23 +354,23 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             getServer().getPluginManager().registerEvents(new PlayerEvents_1_8_3(), this);
         }
     }
-    
+
     @Override
     public void registerInventoryEvents() {
         // Part of PlayerEvents - can be moved if necessary
     }
-    
+
     @Override
     public void registerPlotPlusEvents() {
         PlotPlusListener.startRunnable(this);
         getServer().getPluginManager().registerEvents(new PlotPlusListener(), this);
     }
-    
+
     @Override
     public void registerForceFieldEvents() {
         getServer().getPluginManager().registerEvents(new ForceFieldListener(), this);
     }
-    
+
     @Override
     public boolean initWorldEdit() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
@@ -388,7 +387,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         return false;
     }
-    
+
     @Override
     public EconHandler getEconomyHandler() {
         try {
@@ -400,7 +399,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         return null;
     }
-    
+
     @Override
     public PlotQueue initPlotQueue() {
         try {
@@ -439,12 +438,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             return new SlowQueue();
         }
     }
-    
+
     @Override
     public WorldUtil initWorldUtil() {
         return new BukkitUtil();
     }
-    
+
     @Override
     public boolean initPlotMeConverter() {
         TaskManager.runTaskLaterAsync(new Runnable() {
@@ -463,7 +462,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }, 20);
         return Bukkit.getPluginManager().getPlugin("PlotMe") != null || Bukkit.getPluginManager().getPlugin("AthionPlots") != null;
     }
-    
+
     @Override
     public GeneratorWrapper<?> getGenerator(final String world, final String name) {
         if (name == null) {
@@ -480,17 +479,17 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             return new BukkitPlotGenerator(new HybridGen());
         }
     }
-    
+
     @Override
     public HybridUtils initHybridUtils() {
         return new BukkitHybridUtils();
     }
-    
+
     @Override
     public SetupUtils initSetupUtils() {
         return new BukkitSetupUtils();
     }
-    
+
     @Override
     public UUIDHandlerImplementation initUUIDHandler() {
         final boolean checkVersion = PS.get().checkVersion(getServerVersion(), 1, 7, 6);
@@ -514,7 +513,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             Settings.OFFLINE_MODE = true;
         }
         if (!checkVersion) {
-            log(C.PREFIX.s() + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
+            log(C.PREFIX + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
             Settings.TITLES = false;
             FlagManager.removeFlag(FlagManager.getFlag("titles"));
         } else {
@@ -524,59 +523,59 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             }
         }
         if (Settings.OFFLINE_MODE) {
-            log(C.PREFIX.s() + " &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of Bukkit");
+            log(C.PREFIX + " &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of Bukkit");
         } else {
-            log(C.PREFIX.s() + " &6PlotSquared is using online UUIDs");
+            log(C.PREFIX + " &6PlotSquared is using online UUIDs");
         }
         return Settings.USE_SQLUUIDHANDLER ? new SQLUUIDHandler(wrapper) : new FileUUIDHandler(wrapper);
     }
-    
+
     @Override
     public ChunkManager initChunkManager() {
         return new BukkitChunkManager();
     }
-    
+
     @Override
     public EventUtil initEventUtil() {
         return new BukkitEventUtil();
     }
-    
+
     @Override
     public void unregister(final PlotPlayer player) {
         BukkitUtil.removePlayer(player.getName());
     }
-    
+
     @Override
     public void registerChunkProcessor() {
         getServer().getPluginManager().registerEvents(new ChunkListener(), this);
     }
-    
+
     @Override
     public void registerWorldEvents() {
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);
     }
-    
+
     @Override
     public InventoryUtil initInventoryUtil() {
         return new BukkitInventoryUtil();
     }
-    
+
     @Override
     public String getServerName() {
         return Bukkit.getServerName();
     }
-    
+
     @Override
     public void startMetrics() {
         try {
             Metrics metrics = new Metrics(this);
             metrics.start();
-            log(C.PREFIX.s() + "&6Metrics enabled.");
+            log(C.PREFIX + "&6Metrics enabled.");
         } catch (IOException e) {
-            log(C.PREFIX.s() + "&cFailed to load up metrics.");
+            log(C.PREFIX + "&cFailed to load up metrics.");
         }
     }
-    
+
     @Override
     public void setGenerator(final String worldname) {
         World world = BukkitUtil.getWorld(worldname);
@@ -615,18 +614,18 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             PS.get().loadWorld(worldname, null);
         }
     }
-    
+
     @Override
     public SchematicHandler initSchematicHandler() {
         return new BukkitSchematicHandler();
     }
-    
+
     @Override
     public AbstractTitle initTitleManager() {
         // Already initialized in UUID handler
         return AbstractTitle.TITLE_CLASS;
     }
-    
+
     @Override
     public PlotPlayer wrapPlayer(final Object obj) {
         if (obj instanceof Player) {
@@ -640,13 +639,13 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         }
         return null;
     }
-    
+
     @Override
     public String getNMSPackage() {
         String name = Bukkit.getServer().getClass().getPackage().getName();
         return name.substring(name.lastIndexOf('.') + 1);
     }
-    
+
     @Override
     public ChatManager<?> initChatManager() {
         if (Settings.FANCY_CHAT) {
@@ -655,12 +654,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             return new BukkitPlainChatManager();
         }
     }
-    
+
     @Override
     public GeneratorWrapper<?> wrapPlotGenerator(IndependentPlotGenerator generator) {
         return new BukkitPlotGenerator(generator);
     }
-    
+
     @Override
     public List<String> getPluginIds() {
         ArrayList<String> names = new ArrayList<>();

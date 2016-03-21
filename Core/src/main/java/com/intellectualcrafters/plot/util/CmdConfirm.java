@@ -6,7 +6,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 
 public class CmdConfirm {
     public static CmdInstance getPending(final PlotPlayer player) {
-        return player.<CmdInstance>getMeta("cmdConfirm");
+        return player.getMeta("cmdConfirm");
     }
     
     public static void removePending(final PlotPlayer player) {

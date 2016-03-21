@@ -1,5 +1,21 @@
 package com.plotsquared.bukkit.uuid;
 
+import com.google.common.collect.HashBiMap;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.database.SQLite;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.StringWrapper;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
+import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -13,25 +29,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-import com.google.common.collect.HashBiMap;
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.database.SQLite;
-import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.StringWrapper;
-import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.intellectualcrafters.plot.util.UUIDHandlerImplementation;
-import com.intellectualcrafters.plot.uuid.UUIDWrapper;
-
 public class SQLUUIDHandler extends UUIDHandlerImplementation {
-    
+
     final String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
     final int MAX_REQUESTS = 500;
     final int INTERVAL = 12000;
@@ -57,13 +56,13 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         }
         startCaching(null);
     }
-    
+
     private Connection getConnection() {
         synchronized (_sqLite) {
             return _sqLite.getConnection();
         }
     }
-    
+
     @Override
     public boolean startCaching(final Runnable whenDone) {
         if (!super.startCaching(whenDone)) {
@@ -76,11 +75,9 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     final HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
                     final PreparedStatement statement = getConnection().prepareStatement("SELECT `uuid`, `username` FROM `usercache`");
                     final ResultSet resultSet = statement.executeQuery();
-                    StringWrapper username;
-                    UUID uuid;
                     while (resultSet.next()) {
-                        username = new StringWrapper(resultSet.getString("username"));
-                        uuid = UUID.fromString(resultSet.getString("uuid"));
+                        StringWrapper username = new StringWrapper(resultSet.getString("username"));
+                        UUID uuid = UUID.fromString(resultSet.getString("uuid"));
                         toAdd.put(new StringWrapper(username.value), uuid);
                     }
                     statement.close();
@@ -195,10 +192,10 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         });
         return true;
     }
-    
+
     @Override
     public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
-        PS.debug(C.PREFIX.s() + "UUID for '" + name + "' was null. We'll cache this from the mojang servers!");
+        PS.debug(C.PREFIX + "UUID for '" + name + "' was null. We'll cache this from the mojang servers!");
         if (ifFetch == null) {
             return;
         }
@@ -230,7 +227,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
             }
         });
     }
-    
+
     @Override
     public void handleShutdown() {
         super.handleShutdown();
@@ -240,7 +237,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
             throw new SQLUUIDHandlerException("Couldn't close database connection", e);
         }
     }
-    
+
     @Override
     public boolean add(final StringWrapper name, final UUID uuid) {
         // Ignoring duplicates
@@ -253,7 +250,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                         statement.setString(1, uuid.toString());
                         statement.setString(2, name.toString());
                         statement.execute();
-                        PS.debug(C.PREFIX.s() + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
+                        PS.debug(C.PREFIX + "&cAdded '&6" + uuid + "&c' - '&6" + name + "&c'");
                     } catch (final SQLException e) {
                         e.printStackTrace();
                     }
@@ -263,7 +260,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
         }
         return false;
     }
-    
+
     /**
      * This is useful for name changes
      */
@@ -278,7 +275,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     statement.setString(1, name.value);
                     statement.setString(2, uuid.toString());
                     statement.execute();
-                    PS.debug(C.PREFIX.s() + "Name change for '" + uuid + "' to '" + name.value + "'");
+                    PS.debug(C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + "'");
                 } catch (final SQLException e) {
                     e.printStackTrace();
                 }

@@ -54,7 +54,6 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -165,7 +164,7 @@ public class PS {
             }
             TASK = IMP.getTaskManager();
             if (!C.ENABLED.s().isEmpty()) {
-                log(C.ENABLED.s());
+                log(C.ENABLED);
             }
             setupConfigs();
             translationFile = new File(IMP.getDirectory() + File.separator + "translations" + File.separator + "PlotSquared.use_THIS.yml");
@@ -1370,10 +1369,10 @@ public class PS {
             // Conventional plot generator
             PlotArea plotArea = pg.getNewPlotArea(world, null, null, null);
             PlotManager plotManager = pg.getNewPlotManager();
-            log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
-            log(C.PREFIX.s() + "&3 - generator: &7" + baseGenerator + ">" + pg);
-            log(C.PREFIX.s() + "&3 - plotworld: &7" + plotArea.getClass().getName());
-            log(C.PREFIX.s() + "&3 - manager: &7" + plotManager.getClass().getName());
+            log(C.PREFIX + "&aDetected world load for '" + world + "'");
+            log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + pg);
+            log(C.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
+            log(C.PREFIX + "&3 - manager: &7" + plotManager.getClass().getName());
             if (!config.contains(path)) {
                 config.createSection(path);
                 worldSection = config.getConfigurationSection(path);
@@ -1399,7 +1398,7 @@ public class PS {
                     PS.debug("World possibly already loaded: " + world);
                     return;
                 }
-                log(C.PREFIX.s() + "&aDetected world load for '" + world + "'");
+                log(C.PREFIX + "&aDetected world load for '" + world + "'");
                 String gen_string = worldSection.getString("generator.plugin", "PlotSquared");
                 if (type == 2) {
                     Set<PlotCluster> clusters = clusters_tmp != null ? clusters_tmp.get(world) : new HashSet<PlotCluster>();
@@ -1415,7 +1414,7 @@ public class PS {
                         worldSection.createSection("areas." + fullId);
                         DBFunc.replaceWorld(world, world + ";" + name, pos1, pos2); // NPE
 
-                        log(C.PREFIX.s() + "&3 - " + name + "-" + pos1 + "-" + pos2);
+                        log(C.PREFIX + "&3 - " + name + "-" + pos1 + "-" + pos2);
                         GeneratorWrapper<?> areaGen = IMP.getGenerator(world, gen_string);
                         if (areaGen == null) {
                             throw new IllegalArgumentException("Invalid Generator: " + gen_string);
@@ -1428,10 +1427,10 @@ public class PS {
                         } catch (final IOException e) {
                             e.printStackTrace();
                         }
-                        log(C.PREFIX.s() + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
-                        log(C.PREFIX.s() + "&c | &9plotworld: &7" + pa);
-                        log(C.PREFIX.s() + "&c | &9manager: &7" + pa);
-                        log(C.PREFIX.s() + "&cNote: &7Area created for cluster:" + name + " (invalid or old configuration?)");
+                        log(C.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
+                        log(C.PREFIX + "&c | &9plotworld: &7" + pa);
+                        log(C.PREFIX + "&c | &9manager: &7" + pa);
+                        log(C.PREFIX + "&cNote: &7Area created for cluster:" + name + " (invalid or old configuration?)");
                         areaGen.getPlotGenerator().initialize(pa);
                         areaGen.augment(pa);
                         toLoad.add(pa);
@@ -1453,9 +1452,9 @@ public class PS {
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
-                log(C.PREFIX.s() + "&3 - generator: &7" + baseGenerator + ">" + areaGen);
-                log(C.PREFIX.s() + "&3 - plotworld: &7" + pa);
-                log(C.PREFIX.s() + "&3 - manager: &7" + pa.getPlotManager());
+                log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + areaGen);
+                log(C.PREFIX + "&3 - plotworld: &7" + pa);
+                log(C.PREFIX + "&3 - manager: &7" + pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
@@ -1465,7 +1464,7 @@ public class PS {
                 throw new IllegalArgumentException("Invalid type for multi-area world. Expected `2`, got `" + type + "`");
             }
             for (String areaId : areasSection.getKeys(false)) {
-                log(C.PREFIX.s() + "&3 - " + areaId);
+                log(C.PREFIX + "&3 - " + areaId);
                 String[] split = areaId.split("([^\\-]+)(?:-{1})(-{0,1}\\d+\\;-{0,1}\\d+)(?:-{1})(-{0,1}\\d+\\;-{0,1}\\d+)");
                 if (split.length != 3) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<pos1>-<pos2>`");
@@ -1524,10 +1523,10 @@ public class PS {
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
-                log(C.PREFIX.s() + "&aDetected area load for '" + world + "'");
-                log(C.PREFIX.s() + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
-                log(C.PREFIX.s() + "&c | &9plotworld: &7" + pa);
-                log(C.PREFIX.s() + "&c | &9manager: &7" + pa.getPlotManager());
+                log(C.PREFIX + "&aDetected area load for '" + world + "'");
+                log(C.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
+                log(C.PREFIX + "&c | &9plotworld: &7" + pa);
+                log(C.PREFIX + "&c | &9manager: &7" + pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
@@ -1764,7 +1763,7 @@ public class PS {
     public void setupDatabase() {
         try {
             if (Settings.DB.USE_MONGO) {
-                log(C.PREFIX.s() + "MongoDB is not yet implemented");
+                log(C.PREFIX + "MongoDB is not yet implemented");
                 log(C.PREFIX + "&cNo storage type is set!");
                 IMP.disable();
                 return;
@@ -1786,7 +1785,7 @@ public class PS {
                 this.clusters_tmp = DBFunc.getClusters();
             }
         } catch (ClassNotFoundException | SQLException e) {
-            log(C.PREFIX.s() + "&cFailed to open DATABASE connection. The plugin will disable itself.");
+            log(C.PREFIX + "&cFailed to open DATABASE connection. The plugin will disable itself.");
             if (Settings.DB.USE_MONGO) {
                 log("$4MONGO");
             } else if (Settings.DB.USE_MYSQL) {
@@ -2195,7 +2194,7 @@ public class PS {
         // Misc
         Settings.DEBUG = config.getBoolean("debug");
         if (Settings.DEBUG) {
-            log(C.PREFIX.s() + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
+            log(C.PREFIX + "&6Debug Mode Enabled (Default). Edit the config to turn this off.");
         }
         Settings.CONSOLE_COLOR = config.getBoolean("console.color");
         if (!config.getBoolean("chat.fancy") || !checkVersion(IMP.getServerVersion(), 1, 8, 0)) {
@@ -2216,7 +2215,7 @@ public class PS {
     public void setupConfigs() {
         final File folder = new File(IMP.getDirectory() + File.separator + "config");
         if (!folder.exists() && !folder.mkdirs()) {
-            log(C.PREFIX.s() + "&cFailed to create the /plugins/config folder. Please create it manually.");
+            log(C.PREFIX + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
         try {
             styleFile = new File(IMP.getDirectory() + File.separator + "translations" + File.separator + "style.yml");
@@ -2315,7 +2314,7 @@ public class PS {
             settings.put("Schematics Save Path", "" + Settings.SCHEMATIC_SAVE_PATH);
             settings.put("API Location", "" + Settings.API_URL);
             for (final Entry<String, String> setting : settings.entrySet()) {
-                log(C.PREFIX.s() + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
+                log(C.PREFIX + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
             }
         }
     }

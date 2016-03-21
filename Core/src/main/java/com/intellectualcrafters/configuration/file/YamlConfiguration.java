@@ -159,7 +159,7 @@ public class YamlConfiguration extends FileConfiguration {
         boolean readingHeader = true;
         boolean foundHeader = false;
 
-        for (int i = 0; (i < lines.length) && (readingHeader); i++) {
+        for (int i = 0; (i < lines.length) && readingHeader; i++) {
             final String line = lines[i];
 
             if (line.startsWith(COMMENT_PREFIX)) {
@@ -172,7 +172,7 @@ public class YamlConfiguration extends FileConfiguration {
                 }
 
                 foundHeader = true;
-            } else if ((foundHeader) && (line.isEmpty())) {
+            } else if (foundHeader && line.isEmpty()) {
                 result.append("\n");
             } else if (foundHeader) {
                 readingHeader = false;
@@ -189,11 +189,11 @@ public class YamlConfiguration extends FileConfiguration {
         if (options().copyHeader()) {
             final Configuration def = getDefaults();
 
-            if ((def != null) && (def instanceof FileConfiguration)) {
+            if (def != null && def instanceof FileConfiguration) {
                 final FileConfiguration filedefaults = (FileConfiguration) def;
                 final String defaultsHeader = filedefaults.buildHeader();
 
-                if ((defaultsHeader != null) && (!defaultsHeader.isEmpty())) {
+                if ((defaultsHeader != null) && !defaultsHeader.isEmpty()) {
                     return defaultsHeader;
                 }
             }
@@ -210,7 +210,7 @@ public class YamlConfiguration extends FileConfiguration {
         for (int i = lines.length - 1; i >= 0; i--) {
             builder.insert(0, "\n");
 
-            if ((startedHeader) || (!lines[i].isEmpty())) {
+            if (startedHeader || !lines[i].isEmpty()) {
                 builder.insert(0, lines[i]);
                 builder.insert(0, COMMENT_PREFIX);
                 startedHeader = true;

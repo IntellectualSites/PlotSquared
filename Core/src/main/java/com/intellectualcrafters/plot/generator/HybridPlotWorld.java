@@ -32,7 +32,6 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -177,7 +176,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             PS.debug("&c - road schematics are disabled for this world.");
         }
     }
-    
+
     @Override
     public boolean isCompatible(PlotArea plotworld) {
         if (!(plotworld instanceof SquarePlotWorld)) {
@@ -250,7 +249,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
         if (schem1 == null || schem2 == null || ROAD_WIDTH == 0) {
-            PS.debug(C.PREFIX.s() + "&3 - schematic: &7false");
+            PS.debug(C.PREFIX + "&3 - schematic: &7false");
             return;
         }
         ROAD_SCHEMATIC_ENABLED = true;
@@ -298,7 +297,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
     }
-    
+
     public void addOverlayBlock(short x, final short y, short z, final short id, byte data, final boolean rotate) {
         if (z < 0) {
             z += SIZE;

@@ -41,7 +41,6 @@ import com.plotsquared.sponge.util.SpongeEconHandler;
 import com.plotsquared.sponge.util.SpongeEventUtil;
 import com.plotsquared.sponge.util.SpongeHybridUtils;
 import com.plotsquared.sponge.util.SpongeInventoryUtil;
-import com.plotsquared.sponge.util.SpongeMetrics;
 import com.plotsquared.sponge.util.SpongeSchematicHandler;
 import com.plotsquared.sponge.util.SpongeSetupUtils;
 import com.plotsquared.sponge.util.SpongeTaskManager;
@@ -52,6 +51,7 @@ import com.plotsquared.sponge.util.block.SlowQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
+import org.mcstats.Metrics;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -70,6 +70,7 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -303,10 +304,10 @@ public class SpongeMain implements IPlotMain {
     @Override
     public void startMetrics() {
         try {
-            final SpongeMetrics metrics = new SpongeMetrics(game, (PluginContainer) this);
+            Metrics metrics = new Metrics(game, (PluginContainer) this);
             metrics.start();
             log(C.PREFIX.s() + "&6Metrics enabled.");
-        } catch (final Exception e) {
+        } catch (IOException e) {
             log(C.PREFIX.s() + "&cFailed to load up metrics.");
         }
     }

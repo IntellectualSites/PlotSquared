@@ -76,7 +76,7 @@ public class MemorySection implements ConfigurationSection {
             } catch (NumberFormatException ignored) {
             }
         } else if (obj instanceof List) {
-            final List<?> val = ((List<?>) obj);
+            final List<?> val = (List<?>) obj;
             if (!val.isEmpty()) {
                 return toDouble(val.get(0), def);
             }
@@ -94,7 +94,7 @@ public class MemorySection implements ConfigurationSection {
             } catch (NumberFormatException ignored) {
             }
         } else if (obj instanceof List) {
-            final List<?> val = ((List<?>) obj);
+            final List<?> val = (List<?>) obj;
             if (!val.isEmpty()) {
                 return toInt(val.get(0), def);
             }
@@ -112,7 +112,7 @@ public class MemorySection implements ConfigurationSection {
             } catch (NumberFormatException ignored) {
             }
         } else if (obj instanceof List) {
-            final List<?> val = ((List<?>) obj);
+            final List<?> val = (List<?>) obj;
             if (!val.isEmpty()) {
                 return toLong(val.get(0), def);
             }
@@ -166,7 +166,7 @@ public class MemorySection implements ConfigurationSection {
             builder.insert(0, parent.getName());
         }
 
-        if ((key != null) && (!key.isEmpty())) {
+        if ((key != null) && !key.isEmpty()) {
             if (builder.length() > 0) {
                 builder.append(separator);
             }
@@ -528,7 +528,7 @@ public class MemorySection implements ConfigurationSection {
         final List<String> result = new ArrayList<>();
 
         for (final Object object : list) {
-            if ((object instanceof String) || (isPrimitiveWrapper(object))) {
+            if ((object instanceof String) || isPrimitiveWrapper(object)) {
                 result.add(String.valueOf(object));
             }
         }
@@ -819,7 +819,7 @@ public class MemorySection implements ConfigurationSection {
             for (final Map.Entry<String, Object> entry : sec.map.entrySet()) {
                 output.add(createPath(section, entry.getKey(), this));
 
-                if ((deep) && (entry.getValue() instanceof ConfigurationSection)) {
+                if (deep && (entry.getValue() instanceof ConfigurationSection)) {
                     final ConfigurationSection subsection = (ConfigurationSection) entry.getValue();
                     mapChildrenKeys(output, subsection, deep);
                 }

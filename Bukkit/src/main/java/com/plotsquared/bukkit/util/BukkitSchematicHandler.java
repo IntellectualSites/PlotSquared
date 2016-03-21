@@ -20,7 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.util;
 
-import com.intellectualcrafters.jnbt.*;
+import com.intellectualcrafters.jnbt.ByteArrayTag;
+import com.intellectualcrafters.jnbt.CompoundTag;
+import com.intellectualcrafters.jnbt.IntTag;
+import com.intellectualcrafters.jnbt.ListTag;
+import com.intellectualcrafters.jnbt.ShortTag;
+import com.intellectualcrafters.jnbt.StringTag;
+import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.RegionWrapper;
@@ -35,8 +41,13 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Schematic Handler
@@ -73,7 +84,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
                 schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
                 // Arrays of data types
-                final List<Tag> tileEntities = new ArrayList<>();
+                final List<CompoundTag> tileEntities = new ArrayList<>();
                 final byte[] blocks = new byte[width * height * length];
                 final byte[] blockData = new byte[width * height * length];
                 // Queue
@@ -126,7 +137,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                             @Override
                             public void run() {
                                 final long start = System.currentTimeMillis();
-                                while ((!chunks.isEmpty()) && ((System.currentTimeMillis() - start) < 20)) {
+                                while (!chunks.isEmpty() && ((System.currentTimeMillis() - start) < 20)) {
                                     // save schematics
                                     final ChunkLoc chunk = chunks.remove(0);
                                     final Chunk bc = worldObj.getChunkAt(chunk.x, chunk.z);
@@ -154,7 +165,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                     }
                                     for (int y = sy; y <= Math.min(255, ey); y++) {
                                         final int ry = y - sy;
-                                        final int i1 = (ry * width * length);
+                                        final int i1 = ry * width * length;
                                         for (int z = zzb; z <= zzt; z++) {
                                             final int rz = z - bz;
                                             final int i2 = i1 + (rz * width);
@@ -275,7 +286,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                             final StateWrapper wrapper = new StateWrapper(state);
                                                             final CompoundTag rawTag = wrapper.getTag();
                                                             if (rawTag != null) {
-                                                                final Map<String, Tag> values = new HashMap<String, Tag>();
+                                                                final Map<String, Tag> values = new HashMap<>();
                                                                 for (final Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
                                                                     values.put(entry.getKey(), entry.getValue());
                                                                 }
@@ -283,7 +294,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                                 values.put("x", new IntTag("x", x));
                                                                 values.put("y", new IntTag("y", y));
                                                                 values.put("z", new IntTag("z", z));
-                                                                final CompoundTag tileEntityTag = new CompoundTag(values);
+                                                                CompoundTag tileEntityTag = new CompoundTag(values);
                                                                 tileEntities.add(tileEntityTag);
                                                             }
                                                         }

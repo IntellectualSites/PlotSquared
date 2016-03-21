@@ -90,7 +90,7 @@ public class Delete extends SubCommand {
                 }
             }
         };
-        if (Settings.CONFIRM_DELETE && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
+        if (Settings.CONFIRM_DELETE && !Permissions.hasPermission(plr, "plots.confirm.bypass")) {
             CmdConfirm.addPending(plr, "/plot delete " + plot.getId(), run);
         } else {
             TaskManager.runTask(run);

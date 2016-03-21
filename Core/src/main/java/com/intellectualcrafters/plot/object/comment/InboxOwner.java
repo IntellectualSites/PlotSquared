@@ -1,14 +1,14 @@
 package com.intellectualcrafters.plot.object.comment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InboxOwner extends CommentInbox {
     
@@ -17,10 +17,10 @@ public class InboxOwner extends CommentInbox {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.read." + toString());
         }
-        return (Permissions.hasPermission(player, "plots.inbox.read." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
+        return Permissions.hasPermission(player, "plots.inbox.read." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
         .hasPermission(player, "plots.inbox.read."
         + toString()
-        + ".other")));
+                + ".other"));
     }
     
     @Override
@@ -28,9 +28,10 @@ public class InboxOwner extends CommentInbox {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.write." + toString());
         }
-        return (Permissions.hasPermission(player, "plots.inbox.write." + toString()) && (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.write."
+        return Permissions.hasPermission(player, "plots.inbox.write." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
+                .hasPermission(player, "plots.inbox.write."
         + toString()
-        + ".other")));
+                        + ".other"));
     }
     
     @Override
@@ -38,9 +39,10 @@ public class InboxOwner extends CommentInbox {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.modify." + toString());
         }
-        return (Permissions.hasPermission(player, "plots.inbox.modify." + toString()) && (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.modify."
+        return Permissions.hasPermission(player, "plots.inbox.modify." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
+                .hasPermission(player, "plots.inbox.modify."
         + toString()
-        + ".other")));
+                        + ".other"));
     }
     
     @Override
@@ -59,7 +61,7 @@ public class InboxOwner extends CommentInbox {
             public void run(List<PlotComment> value) {
                 whenDone.value = value;
                 if (value != null) {
-                    for (final PlotComment comment : (ArrayList<PlotComment>) value) {
+                    for (final PlotComment comment : value) {
                         plot.getSettings().addComment(comment);
                     }
                 } else {

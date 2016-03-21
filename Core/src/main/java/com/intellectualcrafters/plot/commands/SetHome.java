@@ -52,7 +52,7 @@ public class SetHome extends SetCommand {
                 Plot base = plot.getBasePlot(false);
                 Location bot = base.getBottomAbs();
                 Location loc = plr.getLocationFull();
-                BlockLoc rel = new BlockLoc(loc.getX() - bot.getX(), loc.getY(), loc.getZ() - bot.getZ(), loc.getYaw(), loc.getPitch());;
+                BlockLoc rel = new BlockLoc(loc.getX() - bot.getX(), loc.getY(), loc.getZ() - bot.getZ(), loc.getYaw(), loc.getPitch());
                 base.setHome(rel);
                 return MainUtil.sendMessage(plr, C.POSITION_SET);
             }
