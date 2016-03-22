@@ -23,10 +23,14 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "home", aliases = { "h" }, description = "Go to your plot", usage = "/plot home [id|alias]",
-        category = CommandCategory.TELEPORT, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "home",
+aliases = { "h" },
+description = "Go to your plot",
+usage = "/plot home [id|alias]",
+category = CommandCategory.TELEPORT,
+requiredType = RequiredType.NONE)
 public class Home extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, String[] args) {
         return MainCommand.getInstance().getCommand("visit").onCommand(plr, args);

@@ -30,7 +30,6 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,11 +38,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@CommandDeclaration(command = "condense", permission = "plots.admin", description = "Condense a plotworld", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.CONSOLE)
+@CommandDeclaration(command = "condense",
+permission = "plots.admin",
+description = "Condense a plotworld",
+category = CommandCategory.ADMINISTRATION,
+requiredType = RequiredType.CONSOLE)
 public class Condense extends SubCommand {
-    
+
     public static boolean TASK = false;
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String... args) {
         if ((args.length != 2) && (args.length != 3)) {
@@ -218,7 +221,7 @@ public class Condense extends SubCommand {
         MainUtil.sendMessage(plr, "/plot condense " + area.worldname + " <start|stop|info> [radius]");
         return false;
     }
-    
+
     public Set<PlotId> getPlots(final Collection<Plot> plots, final int radius) {
         final HashSet<PlotId> outside = new HashSet<>();
         for (final Plot plot : plots) {

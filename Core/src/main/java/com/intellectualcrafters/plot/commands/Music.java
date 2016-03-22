@@ -39,7 +39,7 @@ description = "Player music in a plot",
 usage = "/plot music",
 category = CommandCategory.APPEARANCE,
 requiredType = RequiredType.NONE)
-public class MusicSubcommand extends SubCommand {
+public class Music extends SubCommand {
     
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] args) {

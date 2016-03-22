@@ -36,9 +36,12 @@ import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.HashSet;
 import java.util.UUID;
 
-@CommandDeclaration(command = "merge", aliases = "m", description = "Merge the plot you are standing on, with another plot",
-        permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]", category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "merge",
+aliases = "m",
+description = "Merge the plot you are standing on, with another plot",
+permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
+category = CommandCategory.SETTINGS,
+requiredType = RequiredType.NONE)
 public class Merge extends SubCommand {
     public final static String[] values = new String[] { "north", "east", "south", "west", "auto" };
     public final static String[] aliases = new String[] { "n", "e", "s", "w", "all" };

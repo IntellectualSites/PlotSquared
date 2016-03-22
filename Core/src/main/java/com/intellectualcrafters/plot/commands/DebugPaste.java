@@ -9,14 +9,16 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.io.IOException;
 
-@CommandDeclaration(command = "debugpaste", aliases = "dp", usage = "/plot debugpaste", description = "Upload settings.yml & latest.log to HasteBin",
-        permission = "plots.debugpaste", category = CommandCategory.DEBUG)
+@CommandDeclaration(command = "debugpaste",
+aliases = "dp", usage = "/plot debugpaste",
+description = "Upload settings.yml & latest.log to HasteBin",
+permission = "plots.debugpaste",
+category = CommandCategory.DEBUG)
 public class DebugPaste extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         TaskManager.runTaskAsync(new Runnable() {
@@ -60,7 +62,7 @@ public class DebugPaste extends SubCommand {
                     b.append("os.version: '").append(System.getProperty("os.version")).append("'\n\n");
                     b.append("# Okay :D Great. You are now ready to create your bug report!");
                     b.append("\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
-                    
+
                     final String link = HastebinUtility.upload(b.toString());
                     plr.sendMessage(C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
                 } catch (final IOException e) {

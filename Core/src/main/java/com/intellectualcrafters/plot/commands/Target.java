@@ -37,11 +37,11 @@ permission = "plots.target",
 requiredType = RequiredType.NONE,
 category = CommandCategory.INFO)
 public class Target extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location ploc = plr.getLocation();
-        if (!PS.get().hasPlotArea(ploc.getWorld())) {
+        if (!ploc.isPlotArea()) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
@@ -56,7 +56,7 @@ public class Target extends SubCommand {
                 }
             }
             if (target == null) {
-                C.FOUND_NO_PLOTS.send(plr);
+                MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
                 return false;
             }
         } else if ((target = MainUtil.getPlotFromString(plr, args[0], true)) == null) {

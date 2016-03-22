@@ -29,14 +29,19 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "bo3", aliases = { "bo2" }, description = "Mark a plot as done", permission = "plots.bo3", category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "bo3",
+aliases = { "bo2" },
+description = "Mark a plot as done",
+permission = "plots.bo3",
+category = CommandCategory.SCHEMATIC,
+requiredType = RequiredType.NONE)
 public class BO3 extends SubCommand {
-    
+
     public void noArgs(final PlotPlayer plr) {
         MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot bo3 export [category] [alias] [-r]");
         MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot bo3 import <file>");
     }
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         final Location loc = plr.getLocation();

@@ -1,7 +1,5 @@
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -11,14 +9,14 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+import java.util.UUID;
 
 @CommandDeclaration(
-        command = "grant",
-        category = CommandCategory.CLAIMING,
- usage = "/plot grant <check|add> [player]",
-        permission = "plots.grant",
-        requiredType = RequiredType.NONE
-)
+command = "grant",
+category = CommandCategory.CLAIMING,
+usage = "/plot grant <check|add> [player]",
+permission = "plots.grant",
+requiredType = RequiredType.NONE)
 public class Grant extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {

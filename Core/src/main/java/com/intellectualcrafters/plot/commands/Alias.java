@@ -33,13 +33,13 @@ import com.plotsquared.general.commands.CommandDeclaration;
 @CommandDeclaration(
 command = "setalias",
 permission = "plots.set.alias",
- description = "Set the plot name",
+description = "Set the plot name",
 usage = "/plot alias <alias>",
 aliases = { "alias", "sa", "name", "rename", "setname", "seta" },
- category = CommandCategory.SETTINGS,
+category = CommandCategory.SETTINGS,
 requiredType = RequiredType.NONE)
 public class Alias extends SetCommand {
-    
+
     @Override
     public boolean set(final PlotPlayer plr, final Plot plot, final String alias) {
         if (alias.isEmpty()) {

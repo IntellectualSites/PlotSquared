@@ -23,14 +23,18 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,9 +48,8 @@ aliases = { "sch" },
 category = CommandCategory.SCHEMATIC,
 usage = "/plot schematic <arg...>")
 public class SchematicCmd extends SubCommand {
-    
     private boolean running = false;
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String... args) {
         if (args.length < 1) {
@@ -54,8 +57,6 @@ public class SchematicCmd extends SubCommand {
             return true;
         }
         final String arg = args[0].toLowerCase();
-        final String file;
-        final Schematic schematic;
         switch (arg) {
             case "paste": {
                 if (!Permissions.hasPermission(plr, "plots.schematic.paste")) {

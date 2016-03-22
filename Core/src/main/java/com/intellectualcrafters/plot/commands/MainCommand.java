@@ -37,7 +37,6 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandHandlingOutput;
 import com.plotsquared.general.commands.CommandManager;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,7 +49,6 @@ import java.util.List;
 
  */
 public class MainCommand extends CommandManager<PlotPlayer> {
-    
     private static MainCommand instance;
 
     private MainCommand() {
@@ -86,11 +84,11 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Remove());
         createCommand(new Undeny());
         createCommand(new Info());
-        createCommand(new list());
+        createCommand(new com.intellectualcrafters.plot.commands.List());
         createCommand(new Help());
         createCommand(new Debug());
         createCommand(new SchematicCmd());
-        createCommand(new plugin());
+        createCommand(new Plugin());
         createCommand(new Purge());
         createCommand(new Reload());
         createCommand(new Merge());
@@ -103,7 +101,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         createCommand(new Comment());
         createCommand(new Database());
         createCommand(new Swap());
-        createCommand(new MusicSubcommand());
+        createCommand(new Music());
         createCommand(new DebugRoadRegen());
         createCommand(new Trust());
         createCommand(new DebugExec());
@@ -143,7 +141,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         MainUtil.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
-    
+
     public static List<Command<PlotPlayer>> getCommandAndAliases(final CommandCategory category, final PlotPlayer player) {
         final List<Command<PlotPlayer>> commands = new ArrayList<>();
         for (final Command<PlotPlayer> command : getInstance().getCommands()) {
@@ -157,7 +155,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         }
         return commands;
     }
-    
+
     public static List<Command<PlotPlayer>> getCommands(final CommandCategory category, final PlotPlayer player) {
         final List<Command<PlotPlayer>> commands = new ArrayList<>();
         for (final Command<PlotPlayer> command : new HashSet<>(getInstance().getCommands())) {
@@ -171,7 +169,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         }
         return commands;
     }
-    
+
     public static void displayHelp(final PlotPlayer player, String cat, int page, final String label) {
         CommandCategory catEnum = null;
         if (cat != null) {
@@ -204,7 +202,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         page--;
         new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(page, label).render();
     }
-    
+
     public static boolean onCommand(final PlotPlayer player, final String cmd, String... args) {
         // Clear perm caching //
         player.deleteMeta("perm");
@@ -314,7 +312,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         }
         return true;
     }
-    
+
     public int getMatch(String[] args, Command<PlotPlayer> cmd) {
         int count = 0;
         String perm = cmd.getPermission();
@@ -353,7 +351,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         count += StringMan.intersection(desc, args);
         return count;
     }
-    
+
     @Override
     public int handle(final PlotPlayer plr, final String input) {
         final String[] parts = input.split(" ");

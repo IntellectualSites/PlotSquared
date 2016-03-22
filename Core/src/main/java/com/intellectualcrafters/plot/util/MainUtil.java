@@ -62,9 +62,9 @@ import java.util.regex.Matcher;
  *
  */
 public class MainUtil {
-    
+
     /**
-     * 
+     *
      * @deprecated
      * @param loc
      * @return
@@ -91,7 +91,7 @@ public class MainUtil {
     public static short[][] z_loc;
     public static short[][][] CACHE_I = null;
     public static short[][][] CACHE_J = null;
-    
+
     /**
      * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
      */
@@ -279,10 +279,10 @@ public class MainUtil {
         }
         return time;
     }
-    
+
     /**
      * Hashcode of a boolean array.<br>
-     *  - Used for traversing mega plots quickly.  
+     *  - Used for traversing mega plots quickly.
      * @param array
      * @return hashcode
      */
@@ -299,7 +299,7 @@ public class MainUtil {
         }
         return n;
     }
-    
+
     /**
      * Get a list of plot ids within a selection
      * @param pos1
@@ -315,11 +315,11 @@ public class MainUtil {
         }
         return myplots;
     }
-    
+
     /**
      * Get the name from a UUID<br>
      * @param owner
-     * @return The player's name, None, Everyone or Unknown 
+     * @return The player's name, None, Everyone or Unknown
      */
     public static String getName(final UUID owner) {
         if (owner == null) {
@@ -333,10 +333,10 @@ public class MainUtil {
         }
         return name;
     }
-    
+
     /**
      * Get the corner locations for a list of regions<br>
-     * @see Plot#getCorners() 
+     * @see Plot#getCorners()
      * @param world
      * @param regions
      * @return
@@ -378,12 +378,12 @@ public class MainUtil {
     public static List<Plot> getPlotsBySearch(final String search) {
         final String[] split = search.split(" ");
         final int size = split.length * 2;
-        
+
         final List<UUID> uuids = new ArrayList<>();
         PlotId id = null;
         PlotArea area = null;
         String alias = null;
-        
+
         for (final String term : split) {
             try {
                 UUID uuid = UUIDHandler.getUUID(term, null);
@@ -402,12 +402,12 @@ public class MainUtil {
                 }
             }
         }
-        
+
         final ArrayList<ArrayList<Plot>> plotList = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             plotList.add(new ArrayList<Plot>());
         }
-        
+
         for (final Plot plot : PS.get().getPlots()) {
             int count = 0;
             if (!uuids.isEmpty()) {
@@ -443,10 +443,10 @@ public class MainUtil {
         }
         return plots;
     }
-    
+
     /**
      * Get the plot from a string<br>
-     * @param player Provides a context for what world to search in. Prefixing the term with 'world_name;' will override this context.  
+     * @param player Provides a context for what world to search in. Prefixing the term with 'world_name;' will override this context.
      * @param arg The search term
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
@@ -512,7 +512,7 @@ public class MainUtil {
         }
         return area.getPlotAbs(id);
     }
-    
+
     /**
      * Resend the chunk at a location
      * @param world
@@ -552,9 +552,9 @@ public class MainUtil {
         }
         while (SetQueue.IMP.forceChunkSet());
     }
-    
+
     /**
-     * Set a cubioid asynchronously to a set of blocks
+     * Set a cuboid asynchronously to a set of blocks
      * @param world
      * @param pos1
      * @param pos2
@@ -575,7 +575,7 @@ public class MainUtil {
             }
         }
     }
-    
+
     /**
      * Set a cuboid to a block
      * @param world
@@ -593,9 +593,9 @@ public class MainUtil {
         }
         while (SetQueue.IMP.forceChunkSet());
     }
-    
+
     /**
-     * Set a cuboic asynchronously to a block
+     * Set a cuboid asynchronously to a block
      * @param world
      * @param pos1
      * @param pos2
@@ -610,7 +610,7 @@ public class MainUtil {
             }
         }
     }
-    
+
     /**
      * Synchronously set the biome in a selection
      * @param world
@@ -624,9 +624,9 @@ public class MainUtil {
         RegionWrapper region = new RegionWrapper(p1x, p2x, p1z, p2z);
         WorldUtil.IMP.setBiomes(world, region, biome);
     }
-    
+
     /**
-     * Get the heighest block at a location
+     * Get the highest block at a location
      * @param world
      * @param x
      * @param z
@@ -639,11 +639,11 @@ public class MainUtil {
         }
         return result;
     }
-    
+
     /**
      * Send a message to the player
      *
-     * @param plr Player to recieve message
+     * @param plr Player to receive message
      * @param msg Message to send
      *
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
@@ -651,7 +651,7 @@ public class MainUtil {
     public static boolean sendMessage(final PlotPlayer plr, final String msg) {
         return sendMessage(plr, msg, true);
     }
-    
+
     /**
      * Send a message to console
      * @param caption
@@ -660,7 +660,7 @@ public class MainUtil {
     public static void sendConsoleMessage(final C caption, final String... args) {
         sendMessage(null, caption, args);
     }
-    
+
     /**
      * Send a message to a player
      * @param plr Can be null to represent console, or use ConsolePlayer.getConsole()
@@ -678,7 +678,7 @@ public class MainUtil {
         }
         return true;
     }
-    
+
     /**
      * Send a message to the player
      *
@@ -690,7 +690,7 @@ public class MainUtil {
     public static boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
         return sendMessage(plr, c, (Object[]) args);
     }
-    
+
     /**
      * Send a message to the player
      *
@@ -756,7 +756,7 @@ public class MainUtil {
         }
         return ratings;
     }
-    
+
     /**
      * Format a string with plot information:<br>
      * @param info
@@ -773,10 +773,10 @@ public class MainUtil {
         final String trusted = getPlayerList(plot.getTrusted());
         final String members = getPlayerList(plot.getMembers());
         final String denied = getPlayerList(plot.getDenied());
-        
+
         final Flag descriptionFlag = FlagManager.getPlotFlagRaw(plot, "description");
         final String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
-        
+
         final String flags;
         if (!StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "").isEmpty()) {
             flags = StringMan.replaceFromMap(
@@ -785,9 +785,9 @@ public class MainUtil {
             flags = StringMan.replaceFromMap("$2" + C.NONE.s(), C.replacements);
         }
         final boolean build = plot.isAdded(player.getUUID());
-        
-        final String owner = plot.owner == null ? "unowned" : getPlayerList(plot.getOwners());
-        
+
+        final String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
+
         info = info.replaceAll("%id%", plot.getId().toString());
         info = info.replaceAll("%alias%", alias);
         info = info.replaceAll("%num%", num + "");
@@ -831,7 +831,7 @@ public class MainUtil {
         }
         whenDone.run(info);
     }
-    
+
     /**
      * Get a list of names given a list of uuids.<br>
      * - Uses the format {@link C#PLOT_USER_LIST} for the returned string
@@ -854,7 +854,7 @@ public class MainUtil {
         }
         return list.toString();
     }
-    
+
     public static void getPersistentMeta(final UUID uuid, final String key, final RunnableVal<byte[]> result) {
         PlotPlayer pp = UUIDHandler.getPlayer(uuid);
         if (pp != null) {

@@ -35,19 +35,22 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@CommandDeclaration(command = "cluster", aliases = "clusters", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE,
-        permission = "plots.cluster", description = "Manage a plot cluster")
+@CommandDeclaration(command = "cluster",
+aliases = "clusters",
+category = CommandCategory.ADMINISTRATION,
+requiredType = RequiredType.NONE,
+permission = "plots.cluster",
+description = "Manage a plot cluster")
 public class Cluster extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String... args) {
-        
+
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
         if (args.length == 0) {
             // return arguments

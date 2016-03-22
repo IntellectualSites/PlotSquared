@@ -40,13 +40,11 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -57,10 +55,10 @@ description = "List plots",
 permission = "plots.list",
 category = CommandCategory.INFO,
 usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
-public class list extends SubCommand {
-    
+public class List extends SubCommand {
+
     private String[] getArgumentList(final PlotPlayer player) {
-        final List<String> args = new ArrayList<>();
+        final java.util.List<String> args = new ArrayList<>();
         if ((EconHandler.manager != null) && Permissions.hasPermission(player, "plots.list.forsale")) {
             args.add("forsale");
         }
@@ -102,11 +100,11 @@ public class list extends SubCommand {
         }
         return args.toArray(new String[args.size()]);
     }
-    
+
     public void noArgs(final PlotPlayer plr) {
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + Arrays.toString(getArgumentList(plr)));
     }
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         if (args.length < 1) {
@@ -125,9 +123,9 @@ public class list extends SubCommand {
                 page = -1;
             }
         }
-        
-        List<Plot> plots = null;
-        
+
+        java.util.List<Plot> plots = null;
+
         final String world = plr.getLocation().getWorld();
         final PlotArea area = plr.getApplicablePlotArea();
         final String arg = args[0].toLowerCase();
@@ -353,7 +351,7 @@ public class list extends SubCommand {
                 }
             }
         }
-        
+
         if (plots == null) {
             sendMessage(plr, C.DID_YOU_MEAN, new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
             return false;
@@ -366,8 +364,8 @@ public class list extends SubCommand {
         displayPlots(plr, plots, 12, page, area, args, sort);
         return true;
     }
-    
-    public void displayPlots(final PlotPlayer player, List<Plot> plots, final int pageSize, int page, final PlotArea area, final String[] args, final boolean sort) {
+
+    public void displayPlots(final PlotPlayer player, java.util.List<Plot> plots, final int pageSize, int page, final PlotArea area, final String[] args, final boolean sort) {
         // Header
         Iterator<Plot> iter = plots.iterator();
         while (iter.hasNext()) {

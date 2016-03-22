@@ -1,22 +1,20 @@
 package com.intellectualcrafters.plot.object;
 
 import com.intellectualcrafters.plot.config.Settings;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
 public class Rating {
-    
     /**
      * This is a map of the rating category to the rating value
      */
     private HashMap<String, Integer> ratingMap;
-    
+
     private boolean changed;
     private int initial;
-    
+
     public Rating(int value) {
         initial = value;
         ratingMap = new HashMap<>();
@@ -36,14 +34,14 @@ public class Rating {
             ratingMap.put(null, value);
         }
     }
-    
+
     public List<String> getCategories() {
         if (ratingMap.size() == 1) {
             return new ArrayList<>(0);
         }
         return new ArrayList<>(ratingMap.keySet());
     }
-    
+
     public double getAverageRating() {
         double total = 0;
         for (final Entry<String, Integer> entry : ratingMap.entrySet()) {
@@ -51,11 +49,11 @@ public class Rating {
         }
         return total / ratingMap.size();
     }
-    
+
     public Integer getRating(final String category) {
         return ratingMap.get(category);
     }
-    
+
     public boolean setRating(final String category, final int value) {
         changed = true;
         if (!ratingMap.containsKey(category)) {
@@ -63,7 +61,7 @@ public class Rating {
         }
         return ratingMap.put(category, value) != null;
     }
-    
+
     public int getAggregate() {
         if (!changed) {
             return initial;
@@ -77,7 +75,6 @@ public class Rating {
         } else {
             return ratingMap.get(null);
         }
-        
+
     }
-    
 }

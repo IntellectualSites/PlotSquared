@@ -29,12 +29,15 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.UUID;
 
-@CommandDeclaration(command = "info", aliases = "i", description = "Display plot info", usage = "/plot info <id>", category = CommandCategory.INFO)
+@CommandDeclaration(command = "info",
+aliases = "i",
+description = "Display plot info",
+usage = "/plot info <id>",
+category = CommandCategory.INFO)
 public class Info extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
         Plot plot;
@@ -143,7 +146,7 @@ public class Info extends SubCommand {
         });
         return true;
     }
-    
+
     private String getCaption(final String string) {
         switch (string) {
             case "trusted":

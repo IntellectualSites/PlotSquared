@@ -33,19 +33,23 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.UUID;
 
-@CommandDeclaration(command = "deny", aliases = { "d", "ban" }, description = "Deny a user from a plot", usage = "/plot deny <player>", category = CommandCategory.SETTINGS, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "deny",
+aliases = { "d", "ban" },
+description = "Deny a user from a plot",
+usage = "/plot deny <player>",
+category = CommandCategory.SETTINGS,
+requiredType = RequiredType.NONE)
 public class Deny extends SubCommand {
-    
+
     public Deny() {
         requiredArguments = new Argument[] { Argument.PlayerName };
     }
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
+
         final Location loc = plr.getLocation();
         final Plot plot = loc.getPlotAbs();
         if (plot == null) {
@@ -73,7 +77,7 @@ public class Deny extends SubCommand {
             MainUtil.sendMessage(plr, C.ALREADY_OWNER);
             return false;
         }
-        
+
         if (plot.getDenied().contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;
@@ -92,7 +96,7 @@ public class Deny extends SubCommand {
         }
         return true;
     }
-    
+
     private void handleKick(final PlotPlayer pp, final Plot plot) {
         if (pp == null) {
             return;

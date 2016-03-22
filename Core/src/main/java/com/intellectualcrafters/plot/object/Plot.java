@@ -40,7 +40,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
-
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -70,7 +69,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @SuppressWarnings("javadoc")
 public class Plot {
-
     /**
      * @deprecated raw access is deprecated
      */

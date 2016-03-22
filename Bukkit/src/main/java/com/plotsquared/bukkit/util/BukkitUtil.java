@@ -31,7 +31,6 @@ import org.bukkit.material.Step;
 import org.bukkit.material.Tree;
 import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
-
 import java.util.Arrays;
 import java.util.List;
 

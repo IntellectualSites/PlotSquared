@@ -12,7 +12,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,11 +26,9 @@ category = CommandCategory.ADMINISTRATION,
 permission = "plots.database",
 description = "Convert/Backup Storage",
 requiredType = RequiredType.CONSOLE,
-usage = "/plots database [area] <sqlite|mysql|import>"
-
-)
+usage = "/plots database [area] <sqlite|mysql|import>")
 public class Database extends SubCommand {
-    
+
     public static void insertPlots(final SQLManager manager, final ArrayList<Plot> plots, final PlotPlayer player) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
@@ -56,7 +53,7 @@ public class Database extends SubCommand {
             }
         });
     }
-    
+
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {

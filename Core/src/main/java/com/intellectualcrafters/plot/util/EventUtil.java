@@ -5,45 +5,52 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.LazyBlock;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotCluster;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.Rating;
 import com.plotsquared.listener.PlayerBlockEventType;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
 public abstract class EventUtil {
-    
+
     public static EventUtil manager = null;
-    
+
     public abstract Rating callRating(final PlotPlayer player, final Plot plot, final Rating rating);
-    
+
     public abstract boolean callClaim(final PlotPlayer player, final Plot plot, final boolean auto);
-    
+
     public abstract boolean callTeleport(final PlotPlayer player, final Location from, final Plot plot);
-    
+
     public abstract boolean callClear(Plot plot);
-    
+
     public abstract void callDelete(Plot plot);
-    
+
     public abstract boolean callFlagAdd(final Flag flag, final Plot plot);
-    
+
     public abstract boolean callFlagRemove(final Flag flag, final Plot plot);
-    
+
     public abstract boolean callFlagRemove(final Flag flag, final PlotCluster cluster);
-    
+
     public abstract boolean callMerge(final Plot plot, final ArrayList<PlotId> plots);
-    
+
     public abstract boolean callUnlink(final PlotArea area, final ArrayList<PlotId> plots);
-    
+
     public abstract void callEntry(final PlotPlayer player, final Plot plot);
-    
+
     public abstract void callLeave(final PlotPlayer player, final Plot plot);
-    
+
     public abstract void callDenied(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
-    
+
     public abstract void callTrusted(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
-    
+
     public abstract void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added);
 
     public void doJoinTask(final PlotPlayer pp) {
@@ -272,7 +279,7 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
-                
+
                 if (FlagManager.isPlotFlagTrue(plot, "mob-place")) {
                     return true;
                 }
@@ -295,7 +302,7 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
-                
+
                 if (FlagManager.isPlotFlagTrue(plot, "misc-place")) {
                     return true;
                 }
