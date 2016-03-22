@@ -4,7 +4,6 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.Command;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -45,17 +44,17 @@ public class GenerateDocs {
         try {
             final String clazz = command.getClass().getSimpleName();
             final String name = command.getCommand();
-            
+
             // Header
-            final String source = "https://github.com/IntellectualSites/PlotSquared/tree/master/src/main/java/com/intellectualcrafters/plot/commands/" + clazz + ".java";
+            final String source = "https://github.com/IntellectualSites/PlotSquared/tree/master/Core/src/main/java/com/intellectualcrafters/plot/commands/" + clazz + ".java";
             log("## [" + name.toUpperCase() + "](" + source + ")    ");
-            
-            final File file = new File("src/main/java/com/intellectualcrafters/plot/commands/" + clazz + ".java");
+
+            final File file = new File("Core/src/main/java/com/intellectualcrafters/plot/commands/" + clazz + ".java");
             final List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
             final List<String> perms = getPerms(name, lines);
             final List<String> usages = getUsage(name, lines);
             final String comment = getComments(lines);
-            
+
             log("#### Description");
             log("`" + command.getDescription() + "`");
             if (!comment.isEmpty()) {
@@ -64,7 +63,7 @@ public class GenerateDocs {
                 log(comment);
                 log("```");
             }
-            
+
             log("#### Usage    ");
             {
                 String mainUsage = command.getUsage().replaceAll("\\{label\\}", "plot");
@@ -79,18 +78,18 @@ public class GenerateDocs {
                     log("`" + mainUsage + "`    ");
                 }
             }
-            
+
             if (command.getRequiredType() != RequiredType.NONE) {
                 log("#### Required callers");
                 log("`" + command.getRequiredType().name() + "`");
             }
-            
+
             final Set<String> aliases = command.getAliases();
             if (!aliases.isEmpty()) {
                 log("#### Aliases");
                 log("`" + StringMan.getString(command.getAliases()) + "`");
             }
-            
+
             log("#### Permissions");
             if (!perms.isEmpty()) {
                 log("##### Primary");
@@ -108,7 +107,7 @@ public class GenerateDocs {
             e.printStackTrace();
         }
     }
-    
+
     public static List<String> getUsage(String cmd, List<String> lines) {
         final Pattern p = Pattern.compile("\"([^\"]*)\"");
         HashSet<String> usages = new HashSet<String>();
@@ -136,7 +135,7 @@ public class GenerateDocs {
         final Pattern p2 = Pattern.compile("C.PERMISSION_\\s*(\\w+)");
         String last = null;
         for (final String line : lines) {
-            
+
             Matcher m2 = p2.matcher(line);
             while (m2.find()) {
                 perms.add(C.valueOf("PERMISSION_" + m2.group(1)).s());
@@ -215,7 +214,7 @@ public class GenerateDocs {
         }
         return result.toString().trim();
     }
-    
+
     public static void log(final String s) {
         System.out.println(s);
     }

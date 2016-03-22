@@ -25,7 +25,6 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -38,9 +37,7 @@ requiredType = RequiredType.NONE,
 aliases = { "updateplugin" },
 category = CommandCategory.ADMINISTRATION)
 public class Update extends SubCommand {
-    
-    public static String version;
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         URL url;
@@ -50,7 +47,7 @@ public class Update extends SubCommand {
             try {
                 url = new URL(args[0]);
             } catch (final MalformedURLException e) {
-                MainUtil.sendMessage(plr, "&cInvalid url: " + args[0]);
+                MainUtil.sendMessage(plr, "&cInvalid URL: " + args[0]);
                 MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot update [url]");
                 return false;
             }
@@ -68,5 +65,5 @@ public class Update extends SubCommand {
         }
         return true;
     }
-    
+
 }

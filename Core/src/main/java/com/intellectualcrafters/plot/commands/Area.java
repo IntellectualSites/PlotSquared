@@ -26,16 +26,20 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
-@CommandDeclaration(command = "area", permission = "plots.area", category = CommandCategory.ADMINISTRATION, requiredType = RequiredType.NONE,
-        description = "Create a new PlotArea", aliases = "world", usage = "/plot area <create|info|list|tp|regen>")
+@CommandDeclaration(command = "area",
+permission = "plots.area",
+category = CommandCategory.ADMINISTRATION,
+requiredType = RequiredType.NONE,
+description = "Create a new PlotArea",
+aliases = "world",
+usage = "/plot area <create|info|list|tp|regen>")
 public class Area extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, String[] args) {
         if (args.length == 0) {
@@ -380,7 +384,7 @@ public class Area extends SubCommand {
                         .text("\nClusters=").color("$1").text("" + clusters).color("$2")
                         .text("\nRegion=").color("$1").text(region).color("$2")
                         .text("\nGenerator=").color("$1").text(generator).color("$2");
-                        
+
                         // type / terrain
                         String visit = "/plot area tp " + area.toString();
                         message.text("[").color("$3")
@@ -457,5 +461,5 @@ public class Area extends SubCommand {
         C.COMMAND_SYNTAX.send(plr, getUsage());
         return false;
     }
-    
+
 }

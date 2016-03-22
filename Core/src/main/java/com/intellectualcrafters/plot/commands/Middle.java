@@ -12,13 +12,12 @@ import com.plotsquared.general.commands.CommandDeclaration;
  * @author manuelgu, altered by Citymonstret
  */
 @CommandDeclaration(
-        command = "middle",
-        aliases = { "center" },
-        description = "Teleports you to the center of the current plot",
-        usage = "/plot middle",
-        category = CommandCategory.TELEPORT,
-        requiredType = RequiredType.PLAYER
-)
+command = "middle",
+aliases = { "center" },
+description = "Teleports you to the center of the current plot",
+usage = "/plot middle",
+category = CommandCategory.TELEPORT,
+requiredType = RequiredType.PLAYER)
 public class Middle extends SubCommand {
 
     @Override

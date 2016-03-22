@@ -25,10 +25,13 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "plugin", permission = "plots.use", description = "Show plugin information", aliases = "version",
-        category = CommandCategory.INFO)
-public class plugin extends SubCommand {
-    
+@CommandDeclaration(command = "plugin",
+permission = "plots.use",
+description = "Show plugin information",
+aliases = "version",
+category = CommandCategory.INFO)
+public class Plugin extends SubCommand {
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         MainUtil.sendMessage(plr, String.format("$2>> $1&lPlotSquared $2($1Version$2: $1%s$2)", PS.get().IMP.getPluginVersion()));

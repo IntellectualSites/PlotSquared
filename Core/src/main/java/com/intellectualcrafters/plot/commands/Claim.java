@@ -31,8 +31,12 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "claim", aliases = "c", description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.NONE, permission = "plots.claim", usage = "/plot claim")
+@CommandDeclaration(command = "claim",
+aliases = "c",
+description = "Claim the current plot you're standing on",
+category = CommandCategory.CLAIMING,
+requiredType = RequiredType.PLAYER,
+permission = "plots.claim", usage = "/plot claim")
 public class Claim extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer plr, final String... args) {

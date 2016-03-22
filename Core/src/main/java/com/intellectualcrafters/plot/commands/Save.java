@@ -14,17 +14,21 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
-@CommandDeclaration(command = "save", aliases = { "backup" }, description = "Save your plot", category = CommandCategory.SCHEMATIC, requiredType = RequiredType.NONE, permission = "plots.save")
+@CommandDeclaration(command = "save",
+aliases = { "backup" },
+description = "Save your plot",
+category = CommandCategory.SCHEMATIC,
+requiredType = RequiredType.NONE,
+permission = "plots.save")
 public class Save extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
+
         if (!Settings.METRICS) {
             MainUtil.sendMessage(plr, "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
             return false;

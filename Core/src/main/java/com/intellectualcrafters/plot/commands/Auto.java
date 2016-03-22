@@ -32,10 +32,15 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "auto", permission = "plots.auto", category = CommandCategory.CLAIMING, requiredType = RequiredType.NONE,
-        description = "Claim the nearest plot", aliases = "a", usage = "/plot auto [length,width]")
+@CommandDeclaration(command = "auto",
+permission = "plots.auto",
+category = CommandCategory.CLAIMING,
+requiredType = RequiredType.NONE,
+description = "Claim the nearest plot",
+aliases = "a",
+usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
-    
+
     public static PlotId getNextPlotId(final PlotId id, final int step) {
         final int absX = Math.abs(id.x);
         final int absY = Math.abs(id.y);
@@ -64,7 +69,7 @@ public class Auto extends SubCommand {
             return new PlotId(id.x + 1, id.y);
         }
     }
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         PlotArea plotarea = plr.getApplicablePlotArea();
@@ -199,7 +204,7 @@ public class Auto extends SubCommand {
         plotarea.setMeta("lastPlot", new PlotId(0, 0));
         return true;
     }
-    
+
     public PlotId getLastPlotId(final PlotArea area) {
         PlotId value = (PlotId) area.getMeta("lastPlot");
         if (value == null) {

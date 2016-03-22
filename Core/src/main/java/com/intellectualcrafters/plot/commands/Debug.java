@@ -28,9 +28,13 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-@CommandDeclaration(command = "debug", category = CommandCategory.DEBUG, description = "Show debug information", usage = "/plot debug [msg]", permission = "plots.admin")
+@CommandDeclaration(command = "debug",
+category = CommandCategory.DEBUG,
+description = "Show debug information",
+usage = "/plot debug [msg]",
+permission = "plots.admin")
 public class Debug extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer plr, final String[] args) {
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
@@ -70,11 +74,11 @@ public class Debug extends SubCommand {
         }
         return true;
     }
-    
+
     private String getSection(final String line, final String val) {
         return line.replaceAll("%val%", val) + "\n";
     }
-    
+
     private String getLine(final String line, final String var, final Object val) {
         return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
     }

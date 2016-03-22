@@ -36,7 +36,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,8 +43,13 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(command = "rate", permission = "plots.rate", description = "Rate the plot", usage = "/plot rate [#|next]", aliases = "rt",
-        category = CommandCategory.INFO, requiredType = RequiredType.NONE)
+@CommandDeclaration(command = "rate",
+permission = "plots.rate",
+description = "Rate the plot",
+usage = "/plot rate [#|next]",
+aliases = "rt",
+category = CommandCategory.INFO,
+requiredType = RequiredType.NONE)
 public class Rate extends SubCommand {
 
     @Override

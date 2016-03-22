@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.Arrays;
-import java.util.Map.Entry;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -35,10 +32,17 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+import java.util.Arrays;
+import java.util.Map.Entry;
 
-@CommandDeclaration(command = "comment", aliases = { "msg" }, description = "Comment on a plot", category = CommandCategory.CHAT, requiredType = RequiredType.NONE, permission = "plots.comment")
+@CommandDeclaration(command = "comment",
+aliases = { "msg" },
+description = "Comment on a plot",
+category = CommandCategory.CHAT,
+requiredType = RequiredType.NONE,
+permission = "plots.comment")
 public class Comment extends SubCommand {
-    
+
     @Override
     public boolean onCommand(final PlotPlayer player, final String[] args) {
         if (args.length < 2) {

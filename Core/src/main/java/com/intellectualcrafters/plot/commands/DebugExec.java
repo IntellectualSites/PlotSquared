@@ -27,26 +27,57 @@ import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.object.ConsolePlayer;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotAnalysis;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.AbstractTitle;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.EconHandler;
+import com.intellectualcrafters.plot.util.EventUtil;
+import com.intellectualcrafters.plot.util.ExpireManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.SchematicHandler;
+import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.SetupUtils;
+import com.intellectualcrafters.plot.util.StringMan;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
+import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import com.plotsquared.listener.WEManager;
-
-import javax.script.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
 
-@CommandDeclaration(command = "debugexec", permission = "plots.admin", description = "Mutli-purpose debug command", aliases = "exec",
-        category = CommandCategory.DEBUG)
+@CommandDeclaration(command = "debugexec",
+permission = "plots.admin",
+description = "Mutli-purpose debug command",
+aliases = "exec",
+category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
-    
     private ScriptEngine engine;
     private Bindings scope;
-    
+
     public DebugExec() {
         try {
             if (PS.get() != null) {
@@ -64,15 +95,15 @@ public class DebugExec extends SubCommand {
             }
         } catch (IOException | ScriptException e) {}
     }
-    
+
     public ScriptEngine getEngine() {
         return engine;
     }
-    
+
     public Bindings getScope() {
         return scope;
     }
-    
+
     public void init() {
         if (engine != null) {
             return;
@@ -83,14 +114,14 @@ public class DebugExec extends SubCommand {
         }
         final ScriptContext context = new SimpleScriptContext();
         scope = context.getBindings(ScriptContext.ENGINE_SCOPE);
-        
+
         // stuff
         scope.put("MainUtil", new MainUtil());
         scope.put("Settings", new Settings());
         scope.put("StringMan", new StringMan());
         scope.put("MathMan", new MathMan());
         scope.put("FlagManager", new FlagManager());
-        
+
         // Classes
         scope.put("Location", Location.class);
         scope.put("PlotBlock", PlotBlock.class);
@@ -98,7 +129,7 @@ public class DebugExec extends SubCommand {
         scope.put("PlotId", PlotId.class);
         scope.put("Runnable", Runnable.class);
         scope.put("RunnableVal", RunnableVal.class);
-        
+
         // Instances
         scope.put("PS", PS.get());
         scope.put("SetQueue", SetQueue.IMP);
@@ -120,16 +151,16 @@ public class DebugExec extends SubCommand {
         scope.put("HybridUtils", HybridUtils.manager);
         scope.put("IMP", PS.get().IMP);
         scope.put("MainCommand", MainCommand.getInstance());
-        
+
         // enums
         for (final Enum<?> value : C.values()) {
             scope.put("C_" + value.name(), value);
         }
     }
-    
+
     @Override
     public boolean onCommand(final PlotPlayer player, final String... args) {
-        final List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen");
+        final java.util.List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen");
         if (args.length > 0) {
             final String arg = args[0].toLowerCase();
             String script;
@@ -152,7 +183,7 @@ public class DebugExec extends SubCommand {
                     HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
                         @Override
                         public void run(PlotAnalysis value) {
-                            MainUtil.sendMessage(player, "$1Done: $2use $3/plot debugexec analyze$2 for more information");
+                            MainUtil.sendMessage(player, "$1Done: $2Use $3/plot debugexec analyze$2 for more information");
                         }
                     });
                     return true;
@@ -219,11 +250,11 @@ public class DebugExec extends SubCommand {
                 }
                 case "stop-rgar":
                     if (!HybridUtils.UPDATE) {
-                        MainUtil.sendMessage(player, "&cTASK NOT RUNNING!");
+                        MainUtil.sendMessage(player, "&cTask not running!");
                         return false;
                     }
                     HybridUtils.UPDATE = false;
-                    MainUtil.sendMessage(player, "&cCancelling task... (please wait)");
+                    MainUtil.sendMessage(player, "&cCancelling task... (Please wait)");
                     return true;
                 case "start-expire":
                     if (ExpireManager.IMP == null) {
@@ -246,11 +277,11 @@ public class DebugExec extends SubCommand {
                     }
                     final UUID uuid = UUIDHandler.getUUID(args[1], null);
                     if (uuid == null) {
-                        return MainUtil.sendMessage(player, "player not found: " + args[1]);
+                        return MainUtil.sendMessage(player, "Player not found: " + args[1]);
                     }
                     final OfflinePlotPlayer op = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
                     if (op == null || op.getLastPlayed() == 0) {
-                        return MainUtil.sendMessage(player, "player hasn't connected before: " + args[1]);
+                        return MainUtil.sendMessage(player, "Player hasn't connected before: " + args[1]);
                     }
                     final Timestamp stamp = new Timestamp(op.getLastPlayed());
                     final Date date = new Date(stamp.getTime());
@@ -269,8 +300,7 @@ public class DebugExec extends SubCommand {
                 case "addcmd":
                     try {
                         final String cmd = StringMan.join(Files
-                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]),
-                                                StandardCharsets.UTF_8),
+                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8),
                                 System.getProperty("line.separator"));
                         final Command<PlotPlayer> subcommand = new Command<PlotPlayer>(args[1].split("\\.")[0]) {
                             @Override
