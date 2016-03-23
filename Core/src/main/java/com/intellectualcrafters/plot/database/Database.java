@@ -61,7 +61,7 @@ public abstract class Database {
     public abstract Connection getConnection();
     
     /**
-     * Closes the connection with the database
+     * Closes the connection with the database.
      *
      * @return true if successful
      *
@@ -70,7 +70,8 @@ public abstract class Database {
     public abstract boolean closeConnection() throws SQLException;
     
     /**
-     * Executes a SQL Query<br> If the connection is closed, it will be opened
+     * Executes a SQL Query.
+     * If the connection is closed, it will be opened.
      *
      * @param query Query to be run
      *
@@ -79,7 +80,7 @@ public abstract class Database {
      * @throws SQLException           If the query cannot be executed
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
-    public abstract ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException;
+    public abstract ResultSet querySQL(String query) throws SQLException, ClassNotFoundException;
     
     /**
      * Executes an Update SQL Query<br> See {@link java.sql.Statement#executeUpdate(String)}<br> If the connection is
@@ -92,5 +93,5 @@ public abstract class Database {
      * @throws SQLException           If the query cannot be executed
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
-    public abstract int updateSQL(final String query) throws SQLException, ClassNotFoundException;
+    public abstract int updateSQL(String query) throws SQLException, ClassNotFoundException;
 }

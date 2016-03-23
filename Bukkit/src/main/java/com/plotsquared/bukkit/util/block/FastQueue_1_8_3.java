@@ -48,7 +48,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
     private final RefField fieldWorld;
     private final RefMethod methodGetIdArray;
 
-    public FastQueue_1_8_3() throws NoSuchMethodException, RuntimeException {
+    public FastQueue_1_8_3() throws RuntimeException {
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         RefClass classChunk = getRefClass("{nms}.Chunk");

@@ -41,12 +41,12 @@ import java.util.logging.Level;
  * provided by the vanilla Minecraft <a href="http://minecraft.gamepedia.com/Tellraw#Raw_JSON_Text">JSON message formatter</a>.
  * This class allows plugins to emulate the functionality of the vanilla Minecraft
  * <a href="http://minecraft.gamepedia.com/Commands#tellraw">tellraw command</a>.
- * <p>
- * This class follows the builder pattern, allowing for method chaining.
- * It is set up such that invocations of property-setting methods will affect the current editing component,
- * and a call to {@link #then(String)} or {@link #text(TextualComponent)} will append a new editing component to the end of the message,
- * optionally initializing it with text. Further property-setting method calls will affect that editing component.
- * </p>
+ * <p> This class follows the builder pattern, allowing for method chaining.
+ * It is set up such that invocations of property-setting methods will affect
+ * the current editing component, and a call to {@link #then(String)} or
+ * {@link #text(TextualComponent)} will append a new editing component to the
+ * end of the message, optionally initializing it with text. Further
+ * property-setting method calls will affect that editing component.</p>
  */
 public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<MessagePart>, ConfigurationSerializable {
 

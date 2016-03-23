@@ -39,7 +39,7 @@ public class FastQueue_1_7 extends SlowQueue {
 
     private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
-    public FastQueue_1_7() throws NoSuchMethodException, RuntimeException {
+    public FastQueue_1_7() throws RuntimeException {
         this.methodGetHandle = this.classCraftWorld.getMethod("getHandle");
         this.methodGetChunkAt = this.classWorld.getMethod("getChunkAt", int.class, int.class);
         this.methodA = this.classChunk.getMethod("a", int.class, int.class, int.class, this.classBlock, int.class);

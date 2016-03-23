@@ -63,10 +63,10 @@ public abstract class WorldUtil {
             @Override
             public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
-                    byte[] buffer = new byte[1024];
                     File dat = getDat(plot.getArea().worldname);
                     Location spawn = getSpawn(plot.getArea().worldname);
                     setSpawn(home);
+                    byte[] buffer = new byte[1024];
                     if (dat != null) {
                         ZipEntry ze = new ZipEntry("world" + File.separator + dat.getName());
                         zos.putNextEntry(ze);

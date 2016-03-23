@@ -17,8 +17,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommentManager {
+
     public static HashMap<String, CommentInbox> inboxes = new HashMap<>();
-    
+
     public static void sendTitle(final PlotPlayer player, final Plot plot) {
         if (!Settings.COMMENT_NOTIFICATIONS) {
             return;
@@ -29,7 +30,7 @@ public class CommentManager {
         TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
-                final Collection<CommentInbox> boxes = CommentManager.inboxes.values();
+                Collection<CommentInbox> boxes = CommentManager.inboxes.values();
                 final AtomicInteger count = new AtomicInteger(0);
                 final AtomicInteger size = new AtomicInteger(boxes.size());
                 for (final CommentInbox inbox : inboxes.values()) {
@@ -39,7 +40,7 @@ public class CommentManager {
                             int total;
                             if (value != null) {
                                 int num = 0;
-                                for (final PlotComment comment : value) {
+                                for (PlotComment comment : value) {
                                     if (comment.timestamp > getTimestamp(player, inbox.toString())) {
                                         num++;
                                     }
@@ -57,19 +58,15 @@ public class CommentManager {
             }
         }, 20);
     }
-    
-    public static long getTimestamp(final PlotPlayer player, final String inbox) {
-        final Object meta = player.getMeta("inbox:" + inbox);
-        if (meta == null) {
-            return player.getPreviousLogin();
-        }
-        return (Long) meta;
+
+    public static long getTimestamp(PlotPlayer player, String inbox) {
+        return player.getMeta("inbox:" + inbox, player.getPreviousLogin());
     }
-    
-    public static void addInbox(final CommentInbox inbox) {
+
+    public static void addInbox(CommentInbox inbox) {
         inboxes.put(inbox.toString().toLowerCase(), inbox);
     }
-    
+
     public static void registerDefaultInboxes() {
         addInbox(new InboxReport());
         addInbox(new InboxPublic());

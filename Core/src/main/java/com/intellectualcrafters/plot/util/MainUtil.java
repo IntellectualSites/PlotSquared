@@ -162,7 +162,7 @@ public class MainUtil {
                     con.setDoOutput(true);
                     con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
                     try (OutputStream output = con.getOutputStream();
-                         PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
+                            PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
                         String CRLF = "\r\n";
                         writer.append("--" + boundary).append(CRLF);
                         writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
@@ -180,22 +180,22 @@ public class MainUtil {
                         writer.append(CRLF).flush();
                         writer.append("--" + boundary + "--").append(CRLF).flush();
                     }
-//                    try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
-//                        final char[] buffer = new char[256];
-//                        final StringBuilder result = new StringBuilder();
-//                        while (true) {
-//                            final int r = response.read(buffer);
-//                            if (r < 0) {
-//                                break;
-//                            }
-//                            result.append(buffer, 0, r);
-//                        }
-//                        if (!result.toString().startsWith("Success")) {
-//                            PS.debug(result);
-//                        }
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
+                    //                    try (Reader response = new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8)) {
+                    //                        final char[] buffer = new char[256];
+                    //                        final StringBuilder result = new StringBuilder();
+                    //                        while (true) {
+                    //                            final int r = response.read(buffer);
+                    //                            if (r < 0) {
+                    //                                break;
+                    //                            }
+                    //                            result.append(buffer, 0, r);
+                    //                        }
+                    //                        if (!result.toString().startsWith("Success")) {
+                    //                            PS.debug(result);
+                    //                        }
+                    //                    } catch (IOException e) {
+                    //                        e.printStackTrace();
+                    //                    }
                     int responseCode = ((HttpURLConnection) con).getResponseCode();
                     if (responseCode == 200) {
                         whenDone.value = url;
@@ -272,7 +272,7 @@ public class MainUtil {
                 case "second":
                 case "secs":
                 case "sec":
-                case "s":{
+                case "s": {
                     time += nums;
                 }
             }
@@ -366,7 +366,7 @@ public class MainUtil {
                 min.setZ(pos1.getZ());
             }
         }
-        return new Location[] { min, max };
+        return new Location[]{min, max};
     }
 
     /**
@@ -530,30 +530,6 @@ public class MainUtil {
     }
 
     /**
-     * Set a cuboid in the world to a set of blocks.
-     * @param world
-     * @param pos1
-     * @param pos2
-     * @param blocks If multiple blocks are provided, the result will be a random mix
-     */
-    public static void setCuboid(String world, Location pos1, Location pos2, PlotBlock[] blocks) {
-        if (blocks.length == 1) {
-            setSimpleCuboid(world, pos1, pos2, blocks[0]);
-            return;
-        }
-        for (int y = pos1.getY(); y <= pos2.getY(); y++) {
-            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                    int i = PseudoRandom.random.random(blocks.length);
-                    PlotBlock block = blocks[i];
-                    SetQueue.IMP.setBlock(world, x, y, z, block);
-                }
-            }
-        }
-        while (SetQueue.IMP.forceChunkSet());
-    }
-
-    /**
      * Set a cuboid asynchronously to a set of blocks
      * @param world
      * @param pos1
@@ -577,25 +553,7 @@ public class MainUtil {
     }
 
     /**
-     * Set a cuboid to a block
-     * @param world
-     * @param pos1
-     * @param pos2
-     * @param newblock
-     */
-    public static void setSimpleCuboid(String world, Location pos1, Location pos2, PlotBlock newblock) {
-        for (int y = pos1.getY(); y <= pos2.getY(); y++) {
-            for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-                for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                    SetQueue.IMP.setBlock(world, x, y, z, newblock);
-                }
-            }
-        }
-        while (SetQueue.IMP.forceChunkSet());
-    }
-
-    /**
-     * Set a cuboid asynchronously to a block
+     * Set a cuboid asynchronously to a block.
      * @param world
      * @param pos1
      * @param pos2
@@ -612,7 +570,7 @@ public class MainUtil {
     }
 
     /**
-     * Synchronously set the biome in a selection
+     * Synchronously set the biome in a selection.
      * @param world
      * @param p1x
      * @param p1z
@@ -626,7 +584,7 @@ public class MainUtil {
     }
 
     /**
-     * Get the highest block at a location
+     * Get the highest block at a location.
      * @param world
      * @param x
      * @param z
@@ -662,7 +620,7 @@ public class MainUtil {
     }
 
     /**
-     * Send a message to a player
+     * Send a message to a player.
      * @param plr Can be null to represent console, or use ConsolePlayer.getConsole()
      * @param msg
      * @param prefix If the message should be prefixed with the configured prefix
@@ -680,7 +638,7 @@ public class MainUtil {
     }
 
     /**
-     * Send a message to the player
+     * Send a message to the player.
      *
      * @param plr Player to receive message
      * @param c   Caption to send

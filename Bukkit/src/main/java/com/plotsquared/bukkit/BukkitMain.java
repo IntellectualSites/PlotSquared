@@ -148,6 +148,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 Bukkit.getServer().getConsoleSender().sendMessage(message);
                 return;
             } catch (Throwable ignored) {
+                //ignored
             }
         }
         System.out.println(ConsoleColors.fromString(message));
@@ -345,7 +346,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    final public ChunkGenerator getDefaultWorldGenerator(String world, String id) {
+    public final ChunkGenerator getDefaultWorldGenerator(String world, String id) {
         HybridGen result = new HybridGen();
         if (!PS.get().setupPlotWorld(world, id, result)) {
             return null;
@@ -590,14 +591,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             // create world
             ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", "PlotSquared");
-            String generator = worldConfig.getString("generator.init", manager);
-            int type = worldConfig.getInt("generator.type");
-            int terrain = worldConfig.getInt("generator.terrain");
             SetupObject setup = new SetupObject();
             setup.plotManager = manager;
-            setup.setupGenerator = generator;
-            setup.type = type;
-            setup.terrain = terrain;
+            setup.setupGenerator = worldConfig.getString("generator.init", manager);
+            setup.type = worldConfig.getInt("generator.type");
+            setup.terrain = worldConfig.getInt("generator.terrain");
             setup.step = new ConfigurationNode[0];
             setup.world = worldName;
             SetupUtils.manager.setupWorld(setup);

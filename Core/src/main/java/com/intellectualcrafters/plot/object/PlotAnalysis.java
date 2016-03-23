@@ -518,12 +518,11 @@ public class PlotAnalysis {
             bucket[i] = new ArrayList<Integer>();
         }
         boolean maxLength = false;
-        int tmp;
         int placement = 1;
         while (!maxLength) {
             maxLength = true;
             for (Integer i : input) {
-                tmp = i / placement;
+                int tmp = i / placement;
                 bucket[tmp % SIZE].add(i);
                 if (maxLength && tmp > 0) {
                     maxLength = false;

@@ -23,39 +23,42 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 public class PlotMeConnector_017 extends APlotMeConnector {
+
     private String plugin;
 
     @Override
-    public Connection getPlotMeConnection(final String plugin, final FileConfiguration plotConfig, final String dataFolder) {
+    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
         this.plugin = plugin.toLowerCase();
         try {
             if (plotConfig.getBoolean("usemySQL")) {
-                final String user = plotConfig.getString("mySQLuname");
-                final String password = plotConfig.getString("mySQLpass");
-                final String con = plotConfig.getString("mySQLconn");
+                String user = plotConfig.getString("mySQLuname");
+                String password = plotConfig.getString("mySQLpass");
+                String con = plotConfig.getString("mySQLconn");
                 return DriverManager.getConnection(con, user, password);
             } else {
-                final File file = new File(dataFolder + File.separator + "plotmecore.db");
+                File file = new File(dataFolder + File.separator + "plotmecore.db");
                 if (file.exists()) {
                     return new SQLite(dataFolder + File.separator + "plotmecore.db").openConnection();
                 }
                 return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
             }
-        } catch (SQLException | ClassNotFoundException e) {}
+        } catch (SQLException | ClassNotFoundException ignored) {
+            //ignored
+        }
         return null;
     }
-    
+
     @Override
-    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(final Connection connection) throws SQLException {
-        ResultSet r;
-        PreparedStatement stmt;
-        final HashMap<String, Integer> plotWidth = new HashMap<>();
-        final HashMap<String, Integer> roadWidth = new HashMap<>();
-        final HashMap<Integer, Plot> plots = new HashMap<>();
-        final HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
+    public HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException {
+        ResultSet resultSet;
+        PreparedStatement statement;
+        HashMap<String, Integer> plotWidth = new HashMap<>();
+        HashMap<String, Integer> roadWidth = new HashMap<>();
+        HashMap<Integer, Plot> plots = new HashMap<>();
+        HashMap<String, HashMap<PlotId, boolean[]>> merges = new HashMap<>();
         try {
-            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_plots`");
-            r = stmt.executeQuery();
+            statement = connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_plots`");
+            resultSet = statement.executeQuery();
         } catch (SQLException e) {
             PS.debug("========= Table does not exist =========");
             e.printStackTrace();
@@ -64,29 +67,29 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             PS.debug("&8 - &7Please correct this, or if you are unsure, the most common is 0.16.3");
             return null;
         }
-        final boolean checkUUID = DBFunc.hasColumn(r, "ownerID");
-        final boolean merge = !plugin.equals("plotme") && Settings.CONVERT_PLOTME;
-        while (r.next()) {
-            final int key = r.getInt("plot_id");
-            final PlotId id = new PlotId(r.getInt("plotX"), r.getInt("plotZ"));
-            final String name = r.getString("owner");
-            final String world = LikePlotMeConverter.getWorld(r.getString("world"));
+        boolean checkUUID = DBFunc.hasColumn(resultSet, "ownerID");
+        boolean merge = !this.plugin.equals("plotme") && Settings.CONVERT_PLOTME;
+        while (resultSet.next()) {
+            int key = resultSet.getInt("plot_id");
+            PlotId id = new PlotId(resultSet.getInt("plotX"), resultSet.getInt("plotZ"));
+            String name = resultSet.getString("owner");
+            String world = LikePlotMeConverter.getWorld(resultSet.getString("world"));
             if (!plots.containsKey(world) && merge) {
-                final int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
-                final int path = PS.get().config.getInt("worlds." + world + ".road.width");
+                int plot = PS.get().config.getInt("worlds." + world + ".plot.size");
+                int path = PS.get().config.getInt("worlds." + world + ".road.width");
                 plotWidth.put(world, plot);
                 roadWidth.put(world, path);
                 merges.put(world, new HashMap<PlotId, boolean[]>());
             }
             if (merge) {
-                final int tx = r.getInt("topX");
-                final int tz = r.getInt("topZ");
-                final int bx = r.getInt("bottomX") - 1;
-                final int bz = r.getInt("bottomZ") - 1;
-                final int path = roadWidth.get(world);
-                final int plot = plotWidth.get(world);
-                final Location top = getPlotTopLocAbs(path, plot, id);
-                final Location bot = getPlotBottomLocAbs(path, plot, id);
+                int tx = resultSet.getInt("topX");
+                int tz = resultSet.getInt("topZ");
+                int bx = resultSet.getInt("bottomX") - 1;
+                int bz = resultSet.getInt("bottomZ") - 1;
+                int path = roadWidth.get(world);
+                int plot = plotWidth.get(world);
+                Location top = getPlotTopLocAbs(path, plot, id);
+                Location bot = getPlotBottomLocAbs(path, plot, id);
                 if (tx > top.getX()) {
                     setMerged(merges, world, id, 1);
                 }
@@ -107,12 +110,12 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 } else {
                     if (checkUUID) {
                         try {
-                            final byte[] bytes = r.getBytes("ownerid");
+                            byte[] bytes = resultSet.getBytes("ownerid");
                             if (bytes != null) {
                                 owner = UUID.nameUUIDFromBytes(bytes);
                                 UUIDHandler.add(new StringWrapper(name), owner);
                             }
-                        } catch (final Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -124,60 +127,60 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             } else {
                 UUIDHandler.add(new StringWrapper(name), owner);
             }
-            final Plot plot = new Plot(PlotArea.createGeneric(world), id, owner);
+            Plot plot = new Plot(PlotArea.createGeneric(world), id, owner);
             plots.put(key, plot);
         }
-        for (final Entry<Integer, Plot> entry : plots.entrySet()) {
-            final Plot plot = entry.getValue();
-            final HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.getArea().worldname);
+        for (Entry<Integer, Plot> entry : plots.entrySet()) {
+            Plot plot = entry.getValue();
+            HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.getArea().worldname);
             if (mergeMap != null) {
                 if (mergeMap.containsKey(plot.getId())) {
                     plot.setMerged(mergeMap.get(plot.getId()));
                 }
             }
         }
-        r.close();
-        stmt.close();
+        resultSet.close();
+        statement.close();
         try {
-            PS.log(" - " + plugin + "core_denied");
-            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_denied`");
-            r = stmt.executeQuery();
+            PS.log(" - " + this.plugin + "core_denied");
+            statement = connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_denied`");
+            resultSet = statement.executeQuery();
 
-            while (r.next()) {
-                final int key = r.getInt("plot_id");
-                final Plot plot = plots.get(key);
+            while (resultSet.next()) {
+                int key = resultSet.getInt("plot_id");
+                Plot plot = plots.get(key);
                 if (plot == null) {
                     PS.log("&6Denied (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
-                final UUID denied = UUID.fromString(r.getString("player"));
+                UUID denied = UUID.fromString(resultSet.getString("player"));
                 plot.getDenied().add(denied);
             }
 
-            PS.log(" - " + plugin + "core_allowed");
-            stmt = connection.prepareStatement("SELECT * FROM `" + plugin + "core_allowed`");
-            r = stmt.executeQuery();
+            PS.log(" - " + this.plugin + "core_allowed");
+            statement = connection.prepareStatement("SELECT * FROM `" + this.plugin + "core_allowed`");
+            resultSet = statement.executeQuery();
 
-            while (r.next()) {
-                final int key = r.getInt("plot_id");
-                final Plot plot = plots.get(key);
+            while (resultSet.next()) {
+                int key = resultSet.getInt("plot_id");
+                Plot plot = plots.get(key);
                 if (plot == null) {
                     PS.log("&6Allowed (" + key + ") references deleted plot; ignoring entry.");
                     continue;
                 }
-                final UUID allowed = UUID.fromString(r.getString("player"));
+                UUID allowed = UUID.fromString(resultSet.getString("player"));
                 plot.getTrusted().add(allowed);
             }
-            r.close();
-            stmt.close();
+            resultSet.close();
+            statement.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        final HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
-        
-        for (final Entry<Integer, Plot> entry : plots.entrySet()) {
-            final Plot plot = entry.getValue();
+        HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
+
+        for (Entry<Integer, Plot> entry : plots.entrySet()) {
+            Plot plot = entry.getValue();
             HashMap<PlotId, Plot> map = processed.get(plot.getArea().worldname);
             if (map == null) {
                 map = new HashMap<>();
@@ -187,9 +190,9 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         }
         return processed;
     }
-    
+
     @Override
-    public boolean accepts(final String version) {
+    public boolean accepts(String version) {
         if (version == null) {
             return false;
         }

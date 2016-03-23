@@ -397,7 +397,7 @@ public abstract class PlotArea {
     public abstract ConfigurationNode[] getSettingNodes();
 
     /**
-     * Get the Plot at a location
+     * Get the Plot at a location.
      * @param location
      * @return Plot
      */
@@ -410,7 +410,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the base plot at a location
+     * Get the base plot at a location.
      * @param location
      * @return base Plot
      */
@@ -423,7 +423,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the base owned plot at a location
+     * Get the base owned plot at a location.
      * @param location
      * @return base Plot or null
      */
@@ -437,7 +437,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the owned plot at a location
+     * Get the owned plot at a location.
      * @param location
      * @return Plot or null
      */
@@ -450,7 +450,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the owned Plot at a PlotId
+     * Get the owned Plot at a PlotId.
      * @param id
      * @return Plot or null
      */

@@ -32,90 +32,90 @@ import java.util.ArrayList;
 
  */
 public class Configuration {
-    
+
     public static final SettingValue<String> STRING = new SettingValue<String>("STRING") {
         @Override
-        public boolean validateValue(final String string) {
+        public boolean validateValue(String string) {
             return true;
         }
-        
+
         @Override
-        public String parseString(final String string) {
+        public String parseString(String string) {
             return string;
         }
     };
     public static final SettingValue<String[]> STRINGLIST = new SettingValue<String[]>("STRINGLIST") {
         @Override
-        public boolean validateValue(final String string) {
+        public boolean validateValue(String string) {
             return true;
         }
-        
+
         @Override
-        public String[] parseString(final String string) {
+        public String[] parseString(String string) {
             return string.split(",");
         }
     };
     public static final SettingValue<Integer> INTEGER = new SettingValue<Integer>("INTEGER") {
         @Override
-        public boolean validateValue(final String string) {
+        public boolean validateValue(String string) {
             try {
                 Integer.parseInt(string);
                 return true;
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         }
-        
+
         @Override
-        public Integer parseString(final String string) {
+        public Integer parseString(String string) {
             return Integer.parseInt(string);
         }
     };
     public static final SettingValue<Boolean> BOOLEAN = new SettingValue<Boolean>("BOOLEAN") {
         @Override
-        public boolean validateValue(final String string) {
+        public boolean validateValue(String string) {
             try {
                 Boolean.parseBoolean(string);
                 return true;
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         }
-        
+
         @Override
-        public Boolean parseString(final String string) {
+        public Boolean parseString(String string) {
             return Boolean.parseBoolean(string);
         }
     };
     public static final SettingValue<Double> DOUBLE = new SettingValue<Double>("DOUBLE") {
         @Override
-        public boolean validateValue(final String string) {
+        public boolean validateValue(String string) {
             try {
                 Double.parseDouble(string);
                 return true;
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         }
-        
+
         @Override
-        public Double parseString(final String string) {
+        public Double parseString(String string) {
             return Double.parseDouble(string);
         }
     };
     public static final SettingValue<String> BIOME = new SettingValue<String>("BIOME") {
         @Override
-        public boolean validateValue(final String string) {
+        public boolean validateValue(String string) {
             try {
-                final int biome = WorldUtil.IMP.getBiomeFromString(string.toUpperCase());
+                int biome = WorldUtil.IMP.getBiomeFromString(string.toUpperCase());
                 return biome != -1;
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         }
-        
+
         @Override
-        public String parseString(final String string) {
+        public String parseString(String string) {
             if (validateValue(string)) {
                 return string.toUpperCase();
             }
@@ -124,14 +124,14 @@ public class Configuration {
     };
     public static final SettingValue<PlotBlock> BLOCK = new SettingValue<PlotBlock>("BLOCK") {
         @Override
-        public boolean validateValue(final String string) {
-            final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
+        public boolean validateValue(String string) {
+            StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
             return !(value == null || value.match > 1);
         }
-        
+
         @Override
-        public PlotBlock parseString(final String string) {
-            final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
+        public PlotBlock parseString(String string) {
+            StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(string);
             if (value == null || value.match > 1) {
                 return null;
             }
@@ -140,15 +140,15 @@ public class Configuration {
     };
     public static final SettingValue<PlotBlock[]> BLOCKLIST = new SettingValue<PlotBlock[]>("BLOCKLIST") {
         @Override
-        public boolean validateValue(final String string) {
+        public boolean validateValue(String string) {
             try {
                 for (String block : string.split(",")) {
                     if (block.contains("%")) {
-                        final String[] split = block.split("%");
+                        String[] split = block.split("%");
                         Integer.parseInt(split[0]);
                         block = split[1];
                     }
-                    final StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(block);
+                    StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(block);
                     if (value == null || value.match > 1) {
                         return false;
                     }
@@ -158,20 +158,20 @@ public class Configuration {
                 return false;
             }
         }
-        
+
         @Override
-        public PlotBlock[] parseString(final String string) {
-            final String[] blocks = string.split(",");
-            final ArrayList<PlotBlock> parsedvalues = new ArrayList<>();
-            final PlotBlock[] values = new PlotBlock[blocks.length];
-            final int[] counts = new int[blocks.length];
+        public PlotBlock[] parseString(String string) {
+            String[] blocks = string.split(",");
+            ArrayList<PlotBlock> parsedvalues = new ArrayList<>();
+            PlotBlock[] values = new PlotBlock[blocks.length];
+            int[] counts = new int[blocks.length];
             int min = 100;
             for (int i = 0; i < blocks.length; i++) {
                 try {
                     if (blocks[i].contains("%")) {
-                        final String[] split = blocks[i].split("%");
+                        String[] split = blocks[i].split("%");
                         blocks[i] = split[1];
-                        final int value = Integer.parseInt(split[0]);
+                        int value = Integer.parseInt(split[0]);
                         counts[i] = value;
                         if (value < min) {
                             min = value;
@@ -182,16 +182,16 @@ public class Configuration {
                             min = 1;
                         }
                     }
-                    final StringComparison<PlotBlock>.ComparisonResult result = WorldUtil.IMP.getClosestBlock(blocks[i]);
+                    StringComparison<PlotBlock>.ComparisonResult result = WorldUtil.IMP.getClosestBlock(blocks[i]);
                     if (result != null && result.match < 2) {
                         values[i] = result.best;
                     }
                 } catch (NumberFormatException e) {
                 }
             }
-            final int gcd = gcd(counts);
+            int gcd = gcd(counts);
             for (int i = 0; i < counts.length; i++) {
-                final int num = counts[i];
+                int num = counts[i];
                 for (int j = 0; j < num / gcd; j++) {
                     parsedvalues.add(values[i]);
                 }
@@ -199,38 +199,39 @@ public class Configuration {
             return parsedvalues.toArray(new PlotBlock[parsedvalues.size()]);
         }
     };
-    
-    public static int gcd(final int a, final int b) {
+
+    public static int gcd(int a, int b) {
         if (b == 0) {
             return a;
         }
         return gcd(b, a % b);
     }
-    
-    private static int gcd(final int[] a) {
+
+    private static int gcd(int[] a) {
         int result = a[0];
         for (int i = 1; i < a.length; i++) {
             result = gcd(result, a[i]);
         }
         return result;
     }
-    
+
     /**
      * Create your own SettingValue object to make the management of plotworld configuration easier
      */
     public static abstract class SettingValue<T> {
+
         private final String type;
-        
-        public SettingValue(final String type) {
+
+        public SettingValue(String type) {
             this.type = type;
         }
-        
+
         public String getType() {
             return this.type;
         }
-        
-        public abstract T parseString(final String string);
-        
-        public abstract boolean validateValue(final String string);
+
+        public abstract T parseString(String string);
+
+        public abstract boolean validateValue(String string);
     }
 }

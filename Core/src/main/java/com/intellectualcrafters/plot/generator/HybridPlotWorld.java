@@ -42,7 +42,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public boolean ROAD_SCHEMATIC_ENABLED;
     public short SCHEMATIC_HEIGHT;
     public boolean PLOT_SCHEMATIC = false;
-    public short REQUIRED_CHANGES = 0;
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
     public HashMap<Integer, HashMap<Integer, PlotBlock>> G_SCH;

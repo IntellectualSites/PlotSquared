@@ -28,7 +28,8 @@ public class BukkitPlayer extends PlotPlayer {
     private long last = 0;
     
     /**
-     * Please do not use this method. Instead use BukkitUtil.getPlayer(Player), as it caches player objects.
+     * <p>Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
+     * as it caches player objects.</p>
      * @param player
      */
     public BukkitPlayer(Player player) {
@@ -140,13 +141,16 @@ public class BukkitPlayer extends PlotPlayer {
         switch (weather) {
             case CLEAR:
                 this.player.setPlayerWeather(WeatherType.CLEAR);
-                return;
+                break;
             case RAIN:
                 this.player.setPlayerWeather(WeatherType.DOWNFALL);
-                return;
+                break;
             case RESET:
                 this.player.resetPlayerWeather();
-                return;
+                break;
+            default:
+                this.player.resetPlayerWeather();
+                break;
         }
     }
     
@@ -161,8 +165,9 @@ public class BukkitPlayer extends PlotPlayer {
                 return PlotGameMode.SPECTATOR;
             case SURVIVAL:
                 return PlotGameMode.SURVIVAL;
+            default:
+                return PlotGameMode.SURVIVAL;
         }
-        return null;
     }
     
     @Override
@@ -170,16 +175,19 @@ public class BukkitPlayer extends PlotPlayer {
         switch (gameMode) {
             case ADVENTURE:
                 this.player.setGameMode(GameMode.ADVENTURE);
-                return;
+                break;
             case CREATIVE:
                 this.player.setGameMode(GameMode.CREATIVE);
-                return;
+                break;
             case SPECTATOR:
                 this.player.setGameMode(GameMode.SPECTATOR);
-                return;
+                break;
             case SURVIVAL:
                 this.player.setGameMode(GameMode.SURVIVAL);
-                return;
+                break;
+            default:
+                this.player.setGameMode(GameMode.SURVIVAL);
+                break;
         }
     }
     

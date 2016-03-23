@@ -48,7 +48,7 @@ public class FastChunk_1_8_3 extends PlotChunk<Chunk> {
     }
 
     /**
-     * Get the number of block changes in a specified section
+     * Get the number of block changes in a specified section.
      * @param i
      * @return
      */
@@ -95,7 +95,7 @@ public class FastChunk_1_8_3 extends PlotChunk<Chunk> {
     }
 
     /**
-     * Get the raw data for a section
+     * Get the raw data for a section.
      * @param i
      * @return
      */

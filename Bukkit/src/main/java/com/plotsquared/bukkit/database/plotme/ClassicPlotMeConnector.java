@@ -178,25 +178,23 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                 if (denied == null) {
                     if ("*".equals(name)) {
                         denied = DBFunc.everyone;
-                    } else {
-                        if (DBFunc.hasColumn(resultSet, "playerid")) {
-                            try {
-                                byte[] bytes = resultSet.getBytes("playerid");
-                                if (bytes != null) {
-                                    try {
-                                        ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                        long high = bb.getLong();
-                                        long low = bb.getLong();
-                                        denied = new UUID(high, low);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        denied = UUID.nameUUIDFromBytes(bytes);
-                                    }
-                                    UUIDHandler.add(new StringWrapper(name), denied);
+                    } else if (DBFunc.hasColumn(resultSet, "playerid")) {
+                        try {
+                            byte[] bytes = resultSet.getBytes("playerid");
+                            if (bytes != null) {
+                                try {
+                                    ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                    long high = bb.getLong();
+                                    long low = bb.getLong();
+                                    denied = new UUID(high, low);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    denied = UUID.nameUUIDFromBytes(bytes);
                                 }
-                            } catch (SQLException e) {
-                                e.printStackTrace();
+                                UUIDHandler.add(new StringWrapper(name), denied);
                             }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
                     }
                     if (denied == null) {

@@ -13,7 +13,6 @@ import java.util.Map;
 /**
  * [ PlotSquared DefaultTitleManager by Maxim Van de Wynckel ]
  *
- * @version 1.1.0
  * @author Maxim Van de Wynckel
  *
  */
@@ -46,7 +45,7 @@ public class DefaultTitleManager {
      *            Title
      * @throws ClassNotFoundException
      */
-    public DefaultTitleManager(final String title) throws ClassNotFoundException {
+    public DefaultTitleManager(String title) throws ClassNotFoundException {
         this.title = title;
         loadClasses();
     }
@@ -60,48 +59,42 @@ public class DefaultTitleManager {
      *            Subtitle text
      * @throws ClassNotFoundException
      */
-    public DefaultTitleManager(final String title, final String subtitle) throws ClassNotFoundException {
+    public DefaultTitleManager(String title, String subtitle) throws ClassNotFoundException {
         this.title = title;
         this.subtitle = subtitle;
         loadClasses();
     }
 
     /**
-     * Copy 1.8 title
+     * Copy 1.8 title.
      *
-     * @param title
-     *            Title
+     * @param title Title
      * @throws ClassNotFoundException
      */
-    public DefaultTitleManager(final DefaultTitleManager title) throws ClassNotFoundException {
+    public DefaultTitleManager(DefaultTitleManager title) throws ClassNotFoundException {
         // Copy title
         this.title = title.title;
-        subtitle = title.subtitle;
-        titleColor = title.titleColor;
-        subtitleColor = title.subtitleColor;
-        fadeInTime = title.fadeInTime;
-        fadeOutTime = title.fadeOutTime;
-        stayTime = title.stayTime;
-        ticks = title.ticks;
+        this.subtitle = title.subtitle;
+        this.titleColor = title.titleColor;
+        this.subtitleColor = title.subtitleColor;
+        this.fadeInTime = title.fadeInTime;
+        this.fadeOutTime = title.fadeOutTime;
+        this.stayTime = title.stayTime;
+        this.ticks = title.ticks;
         loadClasses();
     }
 
     /**
-     * Create a new 1.8 title
+     * Create a new 1.8 title.
      *
-     * @param title
-     *            Title text
-     * @param subtitle
-     *            Subtitle text
-     * @param fadeInTime
-     *            Fade in time
-     * @param stayTime
-     *            Stay on screen time
-     * @param fadeOutTime
-     *            Fade out time
+     * @param title Title text
+     * @param subtitle Subtitle text
+     * @param fadeInTime Fade in time
+     * @param stayTime Stay on screen time
+     * @param fadeOutTime Fade out time
      * @throws ClassNotFoundException
      */
-    public DefaultTitleManager(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime)
+    public DefaultTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime)
             throws ClassNotFoundException {
         this.title = title;
         this.subtitle = subtitle;
@@ -111,7 +104,7 @@ public class DefaultTitleManager {
         loadClasses();
     }
 
-    private static boolean equalsTypeArray(final Class<?>[] a, final Class<?>[] o) {
+    private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
         if (a.length != o.length) {
             return false;
         }
@@ -128,10 +121,10 @@ public class DefaultTitleManager {
      * @throws ClassNotFoundException
      */
     private void loadClasses() throws ClassNotFoundException {
-        packetTitle = getNMSClass("PacketPlayOutTitle");
-        packetActions = getNMSClass("EnumTitleAction");
-        chatBaseComponent = getNMSClass("IChatBaseComponent");
-        nmsChatSerializer = getNMSClass("ChatSerializer");
+        this.packetTitle = getNMSClass("PacketPlayOutTitle");
+        this.packetActions = getNMSClass("EnumTitleAction");
+        this.chatBaseComponent = getNMSClass("IChatBaseComponent");
+        this.nmsChatSerializer = getNMSClass("ChatSerializer");
     }
 
     /**
@@ -140,7 +133,7 @@ public class DefaultTitleManager {
      * @return Title text
      */
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     /**
@@ -149,7 +142,7 @@ public class DefaultTitleManager {
      * @param title
      *            Title
      */
-    public void setTitle(final String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -159,190 +152,172 @@ public class DefaultTitleManager {
      * @return Subtitle text
      */
     public String getSubtitle() {
-        return subtitle;
+        return this.subtitle;
     }
 
     /**
-     * Set subtitle text
+     * Set subtitle text.
      *
-     * @param subtitle
-     *            Subtitle text
+     * @param subtitle Subtitle text
      */
-    public void setSubtitle(final String subtitle) {
+    public void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
     }
 
     /**
-     * Set the title color
+     * Set the title color.
      *
-     * @param color
-     *            Chat color
+     * @param color Chat color
      */
-    public void setTitleColor(final ChatColor color) {
-        titleColor = color;
+    public void setTitleColor(ChatColor color) {
+        this.titleColor = color;
     }
 
     /**
-     * Set the subtitle color
+     * Set the subtitle color.
      *
-     * @param color
-     *            Chat color
+     * @param color Chat color
      */
-    public void setSubtitleColor(final ChatColor color) {
-        subtitleColor = color;
+    public void setSubtitleColor(ChatColor color) {
+        this.subtitleColor = color;
     }
 
     /**
-     * Set title fade in time
+     * Set title fade in time.
      *
-     * @param time
-     *            Time
+     * @param time Time
      */
-    public void setFadeInTime(final int time) {
-        fadeInTime = time;
+    public void setFadeInTime(int time) {
+        this.fadeInTime = time;
     }
 
     /**
-     * Set title fade out time
+     * Set title fade out time.
      *
-     * @param time
-     *            Time
+     * @param time Time
      */
-    public void setFadeOutTime(final int time) {
-        fadeOutTime = time;
+    public void setFadeOutTime(int time) {
+        this.fadeOutTime = time;
     }
 
     /**
-     * Set title stay time
+     * Set title stay time.
      *
-     * @param time
-     *            Time
+     * @param time Time
      */
-    public void setStayTime(final int time) {
-        stayTime = time;
+    public void setStayTime(int time) {
+        this.stayTime = time;
     }
 
     /**
-     * Set timings to ticks
+     * Set timings to ticks.
      */
     public void setTimingsToTicks() {
-        ticks = true;
+        this.ticks = true;
     }
 
     /**
-     * Set timings to seconds
+     * Set timings to seconds.
      */
     public void setTimingsToSeconds() {
-        ticks = false;
+        this.ticks = false;
     }
 
     /**
-     * Send the title to a player
+     * Send the title to a player.
      *
-     * @param player
-     *            Player
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
+     * @param player Player
+     * @throws Exception
      */
-    public void send(final Player player)
-            throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,
-            SecurityException {
-        if (packetTitle != null) {
+    public void send(Player player) throws Exception {
+        if (this.packetTitle != null) {
             // First reset previous settings
             resetTitle(player);
             // Send timings first
-            final Object handle = getHandle(player);
-            final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-            final Object[] actions = packetActions.getEnumConstants();
-            final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-            Object packet = packetTitle.getConstructor(packetActions, chatBaseComponent, Integer.TYPE, Integer.TYPE, Integer.TYPE)
-                    .newInstance(actions[2], null, fadeInTime * (ticks ? 1 : 20),
-                            stayTime * (ticks ? 1 : 20), fadeOutTime * (ticks ? 1 : 20));
+            Object handle = getHandle(player);
+            Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+            Object[] actions = this.packetActions.getEnumConstants();
+            Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+            Object packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent, Integer.TYPE, Integer.TYPE, Integer.TYPE)
+                    .newInstance(actions[2], null, this.fadeInTime * (this.ticks ? 1 : 20),
+                            this.stayTime * (this.ticks ? 1 : 20), this.fadeOutTime * (this.ticks ? 1 : 20));
             // Send if set
-            if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1) {
+            if (this.fadeInTime != -1 && this.fadeOutTime != -1 && this.stayTime != -1) {
                 sendPacket.invoke(connection, packet);
             }
             // Send title
-            Object serialized = getMethod(nmsChatSerializer, "a", String.class).invoke(null,
-                    "{text:\"" + ChatColor.translateAlternateColorCodes('&', title) + "\",color:" + titleColor.name().toLowerCase() + "}");
-            packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[0], serialized);
+            Object serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
+                    "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.title) + "\",color:" + this.titleColor.name().toLowerCase() + "}");
+            packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[0], serialized);
             sendPacket.invoke(connection, packet);
-            if (!subtitle.isEmpty()) {
+            if (!this.subtitle.isEmpty()) {
                 // Send subtitle if present
-                serialized = getMethod(nmsChatSerializer, "a", String.class).invoke(null,
-                        "{text:\"" + ChatColor.translateAlternateColorCodes('&', subtitle) + "\",color:" + subtitleColor.name().toLowerCase() + "}");
-                packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[1], serialized);
+                serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
+                        "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.subtitle) + "\",color:" + this.subtitleColor.name()
+                                .toLowerCase() + "}");
+                packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[1], serialized);
                 sendPacket.invoke(connection, packet);
             }
         }
     }
 
     /**
-     * Broadcast the title to all players
-     * @throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,
-    SecurityException
+     * Broadcast the title to all players.
+     *
+     * @throws Exception
      */
-    public void broadcast()
-            throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,
-            SecurityException {
-        for (final Player p : Bukkit.getOnlinePlayers()) {
+    public void broadcast() throws Exception {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             send(p);
         }
     }
 
     /**
-     * Clear the title
+     * Clear the title.
      *
-     * @param player
-     *            Player
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @param player Player
+     * @throws Exception
      */
-    public void clearTitle(final Player player)
-            throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,
-            SecurityException {
+    public void clearTitle(Player player) throws Exception {
         // Send timings first
-        final Object handle = getHandle(player);
-        final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-        final Object[] actions = packetActions.getEnumConstants();
-        final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-        final Object packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[3], null);
+        Object handle = getHandle(player);
+        Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+        Object[] actions = this.packetActions.getEnumConstants();
+        Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+        Object packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[3], null);
         sendPacket.invoke(connection, packet);
     }
 
     /**
-     * Reset the title settings
+     * Reset the title settings.
      *
-     * @param player
-     *            Player
+     * @param player Player
+     * @throws Exception
      */
-    public void resetTitle(final Player player)
-            throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,
-            SecurityException {
+    public void resetTitle(Player player) throws Exception {
         // Send timings first
-        final Object handle = getHandle(player);
-        final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-        final Object[] actions = packetActions.getEnumConstants();
-        final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-        final Object packet = packetTitle.getConstructor(packetActions, chatBaseComponent).newInstance(actions[4], null);
+        Object handle = getHandle(player);
+        Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+        Object[] actions = this.packetActions.getEnumConstants();
+        Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+        Object packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[4], null);
         sendPacket.invoke(connection, packet);
     }
 
-    private Class<?> getPrimitiveType(final Class<?> clazz) {
+    private Class<?> getPrimitiveType(Class<?> clazz) {
         return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
     }
 
-    private Class<?>[] toPrimitiveTypeArray(final Class<?>[] classes) {
-        final int a = classes != null ? classes.length : 0;
-        final Class<?>[] types = new Class<?>[a];
+    private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {
+        int a = classes != null ? classes.length : 0;
+        Class<?>[] types = new Class<?>[a];
         for (int i = 0; i < a; i++) {
             types[i] = getPrimitiveType(classes[i]);
         }
         return types;
     }
 
-    private Object getHandle(final Object obj) {
+    private Object getHandle(Object obj) {
         try {
             return getMethod("getHandle", obj.getClass()).invoke(obj);
         } catch (IllegalAccessException e) {
@@ -357,10 +332,10 @@ public class DefaultTitleManager {
         }
     }
 
-    private Method getMethod(final String name, final Class<?> clazz, final Class<?>... paramTypes) {
-        final Class<?>[] t = toPrimitiveTypeArray(paramTypes);
-        for (final Method m : clazz.getMethods()) {
-            final Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
+    private Method getMethod(String name, Class<?> clazz, Class<?>... paramTypes) {
+        Class<?>[] t = toPrimitiveTypeArray(paramTypes);
+        for (Method m : clazz.getMethods()) {
+            Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
             if (m.getName().equals(name) && equalsTypeArray(types, t)) {
                 return m;
             }
@@ -369,18 +344,18 @@ public class DefaultTitleManager {
     }
 
     private String getVersion() {
-        final String name = Bukkit.getServer().getClass().getPackage().getName();
+        String name = Bukkit.getServer().getClass().getPackage().getName();
         return name.substring(name.lastIndexOf('.') + 1) + ".";
     }
 
-    private Class<?> getNMSClass(final String className) throws ClassNotFoundException {
-        final String fullName = "net.minecraft.server." + getVersion() + className;
+    private Class<?> getNMSClass(String className) throws ClassNotFoundException {
+        String fullName = "net.minecraft.server." + getVersion() + className;
         return Class.forName(fullName);
     }
 
-    private Field getField(final Class<?> clazz, final String name) {
+    private Field getField(Class<?> clazz, String name) {
         try {
-            final Field field = clazz.getDeclaredField(name);
+            Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
             return field;
         } catch (NoSuchFieldException e) {
@@ -392,8 +367,8 @@ public class DefaultTitleManager {
         }
     }
 
-    private Method getMethod(final Class<?> clazz, final String name, final Class<?>... args) {
-        for (final Method m : clazz.getMethods()) {
+    private Method getMethod(Class<?> clazz, String name, Class<?>... args) {
+        for (Method m : clazz.getMethods()) {
             if (m.getName().equals(name) && (args.length == 0 || ClassListEqual(args, m.getParameterTypes()))) {
                 m.setAccessible(true);
                 return m;
@@ -402,7 +377,7 @@ public class DefaultTitleManager {
         return null;
     }
 
-    private boolean ClassListEqual(final Class<?>[] l1, final Class<?>[] l2) {
+    private boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2) {
         if (l1.length != l2.length) {
             return false;
         }

@@ -19,11 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created 2015-02-20 for PlotSquared
- *
-
- */
 public class BukkitCommand implements CommandExecutor, TabCompleter {
 
     public BukkitCommand() {

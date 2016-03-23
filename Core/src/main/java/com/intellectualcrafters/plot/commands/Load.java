@@ -68,7 +68,7 @@ public class Load extends SubCommand {
                 String schem;
                 try {
                     schem = schematics.get(Integer.parseInt(args[0]) - 1);
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
                     // use /plot load <index>
                     MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ")");
                     return false;

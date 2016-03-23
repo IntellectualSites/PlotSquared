@@ -360,10 +360,8 @@ public class BukkitChunkManager extends ChunkManager {
                             blockLocShortEntry.getKey().z + zOffset));
                 }
             } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking (e): " + (blockLocShortEntry.getKey().x + xOffset) + "," +
-                        blockLocShortEntry
-                                .getKey().y + "," + (
-                        blockLocShortEntry.getKey().z + zOffset));
+                PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking (e): " + (blockLocShortEntry.getKey().x + xOffset) + ","
+                        + blockLocShortEntry.getKey().y + "," + (blockLocShortEntry.getKey().z + zOffset));
             }
         }
         for (Entry<BlockLoc, EntityType> blockLocEntityTypeEntry : spawnerData.entrySet()) {
@@ -382,8 +380,8 @@ public class BukkitChunkManager extends ChunkManager {
                             blockLocEntityTypeEntry.getKey().z + zOffset));
                 }
             } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore spawner type (e): " + (blockLocEntityTypeEntry.getKey().x + xOffset) + "," +
-                        blockLocEntityTypeEntry.getKey().y + "," + (blockLocEntityTypeEntry.getKey().z + zOffset));
+                PS.debug("&c[WARN] Plot clear failed to restore spawner type (e): " + (blockLocEntityTypeEntry.getKey().x + xOffset) + ","
+                        + blockLocEntityTypeEntry.getKey().y + "," + (blockLocEntityTypeEntry.getKey().z + zOffset));
             }
         }
         for (Entry<BlockLoc, String> blockLocStringEntry : cmdData.entrySet()) {
@@ -490,8 +488,7 @@ public class BukkitChunkManager extends ChunkManager {
         }
     }
 
-    public static void saveBlocks(World world, int maxY, int x, int z, int offsetX, int offsetZ,
-            boolean storeNormal) {
+    public static void saveBlocks(World world, int maxY, int x, int z, int offsetX, int offsetZ, boolean storeNormal) {
         maxY = Math.min(255, maxY);
         PlotBlock[] ids;
         if (storeNormal) {

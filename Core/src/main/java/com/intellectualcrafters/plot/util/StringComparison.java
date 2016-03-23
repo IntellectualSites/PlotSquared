@@ -25,8 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * String comparison library
- *
+ * String comparison library.
  */
 public class StringComparison<T> {
     
@@ -40,36 +39,18 @@ public class StringComparison<T> {
      * @param input   Input Base Value
      * @param objects Objects to compare
      */
-    public StringComparison(final String input, final T[] objects) {
+    public StringComparison(String input, T[] objects) {
         init(input, objects);
     }
-    
-    public StringComparison(final String input, final Collection<T> objects) {
+
+    public StringComparison(String input, Collection<T> objects) {
         init(input, (T[]) objects.toArray());
     }
     
     /**
-     * You should call init(...) when you are ready to get a String comparison value
+     * You should call init(...) when you are ready to get a String comparison value.
      */
     public StringComparison() {}
-    
-    public void init(String input, final T[] objects) {
-        int c;
-        this.bestMatch = objects[0];
-        this.bestMatchObject = objects[0];
-        input = input.toLowerCase();
-        for (final T o : objects) {
-            if ((c = compare(input, getString(o).toLowerCase())) < this.match) {
-                this.match = c;
-                this.bestMatch = o;
-                this.bestMatchObject = o;
-            }
-        }
-    }
-    
-    public String getString(final T o) {
-        return o.toString();
-    }
     
     /**
      * Compare two strings
@@ -79,10 +60,10 @@ public class StringComparison<T> {
      *
      * @return match
      */
-    public static int compare(final String s1, final String s2) {
+    public static int compare(String s1, String s2) {
         int distance = StringMan.getLevenshteinDistance(s1, s2);
         if (s2.contains(s1)) {
-            distance -= (Math.min(s1.length(), s2.length()));
+            distance -= Math.min(s1.length(), s2.length());
         }
         if (s2.startsWith(s1)) {
             distance -= 4;
@@ -97,11 +78,11 @@ public class StringComparison<T> {
      *
      * @return ArrayList
      */
-    public static ArrayList<String> wLetterPair(final String s) {
-        final ArrayList<String> aPairs = new ArrayList<>();
-        final String[] wo = s.split("\\s");
-        for (final String aWo : wo) {
-            final String[] po = sLetterPair(aWo);
+    public static ArrayList<String> wLetterPair(String s) {
+        ArrayList<String> aPairs = new ArrayList<>();
+        String[] wo = s.split("\\s");
+        for (String aWo : wo) {
+            String[] po = sLetterPair(aWo);
             Collections.addAll(aPairs, po);
         }
         return aPairs;
@@ -114,13 +95,31 @@ public class StringComparison<T> {
      *
      * @return Array
      */
-    public static String[] sLetterPair(final String s) {
-        final int numPair = s.length() - 1;
-        final String[] p = new String[numPair];
+    public static String[] sLetterPair(String s) {
+        int numPair = s.length() - 1;
+        String[] p = new String[numPair];
         for (int i = 0; i < numPair; i++) {
             p[i] = s.substring(i, i + 2);
         }
         return p;
+    }
+
+    public void init(String input, T[] objects) {
+        int c;
+        this.bestMatch = objects[0];
+        this.bestMatchObject = objects[0];
+        input = input.toLowerCase();
+        for (T o : objects) {
+            if ((c = compare(input, getString(o).toLowerCase())) < this.match) {
+                this.match = c;
+                this.bestMatch = o;
+                this.bestMatchObject = o;
+            }
+        }
+    }
+
+    public String getString(T o) {
+        return o.toString();
     }
     
     /**
@@ -163,7 +162,7 @@ public class StringComparison<T> {
          * @param match Match value
          * @param best Best Match
          */
-        public ComparisonResult(final double match, final T best) {
+        public ComparisonResult(double match, T best) {
             this.match = match;
             this.best = best;
         }

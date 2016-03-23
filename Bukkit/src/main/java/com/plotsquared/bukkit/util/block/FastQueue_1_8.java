@@ -42,7 +42,7 @@ public class FastQueue_1_8 extends SlowQueue {
     private final RefConstructor constructorBlockPosition;
     private final SendChunk chunksender;
 
-    public FastQueue_1_8() throws NoSuchMethodException, RuntimeException {
+    public FastQueue_1_8() throws RuntimeException {
         this.methodInitLighting = this.classChunk.getMethod("initLighting");
         this.constructorBlockPosition = this.classBlockPosition.getConstructor(int.class, int.class, int.class);
         this.methodGetByCombinedId = this.classBlock.getMethod("getByCombinedId", int.class);

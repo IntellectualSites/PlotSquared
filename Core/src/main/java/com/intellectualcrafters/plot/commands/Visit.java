@@ -64,11 +64,11 @@ public class Visit extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer player, String[] args) {
-        int page = Integer.MIN_VALUE;
-        Collection<Plot> unsorted = null;
         if (args.length == 1 && args[0].contains(":")) {
             args = args[0].split(":");
         }
+        int page = Integer.MIN_VALUE;
+        Collection<Plot> unsorted = null;
         switch (args.length) {
             case 2: {
                 if (!MathMan.isInteger(args[1])) {

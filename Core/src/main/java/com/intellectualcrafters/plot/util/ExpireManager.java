@@ -40,19 +40,21 @@ public class ExpireManager {
     }
 
     public void handleEntry(PlotPlayer pp, Plot plot) {
-        if (Settings.AUTO_CLEAR_CONFIRMATION && plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear") && plotsToDelete.contains(plot) && !isExpired(plot)) {
+        if (Settings.AUTO_CLEAR_CONFIRMATION && plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")
+                && plotsToDelete.contains(plot) && !isExpired(plot)) {
             plotsToDelete.remove(plot);
             confirmExpiry(pp);
         }
     }
 
     public long getTimestamp(UUID uuid) {
-        Long value = dates_cache.get(uuid);
+        Long value = this.dates_cache.get(uuid);
         return value == null ? 0 : value;
     }
 
     public void confirmExpiry(final PlotPlayer pp) {
-        if (Settings.AUTO_CLEAR_CONFIRMATION && plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")) {
+        if (Settings.AUTO_CLEAR_CONFIRMATION && plotsToDelete != null && !plotsToDelete.isEmpty() && pp
+                .hasPermission("plots.admin.command.autoclear")) {
             final int num = plotsToDelete.size();
             for (final Plot current : plotsToDelete) {
                 if (isExpired(current)) {
@@ -82,10 +84,10 @@ public class ExpireManager {
 
 
     public boolean cancelTask() {
-        if (running != 2) {
+        if (this.running != 2) {
             return false;
         }
-        running = 1;
+        this.running = 1;
         return true;
     }
 
@@ -110,26 +112,26 @@ public class ExpireManager {
             }
         });
     }
-    
+
     public boolean runTask(final RunnableVal2<Plot, Runnable> expiredTask) {
-        if (running != 0) {
+        if (this.running != 0) {
             return false;
         }
-        running = 2;
+        this.running = 2;
         final Set<Plot> plots = PS.get().getPlots();
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                if (running != 2) {
-                    running = 0;
+                if (ExpireManager.this.running != 2) {
+                    ExpireManager.this.running = 0;
                     return;
                 }
                 final Runnable task = this;
                 long start = System.currentTimeMillis();
                 Iterator<Plot> iter = plots.iterator();
                 while (iter.hasNext() && System.currentTimeMillis() - start < 2) {
-                    if (running != 2) {
-                        running = 0;
+                    if (ExpireManager.this.running != 2) {
+                        ExpireManager.this.running = 0;
                         return;
                     }
                     final Plot plot = iter.next();
@@ -139,7 +141,7 @@ public class ExpireManager {
                     }
                     PlotArea area = plot.getArea();
                     if ((Settings.CLEAR_THRESHOLD != -1) && (area.TYPE == 0)) {
-                        final PlotAnalysis analysis = plot.getComplexity();
+                        PlotAnalysis analysis = plot.getComplexity();
                         if (analysis != null) {
                             if (analysis.getComplexity() > Settings.CLEAR_THRESHOLD) {
                                 PS.debug("$2[&5Expire&dManager$2] &bSkipping modified: " + plot);
@@ -150,7 +152,8 @@ public class ExpireManager {
                             @Override
                             public void run(PlotAnalysis changed) {
                                 if ((changed.changes != 0) && (changed.getComplexity() > Settings.CLEAR_THRESHOLD)) {
-                                    PS.debug("$2[&5Expire&dManager$2] &bIgnoring modified plot: " + plot + " : " + changed.getComplexity() + " - " + changed.changes);
+                                    PS.debug("$2[&5Expire&dManager$2] &bIgnoring modified plot: " + plot + " : " + changed.getComplexity() + " - "
+                                            + changed.changes);
                                     FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("analysis"), changed.asList()));
                                     TaskManager.runTaskLaterAsync(task, Settings.CLEAR_INTERVAL * 20);
                                 } else {
@@ -169,12 +172,12 @@ public class ExpireManager {
                     return;
                 }
                 if (plots.isEmpty()) {
-                    running = 3;
+                    ExpireManager.this.running = 3;
                     TaskManager.runTaskLater(new Runnable() {
                         @Override
                         public void run() {
-                            if (running == 3) {
-                                running = 2;
+                            if (ExpireManager.this.running == 3) {
+                                ExpireManager.this.running = 2;
                                 runTask(expiredTask);
                             }
                         }
@@ -188,7 +191,7 @@ public class ExpireManager {
     }
 
     public void storeDate(UUID uuid, long time) {
-        dates_cache.put(uuid, time);
+        this.dates_cache.put(uuid, time);
     }
 
     public HashSet<Plot> getPendingExpired() {
@@ -199,22 +202,22 @@ public class ExpireManager {
         if (plot.isMerged()) {
             plot.unlinkPlot(true, false);
         }
-        for (final UUID helper : plot.getTrusted()) {
-            final PlotPlayer player = UUIDHandler.getPlayer(helper);
+        for (UUID helper : plot.getTrusted()) {
+            PlotPlayer player = UUIDHandler.getPlayer(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.toString());
             }
         }
-        for (final UUID helper : plot.getMembers()) {
-            final PlotPlayer player = UUIDHandler.getPlayer(helper);
+        for (UUID helper : plot.getMembers()) {
+            PlotPlayer player = UUIDHandler.getPlayer(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, C.PLOT_REMOVED_USER, plot.toString());
             }
         }
         plot.deletePlot(whenDone);
-        final PlotAnalysis changed = plot.getComplexity();
-        final int complexity = changed == null ? 0 : changed.getComplexity();
-        final int modified = changed == null ? 0 : changed.changes;
+        PlotAnalysis changed = plot.getComplexity();
+        int complexity = changed == null ? 0 : changed.getComplexity();
+        int modified = changed == null ? 0 : changed.changes;
         PS.debug("$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " : " + complexity + " - " + modified);
         PS.debug("$4 - Area: " + plot.getArea());
         if (plot.hasOwner()) {
@@ -223,14 +226,14 @@ public class ExpireManager {
             PS.debug("$4 - Owner: Unowned");
         }
     }
-    
-    public boolean isExpired(final UUID uuid) {
+
+    public boolean isExpired(UUID uuid) {
         if (UUIDHandler.getPlayer(uuid) != null) {
             return false;
         }
-        final String name = UUIDHandler.getName(uuid);
+        String name = UUIDHandler.getName(uuid);
         if (name != null) {
-            Long last = dates_cache.get(uuid);
+            Long last = this.dates_cache.get(uuid);
             if (last == null) {
                 OfflinePlotPlayer opp;
                 if (Settings.TWIN_MODE_UUID) {
@@ -239,7 +242,7 @@ public class ExpireManager {
                     opp = UUIDHandler.getUUIDWrapper().getOfflinePlayer(name);
                 }
                 if ((last = opp.getLastPlayed()) != 0) {
-                    dates_cache.put(uuid, last);
+                    this.dates_cache.put(uuid, last);
                 } else {
                     return false;
                 }
@@ -247,15 +250,15 @@ public class ExpireManager {
             if (last == 0) {
                 return false;
             }
-            final long compared = System.currentTimeMillis() - last;
+            long compared = System.currentTimeMillis() - last;
             if (compared >= TimeUnit.DAYS.toMillis(Settings.AUTO_CLEAR_DAYS)) {
                 return true;
             }
         }
         return false;
     }
-    
-    public boolean isExpired(final Plot plot) {
+
+    public boolean isExpired(Plot plot) {
         if (!plot.hasOwner() || DBFunc.everyone.equals(plot.owner) || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
             return false;
         }
@@ -274,7 +277,7 @@ public class ExpireManager {
                 return false;
             }
         }
-        for (final UUID owner : plot.getOwners()) {
+        for (UUID owner : plot.getOwners()) {
             if (!isExpired(owner)) {
                 return false;
             }

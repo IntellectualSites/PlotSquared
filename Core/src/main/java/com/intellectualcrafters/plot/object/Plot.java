@@ -419,19 +419,19 @@ public class Plot {
     }
 
     /**
-     * Should the player be denied from entering?
+     * Should the player be denied from entering.
      *
      * @param uuid
      *
      * @return boolean false if the player is allowed to enter
      */
     public boolean isDenied(UUID uuid) {
-        return this.denied != null && (this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid) ||
-                !this.isAdded(uuid) && this.denied.contains(uuid));
+        return this.denied != null && (this.denied.contains(DBFunc.everyone) && !this.isAdded(uuid)
+                || !this.isAdded(uuid) && this.denied.contains(uuid));
     }
 
     /**
-     * Get the plot ID
+     * Get the {@link PlotId}.
      */
     public PlotId getId() {
         return this.id;

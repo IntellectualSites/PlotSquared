@@ -87,7 +87,7 @@ public class Metrics {
      */
     private volatile BukkitTask task = null;
 
-    public Metrics(Plugin plugin) throws IOException {
+    public Metrics(Plugin plugin) {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null");
         }
@@ -280,7 +280,7 @@ public class Metrics {
      *
      * @throws java.io.IOException
      */
-    public void enable() throws IOException {
+    public void enable() {
         // Enable Task, if it is not running
         if (this.task == null) {
             start();
@@ -290,9 +290,8 @@ public class Metrics {
     /**
      * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
      *
-     * @throws java.io.IOException
      */
-    public void disable() throws IOException {
+    public void disable() {
         // Disable Task, if it is running
         if (this.task != null) {
             this.task.cancel();
@@ -301,7 +300,8 @@ public class Metrics {
     }
 
     /**
-     * Gets the File object of the config file that should be used to store data such as the GUID and opt-out status
+     * Gets the File object of the config file that should be used to store
+     * data such as the GUID and opt-out status.
      *
      * @return the File object for the config file
      */
@@ -318,7 +318,7 @@ public class Metrics {
     }
 
     /**
-     * Generic method that posts a plugin to the metrics website
+     * Generic method that posts a plugin to the metrics website.
      */
     private void postPlugin(boolean isPing) throws IOException {
         // Server software specific section

@@ -33,7 +33,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class BO3Handler {
-    
+
     /**
      * @see #saveBO3(PlotPlayer, Plot, RunnableVal)
      * @param plot
@@ -60,7 +60,7 @@ public class BO3Handler {
         }
         return false;
     }
-    
+
     /**
      * Save a plot as a BO3 file<br>
      *  - Use null for the player object if no player is applicable
@@ -88,7 +88,7 @@ public class BO3Handler {
         int cz = (bot.getZ() + top.getZ()) / 2;
 
         HashMap<ChunkLoc, BO3> map = new HashMap<>();
-        
+
         HashSet<RegionWrapper> regions = plot.getRegions();
         ArrayList<ChunkLoc> chunks = new ArrayList<>();
         for (RegionWrapper region : regions) {
@@ -148,7 +148,7 @@ public class BO3Handler {
                 }
             }
         }
-        
+
         if (!content) {
             MainUtil.sendMessage(plr, "No content found!");
             return false;
@@ -177,7 +177,8 @@ public class BO3Handler {
                     }
                 }
                 if (parentLoc == null) {
-                    MainUtil.sendMessage(plr, "Exporting BO3 cancelled due to detached chunk: " + chunk + " - Make sure you only have one object per plot");
+                    MainUtil.sendMessage(plr,
+                            "Exporting BO3 cancelled due to detached chunk: " + chunk + " - Make sure you only have one object per plot");
                     return false;
                 }
             }
@@ -187,7 +188,7 @@ public class BO3Handler {
         for (Entry<ChunkLoc, BO3> entry : map.entrySet()) {
             saveTask.run(entry.getValue());
         }
-        
+
         MainUtil.sendMessage(plr, "BO3 exporting was successful!");
         return true;
     }
@@ -211,8 +212,7 @@ public class BO3Handler {
                     }
                 }
             });
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             whenDone.run();
             return;
@@ -239,7 +239,7 @@ public class BO3Handler {
             String result = StringMan
                     .replaceAll(line, "%owner%", MainUtil.getName(plot.owner), "%alias%", plot.toString(), "%blocks%", bo3.getBlocks(), "%branches%",
                             bo3.getChildren(),
-                    "%flags%", StringMan.join(FlagManager.getPlotFlags(plot).values(), ","));
+                            "%flags%", StringMan.join(FlagManager.getPlotFlags(plot).values(), ","));
             if (!StringMan.isEqual(result, line)) {
                 lines.set(i, result);
             }

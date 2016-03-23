@@ -18,7 +18,7 @@ import java.util.Collection;
  */
 public final class ArrayWrapper<E> {
 
-    private E[] _array;
+    private E[] array;
 
     /**
      * Creates an array wrapper with some elements.
@@ -64,7 +64,7 @@ public final class ArrayWrapper<E> {
      * @return The array wrapped by this instance.
      */
     public E[] getArray() {
-        return this._array;
+        return this.array;
     }
 
     /**
@@ -73,7 +73,7 @@ public final class ArrayWrapper<E> {
      */
     public void setArray(E[] array) {
         Validate.notNull(array, "The array must not be null.");
-        this._array = array;
+        this.array = array;
     }
 
     /**
@@ -86,7 +86,7 @@ public final class ArrayWrapper<E> {
         if (!(other instanceof ArrayWrapper)) {
             return false;
         }
-        return Arrays.equals(this._array, ((ArrayWrapper) other)._array);
+        return Arrays.equals(this.array, ((ArrayWrapper) other).array);
     }
 
     /**
@@ -96,6 +96,6 @@ public final class ArrayWrapper<E> {
      */
     @Override
     public int hashCode() {
-        return Arrays.hashCode(this._array);
+        return Arrays.hashCode(this.array);
     }
 }

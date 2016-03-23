@@ -39,7 +39,7 @@ public final class Reflection {
      * This is needed to bypass the JAR package name changing on each update.
      * @return The version string of the OBC and NMS packages, <em>including the trailing dot</em>.
      */
-    public synchronized static String getVersion() {
+    public static synchronized String getVersion() {
         return PS.get().IMP.getNMSPackage();
     }
 
@@ -50,7 +50,7 @@ public final class Reflection {
      * @param className The name of the class, excluding the package, within NMS.
      * @return The class instance representing the specified NMS class, or {@code null} if it could not be loaded.
      */
-    public synchronized static Class<?> getNMSClass(String className) {
+    public static synchronized Class<?> getNMSClass(String className) {
         if (_loadedNMSClasses.containsKey(className)) {
             return _loadedNMSClasses.get(className);
         }
@@ -76,7 +76,7 @@ public final class Reflection {
      * .CraftItemStack}.
      * @return The class instance representing the specified OBC class, or {@code null} if it could not be loaded.
      */
-    public synchronized static Class<?> getOBCClass(String className) {
+    public static synchronized Class<?> getOBCClass(String className) {
         if (_loadedOBCClasses.containsKey(className)) {
             return _loadedOBCClasses.get(className);
         }

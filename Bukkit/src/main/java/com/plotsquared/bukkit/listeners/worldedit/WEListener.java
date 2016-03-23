@@ -29,17 +29,20 @@ import java.util.Collections;
 import java.util.HashSet;
 
 public class WEListener implements Listener {
-    
-    public final HashSet<String> rad1 = new HashSet<>(Arrays.asList("forestgen", "pumpkins", "drain", "fixwater", "fixlava", "replacenear", "snow", "thaw", "ex", "butcher", "size"));
+
+    public final HashSet<String> rad1 = new HashSet<>(
+            Arrays.asList("forestgen", "pumpkins", "drain", "fixwater", "fixlava", "replacenear", "snow", "thaw", "ex", "butcher", "size"));
     public final HashSet<String> rad2 = new HashSet<>(Arrays.asList("fill", "fillr", "removenear", "remove"));
     public final HashSet<String> rad2_1 = new HashSet<>(Arrays.asList("hcyl", "cyl"));
     public final HashSet<String> rad2_2 = new HashSet<>(Arrays.asList("sphere", "pyramid"));
     public final HashSet<String> rad2_3 = new HashSet<>(Collections.singletonList("brush smooth"));
     public final HashSet<String> rad3_1 = new HashSet<>(Collections.singletonList("brush gravity"));
     public final HashSet<String> rad3_2 = new HashSet<>(Arrays.asList("brush sphere", "brush cylinder"));
-    
-    public final HashSet<String> region = new HashSet<>(Arrays.asList("move", "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "naturalize", "paste", "count", "distr",
-    "regen", "copy", "cut", "green", "setbiome"));
+
+    public final HashSet<String> region = new HashSet<>(
+            Arrays.asList("move", "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "naturalize", "paste", "count",
+                    "distr",
+                    "regen", "copy", "cut", "green", "setbiome"));
     public final HashSet<String> regionExtend = new HashSet<>(Collections.singletonList("stack"));
     public final HashSet<String> restricted = new HashSet<>(Collections.singletonList("up"));
     public final HashSet<String> other = new HashSet<>(Arrays.asList("undo", "redo"));
@@ -152,7 +155,7 @@ public class WEListener implements Listener {
         }
         return true;
     }
-    
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public boolean onPlayerCommand(PlayerCommandPreprocessEvent e) {
         WorldEditPlugin worldedit = BukkitMain.worldEdit;
@@ -229,7 +232,8 @@ public class WEListener implements Listener {
                     if (split.length == 4) {
                         int iterations = getInt(split[3]);
                         if (iterations > maxIterations) {
-                            MainUtil.sendMessage(pp, C.WORLDEDIT_ITERATIONS.s().replaceAll("%current%", iterations + "").replaceAll("%max%", maxIterations + ""));
+                            MainUtil.sendMessage(pp,
+                                    C.WORLDEDIT_ITERATIONS.s().replaceAll("%current%", iterations + "").replaceAll("%max%", maxIterations + ""));
                             e.setCancelled(true);
                             if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
                                 MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);

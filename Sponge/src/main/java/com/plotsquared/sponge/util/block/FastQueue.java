@@ -30,7 +30,7 @@ public class FastQueue extends SlowQueue {
     public final SendChunk chunkSender;
     public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
-    public FastQueue() throws NoSuchMethodException, RuntimeException {
+    public FastQueue() throws RuntimeException {
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {

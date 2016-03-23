@@ -2443,7 +2443,8 @@ public class PS {
     }
 
     /**
-     * Get a list of PlotArea objects
+     * Get a list of PlotArea objects.
+     * @param world
      * @return Collection of PlotArea objects
      */
     public Set<PlotArea> getPlotAreas(String world) {
