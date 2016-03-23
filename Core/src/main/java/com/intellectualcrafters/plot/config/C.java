@@ -41,7 +41,7 @@ import java.util.Set;
 
  */
 public enum C {
-    
+
     /*
      * Static flags
      */
@@ -94,9 +94,10 @@ public enum C {
     /*
      * Static console
      */
-    CONSOLE_JAVA_OUTDATED_1_7("&cYour java version is outdated. Please update to at least 1.7.\n&cURL: &6https://java.com/en/download/index.jsp","static.console"),
-    CONSOLE_JAVA_OUTDATED_1_8("&cIt's really recommended to run Java 1.8, as it increases performance","static.console"),
-    CONSOLE_PLEASE_ENABLE_METRICS("&dUsing metrics will allow us to improve the plugin, please consider it :)","static.console"),
+    CONSOLE_JAVA_OUTDATED_1_7("&cYour java version is outdated. Please update to at least 1.7.\n&cURL: &6https://java.com/en/download/index.jsp",
+            "static.console"),
+    CONSOLE_JAVA_OUTDATED_1_8("&cIt's really recommended to run Java 1.8, as it increases performance", "static.console"),
+    CONSOLE_PLEASE_ENABLE_METRICS("&dUsing metrics will allow us to improve the plugin, please consider it :)", "static.console"),
     /*
      * Confirm
      */
@@ -130,8 +131,9 @@ public enum C {
      * Cluster
      */
     CLUSTER_AVAILABLE_ARGS(
-    "$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2, $4tp$2, $4sethome",
-    "Cluster"),
+            "$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, "
+                    + "$4members$2, $4info$2, $4tp$2, $4sethome",
+            "Cluster"),
     CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
     CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster"),
     CLUSTER_INTERSECTION("$2The proposed area overlaps with: %s0", "Cluster"),
@@ -173,8 +175,8 @@ public enum C {
     WORLDEDIT_BYPASSED("$2Currently bypassing WorldEdit restriction.", "WorldEdit Masks"),
     WORLDEDIT_UNMASKED("$1Your WorldEdit is now unrestricted.", "WorldEdit Masks"),
     WORLDEDIT_RESTRICTED("$1Your WorldEdit is now restricted.", "WorldEdit Masks"),
-    
-    GAMEMODE_WAS_BYPASSED("$1You bypassed the gamemode ($2{gamemode}$1) $1set for $2{plot}", "Gamemode"),
+
+    GAMEMODE_WAS_BYPASSED("$1You bypassed the GameMode ($2{gamemode}$1) $1set for $2{plot}", "GameMode"),
     HEIGHT_LIMIT("$1This plot area has a height limit of $2{limit}", "Height Limit"),
     /*
      * Records
@@ -210,14 +212,14 @@ public enum C {
      */
     NOT_CONSOLE("$2For safety reasons, this command can only be executed by console.", "Console"),
     IS_CONSOLE("$2This command can only be executed by a player.", "Console"),
-    
+
     /*
     Inventory
      */
     INVENTORY_USAGE("&cUsage: &6{usage}", "Inventory"),
     INVENTORY_DESC("&cDescription: &6{desc}", "Inventory"),
     INVENTORY_CATEGORY("&cCategory: &6{category}", "Inventory"),
-    
+
     /*
      * Clipboard
      */
@@ -231,7 +233,7 @@ public enum C {
      */
     TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"),
     TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
-    
+
     COMMAND_BLOCKED("$2That command is not allowed in this plot", "Blocked Command"),
     /*
      * Done
@@ -275,15 +277,18 @@ public enum C {
     SETUP_INVALID_ARG("$2%s0 is not a valid argument for step %s1. To cancel setup use: $1/plot setup cancel", "Setup"),
     SETUP_VALID_ARG("$2Value $1%s0 $2set to %s1", "Setup"),
     SETUP_FINISHED(
-    "$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or your chosen world management plugin.",
-    "Setup"),
+            "$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or "
+                    + "your chosen world management plugin.",
+            "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a registered plotworld", "Setup"),
     SETUP_MISSING_WORLD(
-    "$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel",
-    "Setup"),
+            "$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 -"
+                    + " $1/plot setup back&-$2 - $1/plot setup cancel",
+            "Setup"),
     SETUP_MISSING_GENERATOR(
-    "$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel",
-    "Setup"),
+            "$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - "
+                    + "$1/plot setup back&-$2 - $1/plot setup cancel",
+            "Setup"),
     SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
     /*
      * Schematic Stuff
@@ -315,11 +320,11 @@ public enum C {
     /*
      * BarAPI
      */
-    
+
     DESC_SET("$2Plot description set", "Desc"),
     DESC_UNSET("$2Plot description unset", "Desc"),
     MISSING_DESC("$2You need to specify a description", "Desc"),
-    
+
     /*
      * Alias
      */
@@ -350,7 +355,7 @@ public enum C {
     CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user", "Permission"),
     CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once", "Permission"),
     YOU_BE_DENIED("$2You are not allowed to enter this plot", "Permission"),
-    
+
     /*
      * Merge
      */
@@ -360,7 +365,8 @@ public enum C {
     MERGE_REQUESTED("$2Successfully sent a merge request", "Merge"),
     MERGE_REQUEST_CONFIRM("merge request from %s", "Permission"),
     NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%", "Merge"),
-    NO_AVAILABLE_AUTOMERGE("$2You do not own any adjacent plots in the specified direction or are not allowed to merge to the required size.", "Merge"),
+    NO_AVAILABLE_AUTOMERGE("$2You do not own any adjacent plots in the specified direction or are not allowed to merge to the required size.",
+            "Merge"),
     UNLINK_REQUIRED("$2An unlink is required to do this.", "Merge"),
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Merge"),
     UNLINK_SUCCESS("$2Successfully unlinked plots.", "Merge"),
@@ -426,7 +432,7 @@ public enum C {
      * Set Block
      */
     SET_BLOCK_ACTION_FINISHED("$1The last setblock action is now finished.", "Set Block"),
-    
+
     /*
     AllowUnsafe
      */
@@ -474,15 +480,15 @@ public enum C {
     PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
     PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO("$1ID: $2%id%$1&-"
-    + "$1Alias: $2%alias%$1&-"
-    + "$1Owner: $2%owner%$1&-"
-    + "$1Biome: $2%biome%$1&-"
-    + "$1Can Build: $2%build%$1&-"
-    + "$1Rating: $2%rating%&-"
-    + "$1Trusted: $2%trusted%$1&-"
-    + "$1Members: $2%members%$1&-"
-    + "$1Denied: $2%denied%$1&-"
-    + "$1Flags: $2%flags%", "Info"),
+            + "$1Alias: $2%alias%$1&-"
+            + "$1Owner: $2%owner%$1&-"
+            + "$1Biome: $2%biome%$1&-"
+            + "$1Can Build: $2%build%$1&-"
+            + "$1Rating: $2%rating%&-"
+            + "$1Trusted: $2%trusted%$1&-"
+            + "$1Members: $2%members%$1&-"
+            + "$1Denied: $2%denied%$1&-"
+            + "$1Flags: $2%flags%", "Info"),
     PLOT_INFO_FOOTER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO_TRUSTED("$1Trusted:$2 %trusted%", "Info"),
     PLOT_INFO_MEMBERS("$1Members:$2 %members%", "Info"),
@@ -529,7 +535,9 @@ public enum C {
     /*
      * PlotMe
      */
-    NOT_USING_PLOTME("$2This server uses the far superior $1PlotSquared $2plot management system. Please use the $1/ps $2or $1/p2 $2or $1/plots $2instead", "Errors"),
+    NOT_USING_PLOTME(
+            "$2This server uses the far superior $1PlotSquared $2plot management system. Please use the $1/ps $2or $1/p2 $2or $1/plots $2instead",
+            "Errors"),
     /*
      * Wait
      */
@@ -603,7 +611,7 @@ public enum C {
     HELP_HEADER("$3&m---------&r $1Plot\u00B2 Help $3&m---------", "Help"),
     HELP_PAGE_HEADER("$1Category: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2", "Help"),
     HELP_FOOTER("$3&m---------&r $1Plot\u00B2 Help $3&m---------", "Help"),
-    
+
     HELP_INFO_ITEM("$1/plots help %category% $3- $2%category_desc%", "Help"),
     HELP_ITEM("$1%usage% [%alias%]&- $3- $2%desc%&-", "Help"),
     /*
@@ -622,22 +630,22 @@ public enum C {
     CUSTOM_STRING("-", "-");
     public static final HashMap<String, String> replacements = new HashMap<>();
     /**
-     * Translated
+     * Translated.
      */
     private String s;
     /**
-     * Default
+     * Default.
      */
     private String d;
     /**
-     * What locale category should this translation fall under
+     * What locale category should this translation fall under.
      */
     private String cat;
     /**
-     * Should the string be prefixed?
+     * Should the string be prefixed.
      */
     private boolean prefix;
-    
+
     /**
      * Constructor for custom strings.
      */
@@ -646,34 +654,34 @@ public enum C {
          * use setCustomString();
          */
     }
-    
+
     /**
-     * Constructor
+     * Constructor.
      *
      * @param d default
      * @param prefix use prefix
      */
-    C(final String d, final boolean prefix, final String cat) {
+    C(String d, boolean prefix, String cat) {
         this.d = d;
         this.s = d;
         this.prefix = prefix;
         this.cat = cat.toLowerCase();
     }
-    
+
     /**
-     * Constructor
+     * Constructor.
      *
      * @param d default
      */
-    C(final String d, final String cat) {
+    C(String d, String cat) {
         this(d, true, cat.toLowerCase());
     }
-    
-    public static String format(String m, final Object... args) {
+
+    public static String format(String m, Object... args) {
         if (args.length == 0) {
             return m;
         }
-        final Map<String, String> map = new LinkedHashMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<>();
         if (args.length > 0) {
             for (int i = args.length - 1; i >= 0; i--) {
                 String arg = args[i].toString();
@@ -691,48 +699,52 @@ public enum C {
         m = StringMan.replaceFromMap(m, map);
         return m;
     }
-    
-    public static String format(final C c, final Object... args) {
-        return (c.usePrefix() ? C.PREFIX.s() : "") + format(c.s, args);
+
+    public static String format(C c, Object... args) {
+        if (c.usePrefix()) {
+            return C.PREFIX.s() + format(c.s, args);
+        } else {
+            return format(c.s, args);
+        }
     }
-    
-    public static String color(final String string) {
+
+    public static String color(String string) {
         return StringMan.replaceFromMap(string, replacements);
     }
-    
-    public static void load(final File file) {
+
+    public static void load(File file) {
         try {
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
-            final YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-            final Set<String> keys = yml.getKeys(true);
-            final EnumSet<C> all = EnumSet.allOf(C.class);
-            final HashSet<String> allNames = new HashSet<>();
-            final HashSet<String> allCats = new HashSet<>();
-            final HashSet<String> toRemove = new HashSet<>();
-            for (final C c : all) {
+            YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+            Set<String> keys = yml.getKeys(true);
+            EnumSet<C> all = EnumSet.allOf(C.class);
+            HashSet<String> allNames = new HashSet<>();
+            HashSet<String> allCats = new HashSet<>();
+            HashSet<String> toRemove = new HashSet<>();
+            for (C c : all) {
                 allNames.add(c.name());
                 allCats.add(c.cat.toLowerCase());
             }
-            final HashSet<C> captions = new HashSet<>();
+            HashSet<C> captions = new HashSet<>();
             boolean changed = false;
-            for (final String key : keys) {
+            for (String key : keys) {
                 if (!yml.isString(key)) {
                     if (!allCats.contains(key)) {
                         toRemove.add(key);
                     }
                     continue;
                 }
-                final String[] split = key.split("\\.");
-                final String node = split[split.length - 1].toUpperCase();
-                final C caption = allNames.contains(node) ? valueOf(node) : null;
+                String[] split = key.split("\\.");
+                String node = split[split.length - 1].toUpperCase();
+                C caption = allNames.contains(node) ? valueOf(node) : null;
                 if (caption != null) {
                     if (caption.cat.startsWith("static")) {
                         continue;
                     }
-                    final String value = yml.getString(key);
+                    String value = yml.getString(key);
                     if (!split[0].equalsIgnoreCase(caption.cat)) {
                         changed = true;
                         yml.set(key, null);
@@ -744,24 +756,24 @@ public enum C {
                     toRemove.add(key);
                 }
             }
-            for (final String remove : toRemove) {
+            for (String remove : toRemove) {
                 changed = true;
                 yml.set(remove, null);
             }
-            final ConfigurationSection config = PS.get().style.getConfigurationSection("color");
-            final Set<String> styles = config.getKeys(false);
+            ConfigurationSection config = PS.get().style.getConfigurationSection("color");
+            Set<String> styles = config.getKeys(false);
             // HashMap<String, String> replacements = new HashMap<>();
             replacements.clear();
-            for (final String style : styles) {
+            for (String style : styles) {
                 replacements.put("$" + style, "\u00a7" + config.getString(style));
             }
-            for (final char letter : "1234567890abcdefklmnor".toCharArray()) {
+            for (char letter : "1234567890abcdefklmnor".toCharArray()) {
                 replacements.put("&" + letter, "\u00a7" + letter);
             }
             replacements.put("\\\\n", "\n");
             replacements.put("\\n", "\n");
             replacements.put("&-", "\n");
-            for (final C caption : all) {
+            for (C caption : all) {
                 if (!captions.contains(caption)) {
                     if (caption.cat.startsWith("static")) {
                         continue;
@@ -774,37 +786,37 @@ public enum C {
             if (changed) {
                 yml.save(file);
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public String toString() {
-        return s;
+        return this.s;
     }
-    
+
     public String s() {
-        return s;
+        return this.s;
     }
-    
+
     public boolean usePrefix() {
-        return prefix;
+        return this.prefix;
     }
-    
+
     public String formatted() {
         return StringMan.replaceFromMap(s(), replacements);
     }
-    
+
     public String getCat() {
-        return cat;
+        return this.cat;
     }
-    
-    public void send(final CommandCaller plr, final String... args) {
+
+    public void send(CommandCaller plr, String... args) {
         send(plr, (Object[]) args);
     }
-    
-    public void send(final CommandCaller plr, final Object... args) {
+
+    public void send(CommandCaller plr, Object... args) {
         String msg = format(this, args);
         if (plr == null) {
             ConsolePlayer.getConsole().sendMessage(msg);

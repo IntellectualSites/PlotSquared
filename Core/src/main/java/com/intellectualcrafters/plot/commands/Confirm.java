@@ -29,14 +29,14 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "confirm",
-permission = "plots.use",
-description = "Confirm an action",
-category = CommandCategory.INFO)
+        permission = "plots.use",
+        description = "Confirm an action",
+        category = CommandCategory.INFO)
 public class Confirm extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
-        final CmdInstance command = CmdConfirm.getPending(plr);
+    public boolean onCommand(PlotPlayer plr, String... args) {
+        CmdInstance command = CmdConfirm.getPending(plr);
         if (command == null) {
             MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
             return false;

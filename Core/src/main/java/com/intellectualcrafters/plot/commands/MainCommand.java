@@ -37,6 +37,7 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandHandlingOutput;
 import com.plotsquared.general.commands.CommandManager;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,11 +45,10 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * PlotSquared command class
- *
-
+ * PlotSquared command class.
  */
 public class MainCommand extends CommandManager<PlotPlayer> {
+
     private static MainCommand instance;
 
     private MainCommand() {
@@ -137,14 +137,14 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         return instance;
     }
 
-    public static boolean no_permission(final PlotPlayer player, final String permission) {
+    public static boolean no_permission(PlotPlayer player, String permission) {
         MainUtil.sendMessage(player, C.NO_PERMISSION, permission);
         return false;
     }
 
-    public static List<Command<PlotPlayer>> getCommandAndAliases(final CommandCategory category, final PlotPlayer player) {
-        final List<Command<PlotPlayer>> commands = new ArrayList<>();
-        for (final Command<PlotPlayer> command : getInstance().getCommands()) {
+    public static List<Command<PlotPlayer>> getCommandAndAliases(CommandCategory category, PlotPlayer player) {
+        List<Command<PlotPlayer>> commands = new ArrayList<>();
+        for (Command<PlotPlayer> command : getInstance().getCommands()) {
             if ((category != null) && !command.getCategory().equals(category)) {
                 continue;
             }
@@ -156,9 +156,9 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         return commands;
     }
 
-    public static List<Command<PlotPlayer>> getCommands(final CommandCategory category, final PlotPlayer player) {
-        final List<Command<PlotPlayer>> commands = new ArrayList<>();
-        for (final Command<PlotPlayer> command : new HashSet<>(getInstance().getCommands())) {
+    public static List<Command<PlotPlayer>> getCommands(CommandCategory category, PlotPlayer player) {
+        List<Command<PlotPlayer>> commands = new ArrayList<>();
+        for (Command<PlotPlayer> command : new HashSet<>(getInstance().getCommands())) {
             if ((category != null) && !command.getCategory().equals(category)) {
                 continue;
             }
@@ -170,13 +170,13 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         return commands;
     }
 
-    public static void displayHelp(final PlotPlayer player, String cat, int page, final String label) {
+    public static void displayHelp(PlotPlayer player, String cat, int page, String label) {
         CommandCategory catEnum = null;
         if (cat != null) {
             if (StringMan.isEqualIgnoreCase(cat, "all")) {
                 catEnum = null;
             } else {
-                for (final CommandCategory c : CommandCategory.values()) {
+                for (CommandCategory c : CommandCategory.values()) {
                     if (StringMan.isEqualIgnoreCaseToAny(cat, c.name(), c.toString())) {
                         catEnum = c;
                         cat = c.name();
@@ -188,11 +188,12 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 }
             }
         }
-        if ((cat == null) && (page == 0)) {
-            final StringBuilder builder = new StringBuilder();
+        if (cat == null && page == 0) {
+            StringBuilder builder = new StringBuilder();
             builder.append(C.HELP_HEADER.s());
-            for (final CommandCategory c : CommandCategory.values()) {
-                builder.append("\n" + StringMan.replaceAll(C.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(), "%category_desc%", c.toString()));
+            for (CommandCategory c : CommandCategory.values()) {
+                builder.append(
+                        "\n" + StringMan.replaceAll(C.HELP_INFO_ITEM.s(), "%category%", c.toString().toLowerCase(), "%category_desc%", c.toString()));
             }
             builder.append("\n").append(C.HELP_INFO_ITEM.s().replaceAll("%category%", "all").replaceAll("%category_desc%", "Display all commands"));
             builder.append("\n" + C.HELP_FOOTER.s());
@@ -203,7 +204,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(page, label).render();
     }
 
-    public static boolean onCommand(final PlotPlayer player, final String cmd, String... args) {
+    public static boolean onCommand(PlotPlayer player, String cmd, String... args) {
         // Clear perm caching //
         player.deleteMeta("perm");
         ////////////////////////
@@ -221,7 +222,8 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                 if (MathMan.isInteger(args[0])) {
                     try {
                         help_index = Integer.parseInt(args[args.length - 1]);
-                    } catch (final NumberFormatException e) {}
+                    } catch (NumberFormatException e) {
+                    }
                     break;
                 }
             }
@@ -240,7 +242,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                                     category = null;
                                     try {
                                         help_index = Integer.parseInt(args[1]);
-                                    } catch (final NumberFormatException e) {
+                                    } catch (NumberFormatException e) {
                                         help_index = 1;
                                     }
                                 } else {
@@ -254,7 +256,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                                 if (MathMan.isInteger(args[2])) {
                                     try {
                                         help_index = Integer.parseInt(args[2]);
-                                    } catch (final NumberFormatException e) {
+                                    } catch (NumberFormatException e) {
                                         help_index = 1;
                                     }
                                 }
@@ -274,7 +276,8 @@ public class MainCommand extends CommandManager<PlotPlayer> {
                             if (newPlot == null) {
                                 break;
                             }
-                            if (!ConsolePlayer.isConsole(player) && (!newPlot.getArea().equals(area) || newPlot.isDenied(player.getUUID())) && !Permissions.hasPermission(player, C.PERMISSION_ADMIN)) {
+                            if (!ConsolePlayer.isConsole(player) && (!newPlot.getArea().equals(area) || newPlot.isDenied(player.getUUID()))
+                                    && !Permissions.hasPermission(player, C.PERMISSION_ADMIN)) {
                                 break;
                             }
                             // Save meta
@@ -332,7 +335,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             }
         }
         String[] usage = cmd.getUsage().split(" ");
-        for (int i = 0; i < Math.min(4 , usage.length); i++) {
+        for (int i = 0; i < Math.min(4, usage.length); i++) {
             int require;
             if (usage[i].startsWith("<")) {
                 require = 1;
@@ -353,8 +356,8 @@ public class MainCommand extends CommandManager<PlotPlayer> {
     }
 
     @Override
-    public int handle(final PlotPlayer plr, final String input) {
-        final String[] parts = input.split(" ");
+    public int handle(PlotPlayer plr, String input) {
+        String[] parts = input.split(" ");
         String[] args;
         String label;
         if (parts.length == 1) {
@@ -387,18 +390,18 @@ public class MainCommand extends CommandManager<PlotPlayer> {
         if (cmd == null) {
             MainUtil.sendMessage(plr, C.NOT_VALID_SUBCOMMAND);
             {
-                final List<Command<PlotPlayer>> cmds = getCommands(null, plr);
-                if ((label == null) || (cmds.isEmpty())) {
+                List<Command<PlotPlayer>> cmds = getCommands(null, plr);
+                if ((label == null) || cmds.isEmpty()) {
                     MainUtil.sendMessage(plr, C.DID_YOU_MEAN, "/plot help");
                 } else {
-                    final HashSet<String> setargs = new HashSet<>(args.length + 1);
-                    for (final String arg : args) {
+                    HashSet<String> setargs = new HashSet<>(args.length + 1);
+                    for (String arg : args) {
                         setargs.add(arg.toLowerCase());
                     }
                     setargs.add(label);
-                    final String[] allargs = setargs.toArray(new String[setargs.size()]);
+                    String[] allargs = setargs.toArray(new String[setargs.size()]);
                     int best = 0;
-                    for (final Command<PlotPlayer> current : cmds) {
+                    for (Command<PlotPlayer> current : cmds) {
                         int match = getMatch(allargs, current);
                         if (match > best) {
                             cmd = current;
@@ -424,7 +427,7 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, cmd.getPermission());
             return CommandHandlingOutput.NOT_PERMITTED;
         }
-        final Argument<?>[] requiredArguments = cmd.getRequiredArguments();
+        Argument<?>[] requiredArguments = cmd.getRequiredArguments();
         if ((requiredArguments != null) && (requiredArguments.length > 0)) {
             boolean success = true;
             if (args.length < requiredArguments.length) {
@@ -443,12 +446,12 @@ public class MainCommand extends CommandManager<PlotPlayer> {
             }
         }
         try {
-            final boolean result = cmd.onCommand(plr, args);
+            boolean result = cmd.onCommand(plr, args);
             if (!result) {
                 cmd.getUsage();
                 return CommandHandlingOutput.WRONG_USAGE;
             }
-        } catch (final Throwable t) {
+        } catch (Throwable t) {
             t.printStackTrace();
             return CommandHandlingOutput.ERROR;
         }

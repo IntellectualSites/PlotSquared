@@ -31,8 +31,8 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(final CommandSender commandSender, final org.bukkit.command.Command command, final String commandLabel,
-            final String[] args) {
+    public boolean onCommand(final CommandSender commandSender, org.bukkit.command.Command command, final String commandLabel,
+            String[] args) {
         if (commandSender instanceof Player) {
             return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), commandLabel, args);
         }
@@ -47,7 +47,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
             }
 
             @Override
-            public boolean hasPermission(String perm) {
+            public boolean hasPermission(String permission) {
                 return commandSender.hasPermission(commandLabel);
             }
 
@@ -66,12 +66,12 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(final CommandSender commandSender, final org.bukkit.command.Command command, final String s,
-            final String[] strings) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String s,
+            String[] strings) {
         if (!(commandSender instanceof Player)) {
             return null;
         }
-        final PlotPlayer player = BukkitUtil.getPlayer((Player) commandSender);
+        PlotPlayer player = BukkitUtil.getPlayer((Player) commandSender);
         if (strings.length < 1) {
             if (strings.length == 0 || "plots".startsWith(s)) {
                 return Collections.singletonList("plots");
@@ -80,11 +80,11 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (strings.length > 1) {
             return null;
         }
-        final Set<String> tabOptions = new HashSet<>();
-        final String arg = strings[0].toLowerCase();
+        Set<String> tabOptions = new HashSet<>();
+        String arg = strings[0].toLowerCase();
         ArrayList<String> labels = new ArrayList<>();
-        for (final Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands()) {
-            final String label = cmd.getCommand();
+        for (Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands()) {
+            String label = cmd.getCommand();
             HashSet<String> aliases = new HashSet<>(cmd.getAliases());
             aliases.add(label);
             for (String alias : aliases) {

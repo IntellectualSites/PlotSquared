@@ -32,30 +32,31 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.Arrays;
 import java.util.Map.Entry;
 
 @CommandDeclaration(command = "comment",
-aliases = { "msg" },
-description = "Comment on a plot",
-category = CommandCategory.CHAT,
-requiredType = RequiredType.NONE,
-permission = "plots.comment")
+        aliases = {"msg"},
+        description = "Comment on a plot",
+        category = CommandCategory.CHAT,
+        requiredType = RequiredType.NONE,
+        permission = "plots.comment")
 public class Comment extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer player, final String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length < 2) {
             sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
-        final CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
+        CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
         if (inbox == null) {
             sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
-        final Location loc = player.getLocation();
-        final PlotId id = PlotId.fromString(args[1]);
+        Location loc = player.getLocation();
+        PlotId id = PlotId.fromString(args[1]);
         Plot plot = MainUtil.getPlotFromString(player, args[1], false);
         int index;
         if (plot == null) {
@@ -72,9 +73,9 @@ public class Comment extends SubCommand {
             sendMessage(player, C.NO_PERM_INBOX, "");
             return false;
         }
-        final String message = StringMan.join(Arrays.copyOfRange(args, index, args.length), " ");
-        final PlotComment comment = new PlotComment(loc.getWorld(), id, message, player.getName(), inbox.toString(), System.currentTimeMillis());
-        final boolean result = inbox.addComment(plot, comment);
+        String message = StringMan.join(Arrays.copyOfRange(args, index, args.length), " ");
+        PlotComment comment = new PlotComment(loc.getWorld(), id, message, player.getName(), inbox.toString(), System.currentTimeMillis());
+        boolean result = inbox.addComment(plot, comment);
         if (!result) {
             sendMessage(player, C.NO_PLOT_INBOX, "");
             sendMessage(player, C.COMMENT_SYNTAX, StringMan.join(CommentManager.inboxes.keySet(), "|"));

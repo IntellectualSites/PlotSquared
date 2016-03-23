@@ -29,13 +29,14 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.UUID;
 
 @CommandDeclaration(command = "info",
-aliases = "i",
-description = "Display plot info",
-usage = "/plot info <id>",
-category = CommandCategory.INFO)
+        aliases = "i",
+        description = "Display plot info",
+        usage = "/plot info <id>",
+        category = CommandCategory.INFO)
 public class Info extends SubCommand {
 
     @Override
@@ -82,20 +83,20 @@ public class Info extends SubCommand {
             if (args.length == 1) {
                 args = new String[0];
             } else {
-                args = new String[] { args[1] };
+                args = new String[]{args[1]};
             }
         }
         if ((args.length == 1) && args[0].equalsIgnoreCase("inv")) {
-            final PlotInventory inv = new PlotInventory(player) {
+            PlotInventory inv = new PlotInventory(player) {
                 @Override
-                public boolean onClick(final int index) {
+                public boolean onClick(int index) {
                     // TODO InfoInventory not implemented yet!!!!!!!!
                     // See plot rating or musicsubcommand on examples
                     return false;
                 }
             };
-            final UUID uuid = player.getUUID();
-            final String name = MainUtil.getName(plot.owner);
+            UUID uuid = player.getUUID();
+            String name = MainUtil.getName(plot.owner);
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cPlot Info", "&cID: &6" + plot.getId().toString(),
                     "&cOwner: &6" + name,
                     "&cAlias: &6" + plot.getAlias(),
@@ -113,7 +114,7 @@ public class Info extends SubCommand {
             inv.openInventory();
             return true;
         }
-        final boolean hasOwner = plot.hasOwner();
+        boolean hasOwner = plot.hasOwner();
         boolean containsEveryone;
         boolean trustedEveryone;
         // Wildcard player {added}
@@ -123,7 +124,7 @@ public class Info extends SubCommand {
         }
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
-            MainUtil.sendMessage(player, C.PLOT_INFO_UNCLAIMED, (plot.getId().x + ";" + plot.getId().y));
+            MainUtil.sendMessage(player, C.PLOT_INFO_UNCLAIMED, plot.getId().x + ";" + plot.getId().y);
             return true;
         }
         String info = C.PLOT_INFO.s();
@@ -131,7 +132,9 @@ public class Info extends SubCommand {
         if (arg != null) {
             info = getCaption(arg);
             if (info == null) {
-                MainUtil.sendMessage(player, "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, &arating");
+                MainUtil.sendMessage(player,
+                        "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, "
+                                + "&arating");
                 return false;
             }
             full = true;
@@ -147,7 +150,7 @@ public class Info extends SubCommand {
         return true;
     }
 
-    private String getCaption(final String string) {
+    private String getCaption(String string) {
         switch (string) {
             case "trusted":
                 return C.PLOT_INFO_TRUSTED.s();

@@ -34,12 +34,12 @@ import java.util.List;
 
  */
 public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer> {
-    
+
     /**
      * The category
      */
     public CommandCategory category;
-    
+
     /**
      * Send a message
      *
@@ -49,17 +49,18 @@ public abstract class SubCommand extends com.plotsquared.general.commands.Comman
      *
      * @see MainUtil#sendMessage(PlotPlayer, C, String...)
      */
-    public boolean sendMessage(final PlotPlayer plr, final C c, final String... args) {
+    public boolean sendMessage(PlotPlayer plr, C c, String... args) {
         c.send(plr, args);
         return true;
     }
-    
-    public <T> void paginate(PlotPlayer player, List<T> c, int size, int page, RunnableVal3<Integer, T, PlotMessage> add, String baseCommand, String header) {
+
+    public <T> void paginate(PlotPlayer player, List<T> c, int size, int page, RunnableVal3<Integer, T, PlotMessage> add, String baseCommand,
+            String header) {
         // Calculate pages & index
         if (page < 0) {
             page = 0;
         }
-        final int totalPages = (int) Math.ceil(c.size() / size);
+        int totalPages = (int) Math.ceil(c.size() / size);
         if (page > totalPages) {
             page = totalPages;
         }
@@ -68,12 +69,13 @@ public abstract class SubCommand extends com.plotsquared.general.commands.Comman
             max = c.size();
         }
         // Send the header
-        header = header.replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%amount%", c.size() + "").replaceAll("%word%", "all");
+        header = header.replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%amount%", c.size() + "")
+                .replaceAll("%word%", "all");
         MainUtil.sendMessage(player, header);
         // Send the page content
-        final List<T> subList = c.subList(page * size, max);
+        List<T> subList = c.subList(page * size, max);
         int i = page * size;
-        for (final T obj : subList) {
+        for (T obj : subList) {
             i++;
             PlotMessage msg = new PlotMessage();
             add.run(i, obj, msg);
@@ -83,11 +85,12 @@ public abstract class SubCommand extends com.plotsquared.general.commands.Comman
         if (page < totalPages && page > 0) { // Back | Next
             new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ").color("$3").text("->").color("$1")
                     .command(baseCommand + " " + (page + 2))
-            .text(C.CLICKABLE.s()).color("$2").send(player);
+                    .text(C.CLICKABLE.s()).color("$2").send(player);
             return;
         }
         if (page == 0 && totalPages != 0) { // Next
-            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2)).text(C.CLICKABLE.s()).color("$2").send(player);
+            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
+                    .text(C.CLICKABLE.s()).color("$2").send(player);
             return;
         }
         if (page == totalPages && totalPages != 0) { // Back

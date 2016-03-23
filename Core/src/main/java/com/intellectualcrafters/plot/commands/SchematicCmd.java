@@ -35,28 +35,30 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "schematic",
-permission = "plots.schematic",
-description = "Schematic command",
-aliases = { "sch" },
-category = CommandCategory.SCHEMATIC,
-usage = "/plot schematic <arg...>")
+        command = "schematic",
+        permission = "plots.schematic",
+        description = "Schematic command",
+        aliases = {"sch"},
+        category = CommandCategory.SCHEMATIC,
+        usage = "/plot schematic <arg...>")
 public class SchematicCmd extends SubCommand {
+
     private boolean running = false;
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final PlotPlayer plr, String... args) {
         if (args.length < 1) {
             sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
             return true;
         }
-        final String arg = args[0].toLowerCase();
+        String arg = args[0].toLowerCase();
         switch (arg) {
             case "paste": {
                 if (!Permissions.hasPermission(plr, "plots.schematic.paste")) {
@@ -67,7 +69,7 @@ public class SchematicCmd extends SubCommand {
                     sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
                     break;
                 }
-                final Location loc = plr.getLocation();
+                Location loc = plr.getLocation();
                 final Plot plot = loc.getPlotAbs();
                 if (plot == null) {
                     return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -80,40 +82,40 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
                     return false;
                 }
-                if (running) {
+                if (this.running) {
                     MainUtil.sendMessage(plr, "&cTask is already running.");
                     return false;
                 }
                 final String location = args[1];
-                running = true;
+                this.running = true;
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
                         Schematic schematic;
                         if (location.startsWith("url:")) {
                             try {
-                                final UUID uuid = UUID.fromString(location.substring(4));
-                                final URL base = new URL(Settings.WEB_URL);
-                                final URL url = new URL(base, "uploads/" + uuid + ".schematic");
+                                UUID uuid = UUID.fromString(location.substring(4));
+                                URL base = new URL(Settings.WEB_URL);
+                                URL url = new URL(base, "uploads/" + uuid + ".schematic");
                                 schematic = SchematicHandler.manager.getSchematic(url);
-                            } catch (final Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent url: " + location);
-                                running = false;
+                                SchematicCmd.this.running = false;
                                 return;
                             }
                         } else {
                             schematic = SchematicHandler.manager.getSchematic(location);
                         }
                         if (schematic == null) {
-                            running = false;
+                            SchematicCmd.this.running = false;
                             sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
                             return;
                         }
                         SchematicHandler.manager.paste(schematic, plot, 0, 0, 0, true, new RunnableVal<Boolean>() {
                             @Override
                             public void run(Boolean value) {
-                                running = false;
+                                SchematicCmd.this.running = false;
                                 if (value) {
                                     sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
                                 } else {
@@ -125,38 +127,38 @@ public class SchematicCmd extends SubCommand {
                 });
                 break;
             }
-//            TODO test
-//            case "test": {
-//                if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
-//                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
-//                    return false;
-//                }
-//                if (args.length < 2) {
-//                    sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
-//                    return false;
-//                }
-//                final Location loc = plr.getLocation();
-//                final Plot plot = MainUtil.getPlot(loc);
-//                if (plot == null) {
-//                    sendMessage(plr, C.NOT_IN_PLOT);
-//                    return false;
-//                }
-//                file = args[1];
-//                schematic = SchematicHandler.manager.getSchematic(file);
-//                if (schematic == null) {
-//                    sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
-//                    return false;
-//                }
-//                final int l1 = schematic.getSchematicDimension().getX();
-//                final int l2 = schematic.getSchematicDimension().getZ();
+            //            TODO test
+            //            case "test": {
+            //                if (!Permissions.hasPermission(plr, "plots.schematic.test")) {
+            //                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.test");
+            //                    return false;
+            //                }
+            //                if (args.length < 2) {
+            //                    sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
+            //                    return false;
+            //                }
+            //                final Location loc = plr.getLocation();
+            //                final Plot plot = MainUtil.getPlot(loc);
+            //                if (plot == null) {
+            //                    sendMessage(plr, C.NOT_IN_PLOT);
+            //                    return false;
+            //                }
+            //                file = args[1];
+            //                schematic = SchematicHandler.manager.getSchematic(file);
+            //                if (schematic == null) {
+            //                    sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent");
+            //                    return false;
+            //                }
+            //                final int l1 = schematic.getSchematicDimension().getX();
+            //                final int l2 = schematic.getSchematicDimension().getZ();
             //                final int length = MainUtil.getPlotWidth(loc.getWorld(), plot.id);
-//                if ((l1 < length) || (l2 < length)) {
-//                    sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
-//                    break;
-//                }
-//                sendMessage(plr, C.SCHEMATIC_VALID);
-//                break;
-//            }
+            //                if ((l1 < length) || (l2 < length)) {
+            //                    sendMessage(plr, C.SCHEMATIC_INVALID, String.format("Wrong size (x: %s, z: %d) vs %d ", l1, l2, length));
+            //                    break;
+            //                }
+            //                sendMessage(plr, C.SCHEMATIC_VALID);
+            //                break;
+            //            }
             case "saveall":
             case "exportall": {
                 if (!ConsolePlayer.isConsole(plr)) {
@@ -172,12 +174,12 @@ public class SchematicCmd extends SubCommand {
                     C.NOT_VALID_PLOT_WORLD.send(plr, args[1]);
                     return false;
                 }
-                final Collection<Plot> plots = area.getPlots();
-                if ((plots.isEmpty())) {
+                Collection<Plot> plots = area.getPlots();
+                if (plots.isEmpty()) {
                     MainUtil.sendMessage(plr, "&cInvalid world. Use &7/plots sch exportall <area>");
                     return false;
                 }
-                final boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
+                boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
                     @Override
                     public void run() {
                         MainUtil.sendMessage(plr, "&aFinished mass export");
@@ -198,13 +200,13 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
                 }
-                if (running) {
+                if (this.running) {
                     MainUtil.sendMessage(plr, "&cTask is already running.");
                     return false;
                 }
-                final Plot p2;
-                final Location loc = plr.getLocation();
-                final Plot plot = loc.getPlotAbs();
+                Plot p2;
+                Location loc = plr.getLocation();
+                Plot plot = loc.getPlotAbs();
                 if (plot == null) {
                     return !sendMessage(plr, C.NOT_IN_PLOT);
                 }
@@ -218,13 +220,13 @@ public class SchematicCmd extends SubCommand {
                 }
                 p2 = plot;
                 loc.getWorld();
-                final Collection<Plot> plots = new ArrayList<Plot>();
+                Collection<Plot> plots = new ArrayList<Plot>();
                 plots.add(p2);
-                final boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
+                boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
                     @Override
                     public void run() {
                         MainUtil.sendMessage(plr, "&aFinished export");
-                        running = false;
+                        SchematicCmd.this.running = false;
                     }
                 });
                 if (!result) {

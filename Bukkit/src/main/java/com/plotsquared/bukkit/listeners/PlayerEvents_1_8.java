@@ -1,9 +1,15 @@
 package com.plotsquared.bukkit.listeners;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.listener.PlotListener;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.ArmorStand;
@@ -20,48 +26,41 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.MainUtil;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.listener.PlotListener;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 public class PlayerEvents_1_8 extends PlotListener implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onInventoryClick(final InventoryClickEvent event) {
+    public void onInventoryClick(InventoryClickEvent event) {
         if (!event.isLeftClick() || (event.getAction() != InventoryAction.PLACE_ALL) || event.isShiftClick()) {
             return;
         }
-        final HumanEntity entity = event.getWhoClicked();
+        HumanEntity entity = event.getWhoClicked();
         if (!(entity instanceof Player) || !PS.get().hasPlotArea(entity.getWorld().getName())) {
             return;
         }
-        final Player player = (Player) entity;
-        final PlayerInventory inv = player.getInventory();
-        final int slot = inv.getHeldItemSlot();
+        Player player = (Player) entity;
+        PlayerInventory inv = player.getInventory();
+        int slot = inv.getHeldItemSlot();
         if ((slot != event.getSlot()) || (slot > 8) || !event.getEventName().equals("InventoryCreativeEvent")) {
             return;
         }
-        final ItemStack current = inv.getItemInHand();
-        final ItemStack newItem = event.getCursor();
-        final ItemMeta newMeta = newItem.getItemMeta();
-        final ItemMeta oldMeta = newItem.getItemMeta();
+        ItemStack current = inv.getItemInHand();
+        ItemStack newItem = event.getCursor();
+        ItemMeta newMeta = newItem.getItemMeta();
+        ItemMeta oldMeta = newItem.getItemMeta();
         String newLore = "";
         if (newMeta != null) {
-            final List<String> lore = newMeta.getLore();
+            List<String> lore = newMeta.getLore();
             if (lore != null) {
                 newLore = lore.toString();
             }
         }
         String oldLore = "";
         if (oldMeta != null) {
-            final List<String> lore = oldMeta.getLore();
+            List<String> lore = oldMeta.getLore();
             if (lore != null) {
                 oldLore = lore.toString();
             }
@@ -69,85 +68,81 @@ public class PlayerEvents_1_8 extends PlotListener implements Listener {
         if (!newLore.equals("[(+NBT)]") || (current.equals(newItem) && newLore.equals(oldLore))) {
             return;
         }
-        final HashSet<Byte> blocks = null;
-        final Block block = player.getTargetBlock(blocks, 7);
-        final BlockState state = block.getState();
+        HashSet<Byte> blocks = null;
+        Block block = player.getTargetBlock(blocks, 7);
+        BlockState state = block.getState();
         if (state == null) {
             return;
         }
         if (state.getType() != newItem.getType()) {
             return;
         }
-        final Location l = BukkitUtil.getLocation(state.getLocation());
+        Location l = BukkitUtil.getLocation(state.getLocation());
         PlotArea area = l.getPlotArea();
         if (area == null) {
             return;
         }
-        final Plot plot = area.getPlotAbs(l);
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        Plot plot = area.getPlotAbs(l);
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
         boolean cancelled = false;
         if (plot == null) {
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 cancelled = true;
             }
+        } else if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
+                cancelled = true;
+            }
         } else {
-            if (!plot.hasOwner()) {
-                if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
+            UUID uuid = pp.getUUID();
+            if (!plot.isAdded(uuid)) {
+                if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
                     cancelled = true;
-                }
-            } else {
-                final UUID uuid = pp.getUUID();
-                if (!plot.isAdded(uuid)) {
-                    if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
-                        cancelled = true;
-                    }
                 }
             }
         }
         if (cancelled) {
-            if ((current.getTypeId() == newItem.getTypeId()) && (current.getDurability() == newItem.getDurability())) {
-                event.setCursor(new ItemStack(newItem.getTypeId(), newItem.getAmount(), newItem.getDurability()));
+            if ((current.getType() == newItem.getType()) && (current.getDurability() == newItem.getDurability())) {
+                event.setCursor(new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
                 event.setCancelled(true);
                 return;
             }
-            event.setCursor(new ItemStack(newItem.getTypeId(), newItem.getAmount(), newItem.getDurability()));
+            event.setCursor(new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
         }
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onInteract(final PlayerInteractAtEntityEvent e) {
-        final Entity entity = e.getRightClicked();
+    public void onInteract(PlayerInteractAtEntityEvent e) {
+        Entity entity = e.getRightClicked();
         if (!(entity instanceof ArmorStand)) {
             return;
         }
-        final Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
-        final PlotArea area = l.getPlotArea();
+        Location l = BukkitUtil.getLocation(e.getRightClicked().getLocation());
+        PlotArea area = l.getPlotArea();
         if (area == null) {
             return;
         }
-        final Plot plot = area.getPlotAbs(l);
-        final PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
+        Plot plot = area.getPlotAbs(l);
+        PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
             }
+        } else if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
+                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
+                e.setCancelled(true);
+            }
         } else {
-            if (!plot.hasOwner()) {
-                if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
+            UUID uuid = pp.getUUID();
+            if (!plot.isAdded(uuid)) {
+                if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
                     e.setCancelled(true);
-                }
-            } else {
-                final UUID uuid = pp.getUUID();
-                if (!plot.isAdded(uuid)) {
-                    if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.interact.other");
-                        e.setCancelled(true);
-                    }
                 }
             }
         }

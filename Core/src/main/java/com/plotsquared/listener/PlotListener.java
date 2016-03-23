@@ -35,26 +35,23 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
-
-
- */
 public class PlotListener {
 
     public static boolean plotEntry(final PlotPlayer pp, final Plot plot) {
         if (plot.isDenied(pp.getUUID()) && !Permissions.hasPermission(pp, "plots.admin.entry.denied")) {
             return false;
         }
-        final Plot last = pp.getMeta("lastplot");
+        Plot last = pp.getMeta("lastplot");
         if ((last != null) && !last.getId().equals(plot.getId())) {
             plotExit(pp, last);
         }
@@ -64,17 +61,17 @@ public class PlotListener {
         pp.setMeta("lastplot", plot);
         EventUtil.manager.callEntry(pp, plot);
         if (plot.hasOwner()) {
-            final HashMap<String, Flag> flags = FlagManager.getPlotFlags(plot);
-            final int size = flags.size();
+            HashMap<String, Flag> flags = FlagManager.getPlotFlags(plot);
+            int size = flags.size();
             boolean titles = Settings.TITLES;
             final String greeting;
 
             if (size != 0) {
-                final Flag titleFlag = flags.get("titles");
+                Flag titleFlag = flags.get("titles");
                 if (titleFlag != null) {
                     titles = (Boolean) titleFlag.getValue();
                 }
-                final Flag greetingFlag = flags.get("greeting");
+                Flag greetingFlag = flags.get("greeting");
                 if (greetingFlag != null) {
                     greeting = (String) greetingFlag.getValue();
                     MainUtil.format(C.PREFIX_GREETING.s() + greeting, plot, pp, false, new RunnableVal<String>() {
@@ -86,51 +83,53 @@ public class PlotListener {
                 } else {
                     greeting = "";
                 }
-                final Flag enter = flags.get("notify-enter");
+                Flag enter = flags.get("notify-enter");
                 if (enter != null && (Boolean) enter.getValue()) {
                     if (!Permissions.hasPermission(pp, "plots.flag.notify-enter.bypass")) {
-                        for (final UUID uuid : plot.getOwners()) {
-                            final PlotPlayer owner = UUIDHandler.getPlayer(uuid);
-                            if ((owner != null) && !owner.getUUID().equals(pp.getUUID())) {
-                                MainUtil.sendMessage(owner, C.NOTIFY_ENTER.s().replace("%player", pp.getName()).replace("%plot", plot.getId().toString()));
+                        for (UUID uuid : plot.getOwners()) {
+                            PlotPlayer owner = UUIDHandler.getPlayer(uuid);
+                            if (owner != null && !owner.getUUID().equals(pp.getUUID())) {
+                                MainUtil.sendMessage(owner,
+                                        C.NOTIFY_ENTER.s().replace("%player", pp.getName()).replace("%plot", plot.getId().toString()));
                             }
                         }
                     }
                 }
-                final Flag gamemodeFlag = flags.get("gamemode");
+                Flag gamemodeFlag = flags.get("gamemode");
                 if (gamemodeFlag != null) {
-                    if (pp.getGamemode() != gamemodeFlag.getValue()) {
+                    if (pp.getGameMode() != gamemodeFlag.getValue()) {
                         if (!Permissions.hasPermission(pp, "plots.gamemode.bypass")) {
-                            pp.setGamemode((PlotGamemode) gamemodeFlag.getValue());
+                            pp.setGameMode((PlotGameMode) gamemodeFlag.getValue());
                         } else {
-                            MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.getValue()));
+                            MainUtil.sendMessage(pp,
+                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.getValue()));
                         }
                     }
                 }
-                final Flag flyFlag = flags.get("fly");
+                Flag flyFlag = flags.get("fly");
                 if (flyFlag != null) {
                     pp.setFlight((boolean) flyFlag.getValue());
                 }
-                final Flag timeFlag = flags.get("time");
+                Flag timeFlag = flags.get("time");
                 if (timeFlag != null) {
                     try {
-                        final long time = (long) timeFlag.getValue();
+                        long time = (long) timeFlag.getValue();
                         pp.setTime(time);
-                    } catch (final Exception e) {
+                    } catch (Exception e) {
                         FlagManager.removePlotFlag(plot, "time");
                     }
                 }
-                final Flag weatherFlag = flags.get("weather");
+                Flag weatherFlag = flags.get("weather");
                 if (weatherFlag != null) {
                     pp.setWeather((PlotWeather) weatherFlag.getValue());
                 }
 
-                final Flag musicFlag = flags.get("music");
+                Flag musicFlag = flags.get("music");
                 if (musicFlag != null) {
-                    final Integer id = (Integer) musicFlag.getValue();
+                    Integer id = (Integer) musicFlag.getValue();
                     if ((id >= 2256 && id <= 2267) || (id == 0)) {
-                        final Location loc = pp.getLocation();
-                        final Location lastLoc = pp.getMeta("music");
+                        Location loc = pp.getLocation();
+                        Location lastLoc = pp.getMeta("music");
                         if (lastLoc != null) {
                             pp.playMusic(lastLoc, 0);
                             if (id == 0) {
@@ -141,11 +140,12 @@ public class PlotListener {
                             try {
                                 pp.setMeta("music", loc);
                                 pp.playMusic(loc, id);
-                            } catch (final Exception e) {}
+                            } catch (Exception ignored) {
+                            }
                         }
                     }
                 } else {
-                    final Location lastLoc = pp.getMeta("music");
+                    Location lastLoc = pp.getMeta("music");
                     if (lastLoc != null) {
                         pp.deleteMeta("music");
                         pp.playMusic(lastLoc, 0);
@@ -158,21 +158,21 @@ public class PlotListener {
                 return true;
             }
             if (titles) {
-                if ((!C.TITLE_ENTERED_PLOT.s().isEmpty()) || (!C.TITLE_ENTERED_PLOT_SUB.s().isEmpty())) {
+                if (!C.TITLE_ENTERED_PLOT.s().isEmpty() || !C.TITLE_ENTERED_PLOT_SUB.s().isEmpty()) {
                     TaskManager.runTaskLaterAsync(new Runnable() {
                         @Override
                         public void run() {
-                            final Plot lastPlot = pp.getMeta("lastplot");
+                            Plot lastPlot = pp.getMeta("lastplot");
                             if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
-                                final Map<String, String> replacements = new HashMap<>();
+                                Map<String, String> replacements = new HashMap<>();
                                 replacements.put("%x%", lastPlot.getId().x + "");
                                 replacements.put("%z%", lastPlot.getId().y + "");
                                 replacements.put("%world%", plot.getArea().toString());
                                 replacements.put("%greeting%", greeting);
                                 replacements.put("%alias", plot.toString());
                                 replacements.put("%s", MainUtil.getName(plot.owner));
-                                final String main = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
-                                final String sub = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
+                                String main = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT.s(), replacements);
+                                String sub = StringMan.replaceFromMap(C.TITLE_ENTERED_PLOT_SUB.s(), replacements);
                                 AbstractTitle.sendTitle(pp, main, sub);
                             }
                         }
@@ -184,24 +184,25 @@ public class PlotListener {
         return true;
     }
 
-    public static boolean plotExit(final PlotPlayer pp, final Plot plot) {
+    public static boolean plotExit(final PlotPlayer pp, Plot plot) {
         pp.deleteMeta("lastplot");
         EventUtil.manager.callLeave(pp, plot);
         if (plot.hasOwner()) {
-            final PlotArea pw = plot.getArea();
+            PlotArea pw = plot.getArea();
             if (pw == null) {
                 return true;
             }
             if (FlagManager.getPlotFlagRaw(plot, "gamemode") != null) {
-                if (pp.getGamemode() != pw.GAMEMODE) {
+                if (pp.getGameMode() != pw.GAMEMODE) {
                     if (!Permissions.hasPermission(pp, "plots.gamemode.bypass")) {
-                        pp.setGamemode(pw.GAMEMODE);
+                        pp.setGameMode(pw.GAMEMODE);
                     } else {
-                        MainUtil.sendMessage(pp, StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.toString(), "{gamemode}", pw.GAMEMODE.name().toLowerCase()));
+                        MainUtil.sendMessage(pp, StringMan
+                                .replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.toString(), "{gamemode}", pw.GAMEMODE.name().toLowerCase()));
                     }
                 }
             }
-            final Flag farewell = FlagManager.getPlotFlagRaw(plot, "farewell");
+            Flag farewell = FlagManager.getPlotFlagRaw(plot, "farewell");
             if (farewell != null) {
                 MainUtil.format(C.PREFIX_FAREWELL.s() + farewell.getValueString(), plot, pp, false, new RunnableVal<String>() {
                     @Override
@@ -210,11 +211,11 @@ public class PlotListener {
                     }
                 });
             }
-            final Flag leave = FlagManager.getPlotFlagRaw(plot, "notify-leave");
-            if ((leave != null) && ((Boolean) leave.getValue())) {
+            Flag leave = FlagManager.getPlotFlagRaw(plot, "notify-leave");
+            if ((leave != null) && (Boolean) leave.getValue()) {
                 if (!Permissions.hasPermission(pp, "plots.flag.notify-enter.bypass")) {
-                    for (final UUID uuid : plot.getOwners()) {
-                        final PlotPlayer owner = UUIDHandler.getPlayer(uuid);
+                    for (UUID uuid : plot.getOwners()) {
+                        PlotPlayer owner = UUIDHandler.getPlayer(uuid);
                         if ((owner != null) && !owner.getUUID().equals(pp.getUUID())) {
                             MainUtil.sendMessage(pp, C.NOTIFY_LEAVE.s().replace("%player", pp.getName()).replace("%plot", plot.getId().toString()));
                         }
@@ -222,8 +223,8 @@ public class PlotListener {
                 }
             }
             if (FlagManager.getPlotFlagRaw(plot, "fly") != null) {
-                final PlotGamemode gamemode = pp.getGamemode();
-                if (gamemode == PlotGamemode.SURVIVAL || (gamemode == PlotGamemode.ADVENTURE)) {
+                PlotGameMode gamemode = pp.getGameMode();
+                if (gamemode == PlotGameMode.SURVIVAL || (gamemode == PlotGameMode.ADVENTURE)) {
                     pp.setFlight(false);
                 }
             }
@@ -233,7 +234,7 @@ public class PlotListener {
             if (FlagManager.getPlotFlagRaw(plot, "weather") != null) {
                 pp.setWeather(PlotWeather.RESET);
             }
-            final Location lastLoc = pp.getMeta("music");
+            Location lastLoc = pp.getMeta("music");
             if (lastLoc != null) {
                 pp.deleteMeta("music");
                 pp.playMusic(lastLoc, 0);

@@ -33,22 +33,24 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.HashSet;
 import java.util.UUID;
 
 @CommandDeclaration(command = "merge",
-aliases = "m",
-description = "Merge the plot you are standing on, with another plot",
-permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
-category = CommandCategory.SETTINGS,
-requiredType = RequiredType.NONE)
+        aliases = "m",
+        description = "Merge the plot you are standing on, with another plot",
+        permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE)
 public class Merge extends SubCommand {
-    public final static String[] values = new String[] { "north", "east", "south", "west", "auto" };
-    public final static String[] aliases = new String[] { "n", "e", "s", "w", "all" };
+
+    public final static String[] values = new String[]{"north", "east", "south", "west", "auto"};
+    public final static String[] aliases = new String[]{"n", "e", "s", "w", "all"};
 
     public static String direction(float yaw) {
         yaw = yaw / 90;
-        final int i = Math.round(yaw);
+        int i = Math.round(yaw);
         switch (i) {
             case -4:
             case 0:
@@ -69,8 +71,8 @@ public class Merge extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final Location loc = plr.getLocationFull();
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
+        Location loc = plr.getLocationFull();
         final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -84,8 +86,7 @@ public class Merge extends SubCommand {
             if (!Permissions.hasPermission(plr, "plots.admin.command.merge")) {
                 MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
                 return false;
-            }
-            else {
+            } else {
                 uuid = plot.owner;
             }
         }
@@ -97,26 +98,26 @@ public class Merge extends SubCommand {
         }
         final int size = plot.getConnectedPlots().size();
         final int maxSize = Permissions.hasPermissionRange(plr, "plots.merge", Settings.MAX_PLOTS);
-        if (size - 1> maxSize) {
+        if (size - 1 > maxSize) {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.merge." + (size + 1));
             return false;
         }
         int direction = -1;
         if (args.length == 0) {
-//            switch (direction(plr.getLocationFull().getYaw())) {
-//                case "NORTH":
-//                    direction = 0;
-//                    break;
-//                case "EAST":
-//                    direction = 1;
-//                    break;
-//                case "SOUTH":
-//                    direction = 2;
-//                    break;
-//                case "WEST":
-//                    direction = 3;
-//                    break;
-//            }
+            //            switch (direction(plr.getLocationFull().getYaw())) {
+            //                case "NORTH":
+            //                    direction = 0;
+            //                    break;
+            //                case "EAST":
+            //                    direction = 1;
+            //                    break;
+            //                case "SOUTH":
+            //                    direction = 2;
+            //                    break;
+            //                case "WEST":
+            //                    direction = 3;
+            //                    break;
+            //            }
         } else {
             if ("all".equalsIgnoreCase(args[0]) || "auto".equalsIgnoreCase(args[0])) {
                 boolean terrain = Settings.MERGE_REMOVES_ROADS;
@@ -184,7 +185,7 @@ public class Merge extends SubCommand {
                 public void run() {
                     MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
                     plot.autoMerge(dir, maxSize - size, owner, terrain);
-                    final PlotPlayer pp = UUIDHandler.getPlayer(plr.getUUID());
+                    PlotPlayer pp = UUIDHandler.getPlayer(plr.getUUID());
                     if (pp == null) {
                         sendMessage(accepter, C.MERGE_NOT_VALID);
                         return;

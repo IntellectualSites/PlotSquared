@@ -29,13 +29,13 @@ public class BukkitSetupUtils extends SetupUtils {
         if (!SetupUtils.generators.isEmpty()) {
             return;
         }
-        final String testWorld = "CheckingPlotSquaredGenerator";
-        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+        String testWorld = "CheckingPlotSquaredGenerator";
+        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             if (plugin.isEnabled()) {
-                final ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
+                ChunkGenerator generator = plugin.getDefaultWorldGenerator(testWorld, "");
                 if (generator != null) {
                     PS.get().removePlotAreas(testWorld);
-                    final String name = plugin.getDescription().getName();
+                    String name = plugin.getDescription().getName();
                     GeneratorWrapper<?> wrapped;
                     if (generator instanceof GeneratorWrapper<?>) {
                         wrapped = (GeneratorWrapper<?>) generator;
@@ -49,10 +49,10 @@ public class BukkitSetupUtils extends SetupUtils {
     }
 
     @Override
-    public String setupWorld(final SetupObject object) {
+    public String setupWorld(SetupObject object) {
         SetupUtils.manager.updateGenerators();
         ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
-        final String world = object.world;
+        String world = object.world;
         int type = object.type;
         String worldPath = "worlds." + object.world;
         if (!PS.get().config.contains(worldPath)) {
@@ -69,7 +69,7 @@ public class BukkitSetupUtils extends SetupUtils {
                     }
                     ConfigurationSection areaSection = worldSection.getConfigurationSection(areaPath);
                     HashMap<String, Object> options = new HashMap<>();
-                    for (final ConfigurationNode step : steps) {
+                    for (ConfigurationNode step : steps) {
                         options.put(step.getConstant(), step.getValue());
                     }
                     options.put("generator.type", object.type);
@@ -98,7 +98,7 @@ public class BukkitSetupUtils extends SetupUtils {
                 break;
             }
             case 1: {
-                for (final ConfigurationNode step : steps) {
+                for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
                 PS.get().config.set("worlds." + world + "." + "generator.type", object.type);
@@ -114,7 +114,7 @@ public class BukkitSetupUtils extends SetupUtils {
                 break;
             }
             case 0: {
-                for (final ConfigurationNode step : steps) {
+                for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
                 break;
@@ -122,7 +122,7 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         try {
             PS.get().config.save(PS.get().configFile);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         if (object.setupGenerator != null) {
@@ -142,7 +142,7 @@ public class BukkitSetupUtils extends SetupUtils {
                     return world;
                 }
             }
-            final WorldCreator wc = new WorldCreator(object.world);
+            WorldCreator wc = new WorldCreator(object.world);
             wc.generator(object.setupGenerator);
             wc.environment(Environment.NORMAL);
             Bukkit.createWorld(wc);
@@ -166,34 +166,34 @@ public class BukkitSetupUtils extends SetupUtils {
         return object.world;
     }
 
-    public void setGenerator(final String world, final String generator) {
-        if ((Bukkit.getWorlds().isEmpty()) || !Bukkit.getWorlds().get(0).getName().equals(world)) {
+    public void setGenerator(String world, String generator) {
+        if (Bukkit.getWorlds().isEmpty() || !Bukkit.getWorlds().get(0).getName().equals(world)) {
             return;
         }
-        final File file = new File("bukkit.yml").getAbsoluteFile();
-        final YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+        File file = new File("bukkit.yml").getAbsoluteFile();
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
         yml.set("worlds." + world + ".generator", generator);
         try {
             yml.save(file);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public String getGenerator(final PlotArea plotworld) {
+    public String getGenerator(PlotArea plotworld) {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
-        final World world = Bukkit.getWorld(plotworld.worldname);
+        World world = Bukkit.getWorld(plotworld.worldname);
         if (world == null) {
             return null;
         }
-        final ChunkGenerator generator = world.getGenerator();
+        ChunkGenerator generator = world.getGenerator();
         if (!(generator instanceof BukkitPlotGenerator)) {
             return null;
         }
-        for (final Entry<String, GeneratorWrapper<?>> entry : generators.entrySet()) {
+        for (Entry<String, GeneratorWrapper<?>> entry : generators.entrySet()) {
             GeneratorWrapper<?> current = entry.getValue();
             if (current.equals(generator)) {
                 return entry.getKey();

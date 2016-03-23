@@ -59,10 +59,10 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     public BukkitPlotGenerator(IndependentPlotGenerator generator) {
         this.plotGenerator = generator;
         this.platformGenerator = this;
-        populators.add(new BlockPopulator() {
+        this.populators.add(new BlockPopulator() {
             @Override
             public void populate(World world, Random r, Chunk c) {
-                GenChunk result = (GenChunk) chunkSetter;
+                GenChunk result = (GenChunk) BukkitPlotGenerator.this.chunkSetter;
                 if (result.result_data != null) {
                     for (int i = 0; i < result.result_data.length; i++) {
                         byte[] section = result.result_data[i];
@@ -79,7 +79,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 }
             }
         });
-        chunkSetter = new GenChunk(null, null);
+        this.chunkSetter = new GenChunk(null, null);
         this.full = true;
         MainUtil.initCache();
     }
@@ -90,8 +90,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         }
         this.full = false;
         PS.debug("BukkitPlotGenerator does not fully support: " + cg);
-        platformGenerator = cg;
-        plotGenerator = new IndependentPlotGenerator() {
+        this.platformGenerator = cg;
+        this.plotGenerator = new IndependentPlotGenerator() {
             @Override
             public void processSetup(SetupObject setup) {}
             
@@ -114,7 +114,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             }
             
             @Override
-            public void generateChunk(final PlotChunk<?> result, final PlotArea settings, final PseudoRandom random) {
+            public void generateChunk(final PlotChunk<?> result, PlotArea settings, PseudoRandom random) {
                 World w = BukkitUtil.getWorld(world);
                 Random r = new Random(result.getChunkWrapper().hashCode());
                 BiomeGrid grid = new BiomeGrid() {
@@ -134,8 +134,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                     if (data != null) {
                         return;
                     }
+                } catch (Throwable e) {
+                    //ignored
                 }
-                catch (Throwable e) {}
                 // Populator spillage
                 short[][] tmp = cg.generateExtBlockSections(w, r, result.getX(), result.getZ(), grid);
                 if (tmp != null) {
@@ -166,9 +167,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 }
             }
         };
-        chunkSetter = new GenChunk(null, SetQueue.IMP.new ChunkWrapper(world, 0, 0));
+        this.chunkSetter = new GenChunk(null, SetQueue.IMP.new ChunkWrapper(world, 0, 0));
         if (cg != null) {
-            populators.addAll(cg.getDefaultPopulators(BukkitUtil.getWorld(world)));
+            this.populators.addAll(cg.getDefaultPopulators(BukkitUtil.getWorld(world)));
         }
         MainUtil.initCache();
     }
@@ -180,24 +181,24 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     
     @Override
     public boolean isFull() {
-        return full;
+        return this.full;
     }
     
     @Override
     public IndependentPlotGenerator getPlotGenerator() {
-        return plotGenerator;
+        return this.plotGenerator;
     }
     
     @Override
     public ChunkGenerator getPlatformGenerator() {
-        return platformGenerator;
+        return this.platformGenerator;
     }
 
     @Override
-    public List<BlockPopulator> getDefaultPopulators(final World world) {
+    public List<BlockPopulator> getDefaultPopulators(World world) {
         try {
-            if (!loaded) {
-                final String name = world.getName();
+            if (!this.loaded) {
+                String name = world.getName();
                 PS.get().loadWorld(name, this);
                 Set<PlotArea> areas = PS.get().getPlotAreas(name);
                 if (!areas.isEmpty()) {
@@ -218,17 +219,17 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                         world.setWaterAnimalSpawnLimit(-1);
                     }
                 }
-                loaded = true;
+                this.loaded = true;
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return populators;
+        return this.populators;
     }
     
     @Override
     public ChunkData generateChunkData(World world, Random random, int cx, int cz, BiomeGrid grid) {
-        GenChunk result = (GenChunk) chunkSetter;
+        GenChunk result = (GenChunk) this.chunkSetter;
         // Set the chunk location
         result.setChunkWrapper(SetQueue.IMP.new ChunkWrapper(world.getName(), cx, cz));
         // Set the result data
@@ -239,8 +240,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         // Catch any exceptions (as exceptions usually thrown 
         try {
             // Fill the result data if necessary
-            if (platformGenerator != this) {
-                return platformGenerator.generateChunkData(world, random, cx, cz, grid);
+            if (this.platformGenerator != this) {
+                return this.platformGenerator.generateChunkData(world, random, cx, cz, grid);
             } else {
                 generate(world, cx, cz, result);
             }
@@ -253,10 +254,10 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     
     public void generate(World world, int cx, int cz, GenChunk result) {
         // Load if improperly loaded
-        if (!loaded) {
-            final String name = world.getName();
+        if (!this.loaded) {
+            String name = world.getName();
             PS.get().loadWorld(name, this);
-            loaded = true;
+            this.loaded = true;
         }
         // Set random seed
         this.random.state = cx << 16 | cz & 0xFFFF;
@@ -265,13 +266,13 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             return;
         }
         PlotArea area = PS.get().getPlotArea(world.getName(), null);
-        plotGenerator.generateChunk(chunkSetter, area, this.random);
+        this.plotGenerator.generateChunk(this.chunkSetter, area, this.random);
         ChunkManager.postProcessChunk(result);
     }
     
     @Override
-    public short[][] generateExtBlockSections(final World world, final Random r, final int cx, final int cz, final BiomeGrid grid) {
-        GenChunk result = (GenChunk) chunkSetter;
+    public short[][] generateExtBlockSections(World world, Random r, int cx, int cz, BiomeGrid grid) {
+        GenChunk result = (GenChunk) this.chunkSetter;
         // Set the chunk location
         result.setChunkWrapper(SetQueue.IMP.new ChunkWrapper(world.getName(), cx, cz));
         // Set the result data
@@ -282,8 +283,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         // Catch any exceptions (as exceptions usually thrown 
         try {
             // Fill the result data
-            if (platformGenerator != this) {
-                return platformGenerator.generateExtBlockSections(world, r, cx, cz, grid);
+            if (this.platformGenerator != this) {
+                return this.platformGenerator.generateExtBlockSections(world, r, cx, cz, grid);
             } else {
                 generate(world, cx, cz, result);
             }
@@ -295,19 +296,27 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     }
     
     /**
-     * Allow spawning everywhere
+     * Allow spawning everywhere.
+     * @param world Ignored
+     * @param x Ignored
+     * @param z Ignored
+     * @return always true
      */
     @Override
-    public boolean canSpawn(final World world, final int x, final int z) {
+    public boolean canSpawn(World world, int x, int z) {
         return true;
     }
     
     @Override
     public String toString() {
-        if (platformGenerator == this) {
-            return "" + plotGenerator;
+        if (this.platformGenerator == this) {
+            return "" + this.plotGenerator;
         }
-        return platformGenerator == null ? "null" : platformGenerator.getClass().getName();
+        if (this.platformGenerator == null) {
+            return "null";
+        } else {
+            return this.platformGenerator.getClass().getName();
+        }
     }
     
     @Override

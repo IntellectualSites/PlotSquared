@@ -29,17 +29,17 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(usage = "/plot swap <X;Z>",
-command = "swap",
-description = "Swap two plots",
-aliases = { "switch" },
-category = CommandCategory.CLAIMING,
-requiredType = RequiredType.NONE)
+        command = "swap",
+        description = "Swap two plots",
+        aliases = {"switch"},
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE)
 public class Swap extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final Location loc = plr.getLocation();
-        final Plot plot1 = loc.getPlotAbs();
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
+        Location loc = plr.getLocation();
+        Plot plot1 = loc.getPlotAbs();
         if (plot1 == null) {
             return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -51,8 +51,8 @@ public class Swap extends SubCommand {
             C.COMMAND_SYNTAX.send(plr, getUsage());
             return false;
         }
-        final Plot plot2 = MainUtil.getPlotFromString(plr, args[0], true);
-        if ((plot2 == null)) {
+        Plot plot2 = MainUtil.getPlotFromString(plr, args[0], true);
+        if (plot2 == null) {
             return false;
         }
         if (plot1.equals(plot2)) {

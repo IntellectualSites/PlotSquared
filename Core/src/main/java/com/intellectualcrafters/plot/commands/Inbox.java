@@ -35,26 +35,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 @CommandDeclaration(
-command = "inbox",
-description = "Review the comments for a plot",
-usage = "/plot inbox [inbox] [delete <index>|clear|page]",
-permission = "plots.inbox",
-category = CommandCategory.CHAT,
-requiredType = RequiredType.NONE)
+        command = "inbox",
+        description = "Review the comments for a plot",
+        usage = "/plot inbox [inbox] [delete <index>|clear|page]",
+        permission = "plots.inbox",
+        category = CommandCategory.CHAT,
+        requiredType = RequiredType.NONE)
 public class Inbox extends SubCommand {
-    
-    public void displayComments(final PlotPlayer player, final List<PlotComment> oldComments, int page) {
+
+    public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
         if ((oldComments == null) || oldComments.isEmpty()) {
             MainUtil.sendMessage(player, C.INBOX_EMPTY);
             return;
         }
-        final PlotComment[] comments = oldComments.toArray(new PlotComment[oldComments.size()]);
+        PlotComment[] comments = oldComments.toArray(new PlotComment[oldComments.size()]);
         if (page < 0) {
             page = 0;
         }
         // Get the total pages
         // int totalPages = ((int) Math.ceil(12 *
-        final int totalPages = (int) Math.ceil(comments.length / 12);
+        int totalPages = (int) Math.ceil(comments.length / 12);
         if (page > totalPages) {
             page = totalPages;
         }
@@ -63,8 +63,10 @@ public class Inbox extends SubCommand {
         if (max > comments.length) {
             max = comments.length;
         }
-        final StringBuilder string = new StringBuilder();
-        string.append(StringMan.replaceAll(C.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur", page + 1, "%max", totalPages + 1, "%word", "all") + "\n");
+        StringBuilder string = new StringBuilder();
+        string.append(StringMan
+                .replaceAll(C.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur", page + 1, "%max", totalPages + 1, "%word", "all")
+                + "\n");
 
         // This might work xD
         for (int x = page * 12; x < max; x++) {
@@ -79,10 +81,10 @@ public class Inbox extends SubCommand {
         }
         MainUtil.sendMessage(player, string.toString());
     }
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer player, final String[] args) {
-        
+    public boolean onCommand(final PlotPlayer player, String[] args) {
+
         final Plot plot = player.getCurrentPlot();
         if (args.length == 0) {
             sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
@@ -94,7 +96,7 @@ public class Inbox extends SubCommand {
                             if (value != null) {
                                 int total = 0;
                                 int unread = 0;
-                                for (final PlotComment comment : value) {
+                                for (PlotComment comment : value) {
                                     total++;
                                     if (comment.timestamp > CommentManager.getTimestamp(player, inbox.toString())) {
                                         unread++;
@@ -144,11 +146,11 @@ public class Inbox extends SubCommand {
                             sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
                             return false;
                         }
-                    } catch (final NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox " + inbox.toString() + " delete <index>");
                         return false;
                     }
-                    
+
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
                         @Override
                         public void run(List<PlotComment> value) {
@@ -156,7 +158,7 @@ public class Inbox extends SubCommand {
                                 sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
                                 return;
                             }
-                            final PlotComment comment = value.get(index - 1);
+                            PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
                             plot.getSettings().removeComment(comment);
                             MainUtil.sendMessage(player, C.COMMENT_REMOVED, comment.comment);
@@ -172,7 +174,7 @@ public class Inbox extends SubCommand {
                         sendMessage(player, C.NO_PERM_INBOX_MODIFY);
                     }
                     inbox.clearInbox(plot);
-                    final ArrayList<PlotComment> comments = plot.getSettings().getComments(inbox.toString());
+                    ArrayList<PlotComment> comments = plot.getSettings().getComments(inbox.toString());
                     if (comments != null) {
                         plot.getSettings().removeComments(comments);
                     }
@@ -182,7 +184,7 @@ public class Inbox extends SubCommand {
                 default: {
                     try {
                         page = Integer.parseInt(args[1]);
-                    } catch (final NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
                         return false;
                     }

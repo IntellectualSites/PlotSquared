@@ -35,22 +35,22 @@ import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.Set;
 
 @CommandDeclaration(
-command = "buy",
-aliases = { "b" },
-description = "Buy the plot you are standing on",
-usage = "/plot buy",
-permission = "plots.buy",
-category = CommandCategory.CLAIMING,
-requiredType = RequiredType.NONE)
+        command = "buy",
+        aliases = {"b"},
+        description = "Buy the plot you are standing on",
+        usage = "/plot buy",
+        permission = "plots.buy",
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE)
 public class Buy extends SubCommand {
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(PlotPlayer plr, String... args) {
         if (EconHandler.manager == null) {
             return sendMessage(plr, C.ECON_DISABLED);
         }
-        final Location loc = plr.getLocation();
-        final String world = loc.getWorld();
+        Location loc = plr.getLocation();
+        String world = loc.getWorld();
         if (!PS.get().hasPlotArea(world)) {
             return sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
@@ -63,7 +63,7 @@ public class Buy extends SubCommand {
                     return false;
                 }
                 plots = plot.getConnectedPlots();
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 return sendMessage(plr, C.NOT_VALID_PLOT_ID);
             }
         } else {
@@ -76,11 +76,11 @@ public class Buy extends SubCommand {
         if (!plot.hasOwner()) {
             return sendMessage(plr, C.PLOT_UNOWNED);
         }
-        final int currentPlots = plr.getPlotCount() + plots.size();
+        int currentPlots = plr.getPlotCount() + plots.size();
         if (currentPlots > plr.getAllowedPlots()) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
-        final Flag flag = FlagManager.getPlotFlagRaw(plot, "price");
+        Flag flag = FlagManager.getPlotFlagRaw(plot, "price");
         if (flag == null) {
             return sendMessage(plr, C.NOT_FOR_SALE);
         }
@@ -95,13 +95,13 @@ public class Buy extends SubCommand {
             EconHandler.manager.withdrawMoney(plr, price);
             sendMessage(plr, C.REMOVED_BALANCE, price + "");
             EconHandler.manager.depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.owner), price);
-            final PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
+            PlotPlayer owner = UUIDHandler.getPlayer(plot.owner);
             if (owner != null) {
                 sendMessage(plr, C.PLOT_SOLD, plot.getId() + "", plr.getName(), price + "");
             }
             FlagManager.removePlotFlag(plot, "price");
         }
-        for (final Plot current : plots) {
+        for (Plot current : plots) {
             plot.setOwner(plr.getUUID());
         }
         MainUtil.sendMessage(plr, C.CLAIMED);

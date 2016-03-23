@@ -22,8 +22,8 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
     static final BiMap<ChatColor, String> stylesToNames;
 
     static {
-        final ImmutableBiMap.Builder<ChatColor, String> builder = ImmutableBiMap.builder();
-        for (final ChatColor style : ChatColor.values()) {
+        ImmutableBiMap.Builder<ChatColor, String> builder = ImmutableBiMap.builder();
+        for (ChatColor style : ChatColor.values()) {
             if (!style.isFormat()) {
                 continue;
             }
@@ -57,18 +57,18 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
     TextualComponent text = null;
     String insertionData = null;
     ArrayList<JsonRepresentedObject> translationReplacements = new ArrayList<>();
-    
-    MessagePart(final TextualComponent text) {
+
+    MessagePart(TextualComponent text) {
         this.text = text;
     }
-    
+
     MessagePart() {
-        text = null;
+        this.text = null;
     }
 
     @SuppressWarnings("unchecked")
-    public static MessagePart deserialize(final Map<String, Object> serialized) {
-        final MessagePart part = new MessagePart((TextualComponent) serialized.get("text"));
+    public static MessagePart deserialize(Map<String, Object> serialized) {
+        MessagePart part = new MessagePart((TextualComponent) serialized.get("text"));
         part.styles = (ArrayList<ChatColor>) serialized.get("styles");
         part.color = ChatColor.getByChar(serialized.get("color").toString());
         part.hoverActionName = (String) serialized.get("hoverActionName");
@@ -81,70 +81,71 @@ final class MessagePart implements JsonRepresentedObject, ConfigurationSerializa
     }
 
     boolean hasText() {
-        return text != null;
+        return this.text != null;
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public MessagePart clone() throws CloneNotSupportedException {
-        final MessagePart obj = (MessagePart) super.clone();
-        obj.styles = (ArrayList<ChatColor>) styles.clone();
-        if (hoverActionData instanceof JsonString) {
-            obj.hoverActionData = new JsonString(((JsonString) hoverActionData).getValue());
-        } else if (hoverActionData instanceof FancyMessage) {
-            obj.hoverActionData = ((FancyMessage) hoverActionData).clone();
+        MessagePart obj = (MessagePart) super.clone();
+        obj.styles = (ArrayList<ChatColor>) this.styles.clone();
+        if (this.hoverActionData instanceof JsonString) {
+            obj.hoverActionData = new JsonString(((JsonString) this.hoverActionData).getValue());
+        } else if (this.hoverActionData instanceof FancyMessage) {
+            obj.hoverActionData = ((FancyMessage) this.hoverActionData).clone();
         }
-        obj.translationReplacements = (ArrayList<JsonRepresentedObject>) translationReplacements.clone();
+        obj.translationReplacements = (ArrayList<JsonRepresentedObject>) this.translationReplacements.clone();
         return obj;
 
     }
-    
+
     @Override
-    public void writeJson(final JsonWriter json) {
+    public void writeJson(JsonWriter json) {
         try {
             json.beginObject();
-            text.writeJson(json);
-            json.name("color").value(color.name().toLowerCase());
-            for (final ChatColor style : styles) {
+            this.text.writeJson(json);
+            json.name("color").value(this.color.name().toLowerCase());
+            for (ChatColor style : this.styles) {
                 json.name(stylesToNames.get(style)).value(true);
             }
-            if ((clickActionName != null) && (clickActionData != null)) {
-                json.name("clickEvent").beginObject().name("action").value(clickActionName).name("value").value(clickActionData).endObject();
+            if ((this.clickActionName != null) && (this.clickActionData != null)) {
+                json.name("clickEvent").beginObject().name("action").value(this.clickActionName).name("value").value(this.clickActionData)
+                        .endObject();
             }
-            if ((hoverActionName != null) && (hoverActionData != null)) {
-                json.name("hoverEvent").beginObject().name("action").value(hoverActionName).name("value");
-                hoverActionData.writeJson(json);
+            if ((this.hoverActionName != null) && (this.hoverActionData != null)) {
+                json.name("hoverEvent").beginObject().name("action").value(this.hoverActionName).name("value");
+                this.hoverActionData.writeJson(json);
                 json.endObject();
             }
-            if (insertionData != null) {
-                json.name("insertion").value(insertionData);
+            if (this.insertionData != null) {
+                json.name("insertion").value(this.insertionData);
             }
-            if ((!translationReplacements.isEmpty()) && (text != null) && TextualComponent.isTranslatableText(text)) {
+            if (!this.translationReplacements.isEmpty() && (this.text != null) && TextualComponent.isTranslatableText(this.text)) {
                 json.name("with").beginArray();
-                for (final JsonRepresentedObject obj : translationReplacements) {
+                for (JsonRepresentedObject obj : this.translationReplacements) {
                     obj.writeJson(json);
                 }
                 json.endArray();
             }
             json.endObject();
-        } catch (final IOException e) {
+        } catch (IOException e) {
             Bukkit.getLogger().log(Level.WARNING, "A problem occurred during writing of JSON string", e);
         }
     }
-    
+
     @Override
     public Map<String, Object> serialize() {
-        final HashMap<String, Object> map = new HashMap<>();
-        map.put("text", text);
-        map.put("styles", styles);
-        map.put("color", color.getChar());
-        map.put("hoverActionName", hoverActionName);
-        map.put("hoverActionData", hoverActionData);
-        map.put("clickActionName", clickActionName);
-        map.put("clickActionData", clickActionData);
-        map.put("insertion", insertionData);
-        map.put("translationReplacements", translationReplacements);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("text", this.text);
+        map.put("styles", this.styles);
+        map.put("color", this.color.getChar());
+        map.put("hoverActionName", this.hoverActionName);
+        map.put("hoverActionData", this.hoverActionData);
+        map.put("clickActionName", this.clickActionName);
+        map.put("clickActionData", this.clickActionData);
+        map.put("insertion", this.insertionData);
+        map.put("translationReplacements", this.translationReplacements);
         return map;
     }
-    
+
 }

@@ -20,10 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
@@ -42,23 +38,28 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+
 @CommandDeclaration(
-command = "set",
-description = "Set a plot value",
-aliases = { "s" },
-usage = "/plot set <biome|alias|home|flag> <value...>",
-permission = "plots.set",
-category = CommandCategory.APPEARANCE,
-requiredType = RequiredType.NONE)
+        command = "set",
+        description = "Set a plot value",
+        aliases = {"s"},
+        usage = "/plot set <biome|alias|home|flag> <value...>",
+        permission = "plots.set",
+        category = CommandCategory.APPEARANCE,
+        requiredType = RequiredType.NONE)
 public class Set extends SubCommand {
-    public final static String[] values = new String[] { "biome", "alias", "home", "flag" };
-    public final static String[] aliases = new String[] { "b", "w", "wf", "f", "a", "h", "fl" };
-    
+
+    public final static String[] values = new String[]{"biome", "alias", "home", "flag"};
+    public final static String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
+
     private final SetCommand component;
 
     public Set() {
-        component = new SetCommand() {
-            
+        this.component = new SetCommand() {
+
             @Override
             public String getCommand() {
                 return "set.component";
@@ -66,15 +67,15 @@ public class Set extends SubCommand {
 
             @Override
             public boolean set(PlotPlayer plr, final Plot plot, String value) {
-                final PlotArea plotworld = plr.getLocation().getPlotArea();
-                final PlotManager manager = plr.getLocation().getPlotManager();
-                final String[] components = manager.getPlotComponents(plotworld, plot.getId());
-                final boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(plr.getUUID());
-                
+                PlotArea plotworld = plr.getLocation().getPlotArea();
+                PlotManager manager = plr.getLocation().getPlotManager();
+                String[] components = manager.getPlotComponents(plotworld, plot.getId());
+                boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(plr.getUUID());
+
                 String[] args = value.split(" ");
                 String material = StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
 
-                for (final String component : components) {
+                for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
                         if (!Permissions.hasPermission(plr, "plots.set." + component)) {
                             MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + component);
@@ -86,10 +87,10 @@ public class Set extends SubCommand {
                                 MainUtil.sendMessage(plr, C.NEED_BLOCK);
                                 return true;
                             }
-                            final String[] split = material.split(",");
+                            String[] split = material.split(",");
                             blocks = Configuration.BLOCKLIST.parseString(material);
                             for (int i = 0; i < blocks.length; i++) {
-                                final PlotBlock block = blocks[i];
+                                PlotBlock block = blocks[i];
                                 if (block == null) {
                                     MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, split[i]);
                                     String name;
@@ -98,7 +99,7 @@ public class Set extends SubCommand {
                                     } else {
                                         name = split[i];
                                     }
-                                    final StringComparison<PlotBlock>.ComparisonResult match = WorldUtil.IMP.getClosestBlock(name);
+                                    StringComparison<PlotBlock>.ComparisonResult match = WorldUtil.IMP.getClosestBlock(name);
                                     if (match != null) {
                                         name = WorldUtil.IMP.getClosestMatchingName(match.best);
                                         if (name != null) {
@@ -112,14 +113,14 @@ public class Set extends SubCommand {
                                 }
                             }
                             if (!allowUnsafe) {
-                                for (final PlotBlock block : blocks) {
+                                for (PlotBlock block : blocks) {
                                     if (!WorldUtil.IMP.isBlockSolid(block)) {
                                         MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
                                         return false;
                                     }
                                 }
                             }
-                        } catch (final Exception e2) {
+                        } catch (Exception e2) {
                             MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, material);
                             return false;
                         }
@@ -147,7 +148,7 @@ public class Set extends SubCommand {
     }
 
     public boolean noArgs(PlotPlayer plr) {
-        final ArrayList<String> newValues = new ArrayList<>();
+        ArrayList<String> newValues = new ArrayList<>();
         newValues.addAll(Arrays.asList("biome", "alias", "home", "flag"));
         Plot plot = plr.getCurrentPlot();
         if (plot != null) {
@@ -158,7 +159,7 @@ public class Set extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(PlotPlayer plr, String... args) {
         if (args.length == 0) {
             return noArgs(plr);
         }
@@ -175,18 +176,18 @@ public class Set extends SubCommand {
         // components
         HashSet<String> components = new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
-            return component.onCommand(plr, Arrays.copyOfRange(args, 0, args.length));
+            return this.component.onCommand(plr, Arrays.copyOfRange(args, 0, args.length));
         }
         // flag
         {
             AbstractFlag af;
             try {
                 af = new AbstractFlag(args[0].toLowerCase());
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 af = new AbstractFlag("");
             }
             if (FlagManager.getFlags().contains(af)) {
-                final StringBuilder a = new StringBuilder();
+                StringBuilder a = new StringBuilder();
                 if (args.length > 1) {
                     for (int x = 1; x < args.length; x++) {
                         a.append(" ").append(args[x]);

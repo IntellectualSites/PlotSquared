@@ -19,11 +19,11 @@ import java.util.List;
 
 public class BukkitInventoryUtil extends InventoryUtil {
 
-    public static ItemStack getItem(final PlotItemStack item) {
+    public static ItemStack getItem(PlotItemStack item) {
         if (item == null) {
             return null;
         }
-        final ItemStack stack = new ItemStack(item.id, item.amount, item.data);
+        ItemStack stack = new ItemStack(item.id, item.amount, item.data);
         ItemMeta meta = null;
         if (item.name != null) {
             meta = stack.getItemMeta();
@@ -33,8 +33,8 @@ public class BukkitInventoryUtil extends InventoryUtil {
             if (meta == null) {
                 meta = stack.getItemMeta();
             }
-            final List<String> lore = new ArrayList<>();
-            for (final String entry : item.lore) {
+            List<String> lore = new ArrayList<>();
+            for (String entry : item.lore) {
                 lore.add(ChatColor.translateAlternateColorCodes('&', entry));
             }
             meta.setLore(lore);
@@ -46,12 +46,12 @@ public class BukkitInventoryUtil extends InventoryUtil {
     }
 
     @Override
-    public void open(final PlotInventory inv) {
-        final BukkitPlayer bp = (BukkitPlayer) inv.player;
-        final Inventory inventory = Bukkit.createInventory(null, inv.size * 9, inv.getTitle());
-        final PlotItemStack[] items = inv.getItems();
+    public void open(PlotInventory inv) {
+        BukkitPlayer bp = (BukkitPlayer) inv.player;
+        Inventory inventory = Bukkit.createInventory(null, inv.size * 9, inv.getTitle());
+        PlotItemStack[] items = inv.getItems();
         for (int i = 0; i < inv.size * 9; i++) {
-            final PlotItemStack item = items[i];
+            PlotItemStack item = items[i];
             if (item != null) {
                 inventory.setItem(i, getItem(item));
             }
@@ -61,19 +61,19 @@ public class BukkitInventoryUtil extends InventoryUtil {
     }
 
     @Override
-    public void close(final PlotInventory inv) {
+    public void close(PlotInventory inv) {
         if (!inv.isOpen()) {
             return;
         }
         inv.player.deleteMeta("inventory");
-        final BukkitPlayer bp = (BukkitPlayer) inv.player;
+        BukkitPlayer bp = (BukkitPlayer) inv.player;
         bp.player.closeInventory();
     }
 
     @Override
-    public void setItem(final PlotInventory inv, final int index, final PlotItemStack item) {
-        final BukkitPlayer bp = (BukkitPlayer) inv.player;
-        final InventoryView opened = bp.player.getOpenInventory();
+    public void setItem(PlotInventory inv, int index, PlotItemStack item) {
+        BukkitPlayer bp = (BukkitPlayer) inv.player;
+        InventoryView opened = bp.player.getOpenInventory();
         if (!inv.isOpen()) {
             return;
         }
@@ -81,22 +81,22 @@ public class BukkitInventoryUtil extends InventoryUtil {
         bp.player.updateInventory();
     }
 
-    public PlotItemStack getItem(final ItemStack item) {
+    public PlotItemStack getItem(ItemStack item) {
         if (item == null) {
             return null;
         }
-        final int id = item.getTypeId();
-        final short data = item.getDurability();
-        final int amount = item.getAmount();
+        int id = item.getTypeId();
+        short data = item.getDurability();
+        int amount = item.getAmount();
         String name = null;
         String[] lore = null;
         if (item.hasItemMeta()) {
-            final ItemMeta meta = item.getItemMeta();
+            ItemMeta meta = item.getItemMeta();
             if (meta.hasDisplayName()) {
                 name = meta.getDisplayName();
             }
             if (meta.hasLore()) {
-                final List<String> itemLore = meta.getLore();
+                List<String> itemLore = meta.getLore();
                 lore = itemLore.toArray(new String[itemLore.size()]);
             }
         }
@@ -104,10 +104,10 @@ public class BukkitInventoryUtil extends InventoryUtil {
     }
 
     @Override
-    public PlotItemStack[] getItems(final PlotPlayer player) {
-        final BukkitPlayer bp = (BukkitPlayer) player;
-        final PlayerInventory inv = bp.player.getInventory();
-        final PlotItemStack[] items = new PlotItemStack[36];
+    public PlotItemStack[] getItems(PlotPlayer player) {
+        BukkitPlayer bp = (BukkitPlayer) player;
+        PlayerInventory inv = bp.player.getInventory();
+        PlotItemStack[] items = new PlotItemStack[36];
         for (int i = 0; i < 36; i++) {
             items[i] = getItem(inv.getItem(i));
         }
@@ -115,12 +115,12 @@ public class BukkitInventoryUtil extends InventoryUtil {
     }
 
     @Override
-    public boolean isOpen(final PlotInventory inv) {
+    public boolean isOpen(PlotInventory inv) {
         if (!inv.isOpen()) {
             return false;
         }
-        final BukkitPlayer bp = (BukkitPlayer) inv.player;
-        final InventoryView opened = bp.player.getOpenInventory();
+        BukkitPlayer bp = (BukkitPlayer) inv.player;
+        InventoryView opened = bp.player.getOpenInventory();
         return inv.isOpen() && opened.getType() == InventoryType.CRAFTING && opened.getTitle() == null;
     }
 }

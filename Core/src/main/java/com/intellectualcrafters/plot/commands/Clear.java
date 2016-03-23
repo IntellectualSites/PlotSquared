@@ -32,19 +32,20 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.Set;
 
 @CommandDeclaration(command = "clear",
-description = "Clear a plot",
-permission = "plots.clear",
-category = CommandCategory.APPEARANCE,
-usage = "/plot clear [id]",
-aliases = "reset")
+        description = "Clear a plot",
+        permission = "plots.clear",
+        category = CommandCategory.APPEARANCE,
+        usage = "/plot clear [id]",
+        aliases = "reset")
 public class Clear extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
-        final Location loc = plr.getLocation();
+    public boolean onCommand(final PlotPlayer plr, String... args) {
+        Location loc = plr.getLocation();
         final Plot plot;
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("mine")) {
@@ -81,15 +82,16 @@ public class Clear extends SubCommand {
             return false;
         }
         if ((FlagManager.getPlotFlagRaw(plot, "done") != null)
-        && (!Permissions.hasPermission(plr, "plots.continue") || (Settings.DONE_COUNTS_TOWARDS_LIMIT && (plr.getAllowedPlots() >= plr.getPlotCount())))) {
+                && (!Permissions.hasPermission(plr, "plots.continue") || (Settings.DONE_COUNTS_TOWARDS_LIMIT && (plr.getAllowedPlots() >= plr
+                .getPlotCount())))) {
             MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
             return false;
         }
-        final Runnable runnable = new Runnable() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 final long start = System.currentTimeMillis();
-                final boolean result = plot.clear(true, false, new Runnable() {
+                boolean result = plot.clear(true, false, new Runnable() {
                     @Override
                     public void run() {
                         plot.unlink();
@@ -111,13 +113,12 @@ public class Clear extends SubCommand {
                 });
                 if (!result) {
                     MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
-                }
-                else {
+                } else {
                     plot.addRunning();
                 }
             }
         };
-        if (Settings.CONFIRM_CLEAR && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
+        if (Settings.CONFIRM_CLEAR && !Permissions.hasPermission(plr, "plots.confirm.bypass")) {
             CmdConfirm.addPending(plr, "/plot clear " + plot.getId(), runnable);
         } else {
             TaskManager.runTask(runnable);

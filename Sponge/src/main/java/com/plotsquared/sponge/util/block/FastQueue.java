@@ -1,6 +1,5 @@
 package com.plotsquared.sponge.util.block;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -18,24 +17,29 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class FastQueue extends SlowQueue {
 
-    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     public final SendChunk chunkSender;
+    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
     public FastQueue() throws NoSuchMethodException, RuntimeException {
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-                if (toUpdate.isEmpty()) {
+                if (FastQueue.this.toUpdate.isEmpty()) {
                     return;
                 }
                 int count = 0;
-                final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-                final Iterator<Entry<ChunkWrapper, Chunk>> i = toUpdate.entrySet().iterator();
+                ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+                Iterator<Entry<ChunkWrapper, Chunk>> i = FastQueue.this.toUpdate.entrySet().iterator();
                 while (i.hasNext() && (count < 128)) {
                     chunks.add(i.next().getValue());
                     i.remove();
@@ -47,31 +51,31 @@ public class FastQueue extends SlowQueue {
                 update(chunks);
             }
         }, 1);
-        chunkSender = new SendChunk();
+        this.chunkSender = new SendChunk();
         MainUtil.initCache();
     }
 
-    public void update(final Collection<Chunk> chunks) {
+    public void update(Collection<Chunk> chunks) {
         if (chunks.isEmpty()) {
             return;
         }
         if (!MainUtil.canSendChunk) {
-            for (final Chunk chunk : chunks) {
+            for (Chunk chunk : chunks) {
                 chunk.unloadChunk();
                 chunk.loadChunk(false);
             }
             return;
         }
         try {
-            chunkSender.sendChunk(chunks);
-        } catch (final Throwable e) {
+            this.chunkSender.sendChunk(chunks);
+        } catch (Throwable e) {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
         }
     }
 
     /**
-     * This should be overridden by any specialized queues
+     * This should be overridden by any specialized queues.
      * @param pc
      */
     @Override
@@ -80,12 +84,12 @@ public class FastQueue extends SlowQueue {
         Chunk spongeChunk = pc.getChunk();
         net.minecraft.world.World nmsWorld = (net.minecraft.world.World) spongeChunk.getWorld();
         ChunkWrapper wrapper = pc.getChunkWrapper();
-        if (!toUpdate.containsKey(wrapper)) {
-            toUpdate.put(wrapper, spongeChunk);
+        if (!this.toUpdate.containsKey(wrapper)) {
+            this.toUpdate.put(wrapper, spongeChunk);
         }
         spongeChunk.loadChunk(true);
         try {
-            final boolean flag = !nmsWorld.provider.getHasNoSky();
+            boolean flag = !nmsWorld.provider.getHasNoSky();
             // Sections
             net.minecraft.world.chunk.Chunk nmsChunk = (net.minecraft.world.chunk.Chunk) spongeChunk;
             ExtendedBlockStorage[] sections = nmsChunk.getBlockStorageArray();
@@ -97,12 +101,12 @@ public class FastQueue extends SlowQueue {
             while (iter.hasNext()) {
                 Entry<BlockPos,TileEntity> tile = iter.next();
                 BlockPos pos = tile.getKey();
-                final int lx = pos.getX() & 15;
-                final int ly = pos.getY();
-                final int lz = pos.getZ() & 15;
-                final int j = MainUtil.CACHE_I[ly][lx][lz];
-                final int k = MainUtil.CACHE_J[ly][lx][lz];
-                final char[] array = fs.getIdArray(j);
+                int lx = pos.getX() & 15;
+                int ly = pos.getY();
+                int lz = pos.getZ() & 15;
+                int j = MainUtil.CACHE_I[ly][lx][lz];
+                int k = MainUtil.CACHE_J[ly][lx][lz];
+                char[] array = fs.getIdArray(j);
                 if (array == null) {
                     continue;
                 }
@@ -121,7 +125,7 @@ public class FastQueue extends SlowQueue {
                 if (fs.getCount(j) == 0) {
                     continue;
                 }
-                final char[] newArray = fs.getIdArray(j);
+                char[] newArray = fs.getIdArray(j);
                 if (newArray == null) {
                     continue;
                 }
@@ -132,10 +136,10 @@ public class FastQueue extends SlowQueue {
                     sections[j] = section;
                     continue;
                 }
-                final char[] currentArray = section.getData();
+                char[] currentArray = section.getData();
                 boolean fill = true;
                 for (int k = 0; k < newArray.length; k++) {
-                    final char n = newArray[k];
+                    char n = newArray[k];
                     switch (n) {
                         case 0:
                             fill = false;
@@ -176,7 +180,7 @@ public class FastQueue extends SlowQueue {
     }
 
     /**
-     * This should be overridden by any specialized queues
+     * This should be overridden by any specialized queues.
      * @param wrap
      */
     @Override
@@ -185,15 +189,15 @@ public class FastQueue extends SlowQueue {
     }
 
     /**
-     * This should be overridden by any specialized queues
+     * This should be overridden by any specialized queues.
      * @param pc
      */
     @Override
     public boolean fixLighting(PlotChunk<Chunk> pc, boolean fixAll) {
         try {
             FastChunk bc = (FastChunk) pc;
-            final Chunk spongeChunk = bc.getChunk();
-            final net.minecraft.world.chunk.Chunk nmsChunk = (net.minecraft.world.chunk.Chunk) spongeChunk;
+            Chunk spongeChunk = bc.getChunk();
+            net.minecraft.world.chunk.Chunk nmsChunk = (net.minecraft.world.chunk.Chunk) spongeChunk;
             if (!spongeChunk.isLoaded()) {
                 if (!spongeChunk.loadChunk(false)) {
                     return false;
@@ -204,14 +208,14 @@ public class FastQueue extends SlowQueue {
             }
             // TODO load adjaced chunks
             nmsChunk.generateSkylightMap();
-            if ((bc.getTotalRelight() == 0 && !fixAll)) {
+            if (bc.getTotalRelight() == 0 && !fixAll) {
                 return true;
             }
             ExtendedBlockStorage[] sections = nmsChunk.getBlockStorageArray();
             net.minecraft.world.World nmsWorld = nmsChunk.getWorld();
 
-            final int X = pc.getX() << 4;
-            final int Z = pc.getZ() << 4;
+            int X = pc.getX() << 4;
+            int Z = pc.getZ() << 4;
 
 
             for (int j = 0; j < sections.length; j++) {
@@ -222,14 +226,14 @@ public class FastQueue extends SlowQueue {
                 if ((bc.getRelight(j) == 0 && !fixAll) || bc.getCount(j) == 0 || (bc.getCount(j) >= 4096 && bc.getAir(j) == 0)) {
                     continue;
                 }
-                final char[] array = section.getData();
+                char[] array = section.getData();
                 int l = PseudoRandom.random.random(2);
                 for (int k = 0; k < array.length; k++) {
-                    final int i = array[k];
+                    int i = array[k];
                     if (i < 16) {
                         continue;
                     }
-                    final short id = (short) (i >> 4);
+                    short id = (short) (i >> 4);
                     switch (id) { // Lighting
                         default:
                             if (!fixAll) {
@@ -254,9 +258,9 @@ public class FastQueue extends SlowQueue {
                         case 130:
                         case 138:
                         case 169:
-                            final int x = MainUtil.x_loc[j][k];
-                            final int y = MainUtil.y_loc[j][k];
-                            final int z = MainUtil.z_loc[j][k];
+                            int x = MainUtil.x_loc[j][k];
+                            int y = MainUtil.y_loc[j][k];
+                            int z = MainUtil.z_loc[j][k];
                             if (isSurrounded(sections, x, y, z)) {
                                 continue;
                             }
@@ -266,7 +270,7 @@ public class FastQueue extends SlowQueue {
                 }
             }
             return true;
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return false;
@@ -302,17 +306,17 @@ public class FastQueue extends SlowQueue {
     }
 
     /**
-     * This should be overridden by any specialized queues
+     * This should be overridden by any specialized queues.
      * @param world
-     * @param locs
+     * @param locations
      */
     @Override
-    public void sendChunk(String world, Collection<ChunkLoc> locs) {
+    public void sendChunk(String world, Collection<ChunkLoc> locations) {
         World spongeWorld = SpongeUtil.getWorld(world);
-        for (ChunkLoc loc : locs) {
+        for (ChunkLoc loc : locations) {
             ChunkWrapper wrapper = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
-            if (!toUpdate.containsKey(wrapper)) {
-                toUpdate.put(wrapper, spongeWorld.getChunk(loc.x, 0, loc.z).get());
+            if (!this.toUpdate.containsKey(wrapper)) {
+                this.toUpdate.put(wrapper, spongeWorld.getChunk(loc.x, 0, loc.z).get());
             }
         }
     }

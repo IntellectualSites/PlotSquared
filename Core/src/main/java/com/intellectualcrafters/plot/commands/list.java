@@ -40,6 +40,7 @@ import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,16 +50,16 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "list",
-aliases = { "l", "find", "search" },
-description = "List plots",
-permission = "plots.list",
-category = CommandCategory.INFO,
-usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
+        command = "list",
+        aliases = {"l", "find", "search"},
+        description = "List plots",
+        permission = "plots.list",
+        category = CommandCategory.INFO,
+        usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
 public class List extends SubCommand {
 
-    private String[] getArgumentList(final PlotPlayer player) {
-        final java.util.List<String> args = new ArrayList<>();
+    private String[] getArgumentList(PlotPlayer player) {
+        java.util.List<String> args = new ArrayList<>();
         if ((EconHandler.manager != null) && Permissions.hasPermission(player, "plots.list.forsale")) {
             args.add("forsale");
         }
@@ -101,12 +102,12 @@ public class List extends SubCommand {
         return args.toArray(new String[args.size()]);
     }
 
-    public void noArgs(final PlotPlayer plr) {
+    public void noArgs(PlotPlayer plr) {
         MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + Arrays.toString(getArgumentList(plr)));
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         if (args.length < 1) {
             noArgs(plr);
             return false;
@@ -119,16 +120,16 @@ public class List extends SubCommand {
                 if (page < 0) {
                     page = 0;
                 }
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 page = -1;
             }
         }
 
         java.util.List<Plot> plots = null;
 
-        final String world = plr.getLocation().getWorld();
-        final PlotArea area = plr.getApplicablePlotArea();
-        final String arg = args[0].toLowerCase();
+        String world = plr.getLocation().getWorld();
+        PlotArea area = plr.getApplicablePlotArea();
+        String arg = args[0].toLowerCase();
         boolean sort = true;
         switch (arg) {
             case "mine": {
@@ -146,7 +147,7 @@ public class List extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>();
-                for (final Plot plot : PS.get().getPlots()) {
+                for (Plot plot : PS.get().getPlots()) {
                     if (plot.getTrusted().contains(plr.getUUID()) || plot.getMembers().contains(plr.getUUID())) {
                         plots.add(plot);
                     }
@@ -199,8 +200,8 @@ public class List extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>();
-                for (final Plot plot : PS.get().getPlots()) {
-                    final Flag flag = plot.getFlags().get("done");
+                for (Plot plot : PS.get().getPlots()) {
+                    Flag flag = plot.getFlags().get("done");
                     if (flag == null) {
                         continue;
                     }
@@ -208,9 +209,9 @@ public class List extends SubCommand {
                 }
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
-                    public int compare(final Plot a, final Plot b) {
-                        final String va = a.getFlags().get("done").getValueString();
-                        final String vb = b.getFlags().get("done").getValueString();
+                    public int compare(Plot a, Plot b) {
+                        String va = a.getFlags().get("done").getValueString();
+                        String vb = b.getFlags().get("done").getValueString();
                         if (MathMan.isInteger(va)) {
                             if (MathMan.isInteger(vb)) {
                                 return Integer.parseInt(vb) - Integer.parseInt(va);
@@ -231,13 +232,13 @@ public class List extends SubCommand {
                 plots = new ArrayList<>(PS.get().getPlots());
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
-                    public int compare(final Plot p1, final Plot p2) {
+                    public int compare(Plot p1, Plot p2) {
                         double v1 = 0;
-                        final int p1s = p1.getSettings().getRatings().size();
-                        final int p2s = p2.getRatings().size();
+                        int p1s = p1.getSettings().getRatings().size();
+                        int p2s = p2.getRatings().size();
                         if (!p1.getSettings().getRatings().isEmpty()) {
-                            for (final Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
-                                final double av = entry.getValue().getAverageRating();
+                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
+                                double av = entry.getValue().getAverageRating();
                                 v1 += av * av;
                             }
                             v1 /= p1s;
@@ -245,8 +246,8 @@ public class List extends SubCommand {
                         }
                         double v2 = 0;
                         if (!p2.getSettings().getRatings().isEmpty()) {
-                            for (final Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
-                                final double av = entry.getValue().getAverageRating();
+                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                                double av = entry.getValue().getAverageRating();
                                 v2 += av * av;
                             }
                             v2 /= p2s;
@@ -270,8 +271,8 @@ public class List extends SubCommand {
                     break;
                 }
                 plots = new ArrayList<>();
-                for (final Plot plot : PS.get().getPlots()) {
-                    final Flag price = FlagManager.getPlotFlagRaw(plot, "price");
+                for (Plot plot : PS.get().getPlots()) {
+                    Flag price = FlagManager.getPlotFlagRaw(plot, "price");
                     if (price != null) {
                         plots.add(plot);
                     }
@@ -284,7 +285,7 @@ public class List extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>();
-                for (final Plot plot : PS.get().getPlots()) {
+                for (Plot plot : PS.get().getPlots()) {
                     if (plot.owner == null) {
                         plots.add(plot);
                     }
@@ -297,7 +298,7 @@ public class List extends SubCommand {
                     return false;
                 }
                 plots = new ArrayList<>();
-                for (final Plot plot : PS.get().getPlots()) {
+                for (Plot plot : PS.get().getPlots()) {
                     if (plot.owner == null) {
                         continue;
                     }
@@ -338,7 +339,8 @@ public class List extends SubCommand {
                 if (uuid == null) {
                     try {
                         uuid = UUID.fromString(args[0]);
-                    } catch (final Exception e) {}
+                    } catch (Exception e) {
+                    }
                 }
                 if (uuid != null) {
                     if (!Permissions.hasPermission(plr, "plots.list.player")) {
@@ -365,7 +367,8 @@ public class List extends SubCommand {
         return true;
     }
 
-    public void displayPlots(final PlotPlayer player, java.util.List<Plot> plots, final int pageSize, int page, final PlotArea area, final String[] args, final boolean sort) {
+    public void displayPlots(final PlotPlayer player, java.util.List<Plot> plots, int pageSize, int page, PlotArea area,
+            String[] args, boolean sort) {
         // Header
         Iterator<Plot> iter = plots.iterator();
         while (iter.hasNext()) {
@@ -391,23 +394,29 @@ public class List extends SubCommand {
                 } else {
                     color = "$1";
                 }
-                final PlotMessage trusted = new PlotMessage().text(C.color(C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted())))).color("$1");
-                final PlotMessage members = new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers())))).color("$1");
+                PlotMessage trusted =
+                        new PlotMessage().text(C.color(C.PLOT_INFO_TRUSTED.s().replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted()))))
+                                .color("$1");
+                PlotMessage members =
+                        new PlotMessage().text(C.color(C.PLOT_INFO_MEMBERS.s().replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers()))))
+                                .color("$1");
                 String strFlags = StringMan.join(plot.getFlags().values(), ",");
                 if (strFlags.isEmpty()) {
                     strFlags = C.NONE.s();
                 }
-                final PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");
-                message.text("[").color("$3").text(i + "").command("/plot visit " + plot.getArea() + ";" + plot.getId()).tooltip("/plot visit " + plot.getArea() + ";" + plot.getId()).color("$1")
-                .text("]")
-                .color("$3").text(" " + plot.toString()).tooltip(trusted, members, flags).command("/plot info " + plot.getArea() + ";" + plot.getId()).color(color).text(" - ").color("$2");
+                PlotMessage flags = new PlotMessage().text(C.color(C.PLOT_INFO_FLAGS.s().replaceAll("%flags%", strFlags))).color("$1");
+                message.text("[").color("$3").text(i + "").command("/plot visit " + plot.getArea() + ";" + plot.getId())
+                        .tooltip("/plot visit " + plot.getArea() + ";" + plot.getId()).color("$1")
+                        .text("]")
+                        .color("$3").text(" " + plot.toString()).tooltip(trusted, members, flags)
+                        .command("/plot info " + plot.getArea() + ";" + plot.getId()).color(color).text(" - ").color("$2");
                 String prefix = "";
-                for (final UUID uuid : plot.getOwners()) {
-                    final String name = UUIDHandler.getName(uuid);
+                for (UUID uuid : plot.getOwners()) {
+                    String name = UUIDHandler.getName(uuid);
                     if (name == null) {
                         message = message.text(prefix).color("$4").text("unknown").color("$2").tooltip(uuid.toString()).suggest(uuid.toString());
                     } else {
-                        final PlotPlayer pp = UUIDHandler.getPlayer(uuid);
+                        PlotPlayer pp = UUIDHandler.getPlayer(uuid);
                         if (pp != null) {
                             message = message.text(prefix).color("$4").text(name).color("$1").tooltip(new PlotMessage("Online").color("$4"));
                         } else {

@@ -11,7 +11,8 @@ import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
-import com.sk89q.worldedit.extent.*;
+import com.sk89q.worldedit.extent.AbstractDelegateExtent;
+import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
 
@@ -19,6 +20,7 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 
 public class ProcessedWEExtent extends AbstractDelegateExtent {
+
     private final HashSet<RegionWrapper> mask;
     private final String world;
     private final int max;
@@ -28,8 +30,8 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     boolean Eblocked = false;
     private int count;
     private Extent parent;
-    
-    public ProcessedWEExtent(final String world, final HashSet<RegionWrapper> mask, int max, final Extent child, final Extent parent) {
+
+    public ProcessedWEExtent(String world, HashSet<RegionWrapper> mask, int max, Extent child, Extent parent) {
         super(child);
         this.mask = mask;
         this.world = world;
@@ -37,13 +39,13 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             max = Integer.MAX_VALUE;
         }
         this.max = max;
-        count = 0;
+        this.count = 0;
         this.parent = parent;
     }
-    
+
     @Override
-    public boolean setBlock(final Vector location, final BaseBlock block) throws WorldEditException {
-        final int id = block.getType();
+    public boolean setBlock(Vector location, BaseBlock block) throws WorldEditException {
+        int id = block.getType();
         switch (id) {
             case 54:
             case 130:
@@ -80,25 +82,25 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             case 33:
             case 151:
             case 178: {
-                if (BSblocked) {
+                if (this.BSblocked) {
                     return false;
                 }
-                BScount++;
-                if (BScount > Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES) {
-                    BSblocked = true;
-                    PS.debug("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
+                this.BScount++;
+                if (this.BScount > Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES) {
+                    this.BSblocked = true;
+                    PS.debug("&cPlotSquared detected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
                 }
-                if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
-                    if (count++ > max) {
-                        if (parent != null) {
+                if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+                    if (this.count++ > this.max) {
+                        if (this.parent != null) {
                             try {
-                                final Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
+                                Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
                                 field.setAccessible(true);
-                                field.set(parent, new com.sk89q.worldedit.extent.NullExtent());
-                            } catch (final Exception e) {
+                                field.set(this.parent, new com.sk89q.worldedit.extent.NullExtent());
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            parent = null;
+                            this.parent = null;
                         }
                         return false;
                     }
@@ -107,20 +109,20 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 break;
             }
             default: {
-                final int x = location.getBlockX();
-                final int y = location.getBlockY();
-                final int z = location.getBlockZ();
-                if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
-                    if (count++ > max) {
-                        if (parent != null) {
+                int x = location.getBlockX();
+                int y = location.getBlockY();
+                int z = location.getBlockZ();
+                if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+                    if (this.count++ > this.max) {
+                        if (this.parent != null) {
                             try {
-                                final Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
+                                Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
                                 field.setAccessible(true);
-                                field.set(parent, new com.sk89q.worldedit.extent.NullExtent());
-                            } catch (final Exception e) {
+                                field.set(this.parent, new com.sk89q.worldedit.extent.NullExtent());
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            parent = null;
+                            this.parent = null;
                         }
                         return false;
                     }
@@ -208,7 +210,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         case 191:
                         case 192: {
                             if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
-                                SetQueue.IMP.setBlock(world, x, y, z, id);
+                                SetQueue.IMP.setBlock(this.world, x, y, z, id);
                             } else {
                                 super.setBlock(location, block);
                             }
@@ -216,7 +218,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         }
                         default: {
                             if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
-                                SetQueue.IMP.setBlock(world, x, y, z, new PlotBlock((short) id, (byte) block.getData()));
+                                SetQueue.IMP.setBlock(this.world, x, y, z, new PlotBlock((short) id, (byte) block.getData()));
                             } else {
                                 super.setBlock(location, block);
                             }
@@ -226,32 +228,29 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                     return true;
                 }
             }
-            
+
         }
         return false;
     }
-    
+
     @Override
-    public Entity createEntity(final Location location, final BaseEntity entity) {
-        if (Eblocked) {
+    public Entity createEntity(Location location, BaseEntity entity) {
+        if (this.Eblocked) {
             return null;
         }
-        Ecount++;
-        if (Ecount > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
-            Eblocked = true;
-            PS.debug("&cPlotSquared detected unsafe WorldEdit: " + (location.getBlockX()) + "," + (location.getBlockZ()));
+        this.Ecount++;
+        if (this.Ecount > Settings.CHUNK_PROCESSOR_MAX_ENTITIES) {
+            this.Eblocked = true;
+            PS.debug("&cPlotSquared detected unsafe WorldEdit: " + location.getBlockX() + "," + location.getBlockZ());
         }
-        if (WEManager.maskContains(mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+        if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
             return super.createEntity(location, entity);
         }
         return null;
     }
-    
+
     @Override
-    public boolean setBiome(final Vector2D position, final BaseBiome biome) {
-        if (WEManager.maskContains(mask, position.getBlockX(), position.getBlockZ())) {
-            return super.setBiome(position, biome);
-        }
-        return false;
+    public boolean setBiome(Vector2D position, BaseBiome biome) {
+        return WEManager.maskContains(this.mask, position.getBlockX(), position.getBlockZ()) && super.setBiome(position, biome);
     }
 }

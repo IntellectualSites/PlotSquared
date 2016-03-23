@@ -15,12 +15,12 @@ import java.util.HashMap;
 public class Permissions {
     
     /**
-     * Check if a player has a permission (C class helps keep track of permissions)
+     * Check if a player has a permission (C class helps keep track of permissions).
      * @param player
      * @param c
      * @return
      */
-    public static boolean hasPermission(final PlotPlayer player, final C c) {
+    public static boolean hasPermission(PlotPlayer player, C c) {
         return hasPermission(player, c.s());
     }
     
@@ -30,7 +30,7 @@ public class Permissions {
      * @param perm
      * @return
      */
-    public static boolean hasPermission(final PlotPlayer player, final String perm) {
+    public static boolean hasPermission(PlotPlayer player, String perm) {
         if (!Settings.PERMISSION_CACHING) {
             return hasPermission((CommandCaller) player, perm);
         }
@@ -50,21 +50,21 @@ public class Permissions {
     }
     
     /**
-     * Check if a CommandCaller (PlotPlayer implements CommandCaller) has a permission
+     * Check if a CommandCaller (PlotPlayer implements CommandCaller) has a permission.
      * @param player
-     * @param perm
+     * @param permission
      * @return
      */
-    public static boolean hasPermission(final CommandCaller player, String perm) {
-        if (player.hasPermission(perm) || player.hasPermission(C.PERMISSION_ADMIN.s())) {
+    public static boolean hasPermission(CommandCaller player, String permission) {
+        if (player.hasPermission(permission) || player.hasPermission(C.PERMISSION_ADMIN.s())) {
             return true;
         }
-        perm = perm.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
-        final String[] nodes = perm.split("\\.");
-        final StringBuilder n = new StringBuilder();
+        permission = permission.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
+        String[] nodes = permission.split("\\.");
+        StringBuilder n = new StringBuilder();
         for (int i = 0; i <= (nodes.length - 1); i++) {
             n.append(nodes[i] + ".");
-            if (!perm.equals(n + C.PERMISSION_STAR.s())) {
+            if (!permission.equals(n + C.PERMISSION_STAR.s())) {
                 if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
                     return true;
                 }
@@ -74,16 +74,16 @@ public class Permissions {
     }
     
     /**
-     * Check if a PlotPlayer has a permission, and optionally send the no perm message if applicable.
+     * Check if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
      * @param player
-     * @param perm
+     * @param permission
      * @param notify
      * @return 
      */
-    public static boolean hasPermission(final PlotPlayer player, final String perm, final boolean notify) {
-        if (!hasPermission(player, perm)) {
+    public static boolean hasPermission(PlotPlayer player, String permission, boolean notify) {
+        if (!hasPermission(player, permission)) {
             if (notify) {
-                MainUtil.sendMessage(player, C.NO_PERMISSION_EVENT, perm);
+                MainUtil.sendMessage(player, C.NO_PERMISSION_EVENT, permission);
             }
             return false;
         }
@@ -99,14 +99,14 @@ public class Permissions {
      * @param range The range to check
      * @return The highest permission they have within that range
      */
-    public static int hasPermissionRange(final PlotPlayer player, final String stub, final int range) {
+    public static int hasPermissionRange(PlotPlayer player, String stub, int range) {
         if (player.hasPermission(C.PERMISSION_ADMIN.s())) {
             return Integer.MAX_VALUE;
         }
-        final String[] nodes = stub.split("\\.");
-        final StringBuilder n = new StringBuilder();
+        String[] nodes = stub.split("\\.");
+        StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
-            n.append(nodes[i] + ".");
+            n.append(nodes[i]).append(".");
             if (!stub.equals(n + C.PERMISSION_STAR.s())) {
                 if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
                     return Integer.MAX_VALUE;

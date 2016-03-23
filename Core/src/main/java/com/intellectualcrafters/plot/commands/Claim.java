@@ -32,24 +32,25 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "claim",
-aliases = "c",
-description = "Claim the current plot you're standing on",
-category = CommandCategory.CLAIMING,
-requiredType = RequiredType.PLAYER,
-permission = "plots.claim", usage = "/plot claim")
+        aliases = "c",
+        description = "Claim the current plot you're standing on",
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.PLAYER,
+        permission = "plots.claim", usage = "/plot claim")
 public class Claim extends SubCommand {
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(PlotPlayer plr, String... args) {
         String schematic = "";
         if (args.length >= 1) {
             schematic = args[0];
         }
-        final Location loc = plr.getLocation();
-        final Plot plot = loc.getPlotAbs();
+        Location loc = plr.getLocation();
+        Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return sendMessage(plr, C.NOT_IN_PLOT);
         }
-        final int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(loc.getWorld());
+        int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(loc.getWorld());
         int grants = 0;
         if (currentPlots >= plr.getAllowedPlots()) {
             if (plr.hasPersistentMeta("grantedPlots")) {
@@ -65,9 +66,9 @@ public class Claim extends SubCommand {
         if (!plot.canClaim(plr)) {
             return sendMessage(plr, C.PLOT_IS_CLAIMED);
         }
-        final PlotArea world = plot.getArea();
+        PlotArea world = plot.getArea();
         if ((EconHandler.manager != null) && world.USE_ECONOMY) {
-            final double cost = world.PRICES.get("claim");
+            double cost = world.PRICES.get("claim");
             if (cost > 0d) {
                 if (EconHandler.manager.getMoney(plr) < cost) {
                     return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);

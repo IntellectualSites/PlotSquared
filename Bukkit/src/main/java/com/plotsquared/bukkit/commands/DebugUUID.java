@@ -42,6 +42,7 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -55,20 +56,20 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "uuidconvert",
-permission = "plots.admin",
-description = "Debug UUID conversion",
-usage = "/plot uuidconvert <lower|offline|online>",
-requiredType = RequiredType.CONSOLE,
-category = CommandCategory.DEBUG)
+        command = "uuidconvert",
+        permission = "plots.admin",
+        description = "Debug UUID conversion",
+        usage = "/plot uuidconvert <lower|offline|online>",
+        requiredType = RequiredType.CONSOLE,
+        category = CommandCategory.DEBUG)
 public class DebugUUID extends SubCommand {
 
     public DebugUUID() {
-        requiredArguments = new Argument[] { Argument.String };
+        this.requiredArguments = new Argument[]{Argument.String};
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer player, final String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         final UUIDWrapper currentUUIDWrapper = UUIDHandler.getUUIDWrapper();
         final UUIDWrapper newWrapper;
 
@@ -84,7 +85,7 @@ public class DebugUUID extends SubCommand {
                 break;
             default:
                 try {
-                    final Class<?> clazz = Class.forName(args[0]);
+                    Class<?> clazz = Class.forName(args[0]);
                     newWrapper = (UUIDWrapper) clazz.newInstance();
                 } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert <lower|offline|online>");
@@ -121,38 +122,39 @@ public class DebugUUID extends SubCommand {
 
         MainUtil.sendMessage(player, "&7 - Collecting playerdata");
 
-        final HashSet<String> worlds = new HashSet<>();
+        HashSet<String> worlds = new HashSet<>();
         worlds.add(WorldUtil.IMP.getMainWorld());
         worlds.add("world");
-        final HashSet<UUID> uuids = new HashSet<>();
-        final HashSet<String> names = new HashSet<>();
-        for (final String worldname : worlds) {
-            final File playerdataFolder = new File(worldname + File.separator + "playerdata");
+        HashSet<UUID> uuids = new HashSet<>();
+        HashSet<String> names = new HashSet<>();
+        for (String worldname : worlds) {
+            File playerdataFolder = new File(worldname + File.separator + "playerdata");
             String[] dat = playerdataFolder.list(new FilenameFilter() {
                 @Override
-                public boolean accept(final File f, final String s) {
-                    return s.endsWith(".dat");
-                }
-            });
-            if (dat != null)
-                for (final String current : dat) {
-                    final String s = current.replaceAll(".dat$", "");
-                    try {
-                        final UUID uuid = UUID.fromString(s);
-                        uuids.add(uuid);
-                    } catch (final Exception e) {
-                        MainUtil.sendMessage(player, C.PREFIX + "Invalid playerdata: " + current);
-                    }
-                }
-            final File playersFolder = new File(worldname + File.separator + "players");
-            dat = playersFolder.list(new FilenameFilter() {
-                @Override
-                public boolean accept(final File f, final String s) {
+                public boolean accept(File f, String s) {
                     return s.endsWith(".dat");
                 }
             });
             if (dat != null) {
-                for (final String current : dat) {
+                for (String current : dat) {
+                    String s = current.replaceAll(".dat$", "");
+                    try {
+                        UUID uuid = UUID.fromString(s);
+                        uuids.add(uuid);
+                    } catch (Exception e) {
+                        MainUtil.sendMessage(player, C.PREFIX + "Invalid playerdata: " + current);
+                    }
+                }
+            }
+            File playersFolder = new File(worldname + File.separator + "players");
+            dat = playersFolder.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File f, String s) {
+                    return s.endsWith(".dat");
+                }
+            });
+            if (dat != null) {
+                for (String current : dat) {
                     names.add(current.replaceAll(".dat$", ""));
                 }
             }
@@ -160,22 +162,22 @@ public class DebugUUID extends SubCommand {
 
         MainUtil.sendMessage(player, "&7 - Populating map");
         UUID uuid2;
-        final UUIDWrapper wrapper = new DefaultUUIDWrapper();
+        UUIDWrapper wrapper = new DefaultUUIDWrapper();
         for (UUID uuid : uuids) {
             try {
-                final OfflinePlotPlayer op = wrapper.getOfflinePlayer(uuid);
+                OfflinePlotPlayer op = wrapper.getOfflinePlayer(uuid);
                 uuid = currentUUIDWrapper.getUUID(op);
                 uuid2 = newWrapper.getUUID(op);
                 if (!uuid.equals(uuid2) && !uCMap.containsKey(uuid) && !uCReverse.containsKey(uuid2)) {
                     uCMap.put(uuid, uuid2);
                     uCReverse.put(uuid2, uuid);
                 }
-            } catch (final Throwable e) {
+            } catch (Throwable e) {
                 MainUtil.sendMessage(player, C.PREFIX + "&6Invalid playerdata: " + uuid.toString() + ".dat");
             }
         }
-        for (final String name : names) {
-            final UUID uuid = currentUUIDWrapper.getUUID(name);
+        for (String name : names) {
+            UUID uuid = currentUUIDWrapper.getUUID(name);
             uuid2 = newWrapper.getUUID(name);
             if (!uuid.equals(uuid2)) {
                 uCMap.put(uuid, uuid2);
@@ -184,11 +186,11 @@ public class DebugUUID extends SubCommand {
         }
         if (uCMap.isEmpty()) {
             MainUtil.sendMessage(player, "&c - Error! Attempting to repopulate");
-            for (final OfflinePlotPlayer op : currentUUIDWrapper.getOfflinePlayers()) {
+            for (OfflinePlotPlayer op : currentUUIDWrapper.getOfflinePlayers()) {
                 if (op.getLastPlayed() != 0) {
                     //                    String name = op.getName();
                     //                    StringWrapper wrap = new StringWrapper(name);
-                    final UUID uuid = currentUUIDWrapper.getUUID(op);
+                    UUID uuid = currentUUIDWrapper.getUUID(op);
                     uuid2 = newWrapper.getUUID(op);
                     if (!uuid.equals(uuid2)) {
                         uCMap.put(uuid, uuid2);
@@ -208,8 +210,8 @@ public class DebugUUID extends SubCommand {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                for (final Entry<UUID, UUID> entry : uCMap.entrySet()) {
-                    final String name = UUIDHandler.getName(entry.getKey());
+                for (Entry<UUID, UUID> entry : uCMap.entrySet()) {
+                    String name = UUIDHandler.getName(entry.getKey());
                     if (name != null) {
                         UUIDHandler.add(new StringWrapper(name), entry.getValue());
                     }
@@ -217,10 +219,10 @@ public class DebugUUID extends SubCommand {
 
                 MainUtil.sendMessage(player, "&7 - Scanning for applicable files (uuids.txt)");
 
-                final File file = new File(PS.get().IMP.getDirectory(), "uuids.txt");
+                File file = new File(PS.get().IMP.getDirectory(), "uuids.txt");
                 if (file.exists()) {
                     try {
-                        final List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+                        List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
                         for (String line : lines) {
                             try {
                                 line = line.trim();
@@ -228,24 +230,24 @@ public class DebugUUID extends SubCommand {
                                     continue;
                                 }
                                 line = line.replaceAll("[\\|][0-9]+[\\|][0-9]+[\\|]", "");
-                                final String[] split = line.split("\\|");
-                                final String name = split[0];
+                                String[] split = line.split("\\|");
+                                String name = split[0];
                                 if (name.isEmpty() || name.length() > 16 || !StringMan.isAlphanumericUnd(name)) {
                                     continue;
                                 }
-                                final UUID old = currentUUIDWrapper.getUUID(name);
+                                UUID old = currentUUIDWrapper.getUUID(name);
                                 if (old == null) {
                                     continue;
                                 }
-                                final UUID now = newWrapper.getUUID(name);
+                                UUID now = newWrapper.getUUID(name);
                                 UUIDHandler.add(new StringWrapper(name), now);
                                 uCMap.put(old, now);
                                 uCReverse.put(now, old);
-                            } catch (final Exception e2) {
+                            } catch (Exception e2) {
                                 e2.printStackTrace();
                             }
                         }
-                    } catch (final IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -255,8 +257,8 @@ public class DebugUUID extends SubCommand {
 
                 MainUtil.sendMessage(player, "&7 - Updating plot objects");
 
-                for (final Plot plot : PS.get().getPlots()) {
-                    final UUID value = uCMap.get(plot.owner);
+                for (Plot plot : PS.get().getPlots()) {
+                    UUID value = uCMap.get(plot.owner);
                     if (value != null) {
                         plot.owner = value;
                     }
@@ -267,7 +269,7 @@ public class DebugUUID extends SubCommand {
 
                 MainUtil.sendMessage(player, "&7 - Deleting database");
                 final AbstractDB database = DBFunc.dbManager;
-                final boolean result = database.deleteTables();
+                boolean result = database.deleteTables();
 
                 MainUtil.sendMessage(player, "&7 - Creating tables");
 
@@ -275,8 +277,8 @@ public class DebugUUID extends SubCommand {
                     database.createTables();
                     if (!result) {
                         MainUtil.sendMessage(player, "&cConversion failed! Attempting recovery");
-                        for (final Plot plot : PS.get().getPlots()) {
-                            final UUID value = uCReverse.get(plot.owner);
+                        for (Plot plot : PS.get().getPlots()) {
+                            UUID value = uCReverse.get(plot.owner);
                             if (value != null) {
                                 plot.owner = value;
                             }
@@ -289,7 +291,7 @@ public class DebugUUID extends SubCommand {
                         });
                         return;
                     }
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     return;
                 }
@@ -312,7 +314,7 @@ public class DebugUUID extends SubCommand {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        final ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
+                        ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots());
                         database.createPlotsAndData(plots, new Runnable() {
                             @Override
                             public void run() {

@@ -38,15 +38,16 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 @CommandDeclaration(
-usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]",
-command = "purge",
-permission = "plots.admin",
-description = "Purge all plots for a world",
-category = CommandCategory.ADMINISTRATION,
-requiredType = RequiredType.CONSOLE)
+        usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false]",
+        command = "purge",
+        permission = "plots.admin",
+        description = "Purge all plots for a world",
+        category = CommandCategory.ADMINISTRATION,
+        requiredType = RequiredType.CONSOLE)
 public class Purge extends SubCommand {
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -178,7 +179,7 @@ public class Purge extends SubCommand {
                     }
                 }
                 DBFunc.purgeIds(ids);
-                C.PURGE_SUCCESS.send(plr, ids.size() + "/" + (toDelete.size()));
+                C.PURGE_SUCCESS.send(plr, ids.size() + "/" + toDelete.size());
             }
         });
         return true;

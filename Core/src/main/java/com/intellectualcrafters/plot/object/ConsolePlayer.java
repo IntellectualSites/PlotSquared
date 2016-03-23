@@ -3,7 +3,7 @@ package com.intellectualcrafters.plot.object;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 
 import java.util.HashMap;
@@ -14,16 +14,8 @@ public class ConsolePlayer extends PlotPlayer {
     private static ConsolePlayer instance;
     private final HashMap<String, Object> meta;
     
-    public static ConsolePlayer getConsole() {
-        if (instance == null) {
-            instance = new ConsolePlayer();
-            instance.teleport(instance.getLocation());
-        }
-        return instance;
-    }
-
     /**
-     * Direct access is deprecated
+     * Direct access is deprecated.
      */
     @Deprecated
     public ConsolePlayer() {
@@ -35,11 +27,19 @@ public class ConsolePlayer extends PlotPlayer {
         } else {
             loc = new Location("world", 0, 0, 0);
         }
-        meta = new HashMap<>();
+        this.meta = new HashMap<>();
         setMeta("location", loc);
     }
-    
-    public static boolean isConsole(final PlotPlayer plr) {
+
+    public static ConsolePlayer getConsole() {
+        if (instance == null) {
+            instance = new ConsolePlayer();
+            instance.teleport(instance.getLocation());
+        }
+        return instance;
+    }
+
+    public static boolean isConsole(PlotPlayer plr) {
         return plr instanceof ConsolePlayer;
     }
     
@@ -64,20 +64,20 @@ public class ConsolePlayer extends PlotPlayer {
     }
     
     @Override
-    public boolean hasPermission(final String perm) {
+    public boolean hasPermission(String permission) {
         return true;
     }
     
     @Override
-    public void sendMessage(final String message) {
+    public void sendMessage(String message) {
         PS.log(message);
     }
     
     @Override
-    public void teleport(final Location loc) {
-        final Plot plot = loc.getPlot();
+    public void teleport(Location location) {
+        Plot plot = location.getPlot();
         setMeta("lastplot", plot);
-        setMeta("location", loc);
+        setMeta("location", location);
     }
     
     @Override
@@ -91,38 +91,35 @@ public class ConsolePlayer extends PlotPlayer {
     }
     
     @Override
-    public void setCompassTarget(final Location loc) {}
+    public void setCompassTarget(Location location) {
+    }
+
+    @Override
+    public void setAttribute(String key) {
+    }
     
     @Override
-    public void loadData() {}
-    
-    @Override
-    public void saveData() {}
-    
-    @Override
-    public void setAttribute(final String key) {}
-    
-    @Override
-    public boolean getAttribute(final String key) {
+    public boolean getAttribute(String key) {
         return false;
     }
     
     @Override
-    public void removeAttribute(final String key) {}
-    
-    @Override
-    public void setMeta(final String key, final Object value) {
-        meta.put(key, value);
+    public void removeAttribute(String key) {
     }
     
     @Override
-    public Object getMeta(final String key) {
-        return meta.get(key);
+    public void setMeta(String key, Object value) {
+        this.meta.put(key, value);
     }
     
     @Override
-    public Object deleteMeta(final String key) {
-        return meta.remove(key);
+    public Object getMeta(String key) {
+        return this.meta.get(key);
+    }
+    
+    @Override
+    public Object deleteMeta(String key) {
+        return this.meta.remove(key);
     }
     
     @Override
@@ -131,27 +128,33 @@ public class ConsolePlayer extends PlotPlayer {
     }
     
     @Override
-    public void setWeather(final PlotWeather weather) {}
-    
-    @Override
-    public PlotGamemode getGamemode() {
-        return PlotGamemode.CREATIVE;
+    public void setWeather(PlotWeather weather) {
     }
     
     @Override
-    public void setGamemode(final PlotGamemode gamemode) {}
+    public PlotGameMode getGameMode() {
+        return PlotGameMode.CREATIVE;
+    }
     
     @Override
-    public void setTime(final long time) {}
+    public void setGameMode(PlotGameMode gameMode) {
+    }
     
     @Override
-    public void setFlight(final boolean fly) {}
+    public void setTime(long time) {
+    }
     
     @Override
-    public void playMusic(final Location loc, final int id) {}
+    public void setFlight(boolean fly) {
+    }
     
     @Override
-    public void kick(final String message) {}
+    public void playMusic(Location location, int id) {
+    }
+    
+    @Override
+    public void kick(String message) {
+    }
 
     @Override public void stopSpectating() {}
 

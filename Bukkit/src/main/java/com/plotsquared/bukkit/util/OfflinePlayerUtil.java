@@ -19,15 +19,15 @@ import java.util.UUID;
 
 public class OfflinePlayerUtil {
 
-    public static Player loadPlayer(final String name) {
+    public static Player loadPlayer(String name) {
         return loadPlayer(Bukkit.getOfflinePlayer(name));
     }
 
-    public static Player loadPlayer(final UUID id) {
+    public static Player loadPlayer(UUID id) {
         return loadPlayer(Bukkit.getOfflinePlayer(id));
     }
 
-    public static Player loadPlayer(final OfflinePlayer player) {
+    public static Player loadPlayer(OfflinePlayer player) {
         if (player == null) {
             return null;
         }
@@ -37,21 +37,21 @@ public class OfflinePlayerUtil {
         return loadPlayer(player.getUniqueId(), player.getName());
     }
 
-    private static Player loadPlayer(final UUID id, final String name) {
-        final Object server = getMinecraftServer();
-        final Object interactManager = newPlayerInteractManager();
-        final Object worldServer = getWorldServer();
-        final Object profile = newGameProfile(id, name);
-        final Class<?> entityPlayerClass = getNmsClass("EntityPlayer");
-        final Constructor entityPlayerConstructor = makeConstructor(entityPlayerClass, getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
+    private static Player loadPlayer(UUID id, String name) {
+        Object server = getMinecraftServer();
+        Object interactManager = newPlayerInteractManager();
+        Object worldServer = getWorldServer();
+        Object profile = newGameProfile(id, name);
+        Class<?> entityPlayerClass = getNmsClass("EntityPlayer");
+        Constructor entityPlayerConstructor = makeConstructor(entityPlayerClass, getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
                 getUtilClass("com.mojang.authlib.GameProfile"),
                 getNmsClass("PlayerInteractManager"));
-        final Object entityPlayer = callConstructor(entityPlayerConstructor, server, worldServer, profile, interactManager);
+        Object entityPlayer = callConstructor(entityPlayerConstructor, server, worldServer, profile, interactManager);
         return (Player) getBukkitEntity(entityPlayer);
     }
 
-    private static Object newGameProfile(final UUID id, final String name) {
-        final Class<?> gameProfileClass = getUtilClass("com.mojang.authlib.GameProfile");
+    private static Object newGameProfile(UUID id, String name) {
+        Class<?> gameProfileClass = getUtilClass("com.mojang.authlib.GameProfile");
         if (gameProfileClass == null) { //Before uuids
             return name;
         }
@@ -65,17 +65,17 @@ public class OfflinePlayerUtil {
     }
 
     private static Object newPlayerInteractManager() {
-        final Object worldServer = getWorldServer();
-        final Class<?> playerInteractClass = getNmsClass("PlayerInteractManager");
-        final Class<?> worldClass = getNmsClass("World");
-        final Constructor c = makeConstructor(playerInteractClass, worldClass);
+        Object worldServer = getWorldServer();
+        Class<?> playerInteractClass = getNmsClass("PlayerInteractManager");
+        Class<?> worldClass = getNmsClass("World");
+        Constructor c = makeConstructor(playerInteractClass, worldClass);
         return callConstructor(c, worldServer);
     }
 
     private static Object getWorldServer() {
-        final Object server = getMinecraftServer();
-        final Class<?> minecraftServerClass = getNmsClass("MinecraftServer");
-        final Method getWorldServer = makeMethod(minecraftServerClass, "getWorldServer", int.class);
+        Object server = getMinecraftServer();
+        Class<?> minecraftServerClass = getNmsClass("MinecraftServer");
+        Method getWorldServer = makeMethod(minecraftServerClass, "getWorldServer", int.class);
         return callMethod(getWorldServer, server, 0);
     }
 
@@ -85,8 +85,8 @@ public class OfflinePlayerUtil {
         return callMethod(makeMethod(getCbClass("CraftServer"), "getServer"), Bukkit.getServer());
     }
 
-    private static Entity getBukkitEntity(final Object o) {
-        final Method getBukkitEntity = makeMethod(o.getClass(), "getBukkitEntity");
+    private static Entity getBukkitEntity(Object o) {
+        Method getBukkitEntity = makeMethod(o.getClass(), "getBukkitEntity");
         return callMethod(getBukkitEntity, o);
     }
 }

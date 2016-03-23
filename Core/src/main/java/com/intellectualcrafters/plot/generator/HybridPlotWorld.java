@@ -32,11 +32,13 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
+
     public boolean ROAD_SCHEMATIC_ENABLED;
     public short SCHEMATIC_HEIGHT;
     public boolean PLOT_SCHEMATIC = false;
@@ -50,14 +52,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         super(worldname, id, generator, min, max);
     }
 
-    public static byte wrap(byte data, final int start) {
+    public static byte wrap(byte data, int start) {
         if ((data >= start) && (data < (start + 4))) {
             data = (byte) ((((data - start) + 2) & 3) + start);
         }
         return data;
     }
 
-    public static byte wrap2(byte data, final int start) {
+    public static byte wrap2(byte data, int start) {
         if ((data >= start) && (data < (start + 2))) {
             data = (byte) ((((data - start) + 1) & 1) + start);
         }
@@ -66,7 +68,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     // FIXME depends on block ids
     // Possibly make abstract?
-    public static byte rotate(final short id, byte data) {
+    public static byte rotate(short id, byte data) {
         switch (id) {
             case 162:
             case 17:
@@ -158,21 +160,25 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     /**
-     * This method is called when a world loads. Make sure you set all your constants here. You are provided with the
-     * configuration section for that specific world.
+     * <p>This method is called when a world loads. Make sure you set all your constants here. You are provided with the
+     * configuration section for that specific world.</p>
      */
     @Override
-    public void loadConfiguration(final ConfigurationSection config) {
+    public void loadConfiguration(ConfigurationSection config) {
         super.loadConfiguration(config);
-        if ((ROAD_WIDTH & 1) == 0) {
-            PATH_WIDTH_LOWER = (short) (Math.floor(ROAD_WIDTH / 2) - 1);
+        if ((this.ROAD_WIDTH & 1) == 0) {
+            this.PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2) - 1);
         } else {
-            PATH_WIDTH_LOWER = (short) (Math.floor(ROAD_WIDTH / 2));
+            this.PATH_WIDTH_LOWER = (short) Math.floor(this.ROAD_WIDTH / 2);
         }
-        PATH_WIDTH_UPPER = (short) (ROAD_WIDTH == 0 ? SIZE + 1 : PATH_WIDTH_LOWER + PLOT_WIDTH + 1);
+        if (this.ROAD_WIDTH == 0) {
+            this.PATH_WIDTH_UPPER = (short) (this.SIZE + 1);
+        } else {
+            this.PATH_WIDTH_UPPER = (short) (this.PATH_WIDTH_LOWER + this.PLOT_WIDTH + 1);
+        }
         try {
             setupSchematics();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             PS.debug("&c - road schematics are disabled for this world.");
         }
     }
@@ -182,104 +188,106 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         if (!(plotworld instanceof SquarePlotWorld)) {
             return false;
         }
-        return ((SquarePlotWorld) plotworld).PLOT_WIDTH == PLOT_WIDTH;
+        return ((SquarePlotWorld) plotworld).PLOT_WIDTH == this.PLOT_WIDTH;
     }
 
     public void setupSchematics() {
-        G_SCH = new HashMap<>();
-        final File schem1File = MainUtil.getFile(PS.get().IMP.getDirectory(),"schematics/GEN_ROAD_SCHEMATIC/" + worldname + "/sideroad.schematic");
-        final File schem2File = MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + worldname + "/intersection.schematic");
-        final File schem3File = MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + worldname + "/plot.schematic");
-        final Schematic schem1 = SchematicHandler.manager.getSchematic(schem1File);
-        final Schematic schem2 = SchematicHandler.manager.getSchematic(schem2File);
-        final Schematic schem3 = SchematicHandler.manager.getSchematic(schem3File);
-        final int shift = ROAD_WIDTH / 2;
+        this.G_SCH = new HashMap<>();
+        File schem1File = MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
+        File schem2File =
+                MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
+        File schem3File = MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
+        Schematic schem1 = SchematicHandler.manager.getSchematic(schem1File);
+        Schematic schem2 = SchematicHandler.manager.getSchematic(schem2File);
+        Schematic schem3 = SchematicHandler.manager.getSchematic(schem3File);
+        int shift = this.ROAD_WIDTH / 2;
         int oddshift = 0;
-        if ((ROAD_WIDTH & 1) != 0) {
+        if ((this.ROAD_WIDTH & 1) != 0) {
             oddshift = 1;
         }
         if (schem3 != null) {
-            PLOT_SCHEMATIC = true;
-            final short[] ids = schem3.getIds();
-            final byte[] datas = schem3.getDatas();
-            final Dimension d3 = schem3.getSchematicDimension();
-            final short w3 = (short) d3.getX();
-            final short l3 = (short) d3.getZ();
-            final short h3 = (short) d3.getY();
-            int center_shift_z = 0;
-            if (l3 < PLOT_WIDTH) {
-                center_shift_z = (PLOT_WIDTH - l3) / 2;
+            this.PLOT_SCHEMATIC = true;
+            short[] ids = schem3.getIds();
+            byte[] datas = schem3.getDatas();
+            Dimension d3 = schem3.getSchematicDimension();
+            short w3 = (short) d3.getX();
+            short l3 = (short) d3.getZ();
+            short h3 = (short) d3.getY();
+            int centerShiftZ = 0;
+            if (l3 < this.PLOT_WIDTH) {
+                centerShiftZ = (this.PLOT_WIDTH - l3) / 2;
             }
-            int center_shift_x = 0;
-            if (w3 < PLOT_WIDTH) {
-                center_shift_x = (PLOT_WIDTH - w3) / 2;
+            int centerShiftX = 0;
+            if (w3 < this.PLOT_WIDTH) {
+                centerShiftX = (this.PLOT_WIDTH - w3) / 2;
             }
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
-                        final int index = (y * w3 * l3) + (z * w3) + x;
-                        final short id = ids[index];
-                        final byte data = datas[index];
+                        int index = (y * w3 * l3) + (z * w3) + x;
+                        short id = ids[index];
+                        byte data = datas[index];
                         if (id != 0) {
-                            addOverlayBlock((short) (x + shift + oddshift + center_shift_x), (short) (y + PLOT_HEIGHT), (short) (z + shift + oddshift + center_shift_z), id,
+                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX), (short) (y + this.PLOT_HEIGHT),
+                                    (short) (z + shift + oddshift + centerShiftZ), id,
                                     data, false);
                         }
                     }
                 }
             }
-            final HashSet<PlotItem> items = schem3.getItems();
+            HashSet<PlotItem> items = schem3.getItems();
             if (items != null) {
-                G_SCH_STATE = new HashMap<>();
-                for (final PlotItem item : items) {
-                    item.x += shift + oddshift + center_shift_x;
-                    item.z += shift + oddshift + center_shift_z;
-                    item.y += PLOT_HEIGHT;
-                    final short x = (short) item.x;
-                    final short z = (short) item.z;
+                this.G_SCH_STATE = new HashMap<>();
+                for (PlotItem item : items) {
+                    item.x += shift + oddshift + centerShiftX;
+                    item.z += shift + oddshift + centerShiftZ;
+                    item.y += this.PLOT_HEIGHT;
+                    short x = (short) item.x;
+                    short z = (short) item.z;
                     int pair = MathMan.pair(x, z);
 
 
-                    HashSet<PlotItem> existing = G_SCH_STATE.get(pair);
+                    HashSet<PlotItem> existing = this.G_SCH_STATE.get(pair);
                     if (existing == null) {
                         existing = new HashSet<>();
-                        G_SCH_STATE.put(pair, existing);
+                        this.G_SCH_STATE.put(pair, existing);
                     }
                     existing.add(item);
                 }
             }
         }
-        if (schem1 == null || schem2 == null || ROAD_WIDTH == 0) {
+        if (schem1 == null || schem2 == null || this.ROAD_WIDTH == 0) {
             PS.debug(C.PREFIX + "&3 - schematic: &7false");
             return;
         }
-        ROAD_SCHEMATIC_ENABLED = true;
+        this.ROAD_SCHEMATIC_ENABLED = true;
         // Do not populate road if using schematic population
-        ROAD_BLOCK = new PlotBlock(ROAD_BLOCK.id, (byte) 0);
+        this.ROAD_BLOCK = new PlotBlock(this.ROAD_BLOCK.id, (byte) 0);
 
-        final short[] ids1 = schem1.getIds();
-        final byte[] datas1 = schem1.getDatas();
+        short[] ids1 = schem1.getIds();
+        byte[] datas1 = schem1.getDatas();
 
-        final short[] ids2 = schem2.getIds();
-        final byte[] datas2 = schem2.getDatas();
+        short[] ids2 = schem2.getIds();
+        byte[] datas2 = schem2.getDatas();
 
-        final Dimension d1 = schem1.getSchematicDimension();
-        final short w1 = (short) d1.getX();
-        final short l1 = (short) d1.getZ();
-        final short h1 = (short) d1.getY();
-        final Dimension d2 = schem2.getSchematicDimension();
-        final short w2 = (short) d2.getX();
-        final short l2 = (short) d2.getZ();
-        final short h2 = (short) d2.getY();
-        SCHEMATIC_HEIGHT = (short) Math.max(h2, h1);
+        Dimension d1 = schem1.getSchematicDimension();
+        short w1 = (short) d1.getX();
+        short l1 = (short) d1.getZ();
+        short h1 = (short) d1.getY();
+        Dimension d2 = schem2.getSchematicDimension();
+        short w2 = (short) d2.getX();
+        short l2 = (short) d2.getZ();
+        short h2 = (short) d2.getY();
+        this.SCHEMATIC_HEIGHT = (short) Math.max(h2, h1);
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
                 for (short y = 0; y < h1; y++) {
-                    final int index = (y * w1 * l1) + (z * w1) + x;
-                    final short id = ids1[index];
-                    final byte data = datas1[index];
+                    int index = (y * w1 * l1) + (z * w1) + x;
+                    short id = ids1[index];
+                    byte data = datas1[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), (short) (y + ROAD_HEIGHT), (short) (z + shift + oddshift), id, data, false);
-                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + ROAD_HEIGHT), (short) (x - shift), id, data, true);
+                        addOverlayBlock((short) (x - shift), (short) (y + this.ROAD_HEIGHT), (short) (z + shift + oddshift), id, data, false);
+                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + this.ROAD_HEIGHT), (short) (x - shift), id, data, true);
                     }
                 }
             }
@@ -287,35 +295,35 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
-                    final int index = (y * w2 * l2) + (z * w2) + x;
-                    final short id = ids2[index];
-                    final byte data = datas2[index];
+                    int index = (y * w2 * l2) + (z * w2) + x;
+                    short id = ids2[index];
+                    byte data = datas2[index];
                     if (id != 0) {
-                        addOverlayBlock((short) (x - shift), (short) (y + ROAD_HEIGHT), (short) (z - shift), id, data, false);
+                        addOverlayBlock((short) (x - shift), (short) (y + this.ROAD_HEIGHT), (short) (z - shift), id, data, false);
                     }
                 }
             }
         }
     }
 
-    public void addOverlayBlock(short x, final short y, short z, final short id, byte data, final boolean rotate) {
+    public void addOverlayBlock(short x, short y, short z, short id, byte data, boolean rotate) {
         if (z < 0) {
-            z += SIZE;
+            z += this.SIZE;
         }
         if (x < 0) {
-            x += SIZE;
+            x += this.SIZE;
         }
         if (rotate) {
-            final byte newdata = rotate(id, data);
+            byte newdata = rotate(id, data);
             if (data != 0 || newdata != 0) {
                 data = newdata;
             }
         }
         int pair = MathMan.pair(x, z);
-        HashMap<Integer, PlotBlock> existing = G_SCH.get(pair);
+        HashMap<Integer, PlotBlock> existing = this.G_SCH.get(pair);
         if (existing == null) {
             existing = new HashMap<>();
-            G_SCH.put(pair, existing);
+            this.G_SCH.put(pair, existing);
         }
         existing.put((int) y, new PlotBlock(id, data));
     }

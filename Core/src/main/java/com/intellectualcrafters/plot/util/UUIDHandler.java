@@ -1,9 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
-
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
@@ -13,14 +9,18 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
+
 public class UUIDHandler {
-    
+
     public static UUIDHandlerImplementation implementation;
-    
-    public static void add(final StringWrapper name, final UUID uuid) {
+
+    public static void add(StringWrapper name, UUID uuid) {
         implementation.add(name, uuid);
     }
-    
+
     /**
      * Get the map containing all names/uuids
      *
@@ -31,7 +31,7 @@ public class UUIDHandler {
     public static BiMap<StringWrapper, UUID> getUuidMap() {
         return implementation.getUUIDMap();
     }
-    
+
     /**
      * Check if a uuid is cached
      *
@@ -41,10 +41,10 @@ public class UUIDHandler {
      *
      * @see com.google.common.collect.BiMap#containsValue(Object)
      */
-    public static boolean uuidExists(final UUID uuid) {
+    public static boolean uuidExists(UUID uuid) {
         return implementation.uuidExists(uuid);
     }
-    
+
     /**
      * Check if a name is cached
      *
@@ -54,13 +54,13 @@ public class UUIDHandler {
      *
      * @see com.google.common.collect.BiMap#containsKey(Object)
      */
-    public static boolean nameExists(final StringWrapper name) {
+    public static boolean nameExists(StringWrapper name) {
         return implementation.nameExists(name);
     }
-    
+
     public static HashSet<UUID> getAllUUIDS() {
-        final HashSet<UUID> uuids = new HashSet<>();
-        for (final Plot plot : PS.get().getPlots()) {
+        HashSet<UUID> uuids = new HashSet<>();
+        for (Plot plot : PS.get().getPlots()) {
             if (plot.hasOwner()) {
                 uuids.add(plot.owner);
                 uuids.addAll(plot.getTrusted());
@@ -70,43 +70,43 @@ public class UUIDHandler {
         }
         return uuids;
     }
-    
+
     public static UUIDWrapper getUUIDWrapper() {
         return implementation.getUUIDWrapper();
     }
-    
-    public static void setUUIDWrapper(final UUIDWrapper wrapper) {
+
+    public static void setUUIDWrapper(UUIDWrapper wrapper) {
         implementation.setUUIDWrapper(wrapper);
     }
-    
-    public static void startCaching(final Runnable whenDone) {
+
+    public static void startCaching(Runnable whenDone) {
         implementation.startCaching(whenDone);
     }
-    
-    public static void cache(final BiMap<StringWrapper, UUID> toAdd) {
+
+    public static void cache(BiMap<StringWrapper, UUID> toAdd) {
         implementation.add(toAdd);
     }
-    
-    public static UUID getUUID(final PlotPlayer player) {
+
+    public static UUID getUUID(PlotPlayer player) {
         return implementation.getUUID(player);
     }
-    
-    public static UUID getUUID(final OfflinePlotPlayer player) {
+
+    public static UUID getUUID(OfflinePlotPlayer player) {
         return implementation.getUUID(player);
     }
-    
-    public static String getName(final UUID uuid) {
+
+    public static String getName(UUID uuid) {
         return implementation.getName(uuid);
     }
-    
-    public static PlotPlayer getPlayer(final UUID uuid) {
+
+    public static PlotPlayer getPlayer(UUID uuid) {
         return implementation.getPlayer(uuid);
     }
-    
-    public static PlotPlayer getPlayer(final String name) {
+
+    public static PlotPlayer getPlayer(String name) {
         return implementation.getPlayer(name);
     }
-    
+
     public static UUID getUUIDFromString(String nameOrUUIDString) {
         if (nameOrUUIDString.length() > 16) {
             return UUID.fromString(nameOrUUIDString);
@@ -114,18 +114,18 @@ public class UUIDHandler {
         return UUIDHandler.getUUID(nameOrUUIDString, null);
     }
 
-    public static UUID getUUID(final String name, final RunnableVal<UUID> ifFetch) {
+    public static UUID getUUID(String name, RunnableVal<UUID> ifFetch) {
         return implementation.getUUID(name, ifFetch);
     }
-    
-    public static UUID getCachedUUID(final String name, final RunnableVal<UUID> ifFetch) {
+
+    public static UUID getCachedUUID(String name, RunnableVal<UUID> ifFetch) {
         return implementation.getUUIDMap().get(new StringWrapper(name));
     }
-    
+
     public static Map<String, PlotPlayer> getPlayers() {
         return implementation.getPlayers();
     }
-    
+
     public static void handleShutdown() {
         implementation.handleShutdown();
     }

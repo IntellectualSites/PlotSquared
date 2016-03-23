@@ -15,20 +15,21 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.net.URL;
 
 @CommandDeclaration(usage = "/plot download [schematic|bo3|world]",
-command = "download",
-aliases = { "dl" },
-category = CommandCategory.SCHEMATIC,
-requiredType = RequiredType.NONE,
-description = "Download your plot",
-permission = "plots.download")
+        command = "download",
+        aliases = {"dl"},
+        category = CommandCategory.SCHEMATIC,
+        requiredType = RequiredType.NONE,
+        description = "Download your plot",
+        permission = "plots.download")
 public class Download extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final String world = plr.getLocation().getWorld();
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
+        String world = plr.getLocation().getWorld();
         if (!PS.get().hasPlotArea(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
@@ -40,7 +41,8 @@ public class Download extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if ((!plot.isOwner(plr.getUUID()) || (Settings.DOWNLOAD_REQUIRES_DONE && (FlagManager.getPlotFlagRaw(plot, "done") != null))) && !Permissions.hasPermission(plr, "plots.admin.command.download")) {
+        if ((!plot.isOwner(plr.getUUID()) || (Settings.DOWNLOAD_REQUIRES_DONE && (FlagManager.getPlotFlagRaw(plot, "done") != null))) && !Permissions
+                .hasPermission(plr, "plots.admin.command.download")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -52,7 +54,7 @@ public class Download extends SubCommand {
             plot.addRunning();
             SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                 @Override
-                public void run(final CompoundTag value) {
+                public void run(CompoundTag value) {
                     plot.removeRunning();
                     SchematicHandler.manager.upload(value, null, null, new RunnableVal<URL>() {
                         @Override
@@ -99,8 +101,7 @@ public class Download extends SubCommand {
                     MainUtil.sendMessage(plr, url.toString());
                 }
             });
-        }
-        else {
+        } else {
             C.COMMAND_SYNTAX.send(plr, getUsage());
             return false;
         }

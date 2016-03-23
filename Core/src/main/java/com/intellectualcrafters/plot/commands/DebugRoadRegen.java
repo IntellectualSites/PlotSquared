@@ -34,40 +34,41 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-command = "debugroadregen",
-usage = "/plot debugroadregen",
-requiredType = RequiredType.NONE,
-description = "Regenerate all roads based on the road schematic",
-category = CommandCategory.DEBUG,
-permission = "plots.debugroadregen")
+        command = "debugroadregen",
+        usage = "/plot debugroadregen",
+        requiredType = RequiredType.NONE,
+        description = "Regenerate all roads based on the road schematic",
+        category = CommandCategory.DEBUG,
+        permission = "plots.debugroadregen")
 public class DebugRoadRegen extends SubCommand {
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer player, final String... args) {
-        final Location loc = player.getLocation();
-        final PlotArea plotworld = loc.getPlotArea();
+    public boolean onCommand(PlotPlayer player, String... args) {
+        Location loc = player.getLocation();
+        PlotArea plotworld = loc.getPlotArea();
         if (!(plotworld instanceof HybridPlotWorld)) {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = player.getCurrentPlot();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
+            ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
             int extend = 0;
             if (args.length == 1) {
                 if (MathMan.isInteger(args[0])) {
                     try {
                         extend = Integer.parseInt(args[0]);
-                    } catch (final Exception e) {
+                    } catch (Exception e) {
                         C.NOT_VALID_NUMBER.send(player, "(0, <EXTEND HEIGHT>)");
                         return false;
                     }
                 }
             }
-            final boolean result = HybridUtils.manager.regenerateRoad(plotworld, chunk, extend);
-            MainUtil.sendMessage(player, "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result ? "&aSuccess" : "&cFailed"));
+            boolean result = HybridUtils.manager.regenerateRoad(plotworld, chunk, extend);
+            MainUtil.sendMessage(player,
+                    "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result ? "&aSuccess" : "&cFailed"));
             MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
         } else {
-            final HybridPlotManager manager = (HybridPlotManager) plotworld.getPlotManager();
+            HybridPlotManager manager = (HybridPlotManager) plotworld.getPlotManager();
             manager.createRoadEast(plotworld, plot);
             manager.createRoadSouth(plotworld, plot);
             manager.createRoadSouthEast(plotworld, plot);

@@ -33,40 +33,40 @@ public class GenChunk extends PlotChunk<Chunk> {
     @Override
     public Chunk getChunkAbs() {
         ChunkWrapper wrap = getChunkWrapper();
-        if (chunk == null || wrap.x != chunk.getX() || wrap.z != chunk.getZ()) {
-            chunk = BukkitUtil.getWorld(wrap.world).getChunkAt(wrap.x, wrap.z);
+        if (this.chunk == null || wrap.x != this.chunk.getX() || wrap.z != this.chunk.getZ()) {
+            this.chunk = BukkitUtil.getWorld(wrap.world).getChunkAt(wrap.x, wrap.z);
         }
-        return chunk;
+        return this.chunk;
     }
 
     @Override
     public void setBiome(int x, int z, int biome) {
-        grid.setBiome(x, z, biomes[biome]);
+        this.grid.setBiome(x, z, this.biomes[biome]);
     }
 
     public void setBiome(int x, int z, Biome biome) {
-        if (grid != null) {
-            grid.setBiome(x, z, biome);
+        if (this.grid != null) {
+            this.grid.setBiome(x, z, biome);
         }
     }
 
     @Override
     public void setBlock(int x, int y, int z, int id, byte data) {
-        if (result == null) {
-            cd.setBlock(x, y, z, id, data);
+        if (this.result == null) {
+            this.cd.setBlock(x, y, z, id, data);
             return;
         }
         int i = MainUtil.CACHE_I[y][x][z];
-        short[] v = result[i];
+        short[] v = this.result[i];
         if (v == null) {
-            result[i] = v = new short[4096];
+            this.result[i] = v = new short[4096];
         }
         int j = MainUtil.CACHE_J[y][x][z];
         v[j] = (short) id;
         if (data != 0) {
-            byte[] vd = result_data[i];
+            byte[] vd = this.result_data[i];
             if (vd == null) {
-                result_data[i] = vd = new byte[4096];
+                this.result_data[i] = vd = new byte[4096];
             }
             vd[j] = data;
         }
@@ -75,32 +75,32 @@ public class GenChunk extends PlotChunk<Chunk> {
     @Override
     public PlotChunk clone() {
         GenChunk toReturn = new GenChunk(getChunkAbs(), getChunkWrapper());
-        if (result != null) {
-            for (int i = 0; i < result.length; i++) {
-                short[] matrix = result[i];
+        if (this.result != null) {
+            for (int i = 0; i < this.result.length; i++) {
+                short[] matrix = this.result[i];
                 if (matrix != null) {
                     toReturn.result[i] = new short[matrix.length];
                     System.arraycopy(matrix, 0, toReturn.result[i], 0, matrix.length);
                 }
             }
-            for (int i = 0; i < result_data.length; i++) {
-                byte[] matrix = result_data[i];
+            for (int i = 0; i < this.result_data.length; i++) {
+                byte[] matrix = this.result_data[i];
                 if (matrix != null) {
                     toReturn.result_data[i] = new byte[matrix.length];
                     System.arraycopy(matrix, 0, toReturn.result_data[i], 0, matrix.length);
                 }
             }
         }
-        toReturn.cd = cd;
+        toReturn.cd = this.cd;
         return toReturn;
     }
 
     @Override
     public PlotChunk shallowClone() {
         GenChunk toReturn = new GenChunk(getChunkAbs(), getChunkWrapper());
-        toReturn.result = result;
-        toReturn.result_data = result_data;
-        toReturn.cd = cd;
+        toReturn.result = this.result;
+        toReturn.result_data = this.result_data;
+        toReturn.cd = this.cd;
         return toReturn;
     }
 }

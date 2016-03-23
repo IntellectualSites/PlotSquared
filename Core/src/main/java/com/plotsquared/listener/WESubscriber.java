@@ -18,38 +18,42 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.ChangeSetExtent;
 import com.sk89q.worldedit.extent.MaskingExtent;
+import com.sk89q.worldedit.extent.NullExtent;
 import com.sk89q.worldedit.extent.reorder.MultiStageReorder;
 import com.sk89q.worldedit.extent.world.FastModeExtent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
+
 import java.lang.reflect.Field;
 import java.util.HashSet;
 
 public class WESubscriber {
-    
+
     @Subscribe(priority = Priority.VERY_EARLY)
-    public void onEditSession(final EditSessionEvent event) {
-        final WorldEdit worldedit = PS.get().worldedit;
+    public void onEditSession(EditSessionEvent event) {
+        WorldEdit worldedit = PS.get().worldedit;
         if (worldedit == null) {
             WorldEdit.getInstance().getEventBus().unregister(this);
             return;
         }
-        final World worldObj = event.getWorld();
-        final String world = worldObj.getName();
-        final Actor actor = event.getActor();
+        World worldObj = event.getWorld();
+        String world = worldObj.getName();
+        Actor actor = event.getActor();
         if (actor != null && actor.isPlayer()) {
-            final String name = actor.getName();
-            final PlotPlayer pp = PlotPlayer.wrap(name);
-            final HashSet<RegionWrapper> mask;
+            String name = actor.getName();
+            PlotPlayer pp = PlotPlayer.wrap(name);
+            HashSet<RegionWrapper> mask;
             if (pp == null) {
                 Player player = (Player) actor;
                 Location loc = player.getLocation();
-                com.intellectualcrafters.plot.object.Location pLoc = new com.intellectualcrafters.plot.object.Location(player.getWorld().getName(), loc.getBlockX(), loc.getBlockX(), loc.getBlockZ());
+                com.intellectualcrafters.plot.object.Location pLoc =
+                        new com.intellectualcrafters.plot.object.Location(player.getWorld().getName(), loc.getBlockX(), loc.getBlockX(),
+                                loc.getBlockZ());
                 Plot plot = pLoc.getPlot();
                 if (plot == null) {
-                    event.setExtent(new com.sk89q.worldedit.extent.NullExtent());
+                    event.setExtent(new NullExtent());
                     return;
                 }
                 mask = plot.getRegions();
@@ -62,7 +66,7 @@ public class WESubscriber {
                         MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);
                     }
                     if (PS.get().hasPlotArea(world)) {
-                        event.setExtent(new com.sk89q.worldedit.extent.NullExtent());
+                        event.setExtent(new NullExtent());
                     }
                     return;
                 }
@@ -70,26 +74,26 @@ public class WESubscriber {
             if (Settings.CHUNK_PROCESSOR) {
                 if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
                     try {
-                        final LocalSession session = worldedit.getSessionManager().findByName(name);
+                        LocalSession session = worldedit.getSessionManager().findByName(name);
                         boolean hasMask = session.getMask() != null;
-                        final Player objPlayer = (Player) actor;
-                        final int item = objPlayer.getItemInHand();
+                        Player objPlayer = (Player) actor;
+                        int item = objPlayer.getItemInHand();
                         if (!hasMask) {
                             try {
-                                final Tool tool = session.getTool(item);
+                                Tool tool = session.getTool(item);
                                 if (tool instanceof BrushTool) {
                                     hasMask = ((BrushTool) tool).getMask() != null;
                                 }
-                            } catch (final Exception e) {
+                            } catch (Exception e) {
                             }
                         }
                         AbstractDelegateExtent extent = (AbstractDelegateExtent) event.getExtent();
                         ChangeSetExtent history = null;
                         MultiStageReorder reorder = null;
                         MaskingExtent maskextent = null;
-                        final boolean fast = session.hasFastMode();
+                        boolean fast = session.hasFastMode();
                         while (extent.getExtent() != null && extent.getExtent() instanceof AbstractDelegateExtent) {
-                            final AbstractDelegateExtent tmp = (AbstractDelegateExtent) extent.getExtent();
+                            AbstractDelegateExtent tmp = (AbstractDelegateExtent) extent.getExtent();
                             if (tmp.getExtent() != null && tmp.getExtent() instanceof AbstractDelegateExtent) {
                                 if (tmp instanceof ChangeSetExtent) {
                                     history = (ChangeSetExtent) tmp;
@@ -105,11 +109,11 @@ public class WESubscriber {
                                 break;
                             }
                         }
-                        final int max = event.getMaxBlocks();
-                        final Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
+                        int max = event.getMaxBlocks();
+                        Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
                         field.setAccessible(true);
                         if (history == null) {
-                            final ExtentWrapper wrapper = new ExtentWrapper(event.getExtent());
+                            ExtentWrapper wrapper = new ExtentWrapper(event.getExtent());
                             event.setExtent(wrapper);
                             field.set(extent, new ProcessedWEExtent(world, mask, max, new FastModeExtent(worldObj, true), wrapper));
                         } else if (fast) {

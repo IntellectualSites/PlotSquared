@@ -24,22 +24,26 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.CmdConfirm;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
+import com.intellectualcrafters.plot.util.TaskManager;
+import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.HashSet;
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "setowner",
-permission = "plots.set.owner",
-description = "Set the plot owner",
-usage = "/plot setowner <player>",
-aliases = { "owner", "so", "seto" },
-category = CommandCategory.CLAIMING,
-requiredType = RequiredType.NONE)
+        command = "setowner",
+        permission = "plots.set.owner",
+        description = "Set the plot owner",
+        usage = "/plot setowner <player>",
+        aliases = {"owner", "so", "seto"},
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE)
 public class Owner extends SetCommand {
-    
+
     @Override
     public boolean set(final PlotPlayer plr, final Plot plot, String value) {
         HashSet<Plot> plots = plot.getConnectedPlots();
@@ -49,7 +53,8 @@ public class Owner extends SetCommand {
             try {
                 uuid = UUID.fromString(value);
                 name = MainUtil.getName(uuid);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         } else {
             uuid = UUIDHandler.getUUID(value, null);
             name = UUIDHandler.getName(uuid);
@@ -79,8 +84,8 @@ public class Owner extends SetCommand {
                 C.INVALID_PLAYER_OFFLINE.send(plr, value);
                 return false;
             }
-            final int size = plots.size();
-            final int currentPlots = (Settings.GLOBAL_LIMIT ? other.getPlotCount() : other.getPlotCount(plot.getArea().worldname)) + size;
+            int size = plots.size();
+            int currentPlots = (Settings.GLOBAL_LIMIT ? other.getPlotCount() : other.getPlotCount(plot.getArea().worldname)) + size;
             if (currentPlots > other.getAllowedPlots()) {
                 sendMessage(plr, C.CANT_TRANSFER_MORE_PLOTS);
                 return false;
@@ -99,7 +104,7 @@ public class Owner extends SetCommand {
                 }
             }
         };
-        if (Settings.CONFIRM_SETOWNER && !(Permissions.hasPermission(plr, "plots.confirm.bypass"))) {
+        if (Settings.CONFIRM_SETOWNER && !Permissions.hasPermission(plr, "plots.confirm.bypass")) {
             CmdConfirm.addPending(plr, "/plot set owner " + value, run);
         } else {
             TaskManager.runTask(run);

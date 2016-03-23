@@ -20,8 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Location;
@@ -34,24 +32,26 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
+import java.util.UUID;
+
 @CommandDeclaration(
-command = "add",
-aliases = { "a" },
-description = "Allow a user to build while you are online",
-usage = "/plot add <player>",
-category = CommandCategory.SETTINGS,
-permission = "plots.add",
-requiredType = RequiredType.NONE)
+        command = "add",
+        aliases = {"a"},
+        description = "Allow a user to build while you are online",
+        usage = "/plot add <player>",
+        category = CommandCategory.SETTINGS,
+        permission = "plots.add",
+        requiredType = RequiredType.NONE)
 public class Add extends SubCommand {
-    
+
     public Add() {
-        requiredArguments = new Argument[] { Argument.PlayerName };
+        this.requiredArguments = new Argument[]{Argument.PlayerName};
     }
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final Location loc = plr.getLocation();
-        final Plot plot = loc.getPlotAbs();
+    public boolean onCommand(PlotPlayer plr, String[] args) {
+        Location loc = plr.getLocation();
+        Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -78,7 +78,7 @@ public class Add extends SubCommand {
             MainUtil.sendMessage(plr, C.ALREADY_OWNER);
             return false;
         }
-        
+
         if (plot.getMembers().contains(uuid)) {
             MainUtil.sendMessage(plr, C.ALREADY_ADDED);
             return false;

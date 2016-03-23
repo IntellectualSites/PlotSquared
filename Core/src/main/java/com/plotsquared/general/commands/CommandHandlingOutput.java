@@ -12,16 +12,16 @@ public class CommandHandlingOutput {
     public static int WRONG_USAGE = -1;
     
     public static int SUCCESS = 1;
-    
-    public static String nameField(final int code) {
-        final Field[] fields = CommandHandlingOutput.class.getDeclaredFields();
-        for (final Field field : fields) {
+
+    public static String nameField(int code) {
+        Field[] fields = CommandHandlingOutput.class.getDeclaredFields();
+        for (Field field : fields) {
             if (field.getGenericType() == Integer.TYPE) {
                 try {
                     if ((Integer) field.get(CommandHandlingOutput.class) == code) {
                         return field.getName();
                     }
-                } catch (final IllegalAccessException e) {
+                } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }

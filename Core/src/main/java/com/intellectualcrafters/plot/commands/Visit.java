@@ -30,6 +30,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,31 +39,31 @@ import java.util.List;
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "visit",
-permission = "plots.visit",
-description = "Visit someones plot",
-usage = "/plot visit [player|alias|world|id] [#]",
-aliases = { "v", "tp", "teleport", "goto" },
-requiredType = RequiredType.NONE,
-category = CommandCategory.TELEPORT)
+        command = "visit",
+        permission = "plots.visit",
+        description = "Visit someones plot",
+        usage = "/plot visit [player|alias|world|id] [#]",
+        aliases = {"v", "tp", "teleport", "goto"},
+        requiredType = RequiredType.NONE,
+        category = CommandCategory.TELEPORT)
 public class Visit extends SubCommand {
-    
+
     public Visit() {
-        requiredArguments = new Argument[] { Argument.String };
+        this.requiredArguments = new Argument[]{Argument.String};
     }
-    
-    public List<Plot> getPlots(final UUID uuid) {
-        final List<Plot> plots = new ArrayList<>();
-        for (final Plot p : PS.get().getPlots()) {
+
+    public List<Plot> getPlots(UUID uuid) {
+        List<Plot> plots = new ArrayList<>();
+        for (Plot p : PS.get().getPlots()) {
             if (p.hasOwner() && p.isOwner(uuid)) {
                 plots.add(p);
             }
         }
         return plots;
     }
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer player, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         int page = Integer.MIN_VALUE;
         Collection<Plot> unsorted = null;
         if (args.length == 1 && args[0].contains(":")) {
@@ -78,7 +79,7 @@ public class Visit extends SubCommand {
                 page = Integer.parseInt(args[1]);
             }
             case 1: {
-                final UUID user = UUIDHandler.getCachedUUID(args[0], null);
+                UUID user = UUIDHandler.getCachedUUID(args[0], null);
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
                     unsorted = PS.get().getBasePlots(player);
@@ -87,7 +88,7 @@ public class Visit extends SubCommand {
                 if (user != null) {
                     unsorted = PS.get().getBasePlots(user);
                 } else {
-                    final Plot plot = MainUtil.getPlotFromString(player, args[0], true);
+                    Plot plot = MainUtil.getPlotFromString(player, args[0], true);
                     if (plot != null) {
                         unsorted = Collections.singletonList(plot.getBasePlot(false));
                     }
@@ -100,7 +101,7 @@ public class Visit extends SubCommand {
                 break;
             }
             default: {
-                
+
             }
         }
         if (page == Integer.MIN_VALUE) {
@@ -110,7 +111,7 @@ public class Visit extends SubCommand {
             sendMessage(player, C.FOUND_NO_PLOTS);
             return false;
         }
-        final Iterator<Plot> iter = unsorted.iterator();
+        Iterator<Plot> iter = unsorted.iterator();
         while (iter.hasNext()) {
             if (!iter.next().isBasePlot()) {
                 iter.remove();
@@ -121,7 +122,7 @@ public class Visit extends SubCommand {
             return false;
         }
         ArrayList<Plot> plots = PS.get().sortPlotsByTemp(unsorted);
-        final Plot plot = plots.get(page - 1);
+        Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, "plots.visit.unowned")) {
                 sendMessage(player, C.NO_PERMISSION, "plots.visit.unowned");
@@ -146,5 +147,5 @@ public class Visit extends SubCommand {
         plot.teleportPlayer(player);
         return true;
     }
-    
+
 }

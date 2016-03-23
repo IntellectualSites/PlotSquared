@@ -1,16 +1,16 @@
 package com.intellectualcrafters.plot;
 
+import static com.intellectualcrafters.plot.PS.log;
+
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONObject;
-
 import com.intellectualcrafters.plot.util.StringMan;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import static com.intellectualcrafters.plot.PS.log;
 
 public class Updater {
 
@@ -53,7 +53,12 @@ public class Updater {
             if (downloadURL.equals(name)) {
                 try {
                     String[] split = release.getString("name").split("\\.");
-                    int[] version = new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), (split.length == 3) ? Integer.parseInt(split[2]) : 0 };
+                    int[] version;
+                    if (split.length == 3) {
+                        version = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
+                    } else {
+                        version = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), 0};
+                    }
                     URL url = new URL(asset.getString("browser_download_url"));
                     // If current version >= update
                     if (PS.get().checkVersion(PS.get().getVersion(), version)) {

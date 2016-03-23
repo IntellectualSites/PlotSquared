@@ -29,17 +29,17 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-command = "sethome",
-permission = "plots.set.home",
-description = "Set the plot home",
-usage = "/plot sethome [none]",
-aliases = { "sh", "seth" },
-category = CommandCategory.SETTINGS,
-requiredType = RequiredType.NONE)
+        command = "sethome",
+        permission = "plots.set.home",
+        description = "Set the plot home",
+        usage = "/plot sethome [none]",
+        aliases = {"sh", "seth"},
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE)
 public class SetHome extends SetCommand {
-    
+
     @Override
-    public boolean set(final PlotPlayer plr, final Plot plot, final String value) {
+    public boolean set(PlotPlayer plr, Plot plot, String value) {
         switch (value.toLowerCase()) {
             case "unset":
             case "remove":

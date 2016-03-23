@@ -30,17 +30,18 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.Objects;
 
 @CommandDeclaration(command = "reload",
-permission = "plots.admin.command.reload",
-description = "Reload configurations",
-usage = "/plot reload",
-category = CommandCategory.ADMINISTRATION)
+        permission = "plots.admin.command.reload",
+        description = "Reload configurations",
+        usage = "/plot reload",
+        category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
@@ -51,12 +52,13 @@ public class Reload extends SubCommand {
             PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
                 @Override
                 public void run(PlotArea area) {
-                    final ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds." + area.worldname);
+                    ConfigurationSection worldSection = PS.get().config.getConfigurationSection("worlds." + area.worldname);
                     if (area.TYPE != 2 || !worldSection.contains("areas")) {
                         area.saveConfiguration(worldSection);
                         area.loadDefaultConfiguration(worldSection);
                     } else {
-                        ConfigurationSection areaSection = worldSection.getConfigurationSection("areas." + area.id + "-" + area.getMin() + "-" + area.getMax());
+                        ConfigurationSection areaSection =
+                                worldSection.getConfigurationSection("areas." + area.id + "-" + area.getMin() + "-" + area.getMax());
                         YamlConfiguration clone = new YamlConfiguration();
                         for (String key : areaSection.getKeys(true)) {
                             if (areaSection.get(key) instanceof MemorySection) {
@@ -95,7 +97,7 @@ public class Reload extends SubCommand {
             });
             PS.get().config.save(PS.get().configFile);
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             MainUtil.sendMessage(plr, C.RELOAD_FAILED);
         }

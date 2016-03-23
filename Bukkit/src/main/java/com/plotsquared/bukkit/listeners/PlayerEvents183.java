@@ -14,18 +14,18 @@ import org.bukkit.event.block.BlockExplodeEvent;
 
 import java.util.Iterator;
 
-public class PlayerEvents_1_8_3 implements Listener {
+public class PlayerEvents183 implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBigBoom(final BlockExplodeEvent event) {
-        final Block block = event.getBlock();
+    public void onBigBoom(BlockExplodeEvent event) {
+        Block block = event.getBlock();
         Location loc = BukkitUtil.getLocation(block.getLocation());
-        final String world = loc.getWorld();
+        String world = loc.getWorld();
         if (!PS.get().hasPlotArea(world)) {
             return;
         }
         PlotArea area = loc.getPlotArea();
         if (area == null) {
-            final Iterator<Block> iter = event.blockList().iterator();
+            Iterator<Block> iter = event.blockList().iterator();
             while (iter.hasNext()) {
                 loc = BukkitUtil.getLocation(iter.next().getLocation());
                 if (loc.getPlotArea() != null) {
@@ -38,9 +38,9 @@ public class PlayerEvents_1_8_3 implements Listener {
         if (plot == null || !FlagManager.isPlotFlagTrue(plot, "explosion")) {
             event.setCancelled(true);
         }
-        final Iterator<Block> iter = event.blockList().iterator();
+        Iterator<Block> iter = event.blockList().iterator();
         while (iter.hasNext()) {
-            final Block b = iter.next();
+            Block b = iter.next();
             if (!plot.equals(area.getOwnedPlot(BukkitUtil.getLocation(b.getLocation())))) {
                 iter.remove();
             }

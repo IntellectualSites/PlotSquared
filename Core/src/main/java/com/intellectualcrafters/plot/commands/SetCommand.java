@@ -9,11 +9,11 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 
 public abstract class SetCommand extends SubCommand {
-    
+
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
-        final Location loc = plr.getLocation();
-        final Plot plot = loc.getPlotAbs();
+        Location loc = plr.getLocation();
+        Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -36,7 +36,7 @@ public abstract class SetCommand extends SubCommand {
         }
         return set(plr, plot, StringMan.join(args, " "));
     }
-    
+
     public abstract boolean set(PlotPlayer plr, Plot plot, String value);
 
 }

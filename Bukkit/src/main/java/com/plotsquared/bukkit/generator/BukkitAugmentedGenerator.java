@@ -10,8 +10,6 @@ import java.util.Random;
 public class BukkitAugmentedGenerator extends BlockPopulator {
     
     private static BukkitAugmentedGenerator generator;
-    
-    private BukkitAugmentedGenerator() {}
 
     public static BukkitAugmentedGenerator get(World world) {
         for (BlockPopulator populator : world.getPopulators()) {
@@ -27,7 +25,7 @@ public class BukkitAugmentedGenerator extends BlockPopulator {
     }
 
     @Override
-    public void populate(final World world, Random r, final Chunk chunk) {
+    public void populate(World world, Random r, Chunk chunk) {
         AugmentedUtils.generate(world.getName(), chunk.getX(), chunk.getZ(), null);
     }
 }

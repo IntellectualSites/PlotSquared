@@ -30,19 +30,19 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-command = "createroadschematic",
-aliases = { "crs" },
-category = CommandCategory.ADMINISTRATION,
-requiredType = RequiredType.NONE,
-permission = "plots.createroadschematic",
-description = "Add a road schematic to your world using the roads around your current plot",
-usage = "/plot createroadschematic")
+        command = "createroadschematic",
+        aliases = {"crs"},
+        category = CommandCategory.ADMINISTRATION,
+        requiredType = RequiredType.NONE,
+        permission = "plots.createroadschematic",
+        description = "Add a road schematic to your world using the roads around your current plot",
+        usage = "/plot createroadschematic")
 public class CreateRoadSchematic extends SubCommand {
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer player, final String... args) {
-        final Location loc = player.getLocation();
-        final Plot plot = loc.getPlotAbs();
+    public boolean onCommand(PlotPlayer player, String... args) {
+        Location loc = player.getLocation();
+        Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return sendMessage(player, C.NOT_IN_PLOT);
         }

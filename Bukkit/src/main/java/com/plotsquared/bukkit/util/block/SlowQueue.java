@@ -30,18 +30,18 @@ public class SlowQueue implements PlotQueue<Chunk> {
         if (y > 255 || y < 0) {
             return false;
         }
-        final ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world, x >> 4, z >> 4);
+        ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world, x >> 4, z >> 4);
         x = x & 15;
         z = z & 15;
-        PlotChunk<Chunk> result = blocks.get(wrap);
+        PlotChunk<Chunk> result = this.blocks.get(wrap);
         if (result == null) {
             result = getChunk(wrap);
             result.setBlock(x, y, z, id, data);
-            final PlotChunk<Chunk> previous = blocks.put(wrap, result);
+            PlotChunk<Chunk> previous = this.blocks.put(wrap, result);
             if (previous == null) {
                 return true;
             }
-            blocks.put(wrap, previous);
+            this.blocks.put(wrap, previous);
             result = previous;
         }
         result.setBlock(x, y, z, id, data);
@@ -50,7 +50,7 @@ public class SlowQueue implements PlotQueue<Chunk> {
 
     @Override
     public void setChunk(PlotChunk<Chunk> chunk) {
-        blocks.put(chunk.getChunkWrapper(), chunk);
+        this.blocks.put(chunk.getChunkWrapper(), chunk);
     }
 
     @Override
@@ -59,11 +59,11 @@ public class SlowQueue implements PlotQueue<Chunk> {
             throw new IllegalStateException("Must be called from main thread!");
         }
         try {
-            if (blocks.isEmpty()) {
+            if (this.blocks.isEmpty()) {
                 return null;
             }
-            final Iterator<Entry<ChunkWrapper, PlotChunk<Chunk>>> iter = blocks.entrySet().iterator();
-            final PlotChunk<Chunk> toReturn = iter.next().getValue();
+            Iterator<Entry<ChunkWrapper, PlotChunk<Chunk>>> iter = this.blocks.entrySet().iterator();
+            PlotChunk<Chunk> toReturn = iter.next().getValue();
             if (SetQueue.IMP.isWaiting()) {
                 return null;
             }
@@ -71,7 +71,7 @@ public class SlowQueue implements PlotQueue<Chunk> {
             execute(toReturn);
             fixLighting(toReturn, true);
             return toReturn;
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             return null;
         }
@@ -83,17 +83,17 @@ public class SlowQueue implements PlotQueue<Chunk> {
             throw new IllegalStateException("Must be called from main thread!");
         }
         try {
-            if (blocks.isEmpty()) {
+            if (this.blocks.isEmpty()) {
                 return null;
             }
-            final PlotChunk<Chunk> toReturn = blocks.remove(wrap);
+            PlotChunk<Chunk> toReturn = this.blocks.remove(wrap);
             if (toReturn == null) {
                 return null;
             }
             execute(toReturn);
             fixLighting(toReturn, fixLighting);
             return toReturn;
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             return null;
         }
@@ -101,16 +101,16 @@ public class SlowQueue implements PlotQueue<Chunk> {
 
     @Override
     public void clear() {
-        blocks.clear();
+        this.blocks.clear();
     }
 
     /**
-     * This should be overriden by any specialized queues 
-     * @param pc
+     * This should be overridden by any specialized queues.
+     * @param plotChunk
      */
-    public void execute(PlotChunk<Chunk> pc) {
-        SlowChunk sc = (SlowChunk) pc;
-        Chunk chunk = pc.getChunk();
+    public void execute(PlotChunk<Chunk> plotChunk) {
+        SlowChunk sc = (SlowChunk) plotChunk;
+        Chunk chunk = plotChunk.getChunk();
         chunk.load(true);
         for (int i = 0; i < sc.result.length; i++) {
             PlotBlock[] result2 = sc.result[i];
@@ -118,9 +118,9 @@ public class SlowQueue implements PlotQueue<Chunk> {
                 continue;
             }
             for (int j = 0; j < 4096; j++) {
-                final int x = MainUtil.x_loc[i][j];
-                final int y = MainUtil.y_loc[i][j];
-                final int z = MainUtil.z_loc[i][j];
+                int x = MainUtil.x_loc[i][j];
+                int y = MainUtil.y_loc[i][j];
+                int z = MainUtil.z_loc[i][j];
                 Block block = chunk.getBlock(x, y, z);
                 PlotBlock newBlock = result2[j];
                 if (newBlock == null) {
@@ -252,7 +252,7 @@ public class SlowQueue implements PlotQueue<Chunk> {
     }
 
     /**
-     * This should be overriden by any specialized queues 
+     * This should be overridden by any specialized queues.
      * @param wrap
      */
     @Override
@@ -261,7 +261,7 @@ public class SlowQueue implements PlotQueue<Chunk> {
     }
 
     /**
-     * This should be overriden by any specialized queues 
+     * This should be overridden by any specialized queues.
      * @param fixAll
      */
     @Override
@@ -271,11 +271,11 @@ public class SlowQueue implements PlotQueue<Chunk> {
     }
 
     /**
-     * This should be overriden by any specialized queues 
-     * @param locs
+     * This should be overridden by any specialized queues.
+     * @param locations
      */
     @Override
-    public void sendChunk(String world, Collection<ChunkLoc> locs) {
+    public void sendChunk(String world, Collection<ChunkLoc> locations) {
         // Do nothing
     }
 }

@@ -35,35 +35,36 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 @CommandDeclaration(
-command = "toggle",
-aliases = { "attribute" },
-permission = "plots.use",
-description = "Toggle per user settings",
-usage = "/plot toggle <setting>",
-requiredType = RequiredType.NONE,
-category = CommandCategory.SETTINGS)
+        command = "toggle",
+        aliases = {"attribute"},
+        permission = "plots.use",
+        description = "Toggle per user settings",
+        usage = "/plot toggle <setting>",
+        requiredType = RequiredType.NONE,
+        category = CommandCategory.SETTINGS)
 public class Toggle extends SubCommand {
-    
-    private HashMap<String, Command<PlotPlayer>> toggles;
-    
+
+    private final HashMap<String, Command<PlotPlayer>> toggles;
+
     public Toggle() {
-        toggles = new HashMap<>();
-        toggles.put("titles", new Command<PlotPlayer>("titles", "/plot toggle titles", "Toggle titles for yourself", C.PERMISSION_PLOT_TOGGLE_TITLES.s()) {
+        this.toggles = new HashMap<>();
+        this.toggles.put("titles",
+                new Command<PlotPlayer>("titles", "/plot toggle titles", "Toggle titles for yourself", C.PERMISSION_PLOT_TOGGLE_TITLES.s()) {
+
+                    @Override
+                    public boolean onCommand(PlotPlayer player, String[] args) {
+                        if (toggle(player, "disabletitles")) {
+                            MainUtil.sendMessage(player, C.TOGGLE_ENABLED, getCommand());
+                        } else {
+                            MainUtil.sendMessage(player, C.TOGGLE_DISABLED, getCommand());
+                        }
+                        return true;
+                    }
+                });
+        this.toggles.put("chatspy", new Command<PlotPlayer>("chatspy", "/plot toggle chatspy", "Toggle chat spying", C.PERMISSION_COMMANDS_CHAT.s()) {
 
             @Override
-            public boolean onCommand(final PlotPlayer player, final String[] args) {
-                if (toggle(player, "disabletitles")) {
-                    MainUtil.sendMessage(player, C.TOGGLE_ENABLED, getCommand());
-                } else {
-                    MainUtil.sendMessage(player, C.TOGGLE_DISABLED, getCommand());
-                }
-                return true;
-            }
-        });
-        toggles.put("chatspy", new Command<PlotPlayer>("chatspy", "/plot toggle chatspy", "Toggle chat spying", C.PERMISSION_COMMANDS_CHAT.s()) {
-
-            @Override
-            public boolean onCommand(final PlotPlayer player, final String[] args) {
+            public boolean onCommand(PlotPlayer player, String[] args) {
                 if (toggle(player, "chatspy")) {
                     MainUtil.sendMessage(player, C.TOGGLE_DISABLED, getCommand());
                 } else {
@@ -72,10 +73,11 @@ public class Toggle extends SubCommand {
                 return true;
             }
         });
-        toggles.put("chat", new Command<PlotPlayer>("chat", "/plot toggle chat", "Toggle plot chat for yourself", C.PERMISSION_PLOT_TOGGLE_CHAT.s()) {
+        this.toggles.put("chat",
+                new Command<PlotPlayer>("chat", "/plot toggle chat", "Toggle plot chat for yourself", C.PERMISSION_PLOT_TOGGLE_CHAT.s()) {
 
             @Override
-            public boolean onCommand(final PlotPlayer player, final String[] args) {
+            public boolean onCommand(PlotPlayer player, String[] args) {
                 if (toggle(player, "chat")) {
                     MainUtil.sendMessage(player, C.PLOT_CHAT_OFF);
                 } else {
@@ -85,26 +87,27 @@ public class Toggle extends SubCommand {
             }
         });
         if (PS.get() != null && PS.get().worldedit != null) {
-            toggles.put("worldedit", new Command<PlotPlayer>("worldedit", "/plot toggle worldedit", "Toggle worldedit bypass", C.PERMISSION_WORLDEDIT_BYPASS.s()) {
+            this.toggles.put("worldedit",
+                    new Command<PlotPlayer>("worldedit", "/plot toggle worldedit", "Toggle worldedit bypass", C.PERMISSION_WORLDEDIT_BYPASS.s()) {
 
-                @Override
-                public boolean onCommand(final PlotPlayer player, final String[] args) {
-                    if (toggle(player, "worldedit")) {
-                        MainUtil.sendMessage(player, C.WORLDEDIT_RESTRICTED);
-                    } else {
-                        MainUtil.sendMessage(player, C.WORLDEDIT_UNMASKED);
-                    }
-                    return true;
-                }
-            });
+                        @Override
+                        public boolean onCommand(PlotPlayer player, String[] args) {
+                            if (toggle(player, "worldedit")) {
+                                MainUtil.sendMessage(player, C.WORLDEDIT_RESTRICTED);
+                            } else {
+                                MainUtil.sendMessage(player, C.WORLDEDIT_UNMASKED);
+                            }
+                            return true;
+                        }
+                    });
         }
 
     }
 
-    public void noArgs(final PlotPlayer plr) {
+    public void noArgs(PlotPlayer plr) {
         MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot toggle <setting>");
-        final ArrayList<String> options = new ArrayList<>();
-        for (final Entry<String, Command<PlotPlayer>> entry : toggles.entrySet()) {
+        ArrayList<String> options = new ArrayList<>();
+        for (Entry<String, Command<PlotPlayer>> entry : this.toggles.entrySet()) {
             if (Permissions.hasPermission(plr, entry.getValue().getPermission())) {
                 options.add(entry.getKey());
             }
@@ -113,14 +116,14 @@ public class Toggle extends SubCommand {
             MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(options, ","));
         }
     }
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer player, final String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length == 0) {
             noArgs(player);
             return false;
         }
-        final Command<PlotPlayer> cmd = toggles.get(args[0].toLowerCase());
+        Command<PlotPlayer> cmd = this.toggles.get(args[0].toLowerCase());
         if (cmd == null) {
             noArgs(player);
             return false;
@@ -131,8 +134,8 @@ public class Toggle extends SubCommand {
         }
         return cmd.onCommand(player, Arrays.copyOfRange(args, 1, args.length));
     }
-    
-    public boolean toggle(final PlotPlayer player, final String key) {
+
+    public boolean toggle(PlotPlayer player, String key) {
         if (player.getAttribute(key)) {
             player.removeAttribute(key);
             return true;

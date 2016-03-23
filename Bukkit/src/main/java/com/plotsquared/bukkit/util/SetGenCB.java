@@ -14,24 +14,24 @@ import java.util.Iterator;
 
 public class SetGenCB {
 
-    public static void setGenerator(final World world) throws Exception {
+    public static void setGenerator(World world) throws Exception {
         SetupUtils.manager.updateGenerators();
         PS.get().removePlotAreas(world.getName());
-        final ChunkGenerator gen = world.getGenerator();
+        ChunkGenerator gen = world.getGenerator();
         if (gen == null) {
             return;
         }
-        final String name = gen.getClass().getCanonicalName();
+        String name = gen.getClass().getCanonicalName();
         boolean set = false;
-        for (final GeneratorWrapper<?> wrapper : SetupUtils.generators.values()) {
+        for (GeneratorWrapper<?> wrapper : SetupUtils.generators.values()) {
             ChunkGenerator newGen = (ChunkGenerator) wrapper.getPlatformGenerator();
             if (newGen == null) {
                 newGen = (ChunkGenerator) wrapper;
             }
             if (newGen.getClass().getCanonicalName().equals(name)) {
                 // set generator
-                final Field generator = world.getClass().getDeclaredField("generator");
-                final Field populators = world.getClass().getDeclaredField("populators");
+                Field generator = world.getClass().getDeclaredField("generator");
+                Field populators = world.getClass().getDeclaredField("populators");
                 generator.setAccessible(true);
                 populators.setAccessible(true);
                 // Set populators (just in case)
@@ -45,7 +45,7 @@ public class SetGenCB {
             }
         }
         if (!set) {
-            final Iterator<BlockPopulator> iter = world.getPopulators().iterator();
+            Iterator<BlockPopulator> iter = world.getPopulators().iterator();
             while (iter.hasNext()) {
                 if (iter.next() instanceof BukkitAugmentedGenerator) {
                     iter.remove();

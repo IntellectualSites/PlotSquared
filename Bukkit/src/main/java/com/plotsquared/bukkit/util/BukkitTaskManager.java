@@ -7,37 +7,38 @@ import org.bukkit.Bukkit;
 public class BukkitTaskManager extends TaskManager {
 
     @Override
-    public int taskRepeat(final Runnable r, final int interval) {
+    public int taskRepeat(Runnable r, int interval) {
         return BukkitMain.THIS.getServer().getScheduler().scheduleSyncRepeatingTask(BukkitMain.THIS, r, interval, interval);
     }
 
-    @SuppressWarnings("deprecation") @Override
-    public int taskRepeatAsync(final Runnable r, final int interval) {
+    @SuppressWarnings("deprecation")
+    @Override
+    public int taskRepeatAsync(Runnable r, int interval) {
         return BukkitMain.THIS.getServer().getScheduler().scheduleAsyncRepeatingTask(BukkitMain.THIS, r, interval, interval);
     }
 
     @Override
-    public void taskAsync(final Runnable r) {
+    public void taskAsync(Runnable r) {
         BukkitMain.THIS.getServer().getScheduler().runTaskAsynchronously(BukkitMain.THIS, r).getTaskId();
     }
 
     @Override
-    public void task(final Runnable r) {
+    public void task(Runnable r) {
         BukkitMain.THIS.getServer().getScheduler().runTask(BukkitMain.THIS, r).getTaskId();
     }
 
     @Override
-    public void taskLater(final Runnable r, final int delay) {
+    public void taskLater(Runnable r, int delay) {
         BukkitMain.THIS.getServer().getScheduler().runTaskLater(BukkitMain.THIS, r, delay).getTaskId();
     }
 
     @Override
-    public void taskLaterAsync(final Runnable r, final int delay) {
+    public void taskLaterAsync(Runnable r, int delay) {
         BukkitMain.THIS.getServer().getScheduler().runTaskLaterAsynchronously(BukkitMain.THIS, r, delay);
     }
 
     @Override
-    public void cancelTask(final int task) {
+    public void cancelTask(int task) {
         if (task != -1) {
             Bukkit.getScheduler().cancelTask(task);
         }

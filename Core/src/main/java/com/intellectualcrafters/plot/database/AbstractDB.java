@@ -28,7 +28,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,52 +36,49 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-/**
-
-
- */
 public interface AbstractDB {
     
     /**
-     * The UUID that will count as everyone
+     * The UUID that will count as everyone.
      */
     UUID everyone = UUID.fromString("1-1-3-3-7");
     
     /**
-     * Set Plot owner
+     * Set Plot owner.
      *
      * @param plot Plot in which the owner should be set
      * @param uuid The uuid of the new owner
      */
-    void setOwner(final Plot plot, final UUID uuid);
+    void setOwner(Plot plot, UUID uuid);
     
     /**
-     * Create all settings, and create default helpers, trusted + denied lists
+     * Create all settings, and create default helpers, trusted + denied lists.
      *
      * @param plots Plots for which the default table entries should be created
+     * @param whenDone
      */
-    void createPlotsAndData(final ArrayList<Plot> plots, final Runnable whenDone);
+    void createPlotsAndData(ArrayList<Plot> plots, Runnable whenDone);
     
     /**
      * Create a plot
      *
      * @param plot That should be created
      */
-    void createPlot(final Plot plot);
+    void createPlot(Plot plot);
     
     /**
-     * Create tables
+     * Create tables.
      *
-     * @throws SQLException If the database manager is unable to create the tables
+     * @throws Exception If the database manager is unable to create the tables
      */
     void createTables() throws Exception;
     
     /**
-     * Delete a plot
+     * Delete a plot.
      *
-     * @param plot Plot that should be deleted
+     * @param plot The plot to delete.
      */
-    void delete(final Plot plot);
+    void delete(Plot plot);
     
     void deleteSettings(Plot plot);
     
@@ -96,7 +92,7 @@ public interface AbstractDB {
     
     void deleteRatings(Plot plot);
 
-    void delete(final PlotCluster cluster);
+    void delete(PlotCluster cluster);
 
     void addPersistentMeta(UUID uuid, String key, byte[] meta, boolean delete);
 
@@ -105,248 +101,254 @@ public interface AbstractDB {
     void getPersistentMeta(UUID uuid, RunnableVal<Map<String, byte[]>> result);
 
     /**
-     * Create plot settings
+     * Create plot settings.
      *
      * @param id   Plot Entry ID
      * @param plot Plot Object
      */
-    void createPlotSettings(final int id, final Plot plot);
+    void createPlotSettings(int id, Plot plot);
     
     /**
-     * Get the table entry ID
+     * Get the table entry ID.
      *
      * @param plot Plot Object
      *
      * @return Integer = Plot Entry Id
      */
-    int getId(final Plot plot);
+    int getId(Plot plot);
     
     /**
-     * Get the id of a given plot cluster
+     * Get the id of a given plot cluster.
      *
      * @param cluster PlotCluster Object
      *
      * @return Integer = Cluster Entry Id
      */
-    int getClusterId(final PlotCluster cluster);
+    int getClusterId(PlotCluster cluster);
     
     /**
-     * @return A linked hashmap containing all plots
+     * @return A linked HashMap containing all plots
      */
     HashMap<String, HashMap<PlotId, Plot>> getPlots();
-    
+
     /**
      *
+     * @param toValidate
      */
-    void validateAllPlots(final Set<Plot> toValidate);
+    void validateAllPlots(Set<Plot> toValidate);
     
     /**
-     * @return A hashmap containing all plot clusters
+     * @return A HashMap containing all plot clusters
      */
     HashMap<String, Set<PlotCluster>> getClusters();
     
     /**
-     * Set the merged status for a plot
+     * Set the merged status for a plot.
      *
-     * @param plot   Plot Object
+     * @param plot The plot to set the merged status of
      * @param merged boolean[]
      */
-    void setMerged(final Plot plot, final boolean[] merged);
+    void setMerged(Plot plot, boolean[] merged);
     
     /**
-     * Swap the settings, helpers etc. of two plots
-     * @param p1 Plot1
-     * @param p2 Plot2
+     * Swap the settings, helpers etc. of two plots.
+     * @param plot1 Plot1
+     * @param plot2 Plot2
      */
-    void swapPlots(final Plot p1, final Plot p2);
+    void swapPlots(Plot plot1, Plot plot2);
     
     /**
-     * Set plot flags
+     * Set plot flags.
      *
      * @param plot  Plot Object
      * @param flags flags to set (flag[])
      */
-    void setFlags(final Plot plot, final Collection<Flag> flags);
+    void setFlags(Plot plot, Collection<Flag> flags);
     
     /**
-     * Set cluster flags
+     * Set cluster flags.
      *
      * @param cluster PlotCluster Object
      * @param flags flags to set (flag[])
      */
-    void setFlags(final PlotCluster cluster, final Collection<Flag> flags);
+    void setFlags(PlotCluster cluster, Collection<Flag> flags);
     
     /**
-     * Rename a cluster
+     * Rename a cluster.
      */
-    void setClusterName(final PlotCluster cluster, final String name);
+    void setClusterName(PlotCluster cluster, String name);
     
     /**
-     * Set the plot alias
+     * Set the plot alias.
      *
      * @param plot  Plot for which the alias should be set
      * @param alias Plot Alias
      */
-    void setAlias(final Plot plot, final String alias);
+    void setAlias(Plot plot, String alias);
     
     /**
-     * Purge a plot
+     * Purge a plot.
      *
      * @param uniqueIds list of plot id (db) to be purged
      */
-    void purgeIds(final Set<Integer> uniqueIds);
+    void purgeIds(Set<Integer> uniqueIds);
     
     /**
-     * Purge a whole world
+     * Purge a whole world.
      *
      * @param area World in which the plots should be purged
+     * @param plotIds
      */
-    void purge(final PlotArea area, final Set<PlotId> plotIds);
+    void purge(PlotArea area, Set<PlotId> plotIds);
     
     /**
-     * Set Plot Home Position
+     * Set Plot Home Position.
      *
      * @param plot     Plot Object
      * @param position Plot Home Position
      */
-    void setPosition(final Plot plot, final String position);
+    void setPosition(Plot plot, String position);
     
     /**
      *
      * @param cluster
      * @param position
      */
-    void setPosition(final PlotCluster cluster, final String position);
+    void setPosition(PlotCluster cluster, String position);
     
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
-    void removeTrusted(final Plot plot, final UUID uuid);
+    void removeTrusted(Plot plot, UUID uuid);
     
     /**
      * @param cluster   PlotCluster Object
      * @param uuid Player that should be removed
      */
-    void removeHelper(final PlotCluster cluster, final UUID uuid);
+    void removeHelper(PlotCluster cluster, UUID uuid);
     
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
-    void removeMember(final Plot plot, final UUID uuid);
-    
+    void removeMember(Plot plot, UUID uuid);
+
     /**
      *
      * @param cluster
      * @param uuid
      */
-    void removeInvited(final PlotCluster cluster, final UUID uuid);
+    void removeInvited(PlotCluster cluster, UUID uuid);
     
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be removed
      */
-    void setTrusted(final Plot plot, final UUID uuid);
+    void setTrusted(Plot plot, UUID uuid);
     
     /**
      * @param cluster PlotCluster Object
      * @param uuid Player that should be removed
      */
-    void setHelper(final PlotCluster cluster, final UUID uuid);
+    void setHelper(PlotCluster cluster, UUID uuid);
     
     /**
      * @param plot   Plot Object
      * @param uuid Player that should be added
      */
-    void setMember(final Plot plot, final UUID uuid);
+    void setMember(Plot plot, UUID uuid);
     
     /**
      *
      * @param cluster
      * @param uuid
      */
-    void setInvited(final PlotCluster cluster, final UUID uuid);
+    void setInvited(PlotCluster cluster, UUID uuid);
     
     /**
      * @param plot   Plot Object
      * @param uuid   Player uuid
      */
-    void removeDenied(final Plot plot, final UUID uuid);
+    void removeDenied(Plot plot, UUID uuid);
     
     /**
      * @param plot   Plot Object
      * @param uuid Player uuid that should be added
      */
-    void setDenied(final Plot plot, final UUID uuid);
+    void setDenied(Plot plot, UUID uuid);
     
     /**
-     * Get Plots ratings
+     * Get Plots ratings.
      *
      * @param plot Plot Object
      *
      * @return Plot Ratings (pre-calculated)
      */
-    HashMap<UUID, Integer> getRatings(final Plot plot);
+    HashMap<UUID, Integer> getRatings(Plot plot);
     
     /**
-     * Set a rating for a plot
+     * Set a rating for a plot.
      * @param plot
      * @param rater
      * @param value
      */
-    void setRating(final Plot plot, final UUID rater, final int value);
+    void setRating(Plot plot, UUID rater, int value);
     
     /**
-     * Remove a plot comment
+     * Remove a plot comment.
      *
      * @param plot    Plot Object
      * @param comment Comment to remove
      */
-    void removeComment(final Plot plot, final PlotComment comment);
+    void removeComment(Plot plot, PlotComment comment);
     
     /**
-     * Clear an inbox
+     * Clear an inbox.
+     *
      * @param plot
      * @param inbox
      */
-    void clearInbox(final Plot plot, final String inbox);
+    void clearInbox(Plot plot, String inbox);
     
     /**
-     * Set a plot comment
+     * Set a plot comment.
      *
      * @param plot    Plot Object
      * @param comment Comment to add
      */
-    void setComment(final Plot plot, final PlotComment comment);
+    void setComment(Plot plot, PlotComment comment);
     
     /**
-     * Get Plot Comments
+     * Get Plot Comments.
      *
-     * @param plot  Plot Object
-     * @return Plot Comments within the specified tier
+     * @param plot The Plot to get comments from
      */
-    void getComments(final Plot plot, final String inbox, final RunnableVal<List<PlotComment>> whenDone);
-    
-    void createPlotAndSettings(final Plot plot, final Runnable whenDone);
-    
-    void createCluster(final PlotCluster cluster);
-    
-    void resizeCluster(final PlotCluster current, PlotId min, PlotId max);
-    
-    void movePlot(final Plot originalPlot, final Plot newPlot);
+    void getComments(Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
+
+    void createPlotAndSettings(Plot plot, Runnable whenDone);
+
+    void createCluster(PlotCluster cluster);
+
+    void resizeCluster(PlotCluster current, PlotId min, PlotId max);
+
+    void movePlot(Plot originalPlot, Plot newPlot);
     
     /**
-     * Replace a old uuid with a new one in the database<br>
-     * - Useful for replacing a few uuids (not the entire database)<br>
-     * - For entire conversion, the uuidconvert command scales better
+     * Replace a old uuid with a new one in the database.
+     *
+     * <ul>
+     *  <li> Useful for replacing a few uuids (not the entire database).</li>
+     *  <li>or entire conversion, the uuidconvert command scales better.</li>
+     * </ul>
      * @param old
      * @param now
      */
-    void replaceUUID(final UUID old, final UUID now);
+    void replaceUUID(UUID old, UUID now);
     
     /**
-     * Don't fuck with this one, unless you enjoy it rough
+     * Don't use this method unless you want to ruin someone's server.
+     * @return true if the tables were deleted, false when an error is encountered
      */
     boolean deleteTables();
     

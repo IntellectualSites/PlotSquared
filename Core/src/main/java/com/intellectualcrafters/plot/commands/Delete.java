@@ -36,19 +36,19 @@ import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.HashSet;
 
 @CommandDeclaration(
-command = "delete",
-permission = "plots.delete",
-description = "Delete a plot",
-usage = "/plot delete",
-aliases = { "dispose", "del" },
-category = CommandCategory.CLAIMING,
-requiredType = RequiredType.NONE)
+        command = "delete",
+        permission = "plots.delete",
+        description = "Delete a plot",
+        usage = "/plot delete",
+        aliases = {"dispose", "del"},
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE)
 public class Delete extends SubCommand {
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
-        final Location loc = plr.getLocation();
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
+
+        Location loc = plr.getLocation();
         final Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
@@ -61,7 +61,7 @@ public class Delete extends SubCommand {
         }
         final PlotArea plotworld = plot.getArea();
         final HashSet<Plot> plots = plot.getConnectedPlots();
-        final Runnable run = new Runnable() {
+        Runnable run = new Runnable() {
             @Override
             public void run() {
                 if (plot.getRunning() > 0) {
@@ -74,7 +74,7 @@ public class Delete extends SubCommand {
                     public void run() {
                         plot.removeRunning();
                         if ((EconHandler.manager != null) && plotworld.USE_ECONOMY) {
-                            final double value = plotworld.PRICES.get("sell") * plots.size();
+                            double value = plotworld.PRICES.get("sell") * plots.size();
                             if (value > 0d) {
                                 EconHandler.manager.depositMoney(plr, value);
                                 sendMessage(plr, C.ADDED_BALANCE, value + "");

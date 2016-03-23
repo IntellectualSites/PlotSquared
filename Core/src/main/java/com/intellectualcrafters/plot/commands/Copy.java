@@ -29,19 +29,19 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-command = "copy",
-permission = "plots.copy",
-aliases = { "copypaste" },
-category = CommandCategory.CLAIMING,
-description = "Copy a plot",
-usage = "/plot copy <X;Z>",
-requiredType = RequiredType.NONE)
+        command = "copy",
+        permission = "plots.copy",
+        aliases = {"copypaste"},
+        category = CommandCategory.CLAIMING,
+        description = "Copy a plot",
+        usage = "/plot copy <X;Z>",
+        requiredType = RequiredType.NONE)
 public class Copy extends SubCommand {
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final Location loc = plr.getLocation();
-        final Plot plot1 = loc.getPlotAbs();
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
+        Location loc = plr.getLocation();
+        Plot plot1 = loc.getPlotAbs();
         if (plot1 == null) {
             return !MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -53,8 +53,8 @@ public class Copy extends SubCommand {
             C.COMMAND_SYNTAX.send(plr, getUsage());
             return false;
         }
-        final Plot plot2 = MainUtil.getPlotFromString(plr, args[0], true);
-        if ((plot2 == null)) {
+        Plot plot2 = MainUtil.getPlotFromString(plr, args[0], true);
+        if (plot2 == null) {
             return false;
         }
         if (plot1.equals(plot2)) {

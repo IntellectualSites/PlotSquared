@@ -48,30 +48,30 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @CommandDeclaration(
-command = "template",
-permission = "plots.admin",
-description = "Create or use a world template",
-usage = "/plot template [import|export] <world> <template>",
-category = CommandCategory.ADMINISTRATION)
+        command = "template",
+        permission = "plots.admin",
+        description = "Create or use a world template",
+        usage = "/plot template [import|export] <world> <template>",
+        category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
-    
-    public static boolean extractAllFiles(final String world, final String template) {
+
+    public static boolean extractAllFiles(String world, String template) {
         try {
-            final File folder = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
+            File folder = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
             if (!folder.exists()) {
                 return false;
             }
-            final File input = new File(folder + File.separator + template + ".template");
-            final File output = PS.get().IMP.getDirectory();
+            File input = new File(folder + File.separator + template + ".template");
+            File output = PS.get().IMP.getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
             try (ZipInputStream zis = new ZipInputStream(new FileInputStream(input))) {
                 ZipEntry ze = zis.getNextEntry();
-                final byte[] buffer = new byte[2048];
+                byte[] buffer = new byte[2048];
                 while (ze != null) {
-                    final String name = ze.getName().replace('\\', File.separatorChar).replace('/', File.separatorChar);
-                    final File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
+                    String name = ze.getName().replace('\\', File.separatorChar).replace('/', File.separatorChar);
+                    File newFile = new File((output + File.separator + name).replaceAll("__TEMP_DIR__", world));
                     new File(newFile.getParent()).mkdirs();
                     try (FileOutputStream fos = new FileOutputStream(newFile)) {
                         int len;
@@ -92,37 +92,37 @@ public class Template extends SubCommand {
             return false;
         }
     }
-    
-    public static byte[] getBytes(final PlotArea plotworld) {
-        final ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + plotworld.worldname);
-        final YamlConfiguration config = new YamlConfiguration();
-        final String generator = SetupUtils.manager.getGenerator(plotworld);
+
+    public static byte[] getBytes(PlotArea plotworld) {
+        ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + plotworld.worldname);
+        YamlConfiguration config = new YamlConfiguration();
+        String generator = SetupUtils.manager.getGenerator(plotworld);
         if (generator != null) {
             config.set("generator.plugin", generator);
         }
-        for (final String key : section.getKeys(true)) {
+        for (String key : section.getKeys(true)) {
             config.set(key, section.get(key));
         }
         return config.saveToString().getBytes();
     }
-    
-    public static void zipAll(final String world, final Set<FileBytes> files) throws IOException {
-        final File output = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
+
+    public static void zipAll(String world, Set<FileBytes> files) throws IOException {
+        File output = new File(PS.get().IMP.getDirectory() + File.separator + "templates");
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(output + File.separator + world + ".template");
                 ZipOutputStream zos = new ZipOutputStream(fos)) {
 
-            for (final FileBytes file : files) {
-                final ZipEntry ze = new ZipEntry(file.path);
+            for (FileBytes file : files) {
+                ZipEntry ze = new ZipEntry(file.path);
                 zos.putNextEntry(ze);
                 zos.write(file.data);
             }
             zos.closeEntry();
         }
     }
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         if (args.length != 2 && args.length != 3) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
@@ -147,18 +147,18 @@ public class Template extends SubCommand {
                     MainUtil.sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
                     return false;
                 }
-                final boolean result = extractAllFiles(world, args[2]);
+                boolean result = extractAllFiles(world, args[2]);
                 if (!result) {
                     MainUtil.sendMessage(plr, "&cInvalid template file: " + args[2] + ".template");
                     return false;
                 }
-                final File worldFile = new File(PS.get().IMP.getDirectory() + File.separator + "templates" + File.separator + "tmp-data.yml");
-                final YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
+                File worldFile = new File(PS.get().IMP.getDirectory() + File.separator + "templates" + File.separator + "tmp-data.yml");
+                YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
                 PS.get().config.set("worlds." + world, worldConfig.get(""));
                 try {
                     PS.get().config.save(PS.get().configFile);
                     PS.get().config.load(PS.get().configFile);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 String manager = worldConfig.getString("generator.plugin", "PlotSquared");

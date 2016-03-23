@@ -20,70 +20,71 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.World;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.intellectualcrafters.plot.object.PlotArea;
-import com.intellectualcrafters.plot.object.PlotId;
+import java.util.ArrayList;
 
-/**
+/**
+
  */
 public class PlotUnlinkEvent extends Event implements Cancellable {
-    private static HandlerList handlers = new HandlerList();
+
+    private static final HandlerList handlers = new HandlerList();
     private final ArrayList<PlotId> plots;
     private final World world;
-    private boolean cancelled;
     private final PlotArea area;
-    
+    private boolean cancelled;
+
     /**
      * Called when a mega-plot is unlinked.
      *
      * @param world World in which the event occurred
      * @param plots Plots that are involved in the event
      */
-    public PlotUnlinkEvent(final World world, PlotArea area, final ArrayList<PlotId> plots) {
+    public PlotUnlinkEvent(World world, PlotArea area, ArrayList<PlotId> plots) {
         this.plots = plots;
         this.world = world;
         this.area = area;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     /**
      * Get the plots involved
      *
      * @return PlotId
      */
     public ArrayList<PlotId> getPlots() {
-        return plots;
+        return this.plots;
     }
-    
+
     public World getWorld() {
-        return world;
+        return this.world;
     }
-    
+
     public PlotArea getArea() {
-        return area;
+        return this.area;
     }
 
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-    
+
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return this.cancelled;
     }
-    
+
     @Override
-    public void setCancelled(final boolean b) {
-        cancelled = b;
+    public void setCancelled(boolean b) {
+        this.cancelled = b;
     }
 }

@@ -50,10 +50,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Schematic Handler
- *
-
-
+ * Schematic Handler.
  */
 public class BukkitSchematicHandler extends SchematicHandler {
 
@@ -66,10 +63,10 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 // Main positions
                 Location[] corners = MainUtil.getCorners(world, regions);
                 final Location bot = corners[0];
-                final Location top = corners[1];
+                Location top = corners[1];
 
                 final int width = (top.getX() - bot.getX()) + 1;
-                final int height = (top.getY() - bot.getY()) + 1;
+                int height = (top.getY() - bot.getY()) + 1;
                 final int length = (top.getZ() - bot.getZ()) + 1;
                 // Main Schematic tag
                 final HashMap<String, Tag> schematic = new HashMap<>();
@@ -136,16 +133,16 @@ public class BukkitSchematicHandler extends SchematicHandler {
                         TaskManager.runTask(new Runnable() {
                             @Override
                             public void run() {
-                                final long start = System.currentTimeMillis();
+                                long start = System.currentTimeMillis();
                                 while (!chunks.isEmpty() && ((System.currentTimeMillis() - start) < 20)) {
                                     // save schematics
-                                    final ChunkLoc chunk = chunks.remove(0);
-                                    final Chunk bc = worldObj.getChunkAt(chunk.x, chunk.z);
+                                    ChunkLoc chunk = chunks.remove(0);
+                                    Chunk bc = worldObj.getChunkAt(chunk.x, chunk.z);
                                     if (!bc.load(false)) {
                                         continue;
                                     }
-                                    final int X = chunk.x;
-                                    final int Z = chunk.z;
+                                    int X = chunk.x;
+                                    int Z = chunk.z;
                                     int xxb = X << 4;
                                     int zzb = Z << 4;
                                     int xxt = xxb + 15;
@@ -164,16 +161,16 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                         zzt = p2z;
                                     }
                                     for (int y = sy; y <= Math.min(255, ey); y++) {
-                                        final int ry = y - sy;
-                                        final int i1 = ry * width * length;
+                                        int ry = y - sy;
+                                        int i1 = ry * width * length;
                                         for (int z = zzb; z <= zzt; z++) {
-                                            final int rz = z - bz;
-                                            final int i2 = i1 + (rz * width);
+                                            int rz = z - bz;
+                                            int i2 = i1 + (rz * width);
                                             for (int x = xxb; x <= xxt; x++) {
-                                                final int rx = x - bx;
-                                                final int index = i2 + rx;
-                                                final Block block = worldObj.getBlockAt(x, y, z);
-                                                final int id = block.getTypeId();
+                                                int rx = x - bx;
+                                                int index = i2 + rx;
+                                                Block block = worldObj.getBlockAt(x, y, z);
+                                                int id = block.getTypeId();
                                                 switch (id) {
                                                     case 0:
                                                     case 2:
@@ -281,13 +278,13 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                     case 151:
                                                     case 178: {
                                                         // TODO implement fully
-                                                        final BlockState state = block.getState();
+                                                        BlockState state = block.getState();
                                                         if (state != null) {
-                                                            final StateWrapper wrapper = new StateWrapper(state);
-                                                            final CompoundTag rawTag = wrapper.getTag();
+                                                            StateWrapper wrapper = new StateWrapper(state);
+                                                            CompoundTag rawTag = wrapper.getTag();
                                                             if (rawTag != null) {
-                                                                final Map<String, Tag> values = new HashMap<>();
-                                                                for (final Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
+                                                                Map<String, Tag> values = new HashMap<>();
+                                                                for (Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
                                                                     values.put(entry.getKey(), entry.getValue());
                                                                 }
                                                                 values.put("id", new StringTag("id", wrapper.getId()));

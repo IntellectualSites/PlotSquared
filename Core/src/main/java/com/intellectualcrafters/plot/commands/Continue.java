@@ -30,16 +30,16 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-command = "continue",
-description = "Continue a plot that was previously marked as done",
-permission = "plots.continue",
-category = CommandCategory.SETTINGS,
-requiredType = RequiredType.NONE)
+        command = "continue",
+        description = "Continue a plot that was previously marked as done",
+        permission = "plots.continue",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE)
 public class Continue extends SubCommand {
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final Plot plot = plr.getCurrentPlot();
+    public boolean onCommand(PlotPlayer plr, String[] args) {
+        Plot plot = plr.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }

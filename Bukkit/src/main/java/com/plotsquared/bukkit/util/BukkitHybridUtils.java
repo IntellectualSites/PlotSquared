@@ -49,11 +49,11 @@ public class BukkitHybridUtils extends HybridUtils {
                 }
                 final BiomeGrid nullBiomeGrid = new BiomeGrid() {
                     @Override
-                    public void setBiome(final int a, final int b, final Biome c) {
+                    public void setBiome(int a, int b, Biome c) {
                     }
 
                     @Override
-                    public Biome getBiome(final int a, final int b) {
+                    public Biome getBiome(int a, int b) {
                         return null;
                     }
                 };
@@ -76,8 +76,8 @@ public class BukkitHybridUtils extends HybridUtils {
 
                 System.gc();
                 System.gc();
-                final short[][][] oldblocks = new short[256][width][length];
-                final short[][][] newblocks = new short[256][width][length];
+                final short[][][] oldBlocks = new short[256][width][length];
+                final short[][][] newBlocks = new short[256][width][length];
 
                 final Runnable run = new Runnable() {
                     @Override
@@ -86,38 +86,38 @@ public class BukkitHybridUtils extends HybridUtils {
                             @Override
                             public void run(int[] value) {
                                 // [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge]
-                                final int X = value[0];
-                                final int Z = value[1];
-                                final short[][] result = gen.generateExtBlockSections(worldObj, r, X, Z, nullBiomeGrid);
-                                final int xb = (X << 4) - bx;
-                                final int zb = (Z << 4) - bz;
+                                int X = value[0];
+                                int Z = value[1];
+                                short[][] result = gen.generateExtBlockSections(worldObj, r, X, Z, nullBiomeGrid);
+                                int xb = (X << 4) - bx;
+                                int zb = (Z << 4) - bz;
                                 for (int i = 0; i < result.length; i++) {
                                     if (result[i] == null) {
                                         for (int j = 0; j < 4096; j++) {
-                                            final int x = MainUtil.x_loc[i][j] + xb;
+                                            int x = MainUtil.x_loc[i][j] + xb;
                                             if (x < 0 || x >= width) {
                                                 continue;
                                             }
-                                            final int z = MainUtil.z_loc[i][j] + zb;
+                                            int z = MainUtil.z_loc[i][j] + zb;
                                             if (z < 0 || z >= length) {
                                                 continue;
                                             }
-                                            final int y = MainUtil.y_loc[i][j];
-                                            oldblocks[y][x][z] = 0;
+                                            int y = MainUtil.y_loc[i][j];
+                                            oldBlocks[y][x][z] = 0;
                                         }
                                         continue;
                                     }
                                     for (int j = 0; j < result[i].length; j++) {
-                                        final int x = MainUtil.x_loc[i][j] + xb;
+                                        int x = MainUtil.x_loc[i][j] + xb;
                                         if (x < 0 || x >= width) {
                                             continue;
                                         }
-                                        final int z = MainUtil.z_loc[i][j] + zb;
+                                        int z = MainUtil.z_loc[i][j] + zb;
                                         if (z < 0 || z >= length) {
                                             continue;
                                         }
-                                        final int y = MainUtil.y_loc[i][j];
-                                        oldblocks[y][x][z] = result[i][j];
+                                        int y = MainUtil.y_loc[i][j];
+                                        oldBlocks[y][x][z] = result[i][j];
                                     }
                                 }
 
@@ -128,19 +128,19 @@ public class BukkitHybridUtils extends HybridUtils {
                                 TaskManager.runTaskAsync(new Runnable() {
                                     @Override
                                     public void run() {
-                                        final int size = width * length;
-                                        final int[] changes = new int[size];
-                                        final int[] faces = new int[size];
-                                        final int[] data = new int[size];
-                                        final int[] air = new int[size];
-                                        final int[] variety = new int[size];
+                                        int size = width * length;
+                                        int[] changes = new int[size];
+                                        int[] faces = new int[size];
+                                        int[] data = new int[size];
+                                        int[] air = new int[size];
+                                        int[] variety = new int[size];
                                         int i = 0;
                                         for (int x = 0; x < width; x++) {
                                             for (int z = 0; z < length; z++) {
-                                                final HashSet<Short> types = new HashSet<>();
+                                                HashSet<Short> types = new HashSet<>();
                                                 for (int y = 0; y < 256; y++) {
-                                                    final short old = oldblocks[y][x][z];
-                                                    final short now = newblocks[y][x][z];
+                                                    short old = oldBlocks[y][x][z];
+                                                    short now = newBlocks[y][x][z];
                                                     if (old != now) {
                                                         changes[i]++;
                                                     }
@@ -150,28 +150,28 @@ public class BukkitHybridUtils extends HybridUtils {
                                                         // check vertices
                                                         // modifications_adjacent
                                                         if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1 && y < 255) {
-                                                            if (newblocks[y - 1][x][z] == 0) {
+                                                            if (newBlocks[y - 1][x][z] == 0) {
                                                                 faces[i]++;
                                                             }
-                                                            if (newblocks[y][x - 1][z] == 0) {
+                                                            if (newBlocks[y][x - 1][z] == 0) {
                                                                 faces[i]++;
                                                             }
-                                                            if (newblocks[y][x][z - 1] == 0) {
+                                                            if (newBlocks[y][x][z - 1] == 0) {
                                                                 faces[i]++;
                                                             }
-                                                            if (newblocks[y + 1][x][z] == 0) {
+                                                            if (newBlocks[y + 1][x][z] == 0) {
                                                                 faces[i]++;
                                                             }
-                                                            if (newblocks[y][x + 1][z] == 0) {
+                                                            if (newBlocks[y][x + 1][z] == 0) {
                                                                 faces[i]++;
                                                             }
-                                                            if (newblocks[y][x][z + 1] == 0) {
+                                                            if (newBlocks[y][x][z + 1] == 0) {
                                                                 faces[i]++;
                                                             }
                                                         }
 
-                                                        final Material material = Material.getMaterial(now);
-                                                        final Class<? extends MaterialData> md = material.getData();
+                                                        Material material = Material.getMaterial(now);
+                                                        Class<? extends MaterialData> md = material.getData();
                                                         if (md.equals(Directional.class)) {
                                                             data[i] += 8;
                                                         } else if (!md.equals(MaterialData.class)) {
@@ -188,7 +188,7 @@ public class BukkitHybridUtils extends HybridUtils {
                                         // put in analysis obj
 
                                         // run whenDone
-                                        final PlotAnalysis analysis = new PlotAnalysis();
+                                        PlotAnalysis analysis = new PlotAnalysis();
                                         analysis.changes = (int) (MathMan.getMean(changes) * 100);
                                         analysis.faces = (int) (MathMan.getMean(faces) * 100);
                                         analysis.data = (int) (MathMan.getMean(data) * 100);
@@ -217,8 +217,8 @@ public class BukkitHybridUtils extends HybridUtils {
 
                     @Override
                     public void run(int[] value) {
-                        final int X = value[0];
-                        final int Z = value[1];
+                        int X = value[0];
+                        int Z = value[1];
                         worldObj.loadChunk(X, Z);
                         int minX;
                         if (X == cbx) {
@@ -245,20 +245,20 @@ public class BukkitHybridUtils extends HybridUtils {
                             maxZ = 16;
                         }
 
-                        final int cbx = X << 4;
-                        final int cbz = Z << 4;
+                        int cbx = X << 4;
+                        int cbz = Z << 4;
 
-                        final int xb = cbx - bx;
-                        final int zb = cbz - bz;
+                        int xb = cbx - bx;
+                        int zb = cbz - bz;
                         for (int x = minX; x <= maxX; x++) {
-                            final int xx = cbx + x;
+                            int xx = cbx + x;
                             for (int z = minZ; z <= maxZ; z++) {
-                                final int zz = cbz + z;
+                                int zz = cbz + z;
                                 for (int y = 0; y < 256; y++) {
-                                    final Block block = worldObj.getBlockAt(xx, y, zz);
-                                    final int xr = xb + x;
-                                    final int zr = zb + z;
-                                    newblocks[y][xr][zr] = (short) block.getTypeId();
+                                    Block block = worldObj.getBlockAt(xx, y, zz);
+                                    int xr = xb + x;
+                                    int zr = zb + z;
+                                    newBlocks[y][xr][zr] = (short) block.getTypeId();
                                 }
                             }
                         }
@@ -275,17 +275,17 @@ public class BukkitHybridUtils extends HybridUtils {
     }
 
     @Override
-    public int checkModified(final String worldname, final int x1, final int x2, final int y1, final int y2, final int z1, final int z2,
-            final PlotBlock[] blocks) {
-        final World world = BukkitUtil.getWorld(worldname);
+    public int checkModified(String worldname, int x1, int x2, int y1, int y2, int z1, int z2,
+            PlotBlock[] blocks) {
+        World world = BukkitUtil.getWorld(worldname);
         int count = 0;
         for (int y = y1; y <= y2; y++) {
             for (int x = x1; x <= x2; x++) {
                 for (int z = z1; z <= z2; z++) {
-                    final Block block = world.getBlockAt(x, y, z);
-                    final int id = block.getTypeId();
+                    Block block = world.getBlockAt(x, y, z);
+                    int id = block.getTypeId();
                     boolean same = false;
-                    for (final PlotBlock p : blocks) {
+                    for (PlotBlock p : blocks) {
                         if (id == p.id) {
                             same = true;
                             break;
@@ -301,15 +301,15 @@ public class BukkitHybridUtils extends HybridUtils {
     }
 
     @Override
-    public int get_ey(final String worldname, final int sx, final int ex, final int sz, final int ez, final int sy) {
-        final World world = BukkitUtil.getWorld(worldname);
-        final int maxY = world.getMaxHeight();
+    public int get_ey(String worldname, int sx, int ex, int sz, int ez, int sy) {
+        World world = BukkitUtil.getWorld(worldname);
+        int maxY = world.getMaxHeight();
         int ey = sy;
         for (int x = sx; x <= ex; x++) {
             for (int z = sz; z <= ez; z++) {
                 for (int y = sy; y < maxY; y++) {
                     if (y > ey) {
-                        final Block block = world.getBlockAt(x, y, z);
+                        Block block = world.getBlockAt(x, y, z);
                         if (!block.getType().equals(Material.AIR)) {
                             ey = y;
                         }

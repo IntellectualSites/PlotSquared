@@ -33,17 +33,17 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "auto",
-permission = "plots.auto",
-category = CommandCategory.CLAIMING,
-requiredType = RequiredType.NONE,
-description = "Claim the nearest plot",
-aliases = "a",
-usage = "/plot auto [length,width]")
+        permission = "plots.auto",
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE,
+        description = "Claim the nearest plot",
+        aliases = "a",
+        usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
 
-    public static PlotId getNextPlotId(final PlotId id, final int step) {
-        final int absX = Math.abs(id.x);
-        final int absY = Math.abs(id.y);
+    public static PlotId getNextPlotId(PlotId id, int step) {
+        int absX = Math.abs(id.x);
+        int absY = Math.abs(id.y);
         if (absX > absY) {
             if (id.x > 0) {
                 return new PlotId(id.x, id.y + 1);
@@ -71,7 +71,7 @@ public class Auto extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         PlotArea plotarea = plr.getApplicablePlotArea();
         if (plotarea == null) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
@@ -83,7 +83,7 @@ public class Auto extends SubCommand {
         if (args.length > 0) {
             if (Permissions.hasPermission(plr, "plots.auto.mega")) {
                 try {
-                    final String[] split = args[0].split(",|;");
+                    String[] split = args[0].split(",|;");
                     size_x = Integer.parseInt(split[0]);
                     size_z = Integer.parseInt(split[1]);
                     if (size_x < 1 || size_z < 1) {
@@ -110,8 +110,8 @@ public class Auto extends SubCommand {
             MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-        final int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(plotarea.worldname);
-        final int diff = currentPlots - plr.getAllowedPlots();
+        int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(plotarea.worldname);
+        int diff = currentPlots - plr.getAllowedPlots();
         if (diff + size_x * size_z > 0) {
             if (diff < 0) {
                 MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
@@ -159,15 +159,15 @@ public class Auto extends SubCommand {
         }
         // TODO handle type 2 the same as normal worlds!
         if (plotarea.TYPE == 2) {
-            final PlotId bot = plotarea.getMin();
-            final PlotId top = plotarea.getMax();
-            final PlotId origin = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
+            PlotId bot = plotarea.getMin();
+            PlotId top = plotarea.getMax();
+            PlotId origin = new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
             PlotId id = new PlotId(0, 0);
-            final int width = Math.max(top.x - bot.x + 1, top.y - bot.y + 1);
-            final int max = width * width;
+            int width = Math.max(top.x - bot.x + 1, top.y - bot.y + 1);
+            int max = width * width;
             //
             for (int i = 0; i <= max; i++) {
-                final PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
+                PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
                 Plot current = plotarea.getPlotAbs(currentId);
                 if (current.canClaim(plr)) {
                     current.claim(plr, true, null);
@@ -182,14 +182,14 @@ public class Auto extends SubCommand {
         plotarea.setMeta("lastPlot", new PlotId(0, 0));
         boolean br = false;
         while (true) {
-            final PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
-            final PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);
+            PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
+            PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);
             plotarea.setMeta("lastPlot", start);
             if (plotarea.canClaim(plr, start, end)) {
                 for (int i = start.x; i <= end.x; i++) {
                     for (int j = start.y; j <= end.y; j++) {
                         Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
-                        final boolean teleport = i == end.x && j == end.y;
+                        boolean teleport = i == end.x && j == end.y;
                         plot.claim(plr, teleport, null);
                     }
                 }
@@ -205,7 +205,7 @@ public class Auto extends SubCommand {
         return true;
     }
 
-    public PlotId getLastPlotId(final PlotArea area) {
+    public PlotId getLastPlotId(PlotArea area) {
         PlotId value = (PlotId) area.getMeta("lastPlot");
         if (value == null) {
             value = new PlotId(0, 0);

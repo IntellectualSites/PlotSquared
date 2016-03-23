@@ -22,8 +22,19 @@ package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.Template;
-import com.intellectualcrafters.plot.object.*;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.FileBytes;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
+import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.WorldUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,23 +45,23 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 
 public class HybridPlotManager extends ClassicPlotManager {
-    
+
     @Override
-    public void exportTemplate(final PlotArea plotworld) throws IOException {
-        final HashSet<FileBytes> files = new HashSet<>(
+    public void exportTemplate(PlotArea plotworld) throws IOException {
+        HashSet<FileBytes> files = new HashSet<>(
                 Collections.singletonList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
-        final String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
-        final String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
+        String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
+        String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
         try {
-            final File sideroad = MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "sideroad.schematic");
+            File sideroad = MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "sideroad.schematic");
             if (sideroad.exists()) {
                 files.add(new FileBytes(newDir + "sideroad.schematic", Files.readAllBytes(sideroad.toPath())));
             }
-            final File intersection = MainUtil.getFile(PS.get().IMP.getDirectory(), "intersection.schematic");
+            File intersection = MainUtil.getFile(PS.get().IMP.getDirectory(), "intersection.schematic");
             if (intersection.exists()) {
                 files.add(new FileBytes(newDir + "intersection.schematic", Files.readAllBytes(intersection.toPath())));
             }
-            final File plot = MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "plot.schematic");
+            File plot = MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "plot.schematic");
             if (plot.exists()) {
                 files.add(new FileBytes(newDir + "plot.schematic", Files.readAllBytes(plot.toPath())));
             }
@@ -59,17 +70,17 @@ public class HybridPlotManager extends ClassicPlotManager {
         }
         Template.zipAll(plotworld.worldname, files);
     }
-    
+
     @Override
-    public boolean createRoadEast(final PlotArea plotworld, final Plot plot) {
+    public boolean createRoadEast(PlotArea plotworld, Plot plot) {
         super.createRoadEast(plotworld, plot);
-        final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        final PlotId id = plot.getId();
-        final PlotId id2 = new PlotId(id.x + 1, id.y);
-        final Location bot = getPlotBottomLocAbs(hpw, id2);
-        final Location top = getPlotTopLocAbs(hpw, id);
-        final Location pos1 = new Location(plotworld.worldname, top.getX() + 1, 0, bot.getZ() - 1);
-        final Location pos2 = new Location(plotworld.worldname, bot.getX(), 255, top.getZ() + 1);
+        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+        PlotId id = plot.getId();
+        PlotId id2 = new PlotId(id.x + 1, id.y);
+        Location bot = getPlotBottomLocAbs(hpw, id2);
+        Location top = getPlotTopLocAbs(hpw, id);
+        Location pos1 = new Location(plotworld.worldname, top.getX() + 1, 0, bot.getZ() - 1);
+        Location pos2 = new Location(plotworld.worldname, bot.getX(), 255, top.getZ() + 1);
         MainUtil.resetBiome(plotworld, pos1, pos2);
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
@@ -78,21 +89,21 @@ public class HybridPlotManager extends ClassicPlotManager {
         return true;
     }
 
-    private void createSchemAbs(final HybridPlotWorld hpw, final Location pos1, final Location pos2, final int height, final boolean clear) {
-        final int size = hpw.SIZE;
+    private void createSchemAbs(HybridPlotWorld hpw, Location pos1, Location pos2, int height, boolean clear) {
+        int size = hpw.SIZE;
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
-            short absX = (short) ((x - hpw.ROAD_OFFSET_X) % (size));
+            short absX = (short) ((x - hpw.ROAD_OFFSET_X) % size);
             if (absX < 0) {
                 absX += size;
             }
             for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                short absZ = (short) ((z - hpw.ROAD_OFFSET_Z) % (size));
+                short absZ = (short) ((z - hpw.ROAD_OFFSET_Z) % size);
                 if (absZ < 0) {
                     absZ += size;
                 }
-                final HashMap<Integer, PlotBlock> blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
+                HashMap<Integer, PlotBlock> blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
                 if (clear) {
-                    for (short y = (short) (height); y <= (height + hpw.SCHEMATIC_HEIGHT); y++) {
+                    for (short y = (short) height; y <= (height + hpw.SCHEMATIC_HEIGHT); y++) {
                         SetQueue.IMP.setBlock(hpw.worldname, x, y, z, 0);
                     }
                 }
@@ -104,17 +115,17 @@ public class HybridPlotManager extends ClassicPlotManager {
             }
         }
     }
-    
+
     @Override
-    public boolean createRoadSouth(final PlotArea plotworld, final Plot plot) {
+    public boolean createRoadSouth(PlotArea plotworld, Plot plot) {
         super.createRoadSouth(plotworld, plot);
-        final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        final PlotId id = plot.getId();
-        final PlotId id2 = new PlotId(id.x, id.y + 1);
-        final Location bot = getPlotBottomLocAbs(hpw, id2);
-        final Location top = getPlotTopLocAbs(hpw, id);
-        final Location pos1 = new Location(plotworld.worldname, bot.getX() - 1, 0, top.getZ() + 1);
-        final Location pos2 = new Location(plotworld.worldname, top.getX() + 1, 255, bot.getZ());
+        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+        PlotId id = plot.getId();
+        PlotId id2 = new PlotId(id.x, id.y + 1);
+        Location bot = getPlotBottomLocAbs(hpw, id2);
+        Location top = getPlotTopLocAbs(hpw, id);
+        Location pos1 = new Location(plotworld.worldname, bot.getX() - 1, 0, top.getZ() + 1);
+        Location pos2 = new Location(plotworld.worldname, top.getX() + 1, 255, bot.getZ());
         MainUtil.resetBiome(plotworld, pos1, pos2);
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
@@ -122,15 +133,15 @@ public class HybridPlotManager extends ClassicPlotManager {
         createSchemAbs(hpw, pos1, pos2, 0, true);
         return true;
     }
-    
+
     @Override
-    public boolean createRoadSouthEast(final PlotArea plotworld, final Plot plot) {
+    public boolean createRoadSouthEast(PlotArea plotworld, Plot plot) {
         super.createRoadSouthEast(plotworld, plot);
-        final HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
-        final PlotId id = plot.getId();
-        final PlotId id2 = new PlotId(id.x + 1, id.y + 1);
-        final Location pos1 = getPlotTopLocAbs(hpw, id).add(1, 0, 1);
-        final Location pos2 = getPlotBottomLocAbs(hpw, id2);
+        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+        PlotId id = plot.getId();
+        PlotId id2 = new PlotId(id.x + 1, id.y + 1);
+        Location pos1 = getPlotTopLocAbs(hpw, id).add(1, 0, 1);
+        Location pos2 = getPlotBottomLocAbs(hpw, id2);
         pos1.setY(0);
         pos2.setY(256);
         createSchemAbs(hpw, pos1, pos2, 0, true);
@@ -140,25 +151,30 @@ public class HybridPlotManager extends ClassicPlotManager {
         createSchemAbs(hpw, pos1, pos2, 0, true);
         return true;
     }
-    
+
     /**
-     * Clearing the plot needs to only consider removing the blocks - This implementation has used the setCuboidAsync
+     * <p>Clearing the plot needs to only consider removing the blocks - This implementation has used the setCuboidAsync
      * function, as it is fast, and uses NMS code - It also makes use of the fact that deleting chunks is a lot faster
      * than block updates This code is very messy, but you don't need to do something quite as complex unless you happen
-     * to have 512x512 sized plots
+     * to have 512x512 sized plots. </p>
      */
     @Override
-    public boolean clearPlot(final PlotArea plotworld, final Plot plot, final Runnable whenDone) {
+    public boolean clearPlot(PlotArea plotworld, Plot plot, final Runnable whenDone) {
         final String world = plotworld.worldname;
-        final HybridPlotWorld dpw = ((HybridPlotWorld) plotworld);
-        final Location pos1 = plot.getBottomAbs();
-        final Location pos2 = plot.getExtendedTopAbs();
+        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
+        Location pos1 = plot.getBottomAbs();
+        Location pos2 = plot.getExtendedTopAbs();
         // If augmented
         final boolean canRegen = (plotworld.TYPE == 0) && (plotworld.TERRAIN == 0);
         // The component blocks
         final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
-        final PlotBlock bedrock = (dpw.PLOT_BEDROCK ? new PlotBlock((short) 7, (byte) 0) : new PlotBlock((short) 0, (byte) 0));
+        final PlotBlock bedrock;
+        if (dpw.PLOT_BEDROCK) {
+            bedrock = new PlotBlock((short) 7, (byte) 0);
+        } else {
+            bedrock = new PlotBlock((short) 0, (byte) 0);
+        }
         final PlotBlock air = new PlotBlock((short) 0, (byte) 0);
         final String biome = WorldUtil.IMP.getBiomeList()[dpw.PLOT_BIOME];
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
@@ -175,8 +191,8 @@ public class HybridPlotManager extends ClassicPlotManager {
                 // Set the biome
                 MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
                 // These two locations are for each component (e.g. bedrock, main block, floor, air)
-                final Location bot = new Location(world, value[2], 0, value[3]);
-                final Location top = new Location(world, value[4], 1, value[5]);
+                Location bot = new Location(world, value[2], 0, value[3]);
+                Location top = new Location(world, value[4], 1, value[5]);
                 MainUtil.setSimpleCuboidAsync(world, bot, top, bedrock);
                 // Each component has a different layer
                 bot.setY(1);
@@ -200,8 +216,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         }, 10);
         return true;
     }
-    
-    public void pastePlotSchematic(final HybridPlotWorld plotworld, final Location l1, final Location l2) {
+
+    public void pastePlotSchematic(HybridPlotWorld plotworld, Location l1, Location l2) {
         if (!plotworld.PLOT_SCHEMATIC) {
             return;
         }

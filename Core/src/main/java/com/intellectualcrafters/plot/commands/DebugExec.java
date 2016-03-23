@@ -54,6 +54,7 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import com.plotsquared.listener.WEManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -62,6 +63,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -70,111 +72,114 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 @CommandDeclaration(command = "debugexec",
-permission = "plots.admin",
-description = "Mutli-purpose debug command",
-aliases = "exec",
-category = CommandCategory.DEBUG)
+        permission = "plots.admin",
+        description = "Mutli-purpose debug command",
+        aliases = "exec",
+        category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
+
     private ScriptEngine engine;
     private Bindings scope;
 
     public DebugExec() {
         try {
             if (PS.get() != null) {
-                final File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
+                File file = new File(PS.get().IMP.getDirectory(), "scripts" + File.separator + "start.js");
                 if (file.exists()) {
                     init();
-                    final String script = StringMan.join(Files
+                    String script = StringMan.join(Files
                                     .readLines(new File(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), "start.js"),
                                             StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
-                    scope.put("THIS", this);
-                    scope.put("PlotPlayer", ConsolePlayer.getConsole());
-                    engine.eval(script, scope);
+                    this.scope.put("THIS", this);
+                    this.scope.put("PlotPlayer", ConsolePlayer.getConsole());
+                    this.engine.eval(script, this.scope);
                 }
             }
-        } catch (IOException | ScriptException e) {}
+        } catch (IOException | ScriptException e) {
+        }
     }
 
     public ScriptEngine getEngine() {
-        return engine;
+        return this.engine;
     }
 
     public Bindings getScope() {
-        return scope;
+        return this.scope;
     }
 
     public void init() {
-        if (engine != null) {
+        if (this.engine != null) {
             return;
         }
-        engine = new ScriptEngineManager(null).getEngineByName("nashorn");
-        if (engine == null) {
-            engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
+        this.engine = new ScriptEngineManager(null).getEngineByName("nashorn");
+        if (this.engine == null) {
+            this.engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
         }
-        final ScriptContext context = new SimpleScriptContext();
-        scope = context.getBindings(ScriptContext.ENGINE_SCOPE);
+        ScriptContext context = new SimpleScriptContext();
+        this.scope = context.getBindings(ScriptContext.ENGINE_SCOPE);
 
         // stuff
-        scope.put("MainUtil", new MainUtil());
-        scope.put("Settings", new Settings());
-        scope.put("StringMan", new StringMan());
-        scope.put("MathMan", new MathMan());
-        scope.put("FlagManager", new FlagManager());
+        this.scope.put("MainUtil", new MainUtil());
+        this.scope.put("Settings", new Settings());
+        this.scope.put("StringMan", new StringMan());
+        this.scope.put("MathMan", new MathMan());
+        this.scope.put("FlagManager", new FlagManager());
 
         // Classes
-        scope.put("Location", Location.class);
-        scope.put("PlotBlock", PlotBlock.class);
-        scope.put("Plot", Plot.class);
-        scope.put("PlotId", PlotId.class);
-        scope.put("Runnable", Runnable.class);
-        scope.put("RunnableVal", RunnableVal.class);
+        this.scope.put("Location", Location.class);
+        this.scope.put("PlotBlock", PlotBlock.class);
+        this.scope.put("Plot", Plot.class);
+        this.scope.put("PlotId", PlotId.class);
+        this.scope.put("Runnable", Runnable.class);
+        this.scope.put("RunnableVal", RunnableVal.class);
 
         // Instances
-        scope.put("PS", PS.get());
-        scope.put("SetQueue", SetQueue.IMP);
-        scope.put("ExpireManager", ExpireManager.IMP);
+        this.scope.put("PS", PS.get());
+        this.scope.put("SetQueue", SetQueue.IMP);
+        this.scope.put("ExpireManager", ExpireManager.IMP);
         if (PS.get().worldedit != null) {
-            scope.put("WEManager", new WEManager());
+            this.scope.put("WEManager", new WEManager());
         }
-        scope.put("TaskManager", PS.get().TASK);
-        scope.put("TitleManager", AbstractTitle.TITLE_CLASS);
-        scope.put("ConsolePlayer", ConsolePlayer.getConsole());
-        scope.put("SchematicHandler", SchematicHandler.manager);
-        scope.put("ChunkManager", ChunkManager.manager);
-        scope.put("BlockManager", WorldUtil.IMP);
-        scope.put("SetupUtils", SetupUtils.manager);
-        scope.put("EventUtil", EventUtil.manager);
-        scope.put("EconHandler", EconHandler.manager);
-        scope.put("UUIDHandler", UUIDHandler.implementation);
-        scope.put("DBFunc", DBFunc.dbManager);
-        scope.put("HybridUtils", HybridUtils.manager);
-        scope.put("IMP", PS.get().IMP);
-        scope.put("MainCommand", MainCommand.getInstance());
+        this.scope.put("TaskManager", PS.get().TASK);
+        this.scope.put("TitleManager", AbstractTitle.TITLE_CLASS);
+        this.scope.put("ConsolePlayer", ConsolePlayer.getConsole());
+        this.scope.put("SchematicHandler", SchematicHandler.manager);
+        this.scope.put("ChunkManager", ChunkManager.manager);
+        this.scope.put("BlockManager", WorldUtil.IMP);
+        this.scope.put("SetupUtils", SetupUtils.manager);
+        this.scope.put("EventUtil", EventUtil.manager);
+        this.scope.put("EconHandler", EconHandler.manager);
+        this.scope.put("UUIDHandler", UUIDHandler.implementation);
+        this.scope.put("DBFunc", DBFunc.dbManager);
+        this.scope.put("HybridUtils", HybridUtils.manager);
+        this.scope.put("IMP", PS.get().IMP);
+        this.scope.put("MainCommand", MainCommand.getInstance());
 
         // enums
-        for (final Enum<?> value : C.values()) {
-            scope.put("C_" + value.name(), value);
+        for (Enum<?> value : C.values()) {
+            this.scope.put("C_" + value.name(), value);
         }
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer player, final String... args) {
-        final java.util.List<String> allowed_params = Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen");
+    public boolean onCommand(final PlotPlayer player, String... args) {
+        java.util.List<String> allowed_params =
+                Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen");
         if (args.length > 0) {
-            final String arg = args[0].toLowerCase();
+            String arg = args[0].toLowerCase();
             String script;
             boolean async = false;
             switch (arg) {
                 case "analyze": {
-                    final Plot plot = player.getCurrentPlot();
+                    Plot plot = player.getCurrentPlot();
                     if (plot == null) {
                         MainUtil.sendMessage(player, C.NOT_IN_PLOT);
                         return false;
                     }
-                    final PlotAnalysis analysis = plot.getComplexity();
+                    PlotAnalysis analysis = plot.getComplexity();
                     if (analysis != null) {
-                        final int complexity = analysis.getComplexity();
+                        int complexity = analysis.getComplexity();
                         MainUtil.sendMessage(player, "Changes/column: " + analysis.changes / 1.0);
                         MainUtil.sendMessage(player, "Complexity: " + complexity);
                         return true;
@@ -191,13 +196,15 @@ public class DebugExec extends SubCommand {
                 case "calibrate-analysis":
                     if (args.length != 2) {
                         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec analyze <threshold>");
-                        MainUtil.sendMessage(player, "$1<threshold> $2= $1The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating it)");
+                        MainUtil.sendMessage(player,
+                                "$1<threshold> $2= $1The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating "
+                                        + "it)");
                         return false;
                     }
                     double threshold;
                     try {
                         threshold = Integer.parseInt(args[1]) / 100d;
-                    } catch (final NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         MainUtil.sendMessage(player, "$2Invalid threshold: " + args[1]);
                         MainUtil.sendMessage(player, "$1<threshold> $2= $1The percentage of plots you want to clear as a number between 0 - 100");
                         return false;
@@ -219,8 +226,8 @@ public class DebugExec extends SubCommand {
                         MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot debugexec remove-flag <flag>");
                         return false;
                     }
-                    final String flag = args[1];
-                    for (final Plot plot : PS.get().getBasePlots()) {
+                    String flag = args[1];
+                    for (Plot plot : PS.get().getBasePlots()) {
                         if (FlagManager.getPlotFlagRaw(plot, flag) != null) {
                             FlagManager.removePlotFlag(plot, flag);
                         }
@@ -275,16 +282,16 @@ public class DebugExec extends SubCommand {
                     if (args.length != 2) {
                         return MainUtil.sendMessage(player, "Use /plot debugexec seen <player>");
                     }
-                    final UUID uuid = UUIDHandler.getUUID(args[1], null);
+                    UUID uuid = UUIDHandler.getUUID(args[1], null);
                     if (uuid == null) {
                         return MainUtil.sendMessage(player, "Player not found: " + args[1]);
                     }
-                    final OfflinePlotPlayer op = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
+                    OfflinePlotPlayer op = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
                     if (op == null || op.getLastPlayed() == 0) {
                         return MainUtil.sendMessage(player, "Player hasn't connected before: " + args[1]);
                     }
-                    final Timestamp stamp = new Timestamp(op.getLastPlayed());
-                    final Date date = new Date(stamp.getTime());
+                    Timestamp stamp = new Timestamp(op.getLastPlayed());
+                    Date date = new Date(stamp.getTime());
                     MainUtil.sendMessage(player, "PLAYER: " + args[1]);
                     MainUtil.sendMessage(player, "UUID: " + uuid);
                     MainUtil.sendMessage(player, "Object: " + date.toGMTString());
@@ -300,17 +307,18 @@ public class DebugExec extends SubCommand {
                 case "addcmd":
                     try {
                         final String cmd = StringMan.join(Files
-                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8),
+                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]),
+                                                StandardCharsets.UTF_8),
                                 System.getProperty("line.separator"));
-                        final Command<PlotPlayer> subcommand = new Command<PlotPlayer>(args[1].split("\\.")[0]) {
+                        Command<PlotPlayer> subcommand = new Command<PlotPlayer>(args[1].split("\\.")[0]) {
                             @Override
-                            public boolean onCommand(final PlotPlayer plr, final String[] args) {
+                            public boolean onCommand(PlotPlayer plr, String[] args) {
                                 try {
-                                    scope.put("PlotPlayer", plr);
-                                    scope.put("args", args);
-                                    engine.eval(cmd, scope);
+                                    DebugExec.this.scope.put("PlotPlayer", plr);
+                                    DebugExec.this.scope.put("args", args);
+                                    DebugExec.this.engine.eval(cmd, DebugExec.this.scope);
                                     return true;
-                                } catch (final ScriptException e) {
+                                } catch (ScriptException e) {
                                     e.printStackTrace();
                                     MainUtil.sendMessage(player, C.COMMAND_WENT_WRONG);
                                     return false;
@@ -328,16 +336,18 @@ public class DebugExec extends SubCommand {
                     async = true;
                 case "run":
                     try {
-                        script = StringMan.join(Files.readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]), StandardCharsets.UTF_8),
-                        System.getProperty("line.separator"));
+                        script = StringMan.join(Files
+                                        .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]),
+                                                StandardCharsets.UTF_8),
+                                System.getProperty("line.separator"));
                         if (args.length > 2) {
-                            final HashMap<String, String> replacements = new HashMap<>();
+                            HashMap<String, String> replacements = new HashMap<>();
                             for (int i = 2; i < args.length; i++) {
                                 replacements.put("%s" + (i - 2), args[i]);
                             }
                             script = StringMan.replaceFromMap(script, replacements);
                         }
-                    } catch (final IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                         return false;
                     }
@@ -372,9 +382,11 @@ public class DebugExec extends SubCommand {
                         return true;
                     }
                     init();
-                    scope.put("_2", params);
-                    scope.put("_3", cmd);
-                    script = "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if(" + args[1] + "){PlotPlayer.setMeta(\"location\",plot.getBottomAbs());PlotPlayer.setMeta(\"lastplot\",plot);_3.onCommand(PlotPlayer,_2)}}";
+                    this.scope.put("_2", params);
+                    this.scope.put("_3", cmd);
+                    script = "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if(" + args[1]
+                            + "){PlotPlayer.setMeta(\"location\",plot.getBottomAbs());PlotPlayer.setMeta(\"lastplot\",plot);_3.onCommand"
+                            + "(PlotPlayer,_2)}}";
 
                     break;
                 case "all":
@@ -395,7 +407,7 @@ public class DebugExec extends SubCommand {
                 return false;
             }
             init();
-            scope.put("PlotPlayer", player);
+            this.scope.put("PlotPlayer", player);
             PS.debug("> " + script);
             try {
                 if (async) {
@@ -403,23 +415,23 @@ public class DebugExec extends SubCommand {
                     TaskManager.runTaskAsync(new Runnable() {
                         @Override
                         public void run() {
-                            final long start = System.currentTimeMillis();
+                            long start = System.currentTimeMillis();
                             Object result = null;
                             try {
-                                result = engine.eval(toExec, scope);
-                            } catch (final ScriptException e) {
+                                result = DebugExec.this.engine.eval(toExec, DebugExec.this.scope);
+                            } catch (ScriptException e) {
                                 e.printStackTrace();
                             }
                             ConsolePlayer.getConsole().sendMessage("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                         }
                     });
                 } else {
-                    final long start = System.currentTimeMillis();
-                    Object result = engine.eval(script, scope);
+                    long start = System.currentTimeMillis();
+                    Object result = this.engine.eval(script, this.scope);
                     ConsolePlayer.getConsole().sendMessage("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                 }
                 return true;
-            } catch (final ScriptException e) {
+            } catch (ScriptException e) {
                 e.printStackTrace();
                 return false;
             }

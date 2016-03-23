@@ -14,26 +14,28 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
 @CommandDeclaration(command = "save",
-aliases = { "backup" },
-description = "Save your plot",
-category = CommandCategory.SCHEMATIC,
-requiredType = RequiredType.NONE,
-permission = "plots.save")
+        aliases = {"backup"},
+        description = "Save your plot",
+        category = CommandCategory.SCHEMATIC,
+        requiredType = RequiredType.NONE,
+        permission = "plots.save")
 public class Save extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
 
         if (!Settings.METRICS) {
-            MainUtil.sendMessage(plr, "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
+            MainUtil.sendMessage(plr,
+                    "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
             return false;
         }
-        final String world = plr.getLocation().getWorld();
+        String world = plr.getLocation().getWorld();
         if (!PS.get().hasPlotArea(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
@@ -60,14 +62,14 @@ public class Save extends SubCommand {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        final String time = (System.currentTimeMillis() / 1000) + "";
-                        final String name = PS.get().IMP.getServerName().replaceAll("[^A-Za-z0-9]", "");
+                        String time = (System.currentTimeMillis() / 1000) + "";
+                        String name = PS.get().IMP.getServerName().replaceAll("[^A-Za-z0-9]", "");
                         Location[] corners = plot.getCorners();
-                        final int size = (corners[1].getX() - corners[0].getX()) + 1;
-                        final PlotId id = plot.getId();
-                        final String world = plot.getArea().toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
+                        int size = (corners[1].getX() - corners[0].getX()) + 1;
+                        PlotId id = plot.getId();
+                        String world = plot.getArea().toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
                         final String file = time + "_" + world + "_" + id.x + "_" + id.y + "_" + size + "_" + name;
-                        final UUID uuid = plr.getUUID();
+                        UUID uuid = plr.getUUID();
                         SchematicHandler.manager.upload(value, uuid, file, new RunnableVal<URL>() {
                             @Override
                             public void run(URL url) {
@@ -77,7 +79,7 @@ public class Save extends SubCommand {
                                     return;
                                 }
                                 MainUtil.sendMessage(plr, C.SAVE_SUCCESS);
-                                final List<String> schematics = plr.getMeta("plot_schematics");
+                                List<String> schematics = plr.getMeta("plot_schematics");
                                 if (schematics != null) {
                                     schematics.add(file);
                                 }

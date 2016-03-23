@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,13 +21,13 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 @CommandDeclaration(
-command = "database",
-aliases = { "convert" },
-category = CommandCategory.ADMINISTRATION,
-permission = "plots.database",
-description = "Convert/Backup Storage",
-requiredType = RequiredType.CONSOLE,
-usage = "/plots database [area] <sqlite|mysql|import>")
+        command = "database",
+        aliases = {"convert"},
+        category = CommandCategory.ADMINISTRATION,
+        permission = "plots.database",
+        description = "Convert/Backup Storage",
+        requiredType = RequiredType.CONSOLE,
+        usage = "/plots database [area] <sqlite|mysql|import>")
 public class Database extends SubCommand {
 
     public static void insertPlots(final SQLManager manager, final ArrayList<Plot> plots, final PlotPlayer player) {
@@ -34,8 +35,8 @@ public class Database extends SubCommand {
             @Override
             public void run() {
                 try {
-                    final ArrayList<Plot> ps = new ArrayList<>();
-                    for (final Plot p : plots) {
+                    ArrayList<Plot> ps = new ArrayList<>();
+                    for (Plot p : plots) {
                         ps.add(p);
                     }
                     MainUtil.sendMessage(player, "&6Starting...");
@@ -46,7 +47,7 @@ public class Database extends SubCommand {
                             manager.close();
                         }
                     });
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     MainUtil.sendMessage(player, "Failed to insert plot objects, see stacktrace for info");
                     e.printStackTrace();
                 }
@@ -89,15 +90,15 @@ public class Database extends SubCommand {
                     }
                     MainUtil.sendMessage(player, "&6Starting...");
                     implementation = new SQLite(file.getPath());
-                    final SQLManager manager = new SQLManager(implementation, (args.length == 3) ? args[2] : "", true);
-                    final HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
+                    SQLManager manager = new SQLManager(implementation, (args.length == 3) ? args[2] : "", true);
+                    HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<>();
-                    for (final Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
+                    for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
                         String areaname = entry.getKey();
                         PlotArea pa = PS.get().getPlotAreaByString(areaname);
                         if (pa != null) {
-                            for (final Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
-                                final Plot plot = entry2.getValue();
+                            for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
+                                Plot plot = entry2.getValue();
                                 if (pa.getOwnedPlotAbs(plot.getId()) != null) {
                                     MainUtil.sendMessage(player, "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
                                     continue;
@@ -126,11 +127,11 @@ public class Database extends SubCommand {
                     if (args.length < 6) {
                         return MainUtil.sendMessage(player, "/plot database mysql [host] [port] [username] [password] [database] {prefix}");
                     }
-                    final String host = args[1];
-                    final String port = args[2];
-                    final String username = args[3];
-                    final String password = args[4];
-                    final String database = args[5];
+                    String host = args[1];
+                    String port = args[2];
+                    String username = args[3];
+                    String password = args[4];
+                    String database = args[5];
                     if (args.length > 6) {
                         prefix = args[6];
                     }
@@ -146,7 +147,7 @@ public class Database extends SubCommand {
                     return MainUtil.sendMessage(player, "/plot database [sqlite/mysql]");
             }
             try {
-                final SQLManager manager = new SQLManager(implementation, prefix, true);
+                SQLManager manager = new SQLManager(implementation, prefix, true);
                 insertPlots(manager, plots, player);
                 return true;
             } catch (ClassNotFoundException | SQLException e) {

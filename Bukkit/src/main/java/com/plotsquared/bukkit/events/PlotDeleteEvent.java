@@ -20,26 +20,28 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
-import org.bukkit.event.HandlerList;
-
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+import org.bukkit.event.HandlerList;
 
 /**
  * Called when a plot is deleted
- *
+ *
+
+
  */
 public class PlotDeleteEvent extends PlotEvent {
+
+    private static final HandlerList handlers = new HandlerList();
+
     public PlotDeleteEvent(Plot plot) {
         super(plot);
     }
 
-    private static HandlerList handlers = new HandlerList();
-    
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     /**
      * Get the PlotId
      *
@@ -48,7 +50,7 @@ public class PlotDeleteEvent extends PlotEvent {
     public PlotId getPlotId() {
         return getPlot().getId();
     }
-    
+
     /**
      * Get the world name
      *
@@ -57,7 +59,7 @@ public class PlotDeleteEvent extends PlotEvent {
     public String getWorld() {
         return getPlot().getArea().worldname;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;

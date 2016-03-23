@@ -35,21 +35,21 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "done",
-aliases = { "submit" },
-description = "Mark a plot as done",
-permission = "plots.done",
-category = CommandCategory.SETTINGS,
-requiredType = RequiredType.NONE)
+        aliases = {"submit"},
+        description = "Mark a plot as done",
+        permission = "plots.done",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE)
 public class Done extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final Location loc = plr.getLocation();
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
+        Location loc = plr.getLocation();
         final Plot plot = loc.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
-        if ((!plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.done")) {
+        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.done")) {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
@@ -68,7 +68,7 @@ public class Done extends SubCommand {
             public void run(PlotAnalysis value) {
                 plot.removeRunning();
                 if ((value == null) || (value.getComplexity() >= Settings.CLEAR_THRESHOLD)) {
-                    final Flag flag = new Flag(FlagManager.getFlag("done"), (System.currentTimeMillis() / 1000));
+                    Flag flag = new Flag(FlagManager.getFlag("done"), System.currentTimeMillis() / 1000);
                     FlagManager.addPlotFlag(plot, flag);
                     MainUtil.sendMessage(plr, C.DONE_SUCCESS);
                 } else {

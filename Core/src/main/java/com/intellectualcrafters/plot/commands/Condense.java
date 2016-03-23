@@ -30,6 +30,7 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,16 +40,16 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandDeclaration(command = "condense",
-permission = "plots.admin",
-description = "Condense a plotworld",
-category = CommandCategory.ADMINISTRATION,
-requiredType = RequiredType.CONSOLE)
+        permission = "plots.admin",
+        description = "Condense a plotworld",
+        category = CommandCategory.ADMINISTRATION,
+        requiredType = RequiredType.CONSOLE)
 public class Condense extends SubCommand {
 
     public static boolean TASK = false;
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
+    public boolean onCommand(final PlotPlayer plr, String... args) {
         if ((args.length != 2) && (args.length != 3)) {
             MainUtil.sendMessage(plr, "/plot condense <area> <start|stop|info> [radius]");
             return false;
@@ -72,7 +73,7 @@ public class Condense extends SubCommand {
                     MainUtil.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }
-                final int radius = Integer.parseInt(args[2]);
+                int radius = Integer.parseInt(args[2]);
                 ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots(area));
                 // remove non base plots
                 Iterator<Plot> iter = plots.iterator();
@@ -109,23 +110,23 @@ public class Condense extends SubCommand {
                         allPlots.addAll(array);
                     }
                 }
-                final int size = allPlots.size();
-                final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
-                if (radius < minimum_radius) {
+                int size = allPlots.size();
+                int minimumRadius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
+                if (radius < minimumRadius) {
                     MainUtil.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
                 }
-                final List<PlotId> to_move = new ArrayList<>(getPlots(allPlots, radius));
+                List<PlotId> toMove = new ArrayList<>(getPlots(allPlots, radius));
                 final List<PlotId> free = new ArrayList<>();
                 PlotId start = new PlotId(0, 0);
-                while ((start.x <= minimum_radius) && (start.y <= minimum_radius)) {
+                while ((start.x <= minimumRadius) && (start.y <= minimumRadius)) {
                     Plot plot = area.getPlotAbs(start);
                     if (plot != null && !plot.hasOwner()) {
                         free.add(plot.getId());
                     }
                     start = Auto.getNextPlotId(start, 1);
                 }
-                if ((free.isEmpty()) || (to_move.isEmpty())) {
+                if (free.isEmpty() || toMove.isEmpty()) {
                     MainUtil.sendMessage(plr, "NO FREE PLOTS FOUND");
                     return false;
                 }
@@ -197,22 +198,22 @@ public class Condense extends SubCommand {
                     MainUtil.sendMessage(plr, "INVALID RADIUS");
                     return false;
                 }
-                final int radius = Integer.parseInt(args[2]);
-                final Collection<Plot> plots = area.getPlots();
-                final int size = plots.size();
-                final int minimum_radius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
-                if (radius < minimum_radius) {
+                int radius = Integer.parseInt(args[2]);
+                Collection<Plot> plots = area.getPlots();
+                int size = plots.size();
+                int minimumRadius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
+                if (radius < minimumRadius) {
                     MainUtil.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
                 }
-                final int max_move = getPlots(plots, minimum_radius).size();
-                final int user_move = getPlots(plots, radius).size();
+                int maxMove = getPlots(plots, minimumRadius).size();
+                int userMove = getPlots(plots, radius).size();
                 MainUtil.sendMessage(plr, "=== DEFAULT EVAL ===");
-                MainUtil.sendMessage(plr, "MINIMUM RADIUS: " + minimum_radius);
-                MainUtil.sendMessage(plr, "MAXIMUM MOVES: " + max_move);
+                MainUtil.sendMessage(plr, "MINIMUM RADIUS: " + minimumRadius);
+                MainUtil.sendMessage(plr, "MAXIMUM MOVES: " + maxMove);
                 MainUtil.sendMessage(plr, "=== INPUT EVAL ===");
                 MainUtil.sendMessage(plr, "INPUT RADIUS: " + radius);
-                MainUtil.sendMessage(plr, "ESTIMATED MOVES: " + user_move);
+                MainUtil.sendMessage(plr, "ESTIMATED MOVES: " + userMove);
                 MainUtil.sendMessage(plr, "ESTIMATED TIME: " + "No idea, times will drastically change based on the system performance and load");
                 MainUtil.sendMessage(plr, "&e - Radius is measured in plot width");
                 return true;
@@ -222,9 +223,9 @@ public class Condense extends SubCommand {
         return false;
     }
 
-    public Set<PlotId> getPlots(final Collection<Plot> plots, final int radius) {
-        final HashSet<PlotId> outside = new HashSet<>();
-        for (final Plot plot : plots) {
+    public Set<PlotId> getPlots(Collection<Plot> plots, int radius) {
+        HashSet<PlotId> outside = new HashSet<>();
+        for (Plot plot : plots) {
             if ((plot.getId().x > radius) || (plot.getId().x < -radius) || (plot.getId().y > radius) || (plot.getId().y < -radius)) {
                 outside.add(plot.getId());
             }

@@ -29,13 +29,13 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-command = "setdescription",
-permission = "plots.set.desc",
-description = "Set the plot description",
-usage = "/plot desc <description>",
-aliases = { "desc", "setdesc", "setd", "description" },
-category = CommandCategory.SETTINGS,
-requiredType = RequiredType.NONE)
+        command = "setdescription",
+        permission = "plots.set.desc",
+        description = "Set the plot description",
+        usage = "/plot desc <description>",
+        aliases = {"desc", "setdesc", "setd", "description"},
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE)
 public class Desc extends SetCommand {
 
     @Override
@@ -45,8 +45,8 @@ public class Desc extends SetCommand {
             MainUtil.sendMessage(plr, C.DESC_UNSET);
             return true;
         }
-        final Flag flag = new Flag(FlagManager.getFlag("description"), desc);
-        final boolean result = FlagManager.addPlotFlag(plot, flag);
+        Flag flag = new Flag(FlagManager.getFlag("description"), desc);
+        boolean result = FlagManager.addPlotFlag(plot, flag);
         if (!result) {
             MainUtil.sendMessage(plr, C.FLAG_NOT_ADDED);
             return false;

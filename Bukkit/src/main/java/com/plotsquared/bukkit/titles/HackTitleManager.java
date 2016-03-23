@@ -11,12 +11,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Minecraft 1.8 Title
+ * Minecraft 1.8 Title.
  *
  * @version 1.0.4
  * @author Maxim Van de Wynckel
  */
 public class HackTitleManager {
+
+    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
     /* Title packet */
     private Class<?> packetTitle;
     /* Title packet actions ENUM */
@@ -29,76 +31,66 @@ public class HackTitleManager {
     /* Subtitle text and color */
     private String subtitle = "";
     private ChatColor subtitleColor = ChatColor.WHITE;
-    /* Title timings */
+    /* Title timings. */
     private int fadeInTime = -1;
     private int stayTime = -1;
     private int fadeOutTime = -1;
     private boolean ticks = false;
-    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
-    
+
     /**
-     * Create a new 1.8 title
+     * Create a new 1.8 title.
      *
-     * @param title
-     *            Title
-     * @throws ClassNotFoundException
+     * @param title Title
+     * @throws ClassNotFoundException NMS Error.
      */
-    public HackTitleManager(final String title) throws ClassNotFoundException {
+    public HackTitleManager(String title) throws ClassNotFoundException {
         this.title = title;
         loadClasses();
     }
-    
+
     /**
-     * Create a new 1.8 title
+     * Create a new 1.8 title.
      *
-     * @param title
-     *            Title text
-     * @param subtitle
-     *            Subtitle text
-     * @throws ClassNotFoundException
+     * @param title Title text
+     * @param subtitle Subtitle text
+     * @throws ClassNotFoundException NMS Error
      */
-    public HackTitleManager(final String title, final String subtitle) throws ClassNotFoundException {
+    public HackTitleManager(String title, String subtitle) throws ClassNotFoundException {
         this.title = title;
         this.subtitle = subtitle;
         loadClasses();
     }
-    
+
     /**
-     * Copy 1.8 title
+     * Copy 1.8 title.
      *
-     * @param title
-     *            Title
-     * @throws ClassNotFoundException
+     * @param title Title
+     * @throws ClassNotFoundException NMS Error
      */
-    public HackTitleManager(final HackTitleManager title) throws ClassNotFoundException {
+    public HackTitleManager(HackTitleManager title) throws ClassNotFoundException {
         // Copy title
         this.title = title.title;
-        subtitle = title.subtitle;
-        titleColor = title.titleColor;
-        subtitleColor = title.subtitleColor;
-        fadeInTime = title.fadeInTime;
-        fadeOutTime = title.fadeOutTime;
-        stayTime = title.stayTime;
-        ticks = title.ticks;
+        this.subtitle = title.subtitle;
+        this.titleColor = title.titleColor;
+        this.subtitleColor = title.subtitleColor;
+        this.fadeInTime = title.fadeInTime;
+        this.fadeOutTime = title.fadeOutTime;
+        this.stayTime = title.stayTime;
+        this.ticks = title.ticks;
         loadClasses();
     }
-    
+
     /**
-     * Create a new 1.8 title
+     * Create a new 1.8 title.
      *
-     * @param title
-     *            Title text
-     * @param subtitle
-     *            Subtitle text
-     * @param fadeInTime
-     *            Fade in time
-     * @param stayTime
-     *            Stay on screen time
-     * @param fadeOutTime
-     *            Fade out time
-     * @throws ClassNotFoundException
+     * @param title Title text
+     * @param subtitle Subtitle text
+     * @param fadeInTime Fade in time
+     * @param stayTime Stay on screen time
+     * @param fadeOutTime Fade out time
+     * @throws ClassNotFoundException NMS error
      */
-    public HackTitleManager(final String title, final String subtitle, final int fadeInTime, final int stayTime, final int fadeOutTime) throws ClassNotFoundException {
+    public HackTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) throws ClassNotFoundException {
         this.title = title;
         this.subtitle = subtitle;
         this.fadeInTime = fadeInTime;
@@ -106,265 +98,8 @@ public class HackTitleManager {
         this.fadeOutTime = fadeOutTime;
         loadClasses();
     }
-    
-    /**
-     * Load spigot and NMS classes
-     * @throws ClassNotFoundException
-     */
-    private void loadClasses() throws ClassNotFoundException {
-        packetTitle = getClass("org.spigotmc.ProtocolInjector$PacketTitle");
-        packetActions = getClass("org.spigotmc.ProtocolInjector$PacketTitle$Action");
-        nmsChatSerializer = getNMSClass("ChatSerializer");
-    }
-    
-    /**
-     * Set title text
-     *
-     * @param title
-     *            Title
-     */
-    public void setTitle(final String title) {
-        this.title = title;
-    }
-    
-    /**
-     * Get title text
-     *
-     * @return Title text
-     */
-    public String getTitle() {
-        return title;
-    }
-    
-    /**
-     * Set subtitle text
-     *
-     * @param subtitle
-     *            Subtitle text
-     */
-    public void setSubtitle(final String subtitle) {
-        this.subtitle = subtitle;
-    }
-    
-    /**
-     * Get subtitle text
-     *
-     * @return Subtitle text
-     */
-    public String getSubtitle() {
-        return subtitle;
-    }
-    
-    /**
-     * Set the title color
-     *
-     * @param color
-     *            Chat color
-     */
-    public void setTitleColor(final ChatColor color) {
-        titleColor = color;
-    }
-    
-    /**
-     * Set the subtitle color
-     *
-     * @param color
-     *            Chat color
-     */
-    public void setSubtitleColor(final ChatColor color) {
-        subtitleColor = color;
-    }
-    
-    /**
-     * Set title fade in time
-     *
-     * @param time
-     *            Time
-     */
-    public void setFadeInTime(final int time) {
-        fadeInTime = time;
-    }
-    
-    /**
-     * Set title fade out time
-     *
-     * @param time
-     *            Time
-     */
-    public void setFadeOutTime(final int time) {
-        fadeOutTime = time;
-    }
-    
-    /**
-     * Set title stay time
-     *
-     * @param time
-     *            Time
-     */
-    public void setStayTime(final int time) {
-        stayTime = time;
-    }
-    
-    /**
-     * Set timings to ticks
-     */
-    public void setTimingsToTicks() {
-        ticks = true;
-    }
-    
-    /**
-     * Set timings to seconds
-     */
-    public void setTimingsToSeconds() {
-        ticks = false;
-    }
-    
-    /**
-     * Send the title to a player
-     *
-     * @param player
-     *            Player
-     */
-    public void send(final Player player) throws Exception {
-        if ((getProtocolVersion(player) >= 47) && isSpigot() && (packetTitle != null)) {
-            // First reset previous settings
-            resetTitle(player);
-            // Send timings first
-            final Object handle = getHandle(player);
-            final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-            final Object[] actions = packetActions.getEnumConstants();
-            final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-            Object packet = packetTitle.getConstructor(packetActions, Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(actions[2], fadeInTime * (ticks ? 1 : 20), stayTime * (ticks ? 1 : 20),
-            fadeOutTime * (ticks ? 1 : 20));
-            // Send if set
-            if ((fadeInTime != -1) && (fadeOutTime != -1) && (stayTime != -1)) {
-                sendPacket.invoke(connection, packet);
-            }
-            // Send title
-            Object serialized = getMethod(nmsChatSerializer, "a", String.class).invoke(null,
-            "{text:\"" + ChatColor.translateAlternateColorCodes('&', title) + "\",color:" + titleColor.name().toLowerCase() + "}");
-            packet = packetTitle.getConstructor(packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[0], serialized);
-            sendPacket.invoke(connection, packet);
-            if (!subtitle.isEmpty()) {
-                // Send subtitle if present
-                serialized = getMethod(nmsChatSerializer, "a", String.class).invoke(null,
-                "{text:\"" + ChatColor.translateAlternateColorCodes('&', subtitle) + "\",color:" + subtitleColor.name().toLowerCase() + "}");
-                packet = packetTitle.getConstructor(packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[1], serialized);
-                sendPacket.invoke(connection, packet);
-            }
-        }
-    }
-    
-    /**
-     * Broadcast the title to all players
-     */
-    public void broadcast() throws Exception {
-        for (final Player p : Bukkit.getOnlinePlayers()) {
-            send(p);
-        }
-    }
-    
-    /**
-     * Clear the title
-     *
-     * @param player
-     *            Player
-     * @throws Exception
-     */
-    public void clearTitle(final Player player) throws Exception {
-        if ((getProtocolVersion(player) >= 47) && isSpigot()) {
-            // Send timings first
-            final Object handle = getHandle(player);
-            final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-            final Object[] actions = packetActions.getEnumConstants();
-            final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-            final Object packet = packetTitle.getConstructor(packetActions).newInstance(actions[3]);
-            sendPacket.invoke(connection, packet);
-        }
-    }
-    
-    /**
-     * Reset the title settings
-     *
-     * @param player
-     *            Player
-     * @throws Exception
-     */
-    public void resetTitle(final Player player) throws Exception {
-        if ((getProtocolVersion(player) >= 47) && isSpigot()) {
-            // Send timings first
-            final Object handle = getHandle(player);
-            final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-            final Object[] actions = packetActions.getEnumConstants();
-            final Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-            final Object packet = packetTitle.getConstructor(packetActions).newInstance(actions[4]);
-            sendPacket.invoke(connection, packet);
-        }
-    }
-    
-    /**
-     * Get the protocol version of the player
-     *
-     * @param player
-     *            Player
-     * @return Protocol version
-     * @throws Exception
-     */
-    private int getProtocolVersion(final Player player) throws Exception {
-        final Object handle = getHandle(player);
-        final Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-        final Object networkManager = getValue("networkManager", connection);
-        return (Integer) getMethod("getVersion", networkManager.getClass()).invoke(networkManager);
-    }
-    
-    /**
-     * Check if running spigot
-     *
-     * @return Spigot
-     */
-    private boolean isSpigot() {
-        return Bukkit.getVersion().contains("Spigot");
-    }
-    
-    /**
-     * Get class by url
-     *
-     * @param namespace
-     *            Namespace url
-     * @return Class
-     */
-    private Class<?> getClass(final String namespace) {
-        try {
-            return Class.forName(namespace);
-        } catch (ClassNotFoundException e) {
-        }
-        return null;
-    }
-    
-    private Field getField(final String name, final Class<?> clazz) throws Exception {
-        return clazz.getDeclaredField(name);
-    }
-    
-    private Object getValue(final String name, final Object obj) throws Exception {
-        final Field f = getField(name, obj.getClass());
-        f.setAccessible(true);
-        return f.get(obj);
-    }
-    
-    private Class<?> getPrimitiveType(final Class<?> clazz) {
-        return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
-    }
-    
-    private Class<?>[] toPrimitiveTypeArray(final Class<?>[] classes) {
-        final int a = classes != null ? classes.length : 0;
-        final Class<?>[] types = new Class<?>[a];
-        for (int i = 0; i < a; i++) {
-            types[i] = getPrimitiveType(classes[i]);
-        }
-        return types;
-    }
-    
-    private static boolean equalsTypeArray(final Class<?>[] a, final Class<?>[] o) {
+
+    private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
         if (a.length != o.length) {
             return false;
         }
@@ -375,8 +110,258 @@ public class HackTitleManager {
         }
         return true;
     }
-    
-    private Object getHandle(final Object obj) {
+
+    /**
+     * Load spigot and NMS classes.
+     * @throws ClassNotFoundException Spigot Error.
+     */
+    private void loadClasses() throws ClassNotFoundException {
+        this.packetTitle = getClass("org.spigotmc.ProtocolInjector$PacketTitle");
+        this.packetActions = getClass("org.spigotmc.ProtocolInjector$PacketTitle$Action");
+        this.nmsChatSerializer = getNMSClass("ChatSerializer");
+    }
+
+    /**
+     * Get title text.
+     *
+     * @return Title text
+     */
+    public String getTitle() {
+        return this.title;
+    }
+
+    /**
+     * Set title text.
+     *
+     * @param title Title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * Get subtitle text.
+     *
+     * @return Subtitle text
+     */
+    public String getSubtitle() {
+        return this.subtitle;
+    }
+
+    /**
+     * Set subtitle text.
+     *
+     * @param subtitle Subtitle text
+     */
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+    }
+
+    /**
+     * Set the title color.
+     *
+     * @param color Chat color
+     */
+    public void setTitleColor(ChatColor color) {
+        this.titleColor = color;
+    }
+
+    /**
+     * Set the subtitle color.
+     *
+     * @param color Chat color
+     */
+    public void setSubtitleColor(ChatColor color) {
+        this.subtitleColor = color;
+    }
+
+    /**
+     * Set title fade in time.
+     *
+     * @param time Time
+     */
+    public void setFadeInTime(int time) {
+        this.fadeInTime = time;
+    }
+
+    /**
+     * Set title fade out time.
+     *
+     * @param time Time
+     */
+    public void setFadeOutTime(int time) {
+        this.fadeOutTime = time;
+    }
+
+    /**
+     * Set title stay time.
+     *
+     * @param time Time
+     */
+    public void setStayTime(int time) {
+        this.stayTime = time;
+    }
+
+    /**
+     * Set timings to ticks.
+     */
+    public void setTimingsToTicks() {
+        this.ticks = true;
+    }
+
+    /**
+     * Set timings to seconds.
+     */
+    public void setTimingsToSeconds() {
+        this.ticks = false;
+    }
+
+    /**
+     * Send the title to a player.
+     *
+     * @param player Player
+     * @throws Exception on NMS error
+     */
+    public void send(Player player) throws Exception {
+        if ((getProtocolVersion(player) >= 47) && isSpigot() && (this.packetTitle != null)) {
+            // First reset previous settings
+            resetTitle(player);
+            // Send timings first
+            Object handle = getHandle(player);
+            Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+            Object[] actions = this.packetActions.getEnumConstants();
+            Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+            Object packet = this.packetTitle.getConstructor(this.packetActions, Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(actions[2],
+                    this.fadeInTime * (this.ticks ? 1 : 20),
+                    this.stayTime * (this.ticks ? 1 : 20),
+                    this.fadeOutTime * (this.ticks ? 1 : 20));
+            // Send if set
+            if ((this.fadeInTime != -1) && (this.fadeOutTime != -1) && (this.stayTime != -1)) {
+                sendPacket.invoke(connection, packet);
+            }
+            // Send title
+            Object serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
+                    "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.title) + "\",color:" + this.titleColor.name().toLowerCase() + "}");
+            packet = this.packetTitle.getConstructor(this.packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[0], serialized);
+            sendPacket.invoke(connection, packet);
+            if (!this.subtitle.isEmpty()) {
+                // Send subtitle if present
+                serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
+                        "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.subtitle) + "\",color:" + this.subtitleColor.name()
+                                .toLowerCase() + "}");
+                packet = this.packetTitle.getConstructor(this.packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[1], serialized);
+                sendPacket.invoke(connection, packet);
+            }
+        }
+    }
+
+    /**
+     * Broadcast the title to all players.
+     * @throws Exception on NMS Error
+     */
+    public void broadcast() throws Exception {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            send(p);
+        }
+    }
+
+    /**
+     * Clear the title.
+     *
+     * @param player Player
+     * @throws Exception on NMS Error
+     */
+    public void clearTitle(Player player) throws Exception {
+        if ((getProtocolVersion(player) >= 47) && isSpigot()) {
+            // Send timings first
+            Object handle = getHandle(player);
+            Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+            Object[] actions = this.packetActions.getEnumConstants();
+            Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+            Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[3]);
+            sendPacket.invoke(connection, packet);
+        }
+    }
+
+    /**
+     * Reset the title settings.
+     *
+     * @param player Player
+     * @throws Exception on NMS error.
+     */
+    public void resetTitle(Player player) throws Exception {
+        if ((getProtocolVersion(player) >= 47) && isSpigot()) {
+            // Send timings first
+            Object handle = getHandle(player);
+            Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+            Object[] actions = this.packetActions.getEnumConstants();
+            Method sendPacket = getMethod(connection.getClass(), "sendPacket");
+            Object packet = this.packetTitle.getConstructor(this.packetActions).newInstance(actions[4]);
+            sendPacket.invoke(connection, packet);
+        }
+    }
+
+    /**
+     * Get the protocol version of the player.
+     *
+     * @param player Player
+     * @return Protocol version
+     * @throws Exception on NMS Error
+     */
+    private int getProtocolVersion(Player player) throws Exception {
+        Object handle = getHandle(player);
+        Object connection = getField(handle.getClass(), "playerConnection").get(handle);
+        Object networkManager = getValue("networkManager", connection);
+        return (Integer) getMethod("getVersion", networkManager.getClass()).invoke(networkManager);
+    }
+
+    /**
+     * Check if running spigot.
+     *
+     * @return Spigot
+     */
+    private boolean isSpigot() {
+        return Bukkit.getVersion().contains("Spigot");
+    }
+
+    /**
+     * Get class by url.
+     *
+     * @param namespace Namespace url
+     * @return Class
+     */
+    private Class<?> getClass(String namespace) {
+        try {
+            return Class.forName(namespace);
+        } catch (ClassNotFoundException ignored) {
+        }
+        return null;
+    }
+
+    private Field getField(String name, Class<?> clazz) throws Exception {
+        return clazz.getDeclaredField(name);
+    }
+
+    private Object getValue(String name, Object obj) throws Exception {
+        Field f = getField(name, obj.getClass());
+        f.setAccessible(true);
+        return f.get(obj);
+    }
+
+    private Class<?> getPrimitiveType(Class<?> clazz) {
+        return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
+    }
+
+    private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {
+        int a = classes != null ? classes.length : 0;
+        Class<?>[] types = new Class<?>[a];
+        for (int i = 0; i < a; i++) {
+            types[i] = getPrimitiveType(classes[i]);
+        }
+        return types;
+    }
+
+    private Object getHandle(Object obj) {
         try {
             return getMethod("getHandle", obj.getClass()).invoke(obj);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -384,31 +369,31 @@ public class HackTitleManager {
             return null;
         }
     }
-    
-    private Method getMethod(final String name, final Class<?> clazz, final Class<?>... paramTypes) {
-        final Class<?>[] t = toPrimitiveTypeArray(paramTypes);
-        for (final Method m : clazz.getMethods()) {
-            final Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
+
+    private Method getMethod(String name, Class<?> clazz, Class<?>... paramTypes) {
+        Class<?>[] t = toPrimitiveTypeArray(paramTypes);
+        for (Method m : clazz.getMethods()) {
+            Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
             if (m.getName().equals(name) && equalsTypeArray(types, t)) {
                 return m;
             }
         }
         return null;
     }
-    
+
     private String getVersion() {
-        final String name = Bukkit.getServer().getClass().getPackage().getName();
+        String name = Bukkit.getServer().getClass().getPackage().getName();
         return name.substring(name.lastIndexOf('.') + 1) + ".";
     }
-    
-    private Class<?> getNMSClass(final String className) throws ClassNotFoundException {
-        final String fullName = "net.minecraft.server." + getVersion() + className;
+
+    private Class<?> getNMSClass(String className) throws ClassNotFoundException {
+        String fullName = "net.minecraft.server." + getVersion() + className;
         return Class.forName(fullName);
     }
-    
-    private Field getField(final Class<?> clazz, final String name) {
+
+    private Field getField(Class<?> clazz, String name) {
         try {
-            final Field field = clazz.getDeclaredField(name);
+            Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
             return field;
         } catch (SecurityException | NoSuchFieldException e) {
@@ -416,18 +401,18 @@ public class HackTitleManager {
             return null;
         }
     }
-    
-    private Method getMethod(final Class<?> clazz, final String name, final Class<?>... args) {
-        for (final Method m : clazz.getMethods()) {
-            if (m.getName().equals(name) && ((args.length == 0) || ClassListEqual(args, m.getParameterTypes()))) {
+
+    private Method getMethod(Class<?> clazz, String name, Class<?>... args) {
+        for (Method m : clazz.getMethods()) {
+            if (m.getName().equals(name) && ((args.length == 0) || classListEqual(args, m.getParameterTypes()))) {
                 m.setAccessible(true);
                 return m;
             }
         }
         return null;
     }
-    
-    private boolean ClassListEqual(final Class<?>[] l1, final Class<?>[] l2) {
+
+    private boolean classListEqual(Class<?>[] l1, Class<?>[] l2) {
         if (l1.length != l2.length) {
             return false;
         }

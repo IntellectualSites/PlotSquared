@@ -20,31 +20,31 @@ public class BukkitChatManager extends ChatManager<FancyMessage> {
     }
 
     @Override
-    public void color(final PlotMessage m, final String color) {
+    public void color(PlotMessage m, String color) {
         m.$(this).color(ChatColor.getByChar(C.color(color).substring(1)));
     }
 
     @Override
-    public void tooltip(final PlotMessage m, final PlotMessage... tooltips) {
-        final List<FancyMessage> lines = new ArrayList<>();
-        for (final PlotMessage tooltip : tooltips) {
+    public void tooltip(PlotMessage m, PlotMessage... tooltips) {
+        List<FancyMessage> lines = new ArrayList<>();
+        for (PlotMessage tooltip : tooltips) {
             lines.add(tooltip.$(this));
         }
         m.$(this).formattedTooltip(lines);
     }
 
     @Override
-    public void command(final PlotMessage m, final String command) {
+    public void command(PlotMessage m, String command) {
         m.$(this).command(command);
     }
 
     @Override
-    public void text(final PlotMessage m, final String text) {
+    public void text(PlotMessage m, String text) {
         m.$(this).then(ChatColor.stripColor(text));
     }
 
     @Override
-    public void send(final PlotMessage m, final PlotPlayer player) {
+    public void send(PlotMessage m, PlotPlayer player) {
         if (ConsolePlayer.isConsole(player)) {
             player.sendMessage(m.$(this).toOldMessageFormat());
         } else {
@@ -53,7 +53,7 @@ public class BukkitChatManager extends ChatManager<FancyMessage> {
     }
 
     @Override
-    public void suggest(final PlotMessage m, final String command) {
+    public void suggest(PlotMessage m, String command) {
         m.$(this).suggest(command);
     }
 

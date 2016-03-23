@@ -33,7 +33,7 @@ public final class Reflection {
     private Reflection() {
 
     }
-    
+
     /**
      * Gets the version string from the package name of the CraftBukkit server implementation.
      * This is needed to bypass the JAR package name changing on each update.
@@ -42,19 +42,20 @@ public final class Reflection {
     public synchronized static String getVersion() {
         return PS.get().IMP.getNMSPackage();
     }
-    
+
     /**
      * Gets a {@link Class} object representing a type contained within the {@code net.minecraft.server} versioned package.
-     * The class instances returned by this method are cached, such that no lookup will be done twice (unless multiple threads are accessing this method simultaneously).
+     * The class instances returned by this method are cached, such that no lookup will be done twice (unless multiple threads are accessing this
+     * method simultaneously).
      * @param className The name of the class, excluding the package, within NMS.
      * @return The class instance representing the specified NMS class, or {@code null} if it could not be loaded.
      */
-    public synchronized static Class<?> getNMSClass(final String className) {
+    public synchronized static Class<?> getNMSClass(String className) {
         if (_loadedNMSClasses.containsKey(className)) {
             return _loadedNMSClasses.get(className);
         }
 
-        final String fullName = "net.minecraft.server." + getVersion() + "." + className;
+        String fullName = "net.minecraft.server." + getVersion() + "." + className;
         Class<?> clazz;
         try {
             clazz = Class.forName(fullName);
@@ -66,7 +67,7 @@ public final class Reflection {
         _loadedNMSClasses.put(className, clazz);
         return clazz;
     }
-    
+
     /**
      * Gets a {@link Class} object representing a type contained within the {@code org.bukkit.craftbukkit} versioned package.
      * The class instances returned by this method are cached, such that no lookup will be done twice (unless multiple threads are accessing this
@@ -75,12 +76,12 @@ public final class Reflection {
      * .CraftItemStack}.
      * @return The class instance representing the specified OBC class, or {@code null} if it could not be loaded.
      */
-    public synchronized static Class<?> getOBCClass(final String className) {
+    public synchronized static Class<?> getOBCClass(String className) {
         if (_loadedOBCClasses.containsKey(className)) {
             return _loadedOBCClasses.get(className);
         }
 
-        final String fullName = "org.bukkit.craftbukkit." + getVersion() + "." + className;
+        String fullName = "org.bukkit.craftbukkit." + getVersion() + "." + className;
         Class<?> clazz;
         try {
             clazz = Class.forName(fullName);
@@ -92,7 +93,7 @@ public final class Reflection {
         _loadedOBCClasses.put(className, clazz);
         return clazz;
     }
-    
+
     /**
      * Attempts to get the NMS handle of a CraftBukkit object.
      * <p>
@@ -102,7 +103,7 @@ public final class Reflection {
      * @param obj The object for which to retrieve an NMS handle.
      * @return The NMS handle of the specified object, or {@code null} if it could not be retrieved using {@code getHandle()}.
      */
-    public synchronized static Object getHandle(final Object obj) {
+    public synchronized static Object getHandle(Object obj) {
         try {
             return getMethod(obj.getClass(), "getHandle").invoke(obj);
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
@@ -110,7 +111,7 @@ public final class Reflection {
             return null;
         }
     }
-    
+
     /**
      * Retrieves a {@link Field} instance declared by the specified class with the specified name.
      * Java access modifiers are ignored during this retrieval. No guarantee is made as to whether the field
@@ -129,7 +130,7 @@ public final class Reflection {
      * @return A field object with the specified name declared by the specified class.
      * @see Class#getDeclaredField(String)
      */
-    public synchronized static Field getField(final Class<?> clazz, final String name) {
+    public synchronized static Field getField(Class<?> clazz, String name) {
         Map<String, Field> loaded;
         if (!_loadedFields.containsKey(clazz)) {
             loaded = new HashMap<>();
@@ -142,7 +143,7 @@ public final class Reflection {
             return loaded.get(name);
         }
         try {
-            final Field field = clazz.getDeclaredField(name);
+            Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
             loaded.put(name, field);
             return field;
@@ -154,7 +155,7 @@ public final class Reflection {
             return null;
         }
     }
-    
+
     /**
      * Retrieves a {@link Method} instance declared by the specified class with the specified name and argument types.
      * Java access modifiers are ignored during this retrieval. No guarantee is made as to whether the field
@@ -164,7 +165,8 @@ public final class Reflection {
      * no method will be reflectively looked up twice.
      * </p>
      * <p>
-     * If a method is deemed suitable for return, {@link Method#setAccessible(boolean) setAccessible} will be invoked with an argument of {@code true} before it is returned.
+     * If a method is deemed suitable for return, {@link Method#setAccessible(boolean) setAccessible} will be invoked with an argument of {@code
+     * true} before it is returned.
      * This ensures that callers do not have to check or worry about Java access modifiers when dealing with the returned instance.
      * </p>
      * <p>
@@ -175,23 +177,23 @@ public final class Reflection {
      * @param args The formal argument types of the method.
      * @return A method object with the specified name declared by the specified class.
      */
-    public synchronized static Method getMethod(final Class<?> clazz, final String name, final Class<?>... args) {
+    public synchronized static Method getMethod(Class<?> clazz, String name, Class<?>... args) {
         if (!_loadedMethods.containsKey(clazz)) {
             _loadedMethods.put(clazz, new HashMap<String, Map<ArrayWrapper<Class<?>>, Method>>());
         }
-        
-        final Map<String, Map<ArrayWrapper<Class<?>>, Method>> loadedMethodNames = _loadedMethods.get(clazz);
+
+        Map<String, Map<ArrayWrapper<Class<?>>, Method>> loadedMethodNames = _loadedMethods.get(clazz);
         if (!loadedMethodNames.containsKey(name)) {
             loadedMethodNames.put(name, new HashMap<ArrayWrapper<Class<?>>, Method>());
         }
-        
-        final Map<ArrayWrapper<Class<?>>, Method> loadedSignatures = loadedMethodNames.get(name);
-        final ArrayWrapper<Class<?>> wrappedArg = new ArrayWrapper<>(args);
+
+        Map<ArrayWrapper<Class<?>>, Method> loadedSignatures = loadedMethodNames.get(name);
+        ArrayWrapper<Class<?>> wrappedArg = new ArrayWrapper<>(args);
         if (loadedSignatures.containsKey(wrappedArg)) {
             return loadedSignatures.get(wrappedArg);
         }
-        
-        for (final Method m : clazz.getMethods()) {
+
+        for (Method m : clazz.getMethods()) {
             if (m.getName().equals(name) && Arrays.equals(args, m.getParameterTypes())) {
                 m.setAccessible(true);
                 loadedSignatures.put(wrappedArg, m);
@@ -201,5 +203,5 @@ public final class Reflection {
         loadedSignatures.put(wrappedArg, null);
         return null;
     }
-    
+
 }

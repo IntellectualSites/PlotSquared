@@ -36,6 +36,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,31 +45,31 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 @CommandDeclaration(command = "rate",
-permission = "plots.rate",
-description = "Rate the plot",
-usage = "/plot rate [#|next]",
-aliases = "rt",
-category = CommandCategory.INFO,
-requiredType = RequiredType.NONE)
+        permission = "plots.rate",
+        description = "Rate the plot",
+        usage = "/plot rate [#|next]",
+        aliases = "rt",
+        category = CommandCategory.INFO,
+        requiredType = RequiredType.NONE)
 public class Rate extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer player, final String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("next")) {
-                final ArrayList<Plot> plots = new ArrayList<>(PS.get().getBasePlots());
+                ArrayList<Plot> plots = new ArrayList<>(PS.get().getBasePlots());
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
-                    public int compare(final Plot p1, final Plot p2) {
+                    public int compare(Plot p1, Plot p2) {
                         double v1 = 0;
                         if (!p1.getRatings().isEmpty()) {
-                            for (final Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
+                            for (Entry<UUID, Rating> entry : p1.getRatings().entrySet()) {
                                 v1 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
                         double v2 = 0;
                         if (!p2.getRatings().isEmpty()) {
-                            for (final Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                            for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
                                 v2 -= 11 - entry.getValue().getAverageRating();
                             }
                         }
@@ -78,8 +79,8 @@ public class Rate extends SubCommand {
                         return v2 > v1 ? 1 : -1;
                     }
                 });
-                final UUID uuid = player.getUUID();
-                for (final Plot p : plots) {
+                UUID uuid = player.getUUID();
+                for (Plot p : plots) {
                     if ((!Settings.REQUIRE_DONE || p.getFlags().containsKey("done")) && p.isBasePlot() && (p.hasRatings() || !p.getRatings()
                             .containsKey(uuid)) && !p.isAdded(uuid)) {
                         p.teleportPlayer(player);
@@ -107,7 +108,7 @@ public class Rate extends SubCommand {
             sendMessage(player, C.RATING_NOT_DONE);
             return false;
         }
-        if ((Settings.RATING_CATEGORIES != null) && (!Settings.RATING_CATEGORIES.isEmpty())) {
+        if ((Settings.RATING_CATEGORIES != null) && !Settings.RATING_CATEGORIES.isEmpty()) {
             final Runnable run = new Runnable() {
                 @Override
                 public void run() {
@@ -117,25 +118,25 @@ public class Rate extends SubCommand {
                     }
                     final MutableInt index = new MutableInt(0);
                     final MutableInt rating = new MutableInt(0);
-                    final String title = Settings.RATING_CATEGORIES.get(0);
-                    final PlotInventory inventory = new PlotInventory(player, 1, title) {
+                    String title = Settings.RATING_CATEGORIES.get(0);
+                    PlotInventory inventory = new PlotInventory(player, 1, title) {
                         @Override
-                        public boolean onClick(final int i) {
+                        public boolean onClick(int i) {
                             rating.add((i + 1) * Math.pow(10, index.getValue()));
                             index.increment();
                             if (index.getValue() >= Settings.RATING_CATEGORIES.size()) {
                                 close();
-                                final int rV = rating.getValue();
-                                final Rating result = EventUtil.manager.callRating(player, plot, new Rating(rV));
-                                plot.addRating(player.getUUID(), result);
-                                sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
+                                int rV = rating.getValue();
+                                Rating result = EventUtil.manager.callRating(this.player, plot, new Rating(rV));
+                                plot.addRating(this.player.getUUID(), result);
+                                sendMessage(this.player, C.RATING_APPLIED, plot.getId().toString());
                                 return false;
                             }
                             setTitle(Settings.RATING_CATEGORIES.get(index.getValue()));
-                            if (Permissions.hasPermission(player, "plots.comment")) {
-                                final Command<PlotPlayer> command = MainCommand.getInstance().getCommand("comment");
+                            if (Permissions.hasPermission(this.player, "plots.comment")) {
+                                Command<PlotPlayer> command = MainCommand.getInstance().getCommand("comment");
                                 if (command != null) {
-                                    MainUtil.sendMessage(player, C.COMMENT_THIS, command.getUsage().replaceAll("{label}", "plot"));
+                                    MainUtil.sendMessage(this.player, C.COMMENT_THIS, command.getUsage().replaceAll("{label}", "plot"));
                                 }
                             }
                             return false;
@@ -173,9 +174,9 @@ public class Rate extends SubCommand {
             sendMessage(player, C.RATING_NOT_VALID);
             return true;
         }
-        final String arg = args[0];
+        String arg = args[0];
         final int rating;
-        if (MathMan.isInteger(arg) && (arg.length() < 3) && (!arg.isEmpty())) {
+        if (MathMan.isInteger(arg) && (arg.length() < 3) && !arg.isEmpty()) {
             rating = Integer.parseInt(arg);
             if (rating > 10 || rating < 1) {
                 sendMessage(player, C.RATING_NOT_VALID);
@@ -193,8 +194,8 @@ public class Rate extends SubCommand {
                     sendMessage(player, C.RATING_ALREADY_EXISTS, plot.getId().toString());
                     return;
                 }
-                final Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
-                plot.addRating(uuid,result);
+                Rating result = EventUtil.manager.callRating(player, plot, new Rating(rating));
+                plot.addRating(uuid, result);
                 sendMessage(player, C.RATING_APPLIED, plot.getId().toString());
             }
         };
@@ -220,19 +221,19 @@ public class Rate extends SubCommand {
         private int value;
 
         MutableInt(int i) {
-            value = i;
+            this.value = i;
         }
 
         void increment() {
-            value++;
+            this.value++;
         }
 
         void decrement() {
-            value--;
+            this.value--;
         }
 
         int getValue() {
-            return value;
+            return this.value;
         }
 
         void add(Number v) {

@@ -1,7 +1,12 @@
 package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.LazyResult;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PseudoRandom;
+import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
@@ -9,9 +14,9 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import java.util.Set;
 
 public class AugmentedUtils {
-    
+
     private static boolean enabled = true;
-    
+
     public static void bypass(boolean bypass, Runnable run) {
         enabled = bypass;
         run.run();
@@ -37,7 +42,7 @@ public class AugmentedUtils {
         if (areas.isEmpty()) {
             return false;
         }
-        final PseudoRandom r = new PseudoRandom();
+        PseudoRandom r = new PseudoRandom();
         r.state = (cx << 16) | (cz & 0xFFFF);
         ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(world, cx, cz);
         boolean toReturn = false;
@@ -55,7 +60,10 @@ public class AugmentedUtils {
             final PlotChunk<?> result = lazyChunk.getOrCreate();
             final PlotChunk<?> primaryMask;
             // coords
-            int bxx,bzz,txx,tzz;
+            int bxx;
+            int bzz;
+            int txx;
+            int tzz;
             // gen
             if (area.TYPE == 2) {
                 bxx = Math.max(0, area.getRegion().minX - bx);
@@ -67,26 +75,26 @@ public class AugmentedUtils {
                     public Object getChunkAbs() {
                         return null;
                     }
-                    
+
                     @Override
                     public void setBlock(int x, int y, int z, int id, byte data) {
                         if (area.contains(bx + x, bz + z)) {
                             result.setBlock(x, y, z, id, data);
                         }
                     }
-                    
+
                     @Override
                     public void setBiome(int x, int z, int biome) {
                         if (area.contains(bx + x, bz + z)) {
                             result.setBiome(x, z, biome);
                         }
                     }
-                    
+
                     @Override
                     public PlotChunk clone() {
                         return null;
                     }
-                    
+
                     @Override
                     public PlotChunk shallowClone() {
                         return null;
@@ -127,22 +135,23 @@ public class AugmentedUtils {
                     public Object getChunkAbs() {
                         return null;
                     }
-                    
+
                     @Override
                     public void setBlock(int x, int y, int z, int id, byte data) {
                         if (canPlace[x][z]) {
                             primaryMask.setBlock(x, y, z, id, data);
                         }
                     }
-                    
+
                     @Override
-                    public void setBiome(int x, int z, int biome) {}
-                    
+                    public void setBiome(int x, int z, int biome) {
+                    }
+
                     @Override
                     public PlotChunk clone() {
                         return null;
                     }
-                    
+
                     @Override
                     public PlotChunk shallowClone() {
                         return null;

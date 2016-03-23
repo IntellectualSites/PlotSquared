@@ -30,17 +30,17 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-command = "target",
-usage = "/plot target <<plot>|nearest>",
-description = "Target a plot with your compass",
-permission = "plots.target",
-requiredType = RequiredType.NONE,
-category = CommandCategory.INFO)
+        command = "target",
+        usage = "/plot target <<plot>|nearest>",
+        description = "Target a plot with your compass",
+        permission = "plots.target",
+        requiredType = RequiredType.NONE,
+        category = CommandCategory.INFO)
 public class Target extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        final Location ploc = plr.getLocation();
+    public boolean onCommand(PlotPlayer plr, String[] args) {
+        Location ploc = plr.getLocation();
         if (!ploc.isPlotArea()) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
@@ -48,8 +48,8 @@ public class Target extends SubCommand {
         Plot target = null;
         if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
             int distance = Integer.MAX_VALUE;
-            for (final Plot plot : PS.get().getPlots(ploc.getWorld())) {
-                final double current = plot.getCenter().getEuclideanDistanceSquared(ploc);
+            for (Plot plot : PS.get().getPlots(ploc.getWorld())) {
+                double current = plot.getCenter().getEuclideanDistanceSquared(ploc);
                 if (current < distance) {
                     distance = (int) current;
                     target = plot;

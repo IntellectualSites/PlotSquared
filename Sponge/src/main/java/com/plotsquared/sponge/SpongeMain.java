@@ -94,22 +94,22 @@ public class SpongeMain implements IPlotMain {
 
     //    @Override
     public Logger getLogger() {
-        return logger;
+        return this.logger;
     }
 
     public Game getGame() {
-        return game;
+        return this.game;
     }
 
     public Server getServer() {
-        return server;
+        return this.server;
     }
 
     public GameProfileManager getResolver() {
-        if (resolver == null) {
-            resolver = game.getServer().getGameProfileManager();
+        if (this.resolver == null) {
+            this.resolver = this.game.getServer().getGameProfileManager();
         }
-        return resolver;
+        return this.resolver;
     }
 
     public SpongeMain getPlugin() {
@@ -117,22 +117,22 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Listener
-    public void init(final GameInitializationEvent event) {
+    public void init(GameInitializationEvent event) {
         log("PlotSquared: Game init");
     }
 
     @Listener
-    public void onInit(final GamePreInitializationEvent event) {
+    public void onInit(GamePreInitializationEvent event) {
         log("PlotSquared: Game pre init");
     }
     
     @Listener
-    public void onServerAboutToStart(final GameAboutToStartServerEvent event) {
+    public void onServerAboutToStart(GameAboutToStartServerEvent event) {
         log("PlotSquared: Server init");
         THIS = this;
         new PS(this, "Sponge");
-        server = game.getServer();
-        game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new HybridGen().specify());
+        this.server = this.game.getServer();
+        this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new HybridGen().specify());
     }
 
     @Override
@@ -141,11 +141,11 @@ public class SpongeMain implements IPlotMain {
         if (!Settings.CONSOLE_COLOR) {
             message = message.replaceAll('\u00a7' + "[a-z|0-9]", "");
         }
-        if (server == null || server.getConsole() == null) {
-            logger.info(message);
+        if (this.server == null || this.server.getConsole() == null) {
+            this.logger.info(message);
             return;
         }
-        server.getConsole().sendMessage(SpongeUtil.getText(message));
+        this.server.getConsole().sendMessage(SpongeUtil.getText(message));
     }
 
     @Override
@@ -166,17 +166,17 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public int[] getPluginVersion() {
-        PluginContainer plugin = game.getPluginManager().fromInstance(this).get();
+        PluginContainer plugin = this.game.getPluginManager().fromInstance(this).get();
         String version = plugin.getVersion().get();
-        final String[] split = version.split("\\.");
+        String[] split = version.split("\\.");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
     }
 
     @Override
     public int[] getServerVersion() {
         log("Checking minecraft version: Sponge: ");
-        final String version = game.getPlatform().getMinecraftVersion().getName();
-        final String[] split = version.split("\\.");
+        String version = this.game.getPlatform().getMinecraftVersion().getName();
+        String[] split = version.split("\\.");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
     }
 
@@ -259,7 +259,7 @@ public class SpongeMain implements IPlotMain {
         try {
             Class.forName("com.sk89q.worldedit.WorldEdit");
             return true;
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
             return false;
         }
     }
@@ -282,7 +282,7 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
-    public void unregister(final PlotPlayer player) {
+    public void unregister(PlotPlayer player) {
         SpongeUtil.removePlayer(player.getName());
     }
 
@@ -304,7 +304,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public void startMetrics() {
         try {
-            Metrics metrics = new Metrics(game, (PluginContainer) this);
+            Metrics metrics = new Metrics(this.game, (PluginContainer) this);
             metrics.start();
             log(C.PREFIX.s() + "&6Metrics enabled.");
         } catch (IOException e) {
@@ -313,17 +313,17 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
-    public void setGenerator(final String worldname) {
+    public void setGenerator(String worldname) {
         World world = SpongeUtil.getWorld(worldname);
         if (world == null) {
             // create world
-            final ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldname);
+            ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldname);
             String manager = worldConfig.getString("generator.plugin", "PlotSquared");
             String generator = worldConfig.getString("generator.init", manager);
 
-            final int type = worldConfig.getInt("generator.type");
-            final int terrain = worldConfig.getInt("generator.terrain");
-            final SetupObject setup = new SetupObject();
+            int type = worldConfig.getInt("generator.type");
+            int terrain = worldConfig.getInt("generator.terrain");
+            SetupObject setup = new SetupObject();
             setup.plotManager = manager;
             setup.setupGenerator = generator;
             setup.type = type;
@@ -349,14 +349,13 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
-    public PlotPlayer wrapPlayer(final Object obj) {
-        if (obj instanceof Player) {
-            return SpongeUtil.getPlayer((Player) obj);
-        }
-        else if (obj instanceof String) {
-            return UUIDHandler.getPlayer((String) obj);
-        } else if (obj instanceof UUID) {
-            return UUIDHandler.getPlayer((UUID) obj);
+    public PlotPlayer wrapPlayer(Object player) {
+        if (player instanceof Player) {
+            return SpongeUtil.getPlayer((Player) player);
+        } else if (player instanceof String) {
+            return UUIDHandler.getPlayer((String) player);
+        } else if (player instanceof UUID) {
+            return UUIDHandler.getPlayer((UUID) player);
         }
         // TODO FIXME offline player
         return null;
@@ -395,7 +394,7 @@ public class SpongeMain implements IPlotMain {
         if (name == null) {
             return null;
         }
-        Collection<WorldGeneratorModifier> wgms = game.getRegistry().getAllOf(WorldGeneratorModifier.class);
+        Collection<WorldGeneratorModifier> wgms = this.game.getRegistry().getAllOf(WorldGeneratorModifier.class);
         for (WorldGeneratorModifier wgm : wgms) {
             if (StringMan.isEqualIgnoreCaseToAny(name, wgm.getName(), wgm.getId())) {
                 if (wgm instanceof GeneratorWrapper<?>) {
@@ -415,7 +414,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public List<String> getPluginIds() {
         ArrayList<String> names = new ArrayList<>();
-        for (PluginContainer plugin : game.getPluginManager().getPlugins()) {
+        for (PluginContainer plugin : this.game.getPluginManager().getPlugins()) {
             names.add(plugin.getName() + ";" + plugin.getVersion() + ":" + true);
         }
         return names;

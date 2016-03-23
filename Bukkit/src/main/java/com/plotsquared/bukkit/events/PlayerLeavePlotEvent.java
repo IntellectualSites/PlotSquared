@@ -20,43 +20,44 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-import com.intellectualcrafters.plot.object.Plot;
+/**
 
-/**
+
  */
 public class PlayerLeavePlotEvent extends PlayerEvent {
-    
-    private static HandlerList handlers = new HandlerList();
+
+    private static final HandlerList handlers = new HandlerList();
     private final Plot plot;
-    
+
     /**
      * PlayerLeavePlotEvent: Called when a player leaves a plot
      *
      * @param player Player that left the plot
      * @param plot   Plot that was left
      */
-    public PlayerLeavePlotEvent(final Player player, final Plot plot) {
+    public PlayerLeavePlotEvent(Player player, Plot plot) {
         super(player);
         this.plot = plot;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     /**
      * Get the plot involved
      *
      * @return Plot
      */
     public Plot getPlot() {
-        return plot;
+        return this.plot;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;

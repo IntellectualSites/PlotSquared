@@ -20,25 +20,26 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
-import java.util.ArrayList;
-
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import org.bukkit.World;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotId;
+import java.util.ArrayList;
 
-/**
+/**
+
  */
 public class PlotMergeEvent extends Event implements Cancellable {
-    private static HandlerList handlers = new HandlerList();
+
+    private static final HandlerList handlers = new HandlerList();
     private final ArrayList<PlotId> plots;
     private boolean cancelled;
     private Plot plot;
     private World world;
-    
+
     /**
      * PlotMergeEvent: Called when plots are merged
      *
@@ -46,48 +47,48 @@ public class PlotMergeEvent extends Event implements Cancellable {
      * @param plot  Plot that was merged
      * @param plots A list of plots involved in the event
      */
-    public PlotMergeEvent(final World world, final Plot plot, final ArrayList<PlotId> plots) {
+    public PlotMergeEvent(World world, Plot plot, ArrayList<PlotId> plots) {
         this.plots = plots;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     /**
      * Get the plots being added;
      *
      * @return Plot
      */
     public ArrayList<PlotId> getPlots() {
-        return plots;
+        return this.plots;
     }
-    
+
     /**
      * Get the main plot
      *
      * @return Plot
      */
     public Plot getPlot() {
-        return plot;
+        return this.plot;
     }
-    
+
     public World getWorld() {
-        return world;
+        return this.world;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
-    
+
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return this.cancelled;
     }
-    
+
     @Override
-    public void setCancelled(final boolean b) {
-        cancelled = b;
+    public void setCancelled(boolean b) {
+        this.cancelled = b;
     }
 }

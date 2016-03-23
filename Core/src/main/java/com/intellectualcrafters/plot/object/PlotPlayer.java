@@ -7,10 +7,11 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandCaller;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,7 +28,7 @@ public abstract class PlotPlayer implements CommandCaller {
     private Map<String, byte[]> metaMap = new HashMap<>();
 
     /**
-     * The metadata map
+     * The metadata map.
      */
     private ConcurrentHashMap<String, Object> meta;
 
@@ -37,11 +38,11 @@ public abstract class PlotPlayer implements CommandCaller {
      *  - Accepts player name (online)
      *  - Accepts UUID
      *  - Accepts bukkit OfflinePlayer (offline)
-     * @param obj
+     * @param player
      * @return
      */
-    public static PlotPlayer wrap(final Object obj) {
-        return PS.get().IMP.wrapPlayer(obj);
+    public static PlotPlayer wrap(Object player) {
+        return PS.get().IMP.wrapPlayer(player);
     }
 
     /**
@@ -50,7 +51,7 @@ public abstract class PlotPlayer implements CommandCaller {
      * @param name
      * @return
      */
-    public static PlotPlayer get(final String name) {
+    public static PlotPlayer get(String name) {
         return UUIDHandler.getPlayer(name);
     }
 
@@ -59,46 +60,46 @@ public abstract class PlotPlayer implements CommandCaller {
      * @param key
      * @param value
      */
-    public void setMeta(final String key, final Object value) {
-        if (meta == null) {
-            meta = new ConcurrentHashMap<>();
+    public void setMeta(String key, Object value) {
+        if (this.meta == null) {
+            this.meta = new ConcurrentHashMap<>();
         }
-        meta.put(key, value);
+        this.meta.put(key, value);
     }
 
     /**
-     * Get the metadata for a key
+     * Get the metadata for a key.
      * @param <T>
      * @param key
      * @return
      */
-    public <T> T getMeta(final String key) {
-        if (meta != null) {
-            return (T) meta.get(key);
+    public <T> T getMeta(String key) {
+        if (this.meta != null) {
+            return (T) this.meta.get(key);
         }
         return null;
     }
 
-    public <T> T getMeta(final String key, T def) {
-        if (meta != null) {
-            T value = (T) meta.get(key);
+    public <T> T getMeta(String key, T def) {
+        if (this.meta != null) {
+            T value = (T) this.meta.get(key);
             return value == null ? def : value;
         }
         return def;
     }
 
     /**
-     * Delete the metadata for a key<br>
+     * Delete the metadata for a key.
      *  - metadata is session only
      *  - deleting other plugin's metadata may cause issues
      * @param key
      */
-    public Object deleteMeta(final String key) {
-        return meta == null ? null : meta.remove(key);
+    public Object deleteMeta(String key) {
+        return this.meta == null ? null : this.meta.remove(key);
     }
 
     /**
-     * Returns the player's name
+     * Returns the player's name.
      * @see #getName()
      */
     @Override
@@ -107,7 +108,7 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Get the player's current plot<br>
+     * Get the player's current plot.
      *  - This will return null if the player is standing in the road, or not in a plot world/area
      *  - An unowned plot is still a plot, it just doesn't have any settings
      * @return
@@ -126,7 +127,7 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Get the number of plots the player owns
+     * Get the number of plots the player owns.
      *
      * @see #getPlotCount(String);
      * @see #getPlots()
@@ -157,12 +158,12 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Get the number of plots the player owns in the world
+     * Get the number of plots the player owns in the world.
      * @param world
      * @return
      */
-    public int getPlotCount(final String world) {
-        final UUID uuid = getUUID();
+    public int getPlotCount(String world) {
+        UUID uuid = getUUID();
         int count = 0;
         for (PlotArea area : PS.get().getPlotAreas(world)) {
             if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
@@ -189,7 +190,7 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Return the PlotArea the player is currently in, or null
+     * Return the PlotArea the player is currently in, or null.
      * @return
      */
     public PlotArea getPlotAreaAbs() {
@@ -209,13 +210,13 @@ public abstract class PlotPlayer implements CommandCaller {
 
     ////////////// PARTIALLY IMPLEMENTED ///////////
     /**
-     * Get the player's last recorded location or null if they don't any plot relevant location
+     * Get the player's last recorded location or null if they don't any plot relevant location.
      * @return The location
      */
     public Location getLocation() {
-        final Location loc = getMeta("location");
-        if (loc != null) {
-            return loc;
+        Location location = getMeta("location");
+        if (location != null) {
+            return location;
         }
         return null;
     }
@@ -223,7 +224,7 @@ public abstract class PlotPlayer implements CommandCaller {
     ////////////////////////////////////////////////
 
     /**
-     * Get the previous time the player logged in
+     * Get the previous time the player logged in.
      * @return
      */
     public abstract long getPreviousLogin();
@@ -235,10 +236,10 @@ public abstract class PlotPlayer implements CommandCaller {
     public abstract Location getLocationFull();
 
     /**
-     * Get the player's UUID<br>
-     *  === !IMPORTANT ===<br>
-     *  The UUID is dependent on the mode chosen in the settings.yml and may not be the same as Bukkit has
-     *  (especially if using an old version of Bukkit that does not support UUIDs)
+     * Get the player's UUID.
+     * === !IMPORTANT ===<br>
+     * The UUID is dependent on the mode chosen in the settings.yml and may not be the same as Bukkit has
+     * (especially if using an old version of Bukkit that does not support UUIDs)
      *
      * @return UUID
      */
@@ -249,19 +250,19 @@ public abstract class PlotPlayer implements CommandCaller {
      *  - Will be cached if permission caching is enabled
      */
     @Override
-    public abstract boolean hasPermission(final String perm);
+    public abstract boolean hasPermission(String permission);
 
     /**
      * Send the player a message
      */
     @Override
-    public abstract void sendMessage(final String message);
+    public abstract void sendMessage(String message);
 
     /**
      * Teleport the player to a location
-     * @param loc
+     * @param location
      */
-    public abstract void teleport(final Location loc);
+    public abstract void teleport(Location location);
 
     /**
      * Is the player online
@@ -270,47 +271,33 @@ public abstract class PlotPlayer implements CommandCaller {
     public abstract boolean isOnline();
 
     /**
-     * Get the player's name
+     * Get the player's name.
      * @return
      */
     public abstract String getName();
 
     /**
-     * Set the compass target
-     * @param loc
+     * Set the compass target.
+     * @param location
      */
-    public abstract void setCompassTarget(final Location loc);
+    public abstract void setCompassTarget(Location location);
 
     /**
-     * Load the player data from disk (if applicable)
-     * @deprecated hacky
-     */
-    @Deprecated
-    public abstract void loadData();
-
-    /**
-     * Save the player data from disk (if applicable)
-     * @deprecated hacky
-     */
-    @Deprecated
-    public abstract void saveData();
-
-    /**
-     * Set player data that will persist restarts
+     * Set player data that will persist restarts.
      *  - Please note that this is not intended to store large values
      *  - For session only data use meta
      * @param key
      */
-    public void setAttribute(final String key) {
+    public void setAttribute(String key) {
         setPersistentMeta("attrib_" + key, new byte[]{(byte) 1});
     }
 
 
     /**
-     * The attribute will be either true or false
+     * The attribute will be either true or false.
      * @param key
      */
-    public boolean getAttribute(final String key) {
+    public boolean getAttribute(String key) {
         if (!hasPersistentMeta("attrib_" + key)) {
             return false;
         }
@@ -318,10 +305,10 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Remove an attribute from a player
+     * Remove an attribute from a player.
      * @param key
      */
-    public void removeAttribute(final String key) {
+    public void removeAttribute(String key) {
         removePersistentMeta("attrib_" + key);
     }
 
@@ -329,38 +316,38 @@ public abstract class PlotPlayer implements CommandCaller {
      * Set the player's local weather
      * @param weather
      */
-    public abstract void setWeather(final PlotWeather weather);
+    public abstract void setWeather(PlotWeather weather);
 
     /**
-     * Get the player's gamemode
+     * Get the player's gamemode.
      * @return
      */
-    public abstract PlotGamemode getGamemode();
+    public abstract PlotGameMode getGameMode();
 
     /**
-     * Set the player's gamemode
-     * @param gamemode
+     * Set the player's gameMode.
+     * @param gameMode
      */
-    public abstract void setGamemode(final PlotGamemode gamemode);
+    public abstract void setGameMode(PlotGameMode gameMode);
 
     /**
-     * Set the player's local time (ticks)
+     * Set the player's local time (ticks).
      * @param time
      */
-    public abstract void setTime(final long time);
+    public abstract void setTime(long time);
 
     /**
-     * Set the player's fly mode
+     * Set the player's fly mode.
      * @param fly
      */
-    public abstract void setFlight(final boolean fly);
+    public abstract void setFlight(boolean fly);
 
     /**
-     * Play music at a location for the player
-     * @param loc
+     * Play music at a location for the player.
+     * @param location
      * @param id
      */
-    public abstract void playMusic(final Location loc, final int id);
+    public abstract void playMusic(Location location, int id);
 
     /**
      * Check if the player is banned
@@ -369,21 +356,21 @@ public abstract class PlotPlayer implements CommandCaller {
     public abstract boolean isBanned();
 
     /**
-     * Kick the player from the game
+     * Kick the player from the game.
      * @param message
      */
-    public abstract void kick(final String message);
+    public abstract void kick(String message);
 
     /**
      * Called when the player quits
      */
     public void unregister() {
-        final Plot plot = getCurrentPlot();
+        Plot plot = getCurrentPlot();
         if (plot != null) {
             EventUtil.manager.callLeave(this, plot);
         }
         if (Settings.DELETE_PLOTS_ON_BAN && isBanned()) {
-            for (final Plot owned : getPlots()) {
+            for (Plot owned : getPlots()) {
                 owned.deletePlot(null);
                 PS.debug(String.format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned", plot.getId(), getName()));
             }
@@ -401,10 +388,10 @@ public abstract class PlotPlayer implements CommandCaller {
      * @param world
      * @return
      */
-    public int getPlayerClusterCount(final String world) {
-        final UUID uuid = getUUID();
+    public int getPlayerClusterCount(String world) {
+        UUID uuid = getUUID();
         int count = 0;
-        for (final PlotCluster cluster : PS.get().getClusters(world)) {
+        for (PlotCluster cluster : PS.get().getClusters(world)) {
             if (uuid.equals(cluster.owner)) {
                 count += cluster.getArea();
             }
@@ -453,24 +440,24 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     public byte[] getPersistentMeta(String key) {
-        return metaMap.get(key);
+        return this.metaMap.get(key);
     }
 
     public void removePersistentMeta(String key) {
-        if (metaMap.containsKey(key)) {
-            metaMap.remove(key);
+        if (this.metaMap.containsKey(key)) {
+            this.metaMap.remove(key);
         }
         DBFunc.dbManager.removePersistentMeta(getUUID(), key);
     }
 
     public void setPersistentMeta(String key, byte[] value) {
         boolean delete = hasPersistentMeta(key);
-        metaMap.put(key, value);
+        this.metaMap.put(key, value);
         DBFunc.dbManager.addPersistentMeta(getUUID(), key, value, delete);
     }
 
     public boolean hasPersistentMeta(String key) {
-        return metaMap.containsKey(key);
+        return this.metaMap.containsKey(key);
     }
 
     public abstract void stopSpectating();

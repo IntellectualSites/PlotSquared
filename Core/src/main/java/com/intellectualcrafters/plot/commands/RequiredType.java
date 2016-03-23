@@ -4,8 +4,8 @@ import com.plotsquared.general.commands.CommandCaller;
 
 public enum RequiredType {
     CONSOLE, PLAYER, NONE;
-    
-    public boolean allows(final CommandCaller player) {
+
+    public boolean allows(CommandCaller player) {
         switch (this) {
             case NONE:
                 return true;

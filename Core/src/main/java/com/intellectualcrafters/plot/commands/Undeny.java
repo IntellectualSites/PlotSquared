@@ -20,9 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.commands;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -33,24 +30,27 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 @CommandDeclaration(
-command = "undeny",
-aliases = { "ud" },
-description = "Remove a denied user from a plot",
-usage = "/plot undeny <player>",
-requiredType = RequiredType.NONE,
-category = CommandCategory.SETTINGS)
+        command = "undeny",
+        aliases = {"ud"},
+        description = "Remove a denied user from a plot",
+        usage = "/plot undeny <player>",
+        requiredType = RequiredType.NONE,
+        category = CommandCategory.SETTINGS)
 public class Undeny extends SubCommand {
-    
+
     public Undeny() {
-        requiredArguments = new Argument[] { Argument.PlayerName };
+        this.requiredArguments = new Argument[]{Argument.PlayerName};
     }
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String... args) {
-        
-        final Location loc = plr.getLocation();
-        final Plot plot = loc.getPlotAbs();
+    public boolean onCommand(PlotPlayer plr, String... args) {
+
+        Location loc = plr.getLocation();
+        Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -65,25 +65,25 @@ public class Undeny extends SubCommand {
         int count = 0;
         switch (args[0]) {
             case "unknown":
-                final ArrayList<UUID> toRemove = new ArrayList<>();
-                for (final UUID uuid : plot.getDenied()) {
+                ArrayList<UUID> toRemove = new ArrayList<>();
+                for (UUID uuid : plot.getDenied()) {
                     if (UUIDHandler.getName(uuid) == null) {
                         toRemove.add(uuid);
                     }
                 }
-                for (final UUID uuid : toRemove) {
+                for (UUID uuid : toRemove) {
                     plot.removeDenied(uuid);
                     count++;
                 }
                 break;
             case "*":
-                for (final UUID uuid : new ArrayList<>(plot.getDenied())) {
+                for (UUID uuid : new ArrayList<>(plot.getDenied())) {
                     plot.removeDenied(uuid);
                     count++;
                 }
                 break;
             default:
-                final UUID uuid = UUIDHandler.getUUID(args[0], null);
+                UUID uuid = UUIDHandler.getUUID(args[0], null);
                 if (uuid != null) {
                     if (plot.removeDenied(uuid)) {
                         count++;
@@ -99,5 +99,5 @@ public class Undeny extends SubCommand {
         }
         return true;
     }
-    
+
 }

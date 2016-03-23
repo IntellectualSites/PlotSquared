@@ -20,42 +20,44 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.plotsquared.bukkit.events;
 
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-import com.intellectualcrafters.plot.object.Plot;
+/**
 
-/**
+
  */
 public class PlayerEnterPlotEvent extends PlayerEvent {
-    private static HandlerList handlers = new HandlerList();
+
+    private static final HandlerList handlers = new HandlerList();
     private final Plot plot;
-    
+
     /**
      * PlayerEnterPlotEvent: Called when a player leaves a plot
      *
      * @param player Player that entered the plot
      * @param plot   Plot that was entered
      */
-    public PlayerEnterPlotEvent(final Player player, final Plot plot) {
+    public PlayerEnterPlotEvent(Player player, Plot plot) {
         super(player);
         this.plot = plot;
     }
-    
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
+
     /**
      * Get the plot involved
      *
      * @return Plot
      */
     public Plot getPlot() {
-        return plot;
+        return this.plot;
     }
-    
+
     @Override
     public HandlerList getHandlers() {
         return handlers;

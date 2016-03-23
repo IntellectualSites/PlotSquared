@@ -28,30 +28,31 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.PlotGamemode;
+import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.UUID;
 
 @CommandDeclaration(command = "deny",
-aliases = { "d", "ban" },
-description = "Deny a user from a plot",
-usage = "/plot deny <player>",
-category = CommandCategory.SETTINGS,
-requiredType = RequiredType.NONE)
+        aliases = {"d", "ban"},
+        description = "Deny a user from a plot",
+        usage = "/plot deny <player>",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE)
 public class Deny extends SubCommand {
 
     public Deny() {
-        requiredArguments = new Argument[] { Argument.PlayerName };
+        this.requiredArguments = new Argument[]{Argument.PlayerName};
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
 
-        final Location loc = plr.getLocation();
-        final Plot plot = loc.getPlotAbs();
+        Location loc = plr.getLocation();
+        Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -97,7 +98,7 @@ public class Deny extends SubCommand {
         return true;
     }
 
-    private void handleKick(final PlotPlayer pp, final Plot plot) {
+    private void handleKick(PlotPlayer pp, Plot plot) {
         if (pp == null) {
             return;
         }
@@ -107,7 +108,7 @@ public class Deny extends SubCommand {
         if (pp.hasPermission("plots.admin.entry.denied")) {
             return;
         }
-        if (pp.getGamemode() == PlotGamemode.SPECTATOR) {
+        if (pp.getGameMode() == PlotGameMode.SPECTATOR) {
             pp.stopSpectating();
         }
         pp.teleport(WorldUtil.IMP.getSpawn(pp.getLocation().getWorld()));

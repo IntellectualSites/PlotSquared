@@ -7,52 +7,55 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import java.io.File;
 
 public class BO3 {
+
     private final ChunkLoc chunk;
     private final String world;
     private final StringBuilder blocks;
     private final StringBuilder children;
     private final String name;
-    
-    public BO3(final String name, final String world, final ChunkLoc loc) {
+
+    public BO3(String name, String world, ChunkLoc loc) {
         this.world = world;
         this.name = name;
-        chunk = loc;
-        blocks = new StringBuilder();
-        children = new StringBuilder();
+        this.chunk = loc;
+        this.blocks = new StringBuilder();
+        this.children = new StringBuilder();
     }
-    
-    public void addChild(final BO3 child) {
-        final ChunkLoc childloc = child.getLoc();
-        children.append("Branch(" + (childloc.x - chunk.x) + ",0," + (childloc.z - chunk.z) + "," + name + "_" + childloc.x + "_" + childloc.z + ")\n");
+
+    public void addChild(BO3 child) {
+        ChunkLoc childloc = child.getLoc();
+        this.children.append("Branch(").append(childloc.x - this.chunk.x).append(",0,").append(childloc.z - this.chunk.z).append(",")
+                .append(this.name).append("_").append(childloc.x).append("_").append(childloc.z).append(")\n");
     }
-    
+
     public ChunkLoc getLoc() {
-        return chunk;
+        return this.chunk;
     }
 
     public String getWorld() {
-        return world;
+        return this.world;
     }
-    
+
     public String getName() {
-        return name;
+        return this.name;
     }
-    
-    public void addBlock(final int x, final int y, final int z, final PlotBlock block) {
+
+    public void addBlock(int x, int y, int z, PlotBlock block) {
         if (block.data == 0) {
             // Block(-3,1,-2,AIR)
-            blocks.append("Block(" + x + "," + y + "," + z + "," + block.id + ")\n");
+            this.blocks.append("Block(").append(x).append(",").append(y).append(",").append(z).append(",").append(block.id).append(")\n");
         } else {
-            blocks.append("Block(" + x + "," + y + "," + z + "," + block.id + ":" + block.data + ")\n");
+            this.blocks.append("Block(").append(x).append(",").append(y).append(",").append(z).append(",").append(block.id).append(":")
+                    .append(block.data).append(")\n");
         }
     }
-    
+
     public String getBlocks() {
-        return blocks.toString();
+        return this.blocks.toString();
     }
-    
+
     public String getChildren() {
-        return children.toString();
+        return this.children.toString();
     }
 
     public File getFile() {
@@ -60,6 +63,10 @@ public class BO3 {
     }
 
     public String getFilename() {
-        return name + (chunk.x == 0 && chunk.z == 0 ? "" : "_" + chunk.x + "_" + chunk.z) + ".bo3";
+        if (this.chunk.x == 0 && this.chunk.z == 0) {
+            return this.name + "" + ".bo3";
+        } else {
+            return this.name + ("_" + this.chunk.x + "_" + this.chunk.z) + ".bo3";
+        }
     }
 }

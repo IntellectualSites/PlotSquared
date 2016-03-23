@@ -1,11 +1,5 @@
 package com.intellectualcrafters.plot.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
@@ -15,15 +9,21 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class ChunkManager {
     
     public static ChunkManager manager = null;
     private static RunnableVal<PlotChunk<?>> CURRENT_FORCE_CHUNK;
     private static RunnableVal<PlotChunk<?>> CURRENT_ADD_CHUNK;
 
-    public static ChunkLoc getChunkChunk(final Location loc) {
-        final int x = loc.getX() >> 9;
-        final int z = loc.getZ() >> 9;
+    public static ChunkLoc getChunkChunk(Location location) {
+        int x = location.getX() >> 9;
+        int z = location.getZ() >> 9;
         return new ChunkLoc(x, z);
     }
     
@@ -72,18 +72,18 @@ public abstract class ChunkManager {
             @Override
             public void run() {
                 HashSet<ChunkLoc> chunks = new HashSet<>();
-                final Set<ChunkLoc> mcrs = manager.getChunkChunks(world);
+                Set<ChunkLoc> mcrs = manager.getChunkChunks(world);
                 for (ChunkLoc mcr : mcrs) {
                     int bx = mcr.x << 9;
                     int bz = mcr.z << 9;
                     int tx = bx + 511;
                     int tz = bz + 511;
                     if (bx <= region.maxX && tx >= region.minX && bz <= region.maxZ && tz >= region.minZ) {
-                        for (int x = (bx >> 4); x <= (tx >> 4); x++) {
+                        for (int x = bx >> 4; x <= (tx >> 4); x++) {
                             int cbx = x << 4;
                             int ctx = cbx + 15;
                             if (cbx <= region.maxX && ctx >= region.minX) {
-                                for (int z = (bz >> 4); z <= (tz >> 4); z++) {
+                                for (int z = bz >> 4; z <= (tz >> 4); z++) {
                                     int cbz = z << 4;
                                     int ctz = cbz + 15;
                                     if (cbz <= region.maxZ && ctz >= region.minZ) {
@@ -114,7 +114,7 @@ public abstract class ChunkManager {
      * @param task
      * @param whenDone
      */
-    public static void chunkTask(final Location pos1, final Location pos2, final RunnableVal<int[]> task, final Runnable whenDone, final int allocate) {
+    public static void chunkTask(Location pos1, Location pos2, final RunnableVal<int[]> task, final Runnable whenDone, final int allocate) {
         final int p1x = pos1.getX();
         final int p1z = pos1.getZ();
         final int p2x = pos2.getX();
@@ -133,9 +133,9 @@ public abstract class ChunkManager {
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
-                final long start = System.currentTimeMillis();
-                while ((!chunks.isEmpty()) && ((System.currentTimeMillis() - start) < allocate)) {
-                    final ChunkLoc chunk = chunks.remove(0);
+                long start = System.currentTimeMillis();
+                while (!chunks.isEmpty() && ((System.currentTimeMillis() - start) < allocate)) {
+                    ChunkLoc chunk = chunks.remove(0);
                     task.value = new int[7];
                     task.value[0] = chunk.x;
                     task.value[1] = chunk.z;
@@ -180,35 +180,36 @@ public abstract class ChunkManager {
      * @param plot
      * @return
      */
-    public abstract int[] countEntities(final Plot plot);
-    
-    public abstract boolean loadChunk(final String world, final ChunkLoc loc, final boolean force);
-    
-    public abstract void unloadChunk(final String world, final ChunkLoc loc, final boolean save, final boolean safe);
-    
-    public Set<ChunkLoc> getChunkChunks(final String world) {
-        final File folder = new File(PS.get().IMP.getWorldContainer(), world + File.separator + "region");
-        final File[] regionFiles = folder.listFiles();
-        final HashSet<ChunkLoc> chunks = new HashSet<>();
+    public abstract int[] countEntities(Plot plot);
+
+    public abstract boolean loadChunk(String world, ChunkLoc loc, boolean force);
+
+    public abstract void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe);
+
+    public Set<ChunkLoc> getChunkChunks(String world) {
+        File folder = new File(PS.get().IMP.getWorldContainer(), world + File.separator + "region");
+        File[] regionFiles = folder.listFiles();
+        HashSet<ChunkLoc> chunks = new HashSet<>();
         if (regionFiles == null) {
             throw new RuntimeException("Could not find worlds folder: " + folder + " ? (no read access?)");
         }
-        for (final File file : regionFiles) {
-            final String name = file.getName();
+        for (File file : regionFiles) {
+            String name = file.getName();
             if (name.endsWith("mca")) {
-                final String[] split = name.split("\\.");
+                String[] split = name.split("\\.");
                 try {
-                    final int x = Integer.parseInt(split[1]);
-                    final int z = Integer.parseInt(split[2]);
-                    final ChunkLoc loc = new ChunkLoc(x, z);
+                    int x = Integer.parseInt(split[1]);
+                    int z = Integer.parseInt(split[2]);
+                    ChunkLoc loc = new ChunkLoc(x, z);
                     chunks.add(loc);
-                } catch (final Exception e) {}
+                } catch (Exception e) {
+                }
             }
         }
         return chunks;
     }
-    
-    public abstract void regenerateChunk(final String world, final ChunkLoc loc);
+
+    public abstract void regenerateChunk(String world, ChunkLoc loc);
     
     public void deleteRegionFiles(String world, Collection<ChunkLoc> chunks) {
         deleteRegionFiles(world, chunks, null);
@@ -218,9 +219,9 @@ public abstract class ChunkManager {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                for (final ChunkLoc loc : chunks) {
-                    final String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
-                    final File file = new File(PS.get().IMP.getWorldContainer(), directory);
+                for (ChunkLoc loc : chunks) {
+                    String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
+                    File file = new File(PS.get().IMP.getWorldContainer(), directory);
                     ConsolePlayer.getConsole().sendMessage("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                     if (file.exists()) {
                         file.delete();
@@ -232,16 +233,16 @@ public abstract class ChunkManager {
     }
     
     public Plot hasPlot(String world, ChunkLoc chunk) {
-        final int x1 = chunk.x << 4;
-        final int z1 = chunk.z << 4;
-        final int x2 = x1 + 15;
-        final int z2 = z1 + 15;
-        final Location bot = new Location(world, x1, 0, z1);
+        int x1 = chunk.x << 4;
+        int z1 = chunk.z << 4;
+        int x2 = x1 + 15;
+        int z2 = z1 + 15;
+        Location bot = new Location(world, x1, 0, z1);
         Plot plot = bot.getOwnedPlotAbs();
         if (plot != null) {
             return plot;
         }
-        final Location top = new Location(world, x2, 0, z2);
+        Location top = new Location(world, x2, 0, z2);
         plot = top.getOwnedPlotAbs();
         if (plot != null) {
             return plot;
@@ -252,7 +253,7 @@ public abstract class ChunkManager {
     /**
      * Copy a region to a new location (in the same world)
      */
-    public abstract boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone);
+    public abstract boolean copyRegion(Location pos1, Location pos2, Location newPos, Runnable whenDone);
     
     /**
      * Assumptions:<br>
@@ -263,9 +264,9 @@ public abstract class ChunkManager {
      * @param whenDone
      * @return
      */
-    public abstract boolean regenerateRegion(final Location pos1, final Location pos2, boolean ignoreAugment, final Runnable whenDone);
-    
-    public abstract void clearAllEntities(final Location pos1, final Location pos2);
-    
-    public abstract void swap(final Location bot1, final Location top1, final Location bot2, final Location top2, Runnable whenDone);
+    public abstract boolean regenerateRegion(Location pos1, Location pos2, boolean ignoreAugment, Runnable whenDone);
+
+    public abstract void clearAllEntities(Location pos1, Location pos2);
+
+    public abstract void swap(Location bot1, Location top1, Location bot2, Location top2, Runnable whenDone);
 }

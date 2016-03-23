@@ -9,17 +9,19 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "grant",
-category = CommandCategory.CLAIMING,
-usage = "/plot grant <check|add> [player]",
-permission = "plots.grant",
-requiredType = RequiredType.NONE)
+        command = "grant",
+        category = CommandCategory.CLAIMING,
+        usage = "/plot grant <check|add> [player]",
+        permission = "plots.grant",
+        requiredType = RequiredType.NONE)
 public class Grant extends SubCommand {
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
             case "add":

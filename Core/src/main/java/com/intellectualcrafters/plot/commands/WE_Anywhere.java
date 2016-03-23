@@ -24,19 +24,19 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
-command = "weanywhere",
-permission = "plots.worldedit.bypass",
-description = "Force bypass of WorldEdit",
-aliases = { "wea" },
-usage = "/plot weanywhere",
-requiredType = RequiredType.NONE,
-category = CommandCategory.ADMINISTRATION)
+        command = "weanywhere",
+        permission = "plots.worldedit.bypass",
+        description = "Force bypass of WorldEdit",
+        aliases = {"wea"},
+        usage = "/plot weanywhere",
+        requiredType = RequiredType.NONE,
+        category = CommandCategory.ADMINISTRATION)
 @Deprecated
 public class WE_Anywhere extends SubCommand {
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer player, final String[] arguments) {
+    public boolean onCommand(PlotPlayer player, String[] arguments) {
         return MainCommand.onCommand(player, "plot", "toggle", "worldedit");
     }
-    
+
 }

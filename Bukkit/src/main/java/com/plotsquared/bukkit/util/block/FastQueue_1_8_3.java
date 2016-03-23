@@ -1,15 +1,20 @@
 package com.plotsquared.bukkit.util.block;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
-import com.intellectualcrafters.plot.util.*;
+import com.intellectualcrafters.plot.util.ChunkManager;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod.RefExecutor;
+import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-import com.plotsquared.bukkit.util.BukkitUtil;
+import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.SendChunk;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -20,59 +25,57 @@ import org.bukkit.block.Biome;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+import java.util.Set;
 
 public class FastQueue_1_8_3 extends SlowQueue {
 
     private final SendChunk chunksender;
-    private final RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
-    private final RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-    private final RefClass classPacket = getRefClass("{nms}.Packet");
-    private final RefClass classConnection = getRefClass("{nms}.PlayerConnection");
-    private final RefClass classChunk = getRefClass("{nms}.Chunk");
-    private final RefClass classCraftPlayer = getRefClass("{cb}.entity.CraftPlayer");
-    private final RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-    private final RefClass classWorld = getRefClass("{nms}.World");
-    private final RefField mustSave = classChunk.getField("mustSave");
-    private final RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
-    private final RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
-    private HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
-    private RefMethod methodGetHandleChunk;
-    private RefConstructor MapChunk;
-    private RefMethod methodInitLighting;
-    private RefConstructor classBlockPositionConstructor;
-    private RefConstructor classChunkSectionConstructor;
-    private RefMethod methodX;
-    private RefMethod methodAreNeighborsLoaded;
-    private RefField fieldSections;
-    private RefField fieldWorld;
-    private RefMethod methodGetIdArray;
+    private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
+    private final RefMethod methodGetHandleChunk;
+    private final RefConstructor MapChunk;
+    private final RefMethod methodInitLighting;
+    private final RefConstructor classBlockPositionConstructor;
+    private final RefConstructor classChunkSectionConstructor;
+    private final RefMethod methodX;
+    private final RefMethod methodAreNeighborsLoaded;
+    private final RefField fieldSections;
+    private final RefField fieldWorld;
+    private final RefMethod methodGetIdArray;
 
     public FastQueue_1_8_3() throws NoSuchMethodException, RuntimeException {
-        methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
-        methodInitLighting = classChunk.getMethod("initLighting");
-        MapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
-        classBlockPositionConstructor = classBlockPosition.getConstructor(int.class, int.class, int.class);
-        methodX = classWorld.getMethod("x", classBlockPosition.getRealClass());
-        fieldSections = classChunk.getField("sections");
-        fieldWorld = classChunk.getField("world");
-        methodGetIdArray = classChunkSection.getMethod("getIdArray");
-        methodAreNeighborsLoaded = classChunk.getMethod("areNeighborsLoaded", int.class);
-        classChunkSectionConstructor = classChunkSection.getConstructor(int.class, boolean.class, char[].class);
-        chunksender = new SendChunk();
+        RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
+        this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
+        RefClass classChunk = getRefClass("{nms}.Chunk");
+        this.methodInitLighting = classChunk.getMethod("initLighting");
+        RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
+        this.MapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+        RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
+        this.classBlockPositionConstructor = classBlockPosition.getConstructor(int.class, int.class, int.class);
+        RefClass classWorld = getRefClass("{nms}.World");
+        this.methodX = classWorld.getMethod("x", classBlockPosition.getRealClass());
+        this.fieldSections = classChunk.getField("sections");
+        this.fieldWorld = classChunk.getField("world");
+        RefClass classChunkSection = getRefClass("{nms}.ChunkSection");
+        this.methodGetIdArray = classChunkSection.getMethod("getIdArray");
+        this.methodAreNeighborsLoaded = classChunk.getMethod("areNeighborsLoaded", int.class);
+        this.classChunkSectionConstructor = classChunkSection.getConstructor(int.class, boolean.class, char[].class);
+        this.chunksender = new SendChunk();
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-                if (toUpdate.isEmpty()) {
+                if (FastQueue_1_8_3.this.toUpdate.isEmpty()) {
                     return;
                 }
                 int count = 0;
-                final ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-                final Iterator<Entry<ChunkWrapper, Chunk>> i = toUpdate.entrySet().iterator();
-                while (i.hasNext() && (count < 128)) {
+                ArrayList<Chunk> chunks = new ArrayList<>();
+                Iterator<Entry<ChunkWrapper, Chunk>> i = FastQueue_1_8_3.this.toUpdate.entrySet().iterator();
+                while (i.hasNext() && count < 128) {
                     chunks.add(i.next().getValue());
                     i.remove();
                     count++;
@@ -86,12 +89,12 @@ public class FastQueue_1_8_3 extends SlowQueue {
         MainUtil.initCache();
     }
 
-    public void update(final Collection<Chunk> chunks) {
+    public void update(Collection<Chunk> chunks) {
         if (chunks.isEmpty()) {
             return;
         }
         if (!MainUtil.canSendChunk) {
-            for (final Chunk chunk : chunks) {
+            for (Chunk chunk : chunks) {
                 chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
                 chunk.unload(true, false);
                 chunk.load();
@@ -99,70 +102,70 @@ public class FastQueue_1_8_3 extends SlowQueue {
             return;
         }
         try {
-            chunksender.sendChunk(chunks);
-        } catch (final Throwable e) {
+            this.chunksender.sendChunk(chunks);
+        } catch (Throwable e) {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
         }
     }
 
     /**
-     * This should be overridden by any specialized queues
-     * @param pc
+     * This should be overridden by any specialized queues.
+     * @param plotChunk
      */
     @Override
-    public void execute(PlotChunk<Chunk> pc) {
-        FastChunk_1_8_3 fs = (FastChunk_1_8_3) pc;
-        Chunk chunk = pc.getChunk();
-        final World world = chunk.getWorld();
-        ChunkWrapper wrapper = pc.getChunkWrapper();
-        if (!toUpdate.containsKey(wrapper)) {
-            toUpdate.put(wrapper, chunk);
+    public void execute(PlotChunk<Chunk> plotChunk) {
+        FastChunk_1_8_3 fs = (FastChunk_1_8_3) plotChunk;
+        Chunk chunk = plotChunk.getChunk();
+        World world = chunk.getWorld();
+        ChunkWrapper wrapper = plotChunk.getChunkWrapper();
+        if (!this.toUpdate.containsKey(wrapper)) {
+            this.toUpdate.put(wrapper, chunk);
         }
         chunk.load(true);
         try {
-            final boolean flag = world.getEnvironment() == Environment.NORMAL;
+            boolean flag = world.getEnvironment() == Environment.NORMAL;
 
             // Sections
-            final Method getHandele = chunk.getClass().getDeclaredMethod("getHandle");
-            final Object c = getHandele.invoke(chunk);
-            final Class<? extends Object> clazz = c.getClass();
-            final Field sf = clazz.getDeclaredField("sections");
-            sf.setAccessible(true);
-            final Field tf = clazz.getDeclaredField("tileEntities");
-            final Field ef = clazz.getDeclaredField("entitySlices");
+            Method getHandle = chunk.getClass().getDeclaredMethod("getHandle");
+            Object c = getHandle.invoke(chunk);
+            Class<? extends Object> clazz = c.getClass();
+            Field sections1 = clazz.getDeclaredField("sections");
+            sections1.setAccessible(true);
+            Field tileEntities = clazz.getDeclaredField("tileEntities");
+            Field entitySlices = clazz.getDeclaredField("entitySlices");
 
-            final Object[] sections = (Object[]) sf.get(c);
-            final HashMap<?, ?> tiles = (HashMap<?, ?>) tf.get(c);
-            final List<?>[] entities = (List<?>[]) ef.get(c);
+            Object[] sections = (Object[]) sections1.get(c);
+            HashMap<?, ?> tiles = (HashMap<?, ?>) tileEntities.get(c);
+            List<?>[] entities = (List<?>[]) entitySlices.get(c);
 
-            Method xm = null;
-            Method ym = null;
-            Method zm = null;
+            Method getX = null;
+            Method getY = null;
+            Method getZ = null;
 
             // Trim tiles
-            final Set<Entry<?, ?>> entryset = (Set<Entry<?, ?>>) (Set<?>) tiles.entrySet();
-            final Iterator<Entry<?, ?>> iter = entryset.iterator();
-            while (iter.hasNext()) {
-                final Entry<?, ?> tile = iter.next();
-                final Object pos = tile.getKey();
-                if (xm == null) {
-                    final Class<? extends Object> clazz2 = pos.getClass().getSuperclass();
-                    xm = clazz2.getDeclaredMethod("getX");
-                    ym = clazz2.getDeclaredMethod("getY");
-                    zm = clazz2.getDeclaredMethod("getZ");
+            Set<Entry<?, ?>> entrySet = (Set<Entry<?, ?>>) (Set<?>) tiles.entrySet();
+            Iterator<Entry<?, ?>> iterator = entrySet.iterator();
+            while (iterator.hasNext()) {
+                Entry<?, ?> tile = iterator.next();
+                Object pos = tile.getKey();
+                if (getX == null) {
+                    Class<? extends Object> clazz2 = pos.getClass().getSuperclass();
+                    getX = clazz2.getDeclaredMethod("getX");
+                    getY = clazz2.getDeclaredMethod("getY");
+                    getZ = clazz2.getDeclaredMethod("getZ");
                 }
-                final int lx = (int) xm.invoke(pos) & 15;
-                final int ly = (int) ym.invoke(pos);
-                final int lz = (int) zm.invoke(pos) & 15;
-                final int j = MainUtil.CACHE_I[ly][lx][lz];
-                final int k = MainUtil.CACHE_J[ly][lx][lz];
-                final char[] array = fs.getIdArray(j);
+                int lx = (int) getX.invoke(pos) & 15;
+                int ly = (int) getY.invoke(pos);
+                int lz = (int) getZ.invoke(pos) & 15;
+                int j = MainUtil.CACHE_I[ly][lx][lz];
+                int k = MainUtil.CACHE_J[ly][lx][lz];
+                char[] array = fs.getIdArray(j);
                 if (array == null) {
                     continue;
                 }
                 if (array[k] != 0) {
-                    iter.remove();
+                    iterator.remove();
                 }
             }
 
@@ -178,7 +181,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
                 if (fs.getCount(j) == 0) {
                     continue;
                 }
-                final char[] newArray = fs.getIdArray(j);
+                char[] newArray = fs.getIdArray(j);
                 if (newArray == null) {
                     continue;
                 }
@@ -187,10 +190,10 @@ public class FastQueue_1_8_3 extends SlowQueue {
                     section = sections[j] = newChunkSection(j << 4, flag, newArray);
                     continue;
                 }
-                final char[] currentArray = getIdArray(section);
+                char[] currentArray = getIdArray(section);
                 boolean fill = true;
                 for (int k = 0; k < newArray.length; k++) {
-                    final char n = newArray[k];
+                    char n = newArray[k];
                     switch (n) {
                         case 0:
                             fill = false;
@@ -209,8 +212,8 @@ public class FastQueue_1_8_3 extends SlowQueue {
                 }
             }
             // Clear
-        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException |
-                NoSuchFieldException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException
+                | NoSuchFieldException e) {
             e.printStackTrace();
         }
         int[][] biomes = fs.biomes;
@@ -232,16 +235,16 @@ public class FastQueue_1_8_3 extends SlowQueue {
         }
     }
 
-    public Object newChunkSection(final int i, final boolean flag, final char[] ids) {
-        return classChunkSectionConstructor.create(i, flag, ids);
+    public Object newChunkSection(int i, boolean flag, char[] ids) {
+        return this.classChunkSectionConstructor.create(i, flag, ids);
     }
 
-    public char[] getIdArray(final Object obj) {
-        return (char[]) methodGetIdArray.of(obj).call();
+    public char[] getIdArray(Object obj) {
+        return (char[]) this.methodGetIdArray.of(obj).call();
     }
 
     /**
-     * This should be overridden by any specialized queues
+     * This should be overridden by any specialized queues.
      * @param wrap
      */
     @Override
@@ -251,13 +254,13 @@ public class FastQueue_1_8_3 extends SlowQueue {
 
     /**
      * This should be overridden by any specialized queues
-     * @param pc
+     * @param plotChunk
      */
     @Override
-    public boolean fixLighting(PlotChunk<Chunk> pc, boolean fixAll) {
+    public boolean fixLighting(PlotChunk<Chunk> plotChunk, boolean fixAll) {
         try {
-            FastChunk_1_8_3 bc = (FastChunk_1_8_3) pc;
-            final Chunk chunk = bc.getChunk();
+            FastChunk_1_8_3 bc = (FastChunk_1_8_3) plotChunk;
+            Chunk chunk = bc.getChunk();
             if (!chunk.isLoaded()) {
                 chunk.load(false);
             } else {
@@ -266,12 +269,12 @@ public class FastQueue_1_8_3 extends SlowQueue {
             }
 
             // Initialize lighting
-            final Object c = methodGetHandleChunk.of(chunk).call();
+            Object c = this.methodGetHandleChunk.of(chunk).call();
 
-            if (fixAll && !(boolean) methodAreNeighborsLoaded.of(c).call(1)) {
+            if (fixAll && !(boolean) this.methodAreNeighborsLoaded.of(c).call(1)) {
                 World world = chunk.getWorld();
                 ChunkWrapper wrapper = bc.getChunkWrapper();
-                String worldname = wrapper.world;
+                String worldName = wrapper.world;
                 for (int x = wrapper.x - 1; x <= wrapper.x + 1; x++) {
                     for (int z = wrapper.z - 1; z <= wrapper.z + 1; z++) {
                         if (x != 0 && z != 0) {
@@ -279,44 +282,46 @@ public class FastQueue_1_8_3 extends SlowQueue {
                             while (!other.isLoaded()) {
                                 other.load(true);
                             }
-                            ChunkManager.manager.loadChunk(worldname, new ChunkLoc(x, z), true);
+                            ChunkManager.manager.loadChunk(worldName, new ChunkLoc(x, z), true);
                         }
                     }
                 }
-//                if (!(boolean) methodAreNeighborsLoaded.of(c).call(1)) {
-//                    return false;
-//                }
+/*
+                if (!(boolean) methodAreNeighborsLoaded.of(c).call(1)) {
+                    return false;
+                }
+*/
             }
 
-            methodInitLighting.of(c).call();
+            this.methodInitLighting.of(c).call();
 
-            if ((bc.getTotalRelight() == 0 && !fixAll)) {
+            if (bc.getTotalRelight() == 0 && !fixAll) {
                 return true;
             }
 
-            final Object[] sections = (Object[]) fieldSections.of(c).get();
-            final Object w = fieldWorld.of(c).get();
+            Object[] sections = (Object[]) this.fieldSections.of(c).get();
+            Object w = this.fieldWorld.of(c).get();
 
-            final int X = chunk.getX() << 4;
-            final int Z = chunk.getZ() << 4;
+            int X = chunk.getX() << 4;
+            int Z = chunk.getZ() << 4;
 
-            RefExecutor relight = methodX.of(w);
+            RefExecutor relight = this.methodX.of(w);
             for (int j = 0; j < sections.length; j++) {
-                final Object section = sections[j];
+                Object section = sections[j];
                 if (section == null) {
                     continue;
                 }
                 if ((bc.getRelight(j) == 0 && !fixAll) || bc.getCount(j) == 0 || (bc.getCount(j) >= 4096 && bc.getAir(j) == 0)) {
                     continue;
                 }
-                final char[] array = getIdArray(section);
+                char[] array = getIdArray(section);
                 int l = PseudoRandom.random.random(2);
                 for (int k = 0; k < array.length; k++) {
-                    final int i = array[k];
+                    int i = array[k];
                     if (i < 16) {
                         continue;
                     }
-                    final short id = (short) (i >> 4);
+                    short id = (short) (i >> 4);
                     switch (id) { // Lighting
                         default:
                             if (!fixAll) {
@@ -341,19 +346,19 @@ public class FastQueue_1_8_3 extends SlowQueue {
                         case 130:
                         case 138:
                         case 169:
-                            final int x = MainUtil.x_loc[j][k];
-                            final int y = MainUtil.y_loc[j][k];
-                            final int z = MainUtil.z_loc[j][k];
+                            int x = MainUtil.x_loc[j][k];
+                            int y = MainUtil.y_loc[j][k];
+                            int z = MainUtil.z_loc[j][k];
                             if (isSurrounded(sections, x, y, z)) {
                                 continue;
                             }
-                            final Object pos = classBlockPositionConstructor.create(X + x, y, Z + z);
+                            Object pos = this.classBlockPositionConstructor.create(X + x, y, Z + z);
                             relight.call(pos);
                     }
                 }
             }
             return true;
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return false;
@@ -389,17 +394,16 @@ public class FastQueue_1_8_3 extends SlowQueue {
     }
 
     /**
-     * This should be overridden by any specialized queues
+     * This should be overridden by any specialized queues.
      * @param world
-     * @param locs
+     * @param locations
      */
     @Override
-    public void sendChunk(String world, Collection<ChunkLoc> locs) {
-        World worldObj = BukkitUtil.getWorld(world);
-        for (ChunkLoc loc : locs) {
+    public void sendChunk(String world, Collection<ChunkLoc> locations) {
+        for (ChunkLoc loc : locations) {
             ChunkWrapper wrapper = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
-            toUpdate.remove(wrapper);
+            this.toUpdate.remove(wrapper);
         }
-        chunksender.sendChunk(world, locs);
+        this.chunksender.sendChunk(world, locations);
     }
 }

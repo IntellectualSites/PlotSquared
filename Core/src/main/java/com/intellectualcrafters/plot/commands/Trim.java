@@ -47,16 +47,17 @@ import java.util.Iterator;
 import java.util.Set;
 
 @CommandDeclaration(
-command = "trim",
-permission = "plots.admin",
-description = "Delete unmodified portions of your plotworld",
-usage = "/plot trim <world> [regenerate]",
-requiredType = RequiredType.CONSOLE,
-category = CommandCategory.ADMINISTRATION)
+        command = "trim",
+        permission = "plots.admin",
+        description = "Delete unmodified portions of your plotworld",
+        usage = "/plot trim <world> [regenerate]",
+        requiredType = RequiredType.CONSOLE,
+        category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
-    
+
     public static ArrayList<Plot> expired = null;
-    
+    private static volatile boolean TASK = false;
+
     public static boolean getBulkRegions(final ArrayList<ChunkLoc> empty, final String world, final Runnable whenDone) {
         if (Trim.TASK) {
             return false;
@@ -64,37 +65,37 @@ public class Trim extends SubCommand {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                final String directory = world + File.separator + "region";
-                final File folder = new File(PS.get().IMP.getWorldContainer(), directory);
-                final File[] regionFiles = folder.listFiles();
-                for (final File file : regionFiles) {
-                    final String name = file.getName();
+                String directory = world + File.separator + "region";
+                File folder = new File(PS.get().IMP.getWorldContainer(), directory);
+                File[] regionFiles = folder.listFiles();
+                for (File file : regionFiles) {
+                    String name = file.getName();
                     if (name.endsWith("mca")) {
                         if (file.getTotalSpace() <= 8192) {
                             try {
-                                final String[] split = name.split("\\.");
-                                final int x = Integer.parseInt(split[1]);
-                                final int z = Integer.parseInt(split[2]);
-                                final ChunkLoc loc = new ChunkLoc(x, z);
+                                String[] split = name.split("\\.");
+                                int x = Integer.parseInt(split[1]);
+                                int z = Integer.parseInt(split[2]);
+                                ChunkLoc loc = new ChunkLoc(x, z);
                                 empty.add(loc);
                             } catch (NumberFormatException e) {
                                 PS.debug("INVALID MCA: " + name);
                             }
                         } else {
-                            final Path path = Paths.get(file.getPath());
+                            Path path = Paths.get(file.getPath());
                             try {
-                                final BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-                                final long creation = attr.creationTime().toMillis();
-                                final long modification = file.lastModified();
-                                final long diff = Math.abs(creation - modification);
+                                BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+                                long creation = attr.creationTime().toMillis();
+                                long modification = file.lastModified();
+                                long diff = Math.abs(creation - modification);
                                 if (diff < 10000) {
                                     try {
-                                        final String[] split = name.split("\\.");
-                                        final int x = Integer.parseInt(split[1]);
-                                        final int z = Integer.parseInt(split[2]);
-                                        final ChunkLoc loc = new ChunkLoc(x, z);
+                                        String[] split = name.split("\\.");
+                                        int x = Integer.parseInt(split[1]);
+                                        int z = Integer.parseInt(split[2]);
+                                        ChunkLoc loc = new ChunkLoc(x, z);
                                         empty.add(loc);
-                                    } catch (final Exception e) {
+                                    } catch (Exception e) {
                                         PS.debug("INVALID MCA: " + name);
                                     }
                                 }
@@ -110,19 +111,19 @@ public class Trim extends SubCommand {
         Trim.TASK = true;
         return true;
     }
-    
+
     /**
      * Runs the result task with the parameters (viable, nonViable).<br>
      * @param world
      * @param result (viable = .mcr to trim, nonViable = .mcr keep)
      * @return
      */
-    public static boolean getTrimRegions(final String world, final RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>> result) {
+    public static boolean getTrimRegions(String world, final RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>> result) {
         if (result == null) {
             return false;
         }
         MainUtil.sendMessage(null, "Collecting region data...");
-        final ArrayList<Plot> plots = new ArrayList<>();
+        ArrayList<Plot> plots = new ArrayList<>();
         plots.addAll(PS.get().getPlots(world));
         result.value1 = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
         result.value2 = new HashSet<>();
@@ -132,12 +133,12 @@ public class Trim extends SubCommand {
         TaskManager.objectTask(plots, new RunnableVal<Plot>() {
             @Override
             public void run(Plot plot) {
-                final Location pos1 = plot.getBottom();
-                final Location pos2 = plot.getTop();
-                final int ccx1 = (pos1.getX() >> 9);
-                final int ccz1 = (pos1.getZ() >> 9);
-                final int ccx2 = (pos2.getX() >> 9);
-                final int ccz2 = (pos2.getZ() >> 9);
+                Location pos1 = plot.getBottom();
+                Location pos2 = plot.getTop();
+                int ccx1 = pos1.getX() >> 9;
+                int ccz1 = pos1.getZ() >> 9;
+                int ccx2 = pos2.getX() >> 9;
+                int ccz2 = pos2.getZ() >> 9;
                 for (int x = ccx1; x <= ccx2; x++) {
                     for (int z = ccz1; z <= ccz2; z++) {
                         ChunkLoc loc = new ChunkLoc(x, z);
@@ -150,17 +151,15 @@ public class Trim extends SubCommand {
         }, result);
         return true;
     }
-    
-    private static volatile boolean TASK = false;
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         if (args.length == 0) {
             C.COMMAND_SYNTAX.send(plr, getUsage());
             return false;
         }
         final String world = args[0];
-        if (!WorldUtil.IMP.isWorld(world) || (!PS.get().hasPlotArea(world))) {
+        if (!WorldUtil.IMP.isWorld(world) || !PS.get().hasPlotArea(world)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
             return false;
         }
@@ -172,7 +171,7 @@ public class Trim extends SubCommand {
         final boolean regen = args.length == 2 && Boolean.parseBoolean(args[1]);
         getTrimRegions(world, new RunnableVal2<Set<ChunkLoc>, Set<ChunkLoc>>() {
             @Override
-            public void run(final Set<ChunkLoc> viable, final Set<ChunkLoc> nonViable) {
+            public void run(Set<ChunkLoc> viable, final Set<ChunkLoc> nonViable) {
                 Runnable regenTask;
                 if (regen) {
                     regenTask = new Runnable() {
@@ -221,8 +220,7 @@ public class Trim extends SubCommand {
                             }, this);
                         }
                     };
-                }
-                else {
+                } else {
                     regenTask = new Runnable() {
                         @Override
                         public void run() {

@@ -7,30 +7,29 @@ import com.intellectualcrafters.plot.object.SetupObject;
 
 public abstract class PlotGenerator<T> {
     public T generator;
-    
-    public PlotGenerator(final T generator) {
+
+    public PlotGenerator(T generator) {
         this.generator = generator;
     }
-    
-    public abstract void initialize(final PlotArea plotworld);
+
+    public abstract void initialize(PlotArea plotworld);
     
     /**
      * TYPE = 2;
      * new AugmentedPopulator(world, generator, cluster, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
      * TYPE = 1
      * new AugmentedPopulator(world, gen_class, null, plotWorld.TERRAIN == 2, plotWorld.TERRAIN != 2);
-     * @param cluster Will be the cluster, or null
-     * @param plotworld
+     * @param area
      */
     public abstract void augment(PlotArea area);
-    
-    public abstract PlotArea getNewPlotArea(final String world, final String id, PlotId min, PlotId max);
+
+    public abstract PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max);
     
     public abstract PlotManager getPlotManager();
     
     public abstract boolean isFull();
     
     public abstract String getName();
-    
-    public abstract void processSetup(final SetupObject object);
+
+    public abstract void processSetup(SetupObject object);
 }

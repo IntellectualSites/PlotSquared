@@ -42,8 +42,8 @@ import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.listeners.ChunkListener;
 import com.plotsquared.bukkit.listeners.ForceFieldListener;
 import com.plotsquared.bukkit.listeners.PlayerEvents;
+import com.plotsquared.bukkit.listeners.PlayerEvents183;
 import com.plotsquared.bukkit.listeners.PlayerEvents_1_8;
-import com.plotsquared.bukkit.listeners.PlayerEvents_1_8_3;
 import com.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
@@ -87,6 +87,7 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,14 +105,14 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public int[] getServerVersion() {
-        if (version == null) {
+        if (this.version == null) {
             try {
-                version = new int[3];
-                final String[] split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-                version[0] = Integer.parseInt(split[0]);
-                version[1] = Integer.parseInt(split[1]);
+                this.version = new int[3];
+                String[] split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+                this.version[0] = Integer.parseInt(split[0]);
+                this.version[1] = Integer.parseInt(split[1]);
                 if (split.length == 3) {
-                    version[2] = Integer.parseInt(split[2]);
+                    this.version[2] = Integer.parseInt(split[2]);
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
@@ -120,7 +121,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 return new int[]{Integer.MAX_VALUE, 0, 0};
             }
         }
-        return version;
+        return this.version;
     }
 
     @Override
@@ -146,7 +147,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 }
                 Bukkit.getServer().getConsoleSender().sendMessage(message);
                 return;
-            } catch (final Throwable e) {}
+            } catch (Throwable ignored) {
+            }
         }
         System.out.println(ConsoleColors.fromString(message));
     }
@@ -160,14 +162,14 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public int[] getPluginVersion() {
-        final String[] split = getDescription().getVersion().split("\\.");
-        return new int[] { Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]) };
+        String[] split = getDescription().getVersion().split("\\.");
+        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
     }
 
     @Override
     public void registerCommands() {
-        final BukkitCommand bcmd = new BukkitCommand();
-        final PluginCommand plotCommand = getCommand("plots");
+        BukkitCommand bcmd = new BukkitCommand();
+        PluginCommand plotCommand = getCommand("plots");
         plotCommand.setExecutor(bcmd);
         plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
         plotCommand.setTabCompleter(bcmd);
@@ -204,15 +206,17 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                 return;
                             }
                             List<Entity> entities = world.getEntities();
-                            Iterator<Entity> iter = entities.iterator();
-                            while (iter.hasNext()) {
-                                Entity entity = iter.next();
+                            Iterator<Entity> iterator = entities.iterator();
+                            while (iterator.hasNext()) {
+                                Entity entity = iterator.next();
                                 switch (entity.getType()) {
                                     case EGG:
                                     case ENDER_CRYSTAL:
                                     case COMPLEX_PART:
                                     case FISHING_HOOK:
                                     case ENDER_SIGNAL:
+                                    case LINGERING_POTION:
+                                    case AREA_EFFECT_CLOUD:
                                     case EXPERIENCE_ORB:
                                     case LEASH_HITCH:
                                     case FIREWORK:
@@ -227,6 +231,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case THROWN_EXP_BOTTLE:
                                     case SPLASH_POTION:
                                     case SNOWBALL:
+                                    case SHULKER_BULLET:
+                                    case SPECTRAL_ARROW:
+                                    case TIPPED_ARROW:
                                     case ENDER_PEARL:
                                     case ARROW: {
                                         // managed elsewhere | projectile
@@ -248,11 +255,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                         if (!Settings.KILL_ROAD_VEHICLES) {
                                             continue;
                                         }
-                                        com.intellectualcrafters.plot.object.Location loc = BukkitUtil.getLocation(entity.getLocation());
-                                        Plot plot = loc.getPlot();
+                                        com.intellectualcrafters.plot.object.Location location = BukkitUtil.getLocation(entity.getLocation());
+                                        Plot plot = location.getPlot();
                                         if (plot == null) {
-                                            if (loc.isPlotArea()) {
-                                                iter.remove();
+                                            if (location.isPlotArea()) {
+                                                iterator.remove();
                                                 entity.remove();
                                             }
                                             continue;
@@ -263,13 +270,14 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                         }
                                         Plot origin = (Plot) meta.get(0).value();
                                         if (!plot.equals(origin.getBasePlot(false))) {
-                                            iter.remove();
+                                            iterator.remove();
                                             entity.remove();
                                         }
                                         continue;
                                     }
                                     case SMALL_FIREBALL:
                                     case FIREBALL:
+                                    case DRAGON_FIREBALL:
                                     case DROPPED_ITEM: {
                                         // dropped item
                                         continue;
@@ -311,22 +319,23 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case WITHER:
                                     case WOLF:
                                     case ZOMBIE:
+                                    case SHULKER:
                                     default: {
                                         if (!Settings.KILL_ROAD_MOBS) {
                                             continue;
                                         }
-                                        final Location loc = entity.getLocation();
-                                        if (BukkitUtil.getLocation(loc).isPlotRoad()) {
-                                            final Entity passenger = entity.getPassenger();
+                                        Location location = entity.getLocation();
+                                        if (BukkitUtil.getLocation(location).isPlotRoad()) {
+                                            Entity passenger = entity.getPassenger();
                                             if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
-                                                iter.remove();
+                                                iterator.remove();
                                                 entity.remove();
                                             }
                                         }
                                     }
                                 }
                             }
-                        } catch (final Throwable e) {
+                        } catch (Throwable e) {
                             e.printStackTrace();
                         }
                     }
@@ -336,8 +345,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    final public ChunkGenerator getDefaultWorldGenerator(final String world, final String id) {
-        final HybridGen result = new HybridGen();
+    final public ChunkGenerator getDefaultWorldGenerator(String world, String id) {
+        HybridGen result = new HybridGen();
         if (!PS.get().setupPlotWorld(world, id, result)) {
             return null;
         }
@@ -351,7 +360,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 3)) {
-            getServer().getPluginManager().registerEvents(new PlayerEvents_1_8_3(), this);
+            getServer().getPluginManager().registerEvents(new PlayerEvents183(), this);
         }
     }
 
@@ -375,15 +384,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public boolean initWorldEdit() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
             BukkitMain.worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-            final String version = BukkitMain.worldEdit.getDescription().getVersion();
-            if (version != null && version.startsWith("5.")) {
-                log("&cThis version of WorldEdit does not support PlotSquared.");
-                log("&cPlease use WorldEdit 6+ for masking support");
-                log("&c - http://builds.enginehub.org/job/worldedit");
-            } else {
-                getServer().getPluginManager().registerEvents(new WEListener(), this);
-                return true;
-            }
+            getServer().getPluginManager().registerEvents(new WEListener(), this);
+            return true;
         }
         return false;
     }
@@ -391,11 +393,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public EconHandler getEconomyHandler() {
         try {
-            final BukkitEconHandler econ = new BukkitEconHandler();
+            BukkitEconHandler econ = new BukkitEconHandler();
             if (econ.init()) {
                 return econ;
             }
-        } catch (final Throwable ignored) {
+        } catch (Throwable ignored) {
         }
         return null;
     }
@@ -405,15 +407,14 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         try {
             new SendChunk();
             MainUtil.canSendChunk = true;
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 9, 0)) {
             try {
                 return new FastQueue_1_9();
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 return new SlowQueue();
             }
@@ -464,13 +465,13 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    public GeneratorWrapper<?> getGenerator(final String world, final String name) {
+    public GeneratorWrapper<?> getGenerator(String world, String name) {
         if (name == null) {
             return null;
         }
-        final Plugin gen_plugin = Bukkit.getPluginManager().getPlugin(name);
-        if (gen_plugin != null && gen_plugin.isEnabled()) {
-            ChunkGenerator gen = gen_plugin.getDefaultWorldGenerator(world, "");
+        Plugin genPlugin = Bukkit.getPluginManager().getPlugin(name);
+        if (genPlugin != null && genPlugin.isEnabled()) {
+            ChunkGenerator gen = genPlugin.getDefaultWorldGenerator(world, "");
             if (gen instanceof GeneratorWrapper<?>) {
                 return (GeneratorWrapper<?>) gen;
             }
@@ -492,7 +493,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public UUIDHandlerImplementation initUUIDHandler() {
-        final boolean checkVersion = PS.get().checkVersion(getServerVersion(), 1, 7, 6);
+        boolean checkVersion = PS.get().checkVersion(getServerVersion(), 1, 7, 6);
         UUIDWrapper wrapper;
         if (Settings.OFFLINE_MODE) {
             if (Settings.UUID_LOWERCASE) {
@@ -523,11 +524,17 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             }
         }
         if (Settings.OFFLINE_MODE) {
-            log(C.PREFIX + " &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of Bukkit");
+            log(C.PREFIX
+                    + " &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
+                    + "Bukkit");
         } else {
             log(C.PREFIX + " &6PlotSquared is using online UUIDs");
         }
-        return Settings.USE_SQLUUIDHANDLER ? new SQLUUIDHandler(wrapper) : new FileUUIDHandler(wrapper);
+        if (Settings.USE_SQLUUIDHANDLER) {
+            return new SQLUUIDHandler(wrapper);
+        } else {
+            return new FileUUIDHandler(wrapper);
+        }
     }
 
     @Override
@@ -541,7 +548,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    public void unregister(final PlotPlayer player) {
+    public void unregister(PlotPlayer player) {
         BukkitUtil.removePlayer(player.getName());
     }
 
@@ -577,41 +584,41 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    public void setGenerator(final String worldname) {
-        World world = BukkitUtil.getWorld(worldname);
+    public void setGenerator(String worldName) {
+        World world = BukkitUtil.getWorld(worldName);
         if (world == null) {
             // create world
-            final ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldname);
+            ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", "PlotSquared");
             String generator = worldConfig.getString("generator.init", manager);
-            final int type = worldConfig.getInt("generator.type");
-            final int terrain = worldConfig.getInt("generator.terrain");
-            final SetupObject setup = new SetupObject();
+            int type = worldConfig.getInt("generator.type");
+            int terrain = worldConfig.getInt("generator.terrain");
+            SetupObject setup = new SetupObject();
             setup.plotManager = manager;
             setup.setupGenerator = generator;
             setup.type = type;
             setup.terrain = terrain;
             setup.step = new ConfigurationNode[0];
-            setup.world = worldname;
+            setup.world = worldName;
             SetupUtils.manager.setupWorld(setup);
         } else {
             try {
-                if (!PS.get().hasPlotArea(worldname)) {
-                    SetGenCB.setGenerator(BukkitUtil.getWorld(worldname));
+                if (!PS.get().hasPlotArea(worldName)) {
+                    SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 log("Failed to reload world: " + world);
                 Bukkit.getServer().unloadWorld(world, false);
             }
         }
-        world = Bukkit.getWorld(worldname);
-        final ChunkGenerator gen = world.getGenerator();
+        world = Bukkit.getWorld(worldName);
+        ChunkGenerator gen = world.getGenerator();
         if (gen instanceof BukkitPlotGenerator) {
-            PS.get().loadWorld(worldname, (BukkitPlotGenerator) gen);
+            PS.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
         } else if (gen != null) {
-            PS.get().loadWorld(worldname, new BukkitPlotGenerator(worldname, gen));
-        } else if (PS.get().config.contains("worlds." + worldname)) {
-            PS.get().loadWorld(worldname, null);
+            PS.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen));
+        } else if (PS.get().config.contains("worlds." + worldName)) {
+            PS.get().loadWorld(worldName, null);
         }
     }
 
@@ -627,15 +634,15 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    public PlotPlayer wrapPlayer(final Object obj) {
-        if (obj instanceof Player) {
-            return BukkitUtil.getPlayer((Player) obj);
-        } else if (obj instanceof OfflinePlayer) {
-            return BukkitUtil.getPlayer((OfflinePlayer) obj);
-        } else if (obj instanceof String) {
-            return UUIDHandler.getPlayer((String) obj);
-        } else if (obj instanceof UUID) {
-            return UUIDHandler.getPlayer((UUID) obj);
+    public PlotPlayer wrapPlayer(Object player) {
+        if (player instanceof Player) {
+            return BukkitUtil.getPlayer((Player) player);
+        } else if (player instanceof OfflinePlayer) {
+            return BukkitUtil.getPlayer((OfflinePlayer) player);
+        } else if (player instanceof String) {
+            return UUIDHandler.getPlayer((String) player);
+        } else if (player instanceof UUID) {
+            return UUIDHandler.getPlayer((UUID) player);
         }
         return null;
     }

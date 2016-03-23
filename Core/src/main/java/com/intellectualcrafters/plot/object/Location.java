@@ -9,68 +9,66 @@ import com.intellectualcrafters.plot.util.MathMan;
 
  */
 public class Location implements Cloneable, Comparable<Location> {
-    private int x, y, z;
-    private float yaw, pitch;
-    private String world;
-    private boolean built;
 
-    public Location(final String world, final int x, final int y, final int z, final float yaw, final float pitch) {
+    private int x;
+    private int y;
+    private int z;
+    private float yaw;
+    private float pitch;
+    private String world;
+
+    public Location(String world, int x, int y, int z, float yaw, float pitch) {
         this.world = world;
         this.x = x;
         this.y = y;
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
-        built = false;
     }
 
     public Location() {
         this("", 0, 0, 0, 0, 0);
     }
 
-    public Location(final String world, final int x, final int y, final int z) {
+    public Location(String world, int x, int y, int z) {
         this(world, x, y, z, 0f, 0f);
     }
 
     @Override
     public Location clone() {
-        return new Location(world, x, y, z, yaw, pitch);
+        return new Location(this.world, this.x, this.y, this.z, this.yaw, this.pitch);
     }
 
     public int getX() {
-        return x;
+        return this.x;
     }
 
-    public void setX(final int x) {
+    public void setX(int x) {
         this.x = x;
-        built = false;
     }
 
     public int getY() {
-        return y;
+        return this.y;
     }
 
-    public void setY(final int y) {
+    public void setY(int y) {
         this.y = y;
-        built = false;
     }
 
     public int getZ() {
-        return z;
+        return this.z;
     }
 
-    public void setZ(final int z) {
+    public void setZ(int z) {
         this.z = z;
-        built = false;
     }
 
     public String getWorld() {
-        return world;
+        return this.world;
     }
 
-    public void setWorld(final String world) {
+    public void setWorld(String world) {
         this.world = world;
-        built = false;
     }
 
     public PlotArea getPlotArea() {
@@ -79,12 +77,20 @@ public class Location implements Cloneable, Comparable<Location> {
 
     public Plot getOwnedPlot() {
         PlotArea area = PS.get().getPlotAreaAbs(this);
-        return area != null ? area.getOwnedPlot(this) : null;
+        if (area != null) {
+            return area.getOwnedPlot(this);
+        } else {
+            return null;
+        }
     }
 
     public Plot getOwnedPlotAbs() {
         PlotArea area = PS.get().getPlotAreaAbs(this);
-        return area != null ? area.getOwnedPlotAbs(this) : null;
+        if (area != null) {
+            return area.getOwnedPlotAbs(this);
+        } else {
+            return null;
+        }
     }
 
     public boolean isPlotArea() {
@@ -103,110 +109,119 @@ public class Location implements Cloneable, Comparable<Location> {
 
     public PlotManager getPlotManager() {
         PlotArea pa = getPlotArea();
-        return pa != null ? pa.getPlotManager() : null;
+        if (pa != null) {
+            return pa.getPlotManager();
+        } else {
+            return null;
+        }
     }
 
     public Plot getPlotAbs() {
         PlotArea area = PS.get().getPlotAreaAbs(this);
-        return area != null ? area.getPlotAbs(this) : null;
+        if (area != null) {
+            return area.getPlotAbs(this);
+        } else {
+            return null;
+        }
     }
 
     public Plot getPlot() {
         PlotArea area = PS.get().getPlotAreaAbs(this);
-        return area != null ? area.getPlot(this) : null;
+        if (area != null) {
+            return area.getPlot(this);
+        } else {
+            return null;
+        }
     }
 
     public ChunkLoc getChunkLoc() {
-        return new ChunkLoc(x >> 4, z >> 4);
+        return new ChunkLoc(this.x >> 4, this.z >> 4);
     }
 
     public float getYaw() {
-        return yaw;
+        return this.yaw;
     }
 
-    public void setYaw(final float yaw) {
+    public void setYaw(float yaw) {
         this.yaw = yaw;
-        built = false;
     }
 
     public float getPitch() {
-        return pitch;
+        return this.pitch;
     }
 
-    public void setPitch(final float pitch) {
+    public void setPitch(float pitch) {
         this.pitch = pitch;
-        built = false;
     }
 
-    public Location add(final int x, final int y, final int z) {
+    public Location add(int x, int y, int z) {
         this.x += x;
         this.y += y;
         this.z += z;
-        built = false;
         return this;
     }
 
-    public double getEuclideanDistanceSquared(final Location l2) {
-        final double x = getX() - l2.getX();
-        final double y = getY() - l2.getY();
-        final double z = getZ() - l2.getZ();
+    public double getEuclideanDistanceSquared(Location l2) {
+        double x = getX() - l2.getX();
+        double y = getY() - l2.getY();
+        double z = getZ() - l2.getZ();
         return x * x + y * y + z * z;
     }
 
-    public double getEuclideanDistance(final Location l2) {
+    public double getEuclideanDistance(Location l2) {
         return Math.sqrt(getEuclideanDistanceSquared(l2));
     }
 
-    public boolean isInSphere(final Location origin, final int radius) {
+    public boolean isInSphere(Location origin, int radius) {
         return getEuclideanDistanceSquared(origin) < radius * radius;
     }
 
     @Override
     public int hashCode() {
-        return MathMan.pair((short) x, (short) z) * 17 + y;
+        return MathMan.pair((short) this.x, (short) this.z) * 17 + this.y;
     }
 
-    public boolean isInAABB(final Location min, final Location max) {
-        return x >= min.getX() && x <= max.getX() && y >= min.getY() && y <= max.getY() && z >= min.getX() && z < max.getZ();
+    public boolean isInAABB(Location min, Location max) {
+        return this.x >= min.getX() && this.x <= max.getX() && this.y >= min.getY() && this.y <= max.getY() && this.z >= min.getX() && this.z < max
+                .getZ();
     }
 
-    public void lookTowards(final int x, final int y) {
-        final double l = this.x - x;
-        final double c = Math.sqrt(l * l + 0.0);
+    public void lookTowards(int x, int y) {
+        double l = this.x - x;
+        double c = Math.sqrt(l * l + 0.0);
         if (Math.asin(0 / c) / Math.PI * 180 > 90) {
             setYaw((float) (180 - -Math.asin(l / c) / Math.PI * 180));
         } else {
             setYaw((float) (-Math.asin(l / c) / Math.PI * 180));
         }
-        built = false;
     }
 
-    public Location subtract(final int x, final int y, final int z) {
+    public Location subtract(int x, int y, int z) {
         this.x -= x;
         this.y -= y;
         this.z -= z;
-        built = false;
         return this;
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (o == null) {
             return false;
         }
         if (!(o instanceof Location)) {
             return false;
         }
-        final Location l = (Location) o;
-        return x == l.getX() && y == l.getY() && z == l.getZ() && world.equals(l.getWorld()) && yaw == l.getY() && pitch == l.getPitch();
+        Location l = (Location) o;
+        return this.x == l.getX() && this.y == l.getY() && this.z == l.getZ() && this.world.equals(l.getWorld()) && this.yaw == l.getY()
+                && this.pitch == l.getPitch();
     }
 
     @Override
-    public int compareTo(final Location o) {
-        if (x == o.getX() && y == o.getY() || z == o.getZ()) {
+    public int compareTo(Location o) {
+        if (this.x == o.getX() && this.y == o.getY() || this.z == o.getZ()) {
             return 0;
         }
-        if (x < o.getX() && y < o.getY() && z < o.getZ()) {
+        if (this.x < o.getX() && this.y < o.getY() && this.z < o.getZ()) {
             return -1;
         }
         return 1;
@@ -214,6 +229,8 @@ public class Location implements Cloneable, Comparable<Location> {
 
     @Override
     public String toString() {
-        return "\"plotsquaredlocation\":{" + "\"x\":" + x + ",\"y\":" + y + ",\"z\":" + z + ",\"yaw\":" + yaw + ",\"pitch\":" + pitch + ",\"world\":\"" + world + "\"}";
+        return "\"plotsquaredlocation\":{" + "\"x\":" + this.x + ",\"y\":" + this.y + ",\"z\":" + this.z + ",\"yaw\":" + this.yaw + ",\"pitch\":"
+                + this.pitch
+                + ",\"world\":\"" + this.world + "\"}";
     }
 }

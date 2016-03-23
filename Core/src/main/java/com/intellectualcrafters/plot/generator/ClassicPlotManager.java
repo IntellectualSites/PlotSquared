@@ -13,11 +13,12 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import java.util.ArrayList;
 
 /**
- * A plot manager with square plots which tessellate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot)
+ * A plot manager with square plots which tessellate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot).
  */
 public class ClassicPlotManager extends SquarePlotManager {
+
     @Override
-    public boolean setComponent(final PlotArea plotworld, final PlotId plotid, final String component, final PlotBlock[] blocks) {
+    public boolean setComponent(PlotArea plotworld, PlotId plotid, String component, PlotBlock[] blocks) {
         switch (component) {
             case "floor": {
                 setFloor(plotworld, plotid, blocks);
@@ -54,22 +55,22 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         return false;
     }
-    
+
     @Override
-    public boolean unclaimPlot(final PlotArea plotworld, final Plot plot, final Runnable whenDone) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        setWallFilling(dpw, plot.getId(), new PlotBlock[] { dpw.WALL_FILLING });
+    public boolean unclaimPlot(PlotArea plotworld, Plot plot, Runnable whenDone) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        setWallFilling(dpw, plot.getId(), new PlotBlock[]{dpw.WALL_FILLING});
         if (dpw.WALL_BLOCK.id != 0 || !dpw.WALL_BLOCK.equals(dpw.CLAIMED_WALL_BLOCK)) {
-            setWall(dpw, plot.getId(), new PlotBlock[] { dpw.WALL_BLOCK });
+            setWall(dpw, plot.getId(), new PlotBlock[]{dpw.WALL_BLOCK});
         }
         SetQueue.IMP.addTask(whenDone);
         return true;
     }
-    
-    public boolean setFloor(final PlotArea plotworld, final PlotId plotid, final PlotBlock[] blocks) {
+
+    public boolean setFloor(PlotArea plotworld, PlotId plotid, PlotBlock[] blocks) {
         Plot plot = plotworld.getPlotAbs(plotid);
         if (plot.isBasePlot()) {
-            final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+            ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
             for (RegionWrapper region : plot.getRegions()) {
                 Location pos1 = new Location(plotworld.worldname, region.minX, dpw.PLOT_HEIGHT, region.minZ);
                 Location pos2 = new Location(plotworld.worldname, region.maxX, dpw.PLOT_HEIGHT, region.maxZ);
@@ -78,8 +79,8 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
-    public boolean setAll(final PlotArea plotworld, final PlotId plotid, final PlotBlock[] blocks) {
+
+    public boolean setAll(PlotArea plotworld, PlotId plotid, PlotBlock[] blocks) {
         Plot plot = plotworld.getPlotAbs(plotid);
         if (!plot.isBasePlot()) {
             return false;
@@ -92,12 +93,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
 
-    public boolean setAir(final PlotArea plotworld, final PlotId plotid, final PlotBlock[] blocks) {
+    public boolean setAir(PlotArea plotworld, PlotId plotid, PlotBlock[] blocks) {
         Plot plot = plotworld.getPlotAbs(plotid);
         if (!plot.isBasePlot()) {
             return false;
         }
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         for (RegionWrapper region : plot.getRegions()) {
             Location pos1 = new Location(plotworld.worldname, region.minX, dpw.PLOT_HEIGHT + 1, region.minZ);
             Location pos2 = new Location(plotworld.worldname, region.maxX, 255, region.maxZ);
@@ -105,13 +106,13 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
-    public boolean setMain(final PlotArea plotworld, final PlotId plotid, final PlotBlock[] blocks) {
+
+    public boolean setMain(PlotArea plotworld, PlotId plotid, PlotBlock[] blocks) {
         Plot plot = plotworld.getPlotAbs(plotid);
         if (!plot.isBasePlot()) {
             return false;
         }
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         for (RegionWrapper region : plot.getRegions()) {
             Location pos1 = new Location(plotworld.worldname, region.minX, 1, region.minZ);
             Location pos2 = new Location(plotworld.worldname, region.maxX, dpw.PLOT_HEIGHT - 1, region.maxZ);
@@ -119,27 +120,28 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
-    public boolean setMiddle(final PlotArea plotworld, final PlotId plotid, final PlotBlock[] blocks) {
+
+    public boolean setMiddle(PlotArea plotworld, PlotId plotid, PlotBlock[] blocks) {
         Plot plot = plotworld.getPlotAbs(plotid);
         if (!plot.isBasePlot()) {
             return false;
         }
         Location[] corners = plot.getCorners();
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        SetQueue.IMP.setBlock(plotworld.worldname, (corners[0].getX() + corners[1].getX()) / 2, dpw.PLOT_HEIGHT, (corners[0].getZ() + corners[1].getZ()) / 2, blocks[0]);
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        SetQueue.IMP.setBlock(plotworld.worldname, (corners[0].getX() + corners[1].getX()) / 2, dpw.PLOT_HEIGHT,
+                (corners[0].getZ() + corners[1].getZ()) / 2, blocks[0]);
         return true;
     }
 
-    public boolean setOutline(final PlotArea plotworld, final PlotId plotid, final PlotBlock[] blocks) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+    public boolean setOutline(PlotArea plotworld, PlotId plotid, PlotBlock[] blocks) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         if (dpw.ROAD_WIDTH == 0) {
             return false;
         }
         Plot plot = plotworld.getPlotAbs(plotid);
-        final Location bottom = plot.getBottomAbs();
-        final Location top = plot.getExtendedTopAbs();
-        final PseudoRandom random = new PseudoRandom();
+        Location bottom = plot.getBottomAbs();
+        Location top = plot.getExtendedTopAbs();
+        PseudoRandom random = new PseudoRandom();
         if (!plot.getMerged(0)) {
             int z = bottom.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
@@ -156,7 +158,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        
+
         if (!plot.getMerged(2)) {
             int z = top.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
@@ -182,16 +184,16 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
-    public boolean setWallFilling(final PlotArea plotworld, final PlotId plotid, final PlotBlock[] blocks) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+
+    public boolean setWallFilling(PlotArea plotworld, PlotId plotid, PlotBlock[] blocks) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         if (dpw.ROAD_WIDTH == 0) {
             return false;
         }
         Plot plot = plotworld.getPlotAbs(plotid);
-        final Location bot = plot.getExtendedBottomAbs().subtract(plot.getMerged(3) ? 0 : 1, 0, plot.getMerged(0) ? 0 : 1);
-        final Location top = plot.getExtendedTopAbs().add(1, 0, 1);
-        final PseudoRandom random = new PseudoRandom();
+        Location bot = plot.getExtendedBottomAbs().subtract(plot.getMerged(3) ? 0 : 1, 0, plot.getMerged(0) ? 0 : 1);
+        Location top = plot.getExtendedTopAbs().add(1, 0, 1);
+        PseudoRandom random = new PseudoRandom();
         if (!plot.getMerged(0)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
@@ -226,17 +228,17 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
-    public boolean setWall(final PlotArea plotworld, final PlotId plotid, final PlotBlock[] blocks) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+
+    public boolean setWall(PlotArea plotworld, PlotId plotid, PlotBlock[] blocks) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         if (dpw.ROAD_WIDTH == 0) {
             return false;
         }
         Plot plot = plotworld.getPlotAbs(plotid);
-        final Location bot = plot.getExtendedBottomAbs().subtract(plot.getMerged(3) ? 0 : 1, 0, plot.getMerged(0) ? 0 : 1);
-        final Location top = plot.getExtendedTopAbs().add(1, 0, 1);
-        final PseudoRandom random = new PseudoRandom();
-        final int y = dpw.WALL_HEIGHT + 1;
+        Location bot = plot.getExtendedBottomAbs().subtract(plot.getMerged(3) ? 0 : 1, 0, plot.getMerged(0) ? 0 : 1);
+        Location top = plot.getExtendedTopAbs().add(1, 0, 1);
+        PseudoRandom random = new PseudoRandom();
+        int y = dpw.WALL_HEIGHT + 1;
         if (!plot.getMerged(0)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
@@ -263,172 +265,200 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         return true;
     }
-    
+
     /**
      * PLOT MERGING
      */
     @Override
-    public boolean createRoadEast(final PlotArea plotworld, final Plot plot) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
-        final int sx = pos2.getX() + 1;
-        final int ex = sx + dpw.ROAD_WIDTH - 1;
-        final int sz = pos1.getZ() - 2;
-        final int ez = pos2.getZ() + 2;
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1), new Location(plotworld.worldname, ex, 255, ez - 1), new PlotBlock((short) 0, (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 0, sz + 1), new Location(plotworld.worldname, ex, 0, ez - 1), new PlotBlock((short) 7,
-        (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz + 1), new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, sz + 1), new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, ez - 1),
-        dpw.WALL_BLOCK);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, ex, 1, sz + 1), new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT + 1, sz + 1), new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT + 1, ez - 1),
-        dpw.WALL_BLOCK);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1), new Location(plotworld.worldname, ex - 1, dpw.ROAD_HEIGHT, ez - 1), dpw.ROAD_BLOCK);
+    public boolean createRoadEast(PlotArea plotworld, Plot plot) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
+        int sx = pos2.getX() + 1;
+        int ex = sx + dpw.ROAD_WIDTH - 1;
+        int sz = pos1.getZ() - 2;
+        int ez = pos2.getZ() + 2;
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname,
+                new Location(plotworld.worldname, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1),
+                new Location(plotworld.worldname, ex, 255, ez - 1), new PlotBlock((short) 0, (byte) 0));
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 0, sz + 1),
+                new Location(plotworld.worldname, ex, 0, ez - 1), new PlotBlock((short) 7,
+                        (byte) 0));
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz + 1),
+                new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, sz + 1),
+                new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, ez - 1),
+                dpw.WALL_BLOCK);
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, ex, 1, sz + 1),
+                new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT + 1, sz + 1),
+                new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT + 1, ez - 1),
+                dpw.WALL_BLOCK);
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1),
+                new Location(plotworld.worldname, ex - 1, dpw.ROAD_HEIGHT, ez - 1), dpw.ROAD_BLOCK);
         return true;
     }
-    
+
     @Override
-    public boolean createRoadSouth(final PlotArea plotworld, final Plot plot) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
-        final int sz = pos2.getZ() + 1;
-        final int ez = sz + dpw.ROAD_WIDTH - 1;
-        final int sx = pos1.getX() - 2;
-        final int ex = pos2.getX() + 2;
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(plotworld.worldname, ex - 1, 255, ez), new PlotBlock((short) 0, (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 0, sz), new Location(plotworld.worldname, ex - 1, 0, ez), new PlotBlock((short) 7, (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz), new Location(plotworld.worldname, ex - 1, dpw.WALL_HEIGHT, sz), dpw.WALL_FILLING);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.WALL_HEIGHT + 1, sz), new Location(plotworld.worldname, ex - 1, dpw.WALL_HEIGHT + 1, sz),
-        dpw.WALL_BLOCK);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, ez), new Location(plotworld.worldname, ex - 1, dpw.WALL_HEIGHT, ez), dpw.WALL_FILLING);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.WALL_HEIGHT + 1, ez), new Location(plotworld.worldname, ex - 1, dpw.WALL_HEIGHT + 1, ez),
-        dpw.WALL_BLOCK);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1), new Location(plotworld.worldname, ex - 1, dpw.ROAD_HEIGHT, ez - 1), dpw.ROAD_BLOCK);
+    public boolean createRoadSouth(PlotArea plotworld, Plot plot) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
+        int sz = pos2.getZ() + 1;
+        int ez = sz + dpw.ROAD_WIDTH - 1;
+        int sx = pos1.getX() - 2;
+        int ex = pos2.getX() + 2;
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname,
+                new Location(plotworld.worldname, sx + 1, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz),
+                new Location(plotworld.worldname, ex - 1, 255, ez), new PlotBlock((short) 0, (byte) 0));
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 0, sz),
+                new Location(plotworld.worldname, ex - 1, 0, ez), new PlotBlock((short) 7, (byte) 0));
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz),
+                new Location(plotworld.worldname, ex - 1, dpw.WALL_HEIGHT, sz), dpw.WALL_FILLING);
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.WALL_HEIGHT + 1, sz),
+                new Location(plotworld.worldname, ex - 1, dpw.WALL_HEIGHT + 1, sz),
+                dpw.WALL_BLOCK);
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, ez),
+                new Location(plotworld.worldname, ex - 1, dpw.WALL_HEIGHT, ez), dpw.WALL_FILLING);
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.WALL_HEIGHT + 1, ez),
+                new Location(plotworld.worldname, ex - 1, dpw.WALL_HEIGHT + 1, ez),
+                dpw.WALL_BLOCK);
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1),
+                new Location(plotworld.worldname, ex - 1, dpw.ROAD_HEIGHT, ez - 1), dpw.ROAD_BLOCK);
         return true;
     }
-    
+
     @Override
-    public boolean createRoadSouthEast(final PlotArea plotworld, final Plot plot) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
-        final int sx = pos2.getX() + 1;
-        final int ex = sx + dpw.ROAD_WIDTH - 1;
-        final int sz = pos2.getZ() + 1;
-        final int ez = sz + dpw.ROAD_WIDTH - 1;
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.ROAD_HEIGHT + 1, sz + 1), new Location(plotworld.worldname, ex - 1, 255, ez - 1), new PlotBlock(
-        (short) 0, (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 0, sz + 1), new Location(plotworld.worldname, ex - 1, 0, ez - 1), new PlotBlock((short) 7, (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1), new Location(plotworld.worldname, ex - 1, dpw.ROAD_HEIGHT, ez - 1), dpw.ROAD_BLOCK);
+    public boolean createRoadSouthEast(PlotArea plotworld, Plot plot) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
+        int sx = pos2.getX() + 1;
+        int ex = sx + dpw.ROAD_WIDTH - 1;
+        int sz = pos2.getZ() + 1;
+        int ez = sz + dpw.ROAD_WIDTH - 1;
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.ROAD_HEIGHT + 1, sz + 1),
+                new Location(plotworld.worldname, ex - 1, 255, ez - 1), new PlotBlock(
+                        (short) 0, (byte) 0));
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 0, sz + 1),
+                new Location(plotworld.worldname, ex - 1, 0, ez - 1), new PlotBlock((short) 7, (byte) 0));
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1),
+                new Location(plotworld.worldname, ex - 1, dpw.ROAD_HEIGHT, ez - 1), dpw.ROAD_BLOCK);
         return true;
     }
-    
+
     @Override
-    public boolean removeRoadEast(final PlotArea plotworld, final Plot plot) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
-        final int sx = pos2.getX() + 1;
-        final int ex = sx + dpw.ROAD_WIDTH - 1;
-        final int sz = pos1.getZ() - 1;
-        final int ez = pos2.getZ() + 1;
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(plotworld.worldname, ex, 255, ez), new PlotBlock((short) 0, (byte) 0));
-        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz + 1), new Location(plotworld.worldname, ex, dpw.PLOT_HEIGHT - 1, ez - 1), dpw.MAIN_BLOCK);
-        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.PLOT_HEIGHT, sz + 1), new Location(plotworld.worldname, ex, dpw.PLOT_HEIGHT, ez - 1), dpw.TOP_BLOCK);
+    public boolean removeRoadEast(PlotArea plotworld, Plot plot) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
+        int sx = pos2.getX() + 1;
+        int ex = sx + dpw.ROAD_WIDTH - 1;
+        int sz = pos1.getZ() - 1;
+        int ez = pos2.getZ() + 1;
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz),
+                new Location(plotworld.worldname, ex, 255, ez), new PlotBlock((short) 0, (byte) 0));
+        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz + 1),
+                new Location(plotworld.worldname, ex, dpw.PLOT_HEIGHT - 1, ez - 1), dpw.MAIN_BLOCK);
+        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.PLOT_HEIGHT, sz + 1),
+                new Location(plotworld.worldname, ex, dpw.PLOT_HEIGHT, ez - 1), dpw.TOP_BLOCK);
         return true;
     }
-    
+
     @Override
-    public boolean removeRoadSouth(final PlotArea plotworld, final Plot plot) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
-        final Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
-        final int sz = pos2.getZ() + 1;
-        final int ez = sz + dpw.ROAD_WIDTH - 1;
-        final int sx = pos1.getX() - 1;
-        final int ex = pos2.getX() + 1;
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz), new Location(plotworld.worldname, ex, 255, ez), new PlotBlock((short) 0, (byte) 0));
-        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz), new Location(plotworld.worldname, ex - 1, dpw.PLOT_HEIGHT - 1, ez), dpw.MAIN_BLOCK);
-        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.PLOT_HEIGHT, sz), new Location(plotworld.worldname, ex - 1, dpw.PLOT_HEIGHT, ez), dpw.TOP_BLOCK);
+    public boolean removeRoadSouth(PlotArea plotworld, Plot plot) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
+        Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
+        int sz = pos2.getZ() + 1;
+        int ez = sz + dpw.ROAD_WIDTH - 1;
+        int sx = pos1.getX() - 1;
+        int ex = pos2.getX() + 1;
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, Math.min(dpw.PLOT_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz),
+                new Location(plotworld.worldname, ex, 255, ez), new PlotBlock((short) 0, (byte) 0));
+        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz),
+                new Location(plotworld.worldname, ex - 1, dpw.PLOT_HEIGHT - 1, ez), dpw.MAIN_BLOCK);
+        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, dpw.PLOT_HEIGHT, sz),
+                new Location(plotworld.worldname, ex - 1, dpw.PLOT_HEIGHT, ez), dpw.TOP_BLOCK);
         return true;
     }
-    
+
     @Override
-    public boolean removeRoadSouthEast(final PlotArea plotworld, final Plot plot) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        final Location loc = getPlotTopLocAbs(dpw, plot.getId());
-        final int sx = loc.getX() + 1;
-        final int ex = sx + dpw.ROAD_WIDTH - 1;
-        final int sz = loc.getZ() + 1;
-        final int ez = sz + dpw.ROAD_WIDTH - 1;
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.ROAD_HEIGHT + 1, sz), new Location(plotworld.worldname, ex, 255, ez), new PlotBlock((short) 0, (byte) 0));
-        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz), new Location(plotworld.worldname, ex, dpw.ROAD_HEIGHT - 1, ez), dpw.MAIN_BLOCK);
-        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.ROAD_HEIGHT, sz), new Location(plotworld.worldname, ex, dpw.ROAD_HEIGHT, ez), dpw.TOP_BLOCK);
+    public boolean removeRoadSouthEast(PlotArea plotworld, Plot plot) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+        Location loc = getPlotTopLocAbs(dpw, plot.getId());
+        int sx = loc.getX() + 1;
+        int ex = sx + dpw.ROAD_WIDTH - 1;
+        int sz = loc.getZ() + 1;
+        int ez = sz + dpw.ROAD_WIDTH - 1;
+        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.ROAD_HEIGHT + 1, sz),
+                new Location(plotworld.worldname, ex, 255, ez), new PlotBlock((short) 0, (byte) 0));
+        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz),
+                new Location(plotworld.worldname, ex, dpw.ROAD_HEIGHT - 1, ez), dpw.MAIN_BLOCK);
+        MainUtil.setCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.ROAD_HEIGHT, sz),
+                new Location(plotworld.worldname, ex, dpw.ROAD_HEIGHT, ez), dpw.TOP_BLOCK);
         return true;
     }
-    
+
     /**
      * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED)
      */
     @Override
-    public boolean finishPlotMerge(final PlotArea plotworld, final ArrayList<PlotId> plotIds) {
-        final PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
+    public boolean finishPlotMerge(PlotArea plotworld, ArrayList<PlotId> plotIds) {
+        PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
+        PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
         if (block.id != 0 || !block.equals(unclaim)) {
-            for (final PlotId id : plotIds) {
-                setWall(plotworld, id, new PlotBlock[] { block });
+            for (PlotId id : plotIds) {
+                setWall(plotworld, id, new PlotBlock[]{block});
             }
         }
         return true;
     }
-    
+
     @Override
-    public boolean finishPlotUnlink(final PlotArea plotworld, final ArrayList<PlotId> plotIds) {
-        final PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
-        final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
-        for (final PlotId id : plotIds) {
+    public boolean finishPlotUnlink(PlotArea plotworld, ArrayList<PlotId> plotIds) {
+        PlotBlock block = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
+        PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
+        for (PlotId id : plotIds) {
             if (block.id != 0 || !block.equals(unclaim)) {
-                setWall(plotworld, id, new PlotBlock[] { block });
+                setWall(plotworld, id, new PlotBlock[]{block});
             }
         }
         return true;
     }
-    
+
     @Override
-    public boolean startPlotMerge(final PlotArea plotworld, final ArrayList<PlotId> plotIds) {
+    public boolean startPlotMerge(PlotArea plotworld, ArrayList<PlotId> plotIds) {
         return true;
     }
-    
+
     @Override
-    public boolean startPlotUnlink(final PlotArea plotworld, final ArrayList<PlotId> plotIds) {
+    public boolean startPlotUnlink(PlotArea plotworld, ArrayList<PlotId> plotIds) {
         return true;
     }
-    
+
     @Override
-    public boolean claimPlot(final PlotArea plotworld, final Plot plot) {
-        final PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
-        final PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
+    public boolean claimPlot(PlotArea plotworld, Plot plot) {
+        PlotBlock unclaim = ((ClassicPlotWorld) plotworld).WALL_BLOCK;
+        PlotBlock claim = ((ClassicPlotWorld) plotworld).CLAIMED_WALL_BLOCK;
         if (claim.id != 0 || !claim.equals(unclaim)) {
-            setWall(plotworld, plot.getId(), new PlotBlock[] { claim });
+            setWall(plotworld, plot.getId(), new PlotBlock[]{claim});
         }
         return true;
     }
-    
+
     @Override
-    public String[] getPlotComponents(final PlotArea plotworld, final PlotId plotid) {
-        return new String[] { "main", "floor", "air", "all", "border", "wall", "outline", "middle" };
+    public String[] getPlotComponents(PlotArea plotworld, PlotId plotid) {
+        return new String[]{"main", "floor", "air", "all", "border", "wall", "outline", "middle"};
     }
-    
+
     /**
-     * Remove sign for a plot
+     * Remove sign for a plot.
      */
     @Override
-    public Location getSignLoc(final PlotArea plotworld, Plot plot) {
-        final ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
+    public Location getSignLoc(PlotArea plotworld, Plot plot) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         plot = plot.getBasePlot(false);
-        final Location bot = plot.getBottomAbs();
+        Location bot = plot.getBottomAbs();
         return new com.intellectualcrafters.plot.object.Location(plotworld.worldname, bot.getX() - 1, dpw.ROAD_HEIGHT + 1, bot.getZ() - 2);
     }
 }

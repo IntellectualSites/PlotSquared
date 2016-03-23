@@ -1,6 +1,10 @@
 package com.intellectualcrafters.plot.generator;
 
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.PlotChunk;
 
@@ -13,7 +17,7 @@ public class HybridGen extends IndependentPlotGenerator {
     public String getName() {
         return "PlotSquared";
     }
-    
+
     @Override
     public void generateChunk(PlotChunk<?> result, PlotArea settings, PseudoRandom random) {
         HybridPlotWorld hpw = (HybridPlotWorld) settings;
@@ -36,8 +40,18 @@ public class HybridGen extends IndependentPlotGenerator {
         int cz = result.getZ();
         int bx = (cx << 4) - hpw.ROAD_OFFSET_X;
         int bz = (cz << 4) - hpw.ROAD_OFFSET_Z;
-        short rbx = (short) ((bx < 0) ? (hpw.SIZE + (bx % hpw.SIZE)) : bx % hpw.SIZE);
-        short rbz = (short) ((bz < 0) ? (hpw.SIZE + (bz % hpw.SIZE)) : bz % hpw.SIZE);
+        short rbx;
+        if (bx < 0) {
+            rbx = (short) (hpw.SIZE + (bx % hpw.SIZE));
+        } else {
+            rbx = (short) (bx % hpw.SIZE);
+        }
+        short rbz;
+        if (bz < 0) {
+            rbz = (short) (hpw.SIZE + (bz % hpw.SIZE));
+        } else {
+            rbz = (short) (bz % hpw.SIZE);
+        }
         short[] rx = new short[16];
         boolean[] gx = new boolean[16];
         boolean[] wx = new boolean[16];
@@ -165,17 +179,17 @@ public class HybridGen extends IndependentPlotGenerator {
             }
         }
     }
-    
+
     @Override
     public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return new HybridPlotWorld(world, id, this, min, max);
     }
-    
+
     @Override
     public PlotManager getNewPlotManager() {
         return new HybridPlotManager();
     }
-    
+
     @Override
     public void initialize(PlotArea area) {
         // All initialization is done in the PlotArea class

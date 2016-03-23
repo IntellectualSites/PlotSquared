@@ -11,6 +11,7 @@ public class SlowChunk extends PlotChunk<Chunk> {
 
     public PlotBlock[][] result = new PlotBlock[16][];
     public int[][] biomes;
+
     public SlowChunk(ChunkWrapper chunk) {
         super(chunk);
     }
@@ -23,25 +24,25 @@ public class SlowChunk extends PlotChunk<Chunk> {
 
     @Override
     public void setBiome(int x, int z, int biome) {
-        if (biomes == null) {
-            biomes = new int[16][16];
+        if (this.biomes == null) {
+            this.biomes = new int[16][16];
         }
-        biomes[x][z] = biome;
+        this.biomes[x][z] = biome;
     }
 
     @Override
     public void setBlock(int x, int y, int z, int id, byte data) {
-        if (result[y >> 4] == null) {
-            result[y >> 4] = new PlotBlock[4096];
+        if (this.result[y >> 4] == null) {
+            this.result[y >> 4] = new PlotBlock[4096];
         }
-        result[MainUtil.CACHE_I[y][x][z]][MainUtil.CACHE_J[y][x][z]] = new PlotBlock((short) id, data);
+        this.result[MainUtil.CACHE_I[y][x][z]][MainUtil.CACHE_J[y][x][z]] = new PlotBlock((short) id, data);
     }
 
     @Override
     public PlotChunk clone() {
         SlowChunk toReturn = new SlowChunk(getChunkWrapper());
-        for (int i = 0; i < result.length; i++) {
-            PlotBlock[] matrix = result[i];
+        for (int i = 0; i < this.result.length; i++) {
+            PlotBlock[] matrix = this.result[i];
             if (matrix != null) {
                 toReturn.result[i] = new PlotBlock[matrix.length];
                 System.arraycopy(matrix, 0, toReturn.result[i], 0, matrix.length);
@@ -53,7 +54,7 @@ public class SlowChunk extends PlotChunk<Chunk> {
     @Override
     public PlotChunk shallowClone() {
         SlowChunk toReturn = new SlowChunk(getChunkWrapper());
-        toReturn.result = result;
+        toReturn.result = this.result;
         return toReturn;
     }
 }

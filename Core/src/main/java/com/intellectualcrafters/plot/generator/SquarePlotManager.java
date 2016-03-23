@@ -14,11 +14,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 /**
- * A plot manager with a square grid layout, with square shaped plots
+ * A plot manager with a square grid layout, with square shaped plots.
  */
 public abstract class SquarePlotManager extends GridPlotManager {
+
     @Override
-    public boolean clearPlot(final PlotArea plotworld, final Plot plot, final Runnable whenDone) {
+    public boolean clearPlot(PlotArea plotworld, final Plot plot, final Runnable whenDone) {
         final HashSet<RegionWrapper> regions = plot.getRegions();
         Runnable run = new Runnable() {
             @Override
@@ -38,20 +39,20 @@ public abstract class SquarePlotManager extends GridPlotManager {
         run.run();
         return true;
     }
-    
+
     @Override
-    public Location getPlotTopLocAbs(final PlotArea plotworld, final PlotId plotid) {
-        final SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
-        final int px = plotid.x;
-        final int pz = plotid.y;
-        final int x = (dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - (int) Math.floor(dpw.ROAD_WIDTH / 2) - 1;
-        final int z = (dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - (int) Math.floor(dpw.ROAD_WIDTH / 2) - 1;
+    public Location getPlotTopLocAbs(PlotArea plotworld, PlotId plotid) {
+        SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
+        int px = plotid.x;
+        int pz = plotid.y;
+        int x = (dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - (int) Math.floor(dpw.ROAD_WIDTH / 2) - 1;
+        int z = (dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - (int) Math.floor(dpw.ROAD_WIDTH / 2) - 1;
         return new Location(plotworld.worldname, x, Math.min(plotworld.MAX_BUILD_HEIGHT, 255), z);
     }
-    
+
     @Override
-    public PlotId getPlotIdAbs(final PlotArea plotworld, int x, final int y, int z) {
-        final SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
+    public PlotId getPlotIdAbs(PlotArea plotworld, int x, int y, int z) {
+        SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
         if (dpw.ROAD_OFFSET_X != 0) {
             x -= dpw.ROAD_OFFSET_X;
         }
@@ -71,7 +72,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             }
             end = pathWidthLower + dpw.PLOT_WIDTH;
         }
-        final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
+        int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
         int idx;
         if (x < 0) {
             idx = x / size;
@@ -88,21 +89,25 @@ public abstract class SquarePlotManager extends GridPlotManager {
             idz = (z / size) + 1;
             z = z % size;
         }
-        return ((z <= pathWidthLower) || (z > end) || (x <= pathWidthLower) || (x > end)) ? null : new PlotId(idx, idz);
+        if (z <= pathWidthLower || z > end || x <= pathWidthLower || x > end) {
+            return null;
+        } else {
+            return new PlotId(idx, idz);
+        }
     }
-    
+
     @Override
-    public PlotId getPlotId(final PlotArea plotworld, int x, final int y, int z) {
+    public PlotId getPlotId(PlotArea plotworld, int x, int y, int z) {
         try {
-            final SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
+            SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
             if (plotworld == null) {
                 return null;
             }
             x -= dpw.ROAD_OFFSET_X;
             z -= dpw.ROAD_OFFSET_Z;
-            final int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
+            int size = dpw.PLOT_WIDTH + dpw.ROAD_WIDTH;
             int pathWidthLower;
-            final int end;
+            int end;
             if (dpw.ROAD_WIDTH == 0) {
                 pathWidthLower = -1;
                 end = dpw.PLOT_WIDTH;
@@ -176,17 +181,17 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
         return null;
     }
-    
+
     /**
      * Get the bottom plot loc (some basic math)
      */
     @Override
-    public Location getPlotBottomLocAbs(final PlotArea plotworld, final PlotId plotid) {
-        final SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
-        final int px = plotid.x;
-        final int pz = plotid.y;
-        final int x = (dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - (int) Math.floor(dpw.ROAD_WIDTH / 2);
-        final int z = (dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - (int) Math.floor(dpw.ROAD_WIDTH / 2);
+    public Location getPlotBottomLocAbs(PlotArea plotworld, PlotId plotid) {
+        SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
+        int px = plotid.x;
+        int pz = plotid.y;
+        int x = (dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - (int) Math.floor(dpw.ROAD_WIDTH / 2);
+        int z = (dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - (int) Math.floor(dpw.ROAD_WIDTH / 2);
         return new Location(plotworld.worldname, x, plotworld.MIN_BUILD_HEIGHT, z);
     }
 }

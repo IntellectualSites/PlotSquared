@@ -1,19 +1,18 @@
 package com.plotsquared.bukkit.events;
 
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.event.Event;
 
-import com.intellectualcrafters.plot.object.Plot;
-
 public abstract class PlotEvent extends Event {
-    
+
     private final Plot plot;
-    
-    public PlotEvent(final Plot plot) {
+
+    public PlotEvent(Plot plot) {
         this.plot = plot;
     }
-    
+
     public final Plot getPlot() {
-        return plot;
+        return this.plot;
     }
-    
+
 }

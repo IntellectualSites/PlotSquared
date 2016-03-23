@@ -8,18 +8,18 @@ import org.spongepowered.api.world.extent.MutableBiomeArea;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 
 public class GenChunk extends PlotChunk<Chunk> {
-    
-    public boolean modified = false;
-    private final MutableBlockVolume terain;
+
+    private final MutableBlockVolume terrain;
     private final MutableBiomeArea biome;
     private final int bz;
     private final int bx;
-    
-    public GenChunk(MutableBlockVolume terain, MutableBiomeArea biome, ChunkWrapper wrap) {
+    public boolean modified = false;
+
+    public GenChunk(MutableBlockVolume terrain, MutableBiomeArea biome, ChunkWrapper wrap) {
         super(wrap);
         this.bx = wrap.x << 4;
         this.bz = wrap.z << 4;
-        this.terain = terain;
+        this.terrain = terrain;
         this.biome = biome;
     }
     
@@ -32,13 +32,13 @@ public class GenChunk extends PlotChunk<Chunk> {
     @Override
     public void setBiome(int x, int z, int biome) {
         if (this.biome != null) {
-            this.biome.setBiome(bx + x, bz + z, SpongeUtil.getBiome(biome));
+            this.biome.setBiome(this.bx + x, this.bz + z, SpongeUtil.getBiome(biome));
         }
     }
     
     @Override
     public void setBlock(int x, int y, int z, int id, byte data) {
-        terain.setBlock(bx + x, y, bz + z, SpongeUtil.getBlockState(id, data));
+        this.terrain.setBlock(this.bx + x, y, this.bz + z, SpongeUtil.getBlockState(id, data));
     }
 
     @Override

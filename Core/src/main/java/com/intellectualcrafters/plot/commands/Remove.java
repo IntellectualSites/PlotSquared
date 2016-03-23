@@ -35,27 +35,27 @@ import java.util.HashSet;
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "remove",
-aliases = { "r" },
-description = "Remove a player from a plot",
-usage = "/plot remove <player>",
-category = CommandCategory.SETTINGS,
-requiredType = RequiredType.NONE,
-permission = "plots.remove")
+        command = "remove",
+        aliases = {"r"},
+        description = "Remove a player from a plot",
+        usage = "/plot remove <player>",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE,
+        permission = "plots.remove")
 public class Remove extends SubCommand {
-    
+
     public Remove() {
-        requiredArguments = new Argument[] { Argument.PlayerName };
+        this.requiredArguments = new Argument[]{Argument.PlayerName};
     }
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         if (args.length != 1) {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot remove <player>");
             return true;
         }
-        final Location loc = plr.getLocation();
-        final Plot plot = loc.getPlotAbs();
+        Location loc = plr.getLocation();
+        Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -70,18 +70,18 @@ public class Remove extends SubCommand {
         int count = 0;
         switch (args[0]) {
             case "unknown": {
-                final ArrayList<UUID> toRemove = new ArrayList<>();
-                final HashSet<UUID> all = new HashSet<>();
+                ArrayList<UUID> toRemove = new ArrayList<>();
+                HashSet<UUID> all = new HashSet<>();
                 all.addAll(plot.getMembers());
                 all.addAll(plot.getTrusted());
                 all.addAll(plot.getDenied());
-                for (final UUID uuid : all) {
+                for (UUID uuid : all) {
                     if (UUIDHandler.getName(uuid) == null) {
                         toRemove.add(uuid);
                         count++;
                     }
                 }
-                for (final UUID uuid : toRemove) {
+                for (UUID uuid : toRemove) {
                     plot.removeDenied(uuid);
                     plot.removeTrusted(uuid);
                     plot.removeMember(uuid);
@@ -89,16 +89,16 @@ public class Remove extends SubCommand {
                 break;
             }
             case "*": {
-                final ArrayList<UUID> toRemove = new ArrayList<>();
-                final HashSet<UUID> all = new HashSet<>();
+                ArrayList<UUID> toRemove = new ArrayList<>();
+                HashSet<UUID> all = new HashSet<>();
                 all.addAll(plot.getMembers());
                 all.addAll(plot.getTrusted());
                 all.addAll(plot.getDenied());
-                for (final UUID uuid : all) {
+                for (UUID uuid : all) {
                     toRemove.add(uuid);
                     count++;
                 }
-                for (final UUID uuid : toRemove) {
+                for (UUID uuid : toRemove) {
                     plot.removeDenied(uuid);
                     plot.removeTrusted(uuid);
                     plot.removeMember(uuid);
@@ -106,7 +106,7 @@ public class Remove extends SubCommand {
                 break;
             }
             default:
-                final UUID uuid = UUIDHandler.getUUID(args[0], null);
+                UUID uuid = UUIDHandler.getUUID(args[0], null);
                 if (uuid != null) {
                     if (plot.getTrusted().contains(uuid)) {
                         if (plot.removeTrusted(uuid)) {

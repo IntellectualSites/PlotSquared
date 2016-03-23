@@ -26,18 +26,19 @@ import com.intellectualcrafters.plot.util.SetupUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
 @CommandDeclaration(command = "area",
-permission = "plots.area",
-category = CommandCategory.ADMINISTRATION,
-requiredType = RequiredType.NONE,
-description = "Create a new PlotArea",
-aliases = "world",
-usage = "/plot area <create|info|list|tp|regen>")
+        permission = "plots.area",
+        category = CommandCategory.ADMINISTRATION,
+        requiredType = RequiredType.NONE,
+        description = "Create a new PlotArea",
+        aliases = "world",
+        usage = "/plot area <create|info|list|tp|regen>")
 public class Area extends SubCommand {
 
     @Override
@@ -71,7 +72,7 @@ public class Area extends SubCommand {
                                 plr.setMeta("area_pos1", loc);
                                 C.SET_ATTRIBUTE.send(plr, "area_pos1", loc.getX() + "," + loc.getZ());
                                 MainUtil.sendMessage(plr, "You will now set pos2: /plot area create pos2"
-                                + "\nNote: The chosen plot size may result in the created area not exactly matching your second position.");
+                                        + "\nNote: The chosen plot size may result in the created area not exactly matching your second position.");
                                 return true;
                             }
                             case "pos2": { // Set position 2 and finish creation for type=2 (partial)
@@ -86,8 +87,8 @@ public class Area extends SubCommand {
                                 int dz = Math.abs(pos1.getZ() - pos2.getZ());
                                 int numx = Math.max(1, (dx + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
                                 int numz = Math.max(1, (dz + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
-                                final int ddx = dx - (numx * area.SIZE - area.ROAD_WIDTH);
-                                final int ddz = dz - (numz * area.SIZE - area.ROAD_WIDTH);
+                                int ddx = dx - (numx * area.SIZE - area.ROAD_WIDTH);
+                                int ddz = dz - (numz * area.SIZE - area.ROAD_WIDTH);
                                 int bx = Math.min(pos1.getX(), pos2.getX()) + ddx;
                                 int bz = Math.min(pos1.getZ(), pos2.getZ()) + ddz;
                                 int tx = Math.max(pos1.getX(), pos2.getX()) - ddx;
@@ -129,7 +130,7 @@ public class Area extends SubCommand {
                                             if (area.TERRAIN != 3) {
                                                 ChunkManager.largeRegionTask(world, region, new RunnableVal<ChunkLoc>() {
                                                     @Override
-                                                    public void run(final ChunkLoc value) {
+                                                    public void run(ChunkLoc value) {
                                                         AugmentedUtils.generate(world, value.x, value.z, null);
                                                     }
                                                 }, null);
@@ -326,13 +327,13 @@ public class Area extends SubCommand {
                     region = "N/A";
                 }
                 String value = "&r$1NAME: " + name
-                + "\n$1Type: $2" + area.TYPE
-                + "\n$1Terrain: $2" + area.TERRAIN
-                + "\n$1Usage: $2" + String.format("%.2f", percent) + "%"
-                + "\n$1Claimed: $2" + claimed
-                + "\n$1Clusters: $2" + clusters
-                + "\n$1Region: $2" + region
-                + "\n$1Generator: $2" + generator;
+                        + "\n$1Type: $2" + area.TYPE
+                        + "\n$1Terrain: $2" + area.TERRAIN
+                        + "\n$1Usage: $2" + String.format("%.2f", percent) + "%"
+                        + "\n$1Claimed: $2" + claimed
+                        + "\n$1Clusters: $2" + clusters
+                        + "\n$1Region: $2" + region
+                        + "\n$1Generator: $2" + generator;
                 MainUtil.sendMessage(plr, C.PLOT_INFO_HEADER.s() + '\n' + value + '\n' + C.PLOT_INFO_FOOTER.s(), false);
                 return true;
             }
@@ -379,19 +380,19 @@ public class Area extends SubCommand {
                             region = "N/A";
                         }
                         PlotMessage tooltip = new PlotMessage()
-                        .text("Claimed=").color("$1").text("" + claimed).color("$2")
-                        .text("\nUsage=").color("$1").text(String.format("%.2f", percent) + "%").color("$2")
-                        .text("\nClusters=").color("$1").text("" + clusters).color("$2")
-                        .text("\nRegion=").color("$1").text(region).color("$2")
-                        .text("\nGenerator=").color("$1").text(generator).color("$2");
+                                .text("Claimed=").color("$1").text("" + claimed).color("$2")
+                                .text("\nUsage=").color("$1").text(String.format("%.2f", percent) + "%").color("$2")
+                                .text("\nClusters=").color("$1").text("" + clusters).color("$2")
+                                .text("\nRegion=").color("$1").text(region).color("$2")
+                                .text("\nGenerator=").color("$1").text(generator).color("$2");
 
                         // type / terrain
                         String visit = "/plot area tp " + area.toString();
                         message.text("[").color("$3")
-                        .text(i + "").command(visit).tooltip(visit).color("$1")
-                        .text("]").color("$3")
-                        .text(" " + name).tooltip(tooltip).command("/plot area info " + area).color("$1").text(" - ").color("$2")
-                        .text(area.TYPE + ":" + area.TERRAIN).color("$3");
+                                .text(i + "").command(visit).tooltip(visit).color("$1")
+                                .text("]").color("$3")
+                                .text(" " + name).tooltip(tooltip).command("/plot area info " + area).color("$1").text(" - ").color("$2")
+                                .text(area.TYPE + ":" + area.TERRAIN).color("$3");
                     }
                 }, "/plot area list", C.AREA_LIST_HEADER_PAGED.s());
                 return true;
@@ -442,7 +443,8 @@ public class Area extends SubCommand {
                     center = WorldUtil.IMP.getSpawn(area.worldname);
                 } else {
                     RegionWrapper region = area.getRegion();
-                    center = new Location(area.worldname, region.minX + (region.maxX - region.minX) / 2, 0, region.minZ + (region.maxZ - region.minZ) / 2);
+                    center = new Location(area.worldname, region.minX + (region.maxX - region.minX) / 2, 0,
+                            region.minZ + (region.maxZ - region.minZ) / 2);
                     center.setY(WorldUtil.IMP.getHighestBlock(area.worldname, center.getX(), center.getZ()));
                 }
                 plr.teleport(center);
@@ -451,10 +453,10 @@ public class Area extends SubCommand {
             case "delete":
             case "remove": {
                 MainUtil.sendMessage(plr, "$1World creation settings may be stored in multiple locations:"
-                + "\n$3 - $2Bukkit bukkit.yml"
-                + "\n$3 - $2PlotSquared settings.yml"
-                + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
-                + "\n$1Stop the server and delete it from these locations.");
+                        + "\n$3 - $2Bukkit bukkit.yml"
+                        + "\n$3 - $2PlotSquared settings.yml"
+                        + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
+                        + "\n$1Stop the server and delete it from these locations.");
                 return true;
             }
         }

@@ -1,16 +1,14 @@
 package com.plotsquared.bukkit.util;
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
-
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
 import com.plotsquared.bukkit.object.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.object.BukkitPlayer;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class BukkitEconHandler extends EconHandler {
 
@@ -19,80 +17,80 @@ public class BukkitEconHandler extends EconHandler {
 
     public Economy getEconomy() {
         init();
-        return econ;
+        return this.econ;
     }
 
     public Permission getPermissions() {
         init();
-        return perms;
+        return this.perms;
     }
 
     public boolean init() {
-        if (econ == null || perms == null) {
+        if (this.econ == null || this.perms == null) {
             setupPermissions();
             setupEconomy();
         }
-        return econ != null && perms != null;
+        return this.econ != null && this.perms != null;
     }
 
     private boolean setupPermissions() {
-        final RegisteredServiceProvider<Permission> permissionProvider =
+        RegisteredServiceProvider<Permission> permissionProvider =
                 Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
-            perms = permissionProvider.getProvider();
+            this.perms = permissionProvider.getProvider();
         }
-        return perms != null;
+        return this.perms != null;
     }
 
     private boolean setupEconomy() {
-        final RegisteredServiceProvider<Economy> economyProvider =
+        RegisteredServiceProvider<Economy> economyProvider =
                 Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
-            econ = economyProvider.getProvider();
+            this.econ = economyProvider.getProvider();
         }
-        return econ != null;
+        return this.econ != null;
     }
 
     @Override
-    public double getMoney(final PlotPlayer player) {
-        final double bal = super.getMoney(player);
+    public double getMoney(PlotPlayer player) {
+        double bal = super.getMoney(player);
         if (Double.isNaN(bal)) {
-            return econ.getBalance(((BukkitPlayer) player).player);
+            return this.econ.getBalance(((BukkitPlayer) player).player);
         }
         return bal;
     }
 
     @Override
-    public void withdrawMoney(final PlotPlayer player, final double amount) {
-        econ.withdrawPlayer(((BukkitPlayer) player).player, amount);
+    public void withdrawMoney(PlotPlayer player, double amount) {
+        this.econ.withdrawPlayer(((BukkitPlayer) player).player, amount);
     }
 
     @Override
-    public void depositMoney(final PlotPlayer player, final double amount) {
-        econ.depositPlayer(((BukkitPlayer) player).player, amount);
+    public void depositMoney(PlotPlayer player, double amount) {
+        this.econ.depositPlayer(((BukkitPlayer) player).player, amount);
     }
 
     @Override
-    public void depositMoney(final OfflinePlotPlayer player, final double amount) {
-        econ.depositPlayer(((BukkitOfflinePlayer) player).player, amount);
+    public void depositMoney(OfflinePlotPlayer player, double amount) {
+        this.econ.depositPlayer(((BukkitOfflinePlayer) player).player, amount);
     }
 
     @Override
-    public void setPermission(final String world, final String player, final String perm, final boolean value) {
+    public void setPermission(String world, String player, String perm, boolean value) {
         if (value) {
-            perms.playerAdd(world, player, perm);
+            this.perms.playerAdd(world, player, perm);
         } else {
-            perms.playerRemove(world, player, perm);
+            this.perms.playerRemove(world, player, perm);
         }
     }
 
     @Override
-    public boolean hasPermission(final String world, final String player, final String perm) {
-        return perms.playerHas(world, Bukkit.getOfflinePlayer(player), perm);
+    public boolean hasPermission(String world, String player, String perm) {
+        return this.perms.playerHas(world, Bukkit.getOfflinePlayer(player), perm);
     }
     
     @Override
     public double getBalance(PlotPlayer player) {
-        return econ.getBalance(player.getName());
+        return this.econ.getBalance(player.getName());
     }
 }

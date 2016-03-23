@@ -11,40 +11,36 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandManager<T extends CommandCaller> {
-    
-    final public ConcurrentHashMap<String, Command<T>> commands;
-    final private Character initialCharacter;
-    
-    public CommandManager() {
-        this('/', new ArrayList<Command<T>>());
-    }
-    
-    public CommandManager(final Character initialCharacter, final List<Command<T>> commands) {
+
+    public final ConcurrentHashMap<String, Command<T>> commands;
+    private final Character initialCharacter;
+
+    public CommandManager(Character initialCharacter, List<Command<T>> commands) {
         this.commands = new ConcurrentHashMap<>();
-        for (final Command<T> command : commands) {
+        for (Command<T> command : commands) {
             addCommand(command);
         }
         this.initialCharacter = initialCharacter;
     }
-    
-    final public void addCommand(final Command<T> command) {
+
+    public final void addCommand(Command<T> command) {
         if (command.getCommand() == null) {
             command.create();
         }
         this.commands.put(command.getCommand().toLowerCase(), command);
-        for (final String alias : command.getAliases()) {
+        for (String alias : command.getAliases()) {
             this.commands.put(alias.toLowerCase(), command);
         }
     }
-    
-    final public Command<T> getCommand(final String command) {
-        return commands.get(command.toLowerCase());
+
+    public final Command<T> getCommand(String command) {
+        return this.commands.get(command.toLowerCase());
     }
-    
-    final public boolean createCommand(final Command<T> command) {
+
+    public final boolean createCommand(Command<T> command) {
         try {
             command.create();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -54,13 +50,13 @@ public class CommandManager<T extends CommandCaller> {
         }
         return false;
     }
-    
-    final public ArrayList<Command<T>> getCommands() {
-        final HashSet<Command<T>> set = new HashSet<>(this.commands.values());
-        final ArrayList<Command<T>> result = new ArrayList<>(set);
+
+    public final ArrayList<Command<T>> getCommands() {
+        HashSet<Command<T>> set = new HashSet<>(this.commands.values());
+        ArrayList<Command<T>> result = new ArrayList<>(set);
         Collections.sort(result, new Comparator<Command<T>>() {
             @Override
-            public int compare(final Command<T> a, final Command<T> b) {
+            public int compare(Command<T> a, Command<T> b) {
                 if (a == b) {
                     return 0;
                 }
@@ -75,34 +71,34 @@ public class CommandManager<T extends CommandCaller> {
         });
         return result;
     }
-    
-    final public ArrayList<String> getCommandLabels(final ArrayList<Command<T>> cmds) {
-        final ArrayList<String> labels = new ArrayList<>(cmds.size());
-        for (final Command<T> cmd : cmds) {
+
+    public final ArrayList<String> getCommandLabels(ArrayList<Command<T>> cmds) {
+        ArrayList<String> labels = new ArrayList<>(cmds.size());
+        for (Command<T> cmd : cmds) {
             labels.add(cmd.getCommand());
         }
         return labels;
     }
-    
-    public int handle(final T plr, String input) {
-        if (initialCharacter != null && !input.startsWith(initialCharacter + "")) {
+
+    public int handle(T plr, String input) {
+        if (this.initialCharacter != null && !input.startsWith(this.initialCharacter + "")) {
             return CommandHandlingOutput.NOT_COMMAND;
         }
-        if (initialCharacter == null) {
+        if (this.initialCharacter == null) {
             input = input;
         } else {
             input = input.substring(1);
         }
-        final String[] parts = input.split(" ");
+        String[] parts = input.split(" ");
         String[] args;
-        final String command = parts[0].toLowerCase();
+        String command = parts[0].toLowerCase();
         if (parts.length == 1) {
             args = new String[0];
         } else {
             args = new String[parts.length - 1];
             System.arraycopy(parts, 1, args, 0, args.length);
         }
-        Command<T> cmd = commands.get(command);
+        Command<T> cmd = this.commands.get(command);
         if (cmd == null) {
             return CommandHandlingOutput.NOT_FOUND;
         }
@@ -112,7 +108,7 @@ public class CommandManager<T extends CommandCaller> {
         if (!Permissions.hasPermission(plr, cmd.getPermission())) {
             return CommandHandlingOutput.NOT_PERMITTED;
         }
-        final Argument<?>[] requiredArguments = cmd.getRequiredArguments();
+        Argument<?>[] requiredArguments = cmd.getRequiredArguments();
         if ((requiredArguments != null) && (requiredArguments.length > 0)) {
             boolean success = true;
             if (args.length < requiredArguments.length) {
@@ -132,22 +128,22 @@ public class CommandManager<T extends CommandCaller> {
             }
         }
         try {
-            final boolean a = cmd.onCommand(plr, args);
+            boolean a = cmd.onCommand(plr, args);
             if (!a) {
-                final String usage = cmd.getUsage();
+                String usage = cmd.getUsage();
                 if ((usage != null) && !usage.isEmpty()) {
                     plr.sendMessage(usage);
                 }
                 return CommandHandlingOutput.WRONG_USAGE;
             }
-        } catch (final Throwable t) {
+        } catch (Throwable t) {
             t.printStackTrace();
             return CommandHandlingOutput.ERROR;
         }
         return CommandHandlingOutput.SUCCESS;
     }
-    
-    final public char getInitialCharacter() {
+
+    public final char getInitialCharacter() {
         return this.initialCharacter;
     }
 }

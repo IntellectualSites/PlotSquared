@@ -35,23 +35,23 @@ import com.plotsquared.general.commands.CommandDeclaration;
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "trust",
-aliases = { "t" },
-requiredType = RequiredType.NONE,
-usage = "/plot trust <player>",
-description = "Allow a player to build in a plot",
-category = CommandCategory.SETTINGS)
+        command = "trust",
+        aliases = {"t"},
+        requiredType = RequiredType.NONE,
+        usage = "/plot trust <player>",
+        description = "Allow a player to build in a plot",
+        category = CommandCategory.SETTINGS)
 public class Trust extends SubCommand {
-    
+
     public Trust() {
-        requiredArguments = new Argument[] { Argument.PlayerName };
+        this.requiredArguments = new Argument[]{Argument.PlayerName};
     }
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
-        final Location loc = plr.getLocation();
-        final Plot plot = loc.getPlotAbs();
+    public boolean onCommand(PlotPlayer plr, String[] args) {
+
+        Location loc = plr.getLocation();
+        Plot plot = loc.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }

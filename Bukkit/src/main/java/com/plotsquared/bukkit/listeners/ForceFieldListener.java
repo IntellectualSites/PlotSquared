@@ -37,14 +37,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-/**
-
- */
 public class ForceFieldListener implements Listener {
-    private Set<PlotPlayer> getNearbyPlayers(final Player player, final Plot plot) {
-        final Set<PlotPlayer> players = new HashSet<>();
-        PlotPlayer pp;
-        for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
+
+    private Set<PlotPlayer> getNearbyPlayers(Player player, Plot plot) {
+        Set<PlotPlayer> players = new HashSet<>();
+        for (Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
+            PlotPlayer pp;
             if (!(entity instanceof Player) || ((pp = BukkitUtil.getPlayer((Player) entity)) == null) || !plot.equals(pp.getCurrentPlot())) {
                 continue;
             }
@@ -54,10 +52,10 @@ public class ForceFieldListener implements Listener {
         }
         return players;
     }
-    
-    private PlotPlayer hasNearbyPermitted(final Player player, final Plot plot) {
-        PlotPlayer pp;
-        for (final Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
+
+    private PlotPlayer hasNearbyPermitted(Player player, Plot plot) {
+        for (Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
+            PlotPlayer pp;
             if (!(entity instanceof Player) || ((pp = BukkitUtil.getPlayer((Player) entity)) == null) || !plot.equals(pp.getCurrentPlot())) {
                 continue;
             }
@@ -67,12 +65,16 @@ public class ForceFieldListener implements Listener {
         }
         return null;
     }
-    
-    public Vector calculateVelocity(final PlotPlayer pp, final PlotPlayer e) {
+
+    public Vector calculateVelocity(PlotPlayer pp, PlotPlayer e) {
         Location playerLocation = pp.getLocationFull();
         Location oPlayerLocation = e.getLocation();
-        final double playerX = playerLocation.getX(), playerY = playerLocation.getY(), playerZ = playerLocation.getZ(), oPlayerX = oPlayerLocation.getX(), oPlayerY = oPlayerLocation.getY(), oPlayerZ = oPlayerLocation
-        .getZ();
+        double playerX = playerLocation.getX();
+        double playerY = playerLocation.getY();
+        double playerZ = playerLocation.getZ();
+        double oPlayerX = oPlayerLocation.getX();
+        double oPlayerY = oPlayerLocation.getY();
+        double oPlayerZ = oPlayerLocation.getZ();
         double x = 0d;
         if (playerX < oPlayerX) {
             x = 1.0d;
@@ -93,25 +95,25 @@ public class ForceFieldListener implements Listener {
         }
         return new Vector(x, y, z);
     }
-    
+
     @EventHandler
-    public void onPlotEntry(final PlayerEnterPlotEvent event) {
-        final Player player = event.getPlayer();
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        final Plot plot = event.getPlot();
+    public void onPlotEntry(PlayerEnterPlotEvent event) {
+        Player player = event.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        Plot plot = event.getPlot();
         if (plot == null) {
             return;
         }
         if ((FlagManager.getPlotFlagRaw(plot, "forcefield") != null) && FlagManager.getPlotFlagRaw(plot, "forcefield").getValue().equals("true")) {
             if (!FlagManager.isBooleanFlag(plot, "forcefield", false)) {
-                final UUID uuid = pp.getUUID();
+                UUID uuid = pp.getUUID();
                 if (plot.isAdded(uuid)) {
-                    final Set<PlotPlayer> players = getNearbyPlayers(player, plot);
-                    for (final PlotPlayer oPlayer : players) {
+                    Set<PlotPlayer> players = getNearbyPlayers(player, plot);
+                    for (PlotPlayer oPlayer : players) {
                         ((BukkitPlayer) oPlayer).player.setVelocity(calculateVelocity(pp, oPlayer));
                     }
                 } else {
-                    final PlotPlayer oPlayer = hasNearbyPermitted(player, plot);
+                    PlotPlayer oPlayer = hasNearbyPermitted(player, plot);
                     if (oPlayer == null) {
                         return;
                     }

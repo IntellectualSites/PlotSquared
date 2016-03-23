@@ -24,7 +24,14 @@ import com.google.common.collect.BiMap;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.*;
+import com.intellectualcrafters.plot.object.ChunkLoc;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotManager;
+import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.StringWrapper;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -36,20 +43,22 @@ import java.util.Map;
 import java.util.UUID;
 
 @CommandDeclaration(
-command = "debugclaimtest",
-description = "If you accidentally delete your database, this command will attempt to restore all plots based on the data from plot signs. Execution time may vary",
-category = CommandCategory.DEBUG,
-requiredType = RequiredType.CONSOLE,
-permission = "plots.debugclaimtest")
+        command = "debugclaimtest",
+        description = "If you accidentally delete your database, this command will attempt to restore all plots based on the data from plot signs. "
+                + "Execution time may vary",
+        category = CommandCategory.DEBUG,
+        requiredType = RequiredType.CONSOLE,
+        permission = "plots.debugclaimtest")
 public class DebugClaimTest extends SubCommand {
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         if (args.length < 3) {
             return !MainUtil
-            .sendMessage(
-            null,
-            "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
+                    .sendMessage(
+                            null,
+                            "If you accidentally delete your database, this command will attempt to restore all plots based on the data from the "
+                                    + "plot signs. \n\n&cMissing world arg /plot debugclaimtest {world} {PlotId min} {PlotId max}");
         }
         PlotArea area = PS.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
@@ -62,35 +71,36 @@ public class DebugClaimTest extends SubCommand {
             args[2].split(";");
             min = PlotId.fromString(args[1]);
             max = PlotId.fromString(args[2]);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             return !MainUtil.sendMessage(plr,
-            "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X;Y are the plot coords\nThe conversion will only check the plots in the selected area.");
+                    "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X;Y are the plot coords\nThe conversion "
+                            + "will only check the plots in the selected area.");
         }
         MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
         MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
-        final PlotManager manager = area.getPlotManager();
-        final ArrayList<Plot> plots = new ArrayList<>();
-        for (final PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
-            final Plot plot = area.getPlotAbs(id);
+        PlotManager manager = area.getPlotManager();
+        ArrayList<Plot> plots = new ArrayList<>();
+        for (PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
+            Plot plot = area.getPlotAbs(id);
             if (plot.hasOwner()) {
                 MainUtil.sendMessage(plr, " - &cDB Already contains: " + plot.getId());
                 continue;
             }
-            final Location loc = manager.getSignLoc(area, plot);
-            final ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
-            final boolean result = ChunkManager.manager.loadChunk(area.worldname, chunk, false);
+            Location loc = manager.getSignLoc(area, plot);
+            ChunkLoc chunk = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4);
+            boolean result = ChunkManager.manager.loadChunk(area.worldname, chunk, false);
             if (!result) {
                 continue;
             }
-            final String[] lines = WorldUtil.IMP.getSign(loc);
+            String[] lines = WorldUtil.IMP.getSign(loc);
             if (lines != null) {
                 String line = lines[2];
                 if (line != null && line.length() > 2) {
                     line = line.substring(2);
-                    final BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
+                    BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
                     UUID uuid = map.get(new StringWrapper(line));
                     if (uuid == null) {
-                        for (final Map.Entry<StringWrapper, UUID> stringWrapperUUIDEntry : map.entrySet()) {
+                        for (Map.Entry<StringWrapper, UUID> stringWrapperUUIDEntry : map.entrySet()) {
                             if (stringWrapperUUIDEntry.getKey().value.toLowerCase().startsWith(line.toLowerCase())) {
                                 uuid = stringWrapperUUIDEntry.getValue();
                                 break;
@@ -118,7 +128,7 @@ public class DebugClaimTest extends SubCommand {
                     MainUtil.sendMessage(plr, "&6Database update finished!");
                 }
             });
-            for (final Plot plot : plots) {
+            for (Plot plot : plots) {
                 plot.create();
             }
             MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");

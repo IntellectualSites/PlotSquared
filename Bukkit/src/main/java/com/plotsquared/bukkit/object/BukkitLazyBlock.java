@@ -1,40 +1,39 @@
 package com.plotsquared.bukkit.object;
 
-import org.bukkit.block.Block;
-
 import com.intellectualcrafters.plot.object.LazyBlock;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import org.bukkit.block.Block;
 
 public class BukkitLazyBlock extends LazyBlock {
-    
+
     private int id;
     private Block block;
     private PlotBlock pb;
-    
-    public BukkitLazyBlock(final int id, final Block block) {
+
+    public BukkitLazyBlock(int id, Block block) {
         this.id = id;
         this.block = block;
     }
-    
-    public BukkitLazyBlock(final PlotBlock pb) {
-        id = pb.id;
+
+    public BukkitLazyBlock(PlotBlock pb) {
+        this.id = pb.id;
         this.pb = pb;
     }
-    
-    public BukkitLazyBlock(final Block block) {
+
+    public BukkitLazyBlock(Block block) {
         this.block = block;
     }
-    
+
     @Override
     public PlotBlock getPlotBlock() {
-        if (pb != null) {
-            return pb;
+        if (this.pb != null) {
+            return this.pb;
         }
-        if (id == 0) {
-            id = block.getTypeId();
+        if (this.id == 0) {
+            this.id = this.block.getTypeId();
         }
         byte data;
-        switch (id) {
+        switch (this.id) {
             case 0:
             case 2:
             case 4:
@@ -120,20 +119,20 @@ public class BukkitLazyBlock extends LazyBlock {
                 data = 0;
                 break;
             default:
-                data = block.getData();
+                data = this.block.getData();
                 break;
         }
-        pb = new PlotBlock((short) id, data);
-        return pb;
-        
+        this.pb = new PlotBlock((short) this.id, data);
+        return this.pb;
+
     }
-    
+
     @Override
     public int getId() {
-        if (id == 0) {
-            id = block.getTypeId();
+        if (this.id == 0) {
+            this.id = this.block.getTypeId();
         }
-        return id;
+        return this.id;
     }
-    
+
 }

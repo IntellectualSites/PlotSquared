@@ -19,23 +19,24 @@ import java.net.URL;
 import java.util.List;
 
 @CommandDeclaration(
-command = "load",
-aliases = { "restore" },
-category = CommandCategory.SCHEMATIC,
-requiredType = RequiredType.NONE,
-description = "Load your plot",
-permission = "plots.load",
-usage = "/plot restore")
+        command = "load",
+        aliases = {"restore"},
+        category = CommandCategory.SCHEMATIC,
+        requiredType = RequiredType.NONE,
+        description = "Load your plot",
+        permission = "plots.load",
+        usage = "/plot restore")
 public class Load extends SubCommand {
-    
+
     @Override
-    public boolean onCommand(final PlotPlayer plr, final String[] args) {
-        
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
+
         if (!Settings.METRICS) {
-            MainUtil.sendMessage(plr, "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
+            MainUtil.sendMessage(plr,
+                    "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
             return false;
         }
-        final String world = plr.getLocation().getWorld();
+        String world = plr.getLocation().getWorld();
         if (!PS.get().hasPlotArea(world)) {
             return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
         }
@@ -55,10 +56,10 @@ public class Load extends SubCommand {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
-        
+
         if (args.length != 0) {
             if (args.length == 1) {
-                final List<String> schematics = plr.getMeta("plot_schematics");
+                List<String> schematics = plr.getMeta("plot_schematics");
                 if (schematics == null) {
                     // No schematics found:
                     MainUtil.sendMessage(plr, C.LOAD_NULL);
@@ -67,7 +68,7 @@ public class Load extends SubCommand {
                 String schem;
                 try {
                     schem = schematics.get(Integer.parseInt(args[0]) - 1);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     // use /plot load <index>
                     MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ")");
                     return false;
@@ -75,7 +76,7 @@ public class Load extends SubCommand {
                 final URL url;
                 try {
                     url = new URL(Settings.WEB_URL + "saves/" + plr.getUUID() + "/" + schem + ".schematic");
-                } catch (final MalformedURLException e) {
+                } catch (MalformedURLException e) {
                     e.printStackTrace();
                     MainUtil.sendMessage(plr, C.LOAD_FAILED);
                     return false;
@@ -85,7 +86,7 @@ public class Load extends SubCommand {
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
-                        final Schematic schematic = SchematicHandler.manager.getSchematic(url);
+                        Schematic schematic = SchematicHandler.manager.getSchematic(url);
                         if (schematic == null) {
                             plot.removeRunning();
                             sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
@@ -110,18 +111,18 @@ public class Load extends SubCommand {
             MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot load <index>");
             return false;
         }
-        
+
         // list schematics
-        
-        final List<String> schematics = plr.getMeta("plot_schematics");
+
+        List<String> schematics = plr.getMeta("plot_schematics");
         if (schematics == null) {
             plot.addRunning();
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
-                    final List<String> schematics = SchematicHandler.manager.getSaves(plr.getUUID());
+                    List<String> schematics = SchematicHandler.manager.getSaves(plr.getUUID());
                     plot.removeRunning();
-                    if ((schematics == null) || (schematics.isEmpty())) {
+                    if ((schematics == null) || schematics.isEmpty()) {
                         MainUtil.sendMessage(plr, C.LOAD_FAILED);
                         return;
                     }
@@ -134,37 +135,38 @@ public class Load extends SubCommand {
         }
         return true;
     }
-    
-    public void displaySaves(final PlotPlayer player, final int page) {
-        final List<String> schematics = player.getMeta("plot_schematics");
+
+    public void displaySaves(PlotPlayer player, int page) {
+        List<String> schematics = player.getMeta("plot_schematics");
         for (int i = 0; i < Math.min(schematics.size(), 32); i++) {
             try {
-                final String schem = schematics.get(i);
-                final String[] split = schem.split("_");
+                String schem = schematics.get(i);
+                String[] split = schem.split("_");
                 if (split.length != 6) {
                     continue;
                 }
-                final String time = secToTime((System.currentTimeMillis() / 1000) - (Long.parseLong(split[0])));
-                final String world = split[1];
-                final PlotId id = PlotId.fromString(split[2] + ";" + split[3]);
-                final String size = split[4];
-                final String server = split[5].replaceAll(".schematic", "");
+                String time = secToTime((System.currentTimeMillis() / 1000) - Long.parseLong(split[0]));
+                String world = split[1];
+                PlotId id = PlotId.fromString(split[2] + ";" + split[3]);
+                String size = split[4];
+                String server = split[5].replaceAll(".schematic", "");
                 String color;
                 if (PS.get().IMP.getServerName().replaceAll("[^A-Za-z0-9]", "").equals(server)) {
                     color = "$4";
                 } else {
                     color = "$1";
                 }
-                MainUtil.sendMessage(player, "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ";" + id + "$3 | " + color + size + "x" + size);
-            } catch (final Exception e) {
+                MainUtil.sendMessage(player,
+                        "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ";" + id + "$3 | " + color + size + "x" + size);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         MainUtil.sendMessage(player, C.LOAD_LIST);
     }
-    
+
     public String secToTime(long time) {
-        final StringBuilder toreturn = new StringBuilder();
+        StringBuilder toreturn = new StringBuilder();
         if (time >= 33868800) {
             int years = (int) (time / 33868800);
             time -= years * 33868800;
@@ -191,7 +193,7 @@ public class Load extends SubCommand {
             toreturn.append(minutes + "m ");
         }
         if (toreturn.equals("") || (time > 0)) {
-            toreturn.append((time) + "s ");
+            toreturn.append(time + "s ");
         }
         return toreturn.toString().trim();
     }
