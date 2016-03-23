@@ -25,17 +25,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-/**
-
-
- */
 public class PlayerEnterPlotEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final Plot plot;
 
     /**
-     * PlayerEnterPlotEvent: Called when a player leaves a plot
+     * Called when a player leaves a plot.
      *
      * @param player Player that entered the plot
      * @param plot   Plot that was entered
@@ -50,7 +46,7 @@ public class PlayerEnterPlotEvent extends PlayerEvent {
     }
 
     /**
-     * Get the plot involved
+     * Get the plot involved.
      *
      * @return Plot
      */

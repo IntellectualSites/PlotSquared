@@ -20,10 +20,10 @@ class XML {
     static final Character QUOT = '"';
     static final Character SLASH = '/';
 
-    static String escape(final String string) {
-        final StringBuilder sb = new StringBuilder(string.length());
+    static String escape(String string) {
+        StringBuilder sb = new StringBuilder(string.length());
         for (int i = 0, length = string.length(); i < length; i++) {
-            final char c = string.charAt(i);
+            char c = string.charAt(i);
             switch (c) {
                 case '&':
                     sb.append("&amp;");
@@ -54,8 +54,8 @@ class XML {
      *
      * @throws JSONException
      */
-    static void noSpace(final String string) throws JSONException {
-        final int length = string.length();
+    static void noSpace(String string) throws JSONException {
+        int length = string.length();
         if (length == 0) {
             throw new JSONException("Empty string.");
         }
@@ -77,7 +77,7 @@ class XML {
      *
      * @throws JSONException
      */
-    private static boolean parse(final XMLTokener x, final JSONObject context, final String name) throws JSONException {
+    private static boolean parse(XMLTokener x, JSONObject context, String name) throws JSONException {
         // Test for and skip past these forms:
         // <!-- ... -->
         // <! ... >
@@ -220,7 +220,7 @@ class XML {
      *
      * @return A simple JSON value.
      */
-    static Object stringToValue(final String string) {
+    static Object stringToValue(String string) {
         if ("true".equalsIgnoreCase(string)) {
             return Boolean.TRUE;
         }
@@ -232,16 +232,16 @@ class XML {
         }
         //If it might be a number, try converting it, first as a Long, and then as a Double. If that doesn't work, return the string.
         try {
-            final char initial = string.charAt(0);
+            char initial = string.charAt(0);
             if ((initial == '-') || ((initial >= '0') && (initial <= '9'))) {
-                final Long value = new Long(string);
+                Long value = Long.valueOf(string);
                 if (value.toString().equals(string)) {
                     return value;
                 }
             }
         } catch (NumberFormatException ignore) {
             try {
-                final Double value = new Double(string);
+                Double value = Double.valueOf(string);
                 if (value.toString().equals(string)) {
                     return value;
                 }
@@ -250,10 +250,10 @@ class XML {
         }
         return string;
     }
-    
-    public static JSONObject toJSONObject(final String string) throws JSONException {
-        final JSONObject jo = new JSONObject();
-        final XMLTokener x = new XMLTokener(string);
+
+    public static JSONObject toJSONObject(String string) throws JSONException {
+        JSONObject jo = new JSONObject();
+        XMLTokener x = new XMLTokener(string);
         while (x.more() && x.skipPast("<")) {
             parse(x, jo, null);
         }
@@ -269,7 +269,7 @@ class XML {
      *
      * @throws JSONException
      */
-    public static String toString(final Object object) throws JSONException {
+    public static String toString(Object object) throws JSONException {
         return toString(object, null);
     }
     
@@ -283,8 +283,8 @@ class XML {
      *
      * @throws JSONException
      */
-    public static String toString(Object object, final String tagName) throws JSONException {
-        final StringBuilder sb = new StringBuilder();
+    public static String toString(Object object, String tagName) throws JSONException {
+        StringBuilder sb = new StringBuilder();
         int i;
         JSONArray ja;
         int length;
@@ -371,7 +371,7 @@ class XML {
             } else {
                 string = escape(object.toString());
                 return (tagName == null) ? "\"" + string + "\"" :
-                        (string.isEmpty()) ? "<" + tagName + "/>" : "<" + tagName + ">" + string + "</" + tagName + ">";
+                        string.isEmpty() ? "<" + tagName + "/>" : "<" + tagName + ">" + string + "</" + tagName + ">";
             }
         }
     }

@@ -45,6 +45,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -78,7 +79,8 @@ public class PlotAPI {
      * @deprecated Use new PlotAPI() instead
      */
     @Deprecated
-    public PlotAPI(final JavaPlugin plugin) {}
+    public PlotAPI(JavaPlugin plugin) {
+    }
 
     /**
      * @see PS
@@ -91,7 +93,8 @@ public class PlotAPI {
      *
      */
     @Deprecated
-    public PlotAPI() {}
+    public PlotAPI() {
+    }
 
     /**
      * Get all plots
@@ -111,7 +114,7 @@ public class PlotAPI {
      *
      * @return all plots that a player owns
      */
-    public Set<Plot> getPlayerPlots(final Player player) {
+    public Set<Plot> getPlayerPlots(Player player) {
         return PS.get().getPlots(BukkitUtil.getPlayer(player));
     }
 
@@ -121,7 +124,7 @@ public class PlotAPI {
      * @param plotArea Plot World Object
      * @see PS#addPlotArea(PlotArea)
      */
-    public void addPlotArea(final PlotArea plotArea) {
+    public void addPlotArea(PlotArea plotArea) {
         PS.get().addPlotArea(plotArea);
     }
 
@@ -226,9 +229,9 @@ public class PlotAPI {
      */
     @Deprecated
     public String[] getPermissions() {
-        final ArrayList<String> perms = new ArrayList<>();
-        for (final C c : C.values()) {
-            if ("static.permissions".equals(c.getCat())) {
+        ArrayList<String> perms = new ArrayList<>();
+        for (C c : C.values()) {
+            if ("static.permissions".equals(c.getCategory())) {
                 perms.add(c.s());
             }
         }
@@ -269,7 +272,7 @@ public class PlotAPI {
      * @see PS#getPlotManager(Plot)
      */
     @Deprecated
-    public PlotManager getPlotManager(final World world) {
+    public PlotManager getPlotManager(World world) {
         if (world == null) {
             return null;
         }
@@ -295,7 +298,7 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.object.PlotManager
      */
     @Deprecated
-    public PlotManager getPlotManager(final String world) {
+    public PlotManager getPlotManager(String world) {
         Set<PlotArea> areas = PS.get().getPlotAreas(world);
         switch (areas.size()) {
             case 0:
@@ -320,7 +323,7 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.object.PlotArea
      */
     @Deprecated
-    public PlotArea getWorldSettings(final World world) {
+    public PlotArea getWorldSettings(World world) {
         if (world == null) {
             return null;
         }
@@ -338,7 +341,7 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.object.PlotArea
      */
     @Deprecated
-    public PlotArea getWorldSettings(final String world) {
+    public PlotArea getWorldSettings(String world) {
         if (world == null) {
             return null;
         }
@@ -363,7 +366,7 @@ public class PlotAPI {
      * @see MainUtil#sendMessage(PlotPlayer, C, String...)
      * com.intellectualcrafters.plot.config.C, String...)
      */
-    public void sendMessage(final Player player, final C c) {
+    public void sendMessage(Player player, C c) {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), c);
     }
 
@@ -375,7 +378,7 @@ public class PlotAPI {
      *
      * @see MainUtil#sendMessage(PlotPlayer, String)
      */
-    public void sendMessage(final Player player, final String string) {
+    public void sendMessage(Player player, String string) {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), string);
     }
 
@@ -386,7 +389,7 @@ public class PlotAPI {
      *
      * @see MainUtil#sendConsoleMessage(C, String...)
      */
-    public void sendConsoleMessage(final String msg) {
+    public void sendConsoleMessage(String msg) {
         PS.log(msg);
     }
 
@@ -398,8 +401,8 @@ public class PlotAPI {
      * @see #sendConsoleMessage(String)
      * @see com.intellectualcrafters.plot.config.C
      */
-    public void sendConsoleMessage(final C c) {
-        sendConsoleMessage(c);
+    public void sendConsoleMessage(C c) {
+        sendConsoleMessage(c.s());
     }
 
     /**
@@ -410,7 +413,7 @@ public class PlotAPI {
      * @see com.intellectualcrafters.plot.flag.FlagManager#addFlag(com.intellectualcrafters.plot.flag.AbstractFlag)
      * @see com.intellectualcrafters.plot.flag.AbstractFlag
      */
-    public void addFlag(final AbstractFlag flag) {
+    public void addFlag(AbstractFlag flag) {
         FlagManager.addFlag(flag);
     }
 
@@ -427,7 +430,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get a plot based on the ID
+     * Get a plot based on the ID.
      *
      * @param world World in which the plot is located
      * @param x     Plot Location X Co-ord
@@ -438,7 +441,7 @@ public class PlotAPI {
      * @see PlotArea#getPlot(PlotId)
      */
     @Deprecated
-    public Plot getPlot(final World world, final int x, final int z) {
+    public Plot getPlot(World world, int x, int z) {
         if (world == null) {
             return null;
         }
@@ -450,7 +453,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get a plot based on the location
+     * Get a plot based on the location.
      *
      * @param l The location that you want to to retrieve the plot from
      *
@@ -458,7 +461,7 @@ public class PlotAPI {
      *
      * @see Plot
      */
-    public Plot getPlot(final Location l) {
+    public Plot getPlot(Location l) {
         if (l == null) {
             return null;
         }
@@ -466,7 +469,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get a plot based on the player location
+     * Get a plot based on the player location.
      *
      * @param player Get the current plot for the player location
      *
@@ -475,12 +478,12 @@ public class PlotAPI {
      * @see #getPlot(org.bukkit.Location)
      * @see Plot
      */
-    public Plot getPlot(final Player player) {
+    public Plot getPlot(Player player) {
         return this.getPlot(player.getLocation());
     }
 
     /**
-     * Check whether or not a player has a plot
+     * Check whether or not a player has a plot.
      *
      * @param player Player that you want to check for
      *
@@ -489,22 +492,23 @@ public class PlotAPI {
      * @see #getPlots(World, Player, boolean)
      */
     @Deprecated
-    public boolean hasPlot(final World world, final Player player) {
+    public boolean hasPlot(World world, Player player) {
         return getPlots(world, player, true) != null && getPlots(world, player, true).length > 0;
     }
 
     /**
-     * Get all plots for the player
+     * Get all plots for the player.
      *
-     * @param plr        to search for
-     * @param just_owner should we just search for owner? Or with rights?
+     * @param world
+     * @param player The player to search for
+     * @param justOwner should we just search for owner? Or with rights?
      */
     @Deprecated
-    public Plot[] getPlots(final World world, final Player plr, final boolean just_owner) {
-        final ArrayList<Plot> pPlots = new ArrayList<>();
-        UUID uuid = BukkitUtil.getPlayer(plr).getUUID();
-        for (final Plot plot : PS.get().getPlots(world.getName())) {
-            if (just_owner) {
+    public Plot[] getPlots(World world, Player player, boolean justOwner) {
+        ArrayList<Plot> pPlots = new ArrayList<>();
+        UUID uuid = BukkitUtil.getPlayer(player).getUUID();
+        for (Plot plot : PS.get().getPlots(world.getName())) {
+            if (justOwner) {
                 if (plot.hasOwner() && plot.isOwner(uuid)) {
                     pPlots.add(plot);
                 }
@@ -518,7 +522,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get all plots for the world
+     * Get all plots for the world.
      *
      * @param world to get plots of
      *
@@ -528,7 +532,7 @@ public class PlotAPI {
      * @see Plot
      */
     @Deprecated
-    public Plot[] getPlots(final World world) {
+    public Plot[] getPlots(World world) {
         if (world == null) {
             return new Plot[0];
         }
@@ -537,7 +541,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get all plot worlds
+     * Get all plot worlds.
      *
      * @return World[] - array of plot worlds
      *
@@ -558,7 +562,7 @@ public class PlotAPI {
      * @see PS#hasPlotArea(String)
      */
     @Deprecated
-    public boolean isPlotWorld(final World world) {
+    public boolean isPlotWorld(World world) {
         return PS.get().hasPlotArea(world.getName());
     }
 
@@ -574,8 +578,8 @@ public class PlotAPI {
      * @see Plot
      */
     @Deprecated
-    public Location[] getLocations(final Plot p) {
-        return new Location[] { BukkitUtil.getLocation(p.getBottom()), BukkitUtil.getLocation(p.getTop()), BukkitUtil.getLocation(p.getHome()) };
+    public Location[] getLocations(Plot p) {
+        return new Location[]{BukkitUtil.getLocation(p.getBottom()), BukkitUtil.getLocation(p.getTop()), BukkitUtil.getLocation(p.getHome())};
     }
 
     /**
@@ -587,7 +591,7 @@ public class PlotAPI {
      *
      * @see Plot
      */
-    public Location getHomeLocation(final Plot p) {
+    public Location getHomeLocation(Plot p) {
         return BukkitUtil.getLocation(p.getHome());
     }
 
@@ -603,7 +607,7 @@ public class PlotAPI {
      * @see Plot
      */
     @Deprecated
-    public Location getBottomLocation(final Plot p) {
+    public Location getBottomLocation(Plot p) {
         return BukkitUtil.getLocation(p.getBottom());
     }
 
@@ -619,7 +623,7 @@ public class PlotAPI {
      * @see Plot
      */
     @Deprecated
-    public Location getTopLocation(final Plot p) {
+    public Location getTopLocation(Plot p) {
         return BukkitUtil.getLocation(p.getTop());
     }
 
@@ -631,7 +635,7 @@ public class PlotAPI {
      * @return true if the player is in a plot, false if not-
      *
      */
-    public boolean isInPlot(final Player player) {
+    public boolean isInPlot(Player player) {
         return getPlot(player) != null;
     }
 
@@ -642,7 +646,7 @@ public class PlotAPI {
      *
      * @see com.intellectualcrafters.plot.commands.SubCommand
      */
-    public void registerCommand(final SubCommand c) {
+    public void registerCommand(SubCommand c) {
         if (c.getCommand() != null) {
             MainCommand.getInstance().addCommand(c);
         } else {
@@ -670,7 +674,7 @@ public class PlotAPI {
      * @return the number of plots the player has
      *
      */
-    public int getPlayerPlotCount(final World world, final Player player) {
+    public int getPlayerPlotCount(World world, Player player) {
         if (world == null) {
             return 0;
         }
@@ -689,7 +693,7 @@ public class PlotAPI {
      *
      * @see Plot
      */
-    public Set<Plot> getPlayerPlots(final World world, final Player player) {
+    public Set<Plot> getPlayerPlots(World world, Player player) {
         if (world == null) {
             return new HashSet<>();
         }
@@ -704,8 +708,8 @@ public class PlotAPI {
      * @return the number of allowed plots
      *
      */
-    public int getAllowedPlots(final Player player) {
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+    public int getAllowedPlots(Player player) {
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
         return pp.getAllowedPlots();
     }
 
@@ -718,7 +722,7 @@ public class PlotAPI {
      * @param player
      * @return
      */
-    public PlotPlayer wrapPlayer(final Player player) {
+    public PlotPlayer wrapPlayer(Player player) {
         return PlotPlayer.wrap(player);
     }
 
@@ -730,7 +734,7 @@ public class PlotAPI {
      * @param uuid
      * @return
      */
-    public PlotPlayer wrapPlayer(final UUID uuid) {
+    public PlotPlayer wrapPlayer(UUID uuid) {
         return PlotPlayer.wrap(uuid);
     }
 
@@ -742,7 +746,7 @@ public class PlotAPI {
      * @param player
      * @return
      */
-    public PlotPlayer wrapPlayer(final String player) {
+    public PlotPlayer wrapPlayer(String player) {
         return PlotPlayer.wrap(player);
     }
 
@@ -755,7 +759,7 @@ public class PlotAPI {
      * @param player
      * @return
      */
-    public PlotPlayer wrapPlayer(final OfflinePlayer player) {
+    public PlotPlayer wrapPlayer(OfflinePlayer player) {
         return PlotPlayer.wrap(player);
     }
 }

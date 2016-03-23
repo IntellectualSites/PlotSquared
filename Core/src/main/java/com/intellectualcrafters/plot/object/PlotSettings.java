@@ -31,58 +31,59 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Generic settings class
+ * Generic settings class.
  * - Does not keep a reference to a parent class
  * - Direct changes here will not occur in the db (Use the parent plot object for that)
  */
 public class PlotSettings {
+
     /**
-     * merged plots
+     * Merged plots.
      * @deprecated Raw access
      */
     @Deprecated
-    public boolean[] merged = new boolean[] { false, false, false, false };
+    public boolean[] merged = new boolean[]{false, false, false, false};
     /**
-     * plot alias
+     * Plot alias.
      * @deprecated Raw access
      */
     @Deprecated
     public String alias = "";
     /**
-     * Comments
+     * Comments.
      * @deprecated Raw access
      */
     @Deprecated
     public List<PlotComment> comments = null;
-    
+
     /**
-     * The ratings for a plot
+     * The ratings for a plot.
      * @deprecated Raw access
      */
     @Deprecated
     public HashMap<UUID, Integer> ratings;
-    
+
     /**
-     * Flags
+     * Flags.
      * @deprecated Raw access
      */
     @Deprecated
     public HashMap<String, Flag> flags;
     /**
-     * Home Position
+     * Home Position.
      * @deprecated Raw access
      */
     @Deprecated
     private BlockLoc position;
-    
+
     /**
      * Constructor
      *
      */
     public PlotSettings() {
-        flags = new HashMap<>();
+        this.flags = new HashMap<>();
     }
-    
+
     /**
      * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
      *
@@ -90,118 +91,118 @@ public class PlotSettings {
      *
      * @return boolean merged
      */
-    public boolean getMerged(final int direction) {
-        return merged[direction];
+    public boolean getMerged(int direction) {
+        return this.merged[direction];
     }
-    
+
     /**
      * Returns true if the plot is merged (i.e. if it's a mega plot)
      */
     public boolean isMerged() {
-        return merged[0] || merged[1] || merged[2] || merged[3];
-    }
-    
-    public boolean[] getMerged() {
-        return merged;
-    }
-    
-    public void setMerged(final boolean[] merged) {
-        this.merged = merged;
-    }
-    
-    public Map<UUID, Integer> getRatings() {
-        return ratings == null ? new HashMap<UUID, Integer>() : ratings;
+        return this.merged[0] || this.merged[1] || this.merged[2] || this.merged[3];
     }
 
-    public boolean setMerged(final int direction, final boolean merged) {
+    public boolean[] getMerged() {
+        return this.merged;
+    }
+
+    public void setMerged(boolean[] merged) {
+        this.merged = merged;
+    }
+
+    public Map<UUID, Integer> getRatings() {
+        return this.ratings == null ? new HashMap<UUID, Integer>() : this.ratings;
+    }
+
+    public boolean setMerged(int direction, boolean merged) {
         if (this.merged[direction] != merged) {
             this.merged[direction] = merged;
             return true;
         }
         return false;
     }
-    
+
     public BlockLoc getPosition() {
-        if (position == null) {
+        if (this.position == null) {
             return new BlockLoc(0, 0, 0);
         }
-        return position;
+        return this.position;
     }
-    
+
     public void setPosition(BlockLoc position) {
         if (position != null && position.x == 0 && position.y == 0 && position.z == 0) {
             position = null;
         }
         this.position = position;
     }
-    
+
     public String getAlias() {
-        return alias;
+        return this.alias;
     }
-    
+
     /**
-     * Set the plot alias
+     * Set the plot alias.
      *
      * @param alias alias to be used
      */
-    public void setAlias(final String alias) {
+    public void setAlias(String alias) {
         this.alias = alias;
     }
-    
+
     public String getJoinMessage(PlotArea area) {
-        final Flag greeting = FlagManager.getSettingFlag(area, this, "greeting");
+        Flag greeting = FlagManager.getSettingFlag(area, this, "greeting");
         if (greeting != null) {
             return greeting.getValueString();
         }
         return "";
     }
-    
+
     /**
      * Get the "farewell" flag value
      *
      * @return Farewell flag
      */
     public String getLeaveMessage(PlotArea area) {
-        final Flag farewell = FlagManager.getSettingFlag(area, this, "farewell");
+        Flag farewell = FlagManager.getSettingFlag(area, this, "farewell");
         if (farewell != null) {
             return farewell.getValueString();
         }
         return "";
     }
-    
-    public ArrayList<PlotComment> getComments(final String inbox) {
-        final ArrayList<PlotComment> c = new ArrayList<>();
-        if (comments == null) {
+
+    public ArrayList<PlotComment> getComments(String inbox) {
+        ArrayList<PlotComment> c = new ArrayList<>();
+        if (this.comments == null) {
             return null;
         }
-        for (final PlotComment comment : comments) {
+        for (PlotComment comment : this.comments) {
             if (comment.inbox.equals(inbox)) {
                 c.add(comment);
             }
         }
         return c;
     }
-    
-    public void setComments(final List<PlotComment> comments) {
+
+    public void setComments(List<PlotComment> comments) {
         this.comments = comments;
     }
-    
-    public void removeComment(final PlotComment comment) {
-        if (comments.contains(comment)) {
-            comments.remove(comment);
+
+    public void removeComment(PlotComment comment) {
+        if (this.comments.contains(comment)) {
+            this.comments.remove(comment);
         }
     }
-    
-    public void removeComments(final List<PlotComment> comments) {
-        for (final PlotComment comment : comments) {
+
+    public void removeComments(List<PlotComment> comments) {
+        for (PlotComment comment : comments) {
             removeComment(comment);
         }
     }
-    
-    public void addComment(final PlotComment comment) {
-        if (comments == null) {
-            comments = new ArrayList<>();
+
+    public void addComment(PlotComment comment) {
+        if (this.comments == null) {
+            this.comments = new ArrayList<>();
         }
-        comments.add(comment);
+        this.comments.add(comment);
     }
 }

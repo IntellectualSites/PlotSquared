@@ -37,8 +37,6 @@ import java.util.Set;
 
 /**
  * Captions class.
- *
-
  */
 public enum C {
 
@@ -629,52 +627,46 @@ public enum C {
      */
     CUSTOM_STRING("-", "-");
     public static final HashMap<String, String> replacements = new HashMap<>();
-    /**
-     * Translated.
-     */
-    private String s;
+
     /**
      * Default.
      */
-    private String d;
-    /**
-     * What locale category should this translation fall under.
-     */
-    private String cat;
+    private final String def;
     /**
      * Should the string be prefixed.
      */
-    private boolean prefix;
-
-    /**
-     * Constructor for custom strings.
+    private final boolean prefix;    /**
+     * What locale category should this translation fall under.
      */
-    C() {
-        /*
-         * use setCustomString();
-         */
-    }
+    private final String category;
+    /**
+     * Translated.
+     */
+    private String s;    /**
+     * Should the string be prefixed.
+     */
+    private final boolean prefix;
 
     /**
      * Constructor.
      *
-     * @param d default
+     * @param def default
      * @param prefix use prefix
      */
-    C(String d, boolean prefix, String cat) {
-        this.d = d;
-        this.s = d;
+    C(String def, boolean prefix, String category) {
+        this.def = def;
+        this.s = def;
         this.prefix = prefix;
-        this.cat = cat.toLowerCase();
+        this.category = category.toLowerCase();
     }
 
     /**
      * Constructor.
      *
-     * @param d default
+     * @param def default
      */
-    C(String d, String cat) {
-        this(d, true, cat.toLowerCase());
+    C(String def, String category) {
+        this(def, true, category.toLowerCase());
     }
 
     public static String format(String m, Object... args) {
@@ -720,35 +712,40 @@ public enum C {
             }
             YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
             Set<String> keys = yml.getKeys(true);
-            EnumSet<C> all = EnumSet.allOf(C.class);
+            EnumSet<C> allEnums = EnumSet.allOf(C.class);
             HashSet<String> allNames = new HashSet<>();
-            HashSet<String> allCats = new HashSet<>();
+            HashSet<String> categories = new HashSet<>();
             HashSet<String> toRemove = new HashSet<>();
-            for (C c : all) {
+            for (C c : allEnums) {
                 allNames.add(c.name());
-                allCats.add(c.cat.toLowerCase());
+                categories.add(c.category.toLowerCase());
             }
             HashSet<C> captions = new HashSet<>();
             boolean changed = false;
             for (String key : keys) {
                 if (!yml.isString(key)) {
-                    if (!allCats.contains(key)) {
+                    if (!categories.contains(key)) {
                         toRemove.add(key);
                     }
                     continue;
                 }
                 String[] split = key.split("\\.");
                 String node = split[split.length - 1].toUpperCase();
-                C caption = allNames.contains(node) ? valueOf(node) : null;
+                C caption;
+                if (allNames.contains(node)) {
+                    caption = valueOf(node);
+                } else {
+                    caption = null;
+                }
                 if (caption != null) {
-                    if (caption.cat.startsWith("static")) {
+                    if (caption.category.startsWith("static")) {
                         continue;
                     }
                     String value = yml.getString(key);
-                    if (!split[0].equalsIgnoreCase(caption.cat)) {
+                    if (!split[0].equalsIgnoreCase(caption.category)) {
                         changed = true;
                         yml.set(key, null);
-                        yml.set(caption.cat + "." + caption.name().toLowerCase(), value);
+                        yml.set(caption.category + "." + caption.name().toLowerCase(), value);
                     }
                     captions.add(caption);
                     caption.s = value;
@@ -773,13 +770,13 @@ public enum C {
             replacements.put("\\\\n", "\n");
             replacements.put("\\n", "\n");
             replacements.put("&-", "\n");
-            for (C caption : all) {
+            for (C caption : allEnums) {
                 if (!captions.contains(caption)) {
-                    if (caption.cat.startsWith("static")) {
+                    if (caption.getCategory().startsWith("static")) {
                         continue;
                     }
                     changed = true;
-                    yml.set(caption.cat + "." + caption.name().toLowerCase(), caption.d);
+                    yml.set(caption.category + "." + caption.name().toLowerCase(), caption.def);
                 }
                 caption.s = StringMan.replaceFromMap(caption.s, replacements);
             }
@@ -808,8 +805,8 @@ public enum C {
         return StringMan.replaceFromMap(s(), replacements);
     }
 
-    public String getCat() {
-        return this.cat;
+    public String getCategory() {
+        return this.category;
     }
 
     public void send(CommandCaller plr, String... args) {

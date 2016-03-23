@@ -38,7 +38,6 @@ public class FastQueue_1_8_3 extends SlowQueue {
     private final SendChunk chunksender;
     private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     private final RefMethod methodGetHandleChunk;
-    private final RefConstructor MapChunk;
     private final RefMethod methodInitLighting;
     private final RefConstructor classBlockPositionConstructor;
     private final RefConstructor classChunkSectionConstructor;
@@ -53,8 +52,6 @@ public class FastQueue_1_8_3 extends SlowQueue {
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
-        RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-        this.MapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
         RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
         this.classBlockPositionConstructor = classBlockPosition.getConstructor(int.class, int.class, int.class);
         RefClass classWorld = getRefClass("{nms}.World");

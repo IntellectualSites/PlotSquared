@@ -114,8 +114,9 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
     }
 
     /**
-     * Deserialize a fancy message from its JSON representation. This JSON representation is of the format of
-     * that returned by {@link #toJSONString()}, and is compatible with vanilla inputs.
+     * Deserialize a fancy message from its JSON representation. This JSON
+     * representation is of the format of hat returned by
+     * {@link #toJSONString()}, and is compatible with vanilla inputs.
      * @param json The JSON string which represents a fancy message.
      * @return A {@code FancyMessage} representing the parametrized JSON message.
      */

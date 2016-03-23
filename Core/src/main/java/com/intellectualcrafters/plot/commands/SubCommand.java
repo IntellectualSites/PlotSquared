@@ -29,19 +29,17 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import java.util.List;
 
 /**
- * SubCommand class
- *
-
+ * SubCommand class.
  */
 public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer> {
 
     /**
-     * The category
+     * The category.
      */
     public CommandCategory category;
 
     /**
-     * Send a message
+     * Send a message.
      *
      * @param plr  Player who will receive the message
      * @param c    Caption

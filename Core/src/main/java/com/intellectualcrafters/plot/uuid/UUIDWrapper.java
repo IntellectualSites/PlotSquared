@@ -1,20 +1,21 @@
 package com.intellectualcrafters.plot.uuid;
 
-import java.util.UUID;
-
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 
+import java.util.UUID;
+
 public abstract class UUIDWrapper {
-    public abstract UUID getUUID(final PlotPlayer player);
-    
-    public abstract UUID getUUID(final OfflinePlotPlayer player);
-    
-    public abstract UUID getUUID(final String name);
-    
-    public abstract OfflinePlotPlayer getOfflinePlayer(final UUID uuid);
-    
-    public abstract OfflinePlotPlayer getOfflinePlayer(final String name);
+
+    public abstract UUID getUUID(PlotPlayer player);
+
+    public abstract UUID getUUID(OfflinePlotPlayer player);
+
+    public abstract UUID getUUID(String name);
+
+    public abstract OfflinePlotPlayer getOfflinePlayer(UUID uuid);
+
+    public abstract OfflinePlotPlayer getOfflinePlayer(String name);
 
     public abstract OfflinePlotPlayer[] getOfflinePlayers();
 }

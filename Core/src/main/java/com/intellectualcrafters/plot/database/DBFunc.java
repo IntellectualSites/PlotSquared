@@ -64,7 +64,7 @@ public class DBFunc {
     }
     
     /**
-     * Check if a {@link ResultSet} contains a column
+     * Check if a {@link ResultSet} contains a column.
      * @param resultSet
      * @param name
      * @return
@@ -119,7 +119,7 @@ public class DBFunc {
     }
     
     /**
-     * Create a plot
+     * Create a plot.
      *
      * @param plot Plot to create
      */
@@ -131,7 +131,7 @@ public class DBFunc {
     }
     
     /**
-     * Create tables
+     * Create tables.
      *
      * @throws Exception
      */
@@ -140,7 +140,7 @@ public class DBFunc {
     }
     
     /**
-     * Delete a plot
+     * Delete a plot.
      *
      * @param plot Plot to delete
      */
@@ -153,7 +153,7 @@ public class DBFunc {
     }
     
     /**
-     * Delete the ratings for a plot
+     * Delete the ratings for a plot.
      * @param plot
      */
     public static void deleteRatings(Plot plot) {
@@ -164,7 +164,7 @@ public class DBFunc {
     }
     
     /**
-     * Delete the trusted list for a plot
+     * Delete the trusted list for a plot.
      * @param plot
      */
     public static void deleteTrusted(Plot plot) {
@@ -175,7 +175,7 @@ public class DBFunc {
     }
     
     /**
-     * Delete the members list for a plot
+     * Delete the members list for a plot.
      * @param plot
      */
     public static void deleteMembers(Plot plot) {
@@ -186,7 +186,7 @@ public class DBFunc {
     }
     
     /**
-     * Delete the denied list for a plot
+     * Delete the denied list for a plot.
      * @param plot
      */
     public static void deleteDenied(Plot plot) {
@@ -197,7 +197,7 @@ public class DBFunc {
     }
     
     /**
-     * Delete the comments in a plot
+     * Delete the comments in a plot.
      * @param plot
      */
     public static void deleteComments(Plot plot) {
@@ -227,7 +227,7 @@ public class DBFunc {
     }
     
     /**
-     * Create plot settings
+     * Create plot settings.
      *
      * @param id   Plot ID
      * @param plot Plot Object
@@ -240,7 +240,7 @@ public class DBFunc {
     }
     
     /**
-     * Get a plot id
+     * Get a plot id.
      *
      * @param plot Plot Object
      *

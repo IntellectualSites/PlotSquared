@@ -34,9 +34,10 @@ import java.sql.Statement;
  * Connects to and uses a SQLite database.
  */
 public class SQLite extends Database {
+
     private final String dbLocation;
     private Connection connection;
-    
+
     /**
      * Creates a new SQLite instance
      *
@@ -45,7 +46,7 @@ public class SQLite extends Database {
     public SQLite(String dbLocation) {
         this.dbLocation = dbLocation;
     }
-    
+
     @Override
     public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
@@ -66,17 +67,17 @@ public class SQLite extends Database {
         this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.dbLocation);
         return this.connection;
     }
-    
+
     @Override
     public boolean checkConnection() throws SQLException {
         return (this.connection != null) && !this.connection.isClosed();
     }
-    
+
     @Override
     public Connection getConnection() {
         return this.connection;
     }
-    
+
     @Override
     public boolean closeConnection() throws SQLException {
         if (this.connection == null) {
@@ -86,7 +87,7 @@ public class SQLite extends Database {
         this.connection = null;
         return true;
     }
-    
+
     @Override
     public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
@@ -96,7 +97,7 @@ public class SQLite extends Database {
             return statement.executeQuery(query);
         }
     }
-    
+
     @Override
     public int updateSQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
@@ -106,7 +107,7 @@ public class SQLite extends Database {
             return statement.executeUpdate(query);
         }
     }
-    
+
     @Override
     public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");

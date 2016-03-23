@@ -26,10 +26,8 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when a Flag is added to a plot
+ * Called when a Flag is added to a plot.
  *
-
-
  */
 public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
 
@@ -38,7 +36,7 @@ public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
     private boolean cancelled;
 
     /**
-     * PlotFlagAddEvent: Called when a Flag is added to a plot
+     * PlotFlagAddEvent: Called when a Flag is added to a plot.
      *
      * @param flag Flag that was added
      * @param plot Plot to which the flag was added
@@ -53,7 +51,7 @@ public class PlotFlagAddEvent extends PlotEvent implements Cancellable {
     }
 
     /**
-     * Get the flag involved
+     * Get the flag involved.
      *
      * @return Flag
      */

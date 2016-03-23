@@ -27,8 +27,6 @@ import org.bukkit.event.HandlerList;
 /**
  * Called when a plot is deleted
  *
-
-
  */
 public class PlotDeleteEvent extends PlotEvent {
 

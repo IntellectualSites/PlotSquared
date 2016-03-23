@@ -230,7 +230,8 @@ public class PS {
                                             log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
                                             log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
                                             log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                                            log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
+                                            log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the "
+                                                    + "'settings.yml'");
                                         }
                                     }
                                 }, 20);
@@ -304,7 +305,9 @@ public class PS {
                             }
                             if (!WorldUtil.IMP.isWorld(world)) {
                                 PS.debug("&c`" + world + "` was not properly loaded - PlotSquared will now try to load it properly: ");
-                                PS.debug("&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and multiverse worlds.yml");
+                                PS.debug(
+                                        "&8 - &7Are you trying to delete this world? Remember to remove it from the settings.yml, bukkit.yml and "
+                                                + "multiverse worlds.yml");
                                 PS.debug("&8 - &7Your world management plugin may be faulty (or non existant)");
                                 PS.this.IMP.setGenerator(world);
                             }
@@ -367,7 +370,7 @@ public class PS {
     }
 
     /**
-     * Check if `version` is >= `version2`
+     * Check if `version` is >= `version2`.
      * @param version
      * @param version2
      * @return true if `version` is >= `version2`
@@ -378,7 +381,7 @@ public class PS {
     }
 
     /**
-     * Get the last PlotSquared version
+     * Get the last PlotSquared version.
      * @return last version in config or null
      */
     public int[] getLastVersion() {
@@ -386,7 +389,7 @@ public class PS {
     }
 
     /**
-     * Get the current PlotSquared version
+     * Get the current PlotSquared version.
      * @return current version in config or null
      */
     public int[] getVersion() {
@@ -403,7 +406,7 @@ public class PS {
     }
 
     /**
-     * Get the database object
+     * Get the database object.
      *
      * @return Database object
      * @see Database#getConnection() To get the database connection
@@ -1112,7 +1115,7 @@ public class PS {
     }
 
     /**
-     * Get all plots by a PlotPlayer
+     * Get all plots by a PlotPlayer.
      * @param world
      * @param player
      * @return Set of plot
@@ -1123,7 +1126,7 @@ public class PS {
     }
 
     /**
-     * Get all plots by a PlotPlayer
+     * Get all plots by a PlotPlayer.
      * @param area
      * @param player
      * @return Set of plot
@@ -1134,7 +1137,7 @@ public class PS {
     }
 
     /**
-     * Get all plots by a UUID in a world
+     * Get all plots by a UUID in a world.
      * @param world
      * @param uuid
      * @return Set of plot
@@ -1152,7 +1155,7 @@ public class PS {
     }
 
     /**
-     * Get all plots by a UUID in an area
+     * Get all plots by a UUID in an area.
      * @param area
      * @param uuid
      * @return Set of plot
@@ -1170,7 +1173,7 @@ public class PS {
     }
 
     /**
-     * Use {@link #hasPlotArea(String)}<br>
+     * Use {@link #hasPlotArea(String)}.
      * Note: Worlds may have more than one plot area
      * @deprecated
      * @param world
@@ -1182,7 +1185,7 @@ public class PS {
     }
 
     /**
-     * Check if a plot world
+     * Check if a plot world.
      * @param world
      * @see #getPlotAreaByString(String) to get the PlotArea object
      * @return if a plot world is registered
@@ -1233,7 +1236,7 @@ public class PS {
     }
 
     /**
-     * Get the plots for a PlotPlayer
+     * Get the plots for a PlotPlayer.
      * @param player
      * @return Set of Plot
      */
@@ -1246,7 +1249,7 @@ public class PS {
     }
 
     /**
-     * Get the plots for a UUID
+     * Get the plots for a UUID.
      * @param uuid
      * @return Set of Plot
      */
@@ -1811,7 +1814,7 @@ public class PS {
         List<String> booleanFlags =
                 Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles",
                         "pve", "pvp",
-        "no-worldedit", "redstone");
+                        "no-worldedit", "redstone");
         List<String> intervalFlags = Arrays.asList("feed", "heal");
         List<String> stringFlags = Arrays.asList("greeting", "farewell");
         List<String> intFlags = Arrays.asList("misc-cap", "entity-cap", "mob-cap", "animal-cap", "hostile-cap", "vehicle-cap", "music");
@@ -1874,6 +1877,7 @@ public class PS {
                         return MainUtil.timeToSec(value) * 1000 + System.currentTimeMillis();
                 }
             }
+
             @Override
             public String getValueDesc() {
                 return "Flag value must a timestamp or a boolean";

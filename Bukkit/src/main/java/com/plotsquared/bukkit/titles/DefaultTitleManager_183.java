@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.titles;
 
+import com.plotsquared.bukkit.chat.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -127,10 +128,10 @@ public class DefaultTitleManager_183 {
      * @throws ClassNotFoundException
      */
     private void loadClasses() throws ClassNotFoundException {
-        this.packetTitle = getNMSClass("PacketPlayOutTitle");
-        this.chatBaseComponent = getNMSClass("IChatBaseComponent");
-        this.packetActions = getNMSClass("PacketPlayOutTitle$EnumTitleAction");
-        this.nmsChatSerializer = getNMSClass("IChatBaseComponent$ChatSerializer");
+        this.packetTitle = Reflection.getNMSClass("PacketPlayOutTitle");
+        this.chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
+        this.packetActions = Reflection.getNMSClass("PacketPlayOutTitle$EnumTitleAction");
+        this.nmsChatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
 
     }
 
@@ -366,23 +367,12 @@ public class DefaultTitleManager_183 {
         return null;
     }
 
-    private String getVersion() {
-        String name = Bukkit.getServer().getClass().getPackage().getName();
-        String version = name.substring(name.lastIndexOf('.') + 1) + ".";
-        return version;
-    }
-
-    private Class<?> getNMSClass(String className) throws ClassNotFoundException {
-        String fullName = "net.minecraft.server." + getVersion() + className;
-        return Class.forName(fullName);
-    }
-
     private Field getField(Class<?> clazz, String name) {
         try {
             Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
             return field;
-        } catch (Exception e) {
+        } catch (NoSuchFieldException | SecurityException e) {
             e.printStackTrace();
             return null;
         }

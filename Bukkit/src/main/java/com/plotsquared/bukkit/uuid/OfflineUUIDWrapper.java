@@ -19,9 +19,10 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class OfflineUUIDWrapper extends UUIDWrapper {
+
     private final Object[] arg = new Object[0];
     private Method getOnline = null;
-    
+
     public OfflineUUIDWrapper() {
         try {
             this.getOnline = Server.class.getMethod("getOnlinePlayers");
@@ -29,12 +30,12 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public UUID getUUID(PlotPlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
-    
+
     @Override
     public UUID getUUID(OfflinePlotPlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
@@ -43,7 +44,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     public UUID getUUID(OfflinePlayer player) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
-    
+
     @Override
     public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
         BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
@@ -66,7 +67,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         }
         return null;
     }
-    
+
     public Player[] getOnlinePlayers() {
         if (this.getOnline == null) {
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
@@ -87,12 +88,12 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
             return onlinePlayers.toArray(new Player[onlinePlayers.size()]);
         }
     }
-    
+
     @Override
     public UUID getUUID(String name) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
     }
-    
+
     @Override
     public OfflinePlotPlayer[] getOfflinePlayers() {
         OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
@@ -102,7 +103,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
         }
         return toReturn;
     }
-    
+
     @Override
     public OfflinePlotPlayer getOfflinePlayer(String name) {
         return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(name));

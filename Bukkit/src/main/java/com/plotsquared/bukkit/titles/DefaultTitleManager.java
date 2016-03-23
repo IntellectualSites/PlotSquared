@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.titles;
 
+import com.plotsquared.bukkit.chat.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -121,10 +122,10 @@ public class DefaultTitleManager {
      * @throws ClassNotFoundException
      */
     private void loadClasses() throws ClassNotFoundException {
-        this.packetTitle = getNMSClass("PacketPlayOutTitle");
-        this.packetActions = getNMSClass("EnumTitleAction");
-        this.chatBaseComponent = getNMSClass("IChatBaseComponent");
-        this.nmsChatSerializer = getNMSClass("ChatSerializer");
+        this.packetTitle = Reflection.getNMSClass("PacketPlayOutTitle");
+        this.packetActions = Reflection.getNMSClass("EnumTitleAction");
+        this.chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
+        this.nmsChatSerializer = Reflection.getNMSClass("ChatSerializer");
     }
 
     /**
@@ -341,16 +342,6 @@ public class DefaultTitleManager {
             }
         }
         return null;
-    }
-
-    private String getVersion() {
-        String name = Bukkit.getServer().getClass().getPackage().getName();
-        return name.substring(name.lastIndexOf('.') + 1) + ".";
-    }
-
-    private Class<?> getNMSClass(String className) throws ClassNotFoundException {
-        String fullName = "net.minecraft.server." + getVersion() + className;
-        return Class.forName(fullName);
     }
 
     private Field getField(Class<?> clazz, String name) {

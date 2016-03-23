@@ -5,11 +5,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import org.bukkit.event.HandlerList;
 
-/**
- * Created 2015-07-13 for PlotSquaredGit
- *
-
- */
 public class PlotRateEvent extends PlotEvent {
 
     private static final HandlerList handlers = new HandlerList();

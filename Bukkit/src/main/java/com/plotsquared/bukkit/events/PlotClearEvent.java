@@ -28,8 +28,6 @@ import org.bukkit.event.HandlerList;
 /**
  * Called when a plot is cleared
  *
-
-
  */
 public class PlotClearEvent extends PlotEvent implements Cancellable {
 
@@ -44,7 +42,7 @@ public class PlotClearEvent extends PlotEvent implements Cancellable {
     }
 
     /**
-     * Get the PlotId
+     * Get the PlotId.
      *
      * @return PlotId
      */
@@ -53,7 +51,7 @@ public class PlotClearEvent extends PlotEvent implements Cancellable {
     }
 
     /**
-     * Get the world name
+     * Get the world name.
      *
      * @return String
      */

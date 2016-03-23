@@ -27,10 +27,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when a flag is removed from a plot
- *
-
-
+ * Called when a flag is removed from a plot.
  */
 public class ClusterFlagRemoveEvent extends Event implements Cancellable {
 
@@ -40,7 +37,7 @@ public class ClusterFlagRemoveEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     /**
-     * PlotFlagRemoveEvent: Called when a flag is removed from a plot
+     * PlotFlagRemoveEvent: Called when a flag is removed from a plot.
      *
      * @param flag Flag that was removed
      * @param cluster PlotCluster from which the flag was removed
@@ -55,7 +52,7 @@ public class ClusterFlagRemoveEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the cluster involved
+     * Get the cluster involved.
      *
      * @return PlotCluster
      */
@@ -64,7 +61,7 @@ public class ClusterFlagRemoveEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the flag involved
+     * Get the flag involved.
      *
      * @return Flag
      */

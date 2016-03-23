@@ -26,10 +26,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-/**
-
-
- */
 public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -38,7 +34,7 @@ public class PlayerClaimPlotEvent extends PlayerEvent implements Cancellable {
     private boolean cancelled;
 
     /**
-     * PlayerClaimPlotEvent: Called when a plot is claimed
+     * PlayerClaimPlotEvent: Called when a plot is claimed.
      *
      * @param player Player that claimed the plot
      * @param plot   Plot that was claimed

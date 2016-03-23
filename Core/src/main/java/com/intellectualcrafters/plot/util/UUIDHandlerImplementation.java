@@ -25,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class UUIDHandlerImplementation {
 
     public final ConcurrentHashMap<String, PlotPlayer> players;
-    public boolean CACHED = false;
     public UUIDWrapper uuidWrapper = null;
     public HashSet<UUID> unknown = new HashSet<>();
+    private boolean cached = false;
     private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 
     public UUIDHandlerImplementation(UUIDWrapper wrapper) {
@@ -36,7 +36,7 @@ public abstract class UUIDHandlerImplementation {
     }
 
     /**
-     * If the UUID is not found, some commands can request to fetch the UUID when possible
+     * If the UUID is not found, some commands can request to fetch the UUID when possible.
      * @param name
      * @param ifFetch
      */
@@ -47,10 +47,10 @@ public abstract class UUIDHandlerImplementation {
      * Recommended to override this is you want to cache offline players
      */
     public boolean startCaching(Runnable whenDone) {
-        if (this.CACHED) {
+        if (this.cached) {
             return false;
         }
-        return this.CACHED = true;
+        return this.cached = true;
     }
 
     public UUIDWrapper getUUIDWrapper() {
@@ -73,7 +73,7 @@ public abstract class UUIDHandlerImplementation {
         for (Map.Entry<StringWrapper, UUID> entry : toAdd.entrySet()) {
             UUID uuid = entry.getValue();
             StringWrapper name = entry.getKey();
-            if ((uuid == null) || (name == null)) {
+            if (uuid == null || name == null) {
                 continue;
             }
             BiMap<UUID, StringWrapper> inverse = this.uuidMap.inverse();
@@ -105,7 +105,8 @@ public abstract class UUIDHandlerImplementation {
 
         /*
          * lazy UUID conversion:
-         *  - Useful if the person misconfigured the database, or settings before PlotMe conversion
+         *  - Useful if the person misconfigured the database, or settings before
+          *   PlotMe conversion
          */
         if (!Settings.OFFLINE_MODE && !this.unknown.isEmpty()) {
             TaskManager.runTaskAsync(new Runnable() {

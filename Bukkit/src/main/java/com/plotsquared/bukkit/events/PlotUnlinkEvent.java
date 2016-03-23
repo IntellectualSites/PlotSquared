@@ -29,9 +29,6 @@ import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
 
-/**
-
- */
 public class PlotUnlinkEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -57,9 +54,9 @@ public class PlotUnlinkEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the plots involved
+     * Get the plots involved.
      *
-     * @return PlotId
+     * @return The {@link PlotId}'s of the plots involved
      */
     public ArrayList<PlotId> getPlots() {
         return this.plots;

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class QuadMap<T> {
+
     public final int size;
     public final int x;
     public final int z;
@@ -23,9 +24,9 @@ public class QuadMap<T> {
         this.x = x;
         this.z = z;
         this.newsize = size >> 1;
-        min = 512;
+        this.min = 512;
     }
-    
+
     public QuadMap(int size, int x, int z, int min) {
         this.size = size;
         this.x = x;
@@ -33,112 +34,112 @@ public class QuadMap<T> {
         this.newsize = size >> 1;
         this.min = min;
     }
-    
+
     public int count() {
         int size = countBelow();
-        if (objects != null) {
-            size += objects.size();
+        if (this.objects != null) {
+            size += this.objects.size();
         }
         return size;
     }
-    
+
     public Set<T> getAll() {
         HashSet<T> all = new HashSet<>();
-        if (objects != null) {
-            all.addAll(objects);
+        if (this.objects != null) {
+            all.addAll(this.objects);
         }
-        if (skip != null) {
-            all.addAll(skip.getAll());
+        if (this.skip != null) {
+            all.addAll(this.skip.getAll());
             return all;
         }
-        if (one != null) {
-            all.addAll(one.getAll());
+        if (this.one != null) {
+            all.addAll(this.one.getAll());
         }
-        if (two != null) {
-            all.addAll(two.getAll());
+        if (this.two != null) {
+            all.addAll(this.two.getAll());
         }
-        if (three != null) {
-            all.addAll(three.getAll());
+        if (this.three != null) {
+            all.addAll(this.three.getAll());
         }
-        if (four != null) {
-            all.addAll(four.getAll());
+        if (this.four != null) {
+            all.addAll(this.four.getAll());
         }
         return all;
     }
 
     public int countCurrent() {
-        return objects == null ? 0 : objects.size();
+        return this.objects == null ? 0 : this.objects.size();
     }
 
     public int countBelow() {
         int size = 0;
-        if (one != null) {
-            size += one.count();
+        if (this.one != null) {
+            size += this.one.count();
         }
-        if (two != null) {
-            size += two.count();
+        if (this.two != null) {
+            size += this.two.count();
         }
-        if (three != null) {
-            size += three.count();
+        if (this.three != null) {
+            size += this.three.count();
         }
-        if (four != null) {
-            size += four.count();
+        if (this.four != null) {
+            size += this.four.count();
         }
         return size;
     }
 
     public void add(T area) {
-        if (size <= min) {
+        if (this.size <= this.min) {
             if (this.objects == null) {
-                objects = new HashSet<>();
+                this.objects = new HashSet<>();
             }
             this.objects.add(area);
             return;
         }
         RegionWrapper region = getRegion(area);
-        if (region.minX >= x) {
-            if (region.minZ >= z) {
-                if (one == null) {
-                    one = newInstance(newsize, x + newsize, z + newsize, min);
+        if (region.minX >= this.x) {
+            if (region.minZ >= this.z) {
+                if (this.one == null) {
+                    this.one = newInstance(this.newsize, this.x + this.newsize, this.z + this.newsize, this.min);
                 }
-                one.add(area);
+                this.one.add(area);
                 recalculateSkip();
                 return;
-            } else if (region.maxZ < z) {
-                if (two == null) {
-                    two = newInstance(newsize, x + newsize, z - newsize, min);
+            } else if (region.maxZ < this.z) {
+                if (this.two == null) {
+                    this.two = newInstance(this.newsize, this.x + this.newsize, this.z - this.newsize, this.min);
                 }
-                two.add(area);
+                this.two.add(area);
                 recalculateSkip();
                 return;
             }
-        } else if (region.maxX < x) {
-            if (region.minZ >= z) {
-                if (four == null) {
-                    four = newInstance(newsize, x - newsize, z + newsize, min);
+        } else if (region.maxX < this.x) {
+            if (region.minZ >= this.z) {
+                if (this.four == null) {
+                    this.four = newInstance(this.newsize, this.x - this.newsize, this.z + this.newsize, this.min);
                 }
-                four.add(area);
+                this.four.add(area);
                 recalculateSkip();
                 return;
-            } else if (region.maxZ < z) {
-                if (three == null) {
-                    three = newInstance(newsize, x - newsize, z - newsize, min);
+            } else if (region.maxZ < this.z) {
+                if (this.three == null) {
+                    this.three = newInstance(this.newsize, this.x - this.newsize, this.z - this.newsize, this.min);
                 }
-                three.add(area);
+                this.three.add(area);
                 recalculateSkip();
                 return;
             }
         }
         if (this.objects == null) {
-            objects = new HashSet<>();
+            this.objects = new HashSet<>();
         }
         this.objects.add(area);
     }
-    
+
     public RegionWrapper getRegion(T value) {
         return null;
     }
-    
+
     public QuadMap<T> newInstance(int newsize, int x, int z, int min) {
         try {
             return new QuadMap<T>(newsize, x, z, min) {
@@ -152,47 +153,47 @@ public class QuadMap<T> {
             return null;
         }
     }
-    
+
     public boolean remove(T area) {
-        if (objects != null) {
-            if (objects.remove(area)) {
-                return objects.isEmpty();
+        if (this.objects != null) {
+            if (this.objects.remove(area)) {
+                return this.objects.isEmpty();
             }
         }
-        if (skip != null) {
-            if (skip.remove(area)) {
-                skip = null;
+        if (this.skip != null) {
+            if (this.skip.remove(area)) {
+                this.skip = null;
             }
         } else {
             RegionWrapper region = getRegion(area);
             if (region.minX >= this.x) {
                 if (region.minZ >= this.z) {
-                    if (one != null) {
-                        if (one.remove(area)) {
-                            one = null;
+                    if (this.one != null) {
+                        if (this.one.remove(area)) {
+                            this.one = null;
                         }
                         return countCurrent() == 0;
                     }
                 } else {
-                    if (two != null) {
-                        if (two.remove(area)) {
-                            two = null;
+                    if (this.two != null) {
+                        if (this.two.remove(area)) {
+                            this.two = null;
                         }
                         return countCurrent() == 0;
                     }
                 }
             } else {
                 if (region.minZ >= this.z) {
-                    if (four != null) {
-                        if (four.remove(area)) {
-                            four = null;
+                    if (this.four != null) {
+                        if (this.four.remove(area)) {
+                            this.four = null;
                         }
                         return countCurrent() == 0;
                     }
                 } else {
-                    if (three != null) {
-                        if (three.remove(area)) {
-                            three = null;
+                    if (this.three != null) {
+                        if (this.three.remove(area)) {
+                            this.three = null;
                         }
                         return countCurrent() == 0;
                     }
@@ -204,7 +205,7 @@ public class QuadMap<T> {
 
     public void recalculateSkip() {
         QuadMap<T> map = null;
-        for (QuadMap<T> current : new QuadMap[] { one, two, three, four }) {
+        for (QuadMap<T> current : new QuadMap[]{this.one, this.two, this.three, this.four}) {
             if (current != null) {
                 if (map != null) {
                     this.skip = null;
@@ -215,70 +216,71 @@ public class QuadMap<T> {
         }
         this.skip = map.skip == null ? map : map.skip;
     }
-    
+
     public Set<T> get(RegionWrapper region) {
         HashSet<T> set = new HashSet<>();
-        if (objects != null) {
-            for (T obj : objects) {
+        if (this.objects != null) {
+            for (T obj : this.objects) {
                 if (getRegion(obj).intersects(region)) {
                     set.add(obj);
                 }
             }
         }
-        if (skip != null) {
-            if (skip.intersects(region)) {
-                set.addAll(skip.get(region));
+        if (this.skip != null) {
+            if (this.skip.intersects(region)) {
+                set.addAll(this.skip.get(region));
             }
         } else {
-            if (one != null && one.intersects(region)) {
-                set.addAll(one.get(region));
+            if (this.one != null && this.one.intersects(region)) {
+                set.addAll(this.one.get(region));
             }
-            if (two != null && two.intersects(region)) {
-                set.addAll(two.get(region));
+            if (this.two != null && this.two.intersects(region)) {
+                set.addAll(this.two.get(region));
             }
-            if (three != null && three.intersects(region)) {
-                set.addAll(three.get(region));
+            if (this.three != null && this.three.intersects(region)) {
+                set.addAll(this.three.get(region));
             }
-            if (four != null && four.intersects(region)) {
-                set.addAll(four.get(region));
+            if (this.four != null && this.four.intersects(region)) {
+                set.addAll(this.four.get(region));
             }
         }
         return set;
     }
-    
+
     public boolean intersects(RegionWrapper other) {
-        return (other.minX <= this.x + size) && (other.maxX >= this.x - size) && (other.minZ <= this.z + size) && (other.maxZ >= this.z - size);
+        return (other.minX <= this.x + this.size) && (other.maxX >= this.x - this.size) && (other.minZ <= this.z + this.size) && (other.maxZ
+                >= this.z - this.size);
     }
 
     public T get(int x, int z) {
-        if (objects != null) {
-            for (T obj : objects) {
+        if (this.objects != null) {
+            for (T obj : this.objects) {
                 if (getRegion(obj).isIn(x, z)) {
                     return obj;
                 }
             }
         }
-        if (skip != null) {
-            return skip.get(x, z);
+        if (this.skip != null) {
+            return this.skip.get(x, z);
         } else {
             if (x >= this.x) {
                 if (z >= this.z) {
-                    if (one != null) {
-                        return one.get(x, z);
+                    if (this.one != null) {
+                        return this.one.get(x, z);
                     }
                 } else {
-                    if (two != null) {
-                        return two.get(x, z);
+                    if (this.two != null) {
+                        return this.two.get(x, z);
                     }
                 }
             } else {
                 if (z >= this.z) {
-                    if (four != null) {
-                        return four.get(x, z);
+                    if (this.four != null) {
+                        return this.four.get(x, z);
                     }
                 } else {
-                    if (three != null) {
-                        return three.get(x, z);
+                    if (this.three != null) {
+                        return this.three.get(x, z);
                     }
                 }
             }

@@ -30,10 +30,6 @@ public final class Reflection {
      */
     private static final Map<Class<?>, Map<String, Map<ArrayWrapper<Class<?>>, Method>>> _loadedMethods = new HashMap<>();
 
-    private Reflection() {
-
-    }
-
     /**
      * Gets the version string from the package name of the CraftBukkit server implementation.
      * This is needed to bypass the JAR package name changing on each update.
@@ -103,7 +99,7 @@ public final class Reflection {
      * @param obj The object for which to retrieve an NMS handle.
      * @return The NMS handle of the specified object, or {@code null} if it could not be retrieved using {@code getHandle()}.
      */
-    public synchronized static Object getHandle(Object obj) {
+    public static synchronized Object getHandle(Object obj) {
         try {
             return getMethod(obj.getClass(), "getHandle").invoke(obj);
         } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
@@ -114,8 +110,9 @@ public final class Reflection {
 
     /**
      * Retrieves a {@link Field} instance declared by the specified class with the specified name.
-     * Java access modifiers are ignored during this retrieval. No guarantee is made as to whether the field
-     * returned will be an instance or static field.
+     * Java access modifiers are ignored during this retrieval.
+     * No guarantee is made as to whether the field returned will be an
+     * instance or static field.
      * <p>
      * A global caching mechanism within this class is used to store fields. Combined with synchronization, this guarantees that
      * no field will be reflectively looked up twice.
@@ -130,7 +127,7 @@ public final class Reflection {
      * @return A field object with the specified name declared by the specified class.
      * @see Class#getDeclaredField(String)
      */
-    public synchronized static Field getField(Class<?> clazz, String name) {
+    public static synchronized Field getField(Class<?> clazz, String name) {
         Map<String, Field> loaded;
         if (!_loadedFields.containsKey(clazz)) {
             loaded = new HashMap<>();
@@ -169,6 +166,7 @@ public final class Reflection {
      * true} before it is returned.
      * This ensures that callers do not have to check or worry about Java access modifiers when dealing with the returned instance.
      * </p>
+     *
      * <p>
      * This method does <em>not</em> search superclasses of the specified type for methods with the specified signature.
      * Callers wishing this behavior should use {@link Class#getDeclaredMethod(String, Class...)}.
@@ -177,7 +175,7 @@ public final class Reflection {
      * @param args The formal argument types of the method.
      * @return A method object with the specified name declared by the specified class.
      */
-    public synchronized static Method getMethod(Class<?> clazz, String name, Class<?>... args) {
+    public static synchronized Method getMethod(Class<?> clazz, String name, Class<?>... args) {
         if (!_loadedMethods.containsKey(clazz)) {
             _loadedMethods.put(clazz, new HashMap<String, Map<ArrayWrapper<Class<?>>, Method>>());
         }

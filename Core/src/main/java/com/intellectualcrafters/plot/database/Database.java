@@ -35,17 +35,17 @@ public abstract class Database {
     public abstract Connection forceConnection() throws SQLException, ClassNotFoundException;
     
     /**
-     * Opens a connection with the database
+     * Opens a connection with the database.
      *
      * @return Opened connection
      *
-     * @throws SQLException           if the connection can not be opened
+     * @throws SQLException if the connection can not be opened
      * @throws ClassNotFoundException if the driver cannot be found
      */
     public abstract Connection openConnection() throws SQLException, ClassNotFoundException;
     
     /**
-     * Checks if a connection is open with the database
+     * Checks if a connection is open with the database.
      *
      * @return true if the connection is open
      *
@@ -54,7 +54,7 @@ public abstract class Database {
     public abstract boolean checkConnection() throws SQLException;
     
     /**
-     * Gets the connection with the database
+     * Gets the connection with the database.
      *
      * @return Connection with the database, null if none
      */
@@ -83,8 +83,9 @@ public abstract class Database {
     public abstract ResultSet querySQL(String query) throws SQLException, ClassNotFoundException;
     
     /**
-     * Executes an Update SQL Query<br> See {@link java.sql.Statement#executeUpdate(String)}<br> If the connection is
-     * closed, it will be opened
+     * Executes an Update SQL Query.
+     * See {@link java.sql.Statement#executeUpdate(String)}.
+     * If the connection is closed, it will be opened.
      *
      * @param query Query to be run
      *

@@ -28,8 +28,6 @@ import org.bukkit.event.HandlerList;
 /**
  * Called when a flag is removed from a plot
  *
-
-
  */
 public class PlotFlagRemoveEvent extends PlotEvent implements Cancellable {
 

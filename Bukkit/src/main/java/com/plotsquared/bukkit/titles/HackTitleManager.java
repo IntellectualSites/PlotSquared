@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.titles;
 
+import com.plotsquared.bukkit.chat.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -118,7 +119,7 @@ public class HackTitleManager {
     private void loadClasses() throws ClassNotFoundException {
         this.packetTitle = getClass("org.spigotmc.ProtocolInjector$PacketTitle");
         this.packetActions = getClass("org.spigotmc.ProtocolInjector$PacketTitle$Action");
-        this.nmsChatSerializer = getNMSClass("ChatSerializer");
+        this.nmsChatSerializer = Reflection.getNMSClass("ChatSerializer");
     }
 
     /**
@@ -242,14 +243,16 @@ public class HackTitleManager {
             // Send title
             Object serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
                     "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.title) + "\",color:" + this.titleColor.name().toLowerCase() + "}");
-            packet = this.packetTitle.getConstructor(this.packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[0], serialized);
+            packet = this.packetTitle.getConstructor(this.packetActions, Reflection.getNMSClass("IChatBaseComponent"))
+                    .newInstance(actions[0], serialized);
             sendPacket.invoke(connection, packet);
             if (!this.subtitle.isEmpty()) {
                 // Send subtitle if present
                 serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
                         "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.subtitle) + "\",color:" + this.subtitleColor.name()
                                 .toLowerCase() + "}");
-                packet = this.packetTitle.getConstructor(this.packetActions, getNMSClass("IChatBaseComponent")).newInstance(actions[1], serialized);
+                packet = this.packetTitle.getConstructor(this.packetActions, Reflection.getNMSClass("IChatBaseComponent"))
+                        .newInstance(actions[1], serialized);
                 sendPacket.invoke(connection, packet);
             }
         }
@@ -379,16 +382,6 @@ public class HackTitleManager {
             }
         }
         return null;
-    }
-
-    private String getVersion() {
-        String name = Bukkit.getServer().getClass().getPackage().getName();
-        return name.substring(name.lastIndexOf('.') + 1) + ".";
-    }
-
-    private Class<?> getNMSClass(String className) throws ClassNotFoundException {
-        String fullName = "net.minecraft.server." + getVersion() + className;
-        return Class.forName(fullName);
     }
 
     private Field getField(Class<?> clazz, String name) {

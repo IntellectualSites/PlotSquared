@@ -35,15 +35,16 @@ import java.sql.Statement;
  * @author tips48
  */
 public class MySQL extends Database {
+
     private final String user;
     private final String database;
     private final String password;
     private final String port;
     private final String hostname;
     private Connection connection;
-    
+
     /**
-     * Creates a new MySQL instance
+     * Creates a new MySQL instance.
      *
      * @param hostname Name of the host
      * @param port     Port number
@@ -51,69 +52,71 @@ public class MySQL extends Database {
      * @param username Username
      * @param password Password
      */
-    public MySQL(final String hostname, final String port, final String database, final String username, final String password) {
+    public MySQL(String hostname, String port, String database, String username, String password) {
         this.hostname = hostname;
         this.port = port;
         this.database = database;
-        user = username;
+        this.user = username;
         this.password = password;
-        connection = null;
+        this.connection = null;
     }
-    
+
     @Override
     public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
-        connection = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, user, password);
-        return connection;
+        this.connection =
+                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
+        return this.connection;
     }
-    
+
     @Override
     public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
-            return connection;
+            return this.connection;
         }
         Class.forName("com.mysql.jdbc.Driver");
-        PS.debug("jdbc:mysql://" + hostname + ":" + port + "/" + database);
-        connection = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, user, password);
-        return connection;
+        PS.debug("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database);
+        this.connection =
+                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
+        return this.connection;
     }
-    
+
     @Override
     public boolean checkConnection() throws SQLException {
-        return (connection != null) && !connection.isClosed();
+        return (this.connection != null) && !this.connection.isClosed();
     }
-    
+
     @Override
     public Connection getConnection() {
-        return connection;
+        return this.connection;
     }
-    
+
     @Override
     public boolean closeConnection() throws SQLException {
-        if (connection == null) {
+        if (this.connection == null) {
             return false;
         }
-        connection.close();
-        connection = null;
+        this.connection.close();
+        this.connection = null;
         return true;
     }
-    
+
     @Override
-    public ResultSet querySQL(final String query) throws SQLException, ClassNotFoundException {
+    public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = this.connection.createStatement()) {
             return statement.executeQuery(query);
         }
     }
-    
+
     @Override
-    public int updateSQL(final String query) throws SQLException, ClassNotFoundException {
+    public int updateSQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = this.connection.createStatement()) {
             return statement.executeUpdate(query);
         }
     }

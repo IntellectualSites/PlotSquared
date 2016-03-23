@@ -45,33 +45,25 @@ public class Debug extends SubCommand {
             MainUtil.sendMessage(plr, msg.toString());
             return true;
         }
-        StringBuilder information;
-        String header, line, section;
-        {
-            information = new StringBuilder();
-            header = C.DEBUG_HEADER.s();
-            line = C.DEBUG_LINE.s();
-            section = C.DEBUG_SECTION.s();
-        }
-        {
-            final StringBuilder worlds = new StringBuilder("");
-            PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-                @Override
-                public void run(PlotArea value) {
-                    worlds.append(value.toString()).append(" ");
-                }
-            });
-            information.append(header);
-            information.append(getSection(section, "PlotArea"));
-            information.append(getLine(line, "Plot Worlds", worlds));
-            information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
-            information.append(getSection(section, "Messages"));
-            information.append(getLine(line, "Total Messages", C.values().length));
-            information.append(getLine(line, "View all captions", "/plot debug msg"));
-        }
-        {
-            MainUtil.sendMessage(plr, information.toString());
-        }
+        StringBuilder information = new StringBuilder();
+        String header = C.DEBUG_HEADER.s();
+        String line = C.DEBUG_LINE.s();
+        String section = C.DEBUG_SECTION.s();
+        final StringBuilder worlds = new StringBuilder("");
+        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override
+            public void run(PlotArea value) {
+                worlds.append(value.toString()).append(" ");
+            }
+        });
+        information.append(header);
+        information.append(getSection(section, "PlotArea"));
+        information.append(getLine(line, "Plot Worlds", worlds));
+        information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
+        information.append(getSection(section, "Messages"));
+        information.append(getLine(line, "Total Messages", C.values().length));
+        information.append(getLine(line, "View all captions", "/plot debug msg"));
+        MainUtil.sendMessage(plr, information.toString());
         return true;
     }
 

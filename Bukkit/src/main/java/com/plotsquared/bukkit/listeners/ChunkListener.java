@@ -257,8 +257,8 @@ public class ChunkListener implements Listener {
             this.lastChunk = null;
         }
     }
-    
-    public void cleanChunk(final Chunk chunk) {
+
+    private void cleanChunk(final Chunk chunk) {
         TaskManager.index.incrementAndGet();
         final Integer currentIndex = TaskManager.index.get();
         Integer task = TaskManager.runTaskRepeat(new Runnable() {

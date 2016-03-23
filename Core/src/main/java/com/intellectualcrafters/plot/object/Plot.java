@@ -69,6 +69,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *  - Use the methods from the PlotArea/PS/Location etc to get existing plots
  */
 public class Plot {
+
     /**
      * @deprecated raw access is deprecated
      */

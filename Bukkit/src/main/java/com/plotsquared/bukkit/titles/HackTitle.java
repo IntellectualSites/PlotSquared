@@ -7,10 +7,11 @@ import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 
 public class HackTitle extends AbstractTitle {
+
     @Override
-    public void sendTitle(final PlotPlayer player, final String head, final String sub, final int in, final int delay, final int out) {
+    public void sendTitle(PlotPlayer player, String head, String sub, int in, int delay, int out) {
         try {
-            final HackTitleManager title = new HackTitleManager(head, sub, in, delay, out);
+            HackTitleManager title = new HackTitleManager(head, sub, in, delay, out);
             title.send(((BukkitPlayer) player).player);
         } catch (Throwable e) {
             PS.debug("&cYour server version does not support titles!");

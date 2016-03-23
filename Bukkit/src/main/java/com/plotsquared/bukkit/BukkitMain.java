@@ -89,7 +89,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -139,13 +138,13 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void log(String message) {
-        if (THIS != null && Bukkit.getServer().getConsoleSender() != null) {
+        if (THIS != null) {
             try {
                 message = C.color(message);
                 if (!Settings.CONSOLE_COLOR) {
                     message = ChatColor.stripColor(message);
                 }
-                Bukkit.getServer().getConsoleSender().sendMessage(message);
+                this.getServer().getConsoleSender().sendMessage(message);
                 return;
             } catch (Throwable ignored) {
                 //ignored
@@ -575,13 +574,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void startMetrics() {
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-            log(C.PREFIX + "&6Metrics enabled.");
-        } catch (IOException e) {
-            log(C.PREFIX + "&cFailed to load up metrics.");
-        }
+        Metrics metrics = new Metrics(this);
+        metrics.start();
+        log(C.PREFIX + "&6Metrics enabled.");
     }
 
     @Override
