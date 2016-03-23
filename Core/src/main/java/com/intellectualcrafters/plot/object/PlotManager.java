@@ -20,75 +20,76 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import com.intellectualcrafters.plot.commands.Template;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
-import com.intellectualcrafters.plot.commands.Template;
-
 public abstract class PlotManager {
+
     /*
      * Plot locations (methods with Abs in them will not need to consider mega
-     * plots)
+     * plots).
      */
-    public abstract PlotId getPlotIdAbs(final PlotArea plotworld, final int x, final int y, final int z);
-    
-    public abstract PlotId getPlotId(final PlotArea plotworld, final int x, final int y, final int z);
-    
+    public abstract PlotId getPlotIdAbs(PlotArea plotworld, int x, int y, int z);
+
+    public abstract PlotId getPlotId(PlotArea plotworld, int x, int y, int z);
+
     // If you have a circular plot, just return the corner if it were a square
-    public abstract Location getPlotBottomLocAbs(final PlotArea plotworld, final PlotId plotid);
-    
+    public abstract Location getPlotBottomLocAbs(PlotArea plotworld, PlotId plotid);
+
     // the same applies here
-    public abstract Location getPlotTopLocAbs(final PlotArea plotworld, final PlotId plotid);
-    
+    public abstract Location getPlotTopLocAbs(PlotArea plotworld, PlotId plotid);
+
     /*
      * Plot clearing (return false if you do not support some method)
      */
-    public abstract boolean clearPlot(final PlotArea plotworld, final Plot plot, final Runnable whenDone);
-    
-    public abstract boolean claimPlot(final PlotArea plotworld, final Plot plot);
-    
-    public abstract boolean unclaimPlot(final PlotArea plotworld, final Plot plot, final Runnable whenDone);
-    
-    public abstract Location getSignLoc(final PlotArea plotworld, final Plot plot);
-    
+    public abstract boolean clearPlot(PlotArea plotworld, Plot plot, Runnable whenDone);
+
+    public abstract boolean claimPlot(PlotArea plotworld, Plot plot);
+
+    public abstract boolean unclaimPlot(PlotArea plotworld, Plot plot, Runnable whenDone);
+
+    public abstract Location getSignLoc(PlotArea plotworld, Plot plot);
+
     /*
      * Plot set functions (return false if you do not support the specific set
-     * method)
+     * method).
      */
-    public abstract String[] getPlotComponents(final PlotArea plotworld, final PlotId plotid);
-    
-    public abstract boolean setComponent(final PlotArea plotworld, final PlotId plotid, final String component, final PlotBlock[] blocks);
-    
+    public abstract String[] getPlotComponents(PlotArea plotworld, PlotId plotid);
+
+    public abstract boolean setComponent(PlotArea plotworld, PlotId plotid, String component, PlotBlock[] blocks);
+
     /*
      * PLOT MERGING (return false if your generator does not support plot
-     * merging)
+     * merging).
      */
-    public abstract boolean createRoadEast(final PlotArea plotworld, final Plot plot);
-    
-    public abstract boolean createRoadSouth(final PlotArea plotworld, final Plot plot);
-    
-    public abstract boolean createRoadSouthEast(final PlotArea plotworld, final Plot plot);
-    
-    public abstract boolean removeRoadEast(final PlotArea plotworld, final Plot plot);
-    
-    public abstract boolean removeRoadSouth(final PlotArea plotworld, final Plot plot);
-    
-    public abstract boolean removeRoadSouthEast(final PlotArea plotworld, final Plot plot);
-    
-    public abstract boolean startPlotMerge(final PlotArea plotworld, final ArrayList<PlotId> plotIds);
-    
-    public abstract boolean startPlotUnlink(final PlotArea plotworld, final ArrayList<PlotId> plotIds);
-    
-    public abstract boolean finishPlotMerge(final PlotArea plotworld, final ArrayList<PlotId> plotIds);
-    
-    public abstract boolean finishPlotUnlink(final PlotArea plotworld, final ArrayList<PlotId> plotIds);
-    
-    public void exportTemplate(final PlotArea plotworld) throws IOException {
-        final HashSet<FileBytes> files = new HashSet<>(
+    public abstract boolean createRoadEast(PlotArea plotworld, Plot plot);
+
+    public abstract boolean createRoadSouth(PlotArea plotworld, Plot plot);
+
+    public abstract boolean createRoadSouthEast(PlotArea plotworld, Plot plot);
+
+    public abstract boolean removeRoadEast(PlotArea plotworld, Plot plot);
+
+    public abstract boolean removeRoadSouth(PlotArea plotworld, Plot plot);
+
+    public abstract boolean removeRoadSouthEast(PlotArea plotworld, Plot plot);
+
+    public abstract boolean startPlotMerge(PlotArea plotworld, ArrayList<PlotId> plotIds);
+
+    public abstract boolean startPlotUnlink(PlotArea plotworld, ArrayList<PlotId> plotIds);
+
+    public abstract boolean finishPlotMerge(PlotArea plotworld, ArrayList<PlotId> plotIds);
+
+    public abstract boolean finishPlotUnlink(PlotArea plotworld, ArrayList<PlotId> plotIds);
+
+    public void exportTemplate(PlotArea plotworld) throws IOException {
+        HashSet<FileBytes> files = new HashSet<>(
                 Collections.singletonList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
         Template.zipAll(plotworld.worldname, files);
     }
-    
+
 }
