@@ -61,10 +61,6 @@ public class Settings {
     public static boolean DONE_COUNTS_TOWARDS_LIMIT = false;
     public static boolean DONE_RESTRICTS_BUILDING = false;
     /**
-     * Clusters
-     */
-    public static boolean ENABLE_CLUSTERS = false;
-    /**
      * PlotMe settings
      */
     public static boolean CONVERT_PLOTME = true;

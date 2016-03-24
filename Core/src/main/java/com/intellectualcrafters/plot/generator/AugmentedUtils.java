@@ -115,7 +115,7 @@ public class AugmentedUtils {
                     for (int z = bzz; z <= tzz; z++) {
                         int rx = x + bx;
                         int rz = z + bz;
-                        boolean can = manager.getPlotIdAbs(area, rx, 0, rz) == null;
+                        boolean can = manager.getPlotId(area, rx, 0, rz) == null;
                         if (can) {
                             for (int y = 1; y < 128; y++) {
                                 result.setBlock(x, y, z, air);

@@ -1044,13 +1044,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void createTables() throws SQLException {
-        String[] tables;
-        if (Settings.ENABLE_CLUSTERS) {
-            tables = new String[] { "plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings", "cluster", "player_meta" };
-        } else {
-            tables = new String[]{"plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings",
-                    "player_meta"};
-        }
+        String[] tables = new String[] { "plot", "plot_denied", "plot_helpers", "plot_comments", "plot_trusted", "plot_rating", "plot_settings", "cluster", "player_meta" };
         DatabaseMetaData meta = this.connection.getMetaData();
         int create = 0;
         for (String s : tables) {

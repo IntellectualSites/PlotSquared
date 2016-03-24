@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +22,8 @@ public class HelpPage {
         if (helpObjects.size() < 1) {
             MainUtil.sendMessage(player, C.NOT_VALID_NUMBER, "(0)");
         } else {
-            MainUtil.sendMessage(player, C.HELP_HEADER, false);
-            MainUtil.sendMessage(player, _header, false);
-            for (final HelpObject object : helpObjects) {
-                MainUtil.sendMessage(player, object.toString(), false);
-            }
-            MainUtil.sendMessage(player, C.HELP_FOOTER, false);
+            String message = C.HELP_HEADER.s() + "\n" + _header + "\n" + StringMan.join(helpObjects, "\n") + "\n" + C.HELP_FOOTER.s();
+            MainUtil.sendMessage(player, message, false);
         }
     }
 

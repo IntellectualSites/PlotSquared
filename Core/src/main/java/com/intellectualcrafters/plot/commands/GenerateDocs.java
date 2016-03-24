@@ -1,10 +1,8 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.Command;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,16 +10,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GenerateDocs {
 
     public static void main(String[] args) {
-        MainCommand.getInstance().addCommand(new WE_Anywhere());
-        MainCommand.getInstance().addCommand(new Cluster());
-        ArrayList<Command<PlotPlayer>> commands = MainCommand.getInstance().getCommands();
+        new WE_Anywhere();
+        List<Command> commands = MainCommand.getInstance().getCommands();
         log("### Want to document some commands?");
         log(" - This page is automatically generated");
         log(" - Fork the project and add a javadoc comment to one of the command classes");
@@ -30,22 +26,21 @@ public class GenerateDocs {
         log("# Contents");
         for (CommandCategory category : CommandCategory.values()) {
             log("###### " + category.name());
-            for (Command<PlotPlayer> command : MainCommand.getCommands(category, null)) {
-                log(" - [/plot " + command.getCommand() + "](https://github.com/IntellectualSites/PlotSquared/wiki/Commands#" + command.getCommand()
-                        + ")    ");
+            for (Command command : MainCommand.getInstance().getCommands(category, null)) {
+                log(" - [/plot " + command.getId() + "](https://github.com/IntellectualSites/PlotSquared/wiki/Commands#" + command.getId() + ")    ");
             }
             log("");
         }
         log("# Commands");
-        for (Command<PlotPlayer> command : commands) {
+        for (Command command : commands) {
             printCommand(command);
         }
     }
 
-    public static void printCommand(Command<PlotPlayer> command) {
+    public static void printCommand(Command command) {
         try {
             String clazz = command.getClass().getSimpleName();
-            String name = command.getCommand();
+            String name = command.getId();
 
             // Header
             String source =
@@ -88,7 +83,7 @@ public class GenerateDocs {
                 log("`" + command.getRequiredType().name() + "`");
             }
 
-            Set<String> aliases = command.getAliases();
+            List<String> aliases = command.getAliases();
             if (!aliases.isEmpty()) {
                 log("#### Aliases");
                 log("`" + StringMan.getString(command.getAliases()) + "`");

@@ -45,7 +45,7 @@ import java.util.UUID;
 public class Remove extends SubCommand {
 
     public Remove() {
-        this.requiredArguments = new Argument[]{Argument.PlayerName};
+        super(Argument.PlayerName);
     }
 
     @Override

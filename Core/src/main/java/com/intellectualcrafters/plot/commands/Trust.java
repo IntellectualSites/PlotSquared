@@ -44,7 +44,7 @@ import java.util.UUID;
 public class Trust extends SubCommand {
 
     public Trust() {
-        this.requiredArguments = new Argument[]{Argument.PlayerName};
+        super(Argument.PlayerName);
     }
 
     @Override

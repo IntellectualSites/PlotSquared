@@ -23,7 +23,6 @@ package com.intellectualcrafters.plot.api;
 
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.SubCommand;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.flag.AbstractFlag;
@@ -40,17 +39,16 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * PlotSquared API<br>
@@ -641,17 +639,13 @@ public class PlotAPI {
 
     /**
      * Register a subcommand
-     *
+     * @deprecated Command registration is done on object creation
      * @param c SubCommand, that we want to register
-     *
      * @see com.intellectualcrafters.plot.commands.SubCommand
      */
+    @Deprecated
     public void registerCommand(SubCommand c) {
-        if (c.getCommand() != null) {
-            MainCommand.getInstance().addCommand(c);
-        } else {
-            MainCommand.getInstance().createCommand(c);
-        }
+        PS.debug("SubCommands are now registered on creation");
     }
 
     /**

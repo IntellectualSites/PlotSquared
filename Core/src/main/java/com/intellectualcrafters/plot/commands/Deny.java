@@ -45,7 +45,7 @@ import java.util.UUID;
 public class Deny extends SubCommand {
 
     public Deny() {
-        this.requiredArguments = new Argument[]{Argument.PlayerName};
+        super(Argument.PlayerName);
     }
 
     @Override

@@ -21,80 +21,37 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
+import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.object.RunnableVal3;
-import com.intellectualcrafters.plot.util.MainUtil;
-
-import java.util.List;
+import com.plotsquared.general.commands.Argument;
+import com.plotsquared.general.commands.Command;
 
 /**
- * SubCommand class.
+ * SubCommand class
+ * @see com.plotsquared.general.commands.Command(com.plotsquared.general.commands.Command, boolean)
+ * @Deprecated In favor of normal Command class
  */
-public abstract class SubCommand extends com.plotsquared.general.commands.Command<PlotPlayer> {
-
-    /**
-     * The category.
-     */
-    public CommandCategory category;
-
-    /**
-     * Send a message.
-     *
-     * @param plr  Player who will receive the message
-     * @param c    Caption
-     * @param args Arguments (%s's)
-     *
-     * @see MainUtil#sendMessage(PlotPlayer, C, String...)
-     */
-    public boolean sendMessage(PlotPlayer plr, C c, String... args) {
-        c.send(plr, args);
-        return true;
+public abstract class SubCommand extends Command {
+    public SubCommand() {
+        super(MainCommand.getInstance(), true);
     }
 
-    public <T> void paginate(PlotPlayer player, List<T> c, int size, int page, RunnableVal3<Integer, T, PlotMessage> add, String baseCommand,
-            String header) {
-        // Calculate pages & index
-        if (page < 0) {
-            page = 0;
-        }
-        int totalPages = (int) Math.ceil(c.size() / size);
-        if (page > totalPages) {
-            page = totalPages;
-        }
-        int max = page * size + size;
-        if (max > c.size()) {
-            max = c.size();
-        }
-        // Send the header
-        header = header.replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "").replaceAll("%amount%", c.size() + "")
-                .replaceAll("%word%", "all");
-        MainUtil.sendMessage(player, header);
-        // Send the page content
-        List<T> subList = c.subList(page * size, max);
-        int i = page * size;
-        for (T obj : subList) {
-            i++;
-            PlotMessage msg = new PlotMessage();
-            add.run(i, obj, msg);
-            msg.send(player);
-        }
-        // Send the footer
-        if (page < totalPages && page > 0) { // Back | Next
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ").color("$3").text("->").color("$1")
-                    .command(baseCommand + " " + (page + 2))
-                    .text(C.CLICKABLE.s()).color("$2").send(player);
-            return;
-        }
-        if (page == 0 && totalPages != 0) { // Next
-            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
-                    .text(C.CLICKABLE.s()).color("$2").send(player);
-            return;
-        }
-        if (page == totalPages && totalPages != 0) { // Back
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ").color("$3").text("->").color("$3")
-                    .text(C.CLICKABLE.s()).color("$2").send(player);
+    public SubCommand(Argument... arguments) {
+        this();
+        setRequiredArguments(arguments);
+    }
 
-        }
+    @Override
+    public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+        onCommand(player, args);
+    }
+
+
+    public abstract boolean onCommand(PlotPlayer plr, String[] args);
+
+    public boolean sendMessage(PlotPlayer player, C message, Object... args) {
+        message.send(player, args);
+        return true;
     }
 }

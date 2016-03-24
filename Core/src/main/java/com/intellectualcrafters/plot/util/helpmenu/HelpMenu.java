@@ -15,7 +15,7 @@ public class HelpMenu {
     private HelpPage _page = new HelpPage(CommandCategory.INFO, 0, 0);
     private int _maxPage;
     private CommandCategory _commandCategory;
-    private List<Command<PlotPlayer>> _commands;
+    private List<Command> _commands;
     
     public HelpMenu(final PlotPlayer player) {
         _player = player;
@@ -27,7 +27,7 @@ public class HelpMenu {
     }
     
     public HelpMenu getCommands() {
-        _commands = MainCommand.getCommands(_commandCategory, _player);
+        _commands = MainCommand.getInstance().getCommands(_commandCategory, _player);
         return this;
     }
     

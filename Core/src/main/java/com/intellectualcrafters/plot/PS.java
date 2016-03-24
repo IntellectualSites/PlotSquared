@@ -3,7 +3,6 @@ package com.intellectualcrafters.plot;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.MemorySection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
-import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.WE_Anywhere;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
@@ -54,7 +53,6 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -106,10 +104,12 @@ public class PS {
     // public:
     public File styleFile;
     public File configFile;
+    public File commandsFile;
     public File translationFile;
     public YamlConfiguration style;
     public YamlConfiguration config;
     public YamlConfiguration storage;
+    public YamlConfiguration commands;
     public IPlotMain IMP = null;
     public TaskManager TASK;
     public WorldEdit worldedit;
@@ -176,7 +176,7 @@ public class PS {
             if (this.IMP.initWorldEdit()) {
                 this.worldedit = WorldEdit.getInstance();
                 WorldEdit.getInstance().getEventBus().register(new WESubscriber());
-                MainCommand.getInstance().createCommand(new WE_Anywhere());
+                new WE_Anywhere();
             }
 
             // Events
@@ -649,26 +649,24 @@ public class PS {
                 plot.setArea(plotarea);
             }
         }
-        if (Settings.ENABLE_CLUSTERS) {
-            Set<PlotCluster> clusters = this.clusters_tmp.remove(plotarea.toString());
-            if (clusters == null) {
-                if (plotarea.TYPE == 2) {
-                    clusters = this.clusters_tmp.get(plotarea.worldname);
-                    if (clusters != null) {
-                        Iterator<PlotCluster> iter = clusters.iterator();
-                        while (iter.hasNext()) {
-                            PlotCluster next = iter.next();
-                            if (next.intersects(plotarea.getMin(), plotarea.getMax())) {
-                                next.setArea(plotarea);
-                                iter.remove();
-                            }
+        Set<PlotCluster> clusters = this.clusters_tmp.remove(plotarea.toString());
+        if (clusters == null) {
+            if (plotarea.TYPE == 2) {
+                clusters = this.clusters_tmp.get(plotarea.worldname);
+                if (clusters != null) {
+                    Iterator<PlotCluster> iter = clusters.iterator();
+                    while (iter.hasNext()) {
+                        PlotCluster next = iter.next();
+                        if (next.intersects(plotarea.getMin(), plotarea.getMax())) {
+                            next.setArea(plotarea);
+                            iter.remove();
                         }
                     }
                 }
-            } else {
-                for (PlotCluster cluster : clusters) {
-                    cluster.setArea(plotarea);
-                }
+            }
+        } else {
+            for (PlotCluster cluster : clusters) {
+                cluster.setArea(plotarea);
             }
         }
         Set<PlotArea> localAreas = getPlotAreas(plotarea.worldname);
@@ -736,10 +734,8 @@ public class PS {
 
     public Set<PlotCluster> getClusters(String world) {
         HashSet<PlotCluster> set = new HashSet<>();
-        if (Settings.ENABLE_CLUSTERS) {
-            for (PlotArea area : getPlotAreas(world)) {
-                set.addAll(area.getClusters());
-            }
+        for (PlotArea area : getPlotAreas(world)) {
+            set.addAll(area.getClusters());
         }
         return set;
 
@@ -991,7 +987,7 @@ public class PS {
         Collections.sort(list, new Comparator<Plot>() {
             @Override
             public int compare(Plot a, Plot b) {
-                return (int) Math.signum(ExpireManager.IMP.getTimestamp(a.owner) - ExpireManager.IMP.getTimestamp(b.owner));
+                return Long.compare(ExpireManager.IMP.getTimestamp(a.owner), ExpireManager.IMP.getTimestamp(b.owner));
             }
         });
         return list;
@@ -1785,9 +1781,7 @@ public class PS {
             }
             DBFunc.dbManager = new SQLManager(this.database, Settings.DB.PREFIX, false);
             this.plots_tmp = DBFunc.getPlots();
-            if (Settings.ENABLE_CLUSTERS) {
-                this.clusters_tmp = DBFunc.getClusters();
-            }
+            this.clusters_tmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
             log(C.PREFIX + "&cFailed to open DATABASE connection. The plugin will disable itself.");
             if (Settings.DB.USE_MONGO) {
@@ -1967,9 +1961,6 @@ public class PS {
         options.put("protection.redstone.disable-offline", Settings.REDSTONE_DISABLER);
         options.put("protection.redstone.disable-unoccupied", Settings.REDSTONE_DISABLER_UNOCCUPIED);
 
-        // Clusters
-        options.put("clusters.enabled", Settings.ENABLE_CLUSTERS);
-
         // PlotMe
         options.put("plotme-alias", Settings.USE_PLOTME_ALIAS);
         options.put("plotme-convert.enabled", Settings.CONVERT_PLOTME);
@@ -2099,9 +2090,6 @@ public class PS {
         // Protection
         Settings.REDSTONE_DISABLER = this.config.getBoolean("protection.redstone.disable-offline");
         Settings.REDSTONE_DISABLER_UNOCCUPIED = this.config.getBoolean("protection.redstone.disable-unoccupied");
-
-        // Clusters
-        Settings.ENABLE_CLUSTERS = this.config.getBoolean("clusters.enabled");
 
         // PlotMe
         Settings.USE_PLOTME_ALIAS = this.config.getBoolean("plotme-alias");
@@ -2265,10 +2253,23 @@ public class PS {
             log("Failed to save storage.yml");
         }
         try {
-            this.style.save(this.styleFile);
-            this.config.save(this.configFile);
-            this.storage.save(this.storageFile);
-        } catch (IOException e) {
+            commandsFile = new File(IMP.getDirectory() + File.separator + "config" + File.separator + "commands.yml");
+            if (!commandsFile.exists()) {
+                if (!commandsFile.createNewFile()) {
+                    log("Could not the storage settings file, please create \"commands.yml\" manually.");
+                }
+            }
+            commands = YamlConfiguration.loadConfiguration(commandsFile);
+            setupStorage();
+        } catch (IOException err_trans) {
+            log("Failed to save commands.yml");
+        }
+        try {
+            style.save(styleFile);
+            config.save(configFile);
+            storage.save(storageFile);
+            commands.save(commandsFile);
+        } catch (final IOException e) {
             log("Configuration file saving failed");
             e.printStackTrace();
         }

@@ -43,13 +43,13 @@ import java.util.UUID;
         permission = "plots.visit",
         description = "Visit someones plot",
         usage = "/plot visit [player|alias|world|id] [#]",
-        aliases = {"v", "tp", "teleport", "goto"},
+        aliases = {"v", "tp", "teleport", "goto", "home"},
         requiredType = RequiredType.NONE,
         category = CommandCategory.TELEPORT)
 public class Visit extends SubCommand {
 
     public Visit() {
-        this.requiredArguments = new Argument[]{Argument.String};
+        super(Argument.String);
     }
 
     public List<Plot> getPlots(UUID uuid) {

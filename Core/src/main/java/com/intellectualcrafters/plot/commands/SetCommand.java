@@ -18,15 +18,15 @@ public abstract class SetCommand extends SubCommand {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(plr, "plots.admin.command." + getCommand())) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command." + getCommand());
+            if (!Permissions.hasPermission(plr, "plots.admin.command." + getId())) {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command." + getId());
                 MainUtil.sendMessage(plr, C.PLOT_NOT_CLAIMED);
                 return false;
             }
         }
         if (!plot.isOwner(plr.getUUID())) {
-            if (!Permissions.hasPermission(plr, "plots.admin.command." + getCommand())) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command." + getCommand());
+            if (!Permissions.hasPermission(plr, "plots.admin.command." + getId())) {
+                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command." + getId());
                 MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
                 return false;
             }

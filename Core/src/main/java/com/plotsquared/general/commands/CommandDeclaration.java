@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.commands.RequiredType;
 
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandDeclaration {
     
@@ -24,5 +24,7 @@ public @interface CommandDeclaration {
     
     RequiredType requiredType() default RequiredType.NONE;
     
-    CommandCategory category();
+    CommandCategory category() default CommandCategory.INFO;
+
+    boolean confirmation() default false;
 }

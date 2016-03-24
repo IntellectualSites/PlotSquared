@@ -3,36 +3,31 @@ package com.plotsquared.bukkit.util;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringComparison;
 import com.plotsquared.bukkit.commands.DebugUUID;
-import com.plotsquared.general.commands.Command;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class BukkitCommand implements CommandExecutor, TabCompleter {
 
     public BukkitCommand() {
-        MainCommand.getInstance().addCommand(new DebugUUID());
+        new DebugUUID();
     }
 
     @Override
     public boolean onCommand(final CommandSender commandSender, org.bukkit.command.Command command, final String commandLabel,
             String[] args) {
         if (commandSender instanceof Player) {
-            return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), commandLabel, args);
+            return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), args);
         }
         if (commandSender == null || commandSender.getClass() == Bukkit.getConsoleSender().getClass()) {
-            return MainCommand.onCommand(ConsolePlayer.getConsole(), commandLabel, args);
+            return MainCommand.onCommand(ConsolePlayer.getConsole(), args);
         }
         @SuppressWarnings("deprecation")
         ConsolePlayer sender = new ConsolePlayer() {
@@ -55,49 +50,28 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
             }
         };
         sender.teleport(ConsolePlayer.getConsole().getLocationFull());
-        boolean result = MainCommand.onCommand(sender, commandLabel, args);
+        boolean result = MainCommand.onCommand(sender, args);
         ConsolePlayer.getConsole().teleport(sender.getLocationFull());
         return result;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String s,
-            String[] strings) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String s, String[] args) {
         if (!(commandSender instanceof Player)) {
             return null;
         }
         PlotPlayer player = BukkitUtil.getPlayer((Player) commandSender);
-        if (strings.length < 1) {
-            if (strings.length == 0 || "plots".startsWith(s)) {
-                return Collections.singletonList("plots");
-            }
+        if (args.length == 0) {
+            return Collections.singletonList("plots");
         }
-        if (strings.length > 1) {
+        Collection objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
+        if (objects == null) {
             return null;
         }
-        Set<String> tabOptions = new HashSet<>();
-        String arg = strings[0].toLowerCase();
-        ArrayList<String> labels = new ArrayList<>();
-        for (Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands()) {
-            String label = cmd.getCommand();
-            HashSet<String> aliases = new HashSet<>(cmd.getAliases());
-            aliases.add(label);
-            for (String alias : aliases) {
-                labels.add(alias);
-                if (alias.startsWith(arg)) {
-                    if (Permissions.hasPermission(player, cmd.getPermission())) {
-                        tabOptions.add(label);
-                    } else {
-                        break;
-                    }
-                }
-            }
+        List<String> result = new ArrayList<>();
+        for (Object o : objects) {
+            result.add(o.toString());
         }
-        String best = new StringComparison<>(arg, labels).getBestMatch();
-        tabOptions.add(best);
-        if (!tabOptions.isEmpty()) {
-            return new ArrayList<>(tabOptions);
-        }
-        return null;
+        return result;
     }
 }

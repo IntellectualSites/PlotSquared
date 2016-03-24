@@ -37,6 +37,8 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
+import com.intellectualcrafters.plot.object.RunnableVal2;
+import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.AbstractTitle;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -74,7 +76,7 @@ import javax.script.SimpleScriptContext;
 @CommandDeclaration(command = "debugexec",
         permission = "plots.admin",
         description = "Mutli-purpose debug command",
-        aliases = "exec",
+        aliases = {"exec", "$"},
         category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
 
@@ -310,22 +312,19 @@ public class DebugExec extends SubCommand {
                                         .readLines(MainUtil.getFile(new File(PS.get().IMP.getDirectory() + File.separator + "scripts"), args[1]),
                                                 StandardCharsets.UTF_8),
                                 System.getProperty("line.separator"));
-                        Command<PlotPlayer> subcommand = new Command<PlotPlayer>(args[1].split("\\.")[0]) {
+                        new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null, RequiredType.NONE, CommandCategory.DEBUG) {
                             @Override
-                            public boolean onCommand(PlotPlayer plr, String[] args) {
+                            public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
                                 try {
-                                    DebugExec.this.scope.put("PlotPlayer", plr);
+                                    DebugExec.this.scope.put("PlotPlayer", player);
                                     DebugExec.this.scope.put("args", args);
                                     DebugExec.this.engine.eval(cmd, DebugExec.this.scope);
-                                    return true;
                                 } catch (ScriptException e) {
                                     e.printStackTrace();
                                     MainUtil.sendMessage(player, C.COMMAND_WENT_WRONG);
-                                    return false;
                                 }
                             }
                         };
-                        MainCommand.getInstance().addCommand(subcommand);
                         return true;
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -358,7 +357,7 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     long start = System.currentTimeMillis();
-                    Command<PlotPlayer> cmd = MainCommand.getInstance().getCommand(args[3]);
+                    Command cmd = MainCommand.getInstance().getCommand(args[3]);
                     String[] params = Arrays.copyOfRange(args, 4, args.length);
                     if ("true".equals(args[1])) {
                         Location loc = player.getMeta("location");
@@ -366,7 +365,7 @@ public class DebugExec extends SubCommand {
                         for (Plot current : PS.get().getBasePlots()) {
                             player.setMeta("location", current.getBottomAbs());
                             player.setMeta("lastplot", current);
-                            cmd.onCommand(player, params);
+                            cmd.execute(player, params, null, null);
                         }
                         if (loc == null) {
                             player.deleteMeta("location");

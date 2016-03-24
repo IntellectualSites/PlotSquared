@@ -47,7 +47,7 @@ import java.util.Map.Entry;
 public class DebugFixFlags extends SubCommand {
 
     public DebugFixFlags() {
-        this.requiredArguments = new Argument[]{Argument.String};
+        super(Argument.String);
     }
 
     @Override

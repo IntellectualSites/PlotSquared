@@ -45,7 +45,7 @@ import java.util.UUID;
 public class Add extends SubCommand {
 
     public Add() {
-        this.requiredArguments = new Argument[]{Argument.PlayerName};
+        super(Argument.PlayerName);
     }
 
     @Override

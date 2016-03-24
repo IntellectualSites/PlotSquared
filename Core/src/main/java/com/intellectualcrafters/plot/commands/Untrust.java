@@ -46,7 +46,7 @@ import java.util.UUID;
 public class Untrust extends SubCommand {
 
     public Untrust() {
-        this.requiredArguments = new Argument[]{Argument.PlayerName};
+        super(Argument.PlayerName);
     }
 
     @Override

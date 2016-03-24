@@ -56,7 +56,7 @@ import java.util.UUID;
         permission = "plots.list",
         category = CommandCategory.INFO,
         usage = "/plot list <forsale|mine|shared|world|top|all|unowned|unknown|player|world|done|fuzzy <search...>> [#]")
-public class List extends SubCommand {
+public class ListCmd extends SubCommand {
 
     private String[] getArgumentList(PlotPlayer player) {
         java.util.List<String> args = new ArrayList<>();

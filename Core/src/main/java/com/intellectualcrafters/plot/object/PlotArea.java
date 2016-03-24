@@ -554,9 +554,6 @@ public abstract class PlotArea {
     }
 
     public PlotCluster getCluster(Location location) {
-        if (!Settings.ENABLE_CLUSTERS) {
-            return null;
-        }
         Plot plot = getPlot(location);
         if (plot == null) {
             return null;
@@ -565,7 +562,7 @@ public abstract class PlotArea {
     }
     
     public PlotCluster getFirstIntersectingCluster(PlotId pos1, PlotId pos2) {
-        if (!Settings.ENABLE_CLUSTERS || this.clusters == null) {
+        if (this.clusters == null) {
             return null;
         }
         for (PlotCluster cluster : this.clusters.getAll()) {
@@ -577,9 +574,6 @@ public abstract class PlotArea {
     }
 
     public PlotCluster getCluster(PlotId id) {
-        if (!Settings.ENABLE_CLUSTERS) {
-            return null;
-        }
         return this.clusters != null ? this.clusters.get(id.x, id.y) : null;
     }
     
@@ -862,16 +856,13 @@ public abstract class PlotArea {
     }
     
     public void removeCluster(PlotCluster plotCluster) {
-        if (!Settings.ENABLE_CLUSTERS || this.clusters == null) {
+        if (this.clusters == null) {
             throw new IllegalAccessError("Clusters not enabled!");
         }
         this.clusters.remove(plotCluster);
     }
     
     public void addCluster(PlotCluster plotCluster) {
-        if (!Settings.ENABLE_CLUSTERS) {
-            throw new IllegalAccessError("Clusters not enabled!");
-        }
         if (this.clusters == null) {
             this.clusters = new QuadMap<PlotCluster>(Integer.MAX_VALUE, 0, 0, 64) {
                 @Override

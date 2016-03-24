@@ -8,13 +8,13 @@ package com.intellectualcrafters.plot.commands;
  */
 public enum CommandCategory {
     /**
-     * Claiming Commands
+     * Claiming CommandConfig
      *
      * Such as: /plot claim
      */
     CLAIMING("Claiming"),
     /**
-     * Teleportation Commands
+     * Teleportation CommandConfig
      *
      * Such as: /plot visit
      */
@@ -36,13 +36,13 @@ public enum CommandCategory {
      */
     APPEARANCE("Cosmetic"),
     /**
-     * Information Commands
+     * Information CommandConfig
      *
      * Such as: /plot info
      */
     INFO("Info"),
     /**
-     * Debug Commands
+     * Debug CommandConfig
      *
      * Such as: /plot debug
      */

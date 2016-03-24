@@ -30,7 +30,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Show plugin information",
         aliases = "version",
         category = CommandCategory.INFO)
-public class Plugin extends SubCommand {
+public class PluginCmd extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {

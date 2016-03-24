@@ -20,6 +20,25 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
@@ -40,25 +59,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
-
-import java.awt.Rectangle;
-import java.awt.geom.Area;
-import java.awt.geom.PathIterator;
-import java.io.File;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The plot class<br>
@@ -1960,12 +1960,10 @@ public class Plot {
      * @return
      */
     public boolean canClaim(PlotPlayer player) {
-        if (Settings.ENABLE_CLUSTERS) {
-            PlotCluster cluster = this.getCluster();
-            if (cluster != null) {
-                if (!cluster.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.claim")) {
-                    return false;
-                }
+        PlotCluster cluster = this.getCluster();
+        if (cluster != null) {
+            if (!cluster.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.claim")) {
+                return false;
             }
         }
         return this.guessOwner() == null && !isMerged();
@@ -2650,14 +2648,14 @@ public class Plot {
                 greaterPlot.setMerged(0, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
-                    if (lesserPlot.getMerged(5)) {
-                        lesserPlot.removeRoadSouthEast();
-                    }
                     lesserPlot.removeRoadSouth();
                     Plot other = this.getRelative(3);
                     if (other.getMerged(2) && other.getMerged(1)) {
-                        other.removeRoadEast();
                         greaterPlot.mergePlot(other, removeRoads);
+                        other.removeRoadEast();
+                    }
+                    if (lesserPlot.getMerged(5)) {
+                        lesserPlot.removeRoadSouthEast();
                     }
                 }
             }
@@ -2674,15 +2672,15 @@ public class Plot {
                 greaterPlot.setMerged(3, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
-                    lesserPlot.removeRoadEast();
+                    final Plot other = lesserPlot.getRelative(0);
+                    if (other.getMerged(2) && other.getMerged(1)) {
+                        greaterPlot.mergePlot(other, removeRoads);
+                        other.removeRoadSouthEast();
+                    }
                     if (lesserPlot.getMerged(5)) {
                         lesserPlot.removeRoadSouthEast();
                     }
-                    Plot other = lesserPlot.getRelative(0);
-                    if (other.getMerged(2) && other.getMerged(1)) {
-                        other.removeRoadSouthEast();
-                        greaterPlot.mergePlot(other, removeRoads);
-                    }
+                    lesserPlot.removeRoadEast();
                 }
             }
         }

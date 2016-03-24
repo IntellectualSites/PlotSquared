@@ -369,14 +369,14 @@ public enum C {
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Merge"),
     UNLINK_SUCCESS("$2Successfully unlinked plots.", "Merge"),
     /*
-     * Commands
+     * CommandConfig
      */
-    NOT_VALID_SUBCOMMAND("$2That is not a valid subcommand", "Commands"),
-    DID_YOU_MEAN("$2Did you mean: $1%s", "Commands"),
-    NAME_LITTLE("$2%s0 name is too short, $1%s1$2<$1%s3", "Commands"),
-    NO_COMMANDS("$2I'm sorry, but you're not permitted to use any subcommands.", "Commands"),
-    SUBCOMMAND_SET_OPTIONS_HEADER("$2Possible Values: ", "Commands"),
-    COMMAND_SYNTAX("$1Usage: $2%s", "Commands"),
+    NOT_VALID_SUBCOMMAND("$2That is not a valid subcommand", "CommandConfig"),
+    DID_YOU_MEAN("$2Did you mean: $1%s", "CommandConfig"),
+    NAME_LITTLE("$2%s0 name is too short, $1%s1$2<$1%s3", "CommandConfig"),
+    NO_COMMANDS("$2I'm sorry, but you're not permitted to use any subcommands.", "CommandConfig"),
+    SUBCOMMAND_SET_OPTIONS_HEADER("$2Possible Values: ", "CommandConfig"),
+    COMMAND_SYNTAX("$1Usage: $2%s", "CommandConfig"),
     /*
      * Player not found
      */
@@ -573,7 +573,7 @@ public enum C {
     FLAG_NOT_ADDED("$2The flag could not be added", "Flag"),
     FLAG_REMOVED("$4Successfully removed flag", "Flag"),
     FLAG_ADDED("$4Successfully added flag", "Flag"),
-    FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "Commands"),
+    FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig"),
     /*
      * Trusted
      */
@@ -633,16 +633,14 @@ public enum C {
      */
     private final String def;
     /**
-     * Should the string be prefixed.
-     */
-    private final boolean prefix;    /**
      * What locale category should this translation fall under.
      */
     private final String category;
     /**
      * Translated.
      */
-    private String s;    /**
+    private String s;
+    /**
      * Should the string be prefixed.
      */
     private final boolean prefix;

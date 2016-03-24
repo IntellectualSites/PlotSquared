@@ -134,9 +134,9 @@ public class Rate extends SubCommand {
                             }
                             setTitle(Settings.RATING_CATEGORIES.get(index.getValue()));
                             if (Permissions.hasPermission(this.player, "plots.comment")) {
-                                Command<PlotPlayer> command = MainCommand.getInstance().getCommand("comment");
+                                Command command = MainCommand.getInstance().getCommand("comment");
                                 if (command != null) {
-                                    MainUtil.sendMessage(this.player, C.COMMENT_THIS, command.getUsage().replaceAll("{label}", "plot"));
+                                    MainUtil.sendMessage(this.player, C.COMMENT_THIS, command.getUsage());
                                 }
                             }
                             return false;

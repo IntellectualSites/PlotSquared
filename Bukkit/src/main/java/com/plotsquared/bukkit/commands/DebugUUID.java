@@ -65,7 +65,7 @@ import java.util.UUID;
 public class DebugUUID extends SubCommand {
 
     public DebugUUID() {
-        this.requiredArguments = new Argument[]{Argument.String};
+        super(Argument.String);
     }
 
     @Override

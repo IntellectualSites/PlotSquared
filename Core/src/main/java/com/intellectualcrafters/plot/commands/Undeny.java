@@ -43,7 +43,7 @@ import java.util.UUID;
 public class Undeny extends SubCommand {
 
     public Undeny() {
-        this.requiredArguments = new Argument[]{Argument.PlayerName};
+        super(Argument.PlayerName);
     }
 
     @Override

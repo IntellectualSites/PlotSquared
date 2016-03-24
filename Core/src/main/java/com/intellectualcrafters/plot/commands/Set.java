@@ -61,7 +61,7 @@ public class Set extends SubCommand {
         this.component = new SetCommand() {
 
             @Override
-            public String getCommand() {
+            public String getId() {
                 return "set.component";
             }
 
@@ -163,9 +163,10 @@ public class Set extends SubCommand {
         if (args.length == 0) {
             return noArgs(plr);
         }
-        Command<PlotPlayer> cmd = MainCommand.getInstance().getCommand("set" + args[0]);
+        Command cmd = MainCommand.getInstance().getCommand("set" + args[0]);
         if (cmd != null) {
-            return cmd.onCommand(plr, Arrays.copyOfRange(args, 1, args.length));
+            cmd.execute(plr, Arrays.copyOfRange(args, 1, args.length), null, null);
+            return true;
         }
         // Additional checks
         Plot plot = plr.getCurrentPlot();
@@ -193,7 +194,7 @@ public class Set extends SubCommand {
                         a.append(" ").append(args[x]);
                     }
                 }
-                MainCommand.onCommand(plr, "plot", ("flag set " + args[0] + a.toString()).split(" "));
+                MainCommand.onCommand(plr, ("flag set " + args[0] + a.toString()).split(" "));
                 return true;
             }
         }
