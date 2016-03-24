@@ -1951,11 +1951,6 @@ public class PS {
         this.config.set("platform", this.platform);
 
         Map<String, Object> options = new HashMap<>();
-        // Command confirmation
-        options.put("confirmation.setowner", Settings.CONFIRM_SETOWNER);
-        options.put("confirmation.clear", Settings.CONFIRM_CLEAR);
-        options.put("confirmation.delete", Settings.CONFIRM_DELETE);
-        options.put("confirmation.unlink", Settings.CONFIRM_UNLINK);
 
         // Protection
         options.put("protection.redstone.disable-offline", Settings.REDSTONE_DISABLER);
@@ -2080,12 +2075,6 @@ public class PS {
                 this.config.set(node.getKey(), node.getValue());
             }
         }
-
-        // Command confirmation
-        Settings.CONFIRM_SETOWNER = this.config.getBoolean("confirmation.setowner");
-        Settings.CONFIRM_CLEAR = this.config.getBoolean("confirmation.clear");
-        Settings.CONFIRM_DELETE = this.config.getBoolean("confirmation.delete");
-        Settings.CONFIRM_UNLINK = this.config.getBoolean("confirmation.unlink");
 
         // Protection
         Settings.REDSTONE_DISABLER = this.config.getBoolean("protection.redstone.disable-offline");

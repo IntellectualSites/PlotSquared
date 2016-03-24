@@ -40,7 +40,8 @@ import java.util.Set;
         permission = "plots.clear",
         category = CommandCategory.APPEARANCE,
         usage = "/plot clear [id]",
-        aliases = "reset")
+        aliases = "reset",
+        confirmation=true)
 public class Clear extends SubCommand {
 
     @Override
@@ -118,7 +119,7 @@ public class Clear extends SubCommand {
                 }
             }
         };
-        if (Settings.CONFIRM_CLEAR && !Permissions.hasPermission(plr, "plots.confirm.bypass")) {
+        if (hasConfirmation(plr)) {
             CmdConfirm.addPending(plr, "/plot clear " + plot.getId(), runnable);
         } else {
             TaskManager.runTask(runnable);

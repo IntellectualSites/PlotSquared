@@ -42,7 +42,8 @@ import java.util.UUID;
         description = "Merge the plot you are standing on, with another plot",
         permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
         category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE)
+        requiredType = RequiredType.NONE,
+        confirmation=true)
 public class Merge extends SubCommand {
 
     public final static String[] values = new String[]{"north", "east", "south", "west", "auto"};
@@ -180,7 +181,7 @@ public class Merge extends SubCommand {
             }
             isOnline = true;
             final int dir = direction;
-            CmdConfirm.addPending(accepter, C.MERGE_REQUEST_CONFIRM.s().replaceAll("%s", plr.getName()), new Runnable() {
+            Runnable run = new Runnable() {
                 @Override
                 public void run() {
                     MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
@@ -200,7 +201,12 @@ public class Merge extends SubCommand {
                     }
                     MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
                 }
-            });
+            };
+            if (hasConfirmation(plr)) {
+                CmdConfirm.addPending(accepter, C.MERGE_REQUEST_CONFIRM.s().replaceAll("%s", plr.getName()), run);
+            } else {
+                run.run();
+            }
         }
         if (!isOnline) {
             MainUtil.sendMessage(plr, C.NO_AVAILABLE_AUTOMERGE);

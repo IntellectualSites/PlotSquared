@@ -38,7 +38,8 @@ import java.util.Set;
         requiredType = RequiredType.NONE,
         description = "Create a new PlotArea",
         aliases = "world",
-        usage = "/plot area <create|info|list|tp|regen>")
+        usage = "/plot area <create|info|list|tp|regen>",
+        confirmation=true)
 public class Area extends SubCommand {
 
     @Override
@@ -113,7 +114,7 @@ public class Area extends SubCommand {
                                 object.setupGenerator = "PlotSquared";
                                 object.step = area.getSettingNodes();
                                 final String path = "worlds." + area.worldname + ".areas." + area.id + "-" + object.min + "-" + object.max;
-                                CmdConfirm.addPending(plr, "/plot area create pos2 (Creates world)", new Runnable() {
+                                Runnable run = new Runnable() {
                                     @Override
                                     public void run() {
                                         if (offsetx != 0) {
@@ -139,7 +140,12 @@ public class Area extends SubCommand {
                                             MainUtil.sendMessage(plr, "An error occured while creating the world: " + area.worldname);
                                         }
                                     }
-                                });
+                                };
+                                if (hasConfirmation(plr)) {
+                                    CmdConfirm.addPending(plr, "/plot area create pos2 (Creates world)", run);
+                                } else {
+                                    run.run();
+                                }
                                 return true;
                             }
                         }
@@ -234,7 +240,7 @@ public class Area extends SubCommand {
                                 C.SETUP_WORLD_TAKEN.send(plr, pa.worldname);
                                 return false;
                             }
-                            CmdConfirm.addPending(plr, "/plot area " + StringMan.join(args, " "), new Runnable() {
+                            Runnable run = new Runnable() {
                                 @Override
                                 public void run() {
                                     String path = "worlds." + pa.worldname;
@@ -259,7 +265,12 @@ public class Area extends SubCommand {
                                         e.printStackTrace();
                                     }
                                 }
-                            });
+                            };
+                            if (hasConfirmation(plr)) {
+                                CmdConfirm.addPending(plr, "/plot area " + StringMan.join(args, " "), run);
+                            } else {
+                                run.run();
+                            }
                             return true;
                         }
                         if (pa.id == null) {

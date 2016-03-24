@@ -41,7 +41,8 @@ import java.util.UUID;
         usage = "/plot setowner <player>",
         aliases = {"owner", "so", "seto"},
         category = CommandCategory.CLAIMING,
-        requiredType = RequiredType.NONE)
+        requiredType = RequiredType.NONE,
+        confirmation=true)
 public class Owner extends SetCommand {
 
     @Override
@@ -104,7 +105,7 @@ public class Owner extends SetCommand {
                 }
             }
         };
-        if (Settings.CONFIRM_SETOWNER && !Permissions.hasPermission(plr, "plots.confirm.bypass")) {
+        if (hasConfirmation(plr)) {
             CmdConfirm.addPending(plr, "/plot set owner " + value, run);
         } else {
             TaskManager.runTask(run);

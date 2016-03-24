@@ -173,13 +173,6 @@ public class Settings {
     public static boolean OFFLINE_MODE = false;
     public static boolean UUID_LOWERCASE = false;
     /**
-     * Command confirmation
-     */
-    public static boolean CONFIRM_SETOWNER = true;
-    public static boolean CONFIRM_CLEAR = true;
-    public static boolean CONFIRM_DELETE = true;
-    public static boolean CONFIRM_UNLINK = true;
-    /**
      * Use global plot limit?
      */
     public static boolean GLOBAL_LIMIT = false;

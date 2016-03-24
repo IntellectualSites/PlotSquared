@@ -21,7 +21,6 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -37,7 +36,8 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Unlink a mega-plot",
         usage = "/plot unlink",
         requiredType = RequiredType.NONE,
-        category = CommandCategory.SETTINGS)
+        category = CommandCategory.SETTINGS,
+        confirmation=true)
 public class Unlink extends SubCommand {
 
     @Override
@@ -77,7 +77,7 @@ public class Unlink extends SubCommand {
                 MainUtil.sendMessage(plr, C.UNLINK_SUCCESS);
             }
         };
-        if (Settings.CONFIRM_UNLINK && !Permissions.hasPermission(plr, "plots.confirm.bypass")) {
+        if (hasConfirmation(plr)) {
             CmdConfirm.addPending(plr, "/plot unlink " + plot.getId(), runnable);
         } else {
             TaskManager.runTask(runnable);

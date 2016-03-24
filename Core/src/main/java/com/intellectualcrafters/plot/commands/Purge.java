@@ -43,7 +43,8 @@ import java.util.UUID;
         permission = "plots.admin",
         description = "Purge all plots for a world",
         category = CommandCategory.ADMINISTRATION,
-        requiredType = RequiredType.CONSOLE)
+        requiredType = RequiredType.CONSOLE,
+        confirmation=true)
 public class Purge extends SubCommand {
 
     @Override
@@ -167,7 +168,7 @@ public class Purge extends SubCommand {
             return false;
         }
         String cmd = "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
-        CmdConfirm.addPending(plr, cmd, new Runnable() {
+        Runnable run = new Runnable() {
             @Override
             public void run() {
                 HashSet<Integer> ids = new HashSet<Integer>();
@@ -181,7 +182,12 @@ public class Purge extends SubCommand {
                 DBFunc.purgeIds(ids);
                 C.PURGE_SUCCESS.send(plr, ids.size() + "/" + toDelete.size());
             }
-        });
+        };
+        if (hasConfirmation(plr)) {
+            CmdConfirm.addPending(plr, cmd, run);
+        } else {
+            run.run();
+        }
         return true;
     }
 }
