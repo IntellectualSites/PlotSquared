@@ -71,6 +71,10 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 PlotArea area = plr.getApplicablePlotArea();
+                if (area == null) {
+                    C.NOT_IN_PLOT_WORLD.send(plr);
+                    return false;
+                }
                 Set<PlotCluster> clusters = area.getClusters();
                 MainUtil.sendMessage(plr, C.CLUSTER_LIST_HEADING, clusters.size() + "");
                 for (PlotCluster cluster : clusters) {
@@ -495,6 +499,7 @@ public class Cluster extends SubCommand {
                 PlotArea area = plr.getApplicablePlotArea();
                 if (area == null) {
                     C.NOT_IN_PLOT_WORLD.send(plr);
+                    return false;
                 }
                 PlotCluster cluster = area.getCluster(args[1]);
                 if (cluster == null) {
