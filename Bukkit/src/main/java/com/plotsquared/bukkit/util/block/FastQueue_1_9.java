@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.util.block;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -17,12 +15,6 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,8 +22,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_9 extends SlowQueue {
 
@@ -51,16 +52,20 @@ public class FastQueue_1_9 extends SlowQueue {
     private final RefMethod methodSetType;
     private final RefMethod methodGetCombinedId;
     private final RefMethod methodGetByCombinedId;
+    private final RefMethod methodGetWorld;
+    private final RefField tileEntityUnload;
 
 
     public FastQueue_1_9() throws RuntimeException {
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         RefClass classChunk = getRefClass("{nms}.Chunk");
+        this.methodGetWorld = classChunk.getMethod("getWorld");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
         this.classBlockPositionConstructor = classBlockPosition.getConstructor(int.class, int.class, int.class);
         RefClass classWorld = getRefClass("{nms}.World");
+        this.tileEntityUnload = classWorld.getField("tileEntityListUnload");
         this.methodW = classWorld.getMethod("w", classBlockPosition.getRealClass());
         this.fieldSections = classChunk.getField("sections");
         this.fieldWorld = classChunk.getField("world");
@@ -139,6 +144,7 @@ public class FastQueue_1_9 extends SlowQueue {
             // Sections
             Method getHandle = chunk.getClass().getDeclaredMethod("getHandle");
             Object c = getHandle.invoke(chunk);
+            Object w = methodGetWorld.of(c).call();
             Class<? extends Object> clazz = c.getClass();
             Field sf = clazz.getDeclaredField("sections");
             sf.setAccessible(true);
@@ -147,6 +153,7 @@ public class FastQueue_1_9 extends SlowQueue {
 
             Object[] sections = (Object[]) sf.get(c);
             HashMap<?, ?> tiles = (HashMap<?, ?>) tf.get(c);
+            List<Object> tilesUnload = (List<Object>) tileEntityUnload.of(w).get();
             Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
             Method xm = null;
@@ -174,6 +181,7 @@ public class FastQueue_1_9 extends SlowQueue {
                     continue;
                 }
                 if (array[k] != 0) {
+                    tilesUnload.add(tile.getValue());
                     iterator.remove();
                 }
             }
