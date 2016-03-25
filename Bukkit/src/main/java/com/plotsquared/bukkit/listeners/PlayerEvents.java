@@ -27,6 +27,16 @@ import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -106,17 +116,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots
@@ -534,17 +533,20 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
+        System.out.println("CHAT EVENT!!!");
         Player player = event.getPlayer();
         PlotPlayer plr = BukkitUtil.getPlayer(player);
         Location loc = plr.getLocation();
         PlotArea area = loc.getPlotArea();
-        if (area == null || !area.PLOT_CHAT && !plr.getAttribute("chat")) {
+        if (area == null || (!area.PLOT_CHAT && !plr.getAttribute("chat"))) {
+            System.out.printf("AREA: " + area + " | " + area.PLOT_CHAT + " | " + plr.getAttribute("chat"));
             return;
         }
         Plot plot = area.getPlotAbs(loc);
         if (plot == null) {
+            System.out.println("PLOT IS NULL!!!");
             return;
         }
         String message = event.getMessage();
@@ -553,14 +555,16 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         PlotId id = plot.getId();
         Set<Player> recipients = event.getRecipients();
         recipients.clear();
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            PlotPlayer pp = BukkitUtil.getPlayer(p);
+        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+            PlotPlayer pp = entry.getValue();
             if (pp.getAttribute("chatspy")) {
+                System.out.println("CHAT SPY!");
                 String spy = event.getFormat();
                 spy = String.format(spy, sender, message);
                 pp.sendMessage(spy);
             } else if (plot.equals(pp.getCurrentPlot())) {
-                recipients.add(p);
+                System.out.println("IN PLOT!");
+                recipients.add(((BukkitPlayer) pp).player);
             }
         }
         format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", "%s").replaceAll("%msg%", "%s");
