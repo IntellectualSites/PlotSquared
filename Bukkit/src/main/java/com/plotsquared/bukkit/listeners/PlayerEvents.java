@@ -533,22 +533,20 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
-        System.out.println("CHAT EVENT!!!");
         Player player = event.getPlayer();
         PlotPlayer plr = BukkitUtil.getPlayer(player);
         Location loc = plr.getLocation();
         PlotArea area = loc.getPlotArea();
         if (area == null || (!area.PLOT_CHAT && !plr.getAttribute("chat"))) {
-            System.out.printf("AREA: " + area + " | " + area.PLOT_CHAT + " | " + plr.getAttribute("chat"));
             return;
         }
         Plot plot = area.getPlotAbs(loc);
         if (plot == null) {
-            System.out.println("PLOT IS NULL!!!");
             return;
         }
+        event.setCancelled(true);
         String message = event.getMessage();
         String format = C.PLOT_CHAT_FORMAT.s();
         String sender = event.getPlayer().getDisplayName();
@@ -558,18 +556,21 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer pp = entry.getValue();
             if (pp.getAttribute("chatspy")) {
-                System.out.println("CHAT SPY!");
                 String spy = event.getFormat();
                 spy = String.format(spy, sender, message);
                 pp.sendMessage(spy);
             } else if (plot.equals(pp.getCurrentPlot())) {
-                System.out.println("IN PLOT!");
                 recipients.add(((BukkitPlayer) pp).player);
             }
         }
-        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", "%s").replaceAll("%msg%", "%s");
-        format = ChatColor.translateAlternateColorCodes('&', format);
-        event.setFormat(format);
+        String full = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", sender).replaceAll("%msg%", message);
+        full = ChatColor.translateAlternateColorCodes('&', full);
+//        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", "%s").replaceAll("%msg%", "%s");
+//        format = ChatColor.translateAlternateColorCodes('&', format);
+        for (Player receiver : recipients) {
+            receiver.sendMessage(full);
+        }
+//        event.setFormat(format);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
