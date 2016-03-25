@@ -14,6 +14,6 @@ public class Chat extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer player, String... args) {
-        return MainCommand.onCommand(player, "plot", "toggle", "chat");
+        return MainCommand.onCommand(player, "toggle", "chat");
     }
 }

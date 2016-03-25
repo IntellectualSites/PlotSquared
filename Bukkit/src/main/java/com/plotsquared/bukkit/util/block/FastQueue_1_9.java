@@ -60,12 +60,12 @@ public class FastQueue_1_9 extends SlowQueue {
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         RefClass classChunk = getRefClass("{nms}.Chunk");
-        this.methodGetWorld = classChunk.getMethod("getWorld");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
         this.classBlockPositionConstructor = classBlockPosition.getConstructor(int.class, int.class, int.class);
         RefClass classWorld = getRefClass("{nms}.World");
         this.tileEntityUnload = classWorld.getField("tileEntityListUnload");
+        this.methodGetWorld = classChunk.getMethod("getWorld");
         this.methodW = classWorld.getMethod("w", classBlockPosition.getRealClass());
         this.fieldSections = classChunk.getField("sections");
         this.fieldWorld = classChunk.getField("world");
