@@ -202,8 +202,12 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         continue;
                     }
                 }
-                if (plots.get(world).containsKey(id)) {
-                    plots.get(world).get(id).getDenied().add(denied);
+                HashMap<PlotId, Plot> worldMap = plots.get(world);
+                if (worldMap != null) {
+                    Plot plot = worldMap.get(id);
+                    if (plot != null) {
+                        plot.getDenied().add(denied);
+                    }
                 }
             }
 
@@ -242,8 +246,12 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         continue;
                     }
                 }
-                if (plots.get(world).containsKey(id)) {
-                    plots.get(world).get(id).getTrusted().add(helper);
+                HashMap<PlotId, Plot> worldMap = plots.get(world);
+                if (worldMap != null) {
+                    Plot plot = worldMap.get(id);
+                    if (plot != null) {
+                        plot.getTrusted().add(helper);
+                    }
                 }
             }
 
