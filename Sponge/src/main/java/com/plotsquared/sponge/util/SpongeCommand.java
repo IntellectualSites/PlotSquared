@@ -55,8 +55,8 @@ public class SpongeCommand implements CommandCallable {
         final Set<String> tabOptions = new HashSet<>();
         final String arg = split[0].toLowerCase();
         ArrayList<String> labels = new ArrayList<>();
-        for (final Command<PlotPlayer> cmd : MainCommand.getInstance().getCommands()) {
-            final String label = cmd.getCommand();
+        for (final Command cmd : MainCommand.getInstance().getCommands()) {
+            final String label = cmd.toS();
             HashSet<String> aliases = new HashSet<>(cmd.getAliases());
             aliases.add(label);
             for (String alias : aliases) {

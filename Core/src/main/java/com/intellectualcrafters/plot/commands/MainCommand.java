@@ -240,7 +240,7 @@ public class MainCommand extends Command {
     }
 
     @Override
-    public boolean canExecute(PlotPlayer player) {
+    public boolean canExecute(PlotPlayer player, boolean message) {
         return true;
     }
 }

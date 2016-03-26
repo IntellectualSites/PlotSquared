@@ -62,7 +62,7 @@ public abstract class Command {
     public List<Command> getCommands(PlotPlayer player) {
         List<Command> commands = new ArrayList<>();
         for (Command cmd : allCommands) {
-            if (cmd.canExecute(player)) {
+            if (cmd.canExecute(player, false)) {
                 commands.add(cmd);
             }
         }
@@ -322,23 +322,22 @@ public abstract class Command {
             }
             return;
         }
-        if (!cmd.canExecute(player)) {
-            Argument<?>[] reqArgs = cmd.getRequiredArguments();
-            if ((reqArgs != null) && (reqArgs.length > 0)) {
-                boolean failed = args.length > reqArgs.length;
-                String[] baseSplit = getCommandString().split(" ");
-                String[] fullSplit = getUsage().split(" ");
-                String base = getCommandString();
-                for (int i = 0; i < reqArgs.length; i++) {
-                    fullSplit[i + baseSplit.length] = reqArgs[i].getExample().toString();
-                    failed = failed || reqArgs[i].parse(args[i]) == null;
-                }
-                if (failed) {
-                    C.COMMAND_SYNTAX.send(player, StringMan.join(fullSplit, " "));
-                    return;
-                }
+        Argument<?>[] reqArgs = cmd.getRequiredArguments();
+        if ((reqArgs != null) && (reqArgs.length > 0)) {
+            boolean failed = args.length > reqArgs.length;
+            String[] baseSplit = getCommandString().split(" ");
+            String[] fullSplit = getUsage().split(" ");
+            String base = getCommandString();
+            for (int i = 0; i < reqArgs.length; i++) {
+                fullSplit[i + baseSplit.length] = reqArgs[i].getExample().toString();
+                failed = failed || reqArgs[i].parse(args[i]) == null;
             }
-            C.NO_PERMISSION.send(player, cmd.getPermission());
+            if (failed) {
+                C.COMMAND_SYNTAX.send(player, StringMan.join(fullSplit, " "));
+                return;
+            }
+        }
+        if (!cmd.canExecute(player, true)) {
             return;
         }
         cmd.execute(player, Arrays.copyOfRange(args, 1, args.length), confirm, whenDone);
@@ -395,8 +394,19 @@ public abstract class Command {
         return cmd;
     }
 
-    public boolean canExecute(PlotPlayer player) {
-        return required.allows(player) && Permissions.hasPermission(player, getPermission());
+    public boolean canExecute(PlotPlayer player, boolean message) {
+        if (!required.allows(player)) {
+            if (message) {
+                MainUtil.sendMessage(player, required == RequiredType.PLAYER ? C.IS_CONSOLE : C.NOT_CONSOLE);
+            }
+        } else if (!Permissions.hasPermission(player, getPermission())) {
+            if (message) {
+                C.NO_PERMISSION.send(player, getPermission());
+            }
+        } else {
+            return true;
+        }
+        return false;
     }
 
     public boolean matches(String arg) {
@@ -440,11 +450,11 @@ public abstract class Command {
                 String arg = args[0].toLowerCase();
                 if (space) {
                     Command cmd = getCommand(arg);
-                    return (cmd != null && cmd.canExecute(player)) ? (cmd.tab(player, Arrays.copyOfRange(args, 1, args.length), space)) : null;
+                    return (cmd != null && cmd.canExecute(player, false)) ? (cmd.tab(player, Arrays.copyOfRange(args, 1, args.length), space)) : null;
                 } else {
                     Set<Command> commands = new HashSet<Command>();
                     for (Map.Entry<String, Command> entry : staticCommands.entrySet()) {
-                        if (entry.getKey().startsWith(arg) && entry.getValue().canExecute(player)) {
+                        if (entry.getKey().startsWith(arg) && entry.getValue().canExecute(player, false)) {
                             commands.add(entry.getValue());
                         }
                     }

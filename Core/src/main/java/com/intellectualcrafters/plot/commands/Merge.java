@@ -92,7 +92,7 @@ public class Merge extends SubCommand {
             }
         }
         final PlotArea plotworld = plot.getArea();
-        final double price = plotworld.PRICES.get("merge");
+        final double price = plotworld.PRICES.containsKey("merge") ? plotworld.PRICES.get("merge") : 0;
         if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d && EconHandler.manager.getMoney(plr) < price) {
             sendMessage(plr, C.CANNOT_AFFORD_MERGE, price + "");
             return false;

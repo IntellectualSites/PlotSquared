@@ -13,7 +13,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "help",
         description = "Get this help menu",
-        aliases = {"he", "h", "?"},
+        aliases = {"he", "?"},
         category = CommandCategory.INFO,
         usage="help [category|#]",
         permission="plots.use")
@@ -23,7 +23,7 @@ public class Help extends Command {
     }
 
     @Override
-    public boolean canExecute(PlotPlayer player) {
+    public boolean canExecute(PlotPlayer player, boolean message) {
         return true;
     }
 
