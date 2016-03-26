@@ -31,7 +31,6 @@ import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.EconHandler;
-import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
@@ -46,7 +45,8 @@ import java.util.Arrays;
 public class MainCommand extends Command {
     
     private static MainCommand instance;
-    private Help help;
+    public Help help;
+    public Toggle toggle;
 
     private MainCommand() {
         super(null, true);
@@ -75,7 +75,6 @@ public class MainCommand extends Command {
             new Auto();
             new Visit();
             new Set();
-            new Toggle();
             new Clear();
             new Delete();
             new Trust();
@@ -86,7 +85,6 @@ public class MainCommand extends Command {
             new Undeny();
             new Info();
             new ListCmd();
-            instance.help = new Help(instance);
             new Debug();
             new SchematicCmd();
             new PluginCmd();
@@ -120,13 +118,16 @@ public class MainCommand extends Command {
             new BO3();
             new Middle();
             new Grant();
-            // set commands
+            // Set commands
             new Owner();
             new Desc();
             new Biome();
             new Alias();
             new SetHome();
             new Cluster();
+            // Referenced commands
+            instance.toggle = new Toggle();
+            instance.help = new Help(instance);
         }
         return instance;
     }
@@ -154,16 +155,6 @@ public class MainCommand extends Command {
                 }
                 args = tmp;
             }
-        }
-        {
-            try {
-                if (args.length == 0 || MathMan.isInteger(args[0]) || CommandCategory.valueOf(args[0].toUpperCase()) != null) {
-                    // This will default certain syntax to the help command
-                    // e.g. /plot, /plot 1, /plot claiming
-                    getInstance().help.execute(player, args, null, null);
-                    return true;
-                }
-            } catch (IllegalArgumentException e) {}
         }
         getInstance().execute(player, args, new RunnableVal3<Command, Runnable, Runnable>() {
             @Override
@@ -214,7 +205,6 @@ public class MainCommand extends Command {
         // Clear perm caching //
         player.deleteMeta("perm");
         // Optional command scope //
-        String category = null;
         Location loc = null;
         Plot plot = null;
         boolean tp = false;

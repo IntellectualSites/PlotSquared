@@ -2,6 +2,7 @@ package com.plotsquared.general.commands;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.CommandCategory;
+import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotMessage;
@@ -9,6 +10,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal2;
 import com.intellectualcrafters.plot.object.RunnableVal3;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -267,7 +269,11 @@ public abstract class Command {
      */
     public void execute(final PlotPlayer player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
         if (args.length == 0 || args[0] == null) {
-            C.COMMAND_SYNTAX.send(player, getUsage());
+            if (parent == null) {
+                MainCommand.getInstance().help.displayHelp(player, null, 0);
+            } else {
+                C.COMMAND_SYNTAX.send(player, getUsage());
+            }
             return;
         }
         if (allCommands == null || allCommands.size() == 0) {
@@ -280,12 +286,21 @@ public abstract class Command {
                 C.COMMAND_SYNTAX.send(player, getUsage());
                 return;
             }
+            // Help command
+            try {
+                if (args.length == 0 || MathMan.isInteger(args[0]) || CommandCategory.valueOf(args[0].toUpperCase()) != null) {
+                    // This will default certain syntax to the help command
+                    // e.g. /plot, /plot 1, /plot claiming
+                    MainCommand.getInstance().help.execute(player, args, null, null);
+                    return;
+                }
+            } catch (IllegalArgumentException e) {}
             // Command recommendation
             MainUtil.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
             {
                 List<Command> cmds = getCommands(player);
                 if (cmds.isEmpty()) {
-                    MainUtil.sendMessage(player, C.DID_YOU_MEAN, "/plot help");
+                    MainUtil.sendMessage(player, C.DID_YOU_MEAN, MainCommand.getInstance().help.getUsage());
                     return;
                 }
                 HashSet<String> setargs = new HashSet<>(args.length);
