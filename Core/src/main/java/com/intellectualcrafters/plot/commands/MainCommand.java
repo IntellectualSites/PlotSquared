@@ -136,7 +136,7 @@ public class MainCommand extends Command {
     /**
      * @Deprecated legacy
      */
-    public void addCommand(Command command) {
+    public void addCommand(SubCommand command) {
         PS.debug("Command registration is now done during instantiation");
     }
 
