@@ -324,7 +324,7 @@ public abstract class Command {
         }
         Argument<?>[] reqArgs = cmd.getRequiredArguments();
         if ((reqArgs != null) && (reqArgs.length > 0)) {
-            boolean failed = args.length > reqArgs.length;
+            boolean failed = args.length < reqArgs.length;
             String[] baseSplit = getCommandString().split(" ");
             String[] fullSplit = getUsage().split(" ");
             String base = getCommandString();
