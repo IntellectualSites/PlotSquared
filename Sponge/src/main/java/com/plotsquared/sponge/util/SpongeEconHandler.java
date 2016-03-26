@@ -65,12 +65,6 @@ public class SpongeEconHandler extends EconHandler {
     }
     
     @Override
-    public void setPermission(String world, String player, String perm, boolean value) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("TODO/WIP/NOT IMPLEMENTED!");
-    }
-    
-    @Override
     public boolean hasPermission(String world, String player, String perm) {
         SpongePlayer obj = (SpongePlayer) UUIDHandler.getPlayer(player);
         if (obj != null) {

@@ -1465,13 +1465,16 @@ public class PS {
             }
             for (String areaId : areasSection.getKeys(false)) {
                 log(C.PREFIX + "&3 - " + areaId);
-                String[] split = areaId.split("([^\\-]+)(?:-{1})(-{0,1}\\d+\\;-{0,1}\\d+)(?:-{1})(-{0,1}\\d+\\;-{0,1}\\d+)");
-                if (split.length != 3) {
+                int i1 = areaId.indexOf("-");
+                int i2 = areaId.indexOf(";");
+                if (i1 == -1 || i2 == -1) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<pos1>-<pos2>`");
                 }
-                String name = split[0];
-                PlotId pos1 = PlotId.fromString(split[1]);
-                PlotId pos2 = PlotId.fromString(split[2]);
+                String name = areaId.substring(0, i1);
+                String rest = areaId.substring(i1 + 1);
+                int i3 = rest.indexOf("-", i2);
+                PlotId pos1 = PlotId.fromString(rest.substring(0, i3));
+                PlotId pos2 = PlotId.fromString(rest.substring(i3 + 1));
                 if (pos1 == null || pos2 == null || name.isEmpty()) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }

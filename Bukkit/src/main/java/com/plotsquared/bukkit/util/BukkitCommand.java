@@ -21,8 +21,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(final CommandSender commandSender, org.bukkit.command.Command command, final String commandLabel,
-            String[] args) {
+    public boolean onCommand(final CommandSender commandSender, org.bukkit.command.Command command, final String commandLabel, String[] args) {
         if (commandSender instanceof Player) {
             return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), args);
         }

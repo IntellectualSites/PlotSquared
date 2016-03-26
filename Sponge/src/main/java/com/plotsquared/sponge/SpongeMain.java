@@ -80,9 +80,10 @@ import java.util.UUID;
  * Created by robin on 01/11/2014
  */
 
-@Plugin(id = "com.plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.", url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.1")
+@Plugin(id = "com.plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.", url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.2")
 public class SpongeMain implements IPlotMain {
     public static SpongeMain THIS;
+    public PluginContainer plugin;
 
     @Inject
     private Logger logger;
@@ -130,6 +131,7 @@ public class SpongeMain implements IPlotMain {
     public void onServerAboutToStart(GameAboutToStartServerEvent event) {
         log("PlotSquared: Server init");
         THIS = this;
+        THIS.plugin = this.game.getPluginManager().fromInstance(this).get();
         new PS(this, "Sponge");
         this.server = this.game.getServer();
         this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new HybridGen().specify());
@@ -304,7 +306,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public void startMetrics() {
         try {
-            Metrics metrics = new Metrics(this.game, (PluginContainer) this);
+            Metrics metrics = new Metrics(this.game, plugin);
             metrics.start();
             log(C.PREFIX.s() + "&6Metrics enabled.");
         } catch (IOException e) {

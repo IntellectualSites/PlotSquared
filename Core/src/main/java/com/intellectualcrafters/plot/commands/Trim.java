@@ -174,6 +174,9 @@ public class Trim extends SubCommand {
             public void run(Set<ChunkLoc> viable, final Set<ChunkLoc> nonViable) {
                 Runnable regenTask;
                 if (regen) {
+                    PS.log("Starting regen task:");
+                    PS.log(" - This is a VERY slow command");
+                    PS.log(" - It will say `Trim done!` when complete");
                     regenTask = new Runnable() {
                         @Override
                         public void run() {

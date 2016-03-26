@@ -3,11 +3,14 @@ package com.plotsquared.sponge.util;
 import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.general.commands.Command;
 import com.plotsquared.sponge.SpongeMain;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -15,67 +18,44 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-import java.util.*;
-
 public class SpongeCommand implements CommandCallable {
     
     @Override
     public CommandResult process(final CommandSource cmd, final String string) throws CommandException {
-        TaskManager.runTask(new Runnable() {
-            @Override
-            public void run() {
-                final String id = cmd.getIdentifier();
-                PlotPlayer pp;
-                try {
-                    final UUID uuid = UUID.fromString(id);
-                    final Player player = SpongeMain.THIS.getServer().getPlayer(uuid).get();
-                    pp = SpongeUtil.getPlayer(player);
-                } catch (final Exception e) {
-                    pp = ConsolePlayer.getConsole();
-                }
-                MainCommand.onCommand(pp, cmd.getName(), string.isEmpty() ? new String[]{} : string.split(" "));
+        TaskManager.runTask(() -> {
+            final String id = cmd.getIdentifier();
+            PlotPlayer pp;
+            try {
+                final UUID uuid = UUID.fromString(id);
+                final Player player = SpongeMain.THIS.getServer().getPlayer(uuid).get();
+                pp = SpongeUtil.getPlayer(player);
+            } catch (final Exception e) {
+                pp = ConsolePlayer.getConsole();
             }
+            MainCommand.onCommand(pp, string.isEmpty() ? new String[]{} : string.split(" "));
         });
         return CommandResult.success();
     }
     
     @Override
-    public List<String> getSuggestions(final CommandSource source, final String string) throws CommandException {
+    public List<String> getSuggestions(final CommandSource source, final String s) throws CommandException {
         if (!(source instanceof Player)) {
             return null;
         }
         final PlotPlayer player = SpongeUtil.getPlayer((Player) source);
-        String[] split = string.split(" ");
-        if (split.length < 1) {
-            return Collections.singletonList("plots");
+        String[] args = s.split(" ");
+        if (args.length == 0) {
+            return Collections.singletonList(MainCommand.getInstance().toString());
         }
-        if (split.length > 1) {
-            return Collections.emptyList();
+        Collection objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
+        if (objects == null) {
+            return null;
         }
-        final Set<String> tabOptions = new HashSet<>();
-        final String arg = split[0].toLowerCase();
-        ArrayList<String> labels = new ArrayList<>();
-        for (final Command cmd : MainCommand.getInstance().getCommands()) {
-            final String label = cmd.toS();
-            HashSet<String> aliases = new HashSet<>(cmd.getAliases());
-            aliases.add(label);
-            for (String alias : aliases) {
-                labels.add(alias);
-                if (alias.startsWith(arg)) {
-                    if (Permissions.hasPermission(player, cmd.getPermission())) {
-                        tabOptions.add(label);
-                    } else {
-                        break;
-                    }
-                }
-            }
+        List<String> result = new ArrayList<>();
+        for (Object o : objects) {
+            result.add(o.toString());
         }
-        String best = new StringComparison<>(arg, labels).getBestMatch();
-        tabOptions.add(best);
-        if (!tabOptions.isEmpty()) {
-            return new ArrayList<>(tabOptions);
-        }
-        return Collections.emptyList();
+        return result;
 }
     
     @Override
@@ -90,7 +70,7 @@ public class SpongeCommand implements CommandCallable {
     
     @Override
     public Optional<? extends Text> getHelp(final CommandSource cmd) {
-        return Optional.of(Text.of("/plot help"));
+        return Optional.of(Text.of("/plot"));
     }
     
     @Override
