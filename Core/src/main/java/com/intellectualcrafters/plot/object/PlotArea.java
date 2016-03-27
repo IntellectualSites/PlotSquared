@@ -240,7 +240,7 @@ public abstract class PlotArea {
         this.SCHEMATIC_FILE = config.getString("schematic.file");
         this.SCHEMATIC_CLAIM_SPECIFY = config.getBoolean("schematic.specify_on_claim");
         this.SCHEMATICS = config.getStringList("schematic.schematics");
-        this.USE_ECONOMY = config.getBoolean("economy.use") && EconHandler.manager != null;
+        this.USE_ECONOMY = config.getBoolean("economy.use") && EconHandler.getEconHandler() != null;
         ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
         if (this.USE_ECONOMY) {
             this.PRICES = new HashMap<>();

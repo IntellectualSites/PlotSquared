@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.Chunk;
@@ -139,8 +138,8 @@ public class FastQueue_1_8_3 extends SlowQueue {
 
             Object[] sections = (Object[]) sections1.get(c);
             HashMap<?, ?> tiles = (HashMap<?, ?>) tileEntities.get(c);
-            List<Object> tilesUnload = (List<Object>) tileEntityUnload.of(w).get();
-            List<?>[] entities = (List<?>[]) entitySlices.get(c);
+            Collection<Object> tilesUnload = (Collection<Object>) tileEntityUnload.of(w).get();
+            Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
             Method getX = null;
             Method getY = null;

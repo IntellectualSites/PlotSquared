@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -7,6 +8,15 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 public abstract class EconHandler {
 
     public static EconHandler manager;
+    private static boolean initialized;
+
+    public static EconHandler getEconHandler() {
+        if (initialized) {
+            return manager;
+        }
+        initialized = true;
+        return manager = PS.get().IMP.getEconomyHandler();
+    }
 
     public double getMoney(PlotPlayer player) {
         if (ConsolePlayer.isConsole(player)) {
