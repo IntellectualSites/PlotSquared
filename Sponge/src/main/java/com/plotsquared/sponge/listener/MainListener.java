@@ -24,13 +24,20 @@ import com.plotsquared.listener.PlotListener;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import com.plotsquared.sponge.util.SpongeUtil;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.explosive.Explosive;
-import org.spongepowered.api.entity.explosive.PrimedTNT;
 import org.spongepowered.api.entity.living.Ambient;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.animal.Animal;
@@ -52,16 +59,6 @@ import org.spongepowered.api.event.world.ExplosionEvent;
 import org.spongepowered.api.event.world.ExplosionEvent.Detonate;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
 
 public class MainListener {
     
@@ -185,12 +182,9 @@ public class MainListener {
         }
     }
 
+    @Listener
     public void onSpawnEntity(SpawnEntityEvent event) throws Exception {
         World world = event.getTargetWorld();
-        PlotArea plotworld = PS.get().getPlotAreaByString(world.getName());
-        if (plotworld == null) {
-            return;
-        }
         event.filterEntities((Predicate<Entity>) entity -> {
             if (entity instanceof Player) {
                 return true;
@@ -213,7 +207,7 @@ public class MainListener {
             }
             int[] mobs = null;
             if (entity instanceof Living) {
-                if (!plotworld.MOB_SPAWNING) {
+                if (!loc.getPlotArea().MOB_SPAWNING) {
                     return false;
                 }
                 Flag mobCap = FlagManager.getPlotFlagRaw(plot, "mob-cap");
@@ -241,8 +235,7 @@ public class MainListener {
                             return false;
                         }
                     }
-                }
-                if (entity instanceof Monster) {
+                } else if (entity instanceof Monster) {
                     Flag monsterFlag = FlagManager.getPlotFlagRaw(plot, "hostile-cap");
                     if (monsterFlag != null) {
                         int cap = (Integer) monsterFlag.getValue();
@@ -258,8 +251,7 @@ public class MainListener {
                     }
                 }
                 return true;
-            }
-            if ((entity instanceof Minecart) || (entity instanceof Boat)) {
+            } else if ((entity instanceof Minecart) || (entity instanceof Boat)) {
                 Flag vehicleFlag = FlagManager.getPlotFlagRaw(plot, "vehicle-cap");
                 if (vehicleFlag != null) {
                     int cap = (Integer) vehicleFlag.getValue();
@@ -285,9 +277,8 @@ public class MainListener {
                     return false;
                 }
             }
-            if (entity instanceof PrimedTNT) {
-                Vector3d pos = entity.getLocation().getPosition();
-                entity.setRotation(new Vector3d(MathMan.roundInt(pos.getX()), MathMan.roundInt(pos.getY()), MathMan.roundInt(pos.getZ())));
+            if (entity instanceof Explosive) {
+                entity.setCreator(plot.owner);
             }
             return true;
         });
@@ -386,23 +377,27 @@ public class MainListener {
             }
             Optional<Explosive> source = event.getExplosion().getSourceExplosive();
             if (!source.isPresent()) {
-                event.setCancelled(true);
+                event.filterAll();
                 return;
             }
             Explosive tnt = source.get();
-            Location origin = SpongeUtil.getLocation(worldname, tnt.getRotation());
-            Plot originPlot = origin.getPlot();
+            UUID creator = tnt.getCreator().orElse(null);
             Location current = SpongeUtil.getLocation(tnt);
             Plot currentPlot = current.getPlot();
-            if (!Objects.equals(originPlot, currentPlot)) {
-                event.setCancelled(true);
+            if (currentPlot == null) {
+                if (current.isPlotArea()) {
+                    event.filterAll();
+                }
                 return;
             }
-            if (originPlot == null && current.getPlotAbs() == null) {
-                return;
+            if (creator != null) {
+                if (!currentPlot.isAdded(creator)) {
+                    event.filterAll();
+                    return;
+                }
             }
-            if (!FlagManager.isPlotFlagTrue(currentPlot, "explosion")) {
-                event.setCancelled(true);
+            if (currentPlot == null || !FlagManager.isPlotFlagTrue(currentPlot, "explosion")) {
+                event.filterAll();
                 return;
             }
             event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
