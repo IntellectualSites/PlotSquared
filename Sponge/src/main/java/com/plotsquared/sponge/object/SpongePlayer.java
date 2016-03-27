@@ -2,13 +2,14 @@ package com.plotsquared.sponge.object;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.commands.RequiredType;
-import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.sponge.util.SpongeUtil;
+import java.time.Instant;
+import java.util.UUID;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
@@ -21,15 +22,9 @@ import org.spongepowered.api.service.ban.BanService;
 import org.spongepowered.api.text.chat.ChatTypes;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
-import java.time.Instant;
-import java.util.HashSet;
-import java.util.UUID;
-
 public class SpongePlayer extends PlotPlayer {
     
     public final Player player;
-    public HashSet<String> hasPerm = new HashSet<>();
-    public HashSet<String> noPerm = new HashSet<>();
     private UUID uuid;
     private String name;
     private long last = 0;
@@ -81,21 +76,6 @@ public class SpongePlayer extends PlotPlayer {
     
     @Override
     public boolean hasPermission(String permission) {
-        if (Settings.PERMISSION_CACHING) {
-            if (this.noPerm.contains(permission)) {
-                return false;
-            }
-            if (this.hasPerm.contains(permission)) {
-                return true;
-            }
-            boolean result = this.player.hasPermission(permission);
-            if (!result) {
-                this.noPerm.add(permission);
-                return false;
-            }
-            this.hasPerm.add(permission);
-            return true;
-        }
         return this.player.hasPermission(permission);
     }
     
