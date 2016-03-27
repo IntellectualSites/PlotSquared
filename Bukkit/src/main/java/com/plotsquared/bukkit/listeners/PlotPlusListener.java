@@ -28,27 +28,23 @@ import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlotListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 public class PlotPlusListener extends PlotListener implements Listener {
 
@@ -99,25 +95,6 @@ public class PlotPlusListener extends PlotListener implements Listener {
                 }
             }
         }, 0L, 20L);
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onMelt(BlockFadeEvent event) {
-        BlockState state = event.getNewState();
-
-        if (state.getType() != Material.WATER && state.getType() != Material.STATIONARY_WATER) {
-            return;
-        }
-        Plot plot = BukkitUtil.getLocation(state.getLocation()).getOwnedPlot();
-        if (plot == null) {
-            return;
-        }
-        if (!FlagManager.isBooleanFlag(plot, "ice-melt", false)) {
-            event.setCancelled(true);
-        }
-        if (FlagManager.isPlotFlagFalse(plot, "snow-melt")) {
-            event.setCancelled(true);
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)

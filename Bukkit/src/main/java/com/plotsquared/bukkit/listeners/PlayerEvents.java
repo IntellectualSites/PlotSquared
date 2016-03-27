@@ -806,8 +806,23 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (area == null) {
             return;
         }
-        if (area.getOwnedPlot(loc) == null) {
+        Plot plot = area.getOwnedPlot(loc);
+        if (plot == null) {
             e.setCancelled(true);
+            return;
+        }
+        switch (b.getType()) {
+            case WATER:
+            case STATIONARY_WATER:
+                if (FlagManager.isPlotFlagFalse(plot, "ice-melt")) {
+                    e.setCancelled(true);
+                }
+                break;
+            case SNOW:
+                if (FlagManager.isPlotFlagFalse(plot, "snow-melt")) {
+                    e.setCancelled(true);
+                }
+                break;
         }
     }
 
