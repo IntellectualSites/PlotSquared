@@ -431,7 +431,7 @@ public class MainListener {
         Location loc = SpongeUtil.getLocation(worldname, first.getOriginal().getPosition());
         Plot plot = loc.getPlot();
         if (plot == null) {
-            if (loc.getPlotAbs() == null) {
+            if (!loc.isPlotArea()) {
                 return;
             }
             event.setCancelled(true);
@@ -479,7 +479,7 @@ public class MainListener {
         Location loc = SpongeUtil.getLocation(worldname, pos.getPosition());
         Plot plot = loc.getPlot();
         if (plot == null) {
-            if (loc.getPlotAbs() == null) {
+            if (!loc.isPlotArea()) {
                 return;
             }
             if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
