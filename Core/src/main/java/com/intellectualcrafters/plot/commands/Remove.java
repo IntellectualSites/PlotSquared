@@ -29,7 +29,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
@@ -51,7 +50,7 @@ public class Remove extends SubCommand {
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
         if (args.length != 1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot remove <player>");
+            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, this.getUsage());
             return true;
         }
         Location loc = plr.getLocation();
