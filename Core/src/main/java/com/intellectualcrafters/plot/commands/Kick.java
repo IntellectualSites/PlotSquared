@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
+import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "kick",
@@ -35,8 +36,12 @@ import com.plotsquared.general.commands.CommandDeclaration;
         description = "Kick a player from your plot",
         permission = "plots.kick",
         category = CommandCategory.TELEPORT,
-        requiredType = RequiredType.NONE)
+        requiredType = RequiredType.PLAYER)
 public class Kick extends SubCommand {
+
+    public Kick() {
+        super(Argument.PlayerName);
+    }
 
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {

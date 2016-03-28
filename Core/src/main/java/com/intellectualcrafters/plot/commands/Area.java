@@ -39,7 +39,7 @@ import java.util.Set;
         description = "Create a new PlotArea",
         aliases = "world",
         usage = "/plot area <create|info|list|tp|regen>",
-        confirmation=true)
+        confirmation = true)
 public class Area extends SubCommand {
 
     @Override

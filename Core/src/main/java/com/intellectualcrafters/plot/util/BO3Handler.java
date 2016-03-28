@@ -62,19 +62,19 @@ public class BO3Handler {
     }
 
     /**
-     * Save a plot as a BO3 file<br>
+     * Save a plot as a BO3 file.
      *  - Use null for the player object if no player is applicable
-     * @param plr
+     * @param player
      * @param plot
      * @return
      */
-    public static boolean saveBO3(PlotPlayer plr, Plot plot, RunnableVal<BO3> saveTask) {
+    public static boolean saveBO3(PlotPlayer player, Plot plot, RunnableVal<BO3> saveTask) {
         if (saveTask == null) {
             throw new IllegalArgumentException("Save task cannot be null!");
         }
         PlotArea plotworld = plot.getArea();
         if (!(plotworld instanceof ClassicPlotWorld) || plotworld.TYPE != 0) {
-            MainUtil.sendMessage(plr, "BO3 exporting only supports type 0 classic generation.");
+            MainUtil.sendMessage(player, "BO3 exporting only supports type 0 classic generation.");
             return false;
         }
         String alias = plot.toString();
@@ -150,7 +150,7 @@ public class BO3Handler {
         }
 
         if (!content) {
-            MainUtil.sendMessage(plr, "No content found!");
+            MainUtil.sendMessage(player, "No content found!");
             return false;
         }
 
@@ -177,7 +177,7 @@ public class BO3Handler {
                     }
                 }
                 if (parentLoc == null) {
-                    MainUtil.sendMessage(plr,
+                    MainUtil.sendMessage(player,
                             "Exporting BO3 cancelled due to detached chunk: " + chunk + " - Make sure you only have one object per plot");
                     return false;
                 }
@@ -189,7 +189,7 @@ public class BO3Handler {
             saveTask.run(entry.getValue());
         }
 
-        MainUtil.sendMessage(plr, "BO3 exporting was successful!");
+        MainUtil.sendMessage(player, "BO3 exporting was successful!");
         return true;
     }
 

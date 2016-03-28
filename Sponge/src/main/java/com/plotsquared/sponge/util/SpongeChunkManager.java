@@ -5,10 +5,7 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.ChunkManager;
-import com.intellectualcrafters.plot.util.ReflectionUtils;
-import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.spongepowered.api.entity.Entity;
@@ -18,8 +15,6 @@ import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -27,20 +22,20 @@ import java.util.function.Predicate;
 public class SpongeChunkManager extends ChunkManager {
     
     @Override
-    public int[] countEntities(final Plot plot) {
-        final Location pos1 = plot.getBottomAbs();
-        final Location pos2 = plot.getTopAbs();
-        final World world = SpongeUtil.getWorld(pos1.getWorld());
-        final int bx = pos1.getX();
-        final int bz = pos1.getZ();
-        final int tx = pos2.getX();
-        final int tz = pos2.getZ();
-        final int[] count = new int[6];
+    public int[] countEntities(Plot plot) {
+        Location pos1 = plot.getBottomAbs();
+        Location pos2 = plot.getTopAbs();
+        World world = SpongeUtil.getWorld(pos1.getWorld());
+        int bx = pos1.getX();
+        int bz = pos1.getZ();
+        int tx = pos2.getX();
+        int tz = pos2.getZ();
+        int[] count = new int[6];
         world.getEntities(entity -> {
-            final org.spongepowered.api.world.Location loc = entity.getLocation();
-            final int x = loc.getBlockX();
+            org.spongepowered.api.world.Location loc = entity.getLocation();
+            int x = loc.getBlockX();
             if ((x >= bx) && (x <= tx)) {
-                final int z = loc.getBlockZ();
+                int z = loc.getBlockZ();
                 if ((z >= bz) && (z <= tz)) {
                     count[0]++;
                     if (entity instanceof Living) {
@@ -62,22 +57,22 @@ public class SpongeChunkManager extends ChunkManager {
     }
     
     @Override
-    public boolean loadChunk(final String world, final ChunkLoc loc, final boolean force) {
-        final World worldObj = SpongeUtil.getWorld(world);
+    public boolean loadChunk(String world, ChunkLoc loc, boolean force) {
+        World worldObj = SpongeUtil.getWorld(world);
         return worldObj.loadChunk(loc.x << 4, 0, loc.z << 4, force).isPresent();
     }
     
     @Override
-    public Set<ChunkLoc> getChunkChunks(final String world) {
+    public Set<ChunkLoc> getChunkChunks(String world) {
         // TODO save world;
         return super.getChunkChunks(world);
     }
 
     @Override
-    public void regenerateChunk(final String world, final ChunkLoc loc) {
-        final World spongeWorld = SpongeUtil.getWorld(world);
-        final net.minecraft.world.World nmsWorld = (net.minecraft.world.World) spongeWorld;
-        final Optional<Chunk> chunkOpt = spongeWorld.getChunk(loc.x, 0, loc.z);
+    public void regenerateChunk(String world, ChunkLoc loc) {
+        World spongeWorld = SpongeUtil.getWorld(world);
+        net.minecraft.world.World nmsWorld = (net.minecraft.world.World) spongeWorld;
+        Optional<Chunk> chunkOpt = spongeWorld.getChunk(loc.x, 0, loc.z);
         if (chunkOpt.isPresent()) {
             try {
                 Chunk spongeChunk = chunkOpt.get();
@@ -86,7 +81,7 @@ public class SpongeChunkManager extends ChunkManager {
                     PS.debug("Not valid world generator for: " + world);
                     return;
                 }
-                ChunkProviderServer chunkServer = (ChunkProviderServer) provider;
+/*                ChunkProviderServer chunkServer = (ChunkProviderServer) provider;
                 IChunkProvider chunkProvider = chunkServer.serverChunkGenerator;
 
                 long pos = ChunkCoordIntPair.chunkXZ2Int(loc.x, loc.z);
@@ -103,6 +98,7 @@ public class SpongeChunkManager extends ChunkManager {
                 }
                 Set<Long> set = (Set<Long>) fieldDroppedChunksSet.get(chunkServer);
                 set.remove(pos);
+                ReflectionUtils.findField(chunkServer.getClass(),)
                 chunkServer.id2ChunkMap.remove(pos);
                 mcChunk = chunkProvider.provideChunk(loc.x, loc.z);
                 chunkServer.id2ChunkMap.add(pos, mcChunk);
@@ -114,7 +110,7 @@ public class SpongeChunkManager extends ChunkManager {
                 }
                 else {
                     PS.debug("CHUNK IS NULL!?");
-                }
+                }*/
             } catch (Throwable e){
                 e.printStackTrace();
             }
@@ -122,27 +118,27 @@ public class SpongeChunkManager extends ChunkManager {
     }
     
     @Override
-    public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
+    public boolean copyRegion(Location pos1, Location pos2, Location newPos, Runnable whenDone) {
         // TODO copy a region
         TaskManager.runTask(whenDone);
         return false;
     }
     
     @Override
-    public void clearAllEntities(final Location pos1, final Location pos2) {
-        final String worldname = pos1.getWorld();
-        final World world = SpongeUtil.getWorld(worldname);
-        final int bx = pos1.getX();
-        final int bz = pos1.getZ();
-        final int tx = pos2.getX();
-        final int tz = pos2.getZ();
+    public void clearAllEntities(Location pos1, Location pos2) {
+        String worldname = pos1.getWorld();
+        World world = SpongeUtil.getWorld(worldname);
+        int bx = pos1.getX();
+        int bz = pos1.getZ();
+        int tx = pos2.getX();
+        int tz = pos2.getZ();
         world.getEntities(new Predicate<Entity>() {
             @Override
-            public boolean test(final Entity entity) {
-                final org.spongepowered.api.world.Location loc = entity.getLocation();
-                final int x = loc.getBlockX();
+            public boolean test(Entity entity) {
+                org.spongepowered.api.world.Location loc = entity.getLocation();
+                int x = loc.getBlockX();
                 if ((x >= bx) && (x <= tx)) {
-                    final int z = loc.getBlockZ();
+                    int z = loc.getBlockZ();
                     if ((z >= bz) && (z <= tz)) {
                         entity.remove();
                     }
@@ -160,8 +156,8 @@ public class SpongeChunkManager extends ChunkManager {
     
     @Override
     public void unloadChunk(String world, ChunkLoc loc, boolean save, boolean safe) {
-        final World worldObj = SpongeUtil.getWorld(world);
-        final Optional<Chunk> chunk = worldObj.getChunk(loc.x << 4, 0, loc.z << 4);
+        World worldObj = SpongeUtil.getWorld(world);
+        Optional<Chunk> chunk = worldObj.getChunk(loc.x << 4, 0, loc.z << 4);
         if (chunk.isPresent()) {
             worldObj.unloadChunk(chunk.get());
         }

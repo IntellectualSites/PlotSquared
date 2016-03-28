@@ -130,17 +130,13 @@ public class SpongePlayer extends PlotPlayer {
         GameMode gamemode = this.player.getGameModeData().type().get();
         if (gamemode == GameModes.ADVENTURE) {
             return PlotGameMode.ADVENTURE;
-        }
-        if (gamemode == GameModes.CREATIVE) {
+        } else if (gamemode == GameModes.CREATIVE) {
             return PlotGameMode.CREATIVE;
-        }
-        if (gamemode == GameModes.SPECTATOR) {
+        } else if (gamemode == GameModes.SPECTATOR) {
             return PlotGameMode.SPECTATOR;
-        }
-        if (gamemode == GameModes.SURVIVAL) {
+        } else if (gamemode == GameModes.SURVIVAL) {
             return PlotGameMode.SURVIVAL;
-        }
-        if (gamemode == GameModes.NOT_SET) {
+        } else {
             return PlotGameMode.NOT_SET;
         }
     }

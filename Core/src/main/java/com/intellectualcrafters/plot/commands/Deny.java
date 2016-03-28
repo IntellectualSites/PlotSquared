@@ -41,7 +41,7 @@ import java.util.UUID;
         description = "Deny a user from a plot",
         usage = "/plot deny <player>",
         category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE)
+        requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
 
     public Deny() {

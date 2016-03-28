@@ -41,7 +41,7 @@ import java.util.UUID;
         usage = "/plot add <player>",
         category = CommandCategory.SETTINGS,
         permission = "plots.add",
-        requiredType = RequiredType.NONE)
+        requiredType = RequiredType.PLAYER)
 public class Add extends SubCommand {
 
     public Add() {

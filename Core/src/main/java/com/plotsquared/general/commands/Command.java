@@ -473,7 +473,11 @@ public abstract class Command {
                 String arg = args[0].toLowerCase();
                 if (space) {
                     Command cmd = getCommand(arg);
-                    return (cmd != null && cmd.canExecute(player, false)) ? cmd.tab(player, Arrays.copyOfRange(args, 1, args.length), space) : null;
+                    if (cmd != null && cmd.canExecute(player, false)) {
+                        return cmd.tab(player, Arrays.copyOfRange(args, 1, args.length), space);
+                    } else {
+                        return null;
+                    }
                 } else {
                     Set<Command> commands = new HashSet<Command>();
                     for (Map.Entry<String, Command> entry : this.staticCommands.entrySet()) {
@@ -485,7 +489,11 @@ public abstract class Command {
                 }
             default:
                 Command cmd = getCommand(args[0]);
-                return cmd != null ? cmd.tab(player, Arrays.copyOfRange(args, 1, args.length), space) : null;
+                if (cmd != null) {
+                    return cmd.tab(player, Arrays.copyOfRange(args, 1, args.length), space);
+                } else {
+                    return null;
+                }
         }
     }
 

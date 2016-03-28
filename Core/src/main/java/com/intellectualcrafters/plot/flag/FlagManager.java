@@ -46,9 +46,9 @@ import java.util.Set;
  */
 public class FlagManager {
 
-    private final static HashSet<String> reserved = new HashSet<>();
+    private static final HashSet<String> reserved = new HashSet<>();
 
-    private final static HashSet<AbstractFlag> flags = new HashSet<>();
+    private static final HashSet<AbstractFlag> flags = new HashSet<>();
 
     /**
      * Reserve a flag so that it cannot be set by players

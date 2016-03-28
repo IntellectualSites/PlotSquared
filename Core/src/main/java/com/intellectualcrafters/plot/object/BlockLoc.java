@@ -25,7 +25,8 @@ public class BlockLoc {
     public static BlockLoc fromString(String string) {
         String[] parts = string.split(",");
 
-        float yaw, pitch;
+        float yaw;
+        float pitch;
         if (parts.length == 3) {
             yaw = 0f;
             pitch = 0f;

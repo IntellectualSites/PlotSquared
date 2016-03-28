@@ -37,7 +37,7 @@ import java.util.UUID;
 @CommandDeclaration(
         command = "trust",
         aliases = {"t"},
-        requiredType = RequiredType.NONE,
+        requiredType = RequiredType.PLAYER,
         usage = "/plot trust <player>",
         description = "Allow a player to build in a plot",
         category = CommandCategory.SETTINGS)

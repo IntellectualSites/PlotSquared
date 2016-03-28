@@ -52,8 +52,8 @@ import java.util.HashSet;
         requiredType = RequiredType.NONE)
 public class Set extends SubCommand {
 
-    public final static String[] values = new String[]{"biome", "alias", "home", "flag"};
-    public final static String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
+    public static final String[] values = new String[]{"biome", "alias", "home", "flag"};
+    public static final String[] aliases = new String[]{"b", "w", "wf", "f", "a", "h", "fl"};
 
     private final SetCommand component;
 
