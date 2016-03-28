@@ -542,7 +542,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
         if (area == null || (!area.PLOT_CHAT && !plr.getAttribute("chat"))) {
             return;
         }
-        Plot plot = area.getPlotAbs(loc);
+        Plot plot = area.getPlot(loc);
         if (plot == null) {
             return;
         }
@@ -559,8 +559,11 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 String spy = event.getFormat();
                 spy = String.format(spy, sender, message);
                 pp.sendMessage(spy);
-            } else if (plot.equals(pp.getCurrentPlot())) {
-                recipients.add(((BukkitPlayer) pp).player);
+            } else {
+                Plot current = pp.getCurrentPlot();
+                if (current != null && current.getBasePlot(false).equals(plot)) {
+                    recipients.add(((BukkitPlayer) pp).player);
+                }
             }
         }
         String full = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", sender).replaceAll("%msg%", message);

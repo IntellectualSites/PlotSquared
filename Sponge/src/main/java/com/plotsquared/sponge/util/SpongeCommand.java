@@ -55,7 +55,7 @@ public class SpongeCommand implements CommandCallable {
         for (Object o : objects) {
             result.add(o.toString());
         }
-        return result;
+        return result.size() == 0 ? null : result;
 }
     
     @Override

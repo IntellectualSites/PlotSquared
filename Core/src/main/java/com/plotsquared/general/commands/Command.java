@@ -394,6 +394,28 @@ public abstract class Command {
         return cmd;
     }
 
+    public Command getCommand(Class clazz) {
+        for (Command cmd : allCommands) {
+            if (cmd.getClass() == clazz) {
+                return cmd;
+            }
+        }
+        return null;
+    }
+
+    public Command getCommandById(String id) {
+        Command exact = staticCommands.get(id);
+        if (exact != null) {
+            return exact;
+        }
+        for (Command cmd : allCommands) {
+            if (cmd.getId().equals(id)) {
+                return cmd;
+            }
+        }
+        return null;
+    }
+
     public boolean canExecute(PlotPlayer player, boolean message) {
         if (!required.allows(player)) {
             if (message) {
