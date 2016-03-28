@@ -44,7 +44,7 @@ import java.util.UUID;
  */
 public class DBFunc {
     /**
-     * The "global" uuid
+     * The "global" uuid.
      */
     public static final UUID everyone = UUID.fromString("1-1-3-3-7");
     /**

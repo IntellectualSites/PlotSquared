@@ -20,81 +20,81 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.intellectualcrafters.plot.config.Configuration.SettingValue;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.StringMan;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Configuration Node
- *
+ * Configuration Node.
  */
 public class ConfigurationNode {
+
     private final String constant;
-    private final Object default_value;
+    private final Object defaultValue;
     private final String description;
     private final SettingValue type;
     private Object value;
-    
-    public ConfigurationNode(final String constant, final Object default_value, final String description, final SettingValue type, final boolean required) {
+
+    public ConfigurationNode(String constant, Object defaultValue, String description, SettingValue type, boolean required) {
         this.constant = constant;
-        this.default_value = default_value;
+        this.defaultValue = defaultValue;
         this.description = description;
-        value = default_value;
+        this.value = defaultValue;
         this.type = type;
     }
-    
+
     public SettingValue getType() {
-        return type;
+        return this.type;
     }
-    
-    public boolean isValid(final String string) {
+
+    public boolean isValid(String string) {
         try {
-            final Object result = type.parseString(string);
+            Object result = this.type.parseString(string);
             return result != null;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
-    
-    public boolean setValue(final String string) {
-        if (!type.validateValue(string)) {
+
+    public boolean setValue(String string) {
+        if (!this.type.validateValue(string)) {
             return false;
         }
-        value = type.parseString(string);
+        this.value = this.type.parseString(string);
         return true;
     }
-    
+
     public Object getValue() {
-        if (value instanceof String[]) {
-            return Arrays.asList((String[]) value);
-        } else if (value instanceof Object[]) {
-            final List<String> values = new ArrayList<String>();
-            for (final Object value : (Object[]) this.value) {
+        if (this.value instanceof String[]) {
+            return Arrays.asList((String[]) this.value);
+        } else if (this.value instanceof Object[]) {
+            List<String> values = new ArrayList<String>();
+            for (Object value : (Object[]) this.value) {
                 values.add(value.toString());
             }
             return values;
-        } else if (value instanceof PlotBlock) {
-            return value.toString();
+        } else if (this.value instanceof PlotBlock) {
+            return this.value.toString();
         }
-        return value;
+        return this.value;
     }
-    
+
     public String getConstant() {
-        return constant;
+        return this.constant;
     }
-    
+
     public Object getDefaultValue() {
-        if (default_value instanceof Object[]) {
-            return StringMan.join((Object[]) default_value, ",");
+        if (this.defaultValue instanceof Object[]) {
+            return StringMan.join((Object[]) this.defaultValue, ",");
         }
-        return default_value;
+        return this.defaultValue;
     }
-    
+
     public String getDescription() {
-        return description;
+        return this.description;
     }
 }

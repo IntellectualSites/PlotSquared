@@ -6,7 +6,7 @@ import java.util.ArrayDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SetQueue {
-    
+
     public static final SetQueue IMP = new SetQueue();
     private final AtomicInteger time_waiting = new AtomicInteger(2);
     private final AtomicInteger time_current = new AtomicInteger(0);
@@ -19,42 +19,43 @@ public class SetQueue {
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-                long free = 50 + Math.min(50 + last - (last = System.currentTimeMillis()), last2 - System.currentTimeMillis());
-                time_current.incrementAndGet();
+                long free = 50 + Math.min(50 + SetQueue.this.last - (SetQueue.this.last = System.currentTimeMillis()),
+                        SetQueue.this.last2 - System.currentTimeMillis());
+                SetQueue.this.time_current.incrementAndGet();
                 do {
                     if (isWaiting()) {
                         return;
                     }
-                    final PlotChunk<?> current = queue.next();
+                    PlotChunk<?> current = SetQueue.this.queue.next();
                     if (current == null) {
-                        time_waiting.set(Math.max(time_waiting.get(), time_current.get() - 2));
+                        SetQueue.this.time_waiting.set(Math.max(SetQueue.this.time_waiting.get(), SetQueue.this.time_current.get() - 2));
                         tasks();
                         return;
                     }
-                } while ((last2 = System.currentTimeMillis()) - last < free);
-                time_waiting.set(time_current.get() - 1);
+                } while ((SetQueue.this.last2 = System.currentTimeMillis()) - SetQueue.this.last < free);
+                SetQueue.this.time_waiting.set(SetQueue.this.time_current.get() - 1);
             }
         }, 1);
     }
-    
+
     public boolean forceChunkSet() {
-        final PlotChunk<?> set = queue.next();
+        PlotChunk<?> set = this.queue.next();
         return set != null;
     }
-    
+
     public boolean isWaiting() {
-        return time_waiting.get() >= time_current.get();
+        return this.time_waiting.get() >= this.time_current.get();
     }
-    
+
     public boolean isDone() {
-        return (time_waiting.get() + 1) < time_current.get();
+        return (this.time_waiting.get() + 1) < this.time_current.get();
     }
-    
+
     public void setWaiting() {
-        time_waiting.set(time_current.get() + 1);
+        this.time_waiting.set(this.time_current.get() + 1);
     }
-    
-    public boolean addTask(final Runnable whenDone) {
+
+    public boolean addTask(Runnable whenDone) {
         if (isDone()) {
             // Run
             tasks();
@@ -64,23 +65,23 @@ public class SetQueue {
             return true;
         }
         if (whenDone != null) {
-            runnables.add(whenDone);
+            this.runnables.add(whenDone);
         }
         return false;
     }
-    
+
     public boolean tasks() {
-        if (runnables.isEmpty()) {
+        if (this.runnables.isEmpty()) {
             return false;
         }
-        final ArrayDeque<Runnable> tmp = runnables.clone();
-        runnables.clear();
-        for (final Runnable runnable : tmp) {
+        ArrayDeque<Runnable> tmp = this.runnables.clone();
+        this.runnables.clear();
+        for (Runnable runnable : tmp) {
             runnable.run();
         }
         return true;
     }
-    
+
     /**
      * @param world
      * @param x
@@ -90,16 +91,16 @@ public class SetQueue {
      * @param data
      * @return
      */
-    public boolean setBlock(final String world, final int x, final int y, final int z, final short id, final byte data) {
+    public boolean setBlock(String world, int x, int y, int z, short id, byte data) {
         if ((y > 255) || (y < 0)) {
             return false;
         }
         SetQueue.IMP.setWaiting();
-        return queue.setBlock(world, x, y, z, id, data);
+        return this.queue.setBlock(world, x, y, z, id, data);
     }
-    
+
     /**
-     * 
+     *
      * @param world
      * @param x
      * @param y
@@ -107,65 +108,66 @@ public class SetQueue {
      * @param block
      * @return
      */
-    public boolean setBlock(final String world, final int x, final int y, final int z, PlotBlock block) {
+    public boolean setBlock(String world, int x, int y, int z, PlotBlock block) {
         if ((y > 255) || (y < 0)) {
             return false;
         }
         SetQueue.IMP.setWaiting();
-        return queue.setBlock(world, x, y, z, block.id, block.data);
+        return this.queue.setBlock(world, x, y, z, block.id, block.data);
     }
-    
+
     /**
-     * @param world
-     * @param x
-     * @param y
-     * @param z
+     * @param world The world
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @param z The z coordinate
      * @param id
      * @return
      */
-    public boolean setBlock(final String world, final int x, final int y, final int z, final short id) {
+    public boolean setBlock(String world, int x, int y, int z, short id) {
         if ((y > 255) || (y < 0)) {
             return false;
         }
         SetQueue.IMP.setWaiting();
-        return queue.setBlock(world, x, y, z, id, (byte) 0);
+        return this.queue.setBlock(world, x, y, z, id, (byte) 0);
     }
-    
+
     /**
-     * 
-     * @param world
-     * @param x
-     * @param y
-     * @param z
+     *
+     * @param world The world
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @param z The z coordinate
      * @param id
      * @return
      */
-    public boolean setBlock(final String world, final int x, final int y, final int z, final int id) {
-        if ((y > 255) || (y < 0)) {
+    public boolean setBlock(String world, int x, int y, int z, int id) {
+        if (y > 255 || y < 0) {
             return false;
         }
         SetQueue.IMP.setWaiting();
-        return queue.setBlock(world, x, y, z, (short) id, (byte) 0);
+        return this.queue.setBlock(world, x, y, z, (short) id, (byte) 0);
     }
-    
+
     public class ChunkWrapper {
+
         public final int x;
         public final int z;
         public final String world;
-        
-        public ChunkWrapper(final String world, final int x, final int z) {
+
+        public ChunkWrapper(String world, int x, int z) {
             this.world = world;
             this.x = x;
             this.z = z;
         }
-        
+
         @Override
         public int hashCode() {
-            return (x << 16) | (z & 0xFFFF);
+            return (this.x << 16) | (this.z & 0xFFFF);
         }
-        
+
         @Override
-        public boolean equals(final Object obj) {
+        public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -178,13 +180,13 @@ public class SetQueue {
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            final ChunkWrapper other = (ChunkWrapper) obj;
-            return (x == other.x) && (z == other.z) && StringMan.isEqual(world, other.world);
+            ChunkWrapper other = (ChunkWrapper) obj;
+            return (this.x == other.x) && (this.z == other.z) && StringMan.isEqual(this.world, other.world);
         }
-        
+
         @Override
         public String toString() {
-            return world + ":" + x + "," + z;
+            return this.world + ":" + this.x + "," + this.z;
         }
     }
 }

@@ -21,6 +21,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.InvalidConfigurationException;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -158,7 +159,7 @@ public class Template extends SubCommand {
                 try {
                     PS.get().config.save(PS.get().configFile);
                     PS.get().config.load(PS.get().configFile);
-                } catch (Exception e) {
+                } catch (InvalidConfigurationException | IOException e) {
                     e.printStackTrace();
                 }
                 String manager = worldConfig.getString("generator.plugin", "PlotSquared");

@@ -41,7 +41,7 @@ import java.util.UUID;
         permission = "plots.untrust",
         description = "Remove a trusted user from a plot",
         usage = "/plot untrust <player>",
-        requiredType = RequiredType.NONE,
+        requiredType = RequiredType.PLAYER,
         category = CommandCategory.SETTINGS)
 public class Untrust extends SubCommand {
 

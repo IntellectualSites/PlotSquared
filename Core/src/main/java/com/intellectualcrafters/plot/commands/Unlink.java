@@ -37,7 +37,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         usage = "/plot unlink",
         requiredType = RequiredType.NONE,
         category = CommandCategory.SETTINGS,
-        confirmation=true)
+        confirmation = true)
 public class Unlink extends SubCommand {
 
     @Override

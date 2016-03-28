@@ -13,7 +13,7 @@ import java.util.List;
 public class InboxOwner extends CommentInbox {
     
     @Override
-    public boolean canRead(final Plot plot, final PlotPlayer player) {
+    public boolean canRead(Plot plot, PlotPlayer player) {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.read." + toString());
         }
@@ -24,7 +24,7 @@ public class InboxOwner extends CommentInbox {
     }
     
     @Override
-    public boolean canWrite(final Plot plot, final PlotPlayer player) {
+    public boolean canWrite(Plot plot, PlotPlayer player) {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.write." + toString());
         }
@@ -35,7 +35,7 @@ public class InboxOwner extends CommentInbox {
     }
     
     @Override
-    public boolean canModify(final Plot plot, final PlotPlayer player) {
+    public boolean canModify(Plot plot, PlotPlayer player) {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.modify." + toString());
         }
@@ -50,7 +50,7 @@ public class InboxOwner extends CommentInbox {
         if ((plot == null) || (plot.owner == null)) {
             return false;
         }
-        final ArrayList<PlotComment> comments = plot.getSettings().getComments(toString());
+        ArrayList<PlotComment> comments = plot.getSettings().getComments(toString());
         if (comments != null) {
             whenDone.value = comments;
             TaskManager.runTask(whenDone);
@@ -61,7 +61,7 @@ public class InboxOwner extends CommentInbox {
             public void run(List<PlotComment> value) {
                 whenDone.value = value;
                 if (value != null) {
-                    for (final PlotComment comment : value) {
+                    for (PlotComment comment : value) {
                         plot.getSettings().addComment(comment);
                     }
                 } else {
@@ -74,7 +74,7 @@ public class InboxOwner extends CommentInbox {
     }
     
     @Override
-    public boolean addComment(final Plot plot, final PlotComment comment) {
+    public boolean addComment(Plot plot, PlotComment comment) {
         if ((plot == null) || (plot.owner == null)) {
             return false;
         }
@@ -89,7 +89,7 @@ public class InboxOwner extends CommentInbox {
     }
     
     @Override
-    public boolean removeComment(final Plot plot, final PlotComment comment) {
+    public boolean removeComment(Plot plot, PlotComment comment) {
         if ((plot == null) || (plot.owner == null)) {
             return false;
         }
@@ -98,11 +98,11 @@ public class InboxOwner extends CommentInbox {
     }
     
     @Override
-    public boolean clearInbox(final Plot plot) {
-        if ((plot == null) || (plot.owner == null)) {
+    public boolean clearInbox(Plot plot) {
+        if (plot == null || plot.owner == null) {
             return false;
         }
-        DBFunc.clearInbox(plot, toString());
+        DBFunc.clearInbox(plot, this.toString());
         return false;
     }
 }

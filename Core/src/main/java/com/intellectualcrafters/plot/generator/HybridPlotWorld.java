@@ -47,8 +47,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public HashMap<Integer, HashMap<Integer, PlotBlock>> G_SCH;
     public HashMap<Integer, HashSet<PlotItem>> G_SCH_STATE;
 
-    public HybridPlotWorld(String worldname, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
-        super(worldname, id, generator, min, max);
+    public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
+        super(worldName, id, generator, min, max);
     }
 
     public static byte wrap(byte data, int start) {

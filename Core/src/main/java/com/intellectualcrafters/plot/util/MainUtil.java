@@ -317,7 +317,7 @@ public class MainUtil {
     }
 
     /**
-     * Get the name from a UUID<br>
+     * Get the name from a UUID.
      * @param owner
      * @return The player's name, None, Everyone or Unknown
      */
@@ -335,7 +335,7 @@ public class MainUtil {
     }
 
     /**
-     * Get the corner locations for a list of regions<br>
+     * Get the corner locations for a list of regions.
      * @see Plot#getCorners()
      * @param world
      * @param regions
@@ -514,7 +514,7 @@ public class MainUtil {
     }
 
     /**
-     * Resend the chunk at a location
+     * Resend the chunk at a location.
      * @param world
      * @param loc
      */
@@ -530,7 +530,7 @@ public class MainUtil {
     }
 
     /**
-     * Set a cuboid asynchronously to a set of blocks
+     * Set a cuboid asynchronously to a set of blocks.
      * @param world
      * @param pos1
      * @param pos2
@@ -599,19 +599,19 @@ public class MainUtil {
     }
 
     /**
-     * Send a message to the player
+     * Send a message to the player.
      *
-     * @param plr Player to receive message
+     * @param player Player to receive message
      * @param msg Message to send
      *
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
-    public static boolean sendMessage(PlotPlayer plr, String msg) {
-        return sendMessage(plr, msg, true);
+    public static boolean sendMessage(PlotPlayer player, String msg) {
+        return sendMessage(player, msg, true);
     }
 
     /**
-     * Send a message to console
+     * Send a message to console.
      * @param caption
      * @param args
      */
@@ -621,17 +621,17 @@ public class MainUtil {
 
     /**
      * Send a message to a player.
-     * @param plr Can be null to represent console, or use ConsolePlayer.getConsole()
+     * @param player Can be null to represent console, or use ConsolePlayer.getConsole()
      * @param msg
      * @param prefix If the message should be prefixed with the configured prefix
      * @return
      */
-    public static boolean sendMessage(PlotPlayer plr, String msg, boolean prefix) {
+    public static boolean sendMessage(PlotPlayer player, String msg, boolean prefix) {
         if (!msg.isEmpty()) {
-            if (plr == null) {
+            if (player == null) {
                 ConsolePlayer.getConsole().sendMessage((prefix ? C.PREFIX.s() : "") + msg);
             } else {
-                plr.sendMessage((prefix ? C.PREFIX.s() : "") + C.color(msg));
+                player.sendMessage((prefix ? C.PREFIX.s() : "") + C.color(msg));
             }
         }
         return true;

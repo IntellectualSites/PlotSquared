@@ -113,8 +113,8 @@ public class Trim extends SubCommand {
     }
 
     /**
-     * Runs the result task with the parameters (viable, nonViable).<br>
-     * @param world
+     * Runs the result task with the parameters (viable, nonViable).
+     * @param world The world
      * @param result (viable = .mcr to trim, nonViable = .mcr keep)
      * @return
      */

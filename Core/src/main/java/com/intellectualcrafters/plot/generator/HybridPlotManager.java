@@ -72,16 +72,16 @@ public class HybridPlotManager extends ClassicPlotManager {
     }
 
     @Override
-    public boolean createRoadEast(PlotArea plotworld, Plot plot) {
-        super.createRoadEast(plotworld, plot);
-        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+    public boolean createRoadEast(PlotArea plotArea, Plot plot) {
+        super.createRoadEast(plotArea, plot);
+        HybridPlotWorld hpw = (HybridPlotWorld) plotArea;
         PlotId id = plot.getId();
         PlotId id2 = new PlotId(id.x + 1, id.y);
         Location bot = getPlotBottomLocAbs(hpw, id2);
         Location top = getPlotTopLocAbs(hpw, id);
-        Location pos1 = new Location(plotworld.worldname, top.getX() + 1, 0, bot.getZ() - 1);
-        Location pos2 = new Location(plotworld.worldname, bot.getX(), 255, top.getZ() + 1);
-        MainUtil.resetBiome(plotworld, pos1, pos2);
+        Location pos1 = new Location(plotArea.worldname, top.getX() + 1, 0, bot.getZ() - 1);
+        Location pos2 = new Location(plotArea.worldname, bot.getX(), 255, top.getZ() + 1);
+        MainUtil.resetBiome(plotArea, pos1, pos2);
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }

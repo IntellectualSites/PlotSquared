@@ -75,10 +75,10 @@ public class InboxReport extends CommentInbox {
 
     @Override
     public boolean clearInbox(Plot plot) {
-        if ((plot == null) || (plot.owner == null)) {
+        if (plot == null || plot.owner == null) {
             return false;
         }
-        DBFunc.clearInbox(plot, toString());
+        DBFunc.clearInbox(plot, this.toString());
         return false;
     }
 }

@@ -70,14 +70,16 @@ public class Inbox extends SubCommand {
 
         // This might work xD
         for (int x = page * 12; x < max; x++) {
-            PlotComment c = comments[x];
+            PlotComment comment = comments[x];
             String color;
-            if (player.getName().equals(c.senderName)) {
+            if (player.getName().equals(comment.senderName)) {
                 color = "&a";
             } else {
                 color = "&7";
             }
-            string.append("&8[&7#" + (x + 1) + "&8][&7" + c.world + ";" + c.id + "&8][&6" + c.senderName + "&8]" + color + c.comment + "\n");
+            string.append(
+                    "&8[&7#" + (x + 1) + "&8][&7" + comment.world + ";" + comment.id + "&8][&6" + comment.senderName + "&8]" + color + comment.comment
+                            + "\n");
         }
         MainUtil.sendMessage(player, string.toString());
     }

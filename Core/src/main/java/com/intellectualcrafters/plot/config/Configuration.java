@@ -218,7 +218,7 @@ public class Configuration {
     /**
      * Create your own SettingValue object to make the management of plotworld configuration easier
      */
-    public static abstract class SettingValue<T> {
+    public abstract static class SettingValue<T> {
 
         private final String type;
 

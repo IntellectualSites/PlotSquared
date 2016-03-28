@@ -267,35 +267,35 @@ public class ClassicPlotManager extends SquarePlotManager {
     }
 
     /**
-     * PLOT MERGING
+     * PLOT MERGING.
      */
     @Override
-    public boolean createRoadEast(PlotArea plotworld, Plot plot) {
-        ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
-        Location pos1 = getPlotBottomLocAbs(plotworld, plot.getId());
-        Location pos2 = getPlotTopLocAbs(plotworld, plot.getId());
+    public boolean createRoadEast(PlotArea plotArea, Plot plot) {
+        ClassicPlotWorld dpw = (ClassicPlotWorld) plotArea;
+        Location pos1 = getPlotBottomLocAbs(plotArea, plot.getId());
+        Location pos2 = getPlotTopLocAbs(plotArea, plot.getId());
         int sx = pos2.getX() + 1;
         int ex = sx + dpw.ROAD_WIDTH - 1;
         int sz = pos1.getZ() - 2;
         int ez = pos2.getZ() + 2;
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname,
-                new Location(plotworld.worldname, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1),
-                new Location(plotworld.worldname, ex, 255, ez - 1), new PlotBlock((short) 0, (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 0, sz + 1),
-                new Location(plotworld.worldname, ex, 0, ez - 1), new PlotBlock((short) 7,
+        MainUtil.setSimpleCuboidAsync(plotArea.worldname,
+                new Location(plotArea.worldname, sx, Math.min(dpw.WALL_HEIGHT, dpw.ROAD_HEIGHT) + 1, sz + 1),
+                new Location(plotArea.worldname, ex, 255, ez - 1), new PlotBlock((short) 0, (byte) 0));
+        MainUtil.setSimpleCuboidAsync(plotArea.worldname, new Location(plotArea.worldname, sx, 0, sz + 1),
+                new Location(plotArea.worldname, ex, 0, ez - 1), new PlotBlock((short) 7,
                         (byte) 0));
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, 1, sz + 1),
-                new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, sz + 1),
-                new Location(plotworld.worldname, sx, dpw.WALL_HEIGHT + 1, ez - 1),
+        MainUtil.setSimpleCuboidAsync(plotArea.worldname, new Location(plotArea.worldname, sx, 1, sz + 1),
+                new Location(plotArea.worldname, sx, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
+        MainUtil.setSimpleCuboidAsync(plotArea.worldname, new Location(plotArea.worldname, sx, dpw.WALL_HEIGHT + 1, sz + 1),
+                new Location(plotArea.worldname, sx, dpw.WALL_HEIGHT + 1, ez - 1),
                 dpw.WALL_BLOCK);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, ex, 1, sz + 1),
-                new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT + 1, sz + 1),
-                new Location(plotworld.worldname, ex, dpw.WALL_HEIGHT + 1, ez - 1),
+        MainUtil.setSimpleCuboidAsync(plotArea.worldname, new Location(plotArea.worldname, ex, 1, sz + 1),
+                new Location(plotArea.worldname, ex, dpw.WALL_HEIGHT, ez - 1), dpw.WALL_FILLING);
+        MainUtil.setSimpleCuboidAsync(plotArea.worldname, new Location(plotArea.worldname, ex, dpw.WALL_HEIGHT + 1, sz + 1),
+                new Location(plotArea.worldname, ex, dpw.WALL_HEIGHT + 1, ez - 1),
                 dpw.WALL_BLOCK);
-        MainUtil.setSimpleCuboidAsync(plotworld.worldname, new Location(plotworld.worldname, sx + 1, 1, sz + 1),
-                new Location(plotworld.worldname, ex - 1, dpw.ROAD_HEIGHT, ez - 1), dpw.ROAD_BLOCK);
+        MainUtil.setSimpleCuboidAsync(plotArea.worldname, new Location(plotArea.worldname, sx + 1, 1, sz + 1),
+                new Location(plotArea.worldname, ex - 1, dpw.ROAD_HEIGHT, ez - 1), dpw.ROAD_BLOCK);
         return true;
     }
 
@@ -400,7 +400,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     }
 
     /**
-     * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED)
+     * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED).
      */
     @Override
     public boolean finishPlotMerge(PlotArea plotworld, ArrayList<PlotId> plotIds) {

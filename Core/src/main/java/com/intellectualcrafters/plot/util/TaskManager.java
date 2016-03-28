@@ -1,101 +1,88 @@
 package com.intellectualcrafters.plot.util;
 
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.RunnableVal;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.RunnableVal;
-
 public abstract class TaskManager {
+
     public static HashSet<String> TELEPORT_QUEUE = new HashSet<>();
-    
+
     public static AtomicInteger index = new AtomicInteger(0);
     public static HashMap<Integer, Integer> tasks = new HashMap<>();
-    
-    public static int runTaskRepeat(final Runnable r, final int interval) {
-        if (r != null) {
+
+    public static int runTaskRepeat(Runnable runnable, int interval) {
+        if (runnable != null) {
             if (PS.get().TASK == null) {
                 throw new IllegalArgumentException("disabled");
             }
-            return PS.get().TASK.taskRepeat(r, interval);
+            return PS.get().TASK.taskRepeat(runnable, interval);
         }
         return -1;
     }
-    
-    public static int runTaskRepeatAsync(final Runnable r, final int interval) {
-        if (r != null) {
+
+    public static int runTaskRepeatAsync(Runnable runnable, int interval) {
+        if (runnable != null) {
             if (PS.get().TASK == null) {
                 throw new IllegalArgumentException("disabled");
             }
-            return PS.get().TASK.taskRepeat(r, interval);
+            return PS.get().TASK.taskRepeat(runnable, interval);
         }
         return -1;
     }
-    
-    public static void runTaskAsync(final Runnable r) {
-        if (r != null) {
+
+    public static void runTaskAsync(Runnable runnable) {
+        if (runnable != null) {
             if (PS.get().TASK == null) {
-                r.run();
+                runnable.run();
                 return;
             }
-            PS.get().TASK.taskAsync(r);
+            PS.get().TASK.taskAsync(runnable);
         }
     }
-    
-    public static void runTask(final Runnable r) {
-        if (r != null) {
+
+    public static void runTask(Runnable runnable) {
+        if (runnable != null) {
             if (PS.get().TASK == null) {
-                r.run();
+                runnable.run();
                 return;
             }
-            PS.get().TASK.task(r);
+            PS.get().TASK.task(runnable);
         }
     }
-    
+
     /**
-     * Run task later (delay in ticks)
-     * @param r
-     * @param delay
+     * Run task later.
+     * @param runnable The task
+     * @param delay The delay in ticks
      */
-    public static void runTaskLater(final Runnable r, final int delay) {
-        if (r != null) {
+    public static void runTaskLater(Runnable runnable, int delay) {
+        if (runnable != null) {
             if (PS.get().TASK == null) {
-                r.run();
+                runnable.run();
                 return;
             }
-            PS.get().TASK.taskLater(r, delay);
+            PS.get().TASK.taskLater(runnable, delay);
         }
     }
-    
-    public static void runTaskLaterAsync(final Runnable r, final int delay) {
-        if (r != null) {
+
+    public static void runTaskLaterAsync(Runnable runnable, int delay) {
+        if (runnable != null) {
             if (PS.get().TASK == null) {
-                r.run();
+                runnable.run();
                 return;
             }
-            PS.get().TASK.taskLaterAsync(r, delay);
+            PS.get().TASK.taskLaterAsync(runnable, delay);
         }
     }
-    
-    public abstract int taskRepeat(final Runnable r, final int interval);
-    
-    public abstract int taskRepeatAsync(final Runnable r, final int interval);
-    
-    public abstract void taskAsync(final Runnable r);
-    
-    public abstract void task(final Runnable r);
-    
-    public abstract void taskLater(final Runnable r, final int delay);
-    
-    public abstract void taskLaterAsync(final Runnable r, final int delay);
-    
-    public abstract void cancelTask(final int task);
-    
+
     /**
-     * Break up a series of tasks so that they can run without lagging the server
+     * Break up a series of tasks so that they can run without lagging the server.
      * @param objects
      * @param task
      * @param whenDone
@@ -119,4 +106,18 @@ public abstract class TaskManager {
             }
         });
     }
+
+    public abstract int taskRepeat(Runnable runnable, int interval);
+
+    public abstract int taskRepeatAsync(Runnable runnable, int interval);
+
+    public abstract void taskAsync(Runnable runnable);
+
+    public abstract void task(Runnable runnable);
+
+    public abstract void taskLater(Runnable runnable, int delay);
+
+    public abstract void taskLaterAsync(Runnable runnable, int delay);
+
+    public abstract void cancelTask(int task);
 }

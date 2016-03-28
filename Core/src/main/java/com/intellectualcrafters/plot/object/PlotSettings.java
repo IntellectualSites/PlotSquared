@@ -158,12 +158,13 @@ public class PlotSettings {
     }
 
     /**
-     * Get the "farewell" flag value
+     * Get the "farewell" flag value.
      *
+     * @param plotArea The PlotArea
      * @return Farewell flag
      */
-    public String getLeaveMessage(PlotArea area) {
-        Flag farewell = FlagManager.getSettingFlag(area, this, "farewell");
+    public String getLeaveMessage(PlotArea plotArea) {
+        Flag farewell = FlagManager.getSettingFlag(plotArea, this, "farewell");
         if (farewell != null) {
             return farewell.getValueString();
         }

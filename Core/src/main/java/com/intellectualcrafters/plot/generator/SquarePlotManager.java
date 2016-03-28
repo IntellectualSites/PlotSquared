@@ -183,15 +183,15 @@ public abstract class SquarePlotManager extends GridPlotManager {
     }
 
     /**
-     * Get the bottom plot loc (some basic math)
+     * Get the bottom plot loc (some basic math).
      */
     @Override
-    public Location getPlotBottomLocAbs(PlotArea plotworld, PlotId plotid) {
-        SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
-        int px = plotid.x;
-        int pz = plotid.y;
+    public Location getPlotBottomLocAbs(PlotArea plotArea, PlotId plotId) {
+        SquarePlotWorld dpw = (SquarePlotWorld) plotArea;
+        int px = plotId.x;
+        int pz = plotId.y;
         int x = (dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - (int) Math.floor(dpw.ROAD_WIDTH / 2);
         int z = (dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - dpw.PLOT_WIDTH - (int) Math.floor(dpw.ROAD_WIDTH / 2);
-        return new Location(plotworld.worldname, x, plotworld.MIN_BUILD_HEIGHT, z);
+        return new Location(plotArea.worldname, x, plotArea.MIN_BUILD_HEIGHT, z);
     }
 }

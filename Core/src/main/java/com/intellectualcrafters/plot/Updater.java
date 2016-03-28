@@ -59,7 +59,6 @@ public class Updater {
                     } else {
                         version = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), 0};
                     }
-                    URL url = new URL(asset.getString("browser_download_url"));
                     // If current version >= update
                     if (PS.get().checkVersion(PS.get().getVersion(), version)) {
                         PS.debug("&7PlotSquared is already up to date!");
@@ -68,7 +67,7 @@ public class Updater {
                     log("&6PlotSquared " + StringMan.join(split, ".") + " is available:");
                     log("&8 - &3Use: &7/plot update");
                     log("&8 - &3Or: &7" + downloadURL);
-                    return url;
+                    return new URL(asset.getString("browser_download_url"));
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     log("&dCould not check for updates (1)");
