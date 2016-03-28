@@ -150,7 +150,7 @@ public class MainCommand extends Command {
                 String[] tmp = new String[args.length + 1];
                 tmp[0] = split2[0];
                 tmp[args.length] = split2[1];
-                if (args.length > 2) {
+                if (args.length >= 2) {
                     System.arraycopy(args, 1, tmp, 1, args.length - 1);
                 }
                 args = tmp;
