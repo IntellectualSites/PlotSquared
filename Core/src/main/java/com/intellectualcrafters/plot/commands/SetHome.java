@@ -44,9 +44,12 @@ public class SetHome extends SetCommand {
             case "unset":
             case "remove":
             case "none": {
-                plot.getBasePlot(false).setHome(null);
-                MainUtil.sendMessage(plr, C.POSITION_UNSET);
-                return true;
+                Plot base = plot.getBasePlot(false);
+                Location bot = base.getBottomAbs();
+                Location defaultHome = base.getDefaultHome();
+                BlockLoc bLoc = new BlockLoc(defaultHome.getX() - bot.getX(), defaultHome.getY(), defaultHome.getZ() - bot.getZ(), defaultHome.getYaw(), defaultHome.getPitch());
+                base.setHome(bLoc);
+                return MainUtil.sendMessage(plr, C.POSITION_UNSET);
             }
             case "": {
                 Plot base = plot.getBasePlot(false);
