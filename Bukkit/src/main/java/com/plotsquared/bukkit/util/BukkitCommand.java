@@ -4,15 +4,16 @@ import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.commands.DebugUUID;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class BukkitCommand implements CommandExecutor, TabCompleter {
 
@@ -25,7 +26,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (commandSender instanceof Player) {
             return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), args);
         }
-        if (commandSender == null || commandSender.getClass() == Bukkit.getConsoleSender().getClass()) {
+        if (commandSender.getClass() == Bukkit.getConsoleSender().getClass()) {
             return MainCommand.onCommand(ConsolePlayer.getConsole(), args);
         }
         @SuppressWarnings("deprecation")

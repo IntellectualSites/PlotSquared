@@ -1,64 +1,55 @@
 package com.intellectualcrafters.plot.commands;
 
 /**
- * CommandCategory
- *
-
-
+ * CommandCategory.
  */
 public enum CommandCategory {
     /**
-     * Claiming CommandConfig
-     *
+     * Claiming CommandConfig.
      * Such as: /plot claim
      */
     CLAIMING("Claiming"),
     /**
-     * Teleportation CommandConfig
-     *
+     * Teleportation CommandConfig.
      * Such as: /plot visit
      */
     TELEPORT("Teleport"),
     /**
-     * Protection
+     * Protection.
      */
     SETTINGS("Protection"),
     /**
-     * Chat
+     * Chat.
      */
     CHAT("Chat"),
     /**
-     * Web
+     * Web.
      */
     SCHEMATIC("Web"),
     /**
-     * Cosmetic
+     * Cosmetic.
      */
     APPEARANCE("Cosmetic"),
     /**
-     * Information CommandConfig
-     *
+     * Information CommandConfig.
      * Such as: /plot info
      */
     INFO("Info"),
     /**
-     * Debug CommandConfig
-     *
+     * Debug CommandConfig.
      * Such as: /plot debug
      */
     DEBUG("Debug"),
     /**
-     * Administration commands
+     * Administration commands.
      */
     ADMINISTRATION("Admin");
-
     /**
-     * The category name (Readable)
+     * The category name (Readable).
      */
     private final String name;
-
     /**
-     * Constructor
+     * Constructor.
      *
      * @param name readable name
      */

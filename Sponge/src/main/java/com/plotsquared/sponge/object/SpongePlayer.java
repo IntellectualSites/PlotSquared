@@ -8,8 +8,6 @@ import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.sponge.util.SpongeUtil;
-import java.time.Instant;
-import java.util.UUID;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
@@ -21,6 +19,9 @@ import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.service.ban.BanService;
 import org.spongepowered.api.text.chat.ChatTypes;
 import org.spongepowered.api.text.serializer.TextSerializers;
+
+import java.time.Instant;
+import java.util.UUID;
 
 public class SpongePlayer extends PlotPlayer {
     
@@ -139,7 +140,9 @@ public class SpongePlayer extends PlotPlayer {
         if (gamemode == GameModes.SURVIVAL) {
             return PlotGameMode.SURVIVAL;
         }
-        throw new UnsupportedOperationException("INVALID GAMEMODE");
+        if (gamemode == GameModes.NOT_SET) {
+            return PlotGameMode.NOT_SET;
+        }
     }
     
     @Override
@@ -157,6 +160,11 @@ public class SpongePlayer extends PlotPlayer {
             case SURVIVAL:
                 this.player.offer(Keys.GAME_MODE, GameModes.SURVIVAL);
                 return;
+            case NOT_SET:
+                this.player.offer(Keys.GAME_MODE, GameModes.NOT_SET);
+                return;
+            default:
+                this.player.offer(Keys.GAME_MODE, GameModes.NOT_SET);
         }
     }
     

@@ -116,7 +116,7 @@ public class HackTitleManager {
      * Load spigot and NMS classes.
      * @throws ClassNotFoundException Spigot Error.
      */
-    private void loadClasses() throws ClassNotFoundException {
+    private void loadClasses() {
         this.packetTitle = getClass("org.spigotmc.ProtocolInjector$PacketTitle");
         this.packetActions = getClass("org.spigotmc.ProtocolInjector$PacketTitle$Action");
         this.nmsChatSerializer = Reflection.getNMSClass("ChatSerializer");

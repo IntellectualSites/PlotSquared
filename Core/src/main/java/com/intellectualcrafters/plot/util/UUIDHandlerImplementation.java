@@ -189,12 +189,6 @@ public abstract class UUIDHandlerImplementation {
         if (uuid == null) {
             return null;
         }
-        //        // check online
-        //        final PlotPlayer player = getPlayer(uuid);
-        //        if (player != null) {
-        //            return player.getName();
-        //        }
-        // check cache
         StringWrapper name = this.uuidMap.inverse().get(uuid);
         if (name != null) {
             return name.value;
@@ -203,7 +197,7 @@ public abstract class UUIDHandlerImplementation {
     }
 
     public UUID getUUID(String name, RunnableVal<UUID> ifFetch) {
-        if (name == null || name.isEmpty()) {
+        if (name.isEmpty()) {
             return null;
         }
         // check online

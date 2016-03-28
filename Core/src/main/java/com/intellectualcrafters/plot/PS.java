@@ -53,6 +53,7 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -1902,7 +1903,7 @@ public class PS {
                     case "3":
                         return PlotGameMode.SPECTATOR;
                     default:
-                        return null;
+                        return PlotGameMode.NOT_SET;
                 }
             }
 
@@ -2246,23 +2247,23 @@ public class PS {
             log("Failed to save storage.yml");
         }
         try {
-            commandsFile = new File(IMP.getDirectory() + File.separator + "config" + File.separator + "commands.yml");
-            if (!commandsFile.exists()) {
-                if (!commandsFile.createNewFile()) {
+            this.commandsFile = new File(this.IMP.getDirectory() + File.separator + "config" + File.separator + "commands.yml");
+            if (!this.commandsFile.exists()) {
+                if (!this.commandsFile.createNewFile()) {
                     log("Could not the storage settings file, please create \"commands.yml\" manually.");
                 }
             }
-            commands = YamlConfiguration.loadConfiguration(commandsFile);
+            this.commands = YamlConfiguration.loadConfiguration(this.commandsFile);
             setupStorage();
         } catch (IOException err_trans) {
             log("Failed to save commands.yml");
         }
         try {
-            style.save(styleFile);
-            config.save(configFile);
-            storage.save(storageFile);
-            commands.save(commandsFile);
-        } catch (final IOException e) {
+            this.style.save(this.styleFile);
+            this.config.save(this.configFile);
+            this.storage.save(this.storageFile);
+            this.commands.save(this.commandsFile);
+        } catch (IOException e) {
             log("Configuration file saving failed");
             e.printStackTrace();
         }

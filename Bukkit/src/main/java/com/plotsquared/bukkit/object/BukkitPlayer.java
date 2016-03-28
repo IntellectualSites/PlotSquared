@@ -1,6 +1,5 @@
 package com.plotsquared.bukkit.object;
 
-import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -8,14 +7,11 @@ import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.WeatherType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.PluginManager;
 
 import java.util.UUID;
 
@@ -28,8 +24,8 @@ public class BukkitPlayer extends PlotPlayer {
     private long last = 0;
     
     /**
-     * <p>Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
-     * as it caches player objects.</p>
+     * <p>Please do not use this method. Instead use
+     * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
      * @param player
      */
     public BukkitPlayer(Player player) {
@@ -73,29 +69,6 @@ public class BukkitPlayer extends PlotPlayer {
         return this.player.hasPermission(permission);
     }
 
-    public Permission getPermission(String node) {
-        PluginManager manager = Bukkit.getPluginManager();
-        Permission perm = manager.getPermission(node);
-        if (perm == null) {
-            String[] nodes = node.split("\\.");
-            perm = new Permission(node);
-            StringBuilder n = new StringBuilder();
-            for (int i = 0; i < nodes.length - 1; i++) {
-                n.append(nodes[i]).append(".");
-                if (!node.equals(n + C.PERMISSION_STAR.s())) {
-                    Permission parent = getPermission(n + C.PERMISSION_STAR.s());
-                    if (parent != null) {
-                        perm.addParent(parent, true);
-                    }
-                }
-            }
-            manager.addPermission(perm);
-        }
-        manager.recalculatePermissionDefaults(perm);
-        perm.recalculatePermissibles();
-        return perm;
-    }
-    
     @Override
     public void sendMessage(String message) {
         this.player.sendMessage(message);
@@ -166,7 +139,7 @@ public class BukkitPlayer extends PlotPlayer {
             case SURVIVAL:
                 return PlotGameMode.SURVIVAL;
             default:
-                return PlotGameMode.SURVIVAL;
+                return PlotGameMode.NOT_SET;
         }
     }
     

@@ -20,25 +20,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 package com.intellectualcrafters.plot.object;
 
-import java.awt.Rectangle;
-import java.awt.geom.Area;
-import java.awt.geom.PathIterator;
-import java.io.File;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
@@ -59,6 +40,25 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
+
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The plot class<br>
@@ -1128,15 +1128,14 @@ public class Plot {
 
     /**
      * Set the home location
-     * @param loc
+     * @param location
      */
-    public void setHome(BlockLoc loc) {
+    public void setHome(BlockLoc location) {
         Plot plot = this.getBasePlot(false);
-        BlockLoc pos = plot.getSettings().getPosition();
-        if (new BlockLoc(0, 0, 0).equals(loc)) {
+        if (new BlockLoc(0, 0, 0).equals(location)) {
             return;
         }
-        plot.getSettings().setPosition(loc);
+        plot.getSettings().setPosition(location);
         DBFunc.setPosition(plot, plot.getSettings().getPosition().toString());
     }
 
@@ -1273,7 +1272,7 @@ public class Plot {
     }
 
     /**
-     * Set the plot sign if plot signs are enabled
+     * Set the plot sign if plot signs are enabled.
      */
     public void setSign() {
         if (this.owner == null) {
@@ -1338,6 +1337,8 @@ public class Plot {
      *  - The plot will not be created if the owner is null<br>
      *  - Any setting from before plot creation will not be saved until the server is stopped properly. i.e. Set any values/options after plot
      *  creation.
+     * @param uuid
+     * @param notify
      * @return true if plot was created successfully
      */
     public boolean create(final UUID uuid, final boolean notify) {
@@ -1377,7 +1378,7 @@ public class Plot {
     }
 
     /**
-     * Set components such as border, wall, floor
+     * Set components such as border, wall, floor.
      *  (components are generator specific)
      */
     public boolean setComponent(String component, String blocks) {
@@ -1386,7 +1387,7 @@ public class Plot {
     }
 
     /**
-     * Get the biome (String)
+     * Get the biome.
      */
     public String getBiome() {
         Location loc = this.getBottomAbs();
@@ -1394,7 +1395,7 @@ public class Plot {
     }
 
     /**
-     * Return the top location for the plot
+     * Return the top location for the plot.
      * @return
      */
     public Location getTopAbs() {
@@ -1402,7 +1403,7 @@ public class Plot {
     }
 
     /**
-     * Return the bottom location for the plot
+     * Return the bottom location for the plot.
      * @return
      */
     public Location getBottomAbs() {
@@ -1410,43 +1411,43 @@ public class Plot {
     }
 
     /**
-     * Swap the settings for two plots
-     * @param p2
+     * Swap the settings for two plots.
+     * @param plot
      * @param whenDone
      * @return
      */
-    public boolean swapData(Plot p2, Runnable whenDone) {
+    public boolean swapData(Plot plot, Runnable whenDone) {
         if (this.owner == null) {
-            if (p2 != null && p2.hasOwner()) {
-                p2.moveData(this, whenDone);
+            if (plot != null && plot.hasOwner()) {
+                plot.moveData(this, whenDone);
                 return true;
             }
             return false;
         }
-        if (p2 == null || p2.owner == null) {
-            this.moveData(p2, whenDone);
+        if (plot == null || plot.owner == null) {
+            this.moveData(plot, whenDone);
             return true;
         }
         // Swap cached
         PlotId temp = new PlotId(this.getId().x, this.getId().y);
-        this.getId().x = p2.getId().x;
-        this.getId().y = p2.getId().y;
-        p2.getId().x = temp.x;
-        p2.getId().y = temp.y;
+        this.getId().x = plot.getId().x;
+        this.getId().y = plot.getId().y;
+        plot.getId().x = temp.x;
+        plot.getId().y = temp.y;
         this.area.removePlot(this.getId());
-        p2.area.removePlot(p2.getId());
+        plot.area.removePlot(plot.getId());
         this.getId().recalculateHash();
-        p2.getId().recalculateHash();
+        plot.getId().recalculateHash();
         this.area.addPlotAbs(this);
-        p2.area.addPlotAbs(p2);
+        plot.area.addPlotAbs(plot);
         // Swap database
-        DBFunc.dbManager.swapPlots(p2, this);
+        DBFunc.dbManager.swapPlots(plot, this);
         TaskManager.runTaskLater(whenDone, 1);
         return true;
     }
 
     /**
-     * Move the settings for a plot
+     * Move the settings for a plot.
      * @param pos2
      * @param whenDone
      * @return
@@ -1621,7 +1622,7 @@ public class Plot {
     }
 
     /**
-     * Get plot display name
+     * Get plot display name.
      *
      * @return alias if set, else id
      */
@@ -1718,7 +1719,7 @@ public class Plot {
     }
 
     /**
-     * Export the plot as a schematic to the configured output directory
+     * Export the plot as a schematic to the configured output directory.
      * @return
      */
     public void export(final RunnableVal<Boolean> whenDone) {
@@ -1764,7 +1765,7 @@ public class Plot {
     }
 
     /**
-     * Upload the plot as a schematic to the configured web interface<br>
+     * Upload the plot as a schematic to the configured web interface.
      * @param whenDone value will be null if uploading fails
      */
     public void upload(final RunnableVal<URL> whenDone) {
@@ -1838,7 +1839,7 @@ public class Plot {
     }
 
     /**
-     * Set a flag for this plot
+     * Set a flag for this plot.
      * @param flags
      */
     public void setFlags(Set<Flag> flags) {
@@ -1846,9 +1847,9 @@ public class Plot {
     }
 
     /**
-     * Get the plot Alias<br>
+     * Get the plot alias.
      *  - Returns an empty string if no alias is set
-     * @return
+     * @return The plot alias
      */
     public String getAlias() {
         if (this.settings == null) {
@@ -1858,8 +1859,8 @@ public class Plot {
     }
 
     /**
-     * Set the plot alias
-     * @param alias
+     * Set the plot alias.
+     * @param alias The alias
      */
     public void setAlias(String alias) {
         for (Plot current : this.getConnectedPlots()) {
@@ -1912,7 +1913,7 @@ public class Plot {
     }
 
     /**
-     * Get the merged array
+     * Get the merged array.
      * @return boolean [ north, east, south, west ]
      */
     public boolean[] getMerged() {
@@ -2512,8 +2513,8 @@ public class Plot {
     }
 
     /**
-     * Get all the corners of the plot (supports non-rectangular shapes)<br>
-     * @return
+     * Get all the corners of the plot (supports non-rectangular shapes).
+     * @return A list of the plot corners
      */
     public List<Location> getAllCorners() {
         Area area = new Area();
@@ -2536,7 +2537,7 @@ public class Plot {
 
     /**
      * Teleport a player to a plot and send them the teleport message.
-     * @param player
+     * @param player The player
      * @return If the teleportation is allowed.
      */
     public boolean teleportPlayer(final PlotPlayer player) {
@@ -2605,7 +2606,7 @@ public class Plot {
     }
 
     /**
-     * Expand the world border to include the provided plot (if applicable)
+     * Expand the world border to include the provided plot (if applicable).
      */
     public void updateWorldBorder() {
         if (this.owner == null) {
@@ -2672,7 +2673,7 @@ public class Plot {
                 greaterPlot.setMerged(3, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
-                    final Plot other = lesserPlot.getRelative(0);
+                    Plot other = lesserPlot.getRelative(0);
                     if (other.getMerged(2) && other.getMerged(1)) {
                         greaterPlot.mergePlot(other, removeRoads);
                         other.removeRoadSouthEast();

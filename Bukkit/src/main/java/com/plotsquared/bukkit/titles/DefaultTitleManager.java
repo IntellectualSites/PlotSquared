@@ -121,7 +121,7 @@ public class DefaultTitleManager {
      * Load spigot and NMS classes
      * @throws ClassNotFoundException
      */
-    private void loadClasses() throws ClassNotFoundException {
+    private void loadClasses() {
         this.packetTitle = Reflection.getNMSClass("PacketPlayOutTitle");
         this.packetActions = Reflection.getNMSClass("EnumTitleAction");
         this.chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");

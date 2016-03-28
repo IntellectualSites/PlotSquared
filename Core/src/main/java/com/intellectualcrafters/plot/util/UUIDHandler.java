@@ -22,7 +22,7 @@ public class UUIDHandler {
     }
 
     /**
-     * Get the map containing all names/uuids
+     * Get the map containing all names/uuids.
      *
      * @return map with names + uuids
      *

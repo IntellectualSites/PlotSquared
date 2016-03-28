@@ -34,8 +34,7 @@ public class BukkitEconHandler extends EconHandler {
     }
 
     private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider =
-                Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
         if (permissionProvider != null) {
             this.perms = permissionProvider.getProvider();
         }
@@ -43,8 +42,10 @@ public class BukkitEconHandler extends EconHandler {
     }
 
     private boolean setupEconomy() {
-        RegisteredServiceProvider<Economy> economyProvider =
-                Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (economyProvider != null) {
             this.econ = economyProvider.getProvider();
         }
@@ -79,7 +80,7 @@ public class BukkitEconHandler extends EconHandler {
     public boolean hasPermission(String world, String player, String perm) {
         return this.perms.playerHas(world, Bukkit.getOfflinePlayer(player), perm);
     }
-    
+
     @Override
     public double getBalance(PlotPlayer player) {
         return this.econ.getBalance(player.getName());

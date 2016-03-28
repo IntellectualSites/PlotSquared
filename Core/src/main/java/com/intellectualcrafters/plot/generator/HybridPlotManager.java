@@ -85,11 +85,11 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        createSchemAbs(hpw, pos1, pos2, 0, true);
+        createSchemAbs(hpw, pos1, pos2, true);
         return true;
     }
 
-    private void createSchemAbs(HybridPlotWorld hpw, Location pos1, Location pos2, int height, boolean clear) {
+    private void createSchemAbs(HybridPlotWorld hpw, Location pos1, Location pos2, boolean clear) {
         int size = hpw.SIZE;
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             short absX = (short) ((x - hpw.ROAD_OFFSET_X) % size);
@@ -103,13 +103,13 @@ public class HybridPlotManager extends ClassicPlotManager {
                 }
                 HashMap<Integer, PlotBlock> blocks = hpw.G_SCH.get(MathMan.pair(absX, absZ));
                 if (clear) {
-                    for (short y = (short) height; y <= (height + hpw.SCHEMATIC_HEIGHT); y++) {
+                    for (short y = (short) 0; y <= hpw.SCHEMATIC_HEIGHT; y++) {
                         SetQueue.IMP.setBlock(hpw.worldname, x, y, z, 0);
                     }
                 }
                 if (blocks != null) {
                     for (Entry<Integer, PlotBlock> entry : blocks.entrySet()) {
-                        SetQueue.IMP.setBlock(hpw.worldname, x, height + entry.getKey(), z, entry.getValue());
+                        SetQueue.IMP.setBlock(hpw.worldname, x, entry.getKey(), z, entry.getValue());
                     }
                 }
             }
@@ -130,7 +130,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        createSchemAbs(hpw, pos1, pos2, 0, true);
+        createSchemAbs(hpw, pos1, pos2, true);
         return true;
     }
 
@@ -144,11 +144,11 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location pos2 = getPlotBottomLocAbs(hpw, id2);
         pos1.setY(0);
         pos2.setY(256);
-        createSchemAbs(hpw, pos1, pos2, 0, true);
+        createSchemAbs(hpw, pos1, pos2, true);
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        createSchemAbs(hpw, pos1, pos2, 0, true);
+        createSchemAbs(hpw, pos1, pos2, true);
         return true;
     }
 
@@ -221,6 +221,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!plotworld.PLOT_SCHEMATIC) {
             return;
         }
-        createSchemAbs(plotworld, l1, l2, 0, false);
+        createSchemAbs(plotworld, l1, l2, false);
     }
 }

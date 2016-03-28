@@ -274,7 +274,7 @@ public abstract class PlotArea {
                 this.GAMEMODE = PlotGameMode.SPECTATOR;
                 break;
             default:
-                PS.debug("&cInvalid gamemode set for: " + this.worldname);
+                this.GAMEMODE = PlotGameMode.NOT_SET;
                 break;
         }
 

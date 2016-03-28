@@ -45,7 +45,8 @@ public class Toggle extends Command {
             aliases = {"spy"},
             permission = "plots.admin.command.chat",
             description = "Toggle admin chat spying")
-    public void chatspy(Command command, final PlotPlayer player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+    public void chatspy(Command command, PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "chatspy")) {
             MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
         } else {
@@ -58,7 +59,8 @@ public class Toggle extends Command {
             aliases = {"we", "wea"},
             permission = "plots.worldedit.bypass",
             description = "Toggle worldedit area restrictions")
-    public void worldedit(Command command, final PlotPlayer player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+    public void worldedit(Command command, PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "worldedit")) {
             MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
         } else {
@@ -70,7 +72,8 @@ public class Toggle extends Command {
             command = "chat",
             permission = "plots.toggle.chat",
             description = "Toggle plot chat")
-    public void chat(Command command, final PlotPlayer player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+    public void chat(Command command, PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "chat")) {
             MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
         } else {
@@ -82,7 +85,8 @@ public class Toggle extends Command {
             command = "titles",
             permission = "plots.toggle.titles",
             description = "Toggle plot title messages")
-    public void titles(Command command, final PlotPlayer player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
+    public void titles(Command command, PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "titles")) {
             MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
         } else {

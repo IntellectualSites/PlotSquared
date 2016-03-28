@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 
-public abstract class APlotMeConnector {
+abstract class APlotMeConnector {
 
     public abstract Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder);
 
