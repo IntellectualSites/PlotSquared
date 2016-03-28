@@ -46,7 +46,7 @@ public class Updater {
         String str = readUrl("https://api.github.com/repos/IntellectualSites/PlotSquared/releases/latest");
         JSONObject release = new JSONObject(str);
         JSONArray assets = (JSONArray) release.get("assets");
-        String downloadURL = String.format("PlotSquared-%s%n.jar", PS.get().getPlatform());
+        String downloadURL = String.format("PlotSquared-%s.jar", PS.get().getPlatform());
         for (int i = 0; i < assets.length(); i++) {
             JSONObject asset = assets.getJSONObject(i);
             String name = asset.getString("name");
