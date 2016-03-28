@@ -25,8 +25,6 @@ import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.lang.reflect.Field;
-
 @CommandDeclaration(
         command = "debugloadtest",
         permission = "plots.debugloadtest",
@@ -38,15 +36,7 @@ public class DebugLoadTest extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
-        try {
-            Field fPlots = PS.class.getDeclaredField("plots");
-            fPlots.setAccessible(true);
-            fPlots.set(null, DBFunc.getPlots());
-        } catch (Exception e) {
-            PS.debug("&3===FAILED&3===");
-            e.printStackTrace();
-            PS.debug("&3===END OF STACKTRACE===");
-        }
+        PS.get().plots_tmp = DBFunc.getPlots();
         return true;
     }
 }
