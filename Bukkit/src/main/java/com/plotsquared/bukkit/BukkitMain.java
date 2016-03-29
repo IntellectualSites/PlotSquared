@@ -397,9 +397,8 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             if (econ.init()) {
                 return econ;
             }
-            System.out.println("ECONOMY ENABLED!");
         } catch (Throwable ignored) {
-            ignored.printStackTrace();
+            PS.debug("No economy detected!");
         }
         return null;
     }

@@ -14,7 +14,6 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -323,7 +322,15 @@ public abstract class Command {
             }
             return;
         }
-        Argument<?>[] reqArgs = cmd.getRequiredArguments();
+        String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+        if (!cmd.checkArgs(player, newArgs) || !cmd.canExecute(player, true)) {
+            return;
+        }
+        cmd.execute(player, newArgs, confirm, whenDone);
+    }
+
+    public boolean checkArgs(PlotPlayer player, String[] args) {
+        Argument<?>[] reqArgs = getRequiredArguments();
         if ((reqArgs != null) && (reqArgs.length > 0)) {
             boolean failed = args.length < reqArgs.length;
             String[] baseSplit = getCommandString().split(" ");
@@ -335,13 +342,10 @@ public abstract class Command {
             }
             if (failed) {
                 C.COMMAND_SYNTAX.send(player, StringMan.join(fullSplit, " "));
-                return;
+                return false;
             }
         }
-        if (!cmd.canExecute(player, true)) {
-            return;
-        }
-        cmd.execute(player, Arrays.copyOfRange(args, 1, args.length), confirm, whenDone);
+        return true;
     }
 
     public int getMatch(String[] args, Command cmd) {

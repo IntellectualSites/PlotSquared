@@ -263,7 +263,6 @@ public class PS {
             TaskManager.runTask(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println("SETTING UP ECON");
                     EconHandler.manager = PS.this.IMP.getEconomyHandler();
                 }
             });

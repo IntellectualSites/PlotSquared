@@ -48,10 +48,6 @@ public class Trust extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
-        if (args.length != 1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, this.getUsage());
-            return true;
-        }
         Location loc = plr.getLocation();
         Plot plot = loc.getPlotAbs();
         if (plot == null) {
