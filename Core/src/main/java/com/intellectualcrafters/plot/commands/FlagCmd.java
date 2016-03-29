@@ -33,7 +33,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,8 +54,8 @@ public class FlagCmd extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer player, String... args) {
-        
+    public boolean onCommand(PlotPlayer player, String[] args) {
+
         /*
          *  plot flag set fly true
          *  plot flag remove fly

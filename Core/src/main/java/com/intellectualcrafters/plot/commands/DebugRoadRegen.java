@@ -43,7 +43,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class DebugRoadRegen extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer player, String... args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         Location loc = player.getLocation();
         PlotArea plotworld = loc.getPlotArea();
         if (!(plotworld instanceof HybridPlotWorld)) {

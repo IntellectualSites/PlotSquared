@@ -37,7 +37,6 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -159,7 +158,7 @@ public class Set extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String... args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         if (args.length == 0) {
             return noArgs(plr);
         }

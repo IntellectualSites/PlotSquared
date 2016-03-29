@@ -3,7 +3,6 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +19,7 @@ public class DebugAllowUnsafe extends SubCommand {
     public static final List<UUID> unsafeAllowed = new ArrayList<>();
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String... args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
 
         if (unsafeAllowed.contains(plr.getUUID())) {
             unsafeAllowed.remove(plr.getUUID());

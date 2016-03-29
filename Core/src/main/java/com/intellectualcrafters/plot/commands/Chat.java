@@ -13,7 +13,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Chat extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer player, String... args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         MainCommand.getInstance().toggle.chat(this, player, new String[0], null, null);
         return true;
     }

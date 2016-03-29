@@ -32,7 +32,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.Set;
 
 @CommandDeclaration(command = "clear",
@@ -45,7 +44,7 @@ import java.util.Set;
 public class Clear extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String... args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         Location loc = plr.getLocation();
         final Plot plot;
         if (args.length == 1) {

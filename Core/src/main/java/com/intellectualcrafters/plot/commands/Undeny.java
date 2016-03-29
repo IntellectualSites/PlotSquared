@@ -29,7 +29,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -47,7 +46,7 @@ public class Undeny extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String... args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
 
         Location loc = plr.getLocation();
         Plot plot = loc.getPlotAbs();

@@ -31,7 +31,6 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.Set;
 
 @CommandDeclaration(
@@ -45,7 +44,7 @@ import java.util.Set;
 public class Buy extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String... args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         if (EconHandler.manager == null) {
             return sendMessage(plr, C.ECON_DISABLED);
         }
