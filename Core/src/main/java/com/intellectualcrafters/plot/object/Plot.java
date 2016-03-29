@@ -2737,14 +2737,19 @@ public class Plot {
                     TaskManager.runTask(whenDone);
                     return;
                 }
-                Runnable task = this;
+                final Runnable task = this;
                 RegionWrapper region = regions.poll();
                 Location[] corners = region.getCorners(Plot.this.area.worldname);
-                Location pos1 = corners[0];
-                Location pos2 = corners[1];
+                final Location pos1 = corners[0];
+                final Location pos2 = corners[1];
                 Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
                 newPos.setWorld(destination.area.worldname);
-                ChunkManager.manager.regenerateRegion(pos1, pos2, false, task);
+                ChunkManager.manager.copyRegion(pos1, pos2, newPos, new Runnable() {
+                    @Override
+                    public void run() {
+                        ChunkManager.manager.regenerateRegion(pos1, pos2, false, task);
+                   }
+                });
             }
         };
         Runnable swap = new Runnable() {
