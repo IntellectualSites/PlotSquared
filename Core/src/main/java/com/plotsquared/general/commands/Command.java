@@ -336,6 +336,11 @@ public abstract class Command {
             String[] baseSplit = getCommandString().split(" ");
             String[] fullSplit = getUsage().split(" ");
             String base = getCommandString();
+            if (fullSplit.length - baseSplit.length < reqArgs.length) {
+                String[] tmp = new String[baseSplit.length + reqArgs.length];
+                System.arraycopy(fullSplit, 0, tmp, 0, fullSplit.length);
+                fullSplit = tmp;
+            }
             for (int i = 0; i < reqArgs.length; i++) {
                 fullSplit[i + baseSplit.length] = reqArgs[i].getExample().toString();
                 failed = failed || reqArgs[i].parse(args[i]) == null;

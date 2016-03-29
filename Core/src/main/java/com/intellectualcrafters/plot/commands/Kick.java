@@ -35,6 +35,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         aliases = {"k"},
         description = "Kick a player from your plot",
         permission = "plots.kick",
+        usage = "<player>",
         category = CommandCategory.TELEPORT,
         requiredType = RequiredType.PLAYER)
 public class Kick extends SubCommand {
