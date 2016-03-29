@@ -336,7 +336,7 @@ public class NbtFactory {
     }
 
     /**
-     * Search for the first publically and privately defined method of the given name and parameter count.
+     * Search for the first publicly and privately defined method of the given name and parameter count.
      * @param requireMod - modifiers that are required.
      * @param bannedMod - modifiers that are banned.
      * @param clazz - a class to start with.
@@ -366,7 +366,7 @@ public class NbtFactory {
     }
 
     /**
-     * Search for the first publically and privately defined field of the given name.
+     * Search for the first publicly and privately defined field of the given name.
      * @param instance - an instance of the class with the field.
      * @param clazz - an optional class to start with, or NULL to deduce it from instance.
      * @param fieldName - the field name.

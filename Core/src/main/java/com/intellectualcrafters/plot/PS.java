@@ -2324,7 +2324,7 @@ public class PS {
      */
     private void setupStyle() {
         this.style.set("version", StringMan.join(this.version, "."));
-        Map<String, Object> o = new HashMap<>();
+        Map<String, Object> o = new HashMap<>(4);
         o.put("color.1", "6");
         o.put("color.2", "7");
         o.put("color.3", "8");

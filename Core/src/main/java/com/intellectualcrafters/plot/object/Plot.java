@@ -367,7 +367,7 @@ public class Plot {
     }
 
     /**
-     * Get a list of owner UUIDs for a plot (supports multi-owner mega-plots)
+     * Get a list of owner UUIDs for a plot (supports multi-owner mega-plots).
      * @return
      */
     public HashSet<UUID> getOwners() {
@@ -474,7 +474,7 @@ public class Plot {
     }
 
     /**
-     * Get or create plot settings
+     * Get or create plot settings.
      * @return PlotSettings
      * @deprecated use equivalent plot method;
      */
@@ -487,7 +487,8 @@ public class Plot {
     }
 
     /**
-     * Returns true if the plot is not merged, or it is the base plot of multiple merged plots
+     * Returns true if the plot is not merged, or it is the base
+     * plot of multiple merged plots.
      * @return
      */
     public boolean isBasePlot() {
@@ -528,7 +529,7 @@ public class Plot {
     }
 
     /**
-     * Check if the plot is merged in any direction
+     * Check if the plot is merged in any direction.
      * @return
      */
     public boolean isMerged() {
@@ -603,7 +604,7 @@ public class Plot {
     }
 
     /**
-     * Get the denied users
+     * Get the denied users.
      * @return
      */
     public HashSet<UUID> getDenied() {
@@ -614,7 +615,7 @@ public class Plot {
     }
 
     /**
-     * Set the denied users for this plot
+     * Set the denied users for this plot.
      * @param uuids
      */
     public void setDenied(Set<UUID> uuids) {
@@ -633,7 +634,7 @@ public class Plot {
     }
 
     /**
-     * Get the trusted users
+     * Get the trusted users.
      * @return
      */
     public HashSet<UUID> getTrusted() {
@@ -644,7 +645,7 @@ public class Plot {
     }
 
     /**
-     * Set the trusted users for this plot
+     * Set the trusted users for this plot.
      * @param uuids
      */
     public void setTrusted(Set<UUID> uuids) {

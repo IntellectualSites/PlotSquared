@@ -954,7 +954,7 @@ public class SQLManager implements AbstractDB {
     }
 
     /**
-     * Create a plot
+     * Create a plot.
      *
      * @param plot
      */
@@ -1038,7 +1038,7 @@ public class SQLManager implements AbstractDB {
     }
 
     /**
-     * Create tables
+     * Create tables.
      *
      * @throws SQLException
      */

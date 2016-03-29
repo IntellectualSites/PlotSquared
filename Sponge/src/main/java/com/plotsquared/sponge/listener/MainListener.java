@@ -24,14 +24,6 @@ import com.plotsquared.listener.PlotListener;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import com.plotsquared.sponge.util.SpongeUtil;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Transaction;
@@ -59,6 +51,15 @@ import org.spongepowered.api.event.world.ExplosionEvent;
 import org.spongepowered.api.event.world.ExplosionEvent.Detonate;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 public class MainListener {
     
@@ -159,7 +160,7 @@ public class MainListener {
             }
             ((SpongePlayer) user).player.sendMessage(Text.join(components));
         }
-        event.setMessage(null);
+        //event.setMessage(null);
     }
     
     @Listener
@@ -185,7 +186,7 @@ public class MainListener {
     @Listener
     public void onSpawnEntity(SpawnEntityEvent event) throws Exception {
         World world = event.getTargetWorld();
-        event.filterEntities((Predicate<Entity>) entity -> {
+        event.filterEntities(entity -> {
             if (entity instanceof Player) {
                 return true;
             }
@@ -396,7 +397,7 @@ public class MainListener {
                     return;
                 }
             }
-            if (currentPlot == null || !FlagManager.isPlotFlagTrue(currentPlot, "explosion")) {
+            if (!FlagManager.isPlotFlagTrue(currentPlot, "explosion")) {
                 event.filterAll();
                 return;
             }

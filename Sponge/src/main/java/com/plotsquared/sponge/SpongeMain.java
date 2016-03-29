@@ -143,7 +143,7 @@ public class SpongeMain implements IPlotMain {
         if (!Settings.CONSOLE_COLOR) {
             message = message.replaceAll('\u00a7' + "[a-z|0-9]", "");
         }
-        if (this.server == null || this.server.getConsole() == null) {
+        if (this.server == null) {
             this.logger.info(message);
             return;
         }
@@ -306,7 +306,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public void startMetrics() {
         try {
-            Metrics metrics = new Metrics(this.game, plugin);
+            Metrics metrics = new Metrics(this.game, this.plugin);
             metrics.start();
             log(C.PREFIX.s() + "&6Metrics enabled.");
         } catch (IOException e) {

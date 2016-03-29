@@ -51,39 +51,39 @@ import java.util.zip.GZIPOutputStream;
 public class Metrics {
 
     /**
-     * The current revision number
+     * The current revision number.
      */
     private static final int REVISION = 7;
     /**
-     * The base url of the metrics domain
+     * The base url of the metrics domain.
      */
     private static final String BASE_URL = "http://report.mcstats.org";
     /**
-     * The url used to report a server's status
+     * The url used to report a server's status.
      */
     private static final String REPORT_URL = "/plugin/%s";
     /**
-     * Interval of time to ping (in minutes)
+     * Interval of time to ping (in minutes).
      */
     private static final int PING_INTERVAL = 15;
     /**
-     * The plugin this metrics submits for
+     * The plugin this metrics submits for.
      */
     private final Plugin plugin;
     /**
-     * All of the custom graphs to submit to metrics
+     * All of the custom graphs to submit to metrics.
      */
     private final Set<Graph> graphs = Collections.synchronizedSet(new HashSet<Graph>());
     /**
-     * Unique server id
+     * Unique server id.
      */
     private final String guid;
     /**
-     * Debug mode
+     * Debug mode.
      */
     private final boolean debug;
     /**
-     * The scheduled task
+     * The scheduled task.
      */
     private volatile BukkitTask task = null;
 
@@ -97,7 +97,7 @@ public class Metrics {
     }
 
     /**
-     * GZip compress a string of bytes
+     * GZip compress a string of bytes.
      *
      * @param input
      *
@@ -129,7 +129,6 @@ public class Metrics {
      * @param key
      * @param value
      *
-     * @throws UnsupportedEncodingException
      */
     private static void appendJSONPair(StringBuilder json, String key, String value) {
         boolean isValueNumeric = false;

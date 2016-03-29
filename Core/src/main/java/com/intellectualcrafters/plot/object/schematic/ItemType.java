@@ -599,43 +599,43 @@ public enum ItemType {
     WARD_DISC("record_ward", 2265),
     DISC_11("record_11", 2266),
     WAIT_DISC("record_wait", 2267);
-    
-    private static final Map<String, Integer> ids = new HashMap<String, Integer>();
-    private static final Map<String, Byte> datas = new HashMap<String, Byte>();
-    
-    private final int id;
-    private final byte data;
-    private final String name;
-    
+
+    private static final Map<String, Integer> ids = new HashMap<>();
+    private static final Map<String, Byte> datas = new HashMap<>();
+
     static {
-        for (final ItemType type : EnumSet.allOf(ItemType.class)) {
+        for (ItemType type : EnumSet.allOf(ItemType.class)) {
             ids.put(type.name, type.id);
             datas.put(type.name, type.data);
         }
     }
-    
-    ItemType(final String name, final int id) {
+
+    private final int id;
+    private final byte data;
+    private final String name;
+
+    ItemType(String name, int id) {
         this.id = id;
-        data = 0;
+        this.data = 0;
         this.name = name;
     }
-    
-    ItemType(final String name, final int id, final int data) {
+
+    ItemType(String name, int id, int data) {
         this.id = id;
         this.data = (byte) data;
         this.name = name;
     }
-    
-    public static int getId(final String name) {
-        final Integer value = ids.get(name);
+
+    public static int getId(String name) {
+        Integer value = ids.get(name);
         if (value == null) {
             return 0;
         }
         return value;
     }
-    
-    public static byte getData(final String name) {
-        final Byte value = datas.get(name);
+
+    public static byte getData(String name) {
+        Byte value = datas.get(name);
         if (value == null) {
             return 0;
         }

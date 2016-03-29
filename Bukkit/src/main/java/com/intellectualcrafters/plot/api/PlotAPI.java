@@ -39,19 +39,20 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 /**
- * PlotSquared API<br>
+ * PlotSquared API.
  * <br>
  * @version API 3.3.1
  * <br>
@@ -95,7 +96,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get all plots
+     * Get all plots.
      *
      * @return all plots
      *
@@ -106,7 +107,7 @@ public class PlotAPI {
     }
 
     /**
-     * Return all plots for a player
+     * Return all plots for a player.
      *
      * @param player Player, whose plots to search for
      *
@@ -117,7 +118,7 @@ public class PlotAPI {
     }
 
     /**
-     * Add a plot world
+     * Add a plot world.
      *
      * @param plotArea Plot World Object
      * @see PS#addPlotArea(PlotArea)
@@ -491,7 +492,7 @@ public class PlotAPI {
      */
     @Deprecated
     public boolean hasPlot(World world, Player player) {
-        return getPlots(world, player, true) != null && getPlots(world, player, true).length > 0;
+        return getPlots(world, player, true).length > 0;
     }
 
     /**
@@ -510,10 +511,8 @@ public class PlotAPI {
                 if (plot.hasOwner() && plot.isOwner(uuid)) {
                     pPlots.add(plot);
                 }
-            } else {
-                if (plot.isAdded(uuid)) {
-                    pPlots.add(plot);
-                }
+            } else if (plot.isAdded(uuid)) {
+                pPlots.add(plot);
             }
         }
         return pPlots.toArray(new Plot[pPlots.size()]);

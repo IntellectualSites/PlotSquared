@@ -42,7 +42,7 @@ import java.util.UUID;
         aliases = {"owner", "so", "seto"},
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.NONE,
-        confirmation=true)
+        confirmation = true)
 public class Owner extends SetCommand {
 
     @Override

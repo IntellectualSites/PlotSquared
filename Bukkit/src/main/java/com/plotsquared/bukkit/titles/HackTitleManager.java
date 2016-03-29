@@ -114,7 +114,6 @@ public class HackTitleManager {
 
     /**
      * Load spigot and NMS classes.
-     * @throws ClassNotFoundException Spigot Error.
      */
     private void loadClasses() {
         this.packetTitle = getClass("org.spigotmc.ProtocolInjector$PacketTitle");

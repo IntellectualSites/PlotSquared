@@ -137,7 +137,7 @@ public class Area extends SubCommand {
                                                 }, null);
                                             }
                                         } else {
-                                            MainUtil.sendMessage(plr, "An error occured while creating the world: " + area.worldname);
+                                            MainUtil.sendMessage(plr, "An error occurred while creating the world: " + area.worldname);
                                         }
                                     }
                                 };
@@ -257,7 +257,7 @@ public class Area extends SubCommand {
                                         C.SETUP_FINISHED.send(plr);
                                         plr.teleport(WorldUtil.IMP.getSpawn(world));
                                     } else {
-                                        MainUtil.sendMessage(plr, "An error occured while creating the world: " + pa.worldname);
+                                        MainUtil.sendMessage(plr, "An error occurred while creating the world: " + pa.worldname);
                                     }
                                     try {
                                         PS.get().config.save(PS.get().configFile);

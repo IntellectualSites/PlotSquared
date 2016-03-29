@@ -14,10 +14,10 @@ import java.util.Map;
  */
 final class JsonString implements JsonRepresentedObject, ConfigurationSerializable {
 
-    private final String _value;
+    private final String value;
 
     public JsonString(CharSequence value) {
-        this._value = value == null ? null : value.toString();
+        this.value = value == null ? null : value.toString();
     }
 
     public static JsonString deserialize(Map<String, Object> map) {
@@ -30,18 +30,18 @@ final class JsonString implements JsonRepresentedObject, ConfigurationSerializab
     }
 
     public String getValue() {
-        return this._value;
+        return this.value;
     }
 
     @Override
     public Map<String, Object> serialize() {
         HashMap<String, Object> theSingleValue = new HashMap<>();
-        theSingleValue.put("stringValue", this._value);
+        theSingleValue.put("stringValue", this.value);
         return theSingleValue;
     }
 
     @Override
     public String toString() {
-        return this._value;
+        return this.value;
     }
 }

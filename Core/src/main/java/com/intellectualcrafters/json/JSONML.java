@@ -21,7 +21,7 @@ public class JSONML {
      *
      * @throws JSONException
      */
-    private static Object parse(final XMLTokener x, final boolean arrayForm, final JSONArray ja) throws JSONException {
+    private static Object parse(XMLTokener x, boolean arrayForm, JSONArray ja) throws JSONException {
         String attribute;
         char c;
         String closeTag = null;
@@ -114,9 +114,6 @@ public class JSONML {
                         if (token == null) {
                             token = x.nextToken();
                         }
-                        if (token == null) {
-                            throw x.syntaxError("Misshaped tag");
-                        }
                         if (!(token instanceof String)) {
                             break;
                         }
@@ -195,7 +192,7 @@ public class JSONML {
      *
      * @throws JSONException
      */
-    public static JSONArray toJSONArray(final String string) throws JSONException {
+    public static JSONArray toJSONArray(String string) throws JSONException {
         return toJSONArray(new XMLTokener(string));
     }
     
@@ -212,7 +209,7 @@ public class JSONML {
      *
      * @throws JSONException
      */
-    public static JSONArray toJSONArray(final XMLTokener x) throws JSONException {
+    public static JSONArray toJSONArray(XMLTokener x) throws JSONException {
         return (JSONArray) parse(x, true, null);
     }
     
@@ -230,7 +227,7 @@ public class JSONML {
      *
      * @throws JSONException
      */
-    public static JSONObject toJSONObject(final XMLTokener x) throws JSONException {
+    public static JSONObject toJSONObject(XMLTokener x) throws JSONException {
         return (JSONObject) parse(x, false, null);
     }
     
@@ -248,7 +245,7 @@ public class JSONML {
      *
      * @throws JSONException
      */
-    public static JSONObject toJSONObject(final String string) throws JSONException {
+    public static JSONObject toJSONObject(String string) throws JSONException {
         return toJSONObject(new XMLTokener(string));
     }
     
@@ -261,14 +258,14 @@ public class JSONML {
      *
      * @throws JSONException
      */
-    public static String toString(final JSONArray ja) throws JSONException {
+    public static String toString(JSONArray ja) throws JSONException {
         int i;
         JSONObject jo;
         String key;
         Iterator<String> keys;
         int length;
         Object object;
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         String tagName;
         String value;
         // Emit <tagName
@@ -338,8 +335,8 @@ public class JSONML {
      *
      * @throws JSONException
      */
-    public static String toString(final JSONObject jo) throws JSONException {
-        final StringBuilder sb = new StringBuilder();
+    public static String toString(JSONObject jo) throws JSONException {
+        StringBuilder sb = new StringBuilder();
         int i;
         JSONArray ja;
         String key;

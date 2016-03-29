@@ -189,8 +189,8 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(plr, "&cTask is already running.");
                     return false;
                 } else {
-                    MainUtil.sendMessage(plr, "&3PlotSquared&8->&3Schemaitc&8: &7Mass export has started. This may take a while.");
-                    MainUtil.sendMessage(plr, "&3PlotSquared&8->&3Schemaitc&8: &7Found &c" + plots.size() + "&7 plots...");
+                    MainUtil.sendMessage(plr, "&3PlotSquared&8->&3Schematic&8: &7Mass export has started. This may take a while.");
+                    MainUtil.sendMessage(plr, "&3PlotSquared&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
                 }
                 break;
             }
@@ -204,7 +204,6 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(plr, "&cTask is already running.");
                     return false;
                 }
-                Plot p2;
                 Location loc = plr.getLocation();
                 Plot plot = loc.getPlotAbs();
                 if (plot == null) {
@@ -218,7 +217,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
                     return false;
                 }
-                p2 = plot;
+                Plot p2 = plot;
                 loc.getWorld();
                 Collection<Plot> plots = new ArrayList<Plot>();
                 plots.add(p2);

@@ -1,16 +1,15 @@
 package com.plotsquared.sponge.events;
 
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotId;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.impl.AbstractEvent;
 
-import com.intellectualcrafters.plot.object.PlotId;
-
 public class PlotClearEvent extends AbstractEvent implements Cancellable {
 
+    private final Plot plot;
     private boolean cancelled;
-    private Plot plot;
 
     /**
      * PlotDeleteEvent: Called when a plot is cleared
@@ -23,31 +22,31 @@ public class PlotClearEvent extends AbstractEvent implements Cancellable {
     }
 
     /**
-     * Get the PlotId
+     * Get the PlotId.
      *
      * @return PlotId
      */
     public PlotId getPlotId() {
-        return plot.getId();
+        return this.plot.getId();
     }
     
     /**
-     * Get the world name
+     * Get the world name.
      *
      * @return String
      */
     public String getWorld() {
-        return plot.getArea().worldname;
+        return this.plot.getArea().worldname;
     }
     
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return this.cancelled;
     }
     
     @Override
-    public void setCancelled(final boolean cancel) {
-        cancelled = cancel;
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
     }
     
     @Override

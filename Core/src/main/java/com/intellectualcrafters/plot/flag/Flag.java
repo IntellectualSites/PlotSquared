@@ -31,15 +31,16 @@ public class Flag<T> implements Cloneable {
     private String name;
 
     /**
-     * Flag object used to store basic information for a Plot. Flags are a key/value pair. For a flag to be usable by a
-     * player, you need to register it with PlotSquared.
+     * Flag object used to store basic information for a Plot. Flags are a
+     * key/value pair. For a flag to be usable by a player, you need to
+     * register it with PlotSquared.
      *
      * @param key   AbstractFlag
      * @param value Value must be alphanumerical (can have spaces) and be &lt;= 48 characters
      *
      * @throws IllegalArgumentException if you provide inadequate inputs
      */
-    public Flag(final AbstractFlag key, final String value) {
+    public Flag(AbstractFlag key, String value) {
         if (!StringMan.isAsciiPrintable(value)) {
             throw new IllegalArgumentException("Flag must be ascii");
         }
@@ -55,8 +56,10 @@ public class Flag<T> implements Cloneable {
     
     /**
      * Warning: Unchecked
+     * @param key
+     * @param value
      */
-    public Flag(final AbstractFlag key, final Object value) {
+    public Flag(AbstractFlag key, Object value) {
         this.key = key;
         this.value = value;
     }
@@ -66,53 +69,53 @@ public class Flag<T> implements Cloneable {
     }
     
     /**
-     * Get the AbstractFlag used in creating the flag
+     * Get the AbstractFlag used in creating the flag.
      *
      * @return AbstractFlag
      */
     public AbstractFlag getAbstractFlag() {
-        return key;
+        return this.key;
     }
     
     /**
-     * Get the key for the AbstractFlag
+     * Get the key for the AbstractFlag.
      *
      * @return String
      */
     public String getKey() {
-        return key.getKey();
+        return this.key.getKey();
     }
 
-    public void setKey(final AbstractFlag key) {
+    public void setKey(AbstractFlag key) {
         this.key = key;
-        if (value instanceof String) {
-            value = key.parseValueRaw((String) value);
+        if (this.value instanceof String) {
+            this.value = key.parseValueRaw((String) this.value);
         }
     }
 
     /**
-     * Get the value
+     * Get the value.
      *
      * @return String
      */
     public Object getValue() {
-        return value;
+        return this.value;
     }
     
     public String getValueString() {
-        return key.toString(value);
+        return this.key.toString(this.value);
     }
     
     @Override
     public String toString() {
-        if ("".equals(value)) {
-            return key.getKey();
+        if ("".equals(this.value)) {
+            return this.key.getKey();
         }
-        return key + ":" + getValueString();
+        return this.key + ":" + getValueString();
     }
     
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -122,29 +125,29 @@ public class Flag<T> implements Cloneable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Flag other = (Flag) obj;
-        return key.getKey().equals(other.key.getKey()) && value.equals(other.value);
+        Flag other = (Flag) obj;
+        return this.key.getKey().equals(other.key.getKey()) && this.value.equals(other.value);
     }
     
     @Override
     public int hashCode() {
-        return key.getKey().hashCode();
+        return this.key.getKey().hashCode();
     }
     
     @Override
     protected Object clone() {
         try {
-            if (value == null) {
+            if (this.value == null) {
                 return super.clone();
             }
-            if (value instanceof Cloneable) {
-                Method method = value.getClass().getDeclaredMethod("clone");
+            if (this.value instanceof Cloneable) {
+                Method method = this.value.getClass().getDeclaredMethod("clone");
                 if (!method.isAccessible()) {
                     method.setAccessible(true);
                 }
-                return new Flag(key, method.invoke(value));
+                return new Flag(this.key, method.invoke(this.value));
             }
-            return new Flag(key, key.parseValueRaw(value.toString()));
+            return new Flag(this.key, this.key.parseValueRaw(this.value.toString()));
         } catch (CloneNotSupportedException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -152,6 +155,6 @@ public class Flag<T> implements Cloneable {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 }

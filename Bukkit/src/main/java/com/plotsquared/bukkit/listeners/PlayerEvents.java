@@ -835,14 +835,14 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onChange(BlockFromToEvent e) {
         Block from = e.getBlock();
         Block to = e.getToBlock();
-        Location tloc = BukkitUtil.getLocation(to.getLocation());
-        PlotArea area = tloc.getPlotArea();
+        Location tLocation = BukkitUtil.getLocation(to.getLocation());
+        PlotArea area = tLocation.getPlotArea();
         if (area == null) {
             return;
         }
-        Plot plot = area.getOwnedPlot(tloc);
-        Location floc = BukkitUtil.getLocation(from.getLocation());
-        if (!area.contains(floc.getX(), floc.getZ()) || !Objects.equals(plot, area.getOwnedPlot(floc)) || (plot != null && FlagManager
+        Plot plot = area.getOwnedPlot(tLocation);
+        Location fLocation = BukkitUtil.getLocation(from.getLocation());
+        if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(plot, area.getOwnedPlot(fLocation)) || (plot != null && FlagManager
                 .isPlotFlagTrue(plot, "disable-physics"))) {
             e.setCancelled(true);
         }

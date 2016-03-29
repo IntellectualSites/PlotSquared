@@ -229,17 +229,13 @@ public class MainUtil {
         if (MathMan.isInteger(string)) {
             return Long.parseLong(string);
         }
-        if (string == null) {
-            return 0;
-        }
         string = string.toLowerCase().trim().toLowerCase();
         if (string.equalsIgnoreCase("false")) {
             return 0;
         }
         String[] split = string.split(" ");
         long time = 0;
-        for (int i = 0; i < split.length; i++) {
-            String value = split[i];
+        for (String value : split) {
             int nums = Integer.parseInt(value.replaceAll("[^\\d]", ""));
             String letters = value.replaceAll("[^a-z]", "");
             switch (letters) {

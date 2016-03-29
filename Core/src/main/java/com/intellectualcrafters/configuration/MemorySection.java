@@ -539,10 +539,6 @@ public class MemorySection implements ConfigurationSection {
     public List<String> getStringList(String path) {
         List<?> list = getList(path);
 
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
         List<String> result = new ArrayList<>();
 
         for (Object object : list) {
@@ -557,10 +553,6 @@ public class MemorySection implements ConfigurationSection {
     @Override
     public List<Integer> getIntegerList(String path) {
         List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
 
         List<Integer> result = new ArrayList<>();
 
@@ -586,10 +578,6 @@ public class MemorySection implements ConfigurationSection {
     public List<Boolean> getBooleanList(String path) {
         List<?> list = getList(path);
 
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
         List<Boolean> result = new ArrayList<>();
 
         for (Object object : list) {
@@ -610,10 +598,6 @@ public class MemorySection implements ConfigurationSection {
     @Override
     public List<Double> getDoubleList(String path) {
         List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
 
         List<Double> result = new ArrayList<>();
 
@@ -639,10 +623,6 @@ public class MemorySection implements ConfigurationSection {
     public List<Float> getFloatList(String path) {
         List<?> list = getList(path);
 
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
         List<Float> result = new ArrayList<>();
 
         for (Object object : list) {
@@ -666,10 +646,6 @@ public class MemorySection implements ConfigurationSection {
     @Override
     public List<Long> getLongList(String path) {
         List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
 
         List<Long> result = new ArrayList<>();
 
@@ -695,10 +671,6 @@ public class MemorySection implements ConfigurationSection {
     public List<Byte> getByteList(String path) {
         List<?> list = getList(path);
 
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
         List<Byte> result = new ArrayList<>();
 
         for (Object object : list) {
@@ -723,10 +695,6 @@ public class MemorySection implements ConfigurationSection {
     public List<Character> getCharacterList(String path) {
         List<?> list = getList(path);
 
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
-
         List<Character> result = new ArrayList<>();
 
         for (Object object : list) {
@@ -749,10 +717,6 @@ public class MemorySection implements ConfigurationSection {
     @Override
     public List<Short> getShortList(String path) {
         List<?> list = getList(path);
-
-        if (list == null) {
-            return new ArrayList<>(0);
-        }
 
         List<Short> result = new ArrayList<>();
 
@@ -778,10 +742,6 @@ public class MemorySection implements ConfigurationSection {
     public List<Map<?, ?>> getMapList(String path) {
         List<?> list = getList(path);
         List<Map<?, ?>> result = new ArrayList<>();
-
-        if (list == null) {
-            return result;
-        }
 
         for (Object object : list) {
             if (object instanceof Map) {

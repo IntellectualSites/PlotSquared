@@ -76,14 +76,14 @@ public class FastQueue extends SlowQueue {
 
     /**
      * This should be overridden by any specialized queues.
-     * @param pc
+     * @param plotChunk
      */
     @Override
-    public void execute(PlotChunk<Chunk> pc) {
-        FastChunk fs = (FastChunk) pc;
-        Chunk spongeChunk = pc.getChunk();
+    public void execute(PlotChunk<Chunk> plotChunk) {
+        FastChunk fs = (FastChunk) plotChunk;
+        Chunk spongeChunk = plotChunk.getChunk();
         net.minecraft.world.World nmsWorld = (net.minecraft.world.World) spongeChunk.getWorld();
-        ChunkWrapper wrapper = pc.getChunkWrapper();
+        ChunkWrapper wrapper = plotChunk.getChunkWrapper();
         if (!this.toUpdate.containsKey(wrapper)) {
             this.toUpdate.put(wrapper, spongeChunk);
         }

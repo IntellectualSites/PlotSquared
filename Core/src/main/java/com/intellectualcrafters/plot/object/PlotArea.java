@@ -294,9 +294,9 @@ public abstract class PlotArea {
         }
 
         List<String> flags = config.getStringList("flags.default");
-        if (flags == null || flags.isEmpty()) {
+        if (flags.isEmpty()) {
             flags = config.getStringList("flags");
-            if (flags == null || flags.isEmpty()) {
+            if (flags.isEmpty()) {
                 flags = new ArrayList<>();
                 ConfigurationSection section = config.getConfigurationSection("flags");
                 Set<String> keys = section.getKeys(false);

@@ -40,10 +40,9 @@ public class DefaultTitleManager {
     private boolean ticks = false;
 
     /**
-     * Create a new 1.8 title
+     * Create a new 1.8 title.
      *
-     * @param title
-     *            Title
+     * @param title Title
      * @throws ClassNotFoundException
      */
     public DefaultTitleManager(String title) throws ClassNotFoundException {
@@ -52,12 +51,10 @@ public class DefaultTitleManager {
     }
 
     /**
-     * Create a new 1.8 title
+     * Create a new 1.8 title.
      *
-     * @param title
-     *            Title text
-     * @param subtitle
-     *            Subtitle text
+     * @param title Title text
+     * @param subtitle Subtitle text
      * @throws ClassNotFoundException
      */
     public DefaultTitleManager(String title, String subtitle) throws ClassNotFoundException {
@@ -118,8 +115,7 @@ public class DefaultTitleManager {
     }
 
     /**
-     * Load spigot and NMS classes
-     * @throws ClassNotFoundException
+     * Load spigot and NMS classes.
      */
     private void loadClasses() {
         this.packetTitle = Reflection.getNMSClass("PacketPlayOutTitle");
@@ -129,7 +125,7 @@ public class DefaultTitleManager {
     }
 
     /**
-     * Get title text
+     * Get title text.
      *
      * @return Title text
      */
@@ -138,17 +134,16 @@ public class DefaultTitleManager {
     }
 
     /**
-     * Set title text
+     * Set title text.
      *
-     * @param title
-     *            Title
+     * @param title Title
      */
     public void setTitle(String title) {
         this.title = title;
     }
 
     /**
-     * Get subtitle text
+     * Get subtitle text.
      *
      * @return Subtitle text
      */

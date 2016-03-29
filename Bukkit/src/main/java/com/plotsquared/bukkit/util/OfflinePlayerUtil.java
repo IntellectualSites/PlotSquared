@@ -56,7 +56,7 @@ public class OfflinePlayerUtil {
             return name;
         }
         Constructor gameProfileConstructor = makeConstructor(gameProfileClass, UUID.class, String.class);
-        if (gameProfileConstructor == null) { //Verson has string constructor
+        if (gameProfileConstructor == null) { //Version has string constructor
             gameProfileConstructor = makeConstructor(gameProfileClass, String.class, String.class);
             return callConstructor(gameProfileConstructor, id.toString(), name);
         } else { //Version has uuid constructor
