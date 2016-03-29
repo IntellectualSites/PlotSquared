@@ -237,7 +237,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         result.grid = grid;
         result.result = null;
         result.result_data = null;
-        // Catch any exceptions (as exceptions usually thrown 
+        // Catch any exceptions (as exceptions usually thrown)
         try {
             // Fill the result data if necessary
             if (this.platformGenerator != this) {
@@ -280,7 +280,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         result.result_data = new byte[16][];
         result.grid = grid;
         result.cd = null;
-        // Catch any exceptions (as exceptions usually thrown 
+        // Catch any exceptions (as exceptions usually thrown)
         try {
             // Fill the result data
             if (this.platformGenerator != this) {
