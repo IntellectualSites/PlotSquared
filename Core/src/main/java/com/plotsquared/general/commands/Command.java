@@ -100,6 +100,13 @@ public abstract class Command {
         return this.id;
     }
 
+    public String getFullId() {
+        if (parent != null && parent.getParent() != null) {
+            return parent.getFullId() + "." + id;
+        }
+        return this.id;
+    }
+
     public List<Command> getCommands(PlotPlayer player) {
         List<Command> commands = new ArrayList<>();
         for (Command cmd : this.allCommands) {
@@ -166,7 +173,7 @@ public abstract class Command {
         options.put("confirmation", declaration.confirmation());
         boolean set = false;
         for (Map.Entry<String, Object> entry : options.entrySet()) {
-            String key = this.id + "." + entry.getKey();
+            String key = this.getFullId() + "." + entry.getKey();
             if (!PS.get().commands.contains(key)) {
                 PS.get().commands.set(key, entry.getValue());
                 set = true;
@@ -180,10 +187,10 @@ public abstract class Command {
 
             }
         }
-        this.aliases = PS.get().commands.getStringList(this.id + ".aliases");
-        this.description = PS.get().commands.getString(this.id + ".description");
-        this.usage = PS.get().commands.getString(this.id + ".usage");
-        this.confirmation = PS.get().commands.getBoolean(this.id + ".confirmation");
+        this.aliases = PS.get().commands.getStringList(this.getFullId() + ".aliases");
+        this.description = PS.get().commands.getString(this.getFullId() + ".description");
+        this.usage = PS.get().commands.getString(this.getFullId() + ".usage");
+        this.confirmation = PS.get().commands.getBoolean(this.getFullId() + ".confirmation");
         if (this.parent != null) {
             this.parent.register(this);
         }
@@ -207,10 +214,7 @@ public abstract class Command {
         if (this.parent == null) {
             return "plots.use";
         }
-        if (this.parent.parent == null) {
-            return "plots." + this.id;
-        }
-        return this.parent.getPermission() + "." + this.id;
+        return "plots." + getFullId();
     }
 
     public <T> void paginate(PlotPlayer player, List<T> c, int size, int page, RunnableVal3<Integer, T, PlotMessage> add, String baseCommand,
@@ -523,12 +527,12 @@ public abstract class Command {
         if (this.hashCode() != other.hashCode()) {
             return false;
         }
-        return this.id.equals(other.id);
+        return this.getFullId().equals(other.getFullId());
     }
 
     @Override
     public int hashCode() {
-        return this.id.hashCode();
+        return this.getFullId().hashCode();
     }
 
     public enum CommandResult {
