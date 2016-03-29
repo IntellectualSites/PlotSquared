@@ -2107,7 +2107,7 @@ public class SQLManager implements AbstractDB {
         addPlotTask(plot, new UniqueStatement("setPosition") {
             @Override
             public void set(PreparedStatement stmt) throws SQLException {
-                stmt.setString(1, position);
+                stmt.setString(1, position == null ? "" : position);
                 stmt.setInt(2, getId(plot));
             }
 
