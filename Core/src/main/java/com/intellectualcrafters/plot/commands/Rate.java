@@ -36,7 +36,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -125,21 +124,20 @@ public class Rate extends SubCommand {
                             rating.add((i + 1) * Math.pow(10, index.getValue()));
                             index.increment();
                             if (index.getValue() >= Settings.RATING_CATEGORIES.size()) {
-                                close();
                                 int rV = rating.getValue();
                                 Rating result = EventUtil.manager.callRating(this.player, plot, new Rating(rV));
                                 plot.addRating(this.player.getUUID(), result);
                                 sendMessage(this.player, C.RATING_APPLIED, plot.getId().toString());
+                                if (Permissions.hasPermission(this.player, "plots.comment")) {
+                                    Command command = MainCommand.getInstance().getCommand(Comment.class);
+                                    if (command != null) {
+                                        MainUtil.sendMessage(this.player, C.COMMENT_THIS, command.getUsage());
+                                    }
+                                }
                                 return false;
                             }
                             setTitle(Settings.RATING_CATEGORIES.get(index.getValue()));
-                            if (Permissions.hasPermission(this.player, "plots.comment")) {
-                                Command command = MainCommand.getInstance().getCommand("comment");
-                                if (command != null) {
-                                    MainUtil.sendMessage(this.player, C.COMMENT_THIS, command.getUsage());
-                                }
-                            }
-                            return false;
+                            return true;
                         }
                     };
                     inventory.setItem(0, new PlotItemStack(35, (short) 12, 0, "0/8"));
