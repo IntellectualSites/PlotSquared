@@ -1,11 +1,9 @@
 package com.intellectualcrafters.plot.flag;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -443,7 +441,6 @@ public abstract class FlagValue<T> {
         @Override
         public List<String> parse(final String t) {
             System.out.println("PARSE: " + t);
-            PS.stacktrace();
             return new ArrayList<>(Arrays.asList(t.split(",")));
         }
 

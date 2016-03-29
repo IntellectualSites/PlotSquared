@@ -8,7 +8,6 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,6 +106,24 @@ public abstract class ChunkManager {
         });
     }
 
+    public static void chunkTask(final Plot plot, final RunnableVal<int[]> task, final Runnable whenDone, final int allocate) {
+        final ArrayList<RegionWrapper> regions = new ArrayList<>(plot.getRegions());
+        Runnable smallTask = new Runnable() {
+            @Override
+            public void run() {
+                if (regions.size() == 0) {
+                    TaskManager.runTask(whenDone);
+                    return;
+                }
+                RegionWrapper value = regions.remove(0);
+                Location pos1 = new Location(plot.getArea().worldname, value.minX, 0, value.minZ);
+                Location pos2 = new Location(plot.getArea().worldname, value.maxX, 0, value.maxZ);
+                chunkTask(pos1, pos2, task, this, allocate);
+            }
+        };
+        smallTask.run();
+    }
+
     /**
      * The int[] will be in the form: [chunkx, chunkz, pos1x, pos1z, pos2x, pos2z, isedge] and will represent the bottom and top parts of the chunk
      * @param pos1
@@ -123,7 +140,7 @@ public abstract class ChunkManager {
         final int bcz = p1z >> 4;
         final int tcx = p2x >> 4;
         final int tcz = p2z >> 4;
-        final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+        final ArrayList<ChunkLoc> chunks = new ArrayList<>();
         
         for (int x = bcx; x <= tcx; x++) {
             for (int z = bcz; z <= tcz; z++) {

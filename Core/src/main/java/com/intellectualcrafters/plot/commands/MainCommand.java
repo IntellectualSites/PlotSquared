@@ -70,6 +70,7 @@ public class MainCommand extends Command {
             new PluginCmd();
             new Purge();
             new Reload();
+            new Relight();
             new Merge();
             new DebugPaste();
             new Unlink();
