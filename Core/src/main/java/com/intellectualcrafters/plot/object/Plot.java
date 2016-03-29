@@ -1133,11 +1133,15 @@ public class Plot {
      */
     public void setHome(BlockLoc location) {
         Plot plot = this.getBasePlot(false);
-        if (new BlockLoc(0, 0, 0).equals(location)) {
+        if (location != null && new BlockLoc(0, 0, 0).equals(location)) {
             return;
         }
         plot.getSettings().setPosition(location);
-        DBFunc.setPosition(plot, plot.getSettings().getPosition().toString());
+        if (location != null) {
+            DBFunc.setPosition(plot, plot.getSettings().getPosition().toString());
+            return;
+        }
+        DBFunc.setPosition(plot, null);
     }
 
     /**

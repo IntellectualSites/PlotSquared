@@ -21,7 +21,6 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -46,18 +45,8 @@ public class SetHome extends SetCommand {
             case "none": {
                 Plot base = plot.getBasePlot(false);
                 Location bot = base.getBottomAbs();
-                Location defaultHome = base.getDefaultHome();
-                BlockLoc bLoc = new BlockLoc(defaultHome.getX() - bot.getX(), defaultHome.getY(), defaultHome.getZ() - bot.getZ(), defaultHome.getYaw(), defaultHome.getPitch());
-                base.setHome(bLoc);
+                base.setHome(null);
                 return MainUtil.sendMessage(plr, C.POSITION_UNSET);
-            }
-            case "": {
-                Plot base = plot.getBasePlot(false);
-                Location bot = base.getBottomAbs();
-                Location loc = plr.getLocationFull();
-                BlockLoc rel = new BlockLoc(loc.getX() - bot.getX(), loc.getY(), loc.getZ() - bot.getZ(), loc.getYaw(), loc.getPitch());
-                base.setHome(rel);
-                return MainUtil.sendMessage(plr, C.POSITION_SET);
             }
             default: {
                 MainUtil.sendMessage(plr, C.HOME_ARGUMENT);
