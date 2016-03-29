@@ -408,7 +408,7 @@ public class EntityWrapper {
         Location loc = new Location(world, this.x + x_offset, this.y, this.z + z_offset);
         loc.setYaw(this.yaw);
         loc.setPitch(this.pitch);
-        if (this.type.isSpawnable()) {
+        if (!this.type.isSpawnable()) {
             return null;
         }
         Entity entity;

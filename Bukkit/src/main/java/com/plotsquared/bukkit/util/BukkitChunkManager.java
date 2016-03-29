@@ -20,6 +20,14 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.bukkit.object.entity.EntityWrapper;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.DyeColor;
@@ -33,7 +41,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Chest;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Dispenser;
@@ -53,534 +60,546 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
 public class BukkitChunkManager extends ChunkManager {
 
-    private static HashMap<BlockLoc, ItemStack[]> chestContents;
-    private static HashMap<BlockLoc, ItemStack[]> furnaceContents;
-    private static HashMap<BlockLoc, ItemStack[]> dispenserContents;
-    private static HashMap<BlockLoc, ItemStack[]> dropperContents;
-    private static HashMap<BlockLoc, ItemStack[]> brewingStandContents;
-    private static HashMap<BlockLoc, ItemStack[]> beaconContents;
-    private static HashMap<BlockLoc, ItemStack[]> hopperContents;
-    private static HashMap<BlockLoc, Short[]> furnaceTime;
-    private static HashMap<BlockLoc, Object[]> skullData;
-    private static HashMap<BlockLoc, Material> jukeboxDisc;
-    private static HashMap<BlockLoc, Short> brewTime;
-    private static HashMap<BlockLoc, EntityType> spawnerData;
-    private static HashMap<BlockLoc, String> cmdData;
-    private static HashMap<BlockLoc, String[]> signContents;
-    private static HashMap<BlockLoc, Note> noteBlockContents;
-    private static HashMap<BlockLoc, List<Pattern>> bannerPatterns;
-    private static HashMap<BlockLoc, DyeColor> bannerBase;
-    private static HashSet<EntityWrapper> entities;
-    private static HashMap<PlotLoc, PlotBlock[]> allBlocks;
+    public static class ContentMap {
+        public HashMap<BlockLoc, ItemStack[]> chestContents;
+        public HashMap<BlockLoc, ItemStack[]> furnaceContents;
+        public HashMap<BlockLoc, ItemStack[]> dispenserContents;
+        public HashMap<BlockLoc, ItemStack[]> dropperContents;
+        public HashMap<BlockLoc, ItemStack[]> brewingStandContents;
+        public HashMap<BlockLoc, ItemStack[]> beaconContents;
+        public HashMap<BlockLoc, ItemStack[]> hopperContents;
+        public HashMap<BlockLoc, Short[]> furnaceTime;
+        public HashMap<BlockLoc, Object[]> skullData;
+        public HashMap<BlockLoc, Material> jukeboxDisc;
+        public HashMap<BlockLoc, Short> brewTime;
+        public HashMap<BlockLoc, EntityType> spawnerData;
+        public HashMap<BlockLoc, String> cmdData;
+        public HashMap<BlockLoc, String[]> signContents;
+        public HashMap<BlockLoc, Note> noteBlockContents;
+        public HashMap<BlockLoc, List<Pattern>> bannerPatterns;
+        public HashMap<BlockLoc, DyeColor> bannerBase;
+        public HashSet<EntityWrapper> entities;
+        public HashMap<PlotLoc, PlotBlock[]> allBlocks;
 
-    public static void initMaps() {
-        chestContents = new HashMap<>();
-        furnaceContents = new HashMap<>();
-        dispenserContents = new HashMap<>();
-        dropperContents = new HashMap<>();
-        brewingStandContents = new HashMap<>();
-        beaconContents = new HashMap<>();
-        hopperContents = new HashMap<>();
-        furnaceTime = new HashMap<>();
-        skullData = new HashMap<>();
-        brewTime = new HashMap<>();
-        jukeboxDisc = new HashMap<>();
-        spawnerData = new HashMap<>();
-        noteBlockContents = new HashMap<>();
-        signContents = new HashMap<>();
-        cmdData = new HashMap<>();
-        bannerBase = new HashMap<>();
-        bannerPatterns = new HashMap<>();
-        entities = new HashSet<>();
-        allBlocks = new HashMap<>();
-    }
-
-    public static boolean isIn(RegionWrapper region, int x, int z) {
-        return x >= region.minX && x <= region.maxX && z >= region.minZ && z <= region.maxZ;
-    }
-
-    public static void saveEntitiesOut(Chunk chunk, RegionWrapper region) {
-        for (Entity entity : chunk.getEntities()) {
-            Location loc = BukkitUtil.getLocation(entity);
-            int x = loc.getX();
-            int z = loc.getZ();
-            if (isIn(region, x, z)) {
-                continue;
-            }
-            if (entity.getVehicle() != null) {
-                continue;
-            }
-            EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
-            entities.add(wrap);
+        public ContentMap() {
+            chestContents = new HashMap<>();
+            furnaceContents = new HashMap<>();
+            dispenserContents = new HashMap<>();
+            dropperContents = new HashMap<>();
+            brewingStandContents = new HashMap<>();
+            beaconContents = new HashMap<>();
+            hopperContents = new HashMap<>();
+            furnaceTime = new HashMap<>();
+            skullData = new HashMap<>();
+            brewTime = new HashMap<>();
+            jukeboxDisc = new HashMap<>();
+            spawnerData = new HashMap<>();
+            noteBlockContents = new HashMap<>();
+            signContents = new HashMap<>();
+            cmdData = new HashMap<>();
+            bannerBase = new HashMap<>();
+            bannerPatterns = new HashMap<>();
+            entities = new HashSet<>();
+            allBlocks = new HashMap<>();
         }
-    }
 
-    public static void saveEntitiesIn(Chunk chunk, RegionWrapper region) {
-        saveEntitiesIn(chunk, region, 0, 0, false);
-    }
-
-    public static void saveEntitiesIn(Chunk chunk, RegionWrapper region, int offsetX, int offsetZ, boolean delete) {
-        for (Entity entity : chunk.getEntities()) {
-            Location loc = BukkitUtil.getLocation(entity);
-            int x = loc.getX();
-            int z = loc.getZ();
-            if (!isIn(region, x, z)) {
-                continue;
+        public void saveRegion(World world, int x1, int x2, int z1, int z2) {
+            if (z1 > z2) {
+                int tmp = z1;
+                z1 = z2;
+                z2 = tmp;
             }
-            if (entity.getVehicle() != null) {
-                continue;
+            if (x1 > x2) {
+                int tmp = x1;
+                x1 = x2;
+                x2 = tmp;
             }
-            EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
-            wrap.x += offsetX;
-            wrap.z += offsetZ;
-            entities.add(wrap);
-            if (delete) {
-                if (!(entity instanceof Player)) {
-                    entity.remove();
+            for (int x = x1; x <= x2; x++) {
+                for (int z = z1; z <= z2; z++) {
+                    saveBlocks(world, 256, x, z, 0, 0, true);
                 }
             }
         }
-    }
 
-    public static void restoreEntities(World world, int xOffset, int zOffset) {
-        for (EntityWrapper entity : entities) {
-            try {
-                entity.spawn(world, xOffset, zOffset);
-            } catch (Exception e) {
-                PS.debug("Failed to restore entity (e): " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.type);
-                e.printStackTrace();
-            }
+        public void saveEntitiesIn(Chunk chunk, RegionWrapper region) {
+            saveEntitiesIn(chunk, region, 0, 0, false);
         }
-        entities.clear();
-    }
 
-    public static void restoreBlocks(World world, int xOffset, int zOffset) {
-        for (Entry<BlockLoc, ItemStack[]> blockLocEntry : chestContents.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Chest) {
-                    InventoryHolder chest = (InventoryHolder) state;
-                    chest.getInventory().setContents(blockLocEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+        public void saveEntitiesOut(Chunk chunk, RegionWrapper region) {
+            for (Entity entity : chunk.getEntities()) {
+                Location loc = BukkitUtil.getLocation(entity);
+                int x = loc.getX();
+                int z = loc.getZ();
+                if (isIn(region, x, z)) {
+                    continue;
                 }
-            } catch (IllegalArgumentException e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate chest (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                        .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                if (entity.getVehicle() != null) {
+                    continue;
+                }
+                EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
+                entities.add(wrap);
             }
         }
-        for (Entry<BlockLoc, String[]> blockLocEntry : signContents.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Sign) {
-                    Sign sign = (Sign) state;
-                    int i = 0;
-                    for (String line : blockLocEntry.getValue()) {
-                        sign.setLine(i, line);
-                        i++;
+
+        public void saveEntitiesIn(Chunk chunk, RegionWrapper region, int offsetX, int offsetZ, boolean delete) {
+            for (Entity entity : chunk.getEntities()) {
+                Location loc = BukkitUtil.getLocation(entity);
+                int x = loc.getX();
+                int z = loc.getZ();
+                if (!isIn(region, x, z)) {
+                    continue;
+                }
+                if (entity.getVehicle() != null) {
+                    continue;
+                }
+                EntityWrapper wrap = new EntityWrapper(entity, (short) 2);
+                wrap.x += offsetX;
+                wrap.z += offsetZ;
+                entities.add(wrap);
+                if (delete) {
+                    if (!(entity instanceof Player)) {
+                        entity.remove();
                     }
-                    state.update(true);
-                } else {
-                    PS.debug(
-                            "&c[WARN] Plot clear failed to regenerate sign: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry.getKey().y
-                                    + "," + (
-                                    blockLocEntry.getKey().z + zOffset));
                 }
-            } catch (IndexOutOfBoundsException e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry.getKey().y
-                        + "," + (
-                        blockLocEntry.getKey().z + zOffset));
             }
         }
-        for (Entry<BlockLoc, ItemStack[]> blockLocEntry : dispenserContents.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Dispenser) {
-                    ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+
+        public void restoreEntities(World world, int xOffset, int zOffset) {
+            for (EntityWrapper entity : entities) {
+                try {
+                    entity.spawn(world, xOffset, zOffset);
+                } catch (Exception e) {
+                    PS.debug("Failed to restore entity (e): " + entity.x + "," + entity.y + "," + entity.z + " : " + entity.type);
+                    e.printStackTrace();
+                }
+            }
+            entities.clear();
+        }
+
+        public void restoreBlocks(World world, int xOffset, int zOffset) {
+            for (Entry<BlockLoc, ItemStack[]> blockLocEntry : chestContents.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof InventoryHolder) {
+                        InventoryHolder chest = (InventoryHolder) state;
+                        chest.getInventory().setContents(blockLocEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    }
+                } catch (IllegalArgumentException e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate chest (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
                             .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
                 }
-            } catch (IllegalArgumentException e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                        .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, ItemStack[]> blockLocEntry : dropperContents.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Dropper) {
-                    ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+            for (Entry<BlockLoc, String[]> blockLocEntry : signContents.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Sign) {
+                        Sign sign = (Sign) state;
+                        int i = 0;
+                        for (String line : blockLocEntry.getValue()) {
+                            sign.setLine(i, line);
+                            i++;
+                        }
+                        state.update(true);
+                    } else {
+                        PS.debug(
+                                "&c[WARN] Plot clear failed to regenerate sign: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry.getKey().y
+                                        + "," + (
+                                        blockLocEntry.getKey().z + zOffset));
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry.getKey().y
+                            + "," + (
+                            blockLocEntry.getKey().z + zOffset));
+                }
+            }
+            for (Entry<BlockLoc, ItemStack[]> blockLocEntry : dispenserContents.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Dispenser) {
+                        ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    }
+                } catch (IllegalArgumentException e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
                             .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
                 }
-            } catch (IllegalArgumentException e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                        .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, ItemStack[]> blockLocEntry : beaconContents.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Beacon) {
-                    ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+            for (Entry<BlockLoc, ItemStack[]> blockLocEntry : dropperContents.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Dropper) {
+                        ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    }
+                } catch (IllegalArgumentException e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
                             .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
                 }
-            } catch (IllegalArgumentException e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate beacon (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                        .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, Material> blockLocMaterialEntry : jukeboxDisc.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocMaterialEntry.getKey().x + xOffset, blockLocMaterialEntry.getKey().y, blockLocMaterialEntry
-                                .getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Jukebox) {
-                    ((Jukebox) state).setPlaying(blockLocMaterialEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore jukebox: " + (blockLocMaterialEntry.getKey().x + xOffset) + ","
+            for (Entry<BlockLoc, ItemStack[]> blockLocEntry : beaconContents.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Beacon) {
+                        ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    }
+                } catch (IllegalArgumentException e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate beacon (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                }
+            }
+            for (Entry<BlockLoc, Material> blockLocMaterialEntry : jukeboxDisc.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocMaterialEntry.getKey().x + xOffset, blockLocMaterialEntry.getKey().y, blockLocMaterialEntry
+                                    .getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Jukebox) {
+                        ((Jukebox) state).setPlaying(blockLocMaterialEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to restore jukebox: " + (blockLocMaterialEntry.getKey().x + xOffset) + ","
+                                + blockLocMaterialEntry
+                                .getKey().y + "," + (
+                                blockLocMaterialEntry.getKey().z + zOffset));
+                    }
+                } catch (Exception e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate jukebox (e): " + (blockLocMaterialEntry.getKey().x + xOffset) + ","
                             + blockLocMaterialEntry
                             .getKey().y + "," + (
                             blockLocMaterialEntry.getKey().z + zOffset));
                 }
-            } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate jukebox (e): " + (blockLocMaterialEntry.getKey().x + xOffset) + ","
-                        + blockLocMaterialEntry
-                        .getKey().y + "," + (
-                        blockLocMaterialEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, Object[]> blockLocEntry : skullData.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Skull) {
-                    Object[] data = blockLocEntry.getValue();
-                    if (data[0] != null) {
-                        ((Skull) state).setOwner((String) data[0]);
+            for (Entry<BlockLoc, Object[]> blockLocEntry : skullData.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Skull) {
+                        Object[] data = blockLocEntry.getValue();
+                        if (data[0] != null) {
+                            ((Skull) state).setOwner((String) data[0]);
+                        }
+                        if ((Integer) data[1] != 0) {
+                            ((Skull) state).setRotation(BlockFace.values()[(int) data[1]]);
+                        }
+                        if ((Integer) data[2] != 0) {
+                            ((Skull) state).setSkullType(SkullType.values()[(int) data[2]]);
+                        }
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to restore skull: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry.getKey().y
+                                + "," + (
+                                blockLocEntry.getKey().z + zOffset));
                     }
-                    if ((Integer) data[1] != 0) {
-                        ((Skull) state).setRotation(BlockFace.values()[(int) data[1]]);
-                    }
-                    if ((Integer) data[2] != 0) {
-                        ((Skull) state).setSkullType(SkullType.values()[(int) data[2]]);
-                    }
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore skull: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry.getKey().y
-                            + "," + (
-                            blockLocEntry.getKey().z + zOffset));
-                }
-            } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate skull (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                        .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
-            }
-        }
-        for (Entry<BlockLoc, ItemStack[]> blockLocEntry : hopperContents.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Hopper) {
-                    ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                } catch (Exception e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate skull (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
                             .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
                 }
-            } catch (IllegalArgumentException e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate hopper (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                        .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, Note> blockLocNoteEntry : noteBlockContents.entrySet()) {
-            try {
-                Block block = world.getBlockAt(
-                        blockLocNoteEntry.getKey().x + xOffset, blockLocNoteEntry.getKey().y, blockLocNoteEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof NoteBlock) {
-                    ((NoteBlock) state).setNote(blockLocNoteEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + (blockLocNoteEntry.getKey().x + xOffset) + ","
+            for (Entry<BlockLoc, ItemStack[]> blockLocEntry : hopperContents.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Hopper) {
+                        ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    }
+                } catch (IllegalArgumentException e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate hopper (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                }
+            }
+            for (Entry<BlockLoc, Note> blockLocNoteEntry : noteBlockContents.entrySet()) {
+                try {
+                    Block block = world.getBlockAt(
+                            blockLocNoteEntry.getKey().x + xOffset, blockLocNoteEntry.getKey().y, blockLocNoteEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof NoteBlock) {
+                        ((NoteBlock) state).setNote(blockLocNoteEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + (blockLocNoteEntry.getKey().x + xOffset) + ","
+                                + blockLocNoteEntry
+                                .getKey().y + "," + (
+                                blockLocNoteEntry.getKey().z + zOffset));
+                    }
+                } catch (Exception e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate note block (e): " + (blockLocNoteEntry.getKey().x + xOffset) + ","
                             + blockLocNoteEntry
                             .getKey().y + "," + (
                             blockLocNoteEntry.getKey().z + zOffset));
                 }
-            } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate note block (e): " + (blockLocNoteEntry.getKey().x + xOffset) + ","
-                        + blockLocNoteEntry
-                        .getKey().y + "," + (
-                        blockLocNoteEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, Short> blockLocShortEntry : brewTime.entrySet()) {
-            try {
-                Block block = world.getBlockAt(
-                        blockLocShortEntry.getKey().x + xOffset, blockLocShortEntry.getKey().y, blockLocShortEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof BrewingStand) {
-                    ((BrewingStand) state).setBrewingTime(blockLocShortEntry.getValue());
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + (blockLocShortEntry.getKey().x + xOffset) + ","
-                            + blockLocShortEntry
-                            .getKey().y + "," + (
-                            blockLocShortEntry.getKey().z + zOffset));
+            for (Entry<BlockLoc, Short> blockLocShortEntry : brewTime.entrySet()) {
+                try {
+                    Block block = world.getBlockAt(
+                            blockLocShortEntry.getKey().x + xOffset, blockLocShortEntry.getKey().y, blockLocShortEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof BrewingStand) {
+                        ((BrewingStand) state).setBrewingTime(blockLocShortEntry.getValue());
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + (blockLocShortEntry.getKey().x + xOffset) + ","
+                                + blockLocShortEntry
+                                .getKey().y + "," + (
+                                blockLocShortEntry.getKey().z + zOffset));
+                    }
+                } catch (Exception e) {
+                    PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking (e): " + (blockLocShortEntry.getKey().x + xOffset) + ","
+                            + blockLocShortEntry.getKey().y + "," + (blockLocShortEntry.getKey().z + zOffset));
                 }
-            } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking (e): " + (blockLocShortEntry.getKey().x + xOffset) + ","
-                        + blockLocShortEntry.getKey().y + "," + (blockLocShortEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, EntityType> blockLocEntityTypeEntry : spawnerData.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntityTypeEntry.getKey().x + xOffset, blockLocEntityTypeEntry.getKey().y, blockLocEntityTypeEntry
-                                .getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof CreatureSpawner) {
-                    ((CreatureSpawner) state).setSpawnedType(blockLocEntityTypeEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + (blockLocEntityTypeEntry.getKey().x + xOffset) + ","
-                            + blockLocEntityTypeEntry
-                            .getKey().y + "," + (
-                            blockLocEntityTypeEntry.getKey().z + zOffset));
+            for (Entry<BlockLoc, EntityType> blockLocEntityTypeEntry : spawnerData.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntityTypeEntry.getKey().x + xOffset, blockLocEntityTypeEntry.getKey().y, blockLocEntityTypeEntry
+                                    .getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof CreatureSpawner) {
+                        ((CreatureSpawner) state).setSpawnedType(blockLocEntityTypeEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + (blockLocEntityTypeEntry.getKey().x + xOffset) + ","
+                                + blockLocEntityTypeEntry
+                                .getKey().y + "," + (
+                                blockLocEntityTypeEntry.getKey().z + zOffset));
+                    }
+                } catch (Exception e) {
+                    PS.debug("&c[WARN] Plot clear failed to restore spawner type (e): " + (blockLocEntityTypeEntry.getKey().x + xOffset) + ","
+                            + blockLocEntityTypeEntry.getKey().y + "," + (blockLocEntityTypeEntry.getKey().z + zOffset));
                 }
-            } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore spawner type (e): " + (blockLocEntityTypeEntry.getKey().x + xOffset) + ","
-                        + blockLocEntityTypeEntry.getKey().y + "," + (blockLocEntityTypeEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, String> blockLocStringEntry : cmdData.entrySet()) {
-            try {
-                Block block = world.getBlockAt(
-                        blockLocStringEntry.getKey().x + xOffset, blockLocStringEntry.getKey().y, blockLocStringEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof CommandBlock) {
-                    ((CommandBlock) state).setCommand(blockLocStringEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore command block: " + (blockLocStringEntry.getKey().x + xOffset) + ","
+            for (Entry<BlockLoc, String> blockLocStringEntry : cmdData.entrySet()) {
+                try {
+                    Block block = world.getBlockAt(
+                            blockLocStringEntry.getKey().x + xOffset, blockLocStringEntry.getKey().y, blockLocStringEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof CommandBlock) {
+                        ((CommandBlock) state).setCommand(blockLocStringEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to restore command block: " + (blockLocStringEntry.getKey().x + xOffset) + ","
+                                + blockLocStringEntry
+                                .getKey().y + "," + (
+                                blockLocStringEntry.getKey().z + zOffset));
+                    }
+                } catch (Exception e) {
+                    PS.debug("&c[WARN] Plot clear failed to restore command block (e): " + (blockLocStringEntry.getKey().x + xOffset) + ","
                             + blockLocStringEntry
                             .getKey().y + "," + (
                             blockLocStringEntry.getKey().z + zOffset));
                 }
-            } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore command block (e): " + (blockLocStringEntry.getKey().x + xOffset) + ","
-                        + blockLocStringEntry
-                        .getKey().y + "," + (
-                        blockLocStringEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, ItemStack[]> blockLocEntry : brewingStandContents.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof BrewingStand) {
-                    ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+            for (Entry<BlockLoc, ItemStack[]> blockLocEntry : brewingStandContents.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof BrewingStand) {
+                        ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                                .getKey().y + "," + (
+                                blockLocEntry.getKey().z
+                                        + zOffset));
+                    }
+                } catch (IllegalArgumentException e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
                             .getKey().y + "," + (
                             blockLocEntry.getKey().z
                                     + zOffset));
                 }
-            } catch (IllegalArgumentException e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                        .getKey().y + "," + (
-                        blockLocEntry.getKey().z
-                                + zOffset));
             }
-        }
-        for (Entry<BlockLoc, Short[]> blockLocEntry : furnaceTime.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Furnace) {
-                    Short[] time = blockLocEntry.getValue();
-                    ((Furnace) state).setBurnTime(time[0]);
-                    ((Furnace) state).setCookTime(time[1]);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+            for (Entry<BlockLoc, Short[]> blockLocEntry : furnaceTime.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Furnace) {
+                        Short[] time = blockLocEntry.getValue();
+                        ((Furnace) state).setBurnTime(time[0]);
+                        ((Furnace) state).setCookTime(time[1]);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to restore furnace cooking: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                                .getKey().y + "," + (
+                                blockLocEntry.getKey().z + zOffset));
+                    }
+                } catch (Exception e) {
+                    PS.debug("&c[WARN] Plot clear failed to restore furnace cooking (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
                             .getKey().y + "," + (
                             blockLocEntry.getKey().z + zOffset));
                 }
-            } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to restore furnace cooking (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                        .getKey().y + "," + (
-                        blockLocEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, ItemStack[]> blockLocEntry : furnaceContents.entrySet()) {
-            try {
-                Block block =
-                        world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Furnace) {
-                    ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+            for (Entry<BlockLoc, ItemStack[]> blockLocEntry : furnaceContents.entrySet()) {
+                try {
+                    Block block =
+                            world.getBlockAt(blockLocEntry.getKey().x + xOffset, blockLocEntry.getKey().y, blockLocEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Furnace) {
+                        ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    }
+                } catch (IllegalArgumentException e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate furnace (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
                             .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
                 }
-            } catch (IllegalArgumentException e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate furnace (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                        .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
             }
-        }
-        for (Entry<BlockLoc, DyeColor> blockLocByteEntry : bannerBase.entrySet()) {
-            try {
-                Block block = world.getBlockAt(
-                        blockLocByteEntry.getKey().x + xOffset, blockLocByteEntry.getKey().y, blockLocByteEntry.getKey().z + zOffset);
-                BlockState state = block.getState();
-                if (state instanceof Banner) {
-                    Banner banner = (Banner) state;
-                    DyeColor base = blockLocByteEntry.getValue();
-                    List<Pattern> patterns = bannerPatterns.get(blockLocByteEntry.getKey());
-                    banner.setBaseColor(base);
-                    banner.setPatterns(patterns);
-                    state.update(true);
-                } else {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + (blockLocByteEntry.getKey().x + xOffset) + "," + blockLocByteEntry
+            for (Entry<BlockLoc, DyeColor> blockLocByteEntry : bannerBase.entrySet()) {
+                try {
+                    Block block = world.getBlockAt(
+                            blockLocByteEntry.getKey().x + xOffset, blockLocByteEntry.getKey().y, blockLocByteEntry.getKey().z + zOffset);
+                    BlockState state = block.getState();
+                    if (state instanceof Banner) {
+                        Banner banner = (Banner) state;
+                        DyeColor base = blockLocByteEntry.getValue();
+                        List<Pattern> patterns = bannerPatterns.get(blockLocByteEntry.getKey());
+                        banner.setBaseColor(base);
+                        banner.setPatterns(patterns);
+                        state.update(true);
+                    } else {
+                        PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + (blockLocByteEntry.getKey().x + xOffset) + "," + blockLocByteEntry
+                                .getKey().y + "," + (
+                                blockLocByteEntry.getKey().z + zOffset));
+                    }
+                } catch (Exception e) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate banner (e): " + (blockLocByteEntry.getKey().x + xOffset) + "," + blockLocByteEntry
                             .getKey().y + "," + (
                             blockLocByteEntry.getKey().z + zOffset));
                 }
-            } catch (Exception e) {
-                PS.debug("&c[WARN] Plot clear failed to regenerate banner (e): " + (blockLocByteEntry.getKey().x + xOffset) + "," + blockLocByteEntry
-                        .getKey().y + "," + (
-                        blockLocByteEntry.getKey().z + zOffset));
             }
+        }
+
+        public void saveBlocks(World world, int maxY, int x, int z, int offsetX, int offsetZ, boolean storeNormal) {
+            maxY = Math.min(255, maxY);
+            PlotBlock[] ids;
+            if (storeNormal) {
+                ids = new PlotBlock[maxY + 1];
+            } else {
+                ids = null;
+            }
+            for (short y = 0; y <= maxY; y++) {
+                Block block = world.getBlockAt(x, y, z);
+                Material id = block.getType();
+                if (!id.equals(Material.AIR)) {
+                    if (storeNormal) {
+                        ids[y] = new PlotBlock((short) id.getId(), block.getData());
+                    }
+                    try {
+                        BlockLoc bl = new BlockLoc(x + offsetX, y, z + offsetZ);
+                        if (block.getState() instanceof InventoryHolder) {
+                            InventoryHolder inventoryHolder = (InventoryHolder) block.getState();
+                            ItemStack[] inventory = inventoryHolder.getInventory().getContents().clone();
+                            if (id == Material.CHEST) {
+                                chestContents.put(bl, inventory);
+                            } else if (id == Material.DISPENSER) {
+                                dispenserContents.put(bl, inventory);
+                            } else if (id == Material.BEACON) {
+                                beaconContents.put(bl, inventory);
+                            } else if (id == Material.DROPPER) {
+                                dropperContents.put(bl, inventory);
+                            } else if (id == Material.HOPPER) {
+                                hopperContents.put(bl, inventory);
+                            } else if (id == Material.BREWING_STAND) {
+                                BrewingStand brewingStand = (BrewingStand) inventoryHolder;
+                                short time = (short) brewingStand.getBrewingTime();
+                                if (time > 0) {
+                                    brewTime.put(bl, time);
+                                }
+                                ItemStack[] invBre = brewingStand.getInventory().getContents().clone();
+                                brewingStandContents.put(bl, invBre);
+                            } else if (id == Material.FURNACE || id == Material.BURNING_FURNACE) {
+                                Furnace furnace = (Furnace) inventoryHolder;
+                                short burn = furnace.getBurnTime();
+                                short cook = furnace.getCookTime();
+                                ItemStack[] invFur = furnace.getInventory().getContents().clone();
+                                furnaceContents.put(bl, invFur);
+                                if (cook != 0) {
+                                    furnaceTime.put(bl, new Short[]{burn, cook});
+                                }
+                            }
+                        } else if (block.getState() instanceof CreatureSpawner) {
+                            CreatureSpawner spawner = (CreatureSpawner) block.getState();
+                            EntityType type = spawner.getSpawnedType();
+                            if (type != null) {
+                                spawnerData.put(bl, type);
+                            }
+                        } else if (block.getState() instanceof CommandBlock) {
+                            CommandBlock cmd = (CommandBlock) block.getState();
+                            String string = cmd.getCommand();
+                            if (string != null && !string.isEmpty()) {
+                                cmdData.put(bl, string);
+                            }
+                        } else if (block.getState() instanceof NoteBlock) {
+                            NoteBlock noteBlock = (NoteBlock) block.getState();
+                            Note note = noteBlock.getNote();
+                            noteBlockContents.put(bl, note);
+                        } else if (block.getState() instanceof Jukebox) {
+                            Jukebox jukebox = (Jukebox) block.getState();
+                            Material playing = jukebox.getPlaying();
+                            if (playing != null) {
+                                jukeboxDisc.put(bl, playing);
+                            }
+                        } else if (block.getState() instanceof Skull) {
+                            Skull skull = (Skull) block.getState();
+                            String o = skull.getOwner();
+                            byte skullType = getOrdinal(SkullType.values(), skull.getSkullType());
+                            skull.getRotation();
+                            short rot = getOrdinal(BlockFace.values(), skull.getRotation());
+                            skullData.put(bl, new Object[]{o, rot, skullType});
+                        } else if (block.getState() instanceof Banner) {
+                            Banner banner = (Banner) block.getState();
+                            DyeColor base = banner.getBaseColor();
+                            bannerBase.put(bl, base);
+                            bannerPatterns.put(bl, banner.getPatterns());
+
+                        }
+                    } catch (Exception e) {
+                        PS.debug("------------ FAILED TO DO SOMETHING --------");
+                        e.printStackTrace();
+                        PS.debug("------------ but we caught it ^ --------");
+                    }
+                }
+            }
+            PlotLoc loc = new PlotLoc(x + offsetX, z + offsetZ);
+            allBlocks.put(loc, ids);
         }
     }
 
-    public static void saveBlocks(World world, int maxY, int x, int z, int offsetX, int offsetZ, boolean storeNormal) {
-        maxY = Math.min(255, maxY);
-        PlotBlock[] ids;
-        if (storeNormal) {
-            ids = new PlotBlock[maxY + 1];
-        } else {
-            ids = null;
-        }
-        for (short y = 0; y <= maxY; y++) {
-            Block block = world.getBlockAt(x, y, z);
-            Material id = block.getType();
-            if (!id.equals(Material.AIR)) {
-                if (storeNormal) {
-                    ids[y] = new PlotBlock((short) id.getId(), block.getData());
-                }
-                try {
-                    BlockLoc bl = new BlockLoc(x + offsetX, y, z + offsetZ);
-                    if (block.getState() instanceof InventoryHolder) {
-                        InventoryHolder inventoryHolder = (InventoryHolder) block.getState();
-                        ItemStack[] inventory = inventoryHolder.getInventory().getContents().clone();
-                        if (id == Material.CHEST) {
-                            chestContents.put(bl, inventory);
-                        } else if (id == Material.DISPENSER) {
-                            dispenserContents.put(bl, inventory);
-                        } else if (id == Material.BEACON) {
-                            beaconContents.put(bl, inventory);
-                        } else if (id == Material.DROPPER) {
-                            dropperContents.put(bl, inventory);
-                        } else if (id == Material.HOPPER) {
-                            hopperContents.put(bl, inventory);
-                        } else if (id == Material.BREWING_STAND) {
-                            BrewingStand brewingStand = (BrewingStand) inventoryHolder;
-                            short time = (short) brewingStand.getBrewingTime();
-                            if (time > 0) {
-                                brewTime.put(bl, time);
-                            }
-                            ItemStack[] invBre = brewingStand.getInventory().getContents().clone();
-                            brewingStandContents.put(bl, invBre);
-                        } else if (id == Material.FURNACE || id == Material.BURNING_FURNACE) {
-                            Furnace furnace = (Furnace) inventoryHolder;
-                            short burn = furnace.getBurnTime();
-                            short cook = furnace.getCookTime();
-                            ItemStack[] invFur = furnace.getInventory().getContents().clone();
-                            furnaceContents.put(bl, invFur);
-                            if (cook != 0) {
-                                furnaceTime.put(bl, new Short[]{burn, cook});
-                            }
-                        }
-                    } else if (block.getState() instanceof CreatureSpawner) {
-                        CreatureSpawner spawner = (CreatureSpawner) block.getState();
-                        EntityType type = spawner.getSpawnedType();
-                        if (type != null) {
-                            spawnerData.put(bl, type);
-                        }
-                    } else if (block.getState() instanceof CommandBlock) {
-                        CommandBlock cmd = (CommandBlock) block.getState();
-                        String string = cmd.getCommand();
-                        if (string != null && !string.isEmpty()) {
-                            cmdData.put(bl, string);
-                        }
-                    } else if (block.getState() instanceof NoteBlock) {
-                        NoteBlock noteBlock = (NoteBlock) block.getState();
-                        Note note = noteBlock.getNote();
-                        noteBlockContents.put(bl, note);
-                    } else if (block.getState() instanceof Jukebox) {
-                        Jukebox jukebox = (Jukebox) block.getState();
-                        Material playing = jukebox.getPlaying();
-                        if (playing != null) {
-                            jukeboxDisc.put(bl, playing);
-                        }
-                    } else if (block.getState() instanceof Skull) {
-                        Skull skull = (Skull) block.getState();
-                        String o = skull.getOwner();
-                        byte skullType = getOrdinal(SkullType.values(), skull.getSkullType());
-                        skull.getRotation();
-                        short rot = getOrdinal(BlockFace.values(), skull.getRotation());
-                        skullData.put(bl, new Object[]{o, rot, skullType});
-                    } else if (block.getState() instanceof Banner) {
-                        Banner banner = (Banner) block.getState();
-                        DyeColor base = banner.getBaseColor();
-                        bannerBase.put(bl, base);
-                        bannerPatterns.put(bl, banner.getPatterns());
-
-                    }
-                } catch (Exception e) {
-                    PS.debug("------------ FAILED TO DO SOMETHING --------");
-                    e.printStackTrace();
-                    PS.debug("------------ but we caught it ^ --------");
-                }
-            }
-        }
-        PlotLoc loc = new PlotLoc(x + offsetX, z + offsetZ);
-        allBlocks.put(loc, ids);
+    public static boolean isIn(RegionWrapper region, int x, int z) {
+        return x >= region.minX && x <= region.maxX && z >= region.minZ && z <= region.maxZ;
     }
 
     private static byte getOrdinal(Object[] list, Object value) {
@@ -592,14 +611,13 @@ public class BukkitChunkManager extends ChunkManager {
         return 0;
     }
 
-    public static void swapChunk(World world1, World world2, Chunk pos1, Chunk pos2, RegionWrapper r1,
-            RegionWrapper r2) {
-        initMaps();
+    public static ContentMap swapChunk(World world1, World world2, Chunk pos1, Chunk pos2, RegionWrapper r1, RegionWrapper r2) {
+        ContentMap map = new ContentMap();
         int relX = r2.minX - r1.minX;
         int relZ = r2.minZ - r1.minZ;
 
-        saveEntitiesIn(pos1, r1, relX, relZ, true);
-        saveEntitiesIn(pos2, r2, -relX, -relZ, true);
+        map.saveEntitiesIn(pos1, r1, relX, relZ, true);
+        map.saveEntitiesIn(pos2, r2, -relX, -relZ, true);
 
         int sx = pos1.getX() << 4;
         int sz = pos1.getZ() << 4;
@@ -609,7 +627,7 @@ public class BukkitChunkManager extends ChunkManager {
 
         for (int x = Math.max(r1.minX, sx); x <= Math.min(r1.maxX, sx + 15); x++) {
             for (int z = Math.max(r1.minZ, sz); z <= Math.min(r1.maxZ, sz + 15); z++) {
-                saveBlocks(world1, 256, sx, sz, relX, relZ, false);
+                map.saveBlocks(world1, 256, sx, sz, relX, relZ, false);
                 for (int y = 0; y < 256; y++) {
                     Block block1 = world1.getBlockAt(x, y, z);
                     int id1 = block1.getTypeId();
@@ -639,10 +657,7 @@ public class BukkitChunkManager extends ChunkManager {
                 }
             }
         }
-        while (SetQueue.IMP.forceChunkSet()) {
-        }
-        restoreBlocks(world1, 0, 0);
-        restoreEntities(world1, 0, 0);
+        return map;
     }
 
     @Override
@@ -684,7 +699,7 @@ public class BukkitChunkManager extends ChunkManager {
         final World newWorld = Bukkit.getWorld(newPos.getWorld());
         final String newWorldName = newWorld.getName();
         List<ChunkLoc> chunks = new ArrayList<>();
-        initMaps();
+        final ContentMap map = new ContentMap();
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override
             public void run(int[] value) {
@@ -696,17 +711,17 @@ public class BukkitChunkManager extends ChunkManager {
                 int cxx = loc.x << 4;
                 int czz = loc.z << 4;
                 Chunk chunk = oldWorld.getChunkAt(loc.x, loc.z);
-                saveEntitiesIn(chunk, region);
+                map.saveEntitiesIn(chunk, region);
                 for (int x = bx & 15; x <= (tx & 15); x++) {
                     for (int z = bz & 15; z <= (tz & 15); z++) {
-                        saveBlocks(oldWorld, 256, cxx + x, czz + z, relX, relZ, true);
+                        map.saveBlocks(oldWorld, 256, cxx + x, czz + z, relX, relZ, true);
                     }
                 }
             }
         }, new Runnable() {
             @Override
             public void run() {
-                for (Entry<PlotLoc, PlotBlock[]> entry : allBlocks.entrySet()) {
+                for (Entry<PlotLoc, PlotBlock[]> entry : map.allBlocks.entrySet()) {
                     PlotLoc loc = entry.getKey();
                     PlotBlock[] blocks = entry.getValue();
                     for (int y = 0; y < blocks.length; y++) {
@@ -716,32 +731,17 @@ public class BukkitChunkManager extends ChunkManager {
                         }
                     }
                 }
-                while (SetQueue.IMP.forceChunkSet()) {
-                }
-                restoreBlocks(newWorld, 0, 0);
-                restoreEntities(newWorld, relX, relZ);
-                TaskManager.runTask(whenDone);
+                SetQueue.IMP.addTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        map.restoreBlocks(newWorld, 0, 0);
+                        map.restoreEntities(newWorld, relX, relZ);
+                        TaskManager.runTask(whenDone);
+                    }
+                });
             }
         }, 5);
         return true;
-    }
-
-    public void saveRegion(World world, int x1, int x2, int z1, int z2) {
-        if (z1 > z2) {
-            int tmp = z1;
-            z1 = z2;
-            z2 = tmp;
-        }
-        if (x1 > x2) {
-            int tmp = x1;
-            x1 = x2;
-            x2 = tmp;
-        }
-        for (int x = x1; x <= x2; x++) {
-            for (int z = z1; z <= z2; z++) {
-                saveBlocks(world, 256, x, z, 0, 0, true);
-            }
-        }
     }
 
     @Override
@@ -825,32 +825,32 @@ public class BukkitChunkManager extends ChunkManager {
                     } else {
                         zzt2 = zzt;
                     }
-                    initMaps();
+                    final ContentMap map = new ContentMap();
                     if (checkX1) {
-                        saveRegion(worldObj, xxb, xxb2, zzb2, zzt2); //
+                        map.saveRegion(worldObj, xxb, xxb2, zzb2, zzt2); //
                     }
                     if (checkX2) {
-                        saveRegion(worldObj, xxt2, xxt, zzb2, zzt2); //
+                        map.saveRegion(worldObj, xxt2, xxt, zzb2, zzt2); //
                     }
                     if (checkZ1) {
-                        saveRegion(worldObj, xxb2, xxt2, zzb, zzb2); //
+                        map.saveRegion(worldObj, xxb2, xxt2, zzb, zzb2); //
                     }
                     if (checkZ2) {
-                        saveRegion(worldObj, xxb2, xxt2, zzt2, zzt); //
+                        map.saveRegion(worldObj, xxb2, xxt2, zzt2, zzt); //
                     }
                     if (checkX1 && checkZ1) {
-                        saveRegion(worldObj, xxb, xxb2, zzb, zzb2); //
+                        map.saveRegion(worldObj, xxb, xxb2, zzb, zzb2); //
                     }
                     if (checkX2 && checkZ1) {
-                        saveRegion(worldObj, xxt2, xxt, zzb, zzb2); // ?
+                        map.saveRegion(worldObj, xxt2, xxt, zzb, zzb2); // ?
                     }
                     if (checkX1 && checkZ2) {
-                        saveRegion(worldObj, xxb, xxb2, zzt2, zzt); // ?
+                        map.saveRegion(worldObj, xxb, xxb2, zzt2, zzt); // ?
                     }
                     if (checkX2 && checkZ2) {
-                        saveRegion(worldObj, xxt2, xxt, zzt2, zzt); //
+                        map.saveRegion(worldObj, xxt2, xxt, zzt2, zzt); //
                     }
-                    saveEntitiesOut(chunkObj, currentPlotClear);
+                    map.saveEntitiesOut(chunkObj, currentPlotClear);
                     AugmentedUtils.bypass(ignoreAugment, new Runnable() {
                         @Override
                         public void run() {
@@ -864,7 +864,7 @@ public class BukkitChunkManager extends ChunkManager {
                                     for (int x = 0; x < 16; x++) {
                                         for (int z = 0; z < 16; z++) {
                                             PlotLoc loc = new PlotLoc(bx + x, bz + z);
-                                            PlotBlock[] ids = allBlocks.get(loc);
+                                            PlotBlock[] ids = map.allBlocks.get(loc);
                                             if (ids != null) {
                                                 for (int y = 0; y < Math.min(128, ids.length); y++) {
                                                     PlotBlock id = ids[y];
@@ -887,8 +887,8 @@ public class BukkitChunkManager extends ChunkManager {
                             }, world, chunk);
                         }
                     });
-                    restoreBlocks(worldObj, 0, 0);
-                    restoreEntities(worldObj, 0, 0);
+                    map.restoreBlocks(worldObj, 0, 0);
+                    map.restoreEntities(worldObj, 0, 0);
                 }
                 if (!chunks.isEmpty()) {
                     TaskManager.runTaskLater(this, 1);
@@ -938,23 +938,34 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     @Override
-    public void swap(Location bot1, Location top1, Location bot2, Location top2, Runnable whenDone) {
+    public void swap(Location bot1, Location top1, Location bot2, Location top2, final Runnable whenDone) {
         RegionWrapper region1 = new RegionWrapper(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
         RegionWrapper region2 = new RegionWrapper(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
-        World world1 = Bukkit.getWorld(bot1.getWorld());
-        World world2 = Bukkit.getWorld(bot2.getWorld());
+        final World world1 = Bukkit.getWorld(bot1.getWorld());
+        final World world2 = Bukkit.getWorld(bot2.getWorld());
 
         int relX = bot2.getX() - bot1.getX();
         int relZ = bot2.getZ() - bot1.getZ();
+
+        final ArrayDeque<ContentMap> maps = new ArrayDeque<>();
 
         for (int x = bot1.getX() >> 4; x <= top1.getX() >> 4; x++) {
             for (int z = bot1.getZ() >> 4; z <= top1.getZ() >> 4; z++) {
                 Chunk chunk1 = world1.getChunkAt(x, z);
                 Chunk chunk2 = world2.getChunkAt(x + (relX >> 4), z + (relZ >> 4));
-                swapChunk(world1, world2, chunk1, chunk2, region1, region2);
+                maps.add(swapChunk(world1, world2, chunk1, chunk2, region1, region2));
             }
         }
-        TaskManager.runTaskLater(whenDone, 1);
+        SetQueue.IMP.addTask(new Runnable() {
+            @Override
+            public void run() {
+                for (ContentMap map : maps) {
+                    map.restoreBlocks(world1, 0, 0);
+                    map.restoreEntities(world1, 0, 0);
+                    TaskManager.runTaskLater(whenDone, 1);
+                }
+            }
+        });
     }
 
     @Override
