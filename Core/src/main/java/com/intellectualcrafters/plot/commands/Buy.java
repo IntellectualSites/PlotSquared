@@ -101,9 +101,7 @@ public class Buy extends SubCommand {
             }
             FlagManager.removePlotFlag(plot, "price");
         }
-        for (Plot current : plots) {
-            plot.setOwner(plr.getUUID());
-        }
+        plot.setOwner(plr.getUUID());
         MainUtil.sendMessage(plr, C.CLAIMED);
         return true;
     }
