@@ -13,16 +13,6 @@ group = 'com.intellectualcrafters'
 version = '3.3.3-SNAPSHOT'
 description = """PlotSquared"""
 
-//nukes the output dir
-task makePretty(type: Delete) {
-   delete 'target'
-}
-
-//makes clean nuke the output dir.
-clean{
-   dependsOn makePretty
-}
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
