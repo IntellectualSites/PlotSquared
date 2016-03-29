@@ -180,7 +180,6 @@ public class Auto extends SubCommand {
             return false;
         }
         plotarea.setMeta("lastPlot", new PlotId(0, 0));
-        boolean br = false;
         while (true) {
             PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
             PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);

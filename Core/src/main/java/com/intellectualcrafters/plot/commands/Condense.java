@@ -30,7 +30,6 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -49,7 +48,7 @@ public class Condense extends SubCommand {
     public static boolean TASK = false;
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String... args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         if ((args.length != 2) && (args.length != 3)) {
             MainUtil.sendMessage(plr, "/plot condense <area> <start|stop|info> [radius]");
             return false;

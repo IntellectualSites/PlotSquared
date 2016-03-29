@@ -34,7 +34,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

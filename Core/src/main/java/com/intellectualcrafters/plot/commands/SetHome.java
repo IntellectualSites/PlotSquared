@@ -45,7 +45,6 @@ public class SetHome extends SetCommand {
             case "remove":
             case "none": {
                 Plot base = plot.getBasePlot(false);
-                Location bot = base.getBottomAbs();
                 base.setHome(null);
                 return MainUtil.sendMessage(plr, C.POSITION_UNSET);
             }

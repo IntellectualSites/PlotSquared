@@ -35,7 +35,6 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,7 +52,7 @@ public class SchematicCmd extends SubCommand {
     private boolean running = false;
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String... args) {
+    public boolean onCommand(final PlotPlayer plr, String[] args) {
         if (args.length < 1) {
             sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
             return true;
@@ -166,7 +165,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(plr, "&cNeed world arg. Use &7/plots sch exportall <area>");
+                    MainUtil.sendMessage(plr, "&cNeed world argument. Use &7/plots sch exportall <area>");
                     return false;
                 }
                 PlotArea area = PS.get().getPlotAreaByString(args[1]);

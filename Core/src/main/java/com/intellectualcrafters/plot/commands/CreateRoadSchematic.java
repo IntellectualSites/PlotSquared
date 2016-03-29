@@ -28,6 +28,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+import org.bukkit.ChatColor;
 
 @CommandDeclaration(
         command = "createroadschematic",
@@ -40,7 +41,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class CreateRoadSchematic extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer player, String... args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         Location loc = player.getLocation();
         Plot plot = loc.getPlotAbs();
         if (plot == null) {
@@ -50,7 +51,7 @@ public class CreateRoadSchematic extends SubCommand {
             return sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
         HybridUtils.manager.setupRoadSchematic(plot);
-        MainUtil.sendMessage(player, "&6Saved new road schematic. To test the road, fly to a few other plots and use /plot debugroadregen");
+        MainUtil.sendMessage(player, ChatColor.GOLD + "Saved new road schematic. To test the road, fly to a few other plots and use /plot debugroadregen");
         return true;
     }
 }

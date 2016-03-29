@@ -40,7 +40,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Claim extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String... args) {
+    public boolean onCommand(PlotPlayer plr, String[] args) {
         String schematic = "";
         if (args.length >= 1) {
             schematic = args[0];
