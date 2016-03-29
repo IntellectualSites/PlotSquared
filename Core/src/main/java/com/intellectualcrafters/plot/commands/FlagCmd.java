@@ -225,7 +225,6 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.FLAG_NOT_ADDED);
                     return false;
                 }
-                DBFunc.setFlags(plot, plot.getFlags().values());
                 MainUtil.sendMessage(player, C.FLAG_ADDED);
                 return true;
             }

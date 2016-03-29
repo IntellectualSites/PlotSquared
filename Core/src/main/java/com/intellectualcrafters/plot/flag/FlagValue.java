@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
@@ -441,7 +442,9 @@ public abstract class FlagValue<T> {
 
         @Override
         public List<String> parse(final String t) {
-            return Arrays.asList(t.split(","));
+            System.out.println("PARSE: " + t);
+            PS.stacktrace();
+            return new ArrayList<>(Arrays.asList(t.split(",")));
         }
 
         @Override
@@ -454,6 +457,7 @@ public abstract class FlagValue<T> {
             try {
                 ((List<String>) t).addAll(parse(value));
             } catch (final Exception ignored) {
+                ignored.printStackTrace();
             }
         }
 
@@ -463,7 +467,8 @@ public abstract class FlagValue<T> {
                 for (final String item : parse(value)) {
                     ((List<String>) t).remove(item);
                 }
-            } catch (final Exception e) {
+            } catch (final Exception ignored) {
+                ignored.printStackTrace();
             }
         }
     }

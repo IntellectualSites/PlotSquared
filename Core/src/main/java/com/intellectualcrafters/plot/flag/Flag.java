@@ -147,7 +147,7 @@ public class Flag<T> implements Cloneable {
                 }
                 return new Flag(this.key, method.invoke(this.value));
             }
-            return new Flag(this.key, this.key.parseValueRaw(this.value.toString()));
+            return new Flag(this.key, this.key.parseValueRaw(this.key.toString(this.value)));
         } catch (CloneNotSupportedException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
             e.printStackTrace();
         }
