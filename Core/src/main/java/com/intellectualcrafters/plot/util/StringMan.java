@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -39,6 +40,21 @@ public class StringMan {
             }
         }
         return count;
+    }
+
+    public Collection match(Collection col, String startsWith) {
+        if (col == null) {
+            return null;
+        }
+        startsWith = startsWith.toLowerCase();
+        Iterator iter = col.iterator();
+        while (iter.hasNext()) {
+            Object item = iter.next();
+            if (item == null || !item.toString().toLowerCase().startsWith(startsWith)) {
+                iter.remove();
+            }
+        }
+        return col;
     }
 
     public static String getString(Object obj) {
