@@ -302,29 +302,27 @@ public abstract class Command {
             }
             // Command recommendation
             MainUtil.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
-            {
-                List<Command> commands = getCommands(player);
-                if (commands.isEmpty()) {
-                    MainUtil.sendMessage(player, C.DID_YOU_MEAN, MainCommand.getInstance().help.getUsage());
-                    return;
-                }
-                HashSet<String> setargs = new HashSet<>(args.length);
-                for (String arg : args) {
-                    setargs.add(arg.toLowerCase());
-                }
-                String[] allargs = setargs.toArray(new String[setargs.size()]);
-                int best = 0;
-                for (Command current : commands) {
-                    int match = getMatch(allargs, current);
-                    if (match > best) {
-                        cmd = current;
-                    }
-                }
-                if (cmd == null) {
-                    cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
-                }
-                MainUtil.sendMessage(player, C.DID_YOU_MEAN, cmd.getUsage());
+            List<Command> commands = getCommands(player);
+            if (commands.isEmpty()) {
+                MainUtil.sendMessage(player, C.DID_YOU_MEAN, MainCommand.getInstance().help.getUsage());
+                return;
             }
+            HashSet<String> setargs = new HashSet<>(args.length);
+            for (String arg : args) {
+                setargs.add(arg.toLowerCase());
+            }
+            String[] allargs = setargs.toArray(new String[setargs.size()]);
+            int best = 0;
+            for (Command current : commands) {
+                int match = getMatch(allargs, current);
+                if (match > best) {
+                    cmd = current;
+                }
+            }
+            if (cmd == null) {
+                cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
+            }
+            MainUtil.sendMessage(player, C.DID_YOU_MEAN, cmd.getUsage());
             return;
         }
         String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -336,7 +334,7 @@ public abstract class Command {
 
     public boolean checkArgs(PlotPlayer player, String[] args) {
         Argument<?>[] reqArgs = getRequiredArguments();
-        if ((reqArgs != null) && (reqArgs.length > 0)) {
+        if (reqArgs != null && reqArgs.length > 0) {
             boolean failed = args.length < reqArgs.length;
             String[] baseSplit = getCommandString().split(" ");
             String[] fullSplit = getUsage().split(" ");

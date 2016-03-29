@@ -222,35 +222,31 @@ public class MainUtil {
                 case "week":
                 case "weeks":
                 case "wks":
-                case "w": {
+                case "w":
+
                     time += 604800 * nums;
-                }
                 case "days":
                 case "day":
-                case "d": {
+                case "d":
                     time += 86400 * nums;
-                }
                 case "hour":
                 case "hr":
                 case "hrs":
                 case "hours":
-                case "h": {
+                case "h":
                     time += 3600 * nums;
-                }
                 case "minutes":
                 case "minute":
                 case "mins":
                 case "min":
-                case "m": {
+                case "m":
                     time += 60 * nums;
-                }
                 case "seconds":
                 case "second":
                 case "secs":
                 case "sec":
-                case "s": {
+                case "s":
                     time += nums;
-                }
             }
         }
         return time;

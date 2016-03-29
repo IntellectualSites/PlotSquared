@@ -545,7 +545,7 @@ public class Cluster extends SubCommand {
             }
             case "sh":
             case "setspawn":
-            case "sethome": {
+            case "sethome":
                 if (!Permissions.hasPermission(plr, "plots.cluster.sethome")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome");
                     return false;
@@ -575,7 +575,6 @@ public class Cluster extends SubCommand {
                 cluster.settings.setPosition(blockloc);
                 DBFunc.setPosition(cluster, relative.getX() + "," + relative.getY() + "," + relative.getZ());
                 return MainUtil.sendMessage(plr, C.POSITION_SET);
-            }
         }
         MainUtil.sendMessage(plr, C.CLUSTER_AVAILABLE_ARGS);
         return false;

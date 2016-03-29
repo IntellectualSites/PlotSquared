@@ -51,17 +51,16 @@ public class Area extends SubCommand {
         switch (args[0].toLowerCase()) {
             case "c":
             case "setup":
-            case "create": {
+            case "create":
                 if (!Permissions.hasPermission(plr, "plots.area.create")) {
                     C.NO_PERMISSION.send(plr, "plots.area.create");
                     return false;
                 }
                 switch (args.length) {
-                    case 1: {
+                    case 1:
                         C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
                         return false;
-                    }
-                    case 2: {
+                    case 2:
                         switch (args[1].toLowerCase()) {
                             case "pos1": { // Set position 1
                                 HybridPlotWorld area = plr.getMeta("area_create_area");
@@ -69,14 +68,14 @@ public class Area extends SubCommand {
                                     C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
                                     return false;
                                 }
-                                Location loc = plr.getLocation();
-                                plr.setMeta("area_pos1", loc);
-                                C.SET_ATTRIBUTE.send(plr, "area_pos1", loc.getX() + "," + loc.getZ());
+                                Location location = plr.getLocation();
+                                plr.setMeta("area_pos1", location);
+                                C.SET_ATTRIBUTE.send(plr, "area_pos1", location.getX() + "," + location.getZ());
                                 MainUtil.sendMessage(plr, "You will now set pos2: /plot area create pos2"
                                         + "\nNote: The chosen plot size may result in the created area not exactly matching your second position.");
                                 return true;
                             }
-                            case "pos2": { // Set position 2 and finish creation for type=2 (partial)
+                            case "pos2":  // Set position 2 and finish creation for type=2 (partial)
                                 final HybridPlotWorld area = plr.getMeta("area_create_area");
                                 if (area == null) {
                                     C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
@@ -147,9 +146,7 @@ public class Area extends SubCommand {
                                     run.run();
                                 }
                                 return true;
-                            }
                         }
-                    }
                     default: // Start creation
                         final SetupObject object = new SetupObject();
                         String[] split = args[1].split(":");
@@ -180,59 +177,49 @@ public class Area extends SubCommand {
                             }
                             switch (pair[0].toLowerCase()) {
                                 case "s":
-                                case "size": {
+                                case "size":
                                     pa.PLOT_WIDTH = Integer.parseInt(pair[1]);
                                     pa.SIZE = (short) (pa.PLOT_WIDTH + pa.ROAD_WIDTH);
                                     break;
-                                }
                                 case "g":
-                                case "gap": {
+                                case "gap":
                                     pa.ROAD_WIDTH = Integer.parseInt(pair[1]);
                                     pa.SIZE = (short) (pa.PLOT_WIDTH + pa.ROAD_WIDTH);
                                     break;
-                                }
                                 case "h":
-                                case "height": {
+                                case "height":
                                     int value = Integer.parseInt(pair[1]);
                                     pa.PLOT_HEIGHT = value;
                                     pa.ROAD_HEIGHT = value;
                                     pa.WALL_HEIGHT = value;
                                     break;
-                                }
                                 case "f":
-                                case "floor": {
+                                case "floor":
                                     pa.TOP_BLOCK = Configuration.BLOCKLIST.parseString(pair[1]);
                                     break;
-                                }
                                 case "m":
-                                case "main": {
+                                case "main":
                                     pa.MAIN_BLOCK = Configuration.BLOCKLIST.parseString(pair[1]);
                                     break;
-                                }
                                 case "w":
-                                case "wall": {
+                                case "wall":
                                     pa.WALL_FILLING = Configuration.BLOCK.parseString(pair[1]);
                                     break;
-                                }
                                 case "b":
-                                case "border": {
+                                case "border":
                                     pa.WALL_BLOCK = Configuration.BLOCK.parseString(pair[1]);
                                     break;
-                                }
-                                case "terrain": {
+                                case "terrain":
                                     pa.TERRAIN = Integer.parseInt(pair[1]);
                                     object.terrain = pa.TERRAIN;
                                     break;
-                                }
-                                case "type": {
+                                case "type":
                                     pa.TYPE = Integer.parseInt(pair[1]);
                                     object.type = pa.TYPE;
                                     break;
-                                }
-                                default: {
+                                default:
                                     C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
                                     return false;
-                                }
                             }
                         }
                         if (pa.TYPE != 2) {
@@ -292,7 +279,6 @@ public class Area extends SubCommand {
                         break;
                 }
                 return true;
-            }
             case "i":
             case "info": {
                 if (!Permissions.hasPermission(plr, "plots.area.info")) {
@@ -349,7 +335,7 @@ public class Area extends SubCommand {
                 return true;
             }
             case "l":
-            case "list": {
+            case "list":
                 if (!Permissions.hasPermission(plr, "plots.area.list")) {
                     C.NO_PERMISSION.send(plr, "plots.area.list");
                     return false;
@@ -407,7 +393,6 @@ public class Area extends SubCommand {
                     }
                 }, "/plot area list", C.AREA_LIST_HEADER_PAGED.s());
                 return true;
-            }
             case "regen":
             case "regenerate": {
                 if (!Permissions.hasPermission(plr, "plots.area.regen")) {
@@ -435,7 +420,7 @@ public class Area extends SubCommand {
             case "v":
             case "teleport":
             case "visit":
-            case "tp": {
+            case "tp":
                 if (!Permissions.hasPermission(plr, "plots.area.tp")) {
                     C.NO_PERMISSION.send(plr, "plots.area.tp");
                     return false;
@@ -460,16 +445,14 @@ public class Area extends SubCommand {
                 }
                 plr.teleport(center);
                 return true;
-            }
             case "delete":
-            case "remove": {
+            case "remove":
                 MainUtil.sendMessage(plr, "$1World creation settings may be stored in multiple locations:"
                         + "\n$3 - $2Bukkit bukkit.yml"
                         + "\n$3 - $2PlotSquared settings.yml"
                         + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
                         + "\n$1Stop the server and delete it from these locations.");
                 return true;
-            }
         }
         C.COMMAND_SYNTAX.send(plr, getUsage());
         return false;

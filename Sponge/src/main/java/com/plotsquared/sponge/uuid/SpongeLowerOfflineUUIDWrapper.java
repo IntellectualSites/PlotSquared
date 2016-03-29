@@ -19,30 +19,30 @@ public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
     }
     
     @Override
-    public UUID getUUID(final PlotPlayer player) {
+    public UUID getUUID(PlotPlayer player) {
         return getUUID(player.getName());
     }
     
     @Override
-    public UUID getUUID(final OfflinePlotPlayer player) {
+    public UUID getUUID(OfflinePlotPlayer player) {
         return getUUID(player.getName());
     }
     
     @Override
-    public OfflinePlotPlayer getOfflinePlayer(final UUID uuid) {
+    public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
         String name = UUIDHandler.getName(uuid);
         if (name == null) {
             try {
-                final GameProfile profile = SpongeMain.THIS.getResolver().get(uuid).get();
+                GameProfile profile = SpongeMain.THIS.getResolver().get(uuid).get();
                 if (profile != null) {
                     name = profile.getName().orElse(null);
                 }
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         if (name == null) {
-            for (final GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles()) {
+            for (GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles()) {
                 String tmp = profile.getName().orElse(null);
                 if (tmp != null) {
                     if (getUUID(name).equals(uuid)) {
@@ -52,7 +52,7 @@ public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
                 }
             }
         }
-        final String username = name;
+        String username = name;
         return new OfflinePlotPlayer() {
             @Override
             public boolean isOnline() {
@@ -83,7 +83,7 @@ public class SpongeLowerOfflineUUIDWrapper extends UUIDWrapper {
     }
     
     @Override
-    public UUID getUUID(final String name) {
+    public UUID getUUID(String name) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
     }
     

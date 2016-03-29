@@ -230,13 +230,12 @@ public class FastQueue_1_9 extends SlowQueue {
                             setType.call(x, y & 15, z, this.air);
                             continue;
                         }
-                        default: {
+                        default:
                             int x = MainUtil.x_loc[j][k];
                             int y = MainUtil.y_loc[j][k];
                             int z = MainUtil.z_loc[j][k];
                             Object iBlock = this.methodGetByCombinedId.call((int) n);
                             setType.call(x, y & 15, z, iBlock);
-                        }
                     }
                 }
                 if (fill) {

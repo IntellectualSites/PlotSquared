@@ -40,9 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
 
- */
 public class SQLManager implements AbstractDB {
     // Public final
     public final String SET_OWNER;
@@ -187,11 +185,11 @@ public class SQLManager implements AbstractDB {
                 }
 
                 @Override
-                public void addBatch(PreparedStatement stmt) {
+                public void addBatch(PreparedStatement statement) {
                 }
 
                 @Override
-                public void execute(PreparedStatement stmt) {
+                public void execute(PreparedStatement statement) {
                 }
 
             };
@@ -221,11 +219,11 @@ public class SQLManager implements AbstractDB {
                 }
 
                 @Override
-                public void addBatch(PreparedStatement stmt) {
+                public void addBatch(PreparedStatement statement) {
                 }
 
                 @Override
-                public void execute(PreparedStatement stmt) {
+                public void execute(PreparedStatement statement) {
                 }
 
             };
@@ -252,11 +250,11 @@ public class SQLManager implements AbstractDB {
                 }
 
                 @Override
-                public void addBatch(PreparedStatement stmt) {
+                public void addBatch(PreparedStatement statement) {
                 }
 
                 @Override
-                public void execute(PreparedStatement stmt) {
+                public void execute(PreparedStatement statement) {
                 }
 
             };
@@ -294,7 +292,7 @@ public class SQLManager implements AbstractDB {
                     this.connection.setAutoCommit(false);
                 }
                 String method = null;
-                PreparedStatement stmt = null;
+                PreparedStatement statement = null;
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
                 for (Entry<Plot, Queue<UniqueStatement>> entry : this.plotTasks.entrySet()) {
@@ -306,22 +304,22 @@ public class SQLManager implements AbstractDB {
                     task = this.plotTasks.get(plot).remove();
                     count++;
                     if (task != null) {
-                        if (task._method == null || !task._method.equals(method)) {
-                            if (stmt != null) {
-                                lastTask.execute(stmt);
-                                stmt.close();
+                        if (task.method == null || !task.method.equals(method)) {
+                            if (statement != null) {
+                                lastTask.execute(statement);
+                                statement.close();
                             }
-                            method = task._method;
-                            stmt = task.get();
+                            method = task.method;
+                            statement = task.get();
                         }
-                        task.set(stmt);
-                        task.addBatch(stmt);
+                        task.set(statement);
+                        task.addBatch(statement);
                     }
                     lastTask = task;
                 }
-                if (stmt != null && task != null) {
-                    task.execute(stmt);
-                    stmt.close();
+                if (statement != null && task != null) {
+                    task.execute(statement);
+                    statement.close();
                 }
             }
             if (!this.playerTasks.isEmpty()) {
@@ -330,7 +328,7 @@ public class SQLManager implements AbstractDB {
                     this.connection.setAutoCommit(false);
                 }
                 String method = null;
-                PreparedStatement stmt = null;
+                PreparedStatement statement = null;
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
                 for (Entry<UUID, Queue<UniqueStatement>> entry : this.playerTasks.entrySet()) {
@@ -342,22 +340,22 @@ public class SQLManager implements AbstractDB {
                     task = this.playerTasks.get(uuid).remove();
                     count++;
                     if (task != null) {
-                        if (task._method == null || !task._method.equals(method)) {
-                            if (stmt != null) {
-                                lastTask.execute(stmt);
-                                stmt.close();
+                        if (task.method == null || !task.method.equals(method)) {
+                            if (statement != null) {
+                                lastTask.execute(statement);
+                                statement.close();
                             }
-                            method = task._method;
-                            stmt = task.get();
+                            method = task.method;
+                            statement = task.get();
                         }
-                        task.set(stmt);
-                        task.addBatch(stmt);
+                        task.set(statement);
+                        task.addBatch(statement);
                     }
                     lastTask = task;
                 }
-                if (stmt != null && task != null) {
-                    task.execute(stmt);
-                    stmt.close();
+                if (statement != null && task != null) {
+                    task.execute(statement);
+                    statement.close();
                 }
             }
             if (!this.clusterTasks.isEmpty()) {
@@ -366,7 +364,7 @@ public class SQLManager implements AbstractDB {
                     this.connection.setAutoCommit(false);
                 }
                 String method = null;
-                PreparedStatement stmt = null;
+                PreparedStatement statement = null;
                 UniqueStatement task = null;
                 UniqueStatement lastTask = null;
                 for (Entry<PlotCluster, Queue<UniqueStatement>> entry : this.clusterTasks.entrySet()) {
@@ -378,22 +376,22 @@ public class SQLManager implements AbstractDB {
                     task = this.clusterTasks.get(cluster).remove();
                     count++;
                     if (task != null) {
-                        if (task._method == null || !task._method.equals(method)) {
-                            if (stmt != null) {
-                                lastTask.execute(stmt);
-                                stmt.close();
+                        if (task.method == null || !task.method.equals(method)) {
+                            if (statement != null) {
+                                lastTask.execute(statement);
+                                statement.close();
                             }
-                            method = task._method;
-                            stmt = task.get();
+                            method = task.method;
+                            statement = task.get();
                         }
-                        task.set(stmt);
-                        task.addBatch(stmt);
+                        task.set(statement);
+                        task.addBatch(statement);
                     }
                     lastTask = task;
                 }
-                if (stmt != null && task != null) {
-                    task.execute(stmt);
-                    stmt.close();
+                if (statement != null && task != null) {
+                    task.execute(statement);
+                    statement.close();
                 }
             }
             if (count > 0) {
@@ -614,7 +612,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt.setString(i * 5 + 3, plot.owner.toString());
                 } catch (SQLException e) {
-                    stmt.setString(i * 5 + 3, everyone.toString());
+                    stmt.setString(i * 5 + 3, AbstractDB.everyone.toString());
                 }
                 stmt.setString(i * 5 + 4, plot.getArea().toString());
                 stmt.setTimestamp(i * 5 + 5, new Timestamp(plot.getTimestamp()));
@@ -628,7 +626,7 @@ public class SQLManager implements AbstractDB {
                 try {
                     stmt.setString(i * 6 + 4, plot.owner.toString());
                 } catch (SQLException e1) {
-                    stmt.setString(i * 6 + 4, everyone.toString());
+                    stmt.setString(i * 6 + 4, AbstractDB.everyone.toString());
                 }
                 stmt.setString(i * 6 + 5, plot.getArea().toString());
                 stmt.setTimestamp(i * 6 + 6, new Timestamp(plot.getTimestamp()));
@@ -989,14 +987,14 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(PreparedStatement stmt) {
+            public void execute(PreparedStatement statement) {
 
             }
 
             @Override
-            public void addBatch(PreparedStatement stmt) throws SQLException {
-                stmt.executeUpdate();
-                ResultSet keys = stmt.getGeneratedKeys();
+            public void addBatch(PreparedStatement statement) throws SQLException {
+                statement.executeUpdate();
+                ResultSet keys = statement.getGeneratedKeys();
                 if (keys.next()) {
                     plot.temp = keys.getInt(1);
                 }
@@ -1476,8 +1474,9 @@ public class SQLManager implements AbstractDB {
             if (this.mySQL && !PS.get().checkVersion(oldVersion, 3, 3, 2)) {
                 try (Statement stmt = this.connection.createStatement()) {
                     stmt.executeUpdate("ALTER TABLE `" + this.prefix + "plots` DROP INDEX `unique_alias`");
+                } catch (SQLException ignore) {
+                    //ignored
                 }
-                catch (SQLException ignore) {}
             }
             DatabaseMetaData data = this.connection.getMetaData();
             ResultSet rs = data.getColumns(null, null, this.prefix + "plot_comments", "plot_plot_id");
@@ -2178,7 +2177,7 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(PreparedStatement stmt) {
+            public void execute(PreparedStatement statement) {
             }
 
             @Override
@@ -2480,11 +2479,12 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(PreparedStatement stmt) {}
+            public void execute(PreparedStatement statement) {
+            }
 
             @Override
-            public void addBatch(PreparedStatement stmt) throws SQLException {
-                ResultSet resultSet = stmt.executeQuery();
+            public void addBatch(PreparedStatement statement) throws SQLException {
+                ResultSet resultSet = statement.executeQuery();
 
                 Map<String, byte[]> metaMap = new HashMap<>();
 
@@ -2782,14 +2782,14 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(PreparedStatement stmt) {
+            public void execute(PreparedStatement statement) {
 
             }
 
             @Override
-            public void addBatch(PreparedStatement stmt) throws SQLException {
-                stmt.executeUpdate();
-                ResultSet keys = stmt.getGeneratedKeys();
+            public void addBatch(PreparedStatement statement) throws SQLException {
+                statement.executeUpdate();
+                ResultSet keys = statement.getGeneratedKeys();
                 if (keys.next()) {
                     cluster.temp = keys.getInt(1);
                 }
@@ -3146,18 +3146,18 @@ public class SQLManager implements AbstractDB {
 
     public abstract class UniqueStatement {
 
-        public String _method;
+        public String method;
 
         public UniqueStatement(String method) {
-            this._method = method;
+            this.method = method;
         }
 
-        public void addBatch(PreparedStatement stmt) throws SQLException {
-            stmt.addBatch();
+        public void addBatch(PreparedStatement statement) throws SQLException {
+            statement.addBatch();
         }
 
-        public void execute(PreparedStatement stmt) throws SQLException {
-            stmt.executeBatch();
+        public void execute(PreparedStatement statement) throws SQLException {
+            statement.executeBatch();
         }
 
         public abstract PreparedStatement get() throws SQLException;

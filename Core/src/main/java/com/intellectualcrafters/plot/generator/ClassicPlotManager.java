@@ -20,38 +20,30 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override
     public boolean setComponent(PlotArea plotworld, PlotId plotid, String component, PlotBlock[] blocks) {
         switch (component) {
-            case "floor": {
+            case "floor":
                 setFloor(plotworld, plotid, blocks);
                 return true;
-            }
-            case "wall": {
+            case "wall":
                 setWallFilling(plotworld, plotid, blocks);
                 return true;
-            }
-            case "all": {
+            case "all":
                 setAll(plotworld, plotid, blocks);
                 return true;
-            }
-            case "air": {
+            case "air":
                 setAir(plotworld, plotid, blocks);
                 return true;
-            }
-            case "main": {
+            case "main":
                 setMain(plotworld, plotid, blocks);
                 return true;
-            }
-            case "middle": {
+            case "middle":
                 setMiddle(plotworld, plotid, blocks);
                 return true;
-            }
-            case "outline": {
+            case "outline":
                 setOutline(plotworld, plotid, blocks);
                 return true;
-            }
-            case "border": {
+            case "border":
                 setWall(plotworld, plotid, blocks);
                 return true;
-            }
         }
         return false;
     }
@@ -459,6 +451,6 @@ public class ClassicPlotManager extends SquarePlotManager {
         ClassicPlotWorld dpw = (ClassicPlotWorld) plotworld;
         plot = plot.getBasePlot(false);
         Location bot = plot.getBottomAbs();
-        return new com.intellectualcrafters.plot.object.Location(plotworld.worldname, bot.getX() - 1, dpw.ROAD_HEIGHT + 1, bot.getZ() - 2);
+        return new Location(plotworld.worldname, bot.getX() - 1, dpw.ROAD_HEIGHT + 1, bot.getZ() - 2);
     }
 }

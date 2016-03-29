@@ -17,6 +17,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -159,23 +160,21 @@ public class Set extends SubCommand {
             return this.component.onCommand(plr, Arrays.copyOfRange(args, 0, args.length));
         }
         // flag
-        {
-            AbstractFlag af;
-            try {
-                af = new AbstractFlag(args[0].toLowerCase());
-            } catch (Exception e) {
-                af = new AbstractFlag("");
-            }
-            if (FlagManager.getFlags().contains(af)) {
-                StringBuilder a = new StringBuilder();
-                if (args.length > 1) {
-                    for (int x = 1; x < args.length; x++) {
-                        a.append(" ").append(args[x]);
-                    }
+        AbstractFlag af;
+        try {
+            af = new AbstractFlag(args[0].toLowerCase());
+        } catch (Exception e) {
+            af = new AbstractFlag("");
+        }
+        if (FlagManager.getFlags().contains(af)) {
+            StringBuilder a = new StringBuilder();
+            if (args.length > 1) {
+                for (int x = 1; x < args.length; x++) {
+                    a.append(" ").append(args[x]);
                 }
-                MainCommand.onCommand(plr, ("flag set " + args[0] + a.toString()).split(" "));
-                return true;
             }
+            MainCommand.onCommand(plr, ("flag set " + args[0] + a.toString()).split(" "));
+            return true;
         }
         return noArgs(plr);
     }

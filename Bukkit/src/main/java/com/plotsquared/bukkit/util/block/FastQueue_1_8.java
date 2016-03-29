@@ -59,7 +59,7 @@ public class FastQueue_1_8 extends SlowQueue {
                 int count = 0;
                 ArrayList<Chunk> chunks = new ArrayList<Chunk>();
                 Iterator<Entry<ChunkWrapper, Chunk>> i = FastQueue_1_8.this.toUpdate.entrySet().iterator();
-                while (i.hasNext() && (count < 128)) {
+                while (i.hasNext() && count < 128) {
                     chunks.add(i.next().getValue());
                     i.remove();
                     count++;
@@ -161,7 +161,7 @@ public class FastQueue_1_8 extends SlowQueue {
                     case 29:
                     case 33:
                     case 151:
-                    case 178: {
+                    case 178:
                         Block block = world.getBlockAt(x, y, z);
                         if (block.getData() == newBlock.data) {
                             if (block.getTypeId() != newBlock.id) {
@@ -175,7 +175,6 @@ public class FastQueue_1_8 extends SlowQueue {
                             }
                         }
                         continue;
-                    }
                 }
 
                 // Start data value shortcut
@@ -263,9 +262,8 @@ public class FastQueue_1_8 extends SlowQueue {
                         case 189:
                         case 190:
                         case 191:
-                        case 192: {
+                        case 192:
                             continue;
-                        }
                     }
                     if (block.getData() == newBlock.data) {
                         return;
@@ -311,14 +309,13 @@ public class FastQueue_1_8 extends SlowQueue {
                     case 29:
                     case 33:
                     case 151:
-                    case 178: {
+                    case 178:
                         if (block.getData() == newBlock.data) {
                             block.setTypeId(newBlock.id, false);
                         } else {
                             block.setTypeIdAndData(newBlock.id, newBlock.data, false);
                         }
                         continue;
-                    }
                 }
                 // End blockstate workaround //
 

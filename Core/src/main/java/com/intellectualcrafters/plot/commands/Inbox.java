@@ -10,6 +10,7 @@ import com.intellectualcrafters.plot.util.CommentManager;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ import java.util.List;
 public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
-        if ((oldComments == null) || oldComments.isEmpty()) {
+        if (oldComments == null || oldComments.isEmpty()) {
             MainUtil.sendMessage(player, C.INBOX_EMPTY);
             return;
         }
@@ -38,7 +39,7 @@ public class Inbox extends SubCommand {
             page = totalPages;
         }
         // Only display 12 per page
-        int max = (page * 12) + 12;
+        int max = page * 12 + 12;
         if (max > comments.length) {
             max = comments.length;
         }
@@ -112,7 +113,7 @@ public class Inbox extends SubCommand {
         final int page;
         if (args.length > 1) {
             switch (args[1].toLowerCase()) {
-                case "delete": {
+                case "delete":
                     if (!inbox.canModify(plot, player)) {
                         sendMessage(player, C.NO_PERM_INBOX_MODIFY);
                         return false;
@@ -149,8 +150,7 @@ public class Inbox extends SubCommand {
                         return false;
                     }
                     return true;
-                }
-                case "clear": {
+                case "clear":
                     if (!inbox.canModify(plot, player)) {
                         sendMessage(player, C.NO_PERM_INBOX_MODIFY);
                     }
@@ -161,15 +161,13 @@ public class Inbox extends SubCommand {
                     }
                     MainUtil.sendMessage(player, C.COMMENT_REMOVED, "*");
                     return true;
-                }
-                default: {
+                default:
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException e) {
                         sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
                         return false;
                     }
-                }
             }
         } else {
             page = 1;

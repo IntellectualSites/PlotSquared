@@ -41,9 +41,9 @@ public class SpongeSchematicHandler extends SchematicHandler {
                 Location bot = corners[0];
                 Location top = corners[1];
 
-                int width = (top.getX() - bot.getX()) + 1;
-                int height = (top.getY() - bot.getY()) + 1;
-                int length = (top.getZ() - bot.getZ()) + 1;
+                int width = top.getX() - bot.getX() + 1;
+                int height = top.getY() - bot.getY() + 1;
+                int length = top.getZ() - bot.getZ() + 1;
                 // Main Schematic tag
                 HashMap<String, Tag> schematic = new HashMap<>();
                 schematic.put("Width", new ShortTag("Width", (short) width));
@@ -110,7 +110,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                             @Override
                             public void run() {
                                 long start = System.currentTimeMillis();
-                                while (!chunks.isEmpty() && ((System.currentTimeMillis() - start) < 20)) {
+                                while (!chunks.isEmpty() && System.currentTimeMillis() - start < 20) {
                                     // save schematics
                                     ChunkLoc chunk = chunks.remove(0);
                                     int X = chunk.x;
@@ -140,7 +140,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                         int i1 = ry * width * length;
                                         for (int z = zzb; z <= zzt; z++) {
                                             int rz = z - p1z;
-                                            int i2 = i1 + (rz * width);
+                                            int i2 = i1 + rz * width;
                                             for (int x = xxb; x <= xxt; x++) {
                                                 int rx = x - p1x;
                                                 int index = i2 + rx;
@@ -216,9 +216,8 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                                     case 189:
                                                     case 190:
                                                     case 191:
-                                                    case 192: {
+                                                    case 192:
                                                         break;
-                                                    }
                                                     case 54:
                                                     case 130:
                                                     case 142:
@@ -253,7 +252,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                                     case 29:
                                                     case 33:
                                                     case 151:
-                                                    case 178: {
+                                                    case 178:
                                                         CompoundTag rawTag;
                                                         if (state instanceof Carrier) {
                                                             Carrier chest = (Carrier) state;
@@ -275,10 +274,8 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                                             CompoundTag tileEntityTag = new CompoundTag(values);
                                                             tileEntities.add(tileEntityTag);
                                                         }
-                                                    }
-                                                    default: {
+                                                    default:
                                                         blockData[index] = block.data;
-                                                    }
                                                 }
                                                 blocks[index] = (byte) id;
                                             }

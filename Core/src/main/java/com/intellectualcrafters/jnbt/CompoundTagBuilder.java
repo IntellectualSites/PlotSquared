@@ -9,25 +9,26 @@ import java.util.Map;
  * Helps create compound tags.
  */
 public class CompoundTagBuilder {
+
     private final Map<String, Tag> entries;
-    
+
     /**
      * Create a new instance.
      */
     CompoundTagBuilder() {
-        entries = new HashMap<String, Tag>();
+        this.entries = new HashMap<String, Tag>();
     }
-    
+
     /**
      * Create a new instance and use the given map (which will be modified).
      *
      * @param value the value
      */
-    CompoundTagBuilder(final Map<String, Tag> value) {
+    CompoundTagBuilder(Map<String, Tag> value) {
         checkNotNull(value);
-        entries = value;
+        this.entries = value;
     }
-    
+
     /**
      * Create a new builder instance.
      *
@@ -36,7 +37,7 @@ public class CompoundTagBuilder {
     public static CompoundTagBuilder create() {
         return new CompoundTagBuilder();
     }
-    
+
     /**
      * Put the given key and tag into the compound tag.
      *
@@ -45,13 +46,13 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder put(final String key, final Tag value) {
+    public CompoundTagBuilder put(String key, Tag value) {
         checkNotNull(key);
         checkNotNull(value);
-        entries.put(key, value);
+        this.entries.put(key, value);
         return this;
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code ByteArrayTag}.
      *
@@ -60,10 +61,10 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putByteArray(final String key, final byte[] value) {
+    public CompoundTagBuilder putByteArray(String key, byte[] value) {
         return put(key, new ByteArrayTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code ByteTag}.
      *
@@ -72,10 +73,10 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putByte(final String key, final byte value) {
+    public CompoundTagBuilder putByte(String key, byte value) {
         return put(key, new ByteTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code DoubleTag}.
      *
@@ -84,10 +85,10 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putDouble(final String key, final double value) {
+    public CompoundTagBuilder putDouble(String key, double value) {
         return put(key, new DoubleTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code FloatTag}.
      *
@@ -96,10 +97,10 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putFloat(final String key, final float value) {
+    public CompoundTagBuilder putFloat(String key, float value) {
         return put(key, new FloatTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code IntArrayTag}.
      *
@@ -108,10 +109,10 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putIntArray(final String key, final int[] value) {
+    public CompoundTagBuilder putIntArray(String key, int[] value) {
         return put(key, new IntArrayTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as an {@code IntTag}.
      *
@@ -120,10 +121,10 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putInt(final String key, final int value) {
+    public CompoundTagBuilder putInt(String key, int value) {
         return put(key, new IntTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code LongTag}.
      *
@@ -132,10 +133,10 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putLong(final String key, final long value) {
+    public CompoundTagBuilder putLong(String key, long value) {
         return put(key, new LongTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code ShortTag}.
      *
@@ -144,10 +145,10 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putShort(final String key, final short value) {
+    public CompoundTagBuilder putShort(String key, short value) {
         return put(key, new ShortTag(key, value));
     }
-    
+
     /**
      * Put the given key and value into the compound tag as a {@code StringTag}.
      *
@@ -156,10 +157,10 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putString(final String key, final String value) {
+    public CompoundTagBuilder putString(String key, String value) {
         return put(key, new StringTag(key, value));
     }
-    
+
     /**
      * Put all the entries from the given map into this map.
      *
@@ -167,23 +168,23 @@ public class CompoundTagBuilder {
      *
      * @return this object
      */
-    public CompoundTagBuilder putAll(final Map<String, ? extends Tag> value) {
+    public CompoundTagBuilder putAll(Map<String, ? extends Tag> value) {
         checkNotNull(value);
-        for (final Map.Entry<String, ? extends Tag> entry : value.entrySet()) {
+        for (Map.Entry<String, ? extends Tag> entry : value.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
         return this;
     }
-    
+
     /**
      * Build an unnamed compound tag with this builder's entries.
      *
      * @return the new compound tag
      */
     public CompoundTag build() {
-        return new CompoundTag(new HashMap<String, Tag>(entries));
+        return new CompoundTag(new HashMap<String, Tag>(this.entries));
     }
-    
+
     /**
      * Build a new compound tag with this builder's entries.
      *
@@ -191,7 +192,7 @@ public class CompoundTagBuilder {
      *
      * @return the created compound tag
      */
-    public CompoundTag build(final String name) {
-        return new CompoundTag(name, new HashMap<String, Tag>(entries));
+    public CompoundTag build(String name) {
+        return new CompoundTag(name, new HashMap<String, Tag>(this.entries));
     }
 }

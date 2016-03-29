@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.WorldUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,7 +27,7 @@ public abstract class FlagValue<T> {
     }
 
     public boolean validValue(Object value) {
-        return (value != null) && (value.getClass() == this.clazz);
+        return value != null && value.getClass() == this.clazz;
     }
 
     public String toString(Object t) {
@@ -59,18 +60,15 @@ public abstract class FlagValue<T> {
                 case "1":
                 case "yes":
                 case "allow":
-                case "true": {
+                case "true":
                     return true;
-                }
                 case "0":
                 case "no":
                 case "deny":
-                case "false": {
+                case "false":
                     return false;
-                }
-                default: {
+                default:
                     return null;
-                }
             }
         }
 
@@ -291,7 +289,7 @@ public abstract class FlagValue<T> {
                 return new PlotBlock(id, data);
             } catch (Exception e) {
                 StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(t);
-                if ((value == null) || (value.match > 1)) {
+                if (value == null || value.match > 1) {
                     return null;
                 }
                 return value.best;
@@ -339,7 +337,7 @@ public abstract class FlagValue<T> {
                     block = new PlotBlock(id, data);
                 } catch (Exception e) {
                     StringComparison<PlotBlock>.ComparisonResult value = WorldUtil.IMP.getClosestBlock(t);
-                    if ((value == null) || (value.match > 1)) {
+                    if (value == null || value.match > 1) {
                         continue;
                     }
                     block = value.best;

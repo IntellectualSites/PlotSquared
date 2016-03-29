@@ -75,8 +75,8 @@ public class Setup extends SubCommand {
         }
         int index = object.current;
         switch (index) {
-            case 0: { // choose generator
-                if ((args.length != 1) || !SetupUtils.generators.containsKey(args[0])) {
+            case 0:  // choose generator
+                if (args.length != 1 || !SetupUtils.generators.containsKey(args[0])) {
                     String prefix = "\n&8 - &7";
                     MainUtil.sendMessage(plr, "&cYou must choose a generator!" + prefix + StringMan.join(SetupUtils.generators.keySet(), prefix)
                             .replaceAll("PlotSquared", "&2PlotSquared"));
@@ -89,8 +89,7 @@ public class Setup extends SubCommand {
                 MainUtil.sendMessage(plr, "&6What world type do you want?" + "\n&8 - &2DEFAULT&8 - &7Standard plot generation"
                         + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + partial);
                 break;
-            }
-            case 1: { // choose world type
+            case 1:  // choose world type
                 List<String> allTypes = Arrays.asList("default", "augmented", "partial");
                 List<String> allDesc = Arrays.asList("Standard plot generation", "Plot generation with vanilla terrain",
                         "Vanilla with clusters of plots");
@@ -100,7 +99,7 @@ public class Setup extends SubCommand {
                 }
                 types.add("augmented");
                 types.add("partial");
-                if ((args.length != 1) || !types.contains(args[0].toLowerCase())) {
+                if (args.length != 1 || !types.contains(args[0].toLowerCase())) {
                     MainUtil.sendMessage(plr, "&cYou must choose a world type!");
                     for (String type : types) {
                         int i = allTypes.indexOf(type);
@@ -157,8 +156,7 @@ public class Setup extends SubCommand {
                     }
                 }
                 break;
-            }
-            case 2: { // area id
+            case 2:  // area id
                 if (!StringMan.isAlphanumericUnd(args[0])) {
                     MainUtil.sendMessage(plr, "&cThe area id must be alphanumerical!");
                     return false;
@@ -173,8 +171,7 @@ public class Setup extends SubCommand {
                 object.current++;
                 MainUtil.sendMessage(plr, "&6What should be the minimum Plot Id?");
                 break;
-            }
-            case 3: { // min
+            case 3:  // min
                 object.min = PlotId.fromString(args[0]);
                 if (object.min == null) {
                     MainUtil.sendMessage(plr, "&cYou must choose a valid minimum PlotId!");
@@ -183,8 +180,7 @@ public class Setup extends SubCommand {
                 object.current++;
                 MainUtil.sendMessage(plr, "&6What should be the maximum Plot Id?");
                 break;
-            }
-            case 4: {
+            case 4:
                 // max
                 PlotId id = PlotId.fromString(args[0]);
                 if (id == null) {
@@ -203,10 +199,9 @@ public class Setup extends SubCommand {
                         + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
                         + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
                 break;
-            }
             case 5: { // Choose terrain
                 List<String> terrain = Arrays.asList("none", "ore", "road", "all");
-                if ((args.length != 1) || !terrain.contains(args[0].toLowerCase())) {
+                if (args.length != 1 || !terrain.contains(args[0].toLowerCase())) {
                     MainUtil.sendMessage(plr, "&cYou must choose the terrain!"
                             + "\n&8 - &2NONE&8 - &7No terrain at all"
                             + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
@@ -225,7 +220,7 @@ public class Setup extends SubCommand {
                         step.getDefaultValue() + "");
                 break;
             }
-            case 6: { // world setup
+            case 6:  // world setup
                 if (object.setup_index == object.step.length) {
                     MainUtil.sendMessage(plr, "&6What do you want your world to be called?");
                     object.setup_index = 0;
@@ -257,8 +252,7 @@ public class Setup extends SubCommand {
                             step.getDefaultValue() + "");
                     return false;
                 }
-            }
-            case 7: {
+            case 7:
                 if (args.length != 1) {
                     MainUtil.sendMessage(plr, "&cYou need to choose a world name!");
                     return false;
@@ -287,7 +281,6 @@ public class Setup extends SubCommand {
                     e.printStackTrace();
                 }
                 sendMessage(plr, C.SETUP_FINISHED, object.world);
-            }
         }
         return false;
     }

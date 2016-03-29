@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.Command;
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,22 +19,24 @@ public class GenerateDocs {
     public static void main(String[] args) {
         new WE_Anywhere();
         List<Command> commands = MainCommand.getInstance().getCommands();
-        log("### Want to document some commands?");
-        log(" - This page is automatically generated");
-        log(" - Fork the project and add a javadoc comment to one of the command classes");
-        log(" - Then do a pull request and it will be added to this page");
-        log("");
-        log("# Contents");
+        GenerateDocs.log("### Want to document some commands?");
+        GenerateDocs.log(" - This page is automatically generated");
+        GenerateDocs.log(" - Fork the project and add a javadoc comment to one of the command classes");
+        GenerateDocs.log(" - Then do a pull request and it will be added to this page");
+        GenerateDocs.log("");
+        GenerateDocs.log("# Contents");
         for (CommandCategory category : CommandCategory.values()) {
-            log("###### " + category.name());
+            GenerateDocs.log("###### " + category.name());
             for (Command command : MainCommand.getInstance().getCommands(category, null)) {
-                log(" - [/plot " + command.getId() + "](https://github.com/IntellectualSites/PlotSquared/wiki/Commands#" + command.getId() + ")    ");
+                GenerateDocs
+                        .log(" - [/plot " + command.getId() + "](https://github.com/IntellectualSites/PlotSquared/wiki/Commands#" + command.getId()
+                                + ")    ");
             }
-            log("");
+            GenerateDocs.log("");
         }
-        log("# Commands");
+        GenerateDocs.log("# Commands");
         for (Command command : commands) {
-            printCommand(command);
+            GenerateDocs.printCommand(command);
         }
     }
 
@@ -46,62 +49,60 @@ public class GenerateDocs {
             String source =
                     "https://github.com/IntellectualSites/PlotSquared/tree/master/Core/src/main/java/com/intellectualcrafters/plot/commands/" + clazz
                             + ".java";
-            log("## [" + name.toUpperCase() + "](" + source + ")    ");
+            GenerateDocs.log("## [" + name.toUpperCase() + "](" + source + ")    ");
 
             File file = new File("Core/src/main/java/com/intellectualcrafters/plot/commands/" + clazz + ".java");
             List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-            List<String> perms = getPerms(name, lines);
-            List<String> usages = getUsage(name, lines);
-            String comment = getComments(lines);
+            List<String> perms = GenerateDocs.getPerms(name, lines);
+            List<String> usages = GenerateDocs.getUsage(name, lines);
+            String comment = GenerateDocs.getComments(lines);
 
-            log("#### Description");
-            log("`" + command.getDescription() + "`");
+            GenerateDocs.log("#### Description");
+            GenerateDocs.log("`" + command.getDescription() + "`");
             if (!comment.isEmpty()) {
-                log("##### Comments");
-                log("``` java");
-                log(comment);
-                log("```");
+                GenerateDocs.log("##### Comments");
+                GenerateDocs.log("``` java");
+                GenerateDocs.log(comment);
+                GenerateDocs.log("```");
             }
 
-            log("#### Usage    ");
-            {
-                String mainUsage = command.getUsage().replaceAll("\\{label\\}", "plot");
-                if (!usages.isEmpty() && !usages.get(0).equalsIgnoreCase(mainUsage)) {
-                    log("##### Primary    ");
-                    log(" - `" + mainUsage + "`    ");
-                    log("");
-                    log("##### Other    ");
-                    log(" - `" + StringMan.join(usages, "`\n - `") + "`    ");
-                    log("");
-                } else {
-                    log("`" + mainUsage + "`    ");
-                }
+            GenerateDocs.log("#### Usage    ");
+            String mainUsage = command.getUsage().replaceAll("\\{label\\}", "plot");
+            if (!usages.isEmpty() && !usages.get(0).equalsIgnoreCase(mainUsage)) {
+                GenerateDocs.log("##### Primary    ");
+                GenerateDocs.log(" - `" + mainUsage + "`    ");
+                GenerateDocs.log("");
+                GenerateDocs.log("##### Other    ");
+                GenerateDocs.log(" - `" + StringMan.join(usages, "`\n - `") + "`    ");
+                GenerateDocs.log("");
+            } else {
+                GenerateDocs.log("`" + mainUsage + "`    ");
             }
 
             if (command.getRequiredType() != RequiredType.NONE) {
-                log("#### Required callers");
-                log("`" + command.getRequiredType().name() + "`");
+                GenerateDocs.log("#### Required callers");
+                GenerateDocs.log("`" + command.getRequiredType().name() + "`");
             }
 
             List<String> aliases = command.getAliases();
             if (!aliases.isEmpty()) {
-                log("#### Aliases");
-                log("`" + StringMan.getString(command.getAliases()) + "`");
+                GenerateDocs.log("#### Aliases");
+                GenerateDocs.log("`" + StringMan.getString(command.getAliases()) + "`");
             }
 
-            log("#### Permissions");
+            GenerateDocs.log("#### Permissions");
             if (!perms.isEmpty()) {
-                log("##### Primary");
-                log(" - `" + command.getPermission() + "`    ");
-                log("");
-                log("##### Other");
-                log(" - `" + StringMan.join(perms, "`\n - `") + "`");
-                log("");
+                GenerateDocs.log("##### Primary");
+                GenerateDocs.log(" - `" + command.getPermission() + "`    ");
+                GenerateDocs.log("");
+                GenerateDocs.log("##### Other");
+                GenerateDocs.log(" - `" + StringMan.join(perms, "`\n - `") + "`");
+                GenerateDocs.log("");
             } else {
-                log("`" + command.getPermission() + "`    ");
+                GenerateDocs.log("`" + command.getPermission() + "`    ");
             }
-            log("***");
-            log("");
+            GenerateDocs.log("***");
+            GenerateDocs.log("");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -189,10 +190,9 @@ public class GenerateDocs {
         }
         switch (cmd.toLowerCase()) {
             case "auto":
-            case "claim": {
+            case "claim":
                 perms.add("plots.plot.<#>");
                 break;
-            }
         }
         return new ArrayList<>(perms);
     }

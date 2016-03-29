@@ -55,16 +55,16 @@ abstract class APlotMeConnector {
     public Location getPlotTopLocAbs(int path, int plot, PlotId plotid) {
         int px = plotid.x;
         int pz = plotid.y;
-        int x = (px * (path + plot)) - (int) Math.floor(path / 2) - 1;
-        int z = (pz * (path + plot)) - (int) Math.floor(path / 2) - 1;
+        int x = px * (path + plot) - (int) Math.floor(path / 2) - 1;
+        int z = pz * (path + plot) - (int) Math.floor(path / 2) - 1;
         return new Location(null, x, 256, z);
     }
 
     public Location getPlotBottomLocAbs(int path, int plot, PlotId plotid) {
         int px = plotid.x;
         int pz = plotid.y;
-        int x = (px * (path + plot)) - plot - (int) Math.floor(path / 2) - 1;
-        int z = (pz * (path + plot)) - plot - (int) Math.floor(path / 2) - 1;
+        int x = px * (path + plot) - plot - (int) Math.floor(path / 2) - 1;
+        int z = pz * (path + plot) - plot - (int) Math.floor(path / 2) - 1;
         return new Location(null, x, 1, z);
     }
 

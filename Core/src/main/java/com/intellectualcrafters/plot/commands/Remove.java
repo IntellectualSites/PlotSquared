@@ -9,6 +9,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
@@ -63,7 +64,7 @@ public class Remove extends SubCommand {
                 }
                 break;
             }
-            case "*": {
+            case "*":
                 ArrayList<UUID> toRemove = new ArrayList<>();
                 HashSet<UUID> all = new HashSet<>();
                 all.addAll(plot.getMembers());
@@ -79,7 +80,6 @@ public class Remove extends SubCommand {
                     plot.removeMember(uuid);
                 }
                 break;
-            }
             default:
                 UUID uuid = UUIDHandler.getUUID(args[0], null);
                 if (uuid != null) {

@@ -66,7 +66,7 @@ public class Info extends SubCommand {
                 args = new String[]{args[1]};
             }
         }
-        if ((args.length == 1) && args[0].equalsIgnoreCase("inv")) {
+        if (args.length == 1 && args[0].equalsIgnoreCase("inv")) {
             PlotInventory inv = new PlotInventory(player) {
                 @Override
                 public boolean onClick(int index) {
@@ -95,13 +95,9 @@ public class Info extends SubCommand {
             return true;
         }
         boolean hasOwner = plot.hasOwner();
-        boolean containsEveryone;
-        boolean trustedEveryone;
         // Wildcard player {added}
-        {
-            containsEveryone = plot.getTrusted().contains(DBFunc.everyone);
-            trustedEveryone = plot.getMembers().contains(DBFunc.everyone);
-        }
+        boolean containsEveryone = plot.getTrusted().contains(DBFunc.everyone);
+        boolean trustedEveryone = plot.getMembers().contains(DBFunc.everyone);
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             MainUtil.sendMessage(player, C.PLOT_INFO_UNCLAIMED, plot.getId().x + ";" + plot.getId().y);

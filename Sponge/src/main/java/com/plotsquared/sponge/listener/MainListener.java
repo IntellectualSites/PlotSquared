@@ -91,7 +91,7 @@ public class MainListener {
     @Listener
     public void onCommand(SendCommandEvent event) {
         switch (event.getCommand().toLowerCase()) {
-            case "plotme": {
+            case "plotme":
                 Player source = SpongeUtil.getCause(event.getCause(), Player.class);
                 if (source == null) {
                     return;
@@ -102,7 +102,6 @@ public class MainListener {
                     source.sendMessage(SpongeUtil.getText(C.NOT_USING_PLOTME.s()));
                 }
                 event.setCancelled(true);
-            }
         }
     }
     
@@ -119,7 +118,7 @@ public class MainListener {
         }
         PlotArea plotworld = PS.get().getPlotAreaByString(world);
         PlotPlayer plr = SpongeUtil.getPlayer(player);
-        if (!plotworld.PLOT_CHAT && ((plr.getMeta("chat") == null) || !(Boolean) plr.getMeta("chat"))) {
+        if (!plotworld.PLOT_CHAT && (plr.getMeta("chat") == null || !(Boolean) plr.getMeta("chat"))) {
             return;
         }
         Location loc = SpongeUtil.getLocation(player);
@@ -222,7 +221,7 @@ public class MainListener {
                         return false;
                     }
                 }
-                if ((entity instanceof Ambient) || (entity instanceof Animal)) {
+                if (entity instanceof Ambient || entity instanceof Animal) {
                     Flag animalFlag = FlagManager.getPlotFlagRaw(plot, "animal-cap");
                     if (animalFlag != null) {
                         int cap = (Integer) animalFlag.getValue();
@@ -252,7 +251,7 @@ public class MainListener {
                     }
                 }
                 return true;
-            } else if ((entity instanceof Minecart) || (entity instanceof Boat)) {
+            } else if (entity instanceof Minecart || entity instanceof Boat) {
                 Flag vehicleFlag = FlagManager.getPlotFlagRaw(plot, "vehicle-cap");
                 if (vehicleFlag != null) {
                     int cap = (Integer) vehicleFlag.getValue();
@@ -358,7 +357,7 @@ public class MainListener {
             return;
         } else {
             Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
-            if ((flag != null) && ((HashSet<PlotBlock>) flag.getValue()).contains(SpongeUtil.getPlotBlock(l.getBlock()))) {
+            if (flag != null && ((HashSet<PlotBlock>) flag.getValue()).contains(SpongeUtil.getPlotBlock(l.getBlock()))) {
                 return;
             }
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_OTHER);
@@ -497,7 +496,7 @@ public class MainListener {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 Flag destroy = FlagManager.getPlotFlagRaw(plot, "break");
                 BlockState state = pos.getState();
-                if ((destroy == null) || !((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
+                if (destroy == null || !((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
                     event.setCancelled(true);
                     return;
                 }
@@ -527,7 +526,7 @@ public class MainListener {
                 } else {
                     Flag destroy = FlagManager.getPlotFlagRaw(plot, "break");
                     BlockState state = l.getBlock();
-                    if ((destroy != null) && ((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
+                    if (destroy != null && ((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
                         return true;
                     }
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
@@ -578,7 +577,7 @@ public class MainListener {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                 Flag BUILD = FlagManager.getPlotFlagRaw(plot, C.FLAG_PLACE.s());
                 BlockState state = pos.getState();
-                if ((BUILD == null) || !((HashSet<PlotBlock>) BUILD.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
+                if (BUILD == null || !((HashSet<PlotBlock>) BUILD.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
                     event.setCancelled(true);
                     return;
                 }
@@ -608,7 +607,7 @@ public class MainListener {
                 } else {
                     Flag build = FlagManager.getPlotFlagRaw(plot, C.FLAG_PLACE.s());
                     BlockState state = l.getBlock();
-                    if ((build != null) && ((HashSet<PlotBlock>) build.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
+                    if (build != null && ((HashSet<PlotBlock>) build.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
                         return true;
                     }
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);

@@ -26,7 +26,7 @@ public class BO3 extends SubCommand {
     public boolean onCommand(PlotPlayer plr, String[] args) {
         Location loc = plr.getLocation();
         Plot plot = loc.getPlotAbs();
-        if ((plot == null) || !plot.hasOwner()) {
+        if (plot == null || !plot.hasOwner()) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
         if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.bo3")) {
@@ -40,21 +40,18 @@ public class BO3 extends SubCommand {
         switch (args[0].toLowerCase()) {
             case "output":
             case "save":
-            case "export": {
+            case "export":
                 return BO3Handler.saveBO3(plr, plot);
-            }
             case "paste":
             case "load":
             case "import":
-            case "input": {
+            case "input":
                 // TODO NOT IMPLEMENTED YET
                 MainUtil.sendMessage(plr, "NOT IMPLEMENTED YET!!!");
                 return false;
-            }
-            default: {
+            default:
                 noArgs(plr);
                 return false;
-            }
         }
     }
 }
