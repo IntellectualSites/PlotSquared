@@ -28,9 +28,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,10 +45,6 @@ import java.util.UUID;
         requiredType = RequiredType.PLAYER,
         category = CommandCategory.TELEPORT)
 public class Visit extends SubCommand {
-
-    public Visit() {
-        super(Argument.String);
-    }
 
     public List<Plot> getPlots(UUID uuid) {
         List<Plot> plots = new ArrayList<>();
