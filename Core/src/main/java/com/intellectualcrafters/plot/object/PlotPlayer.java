@@ -362,7 +362,7 @@ public abstract class PlotPlayer implements CommandCaller {
     public abstract void kick(String message);
 
     /**
-     * Called when the player quits
+     * Called when the player quits.
      */
     public void unregister() {
         Plot plot = getCurrentPlot();
@@ -384,7 +384,7 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Get the amount of clusters a player owns in the specific world
+     * Get the amount of clusters a player owns in the specific world.
      * @param world
      * @return
      */

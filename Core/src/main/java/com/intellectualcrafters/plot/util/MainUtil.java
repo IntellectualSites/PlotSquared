@@ -716,7 +716,7 @@ public class MainUtil {
     }
 
     /**
-     * Format a string with plot information:<br>
+     * Format a string with plot information.
      * @param info
      * @param plot
      * @param player

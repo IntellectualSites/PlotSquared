@@ -27,16 +27,7 @@ import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import com.plotsquared.listener.PlotListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -117,16 +108,27 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
 /**
- * Player Events involving plots
+ * Player Events involving plots.
  *
  */
-public class PlayerEvents extends com.plotsquared.listener.PlotListener implements Listener {
+public class PlayerEvents extends PlotListener implements Listener {
 
     private boolean pistonBlocks = true;
     private float lastRadius;
     // To prevent recursion
-    private boolean tmp_teleport = true;
+    private boolean tmpTeleport = true;
 
     public static void sendBlockChange(final org.bukkit.Location bloc, final Material type, final byte data) {
         TaskManager.runTaskLater(new Runnable() {
@@ -312,7 +314,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void PlayerCommand(PlayerCommandPreprocessEvent event) {
+    public void playerCommand(PlayerCommandPreprocessEvent event) {
         String msg = event.getMessage().toLowerCase().replaceAll("/", "").trim();
         if (msg.isEmpty()) {
             return;
@@ -433,7 +435,7 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void PlayerMove(PlayerMoveEvent event) {
+    public void playerMove(PlayerMoveEvent event) {
         org.bukkit.Location from = event.getFrom();
         org.bukkit.Location to = event.getTo();
         int x2;
@@ -1592,18 +1594,18 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             Plot now = area.getPlotAbs(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmp_teleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
-                        this.tmp_teleport = false;
+                        this.tmpTeleport = false;
                         player.teleport(from);
-                        this.tmp_teleport = true;
+                        this.tmpTeleport = true;
                     } else {
                         Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
                         if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
-                            this.tmp_teleport = false;
+                            this.tmpTeleport = false;
                             player.teleport(player.getWorld().getSpawnLocation());
-                            this.tmp_teleport = true;
+                            this.tmpTeleport = true;
                         }
                     }
                     event.setCancelled(true);
@@ -1611,37 +1613,37 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             } else if (lastPlot != null && now.equals(lastPlot)) {
                 return;
-            } else if (!plotEntry(pp, now) && this.tmp_teleport) {
+            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                 if (!now.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
-                    this.tmp_teleport = false;
+                    this.tmpTeleport = false;
                     player.teleport(from);
-                    this.tmp_teleport = true;
+                    this.tmpTeleport = true;
                 } else {
                     Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
                     if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
-                        this.tmp_teleport = false;
+                        this.tmpTeleport = false;
                         player.teleport(player.getWorld().getSpawnLocation());
-                        this.tmp_teleport = true;
+                        this.tmpTeleport = true;
                     }
                 }
                 event.setCancelled(true);
                 return;
             }
             Integer border = area.getBorder();
-            if (this.tmp_teleport) {
+            if (this.tmpTeleport) {
                 if (x2 > border) {
                     to.setX(border - 4);
-                    this.tmp_teleport = false;
+                    this.tmpTeleport = false;
                     player.teleport(event.getTo());
-                    this.tmp_teleport = true;
+                    this.tmpTeleport = true;
                     MainUtil.sendMessage(pp, C.BORDER);
                     return;
                 } else if (x2 < -border) {
                     to.setX(-border + 4);
-                    this.tmp_teleport = false;
+                    this.tmpTeleport = false;
                     player.teleport(event.getTo());
-                    this.tmp_teleport = true;
+                    this.tmpTeleport = true;
                     MainUtil.sendMessage(pp, C.BORDER);
                     return;
                 }
@@ -1662,18 +1664,18 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
             Plot now = area.getPlotAbs(loc);
             Plot lastPlot = pp.getMeta("lastplot");
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmp_teleport) {
+                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_EXIT_DENIED);
                     if (lastPlot.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
-                        this.tmp_teleport = false;
+                        this.tmpTeleport = false;
                         player.teleport(from);
-                        this.tmp_teleport = true;
+                        this.tmpTeleport = true;
                     } else {
                         Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
                         if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
-                            this.tmp_teleport = false;
+                            this.tmpTeleport = false;
                             player.teleport(player.getWorld().getSpawnLocation());
-                            this.tmp_teleport = true;
+                            this.tmpTeleport = true;
                         }
                     }
                     event.setCancelled(true);
@@ -1681,36 +1683,36 @@ public class PlayerEvents extends com.plotsquared.listener.PlotListener implemen
                 }
             } else if (lastPlot != null && now.equals(lastPlot)) {
                 return;
-            } else if (!plotEntry(pp, now) && this.tmp_teleport) {
+            } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_ENTRY_DENIED);
                 if (!now.equals(area.getPlot(BukkitUtil.getLocation(from)))) {
-                    this.tmp_teleport = false;
+                    this.tmpTeleport = false;
                     player.teleport(from);
-                    this.tmp_teleport = true;
+                    this.tmpTeleport = true;
                 } else {
                     Location spawn = BukkitUtil.getLocation(player.getWorld().getSpawnLocation());
                     if (spawn.getEuclideanDistanceSquared(pp.getLocation()) > 2) {
-                        this.tmp_teleport = false;
+                        this.tmpTeleport = false;
                         player.teleport(player.getWorld().getSpawnLocation());
-                        this.tmp_teleport = true;
+                        this.tmpTeleport = true;
                     }
                 }
                 event.setCancelled(true);
                 return;
             }
             Integer border = area.getBorder();
-            if (this.tmp_teleport) {
+            if (this.tmpTeleport) {
                 if (z2 > border) {
                     to.setZ(border - 4);
-                    this.tmp_teleport = false;
+                    this.tmpTeleport = false;
                     player.teleport(event.getTo());
-                    this.tmp_teleport = true;
+                    this.tmpTeleport = true;
                     MainUtil.sendMessage(pp, C.BORDER);
                 } else if (z2 < -border) {
                     to.setZ(-border + 4);
-                    this.tmp_teleport = false;
+                    this.tmpTeleport = false;
                     player.teleport(event.getTo());
-                    this.tmp_teleport = true;
+                    this.tmpTeleport = true;
                     MainUtil.sendMessage(pp, C.BORDER);
                 }
             }
