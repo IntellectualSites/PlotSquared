@@ -45,6 +45,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             }
         } catch (SQLException | ClassNotFoundException ignored) {
             //ignored
+            ignored.printStackTrace();
         }
         return null;
     }

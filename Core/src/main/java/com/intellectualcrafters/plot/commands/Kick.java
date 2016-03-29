@@ -55,10 +55,6 @@ public class Kick extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (args.length != 1) {
-            MainUtil.sendMessage(plr, "&c/plot kick <player>");
-            return false;
-        }
         PlotPlayer player = UUIDHandler.getPlayer(args[0]);
         if (player == null) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
