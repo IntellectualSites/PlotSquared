@@ -8,10 +8,6 @@ import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.events.PlayerLeavePlotEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlotListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
@@ -26,6 +22,11 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.UUID;
+
 public class PlotPlusListener extends PlotListener implements Listener {
 
     private static final HashMap<String, Interval> feedRunnable = new HashMap<>();
@@ -36,15 +37,15 @@ public class PlotPlusListener extends PlotListener implements Listener {
             @Override
             public void run() {
                 if (!healRunnable.isEmpty()) {
-                    for (Iterator<Entry<String, Interval>> iter = healRunnable.entrySet().iterator(); iter.hasNext(); ) {
-                        Entry<String, Interval> entry = iter.next();
+                    for (Iterator<Entry<String, Interval>> iterator = healRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                        Entry<String, Interval> entry = iterator.next();
                         Interval value = entry.getValue();
                         ++value.count;
                         if (value.count == value.interval) {
                             value.count = 0;
                             Player player = Bukkit.getPlayer(entry.getKey());
                             if (player == null) {
-                                iter.remove();
+                                iterator.remove();
                                 continue;
                             }
                             double level = player.getHealth();
@@ -55,15 +56,15 @@ public class PlotPlusListener extends PlotListener implements Listener {
                     }
                 }
                 if (!feedRunnable.isEmpty()) {
-                    for (Iterator<Entry<String, Interval>> iter = feedRunnable.entrySet().iterator(); iter.hasNext(); ) {
-                        Entry<String, Interval> entry = iter.next();
+                    for (Iterator<Entry<String, Interval>> iterator = feedRunnable.entrySet().iterator(); iterator.hasNext(); ) {
+                        Entry<String, Interval> entry = iterator.next();
                         Interval value = entry.getValue();
                         ++value.count;
                         if (value.count == value.interval) {
                             value.count = 0;
                             Player player = Bukkit.getPlayer(entry.getKey());
                             if (player == null) {
-                                iter.remove();
+                                iterator.remove();
                                 continue;
                             }
                             int level = player.getFoodLevel();

@@ -128,14 +128,14 @@ public class ExpireManager {
                 }
                 final Runnable task = this;
                 long start = System.currentTimeMillis();
-                Iterator<Plot> iter = plots.iterator();
-                while (iter.hasNext() && System.currentTimeMillis() - start < 2) {
+                Iterator<Plot> iterator = plots.iterator();
+                while (iterator.hasNext() && System.currentTimeMillis() - start < 2) {
                     if (ExpireManager.this.running != 2) {
                         ExpireManager.this.running = 0;
                         return;
                     }
-                    final Plot plot = iter.next();
-                    iter.remove();
+                    final Plot plot = iterator.next();
+                    iterator.remove();
                     if (!isExpired(plot)) {
                         continue;
                     }

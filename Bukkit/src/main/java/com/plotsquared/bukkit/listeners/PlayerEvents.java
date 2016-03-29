@@ -636,22 +636,22 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBigBoom(EntityExplodeEvent event) {
-        Location loc = BukkitUtil.getLocation(event.getLocation());
-        PlotArea area = loc.getPlotArea();
+        Location location = BukkitUtil.getLocation(event.getLocation());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
-            if (!PS.get().hasPlotArea(loc.getWorld())) {
+            if (!PS.get().hasPlotArea(location.getWorld())) {
                 return;
             }
-            Iterator<Block> iter = event.blockList().iterator();
-            while (iter.hasNext()) {
-                iter.next();
-                if (loc.getPlotArea() != null) {
-                    iter.remove();
+            Iterator<Block> iterator = event.blockList().iterator();
+            while (iterator.hasNext()) {
+                iterator.next();
+                if (location.getPlotArea() != null) {
+                    iterator.remove();
                 }
             }
             return;
         }
-        Plot plot = area.getOwnedPlot(loc);
+        Plot plot = area.getOwnedPlot(location);
         if (plot != null) {
             if (FlagManager.isPlotFlagTrue(plot, "explosion")) {
                 List<MetadataValue> meta = event.getEntity().getMetadata("plot");
@@ -672,12 +672,12 @@ public class PlayerEvents extends PlotListener implements Listener {
                     }
                     this.lastRadius = 0;
                 }
-                Iterator<Block> iter = event.blockList().iterator();
-                while (iter.hasNext()) {
-                    Block b = iter.next();
-                    loc = BukkitUtil.getLocation(b.getLocation());
-                    if (!area.contains(loc.getX(), loc.getZ()) || !origin.equals(area.getOwnedPlot(loc))) {
-                        iter.remove();
+                Iterator<Block> iterator = event.blockList().iterator();
+                while (iterator.hasNext()) {
+                    Block block = iterator.next();
+                    location = BukkitUtil.getLocation(block.getLocation());
+                    if (!area.contains(location.getX(), location.getZ()) || !origin.equals(area.getOwnedPlot(location))) {
+                        iterator.remove();
                     }
                 }
                 return;
@@ -1267,8 +1267,8 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Block block = event.getBlock();
         World world = block.getWorld();
-        String worldname = world.getName();
-        if (!PS.get().hasPlotArea(worldname)) {
+        String worldName = world.getName();
+        if (!PS.get().hasPlotArea(worldName)) {
             return;
         }
         Location loc = BukkitUtil.getLocation(block.getLocation());
@@ -1382,7 +1382,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             case LIGHTNING:
             case WITHER_SKULL:
             case UNKNOWN:
-                // non moving / unremovable
+                // non moving / unmovable
                 return checkEntity(plot, "entity-cap");
             case ITEM_FRAME:
             case PAINTING:
@@ -1540,17 +1540,17 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
 
         } else if (event.getIgnitingBlock() != null) {
-            Block igniter = event.getIgnitingBlock();
+            Block ignitingBlock = event.getIgnitingBlock();
             if (igniteCause == BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL) {
                 if (plot == null || !FlagManager.isPlotFlagTrue(plot, "block-ignition")) {
                     event.setCancelled(true);
                     return;
                 }
-                if (BukkitUtil.getLocation(igniter.getLocation()).getPlot() == null) {
+                if (BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot() == null) {
                     event.setCancelled(true);
                     return;
                 }
-                if (!BukkitUtil.getLocation(igniter.getLocation()).getPlot().equals(plot)) {
+                if (!BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot().equals(plot)) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1560,11 +1560,11 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                if (BukkitUtil.getLocation(igniter.getLocation()).getPlot() == null) {
+                if (BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot() == null) {
                     event.setCancelled(true);
                     return;
                 }
-                if (!BukkitUtil.getLocation(igniter.getLocation()).getPlot().equals(plot)) {
+                if (!BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot().equals(plot)) {
                     event.setCancelled(true);
                     return;
                 }

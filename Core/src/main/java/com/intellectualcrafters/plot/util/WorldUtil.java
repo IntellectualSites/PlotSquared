@@ -26,7 +26,7 @@ public abstract class WorldUtil {
     
     public abstract String getMainWorld();
 
-    public abstract boolean isWorld(String worldname);
+    public abstract boolean isWorld(String worldName);
 
     public abstract String[] getSign(Location location);
     

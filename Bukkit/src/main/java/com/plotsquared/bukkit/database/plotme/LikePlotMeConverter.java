@@ -45,9 +45,9 @@ public class LikePlotMeConverter {
     }
 
     public static String getWorld(String world) {
-        for (World newworld : Bukkit.getWorlds()) {
-            if (newworld.getName().equalsIgnoreCase(world)) {
-                return newworld.getName();
+        for (World newWorld : Bukkit.getWorlds()) {
+            if (newWorld.getName().equalsIgnoreCase(world)) {
+                return newWorld.getName();
             }
         }
         return world;
@@ -205,11 +205,11 @@ public class LikePlotMeConverter {
                         PS.get().config.set("worlds." + world + ".road.height", pathheight);
                         PS.get().config.set("worlds." + world + ".wall.height", pathheight);
                         PS.get().config.set("worlds." + world + ".plot.height", pathheight);
-                        Integer plotsize = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PlotSize"); //
-                        if (plotsize == 0) {
-                            plotsize = 32;
+                        Integer plotSize = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PlotSize"); //
+                        if (plotSize == 0) {
+                            plotSize = 32;
                         }
-                        PS.get().config.set("worlds." + world + ".plot.size", plotsize);
+                        PS.get().config.set("worlds." + world + ".plot.size", plotSize);
                         String wallblock = plotmeDgYml.getString("worlds." + plotMeWorldName + ".WallBlock", "44"); //
                         PS.get().config.set("worlds." + world + ".wall.block", wallblock);
                         String floor = plotmeDgYml.getString("worlds." + plotMeWorldName + ".PlotFloorBlock", "2"); //
@@ -310,10 +310,10 @@ public class LikePlotMeConverter {
                                 .isEnabled()) {
                             mw = true;
                         }
-                        for (String worldname : worlds) {
-                            World world = Bukkit.getWorld(getWorld(worldname));
+                        for (String worldName : worlds) {
+                            World world = Bukkit.getWorld(getWorld(worldName));
                             if (world == null) {
-                                sendMessage("&cInvalid world in PlotMe configuration: " + worldname);
+                                sendMessage("&cInvalid world in PlotMe configuration: " + worldName);
                             }
                             String actualWorldName = world.getName();
                             sendMessage("Reloading generator for world: '" + actualWorldName + "'...");
@@ -344,8 +344,8 @@ public class LikePlotMeConverter {
                                 // Load using Bukkit API
                                 // - User must set generator manually
                                 Bukkit.getServer().unloadWorld(world, true);
-                                World myworld = WorldCreator.name(actualWorldName).generator(new BukkitPlotGenerator(new HybridGen())).createWorld();
-                                myworld.save();
+                                World myWorld = WorldCreator.name(actualWorldName).generator(new BukkitPlotGenerator(new HybridGen())).createWorld();
+                                myWorld.save();
                             }
                         }
                     } catch (CommandException e) {

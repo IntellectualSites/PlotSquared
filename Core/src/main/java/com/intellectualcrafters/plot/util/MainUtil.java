@@ -277,19 +277,19 @@ public class MainUtil {
     }
 
     /**
-     * Get a list of plot ids within a selection
+     * Get a list of plot ids within a selection.
      * @param pos1
      * @param pos2
      * @return
      */
     public static ArrayList<PlotId> getPlotSelectionIds(PlotId pos1, PlotId pos2) {
-        ArrayList<PlotId> myplots = new ArrayList<>();
+        ArrayList<PlotId> myPlots = new ArrayList<>();
         for (int x = pos1.x; x <= pos2.x; x++) {
             for (int y = pos1.y; y <= pos2.y; y++) {
-                myplots.add(new PlotId(x, y));
+                myPlots.add(new PlotId(x, y));
             }
         }
-        return myplots;
+        return myPlots;
     }
 
     /**
@@ -346,7 +346,7 @@ public class MainUtil {
     }
 
     /**
-     * Fuzzy plot search with spaces separating terms<br>
+     * Fuzzy plot search with spaces separating terms.
      *  - Terms: type, alias, world, owner, trusted, member
      * @param search
      * @return
@@ -421,7 +421,7 @@ public class MainUtil {
     }
 
     /**
-     * Get the plot from a string<br>
+     * Get the plot from a string.
      * @param player Provides a context for what world to search in. Prefixing the term with 'world_name;' will override this context.
      * @param arg The search term
      * @param message If a message should be sent to the player if a plot cannot be found
@@ -533,13 +533,13 @@ public class MainUtil {
      * @param world
      * @param pos1
      * @param pos2
-     * @param newblock
+     * @param newBlock
      */
-    public static void setSimpleCuboidAsync(String world, Location pos1, Location pos2, PlotBlock newblock) {
+    public static void setSimpleCuboidAsync(String world, Location pos1, Location pos2, PlotBlock newBlock) {
         for (int y = pos1.getY(); y <= Math.min(255, pos2.getY()); y++) {
             for (int x = pos1.getX(); x <= pos2.getX(); x++) {
                 for (int z = pos1.getZ(); z <= pos2.getZ(); z++) {
-                    SetQueue.IMP.setBlock(world, x, y, z, newblock);
+                    SetQueue.IMP.setBlock(world, x, y, z, newBlock);
                 }
             }
         }

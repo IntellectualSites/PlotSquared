@@ -1,5 +1,7 @@
 package com.plotsquared.bukkit.util.block;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -15,6 +17,12 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,14 +32,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_9 extends SlowQueue {
 
@@ -143,7 +143,7 @@ public class FastQueue_1_9 extends SlowQueue {
             // Sections
             Method getHandle = chunk.getClass().getDeclaredMethod("getHandle");
             Object c = getHandle.invoke(chunk);
-            Object w = methodGetWorld.of(c).call();
+            Object w = this.methodGetWorld.of(c).call();
             Class<? extends Object> clazz = c.getClass();
             Field sf = clazz.getDeclaredField("sections");
             sf.setAccessible(true);
@@ -152,7 +152,7 @@ public class FastQueue_1_9 extends SlowQueue {
 
             Object[] sections = (Object[]) sf.get(c);
             HashMap<?, ?> tiles = (HashMap<?, ?>) tf.get(c);
-            Collection<Object> tilesUnload = (Collection<Object>) tileEntityUnload.of(w).get();
+            Collection<Object> tilesUnload = (Collection<Object>) this.tileEntityUnload.of(w).get();
             Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
             Method xm = null;
@@ -306,7 +306,7 @@ public class FastQueue_1_9 extends SlowQueue {
             if (fixAll && !(boolean) this.methodAreNeighborsLoaded.of(c).call(1)) {
                 World world = chunk.getWorld();
                 ChunkWrapper wrapper = bc.getChunkWrapper();
-                String worldname = wrapper.world;
+                String worldName = wrapper.world;
                 for (int x = wrapper.x - 1; x <= wrapper.x + 1; x++) {
                     for (int z = wrapper.z - 1; z <= wrapper.z + 1; z++) {
                         if (x != 0 && z != 0) {
@@ -314,7 +314,7 @@ public class FastQueue_1_9 extends SlowQueue {
                             while (!other.isLoaded()) {
                                 other.load(true);
                             }
-                            ChunkManager.manager.loadChunk(worldname, new ChunkLoc(x, z), true);
+                            ChunkManager.manager.loadChunk(worldName, new ChunkLoc(x, z), true);
                         }
                     }
                 }

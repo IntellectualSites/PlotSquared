@@ -50,23 +50,23 @@ public class SpongeSetupUtils extends SetupUtils {
     }
     
     @Override
-    public String getGenerator(final PlotArea plotworld) {
+    public String getGenerator(PlotArea plotworld) {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
-        final World world = SpongeUtil.getWorld(plotworld.worldname);
+        World world = SpongeUtil.getWorld(plotworld.worldname);
         if (world == null) {
             return null;
         }
-        final WorldGenerator generator = world.getWorldGenerator();
+        WorldGenerator generator = world.getWorldGenerator();
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
     @Override
-    public String setupWorld(final SetupObject object) {
+    public String setupWorld(SetupObject object) {
         SetupUtils.manager.updateGenerators();
         ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
-        final String world = object.world;
+        String world = object.world;
         int type = object.type;
         String worldPath = "worlds." + object.world;
         if (!PS.get().config.contains(worldPath)) {
@@ -76,14 +76,14 @@ public class SpongeSetupUtils extends SetupUtils {
         switch (type) {
             case 2: {
                 if (object.id != null) {
-                    String areaname = object.id + "-" + object.min + "-" + object.max;
-                    String areaPath = "areas." + areaname;
+                    String areaName = object.id + "-" + object.min + "-" + object.max;
+                    String areaPath = "areas." + areaName;
                     if (!worldSection.contains(areaPath)) {
                         worldSection.createSection(areaPath);
                     }
                     ConfigurationSection areaSection = worldSection.getConfigurationSection(areaPath);
                     HashMap<String, Object> options = new HashMap<>();
-                    for (final ConfigurationNode step : steps) {
+                    for (ConfigurationNode step : steps) {
                         options.put(step.getConstant(), step.getValue());
                     }
                     options.put("generator.type", object.type);
@@ -112,7 +112,7 @@ public class SpongeSetupUtils extends SetupUtils {
                 break;
             }
             case 1: {
-                for (final ConfigurationNode step : steps) {
+                for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
                 PS.get().config.set("worlds." + world + "." + "generator.type", object.type);
@@ -128,7 +128,7 @@ public class SpongeSetupUtils extends SetupUtils {
                 break;
             }
             case 0: {
-                for (final ConfigurationNode step : steps) {
+                for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
                 break;
@@ -136,7 +136,7 @@ public class SpongeSetupUtils extends SetupUtils {
         }
         try {
             PS.get().config.save(PS.get().configFile);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         if (object.setupGenerator != null) {

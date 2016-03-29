@@ -111,8 +111,8 @@ public class ChunkListener implements Listener {
                     if (!PS.get().hasPlotArea(name)) {
                         continue;
                     }
-                    boolean autosave = world.isAutoSave();
-                    if (autosave) {
+                    boolean autoSave = world.isAutoSave();
+                    if (autoSave) {
                         world.setAutoSave(false);
                     }
                     HashMap<ChunkLoc, Integer> map = players.get(name);
@@ -142,7 +142,7 @@ public class ChunkListener implements Listener {
                             time = 1;
                         }
                     }
-                    if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autosave) {
+                    if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autoSave) {
                         world.setAutoSave(true);
                     }
                 }

@@ -24,26 +24,26 @@ public interface IPlotMain {
 
     /**
      * Log a message to console.
-     * @param message
+     * @param message The message to log
      */
     void log(String message);
 
     /**
      * Get the `PlotSquared` directory.
-     * @return
+     * @return The plugin directory
      */
     File getDirectory();
 
     /**
      * Get the directory containing all the worlds.
-     * @return
+     * @return The directory containing the worlds
      */
     File getWorldContainer();
 
     /**
      * Wrap a player into a PlotPlayer object.
-     * @param player
-     * @return
+     * @param player The player to convert to a PlotPlayer
+     * @return A PlotPlayer
      */
     PlotPlayer wrapPlayer(Object player);
 
@@ -69,20 +69,20 @@ public interface IPlotMain {
     int[] getServerVersion();
 
     /**
-     * Get the nms package prefix.
-     * @return
+     * Get the NMS package prefix.
+     * @return The NMS package prefix
      */
     String getNMSPackage();
 
     /**
      * Get the schematic handler.
-     * @return
+     * @return The {@link SchematicHandler}
      */
     SchematicHandler initSchematicHandler();
 
     /**
-     * Get the schematic handler.
-     * @return
+     * Get the Chat Manager.
+     * @return The {@link ChatManager}
      */
     ChatManager initChatManager();
 
@@ -176,24 +176,27 @@ public interface IPlotMain {
 
     /**
      * If a world is already loaded, set the generator (use NMS if required).
-     * @param world
+     * @param world The world to set the generator
      */
     void setGenerator(String world);
 
     /**
-     * Get the {@link UUIDHandlerImplementation} which will cache and provide UUIDs.
+     * Get the {@link UUIDHandlerImplementation} which will cache and
+     * provide UUIDs.
      * @return
      */
     UUIDHandlerImplementation initUUIDHandler();
 
     /**
-     * Get the {@link InventoryUtil} class (used for implementation specific inventory guis).
+     * Get the {@link InventoryUtil} class (used for implementation specific
+     * inventory guis).
      * @return
      */
     InventoryUtil initInventoryUtil();
 
     /**
-     * Run the converter for the implementation (not necessarily PlotMe, just any plugin that we can convert from).
+     * Run the converter for the implementation (not necessarily PlotMe, just
+     * any plugin that we can convert from).
      * @return
      */
     boolean initPlotMeConverter();
@@ -212,26 +215,23 @@ public interface IPlotMain {
      */
     GeneratorWrapper<?> getGenerator(String world, String name);
 
-    /**
-     *
-     * @param generator
-     * @return
-     */
     GeneratorWrapper<?> wrapPlotGenerator(IndependentPlotGenerator generator);
 
     /**
-     * Register the chunk processor which will clean out chunks that have too many blockstates or entities.
+     * Register the chunk processor which will clean out chunks that have too
+     * many blockstates or entities.
      */
     void registerChunkProcessor();
 
     /**
-     * Register the world initialization events (used to keep track of worlds being generated).
+     * Register the world initialization events (used to keep track of worlds
+     * being generated).
      */
     void registerWorldEvents();
 
     /**
      * Get the name of the server.
-     * @return
+     * @return The server name
      */
     String getServerName();
 

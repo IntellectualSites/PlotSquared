@@ -40,7 +40,7 @@ public class FastQueue_1_8 extends SlowQueue {
     private final RefMethod methodA;
     private final RefMethod methodGetByCombinedId;
     private final RefConstructor constructorBlockPosition;
-    private final SendChunk chunksender;
+    private final SendChunk sendChunk;
 
     public FastQueue_1_8() throws RuntimeException {
         this.methodInitLighting = this.classChunk.getMethod("initLighting");
@@ -49,7 +49,7 @@ public class FastQueue_1_8 extends SlowQueue {
         this.methodGetHandle = this.classCraftWorld.getMethod("getHandle");
         this.methodGetChunkAt = this.classWorld.getMethod("getChunkAt", int.class, int.class);
         this.methodA = this.classChunk.getMethod("a", this.classBlockPosition, this.classIBlockData);
-        this.chunksender = new SendChunk();
+        this.sendChunk = new SendChunk();
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
@@ -86,7 +86,7 @@ public class FastQueue_1_8 extends SlowQueue {
             return;
         }
         try {
-            this.chunksender.sendChunk(chunks);
+            this.sendChunk.sendChunk(chunks);
         } catch (Throwable e) {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
@@ -378,6 +378,6 @@ public class FastQueue_1_8 extends SlowQueue {
             ChunkWrapper wrapper = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
             this.toUpdate.remove(wrapper);
         }
-        this.chunksender.sendChunk(world, locations);
+        this.sendChunk.sendChunk(world, locations);
     }
 }

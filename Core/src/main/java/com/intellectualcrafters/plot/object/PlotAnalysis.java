@@ -81,12 +81,12 @@ public class PlotAnalysis {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                Iterator<Plot> iter = plots.iterator();
+                Iterator<Plot> iterator = plots.iterator();
                 PS.debug(" - $1Reducing " + plots.size() + " plots to those with sufficient data");
-                while (iter.hasNext()) {
-                    Plot plot = iter.next();
+                while (iterator.hasNext()) {
+                    Plot plot = iterator.next();
                     if (plot.getSettings().ratings == null || plot.getSettings().getRatings().isEmpty()) {
-                        iter.remove();
+                        iterator.remove();
                     } else {
                         plot.addRunning();
                     }
@@ -393,7 +393,7 @@ public class PlotAnalysis {
     }
     
     /**
-     * Get correllation coefficient.
+     * Get correlation coefficient.
      * @return
      */
     public static double getCC(int n, int sum) {

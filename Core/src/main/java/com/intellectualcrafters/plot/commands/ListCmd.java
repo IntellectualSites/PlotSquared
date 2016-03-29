@@ -350,10 +350,10 @@ public class ListCmd extends SubCommand {
     public void displayPlots(final PlotPlayer player, java.util.List<Plot> plots, int pageSize, int page, PlotArea area,
             String[] args, boolean sort) {
         // Header
-        Iterator<Plot> iter = plots.iterator();
-        while (iter.hasNext()) {
-            if (!iter.next().isBasePlot()) {
-                iter.remove();
+        Iterator<Plot> iterator = plots.iterator();
+        while (iterator.hasNext()) {
+            if (!iterator.next().isBasePlot()) {
+                iterator.remove();
             }
         }
         if (sort) {

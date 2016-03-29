@@ -172,23 +172,24 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
     public void setupSchematics() {
         this.G_SCH = new HashMap<>();
-        File schem1File = MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
-        File schem2File =
+        File schematic1File =
+                MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/sideroad.schematic");
+        File schematic2File =
                 MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/intersection.schematic");
         File schem3File = MainUtil.getFile(PS.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.worldname + "/plot.schematic");
-        Schematic schem1 = SchematicHandler.manager.getSchematic(schem1File);
-        Schematic schem2 = SchematicHandler.manager.getSchematic(schem2File);
-        Schematic schem3 = SchematicHandler.manager.getSchematic(schem3File);
+        Schematic schematic1 = SchematicHandler.manager.getSchematic(schematic1File);
+        Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
+        Schematic schematic3 = SchematicHandler.manager.getSchematic(schem3File);
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = 0;
         if ((this.ROAD_WIDTH & 1) != 0) {
             oddshift = 1;
         }
-        if (schem3 != null) {
+        if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
-            short[] ids = schem3.getIds();
-            byte[] datas = schem3.getDatas();
-            Dimension d3 = schem3.getSchematicDimension();
+            short[] ids = schematic3.getIds();
+            byte[] datas = schematic3.getDatas();
+            Dimension d3 = schematic3.getSchematicDimension();
             short w3 = (short) d3.getX();
             short l3 = (short) d3.getZ();
             short h3 = (short) d3.getY();
@@ -214,7 +215,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     }
                 }
             }
-            HashSet<PlotItem> items = schem3.getItems();
+            HashSet<PlotItem> items = schematic3.getItems();
             if (items != null) {
                 this.G_SCH_STATE = new HashMap<>();
                 for (PlotItem item : items) {
@@ -235,7 +236,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
         }
-        if (schem1 == null || schem2 == null || this.ROAD_WIDTH == 0) {
+        if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
             PS.debug(C.PREFIX + "&3 - schematic: &7false");
             return;
         }
@@ -243,17 +244,17 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         // Do not populate road if using schematic population
         this.ROAD_BLOCK = new PlotBlock(this.ROAD_BLOCK.id, (byte) 0);
 
-        short[] ids1 = schem1.getIds();
-        byte[] datas1 = schem1.getDatas();
+        short[] ids1 = schematic1.getIds();
+        byte[] datas1 = schematic1.getDatas();
 
-        short[] ids2 = schem2.getIds();
-        byte[] datas2 = schem2.getDatas();
+        short[] ids2 = schematic2.getIds();
+        byte[] datas2 = schematic2.getDatas();
 
-        Dimension d1 = schem1.getSchematicDimension();
+        Dimension d1 = schematic1.getSchematicDimension();
         short w1 = (short) d1.getX();
         short l1 = (short) d1.getZ();
         short h1 = (short) d1.getY();
-        Dimension d2 = schem2.getSchematicDimension();
+        Dimension d2 = schematic2.getSchematicDimension();
         short w2 = (short) d2.getX();
         short l2 = (short) d2.getZ();
         short h2 = (short) d2.getY();
@@ -293,9 +294,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             x += this.SIZE;
         }
         if (rotate) {
-            byte newdata = rotate(id, data);
-            if (data != 0 || newdata != 0) {
-                data = newdata;
+            byte newData = rotate(id, data);
+            if (data != 0 || newData != 0) {
+                data = newData;
             }
         }
         int pair = MathMan.pair(x, z);

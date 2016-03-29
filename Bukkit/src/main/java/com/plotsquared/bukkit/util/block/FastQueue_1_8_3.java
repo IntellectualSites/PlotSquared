@@ -1,5 +1,7 @@
 package com.plotsquared.bukkit.util.block;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -14,6 +16,12 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.SendChunk;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,18 +31,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_8_3 extends SlowQueue {
 
-    private final SendChunk chunksender;
+    private final SendChunk sendChunk;
     private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     private final RefMethod methodGetHandleChunk;
     private final RefMethod methodInitLighting;
@@ -65,7 +65,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
         this.classChunkSectionConstructor = classChunkSection.getConstructor(int.class, boolean.class, char[].class);
         this.tileEntityUnload = classWorld.getField("c");
         this.methodGetWorld = classChunk.getMethod("getWorld");
-        this.chunksender = new SendChunk();
+        this.sendChunk = new SendChunk();
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
@@ -102,7 +102,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
             return;
         }
         try {
-            this.chunksender.sendChunk(chunks);
+            this.sendChunk.sendChunk(chunks);
         } catch (Throwable e) {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
@@ -129,7 +129,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
             // Sections
             Method getHandle = chunk.getClass().getDeclaredMethod("getHandle");
             Object c = getHandle.invoke(chunk);
-            Object w = methodGetWorld.of(c).call();
+            Object w = this.methodGetWorld.of(c).call();
             Class<? extends Object> clazz = c.getClass();
             Field sections1 = clazz.getDeclaredField("sections");
             sections1.setAccessible(true);
@@ -138,7 +138,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
 
             Object[] sections = (Object[]) sections1.get(c);
             HashMap<?, ?> tiles = (HashMap<?, ?>) tileEntities.get(c);
-            Collection<Object> tilesUnload = (Collection<Object>) tileEntityUnload.of(w).get();
+            Collection<Object> tilesUnload = (Collection<Object>) this.tileEntityUnload.of(w).get();
             Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
             Method getX = null;
@@ -407,6 +407,6 @@ public class FastQueue_1_8_3 extends SlowQueue {
             ChunkWrapper wrapper = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
             this.toUpdate.remove(wrapper);
         }
-        this.chunksender.sendChunk(world, locations);
+        this.sendChunk.sendChunk(world, locations);
     }
 }

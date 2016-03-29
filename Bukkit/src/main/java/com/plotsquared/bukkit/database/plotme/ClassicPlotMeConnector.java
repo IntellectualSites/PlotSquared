@@ -154,8 +154,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
         for (Entry<String, HashMap<PlotId, boolean[]>> entry : merges.entrySet()) {
             String world = entry.getKey();
             for (Entry<PlotId, boolean[]> entry2 : entry.getValue().entrySet()) {
-                HashMap<PlotId, Plot> newplots = plots.get(world);
-                Plot plot = newplots.get(entry2.getKey());
+                HashMap<PlotId, Plot> newPlots = plots.get(world);
+                Plot plot = newPlots.get(entry2.getKey());
                 if (plot != null) {
                     plot.setMerged(entry2.getValue());
                 }

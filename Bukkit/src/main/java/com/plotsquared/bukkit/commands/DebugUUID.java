@@ -107,9 +107,9 @@ public class DebugUUID extends SubCommand {
         worlds.add("world");
         HashSet<UUID> uuids = new HashSet<>();
         HashSet<String> names = new HashSet<>();
-        for (String worldname : worlds) {
-            File playerdataFolder = new File(worldname + File.separator + "playerdata");
-            String[] dat = playerdataFolder.list(new FilenameFilter() {
+        for (String worldName : worlds) {
+            File playerDataFolder = new File(worldName + File.separator + "playerdata");
+            String[] dat = playerDataFolder.list(new FilenameFilter() {
                 @Override
                 public boolean accept(File f, String s) {
                     return s.endsWith(".dat");
@@ -126,7 +126,7 @@ public class DebugUUID extends SubCommand {
                     }
                 }
             }
-            File playersFolder = new File(worldname + File.separator + "players");
+            File playersFolder = new File(worldName + File.separator + "players");
             dat = playersFolder.list(new FilenameFilter() {
                 @Override
                 public boolean accept(File f, String s) {
@@ -286,7 +286,7 @@ public class DebugUUID extends SubCommand {
                 try {
                     PS.get().config.save(PS.get().configFile);
                 } catch (IOException e) {
-                    MainUtil.sendMessage(player, "Could not save configuration. It will need to be manuall set!");
+                    MainUtil.sendMessage(player, "Could not save configuration. It will need to be manual set!");
                 }
 
                 MainUtil.sendMessage(player, "&7 - Populating tables");

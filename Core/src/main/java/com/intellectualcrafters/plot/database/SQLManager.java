@@ -1599,7 +1599,7 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public HashMap<String, HashMap<PlotId, Plot>> getPlots() {
-        HashMap<String, HashMap<PlotId, Plot>> newplots = new HashMap<>();
+        HashMap<String, HashMap<PlotId, Plot>> newPlots = new HashMap<>();
         HashMap<Integer, Plot> plots = new HashMap<>();
         try {
             HashSet<String> areas = new HashSet<>();
@@ -1660,7 +1660,7 @@ public class SQLManager implements AbstractDB {
                     long time = timestamp.getTime();
                     Plot p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, null,
                             new boolean[]{false, false, false, false}, time, id);
-                    HashMap<PlotId, Plot> map = newplots.get(areaid);
+                    HashMap<PlotId, Plot> map = newPlots.get(areaid);
                     if (map != null) {
                         Plot last = map.put(p.getId(), p);
                         if (last != null) {
@@ -1675,7 +1675,7 @@ public class SQLManager implements AbstractDB {
                         }
                     } else {
                         map = new HashMap<>();
-                        newplots.put(areaid, map);
+                        newPlots.put(areaid, map);
                         map.put(p.getId(), p);
                     }
                     plots.put(id, p);
@@ -1872,9 +1872,9 @@ public class SQLManager implements AbstractDB {
             }
             boolean invalidPlot = false;
             for (Entry<String, AtomicInteger> entry : noExist.entrySet()) {
-                String worldname = entry.getKey();
+                String worldName = entry.getKey();
                 invalidPlot = true;
-                PS.debug("&c[WARNING] Found " + entry.getValue().intValue() + " plots in DB for non existant world; '" + worldname + "'.");
+                PS.debug("&c[WARNING] Found " + entry.getValue().intValue() + " plots in DB for non existent world; '" + worldName + "'.");
             }
             if (invalidPlot) {
                 PS.debug("&c[WARNING] - Please create the world/s or remove the plots using the purge command");
@@ -1883,7 +1883,7 @@ public class SQLManager implements AbstractDB {
             PS.debug("&7[WARN] " + "Failed to load plots.");
             e.printStackTrace();
         }
-        return newplots;
+        return newPlots;
     }
 
     @Override
@@ -2072,9 +2072,9 @@ public class SQLManager implements AbstractDB {
                         e.printStackTrace();
                         PS.debug("&c[ERROR] " + "FAILED TO PURGE AREA '" + area + "'!");
                     }
-                for (Iterator<PlotId> iter = plots.iterator(); iter.hasNext(); ) {
-                    PlotId plotId = iter.next();
-                        iter.remove();
+                for (Iterator<PlotId> iterator = plots.iterator(); iterator.hasNext(); ) {
+                    PlotId plotId = iterator.next();
+                    iterator.remove();
                     PlotId id = new PlotId(plotId.x, plotId.y);
                         area.removePlot(id);
                     }
@@ -2673,7 +2673,7 @@ public class SQLManager implements AbstractDB {
             for (Entry<String, Integer> entry : noExist.entrySet()) {
                 String a = entry.getKey();
                 invalidPlot = true;
-                PS.debug("&c[WARNING] Found " + noExist.get(a) + " clusters in DB for non existant area; '" + a + "'.");
+                PS.debug("&c[WARNING] Found " + noExist.get(a) + " clusters in DB for non existent area; '" + a + "'.");
             }
             if (invalidPlot) {
                 PS.debug("&c[WARNING] - Please create the world/s or remove the clusters using the purge command");
@@ -2943,29 +2943,29 @@ public class SQLManager implements AbstractDB {
             if (plot.temp == -1) {
                 continue;
             }
-            HashMap<PlotId, Plot> worldplots = database.get(plot.getArea().toString());
-            if (worldplots == null) {
+            HashMap<PlotId, Plot> worldPlots = database.get(plot.getArea().toString());
+            if (worldPlots == null) {
                 PS.debug("&8 - &7Creating plot (1): " + plot);
                 toCreate.add(plot);
                 continue;
             }
-            Plot dataplot = worldplots.remove(plot.getId());
-            if (dataplot == null) {
+            Plot dataPlot = worldPlots.remove(plot.getId());
+            if (dataPlot == null) {
                 PS.debug("&8 - &7Creating plot (2): " + plot);
                 toCreate.add(plot);
                 continue;
             }
             // owner
-            if (!plot.owner.equals(dataplot.owner)) {
+            if (!plot.owner.equals(dataPlot.owner)) {
                 PS.debug("&8 - &7Setting owner: " + plot + " -> " + MainUtil.getName(plot.owner));
                 setOwner(plot, plot.owner);
             }
             // trusted
-            if (!plot.getTrusted().equals(dataplot.getTrusted())) {
+            if (!plot.getTrusted().equals(dataPlot.getTrusted())) {
                 HashSet<UUID> toAdd = (HashSet<UUID>) plot.getTrusted().clone();
-                HashSet<UUID> toRemove = (HashSet<UUID>) dataplot.getTrusted().clone();
+                HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getTrusted().clone();
                 toRemove.removeAll(plot.getTrusted());
-                toAdd.removeAll(dataplot.getTrusted());
+                toAdd.removeAll(dataPlot.getTrusted());
                 PS.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " trusted for: " + plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
@@ -2978,11 +2978,11 @@ public class SQLManager implements AbstractDB {
                     }
                 }
             }
-            if (!plot.getMembers().equals(dataplot.getMembers())) {
+            if (!plot.getMembers().equals(dataPlot.getMembers())) {
                 HashSet<UUID> toAdd = (HashSet<UUID>) plot.getMembers().clone();
-                HashSet<UUID> toRemove = (HashSet<UUID>) dataplot.getMembers().clone();
+                HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getMembers().clone();
                 toRemove.removeAll(plot.getMembers());
-                toAdd.removeAll(dataplot.getMembers());
+                toAdd.removeAll(dataPlot.getMembers());
                 PS.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " members for: " + plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
@@ -2995,11 +2995,11 @@ public class SQLManager implements AbstractDB {
                     }
                 }
             }
-            if (!plot.getDenied().equals(dataplot.getDenied())) {
+            if (!plot.getDenied().equals(dataPlot.getDenied())) {
                 HashSet<UUID> toAdd = (HashSet<UUID>) plot.getDenied().clone();
-                HashSet<UUID> toRemove = (HashSet<UUID>) dataplot.getDenied().clone();
+                HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getDenied().clone();
                 toRemove.removeAll(plot.getDenied());
-                toAdd.removeAll(dataplot.getDenied());
+                toAdd.removeAll(dataPlot.getDenied());
                 PS.debug("&8 - &7Correcting " + (toAdd.size() + toRemove.size()) + " denied for: " + plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
@@ -3013,13 +3013,13 @@ public class SQLManager implements AbstractDB {
                 }
             }
             boolean[] pm = plot.getMerged();
-            boolean[] dm = dataplot.getMerged();
+            boolean[] dm = dataPlot.getMerged();
             if (pm[0] != dm[0] || pm[1] != dm[1]) {
                 PS.debug("&8 - &7Correcting merge for: " + plot);
-                setMerged(dataplot, plot.getMerged());
+                setMerged(dataPlot, plot.getMerged());
             }
             HashMap<String, Flag> pf = plot.getFlags();
-            HashMap<String, Flag> df = dataplot.getFlags();
+            HashMap<String, Flag> df = dataPlot.getFlags();
             if (!pf.isEmpty() && !df.isEmpty()) {
                 if (pf.size() != df.size() || !StringMan.isEqual(StringMan.joinOrdered(pf.values(), ","), StringMan.joinOrdered(df.values(), ","))) {
                     PS.debug("&8 - &7Correcting flags for: " + plot);

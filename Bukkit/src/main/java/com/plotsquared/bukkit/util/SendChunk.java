@@ -116,10 +116,10 @@ public class SendChunk {
                     try {
                         chunk.unload(true, false);
                     } catch (Throwable e) {
-                        String worldname = chunk.getWorld().getName();
-                        PS.debug("$4Could not save chunk: " + worldname + ";" + chunk.getX() + ";" + chunk.getZ());
+                        String worldName = chunk.getWorld().getName();
+                        PS.debug("$4Could not save chunk: " + worldName + ";" + chunk.getX() + ";" + chunk.getZ());
                         PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
-                        PS.debug("$3 - $4" + worldname + "/level.dat or " + worldname
+                        PS.debug("$3 - $4" + worldName + "/level.dat or " + worldName
                                 + "/level_old.dat may be corrupt (try repairing or removing these)");
                     }
                 }
@@ -127,12 +127,12 @@ public class SendChunk {
         }
     }
 
-    public void sendChunk(String worldname, Collection<ChunkLoc> chunkLocs) {
-        World myworld = Bukkit.getWorld(worldname);
+    public void sendChunk(String worldName, Collection<ChunkLoc> chunkLocations) {
+        World myWorld = Bukkit.getWorld(worldName);
         ArrayList<Chunk> chunks = new ArrayList<>();
-        for (ChunkLoc loc : chunkLocs) {
-            if (myworld.isChunkLoaded(loc.x, loc.z)) {
-                chunks.add(myworld.getChunkAt(loc.x, loc.z));
+        for (ChunkLoc loc : chunkLocations) {
+            if (myWorld.isChunkLoaded(loc.x, loc.z)) {
+                chunks.add(myWorld.getChunkAt(loc.x, loc.z));
             }
         }
         sendChunk(chunks);

@@ -88,14 +88,14 @@ public abstract class TaskManager {
      * @param whenDone
      */
     public static <T> void objectTask(Collection<T> objects, final RunnableVal<T> task, final Runnable whenDone) {
-        final Iterator<T> iter = objects.iterator();
+        final Iterator<T> iterator = objects.iterator();
         TaskManager.runTask(new Runnable() {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
                 boolean hasNext;
-                while ((hasNext = iter.hasNext()) && System.currentTimeMillis() - start < 5) {
-                    task.value = iter.next();
+                while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
+                    task.value = iterator.next();
                     task.run();
                 }
                 if (!hasNext) {

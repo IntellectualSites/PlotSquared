@@ -182,7 +182,7 @@ public class EntityWrapper {
                 storeLiving((LivingEntity) entity);
                 return;
             }
-            // END AMEABLE //
+            // END TAMEABLE //
             case SHEEP: {
                 Sheep sheep = (Sheep) entity;
                 this.dataByte = (byte) (sheep.isSheared() ? 1 : 0);

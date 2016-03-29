@@ -223,9 +223,9 @@ public abstract class HybridUtils {
                                 }
                                 if (chunks.size() < 1024) {
                                     if (!regions.isEmpty()) {
-                                        Iterator<ChunkLoc> iter = regions.iterator();
-                                        ChunkLoc loc = iter.next();
-                                        iter.remove();
+                                        Iterator<ChunkLoc> iterator = regions.iterator();
+                                        ChunkLoc loc = iterator.next();
+                                        iterator.remove();
                                         PS.debug("&3Updating .mcr: " + loc.x + ", " + loc.z + " (aprrox 1024 chunks)");
                                         PS.debug(" - Remaining: " + regions.size());
                                         chunks.addAll(getChunks(loc));
@@ -237,9 +237,9 @@ public abstract class HybridUtils {
                                     if (System.currentTimeMillis() - baseTime - last.get() > 2000 && last.get() != 0) {
                                         last.set(0);
                                         PS.debug(C.PREFIX.s() + "Detected low TPS. Rescheduling in 30s");
-                                        Iterator<ChunkLoc> iter = chunks.iterator();
-                                        final ChunkLoc chunk = iter.next();
-                                        iter.remove();
+                                        Iterator<ChunkLoc> iterator = chunks.iterator();
+                                        final ChunkLoc chunk = iterator.next();
+                                        iterator.remove();
                                         TaskManager.runTask(new Runnable() {
                                             @Override
                                             public void run() {
@@ -252,9 +252,9 @@ public abstract class HybridUtils {
                                     }
                                     if (System.currentTimeMillis() - baseTime - last.get() < 1500 && last.get() != 0) {
                                         while (System.currentTimeMillis() < diff && !chunks.isEmpty()) {
-                                            Iterator<ChunkLoc> iter = chunks.iterator();
-                                            final ChunkLoc chunk = iter.next();
-                                            iter.remove();
+                                            Iterator<ChunkLoc> iterator = chunks.iterator();
+                                            final ChunkLoc chunk = iterator.next();
+                                            iterator.remove();
                                             TaskManager.runTask(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -267,9 +267,9 @@ public abstract class HybridUtils {
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                Iterator<ChunkLoc> iter = regions.iterator();
-                                ChunkLoc loc = iter.next();
-                                iter.remove();
+                                Iterator<ChunkLoc> iterator = regions.iterator();
+                                ChunkLoc loc = iterator.next();
+                                iterator.remove();
                                 PS.debug("&c[ERROR]&7 Could not update '" + area.worldname + "/region/r." + loc.x + "." + loc.z
                                         + ".mca' (Corrupt chunk?)");
                                 int sx = loc.x << 5;
@@ -311,12 +311,12 @@ public abstract class HybridUtils {
         int tz = sz - 1;
         int ty = get_ey(world, sx, ex, bz, tz, sy);
 
-        Set<RegionWrapper> sideroad = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ey, sz, ez)));
+        Set<RegionWrapper> sideRoad = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ey, sz, ez)));
         final Set<RegionWrapper> intersection = new HashSet<>(Collections.singletonList(new RegionWrapper(sx, ex, sy, ty, bz, tz)));
 
         final String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot
                 .getArea().toString() + File.separator;
-        SchematicHandler.manager.getCompoundTag(world, sideroad, new RunnableVal<CompoundTag>() {
+        SchematicHandler.manager.getCompoundTag(world, sideRoad, new RunnableVal<CompoundTag>() {
             @Override
             public void run(CompoundTag value) {
                 SchematicHandler.manager.save(value, dir + "sideroad.schematic");

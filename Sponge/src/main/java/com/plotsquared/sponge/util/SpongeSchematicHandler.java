@@ -1,18 +1,5 @@
 package com.plotsquared.sponge.util;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.item.inventory.Carrier;
-import org.spongepowered.api.item.inventory.type.CarriedInventory;
-import org.spongepowered.api.world.World;
-
 import com.intellectualcrafters.jnbt.ByteArrayTag;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.jnbt.IntTag;
@@ -28,25 +15,37 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.TaskManager;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.item.inventory.Carrier;
+import org.spongepowered.api.item.inventory.type.CarriedInventory;
+import org.spongepowered.api.world.World;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class SpongeSchematicHandler extends SchematicHandler {
     
     @Override
-    public void getCompoundTag(final String world, final Set<RegionWrapper> regions, final RunnableVal<CompoundTag> whenDone) {
+    public void getCompoundTag(String world, Set<RegionWrapper> regions, RunnableVal<CompoundTag> whenDone) {
         // async
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 // Main positions
                 Location[] corners = MainUtil.getCorners(world, regions);
-                final Location bot = corners[0];
-                final Location top = corners[1];
-                
-                final int width = (top.getX() - bot.getX()) + 1;
-                final int height = (top.getY() - bot.getY()) + 1;
-                final int length = (top.getZ() - bot.getZ()) + 1;
+                Location bot = corners[0];
+                Location top = corners[1];
+
+                int width = (top.getX() - bot.getX()) + 1;
+                int height = (top.getY() - bot.getY()) + 1;
+                int length = (top.getZ() - bot.getZ()) + 1;
                 // Main Schematic tag
-                final HashMap<String, Tag> schematic = new HashMap<>();
+                HashMap<String, Tag> schematic = new HashMap<>();
                 schematic.put("Width", new ShortTag("Width", (short) width));
                 schematic.put("Length", new ShortTag("Length", (short) length));
                 schematic.put("Height", new ShortTag("Height", (short) height));
@@ -58,11 +57,11 @@ public class SpongeSchematicHandler extends SchematicHandler {
                 schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
                 schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
                 // Arrays of data types
-                final List<Tag> tileEntities = new ArrayList<Tag>();
-                final byte[] blocks = new byte[width * height * length];
-                final byte[] blockData = new byte[width * height * length];
+                List<Tag> tileEntities = new ArrayList<Tag>();
+                byte[] blocks = new byte[width * height * length];
+                byte[] blockData = new byte[width * height * length];
                 // Queue
-                final ArrayDeque<RegionWrapper> queue = new ArrayDeque<>(regions);
+                ArrayDeque<RegionWrapper> queue = new ArrayDeque<>(regions);
                 TaskManager.runTask(new Runnable() {
                     @Override
                     public void run() {
@@ -82,40 +81,40 @@ public class SpongeSchematicHandler extends SchematicHandler {
                             });
                             return;
                         }
-                        final Runnable regionTask = this;
+                        Runnable regionTask = this;
                         RegionWrapper region = queue.poll();
                         Location pos1 = new Location(world, region.minX, region.minY, region.minZ);
                         Location pos2 = new Location(world, region.maxX, region.maxY, region.maxZ);
-                        final int bx = bot.getX();
-                        final int bz = bot.getZ();
-                        final int p1x = pos1.getX();
-                        final int p1z = pos1.getZ();
-                        final int p2x = pos2.getX();
-                        final int p2z = pos2.getZ();
-                        final int bcx = p1x >> 4;
-                        final int bcz = p1z >> 4;
-                        final int tcx = p2x >> 4;
-                        final int tcz = p2z >> 4;
-                        final int sy = pos1.getY();
-                        final int ey = pos2.getY();
+                        int bx = bot.getX();
+                        int bz = bot.getZ();
+                        int p1x = pos1.getX();
+                        int p1z = pos1.getZ();
+                        int p2x = pos2.getX();
+                        int p2z = pos2.getZ();
+                        int bcx = p1x >> 4;
+                        int bcz = p1z >> 4;
+                        int tcx = p2x >> 4;
+                        int tcz = p2z >> 4;
+                        int sy = pos1.getY();
+                        int ey = pos2.getY();
                         // Generate list of chunks
-                        final ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+                        ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
                         for (int x = bcx; x <= tcx; x++) {
                             for (int z = bcz; z <= tcz; z++) {
                                 chunks.add(new ChunkLoc(x, z));
                             }
                         }
-                        final World worldObj = SpongeUtil.getWorld(world);
+                        World worldObj = SpongeUtil.getWorld(world);
                         // Main thread
                         TaskManager.runTask(new Runnable() {
                             @Override
                             public void run() {
-                                final long start = System.currentTimeMillis();
-                                while ((!chunks.isEmpty()) && ((System.currentTimeMillis() - start) < 20)) {
+                                long start = System.currentTimeMillis();
+                                while (!chunks.isEmpty() && ((System.currentTimeMillis() - start) < 20)) {
                                     // save schematics
-                                    final ChunkLoc chunk = chunks.remove(0);
-                                    final int X = chunk.x;
-                                    final int Z = chunk.z;
+                                    ChunkLoc chunk = chunks.remove(0);
+                                    int X = chunk.x;
+                                    int Z = chunk.z;
                                     int xxb = X << 4;
                                     int zzb = Z << 4;
                                     if (!worldObj.getChunk(xxb, 1, zzb).isPresent() && !worldObj.loadChunk(xxb, 1, zzb, false).isPresent()) {
@@ -137,18 +136,18 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                         zzt = p2z;
                                     }
                                     for (int y = sy; y <= Math.min(255, ey); y++) {
-                                        final int ry = y - sy;
-                                        final int i1 = (ry * width * length);
+                                        int ry = y - sy;
+                                        int i1 = ry * width * length;
                                         for (int z = zzb; z <= zzt; z++) {
-                                            final int rz = z - p1z;
-                                            final int i2 = i1 + (rz * width);
+                                            int rz = z - p1z;
+                                            int i2 = i1 + (rz * width);
                                             for (int x = xxb; x <= xxt; x++) {
-                                                final int rx = x - p1x;
-                                                final int index = i2 + rx;
-                                                
-                                                final BlockState state = worldObj.getBlock(x, y, z);
+                                                int rx = x - p1x;
+                                                int index = i2 + rx;
+
+                                                BlockState state = worldObj.getBlock(x, y, z);
                                                 PlotBlock block = SpongeUtil.getPlotBlock(state);
-                                                final int id = block.id;
+                                                int id = block.id;
                                                 switch (id) {
                                                     case 0:
                                                     case 2:
@@ -265,15 +264,15 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                                             rawTag = null;
                                                         }
                                                         if (rawTag != null) {
-                                                            final Map<String, Tag> values = new HashMap<String, Tag>();
-                                                            for (final Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
+                                                            Map<String, Tag> values = new HashMap<String, Tag>();
+                                                            for (Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
                                                                 values.put(entry.getKey(), entry.getValue());
                                                             }
                                                             values.put("id", new StringTag("id", "Chest"));
                                                             values.put("x", new IntTag("x", x));
                                                             values.put("y", new IntTag("y", y));
                                                             values.put("z", new IntTag("z", z));
-                                                            final CompoundTag tileEntityTag = new CompoundTag(values);
+                                                            CompoundTag tileEntityTag = new CompoundTag(values);
                                                             tileEntities.add(tileEntityTag);
                                                         }
                                                     }
@@ -300,7 +299,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
     }
     
     @Override
-    public void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schem) {
+    public void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schematic) {
         // TODO Auto-generated method stub
         // This method should place the compound tag at a location e.g. chest contents
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");

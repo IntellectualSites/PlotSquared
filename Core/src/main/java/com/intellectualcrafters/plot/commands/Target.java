@@ -20,16 +20,16 @@ public class Target extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
-        Location ploc = plr.getLocation();
-        if (!ploc.isPlotArea()) {
+        Location plrLocation = plr.getLocation();
+        if (!plrLocation.isPlotArea()) {
             MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         Plot target = null;
         if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
             int distance = Integer.MAX_VALUE;
-            for (Plot plot : PS.get().getPlots(ploc.getWorld())) {
-                double current = plot.getCenter().getEuclideanDistanceSquared(ploc);
+            for (Plot plot : PS.get().getPlots(plrLocation.getWorld())) {
+                double current = plot.getCenter().getEuclideanDistanceSquared(plrLocation);
                 if (current < distance) {
                     distance = (int) current;
                     target = plot;

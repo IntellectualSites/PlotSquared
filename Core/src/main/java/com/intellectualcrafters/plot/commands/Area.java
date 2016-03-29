@@ -86,17 +86,17 @@ public class Area extends SubCommand {
                                 Location pos2 = plr.getMeta("area_pos1");
                                 int dx = Math.abs(pos1.getX() - pos2.getX());
                                 int dz = Math.abs(pos1.getZ() - pos2.getZ());
-                                int numx = Math.max(1, (dx + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
-                                int numz = Math.max(1, (dz + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
-                                int ddx = dx - (numx * area.SIZE - area.ROAD_WIDTH);
-                                int ddz = dz - (numz * area.SIZE - area.ROAD_WIDTH);
+                                int numX = Math.max(1, (dx + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
+                                int numZ = Math.max(1, (dz + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
+                                int ddx = dx - (numX * area.SIZE - area.ROAD_WIDTH);
+                                int ddz = dz - (numZ * area.SIZE - area.ROAD_WIDTH);
                                 int bx = Math.min(pos1.getX(), pos2.getX()) + ddx;
                                 int bz = Math.min(pos1.getZ(), pos2.getZ()) + ddz;
                                 int tx = Math.max(pos1.getX(), pos2.getX()) - ddx;
                                 int tz = Math.max(pos1.getZ(), pos2.getZ()) - ddz;
                                 int lower = (area.ROAD_WIDTH & 1) == 0 ? area.ROAD_WIDTH / 2 - 1 : area.ROAD_WIDTH / 2;
-                                final int offsetx = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
-                                final int offsetz = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
+                                final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
+                                final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final RegionWrapper region = new RegionWrapper(bx, tx, bz, tz);
                                 Set<PlotArea> areas = PS.get().getPlotAreas(area.worldname, region);
                                 if (!areas.isEmpty()) {
@@ -109,7 +109,7 @@ public class Area extends SubCommand {
                                 object.terrain = area.TERRAIN;
                                 object.type = area.TYPE;
                                 object.min = new PlotId(1, 1);
-                                object.max = new PlotId(numx, numz);
+                                object.max = new PlotId(numX, numZ);
                                 object.plotManager = "PlotSquared";
                                 object.setupGenerator = "PlotSquared";
                                 object.step = area.getSettingNodes();
@@ -117,11 +117,11 @@ public class Area extends SubCommand {
                                 Runnable run = new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (offsetx != 0) {
-                                            PS.get().config.set(path + ".road.offset.x", offsetx);
+                                        if (offsetX != 0) {
+                                            PS.get().config.set(path + ".road.offset.x", offsetX);
                                         }
-                                        if (offsetz != 0) {
-                                            PS.get().config.set(path + ".road.offset.z", offsetz);
+                                        if (offsetZ != 0) {
+                                            PS.get().config.set(path + ".road.offset.z", offsetZ);
                                         }
                                         final String world = SetupUtils.manager.setupWorld(object);
                                         if (WorldUtil.IMP.isWorld(world)) {

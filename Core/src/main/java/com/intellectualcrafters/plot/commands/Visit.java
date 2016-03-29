@@ -9,6 +9,7 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -85,10 +86,10 @@ public class Visit extends SubCommand {
             sendMessage(player, C.FOUND_NO_PLOTS);
             return false;
         }
-        Iterator<Plot> iter = unsorted.iterator();
-        while (iter.hasNext()) {
-            if (!iter.next().isBasePlot()) {
-                iter.remove();
+        Iterator<Plot> iterator = unsorted.iterator();
+        while (iterator.hasNext()) {
+            if (!iterator.next().isBasePlot()) {
+                iterator.remove();
             }
         }
         if (page < 1 || page > unsorted.size()) {

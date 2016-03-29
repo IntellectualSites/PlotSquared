@@ -372,8 +372,8 @@ public class MainListener {
         if (e instanceof ExplosionEvent.Detonate) {
             ExplosionEvent.Detonate event = (Detonate) e;
             World world = event.getTargetWorld();
-            String worldname = world.getName();
-            if (!PS.get().hasPlotArea(worldname)) {
+            String worldName = world.getName();
+            if (!PS.get().hasPlotArea(worldName)) {
                 return;
             }
             Optional<Explosive> source = event.getExplosion().getSourceExplosive();
@@ -418,13 +418,13 @@ public class MainListener {
     
     public void onChangeBlock(ChangeBlockEvent event) {
         World world = event.getTargetWorld();
-        String worldname = world.getName();
-        if (!PS.get().hasPlotArea(worldname)) {
+        String worldName = world.getName();
+        if (!PS.get().hasPlotArea(worldName)) {
             return;
         }
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
-        Location loc = SpongeUtil.getLocation(worldname, first.getOriginal().getPosition());
+        Location loc = SpongeUtil.getLocation(worldName, first.getOriginal().getPosition());
         Plot plot = loc.getPlot();
         if (plot == null) {
             if (!loc.isPlotArea()) {
@@ -436,7 +436,7 @@ public class MainListener {
         event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
             @Override
             public boolean test(org.spongepowered.api.world.Location<World> loc) {
-                return !SpongeUtil.getLocation(worldname, loc).isPlotRoad();
+                return !SpongeUtil.getLocation(worldName, loc).isPlotRoad();
             }
         });
     }
@@ -465,14 +465,14 @@ public class MainListener {
         }
         PlotPlayer pp = SpongeUtil.getPlayer(player);
         World world = event.getTargetWorld();
-        String worldname = world.getName();
-        if (!PS.get().hasPlotArea(worldname)) {
+        String worldName = world.getName();
+        if (!PS.get().hasPlotArea(worldName)) {
             return;
         }
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
         BlockSnapshot pos = first.getOriginal();
-        Location loc = SpongeUtil.getLocation(worldname, pos.getPosition());
+        Location loc = SpongeUtil.getLocation(worldName, pos.getPosition());
         Plot plot = loc.getPlot();
         if (plot == null) {
             if (!loc.isPlotArea()) {
@@ -507,7 +507,7 @@ public class MainListener {
 
             @Override
             public boolean test(org.spongepowered.api.world.Location<World> l) {
-                Location loc = SpongeUtil.getLocation(worldname, l);
+                Location loc = SpongeUtil.getLocation(worldName, l);
                 Plot plot = loc.getPlot();
                 if (plot == null) {
                     if (loc.getPlotAbs() == null) {
@@ -546,14 +546,14 @@ public class MainListener {
         }
         PlotPlayer pp = SpongeUtil.getPlayer(player);
         World world = event.getTargetWorld();
-        String worldname = world.getName();
-        if (!PS.get().hasPlotArea(worldname)) {
+        String worldName = world.getName();
+        if (!PS.get().hasPlotArea(worldName)) {
             return;
         }
         List<Transaction<BlockSnapshot>> transactions = event.getTransactions();
         Transaction<BlockSnapshot> first = transactions.get(0);
         BlockSnapshot pos = first.getOriginal();
-        Location loc = SpongeUtil.getLocation(worldname, pos.getPosition());
+        Location loc = SpongeUtil.getLocation(worldName, pos.getPosition());
         Plot plot = loc.getPlot();
         if (plot == null) {
             if (loc.getPlotAbs() == null) {
@@ -588,7 +588,7 @@ public class MainListener {
 
             @Override
             public boolean test(org.spongepowered.api.world.Location<World> l) {
-                Location loc = SpongeUtil.getLocation(worldname, l);
+                Location loc = SpongeUtil.getLocation(worldName, l);
                 Plot plot = loc.getPlot();
                 if (plot == null) {
                     if (loc.getPlotAbs() == null) {

@@ -55,10 +55,10 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
             @Override
             public void run() {
                 PS.debug(C.PREFIX + "&6Starting player data caching for: " + world);
-                File uuidfile = new File(PS.get().IMP.getDirectory(), "uuids.txt");
-                if (uuidfile.exists()) {
+                File uuidFile = new File(PS.get().IMP.getDirectory(), "uuids.txt");
+                if (uuidFile.exists()) {
                     try {
-                        List<String> lines = Files.readAllLines(uuidfile.toPath(), StandardCharsets.UTF_8);
+                        List<String> lines = Files.readAllLines(uuidFile.toPath(), StandardCharsets.UTF_8);
                         for (String line : lines) {
                             try {
                                 line = line.trim();
@@ -89,8 +89,8 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     toAdd.put(new StringWrapper("*"), DBFunc.everyone);
                     HashSet<UUID> all = UUIDHandler.getAllUUIDS();
                     PS.debug("&aFast mode UUID caching enabled!");
-                    File playerdataFolder = new File(container, world + File.separator + "playerdata");
-                    String[] dat = playerdataFolder.list(new FilenameFilter() {
+                    File playerDataFolder = new File(container, world + File.separator + "playerdata");
+                    String[] dat = playerDataFolder.list(new FilenameFilter() {
                         @Override
                         public boolean accept(File f, String s) {
                             return s.endsWith(".dat");
@@ -103,7 +103,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             try {
                                 UUID uuid = UUID.fromString(s);
                                 if (check || all.remove(uuid)) {
-                                    File file = new File(playerdataFolder + File.separator + current);
+                                    File file = new File(playerDataFolder + File.separator + current);
                                     InputSupplier<FileInputStream> is = com.google.common.io.Files.newInputStreamSupplier(file);
                                     NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
                                     NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
@@ -137,11 +137,11 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 worlds.add("world");
                 HashSet<UUID> uuids = new HashSet<>();
                 HashSet<String> names = new HashSet<>();
-                File playerdataFolder = null;
+                File playerDataFolder = null;
                 for (String worldName : worlds) {
                     // Getting UUIDs
-                    playerdataFolder = new File(container, worldName + File.separator + "playerdata");
-                    String[] dat = playerdataFolder.list(new FilenameFilter() {
+                    playerDataFolder = new File(container, worldName + File.separator + "playerdata");
+                    String[] dat = playerDataFolder.list(new FilenameFilter() {
                         @Override
                         public boolean accept(File f, String s) {
                             return s.endsWith(".dat");
@@ -154,7 +154,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                 UUID uuid = UUID.fromString(s);
                                 uuids.add(uuid);
                             } catch (Exception e) {
-                                PS.debug(C.PREFIX + "Invalid playerdata: " + current);
+                                PS.debug(C.PREFIX + "Invalid PlayerData: " + current);
                             }
                         }
                         break;
@@ -176,7 +176,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 }
                 for (UUID uuid : uuids) {
                     try {
-                        File file = new File(playerdataFolder + File.separator + uuid.toString() + ".dat");
+                        File file = new File(playerDataFolder + File.separator + uuid.toString() + ".dat");
                         if (!file.exists()) {
                             continue;
                         }
@@ -199,7 +199,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         }
                         toAdd.put(new StringWrapper(name), uuid);
                     } catch (Throwable e) {
-                        PS.debug(C.PREFIX + "&6Invalid playerdata: " + uuid.toString() + ".dat");
+                        PS.debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
                     }
                 }
                 for (String name : names) {

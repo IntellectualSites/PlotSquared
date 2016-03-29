@@ -121,8 +121,8 @@ public class Purge extends SubCommand {
         }
         if (PS.get().plots_tmp != null) {
             for (Entry<String, HashMap<PlotId, Plot>> entry : PS.get().plots_tmp.entrySet()) {
-                String worldname = entry.getKey();
-                if (world != null && !world.equalsIgnoreCase(worldname)) {
+                String worldName = entry.getKey();
+                if (world != null && !world.equalsIgnoreCase(worldName)) {
                     continue;
                 }
                 for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {

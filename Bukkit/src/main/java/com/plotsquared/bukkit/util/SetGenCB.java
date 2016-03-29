@@ -45,10 +45,10 @@ public class SetGenCB {
             }
         }
         if (!set) {
-            Iterator<BlockPopulator> iter = world.getPopulators().iterator();
-            while (iter.hasNext()) {
-                if (iter.next() instanceof BukkitAugmentedGenerator) {
-                    iter.remove();
+            Iterator<BlockPopulator> iterator = world.getPopulators().iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next() instanceof BukkitAugmentedGenerator) {
+                    iterator.remove();
                 }
             }
         }

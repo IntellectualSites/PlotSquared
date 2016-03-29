@@ -3,19 +3,15 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.Permissions;
 
-/**
- * Created by Citymonstret on 2014-08-03.
- *
-
- */
 public class CommandPermission {
 
     /**
-     * Permission Node
+     * Permission Node.
      */
     public final String permission;
 
     /**
+     * Command Permission
      * @param permission Command Permission
      */
     public CommandPermission(String permission) {
@@ -23,7 +19,8 @@ public class CommandPermission {
     }
 
     /**
-     * @param player Does the player have the permission?
+     * Check the permissions of a player.
+     * @param player The player to check permissions for
      *
      * @return true of player has the required permission node
      */

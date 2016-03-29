@@ -6,7 +6,6 @@ import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.sponge.object.SpongePlayer;
@@ -19,7 +18,11 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 
 /**
@@ -29,11 +32,11 @@ import java.util.Map.Entry;
  */
 public class SendChunk {
 
-    public void sendChunk(final Collection<Chunk> input) {
-        final HashSet<Chunk> chunks = new HashSet<Chunk>(input);
-        final HashMap<String, ArrayList<Chunk>> map = new HashMap<>();
-        for (final Chunk chunk : chunks) {
-            final String world = chunk.getWorld().getName();
+    public void sendChunk(Collection<Chunk> input) {
+        HashSet<Chunk> chunks = new HashSet<Chunk>(input);
+        HashMap<String, ArrayList<Chunk>> map = new HashMap<>();
+        for (Chunk chunk : chunks) {
+            String world = chunk.getWorld().getName();
             ArrayList<Chunk> list = map.get(world);
             if (list == null) {
                 list = new ArrayList<>();
@@ -44,7 +47,7 @@ public class SendChunk {
         }
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer pp = entry.getValue();
-            final Plot plot = pp.getCurrentPlot();
+            Plot plot = pp.getCurrentPlot();
             Location loc = null;
             String world;
             if (plot != null) {
@@ -53,16 +56,16 @@ public class SendChunk {
                 loc = pp.getLocation();
                 world = loc.getWorld();
             }
-            final ArrayList<Chunk> list = map.get(world);
+            ArrayList<Chunk> list = map.get(world);
             if (list == null) {
                 continue;
             }
             if (loc == null) {
                 loc = pp.getLocation();
             }
-            final int cx = loc.getX() >> 4;
-            final int cz = loc.getZ() >> 4;
-            final Player player = ((SpongePlayer) pp).player;
+            int cx = loc.getX() >> 4;
+            int cz = loc.getZ() >> 4;
+            Player player = ((SpongePlayer) pp).player;
             int view = player.getViewDistance();
             EntityPlayer nmsPlayer = (EntityPlayer) player;
             if (!(nmsPlayer instanceof EntityPlayerMP)) {
@@ -70,10 +73,10 @@ public class SendChunk {
                 return;
             }
             EntityPlayerMP nmsPlayerMP = (EntityPlayerMP) nmsPlayer;
-            for (final Chunk chunk : list) {
+            for (Chunk chunk : list) {
                 Vector3i min = chunk.getBlockMin();
-                final int dx = Math.abs(cx - (min.getX() >> 4));
-                final int dz = Math.abs(cz - (min.getZ() >> 4));
+                int dx = Math.abs(cx - (min.getX() >> 4));
+                int dz = Math.abs(cz - (min.getZ() >> 4));
                 if ((dx > view) || (dz > view)) {
                     continue;
                 }
@@ -84,7 +87,7 @@ public class SendChunk {
                 con.sendPacket(packet);
             }
         }
-        for (final Chunk chunk : chunks) {
+        for (Chunk chunk : chunks) {
             TaskManager.runTask(new Runnable() {
                 @Override
                 public void run() {
@@ -94,10 +97,10 @@ public class SendChunk {
         }
     }
 
-    public void sendChunk(final String worldname, final List<ChunkLoc> locs) {
-        World spongeWorld = SpongeUtil.getWorld(worldname);
-        final ArrayList<Chunk> chunks = new ArrayList<>();
-        for (final ChunkLoc loc : locs) {
+    public void sendChunk(String worldName, List<ChunkLoc> chunkLocations) {
+        World spongeWorld = SpongeUtil.getWorld(worldName);
+        ArrayList<Chunk> chunks = new ArrayList<>();
+        for (ChunkLoc loc : chunkLocations) {
             chunks.add(spongeWorld.getChunk(loc.x, 0, loc.z).get());
         }
         sendChunk(chunks);

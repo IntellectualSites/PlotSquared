@@ -151,7 +151,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
 
     @Override
     public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
-        PS.debug(C.PREFIX + "UUID for '" + name + "' was null. We'll cache this from the mojang servers!");
+        PS.debug(C.PREFIX + "UUID for '" + name + "' was null. We'll cache this from the Mojang servers!");
         if (ifFetch == null) {
             return;
         }

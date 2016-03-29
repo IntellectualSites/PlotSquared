@@ -170,11 +170,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void registerCommands() {
-        BukkitCommand bcmd = new BukkitCommand();
+        BukkitCommand bukkitCommand = new BukkitCommand();
         PluginCommand plotCommand = getCommand("plots");
-        plotCommand.setExecutor(bcmd);
+        plotCommand.setExecutor(bukkitCommand);
         plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
-        plotCommand.setTabCompleter(bcmd);
+        plotCommand.setTabCompleter(bukkitCommand);
     }
 
     @Override
@@ -225,7 +225,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case WITHER_SKULL:
                                     case UNKNOWN:
                                     case PLAYER: {
-                                        // non moving / unremovable
+                                        // non moving / unmovable
                                         continue;
                                     }
                                     case THROWN_EXP_BOTTLE:

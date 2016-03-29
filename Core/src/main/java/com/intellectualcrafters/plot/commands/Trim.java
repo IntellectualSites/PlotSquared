@@ -14,6 +14,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -164,9 +165,9 @@ public class Trim extends SubCommand {
                                 plr.sendMessage("Trim done!");
                                 return;
                             }
-                            Iterator<ChunkLoc> iter = nonViable.iterator();
-                            ChunkLoc mcr = iter.next();
-                            iter.remove();
+                            Iterator<ChunkLoc> iterator = nonViable.iterator();
+                            ChunkLoc mcr = iterator.next();
+                            iterator.remove();
                             int cbx = mcr.x << 5;
                             int cbz = mcr.z << 5;
                             // get all 1024 chunks

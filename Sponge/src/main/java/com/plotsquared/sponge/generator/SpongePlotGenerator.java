@@ -28,9 +28,9 @@ public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWra
     private final IndependentPlotGenerator plotGenerator;
     private final List<GenerationPopulator> populators = new ArrayList<>();
     private final boolean loaded = false;
-    private PlotManager manager;
     private final WorldGeneratorModifier platformGenerator;
     private final boolean full;
+    private PlotManager manager;
     
     public SpongePlotGenerator(IndependentPlotGenerator generator) {
         this.plotGenerator = generator;
@@ -48,34 +48,34 @@ public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWra
 
     @Override
     public String getId() {
-        if (plotGenerator == null) {
-            if (platformGenerator != this) {
-                return platformGenerator.getId();
+        if (this.plotGenerator == null) {
+            if (this.platformGenerator != this) {
+                return this.platformGenerator.getId();
             }
             return "null";
         }
-        return plotGenerator.getName();
+        return this.plotGenerator.getName();
     }
     
     @Override
     public String getName() {
-        if (plotGenerator == null) {
-            if (platformGenerator != this) {
-                return platformGenerator.getName();
+        if (this.plotGenerator == null) {
+            if (this.platformGenerator != this) {
+                return this.platformGenerator.getName();
             }
             return "null";
         }
-        return plotGenerator.getName();
+        return this.plotGenerator.getName();
     }
     
     @Override
     public void modifyWorldGenerator(WorldCreationSettings settings, DataContainer data, WorldGenerator wg) {
-        final String worldname = settings.getWorldName();
-        wg.setBaseGenerationPopulator(new SpongeTerrainGen(this, plotGenerator));
+        String worldName = settings.getWorldName();
+        wg.setBaseGenerationPopulator(new SpongeTerrainGen(this, this.plotGenerator));
         wg.setBiomeGenerator(new BiomeGenerator() {
             @Override
             public void generateBiomes(MutableBiomeArea buffer) {
-                PlotArea area = PS.get().getPlotArea(worldname, null);
+                PlotArea area = PS.get().getPlotArea(worldName, null);
                 if (area != null) {
                     BiomeType biome = SpongeUtil.getBiome(area.PLOT_BIOME);
                     Vector2i min = buffer.getBiomeMin();
@@ -96,17 +96,17 @@ public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWra
     }
         wg.getGenerationPopulators().clear();
         wg.getPopulators().clear();
-        PS.get().loadWorld(worldname, this);
+        PS.get().loadWorld(worldName, this);
     }
     
     @Override
     public IndependentPlotGenerator getPlotGenerator() {
-        return plotGenerator;
+        return this.plotGenerator;
     }
     
     @Override
     public WorldGeneratorModifier getPlatformGenerator() {
-        return platformGenerator;
+        return this.platformGenerator;
     }
     
     @Override
@@ -116,7 +116,7 @@ public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWra
     
     @Override
     public boolean isFull() {
-        return full;
+        return this.full;
     }
     
 }

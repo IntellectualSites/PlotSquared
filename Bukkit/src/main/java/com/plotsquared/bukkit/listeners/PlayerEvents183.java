@@ -25,11 +25,11 @@ public class PlayerEvents183 implements Listener {
         }
         PlotArea area = loc.getPlotArea();
         if (area == null) {
-            Iterator<Block> iter = event.blockList().iterator();
-            while (iter.hasNext()) {
-                loc = BukkitUtil.getLocation(iter.next().getLocation());
+            Iterator<Block> iterator = event.blockList().iterator();
+            while (iterator.hasNext()) {
+                loc = BukkitUtil.getLocation(iterator.next().getLocation());
                 if (loc.getPlotArea() != null) {
-                    iter.remove();
+                    iterator.remove();
                 }
             }
             return;
@@ -38,11 +38,11 @@ public class PlayerEvents183 implements Listener {
         if (plot == null || !FlagManager.isPlotFlagTrue(plot, "explosion")) {
             event.setCancelled(true);
         }
-        Iterator<Block> iter = event.blockList().iterator();
-        while (iter.hasNext()) {
-            Block b = iter.next();
+        Iterator<Block> iterator = event.blockList().iterator();
+        while (iterator.hasNext()) {
+            Block b = iterator.next();
             if (!plot.equals(area.getOwnedPlot(BukkitUtil.getLocation(b.getLocation())))) {
-                iter.remove();
+                iterator.remove();
             }
         }
     }

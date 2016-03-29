@@ -223,7 +223,7 @@ public class NbtFactory {
 
     /**
      * Construct a new NBT wrapper from a compound.
-     * @param nmsCompound - the NBT compund.
+     * @param nmsCompound - the NBT compound.
      * @return The wrapper.
      */
     public static NbtCompound fromCompound(Object nmsCompound) {
@@ -247,7 +247,7 @@ public class NbtFactory {
 
     /**
      * Construct a wrapper for an NBT tag stored (in memory) in an item stack. This is where
-     * auxillary data such as enchanting, name and lore is stored. It does not include items
+     * auxiliary data such as enchanting, name and lore is stored. It does not include items
      * material, damage value or count.
      * <p>
      * The item stack must be a wrapper for a CraftItemStack.
@@ -669,7 +669,7 @@ public class NbtFactory {
             super(handle, getDataMap(handle));
         }
 
-        // Simplifiying access to each value
+        // Simplifying access to each value
         public Byte getByte(String key, Byte defaultValue) {
             return containsKey(key) ? (Byte) get(key) : defaultValue;
         }

@@ -362,7 +362,7 @@ public class SpongeUtil extends WorldUtil {
     }
 
     @Override
-    public void saveWorld(String worldname) {
+    public void saveWorld(String worldName) {
         throw new NotImplementedException("TODO WIP"); // TODO FIXME
     }
 
@@ -391,8 +391,8 @@ public class SpongeUtil extends WorldUtil {
     }
     
     @Override
-    public boolean isWorld(String world) {
-        return SpongeUtil.getWorld(world) != null;
+    public boolean isWorld(String worldName) {
+        return SpongeUtil.getWorld(worldName) != null;
     }
     
     @Override
@@ -401,8 +401,8 @@ public class SpongeUtil extends WorldUtil {
     }
     
     @Override
-    public int getHighestBlock(String worldname, int x, int z) {
-        World world = SpongeUtil.getWorld(worldname);
+    public int getHighestBlock(String worldName, int x, int z) {
+        World world = SpongeUtil.getWorld(worldName);
         if (world == null) {
             return 64;
         }
@@ -416,8 +416,8 @@ public class SpongeUtil extends WorldUtil {
     }
     
     @Override
-    public void setSign(String worldname, int x, int y, int z, String[] lines) {
-        World world = SpongeUtil.getWorld(worldname);
+    public void setSign(String worldName, int x, int y, int z, String[] lines) {
+        World world = SpongeUtil.getWorld(worldName);
         world.setBlock(x, y, z, BlockTypes.WALL_SIGN.getDefaultState());
         Optional<TileEntity> block = world.getTileEntity(x, y, z);
         if (!block.isPresent()) {
@@ -436,8 +436,8 @@ public class SpongeUtil extends WorldUtil {
     }
     
     @Override
-    public void setBiomes(String worldname, RegionWrapper region, String biomename) {
-        World world = SpongeUtil.getWorld(worldname);
+    public void setBiomes(String worldName, RegionWrapper region, String biomename) {
+        World world = SpongeUtil.getWorld(worldName);
         BiomeType biome = SpongeUtil.getBiome(biomename);
         for (int x = region.minX; x <= region.maxX; x++) {
             for (int z = region.minZ; z <= region.maxZ; z++) {

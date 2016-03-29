@@ -10,6 +10,7 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -55,13 +56,13 @@ public class Condense extends SubCommand {
                 int radius = Integer.parseInt(args[2]);
                 ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots(area));
                 // remove non base plots
-                Iterator<Plot> iter = plots.iterator();
+                Iterator<Plot> iterator = plots.iterator();
                 int maxSize = 0;
                 ArrayList<Integer> sizes = new ArrayList<>();
-                while (iter.hasNext()) {
-                    Plot plot = iter.next();
+                while (iterator.hasNext()) {
+                    Plot plot = iterator.next();
                     if (!plot.isBasePlot()) {
-                        iter.remove();
+                        iterator.remove();
                         continue;
                     }
                     int size = plot.getConnectedPlots().size();
