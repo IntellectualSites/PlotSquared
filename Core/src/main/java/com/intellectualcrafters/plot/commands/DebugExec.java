@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.object.PlotAnalysis;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
+import com.intellectualcrafters.plot.object.PlotMessage;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.RunnableVal2;
@@ -43,6 +44,7 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -57,7 +59,6 @@ import javax.script.SimpleScriptContext;
         aliases = {"exec", "$"},
         category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
-
     private ScriptEngine engine;
     private Bindings scope;
 
@@ -145,7 +146,7 @@ public class DebugExec extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
         java.util.List<String> allowed_params =
-                Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen");
+                Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "list-scripts");
         if (args.length > 0) {
             String arg = args[0].toLowerCase();
             String script;
@@ -329,6 +330,42 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     break;
+                case "list-scripts":
+                    final String path = PS.get().IMP.getDirectory() + File.separator + "scripts";
+                    File folder = new File(path);
+                    File[] filesArray = folder.listFiles();
+
+                    int page;
+                    switch (args.length) {
+                        case 1:
+                            page = 0;
+                            break;
+                        case 2:
+                            if (MathMan.isInteger(args[1])) {
+                                page = Integer.parseInt(args[1]) - 1;
+                                break;
+                            }
+                        default:
+                            C.COMMAND_SYNTAX.send(player, "/plot debugexec list-scripts [#]");
+                            return false;
+                    }
+
+                    List<File> allFiles = Arrays.asList(filesArray);
+                    paginate(player, allFiles, 8, page, new RunnableVal3<Integer, File, PlotMessage>() {
+
+                        @Override
+                        public void run(Integer i, File file, PlotMessage message) {
+                            String name;
+                            name = file.getName();
+
+                            message.text("[").color("$3")
+                                    .text(i + "").color("$1")
+                                    .text("]").color("$3")
+                                    .text(" " + name).color("$1");
+
+                        }
+                    }, "/plot debugexec list-scripts", "List of scripts");
+                    return true;
                 case "allcmd":
                     if (args.length < 3) {
                         C.COMMAND_SYNTAX.send(player, "/plot debugexec allcmd <condition> <command>");
