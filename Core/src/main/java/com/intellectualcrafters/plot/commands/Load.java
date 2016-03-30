@@ -65,9 +65,9 @@ public class Load extends SubCommand {
                     MainUtil.sendMessage(plr, C.LOAD_NULL);
                     return false;
                 }
-                String schem;
+                String schematic;
                 try {
-                    schem = schematics.get(Integer.parseInt(args[0]) - 1);
+                    schematic = schematics.get(Integer.parseInt(args[0]) - 1);
                 } catch (NumberFormatException e) {
                     // use /plot load <index>
                     MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ")");
@@ -75,7 +75,7 @@ public class Load extends SubCommand {
                 }
                 final URL url;
                 try {
-                    url = new URL(Settings.WEB_URL + "saves/" + plr.getUUID() + "/" + schem + ".schematic");
+                    url = new URL(Settings.WEB_URL + "saves/" + plr.getUUID() + "/" + schematic + ".schematic");
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     MainUtil.sendMessage(plr, C.LOAD_FAILED);
@@ -140,8 +140,8 @@ public class Load extends SubCommand {
         List<String> schematics = player.getMeta("plot_schematics");
         for (int i = 0; i < Math.min(schematics.size(), 32); i++) {
             try {
-                String schem = schematics.get(i);
-                String[] split = schem.split("_");
+                String schematic = schematics.get(i);
+                String[] split = schematic.split("_");
                 if (split.length != 6) {
                     continue;
                 }

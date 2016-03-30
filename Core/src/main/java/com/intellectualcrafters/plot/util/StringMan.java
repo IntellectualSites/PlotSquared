@@ -42,21 +42,6 @@ public class StringMan {
         return count;
     }
 
-    public Collection match(Collection col, String startsWith) {
-        if (col == null) {
-            return null;
-        }
-        startsWith = startsWith.toLowerCase();
-        Iterator iter = col.iterator();
-        while (iter.hasNext()) {
-            Object item = iter.next();
-            if (item == null || !item.toString().toLowerCase().startsWith(startsWith)) {
-                iter.remove();
-            }
-        }
-        return col;
-    }
-
     public static String getString(Object obj) {
         if (obj == null) {
             return "null";
@@ -278,5 +263,20 @@ public class StringMan {
             sb.append(s);
         }
         return sb.toString();
+    }
+
+    public Collection match(Collection col, String startsWith) {
+        if (col == null) {
+            return null;
+        }
+        startsWith = startsWith.toLowerCase();
+        Iterator iterator = col.iterator();
+        while (iterator.hasNext()) {
+            Object item = iterator.next();
+            if (item == null || !item.toString().toLowerCase().startsWith(startsWith)) {
+                iterator.remove();
+            }
+        }
+        return col;
     }
 }

@@ -11,8 +11,8 @@ import com.intellectualcrafters.plot.util.StringMan;
 public class AbstractFlag {
     public final String key;
     public final FlagValue<?> value;
-    
-    public AbstractFlag(final String key) {
+
+    public AbstractFlag(String key) {
         this(key, new FlagValue.StringValue());
     }
     
@@ -21,7 +21,7 @@ public class AbstractFlag {
      * The key must be alphabetical characters and &lt;= 16 characters in length
      * @param key
      */
-    public AbstractFlag(final String key, final FlagValue<?> value) {
+    public AbstractFlag(String key, FlagValue<?> value) {
         if (!StringMan.isAlpha(key.replaceAll("_", "").replaceAll("-", ""))) {
             throw new IllegalArgumentException("Flag must be alphabetic characters");
         }
@@ -37,23 +37,23 @@ public class AbstractFlag {
     }
     
     public boolean isList() {
-        return value instanceof FlagValue.ListValue;
+        return this.value instanceof FlagValue.ListValue;
     }
-    
-    public Object parseValueRaw(final String value) {
+
+    public Object parseValueRaw(String value) {
         try {
             return this.value.parse(value);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
-    
-    public String toString(final Object t) {
-        return value.toString(t);
+
+    public String toString(Object t) {
+        return this.value.toString(t);
     }
     
     public String getValueDesc() {
-        return value.getDescription();
+        return this.value.getDescription();
     }
     
     /**
@@ -62,28 +62,28 @@ public class AbstractFlag {
      * @return String
      */
     public String getKey() {
-        return key;
+        return this.key;
     }
     
     @Override
     public String toString() {
-        return key;
+        return this.key;
     }
     
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return this.key.hashCode();
     }
     
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         if (other == this) {
             return true;
         }
         if (!(other instanceof AbstractFlag)) {
             return false;
         }
-        final AbstractFlag otherObj = (AbstractFlag) other;
-        return otherObj.key.equals(key);
+        AbstractFlag otherObj = (AbstractFlag) other;
+        return otherObj.key.equals(this.key);
     }
 }

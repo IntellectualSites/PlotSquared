@@ -30,11 +30,10 @@ public class Help extends Command {
     @Override
     public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
         switch (args.length) {
-            case 0: {
+            case 0:
                 displayHelp(player, null, 0);
                 return;
-            }
-            case 1: {
+            case 1:
                 if (MathMan.isInteger(args[0])) {
                     try {
                         displayHelp(player, null, Integer.parseInt(args[0]));
@@ -45,8 +44,7 @@ public class Help extends Command {
                     displayHelp(player, args[0], 1);
                 }
                 return;
-            }
-            case 2: {
+            case 2:
                 if (MathMan.isInteger(args[1])) {
                     try {
                         displayHelp(player, args[1], Integer.parseInt(args[1]));
@@ -55,10 +53,8 @@ public class Help extends Command {
                     }
                 }
                 return;
-            }
-            default: {
+            default:
                 C.COMMAND_SYNTAX.send(player, getUsage());
-            }
         }
     }
 

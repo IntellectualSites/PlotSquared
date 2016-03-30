@@ -25,9 +25,9 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
     public static SpongeAugmentedGenerator get(World world) {
         WorldGenerator wg = world.getWorldGenerator();
         List<GenerationPopulator> populators = wg.getGenerationPopulators();
-        for (GenerationPopulator poplator : populators) {
-            if (poplator instanceof SpongeAugmentedGenerator) {
-                return (SpongeAugmentedGenerator) poplator;
+        for (GenerationPopulator populator : populators) {
+            if (populator instanceof SpongeAugmentedGenerator) {
+                return (SpongeAugmentedGenerator) populator;
             }
         }
         if (generator == null) {
@@ -38,12 +38,12 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
     }
     
     @Override
-    public void populate(final World world, final MutableBlockVolume terrain, final ImmutableBiomeArea biome) {
+    public void populate(World world, MutableBlockVolume terrain, ImmutableBiomeArea biome) {
         Vector3i min = terrain.getBlockMin();
-        final int bx = min.getX();
-        final int bz = min.getZ();
-        final int cx = bx >> 4;
-        final int cz = bz >> 4;
+        int bx = min.getX();
+        int bz = min.getZ();
+        int cx = bx >> 4;
+        int cz = bz >> 4;
         AugmentedUtils.generate(world.getName(), cx, cz, new LazyResult<PlotChunk<?>>() {
             @Override
             public PlotChunk<?> create() {

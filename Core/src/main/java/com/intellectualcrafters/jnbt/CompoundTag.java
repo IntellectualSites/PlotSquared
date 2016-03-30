@@ -18,7 +18,6 @@ public final class CompoundTag extends Tag {
      * @param value the value of the tag
      */
     public CompoundTag(Map<String, Tag> value) {
-        super();
         this.value = Collections.unmodifiableMap(value);
     }
 
@@ -374,7 +373,7 @@ public final class CompoundTag extends Tag {
     public String toString() {
         String name = getName();
         String append = "";
-        if ((name != null) && !name.equals("")) {
+        if (name != null && !name.equals("")) {
             append = "(\"" + getName() + "\")";
         }
         StringBuilder bldr = new StringBuilder();

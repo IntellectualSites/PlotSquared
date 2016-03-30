@@ -62,8 +62,8 @@ public class BukkitSetupUtils extends SetupUtils {
         switch (type) {
             case 2: {
                 if (object.id != null) {
-                    String areaname = object.id + "-" + object.min + "-" + object.max;
-                    String areaPath = "areas." + areaname;
+                    String areaName = object.id + "-" + object.min + "-" + object.max;
+                    String areaPath = "areas." + areaName;
                     if (!worldSection.contains(areaPath)) {
                         worldSection.createSection(areaPath);
                     }
@@ -75,7 +75,7 @@ public class BukkitSetupUtils extends SetupUtils {
                     options.put("generator.type", object.type);
                     options.put("generator.terrain", object.terrain);
                     options.put("generator.plugin", object.plotManager);
-                    if ((object.setupGenerator != null) && !object.setupGenerator.equals(object.plotManager)) {
+                    if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
                         options.put("generator.init", object.setupGenerator);
                     }
                     for (Entry<String, Object> entry : options.entrySet()) {
@@ -91,34 +91,32 @@ public class BukkitSetupUtils extends SetupUtils {
                         }
                     }
                 }
-                GeneratorWrapper<?> gen = generators.get(object.setupGenerator);
-                if ((gen != null) && gen.isFull()) {
+                GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
+                if (gen != null && gen.isFull()) {
                     object.setupGenerator = null;
                 }
                 break;
             }
-            case 1: {
+            case 1:
                 for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
                 PS.get().config.set("worlds." + world + "." + "generator.type", object.type);
                 PS.get().config.set("worlds." + world + "." + "generator.terrain", object.terrain);
                 PS.get().config.set("worlds." + world + "." + "generator.plugin", object.plotManager);
-                if ((object.setupGenerator != null) && !object.setupGenerator.equals(object.plotManager)) {
+                if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
                     PS.get().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
                 }
-                GeneratorWrapper<?> gen = generators.get(object.setupGenerator);
-                if ((gen != null) && gen.isFull()) {
+                GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
+                if (gen != null && gen.isFull()) {
                     object.setupGenerator = null;
                 }
                 break;
-            }
-            case 0: {
+            case 0:
                 for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
                 break;
-            }
         }
         try {
             PS.get().config.save(PS.get().configFile);
@@ -126,7 +124,7 @@ public class BukkitSetupUtils extends SetupUtils {
             e.printStackTrace();
         }
         if (object.setupGenerator != null) {
-            if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core")
+            if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null && Bukkit.getPluginManager().getPlugin("Multiverse-Core")
                     .isEnabled()) {
                 Bukkit.getServer()
                         .dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal -g " + object.setupGenerator);
@@ -135,7 +133,7 @@ public class BukkitSetupUtils extends SetupUtils {
                     return world;
                 }
             }
-            if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
+            if (Bukkit.getPluginManager().getPlugin("MultiWorld") != null && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world + " plugin:" + object.setupGenerator);
                 setGenerator(world, object.setupGenerator);
                 if (Bukkit.getWorld(world) != null) {
@@ -148,14 +146,14 @@ public class BukkitSetupUtils extends SetupUtils {
             Bukkit.createWorld(wc);
             setGenerator(world, object.setupGenerator);
         } else {
-            if ((Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) && Bukkit.getPluginManager().getPlugin("Multiverse-Core")
+            if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null && Bukkit.getPluginManager().getPlugin("Multiverse-Core")
                     .isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv create " + world + " normal");
                 if (Bukkit.getWorld(world) != null) {
                     return world;
                 }
             }
-            if ((Bukkit.getPluginManager().getPlugin("MultiWorld") != null) && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
+            if (Bukkit.getPluginManager().getPlugin("MultiWorld") != null && Bukkit.getPluginManager().getPlugin("MultiWorld").isEnabled()) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw create " + world);
                 if (Bukkit.getWorld(world) != null) {
                     return world;
@@ -193,7 +191,7 @@ public class BukkitSetupUtils extends SetupUtils {
         if (!(generator instanceof BukkitPlotGenerator)) {
             return null;
         }
-        for (Entry<String, GeneratorWrapper<?>> entry : generators.entrySet()) {
+        for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
             GeneratorWrapper<?> current = entry.getValue();
             if (current.equals(generator)) {
                 return entry.getKey();

@@ -39,34 +39,34 @@ public class SpongeSetupUtils extends SetupUtils {
             String id = wgm.getId();
             String name = wgm.getName();
             if (wgm instanceof GeneratorWrapper<?>) {
-                generators.put(id, (GeneratorWrapper<?>) wgm);
-                generators.put(name, (GeneratorWrapper<?>) wgm);
+                SetupUtils.generators.put(id, (GeneratorWrapper<?>) wgm);
+                SetupUtils.generators.put(name, (GeneratorWrapper<?>) wgm);
             } else {
                 SpongePlotGenerator wrap = new SpongePlotGenerator(wgm);
-                generators.put(id, wrap);
-                generators.put(name, wrap);
+                SetupUtils.generators.put(id, wrap);
+                SetupUtils.generators.put(name, wrap);
             }
         }
     }
     
     @Override
-    public String getGenerator(final PlotArea plotworld) {
+    public String getGenerator(PlotArea plotworld) {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
-        final World world = SpongeUtil.getWorld(plotworld.worldname);
+        World world = SpongeUtil.getWorld(plotworld.worldname);
         if (world == null) {
             return null;
         }
-        final WorldGenerator generator = world.getWorldGenerator();
+        WorldGenerator generator = world.getWorldGenerator();
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
     
     @Override
-    public String setupWorld(final SetupObject object) {
+    public String setupWorld(SetupObject object) {
         SetupUtils.manager.updateGenerators();
         ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
-        final String world = object.world;
+        String world = object.world;
         int type = object.type;
         String worldPath = "worlds." + object.world;
         if (!PS.get().config.contains(worldPath)) {
@@ -76,20 +76,20 @@ public class SpongeSetupUtils extends SetupUtils {
         switch (type) {
             case 2: {
                 if (object.id != null) {
-                    String areaname = object.id + "-" + object.min + "-" + object.max;
-                    String areaPath = "areas." + areaname;
+                    String areaName = object.id + "-" + object.min + "-" + object.max;
+                    String areaPath = "areas." + areaName;
                     if (!worldSection.contains(areaPath)) {
                         worldSection.createSection(areaPath);
                     }
                     ConfigurationSection areaSection = worldSection.getConfigurationSection(areaPath);
                     HashMap<String, Object> options = new HashMap<>();
-                    for (final ConfigurationNode step : steps) {
+                    for (ConfigurationNode step : steps) {
                         options.put(step.getConstant(), step.getValue());
                     }
                     options.put("generator.type", object.type);
                     options.put("generator.terrain", object.terrain);
                     options.put("generator.plugin", object.plotManager);
-                    if ((object.setupGenerator != null) && !object.setupGenerator.equals(object.plotManager)) {
+                    if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
                         options.put("generator.init", object.setupGenerator);
                     }
                     for (Entry<String, Object> entry : options.entrySet()) {
@@ -105,43 +105,41 @@ public class SpongeSetupUtils extends SetupUtils {
                         }
                     }
                 }
-                GeneratorWrapper<?> gen = generators.get(object.setupGenerator);
-                if ((gen != null) && gen.isFull()) {
+                GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
+                if (gen != null && gen.isFull()) {
                     object.setupGenerator = null;
                 }
                 break;
             }
-            case 1: {
-                for (final ConfigurationNode step : steps) {
+            case 1:
+                for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
                 PS.get().config.set("worlds." + world + "." + "generator.type", object.type);
                 PS.get().config.set("worlds." + world + "." + "generator.terrain", object.terrain);
                 PS.get().config.set("worlds." + world + "." + "generator.plugin", object.plotManager);
-                if ((object.setupGenerator != null) && !object.setupGenerator.equals(object.plotManager)) {
+                if (object.setupGenerator != null && !object.setupGenerator.equals(object.plotManager)) {
                     PS.get().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
                 }
-                GeneratorWrapper<?> gen = generators.get(object.setupGenerator);
-                if ((gen != null) && gen.isFull()) {
+                GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
+                if (gen != null && gen.isFull()) {
                     object.setupGenerator = null;
                 }
                 break;
-            }
-            case 0: {
-                for (final ConfigurationNode step : steps) {
+            case 0:
+                for (ConfigurationNode step : steps) {
                     worldSection.set(step.getConstant(), step.getValue());
                 }
                 break;
-            }
         }
         try {
             PS.get().config.save(PS.get().configFile);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         if (object.setupGenerator != null) {
             // create world with generator
-            GeneratorWrapper<?> gw = generators.get(object.setupGenerator);
+            GeneratorWrapper<?> gw = SetupUtils.generators.get(object.setupGenerator);
             WorldGeneratorModifier wgm = (WorldGeneratorModifier) gw.getPlatformGenerator();
             
             WorldCreationSettings settings = Sponge.getRegistry().createBuilder(Builder.class)

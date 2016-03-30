@@ -7,17 +7,17 @@ public class RegionWrapper {
     public final int maxY;
     public final int minZ;
     public final int maxZ;
-    
-    public RegionWrapper(final int minX, final int maxX, final int minZ, final int maxZ) {
+
+    public RegionWrapper(int minX, int maxX, int minZ, int maxZ) {
         this.maxX = maxX;
         this.minX = minX;
         this.maxZ = maxZ;
         this.minZ = minZ;
-        minY = 0;
-        maxY = 256;
+        this.minY = 0;
+        this.maxY = 256;
     }
-    
-    public RegionWrapper(final int minX, final int maxX, final int minY, final int maxY, final int minZ, final int maxZ) {
+
+    public RegionWrapper(int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
         this.maxX = maxX;
         this.minX = minX;
         this.maxZ = maxZ;
@@ -25,13 +25,13 @@ public class RegionWrapper {
         this.minY = minY;
         this.maxY = maxY;
     }
-    
-    public boolean isIn(final int x, final int y, final int z) {
-        return x >= minX && x <= maxX && z >= minZ && z <= maxZ && y >= minY && y <= maxY;
+
+    public boolean isIn(int x, int y, int z) {
+        return x >= this.minX && x <= this.maxX && z >= this.minZ && z <= this.maxZ && y >= this.minY && y <= this.maxY;
     }
-    
-    public boolean isIn(final int x, final int z) {
-        return x >= minX && x <= maxX && z >= minZ && z <= maxZ;
+
+    public boolean isIn(int x, int z) {
+        return x >= this.minX && x <= this.maxX && z >= this.minZ && z <= this.maxZ;
     }
     
     public boolean intersects(RegionWrapper other) {
@@ -40,7 +40,7 @@ public class RegionWrapper {
 
     @Override
     public int hashCode() {
-        return minX + 13 * maxX + 23 * minZ + 39 * maxZ;
+        return this.minX + 13 * this.maxX + 23 * this.minZ + 39 * this.maxZ;
     }
     
     @Override
@@ -53,19 +53,20 @@ public class RegionWrapper {
         }
         if (obj instanceof RegionWrapper) {
             RegionWrapper other = (RegionWrapper) obj;
-            return minX == other.minX && minZ == other.minZ && minY == other.minY && maxX == other.maxX && maxZ == other.maxZ && maxY == other.maxY;
+            return this.minX == other.minX && this.minZ == other.minZ && this.minY == other.minY && this.maxX == other.maxX && this.maxZ == other.maxZ
+                    && this.maxY == other.maxY;
         }
         return false;
     }
     
     @Override
     public String toString() {
-        return minX + "->" + maxX + "," + minZ + "->" + maxZ;
+        return this.minX + "->" + this.maxX + "," + this.minZ + "->" + this.maxZ;
     }
     
     public Location[] getCorners(String world) {
-        Location pos1 = new Location(world, minX, minY, minZ);
-        Location pos2 = new Location(world, maxX, maxY, maxZ);
+        Location pos1 = new Location(world, this.minX, this.minY, this.minZ);
+        Location pos2 = new Location(world, this.maxX, this.maxY, this.maxZ);
         return new Location[] { pos1, pos2 };
     }
 }

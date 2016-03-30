@@ -95,7 +95,7 @@ public class DebugClaimTest extends SubCommand {
                         plot.owner = uuid;
                         plots.add(plot);
                     } else {
-                        MainUtil.sendMessage(plr, " - &cInvalid playername: " + plot.getId() + " : " + line);
+                        MainUtil.sendMessage(plr, " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
                     }
                 }
             }

@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -87,7 +88,7 @@ public class Rate extends SubCommand {
             sendMessage(player, C.RATING_NOT_DONE);
             return false;
         }
-        if ((Settings.RATING_CATEGORIES != null) && !Settings.RATING_CATEGORIES.isEmpty()) {
+        if (Settings.RATING_CATEGORIES != null && !Settings.RATING_CATEGORIES.isEmpty()) {
             final Runnable run = new Runnable() {
                 @Override
                 public void run() {
@@ -154,7 +155,7 @@ public class Rate extends SubCommand {
         }
         String arg = args[0];
         final int rating;
-        if (MathMan.isInteger(arg) && (arg.length() < 3) && !arg.isEmpty()) {
+        if (MathMan.isInteger(arg) && arg.length() < 3 && !arg.isEmpty()) {
             rating = Integer.parseInt(arg);
             if (rating > 10 || rating < 1) {
                 sendMessage(player, C.RATING_NOT_VALID);

@@ -321,7 +321,7 @@ public class Metrics {
         // Construct the post data
         StringBuilder json = new StringBuilder(1024);
         json.append('{');
-        // The plugin's description file containg all of the plugin data such as name, version, author, etc
+        // The plugin's description file containing all of the plugin data such as name, version, author, etc
         appendJSONPair(json, "guid", this.guid);
         appendJSONPair(json, "plugin_version", pluginVersion);
         appendJSONPair(json, "server_version", serverVersion);

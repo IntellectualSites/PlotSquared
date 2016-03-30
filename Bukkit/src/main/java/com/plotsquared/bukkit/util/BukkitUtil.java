@@ -97,8 +97,8 @@ public class BukkitUtil extends WorldUtil {
         return entity.getWorld().getName();
     }
 
-    public static List<Entity> getEntities(String worldname) {
-        return getWorld(worldname).getEntities();
+    public static List<Entity> getEntities(String worldName) {
+        return getWorld(worldName).getEntities();
     }
 
     public static Location getLocation(Entity entity) {
@@ -114,8 +114,8 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public boolean isWorld(String world) {
-        return getWorld(world) != null;
+    public boolean isWorld(String worldName) {
+        return getWorld(worldName) != null;
     }
 
     @Override
@@ -124,8 +124,8 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public void setSign(String worldname, int x, int y, int z, String[] lines) {
-        World world = getWorld(worldname);
+    public void setSign(String worldName, int x, int y, int z, String[] lines) {
+        World world = getWorld(worldName);
         Block block = world.getBlockAt(x, y, z);
         //        block.setType(Material.AIR);
         block.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) 2, false);
@@ -172,8 +172,8 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public void saveWorld(String worldname) {
-        World world = getWorld(worldname);
+    public void saveWorld(String worldName) {
+        World world = getWorld(worldName);
         if (world != null) {
             world.save();
         }

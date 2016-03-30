@@ -62,12 +62,12 @@ public class SlowQueue implements PlotQueue<Chunk> {
             if (this.blocks.isEmpty()) {
                 return null;
             }
-            Iterator<Entry<ChunkWrapper, PlotChunk<Chunk>>> iter = this.blocks.entrySet().iterator();
-            PlotChunk<Chunk> toReturn = iter.next().getValue();
+            Iterator<Entry<ChunkWrapper, PlotChunk<Chunk>>> iterator = this.blocks.entrySet().iterator();
+            PlotChunk<Chunk> toReturn = iterator.next().getValue();
             if (SetQueue.IMP.isWaiting()) {
                 return null;
             }
-            iter.remove();
+            iterator.remove();
             execute(toReturn);
             fixLighting(toReturn, true);
             return toReturn;

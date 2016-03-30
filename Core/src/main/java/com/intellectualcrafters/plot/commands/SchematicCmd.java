@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -174,7 +175,7 @@ public class SchematicCmd extends SubCommand {
                 break;
             }
             case "export":
-            case "save": {
+            case "save":
                 if (!Permissions.hasPermission(plr, "plots.schematic.save")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
@@ -214,11 +215,9 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(plr, "&7Starting export...");
                 }
                 break;
-            }
-            default: {
+            default:
                 sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
                 break;
-            }
         }
         return true;
     }

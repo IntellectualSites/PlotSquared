@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -45,9 +44,9 @@ public class BukkitSchematicHandler extends SchematicHandler {
                 final Location bot = corners[0];
                 Location top = corners[1];
 
-                final int width = (top.getX() - bot.getX()) + 1;
-                int height = (top.getY() - bot.getY()) + 1;
-                final int length = (top.getZ() - bot.getZ()) + 1;
+                final int width = top.getX() - bot.getX() + 1;
+                int height = top.getY() - bot.getY() + 1;
+                final int length = top.getZ() - bot.getZ() + 1;
                 // Main Schematic tag
                 final HashMap<String, Tag> schematic = new HashMap<>();
                 schematic.put("Width", new ShortTag("Width", (short) width));
@@ -114,7 +113,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                             @Override
                             public void run() {
                                 long start = System.currentTimeMillis();
-                                while (!chunks.isEmpty() && ((System.currentTimeMillis() - start) < 20)) {
+                                while (!chunks.isEmpty() && System.currentTimeMillis() - start < 20) {
                                     // save schematics
                                     ChunkLoc chunk = chunks.remove(0);
                                     Chunk bc = worldObj.getChunkAt(chunk.x, chunk.z);
@@ -145,7 +144,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                         int i1 = ry * width * length;
                                         for (int z = zzb; z <= zzt; z++) {
                                             int rz = z - bz;
-                                            int i2 = i1 + (rz * width);
+                                            int i2 = i1 + rz * width;
                                             for (int x = xxb; x <= xxt; x++) {
                                                 int rx = x - bx;
                                                 int index = i2 + rx;
@@ -219,9 +218,8 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                     case 189:
                                                     case 190:
                                                     case 191:
-                                                    case 192: {
+                                                    case 192:
                                                         break;
-                                                    }
                                                     case 54:
                                                     case 130:
                                                     case 142:
@@ -256,17 +254,14 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                     case 29:
                                                     case 33:
                                                     case 151:
-                                                    case 178: {
+                                                    case 178:
                                                         // TODO implement fully
                                                         BlockState state = block.getState();
                                                         if (state != null) {
                                                             StateWrapper wrapper = new StateWrapper(state);
                                                             CompoundTag rawTag = wrapper.getTag();
                                                             if (rawTag != null) {
-                                                                Map<String, Tag> values = new HashMap<>();
-                                                                for (Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
-                                                                    values.put(entry.getKey(), entry.getValue());
-                                                                }
+                                                                Map<String, Tag> values = new HashMap<>(rawTag.getValue());
                                                                 values.put("id", new StringTag("id", wrapper.getId()));
                                                                 values.put("x", new IntTag("x", x));
                                                                 values.put("y", new IntTag("y", y));
@@ -275,10 +270,8 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                                                 tileEntities.add(tileEntityTag);
                                                             }
                                                         }
-                                                    }
-                                                    default: {
+                                                    default:
                                                         blockData[index] = block.getData();
-                                                    }
                                                 }
                                                 // For optimization reasons, we are not supporting custom data types
                                                 // Especially since the most likely reason beyond  this range is modded servers in which the blocks
@@ -310,7 +303,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
     }
 
     @Override
-    public void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schem) {
-        new StateWrapper(ct).restoreTag(x, y, z, schem);
+    public void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schematic) {
+        new StateWrapper(ct).restoreTag(x, y, z, schematic);
     }
 }

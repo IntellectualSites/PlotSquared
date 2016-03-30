@@ -10,6 +10,7 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ public class Condense extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer plr, String[] args) {
-        if ((args.length != 2) && (args.length != 3)) {
+        if (args.length != 2 && args.length != 3) {
             MainUtil.sendMessage(plr, "/plot condense <area> <start|stop|info> [radius]");
             return false;
         }
@@ -44,7 +45,7 @@ public class Condense extends SubCommand {
                     MainUtil.sendMessage(plr, "/plot condense " + area.toString() + " start <radius>");
                     return false;
                 }
-                if (TASK) {
+                if (Condense.TASK) {
                     MainUtil.sendMessage(plr, "TASK ALREADY STARTED");
                     return false;
                 }
@@ -55,13 +56,13 @@ public class Condense extends SubCommand {
                 int radius = Integer.parseInt(args[2]);
                 ArrayList<Plot> plots = new ArrayList<>(PS.get().getPlots(area));
                 // remove non base plots
-                Iterator<Plot> iter = plots.iterator();
+                Iterator<Plot> iterator = plots.iterator();
                 int maxSize = 0;
                 ArrayList<Integer> sizes = new ArrayList<>();
-                while (iter.hasNext()) {
-                    Plot plot = iter.next();
+                while (iterator.hasNext()) {
+                    Plot plot = iterator.next();
                     if (!plot.isBasePlot()) {
-                        iter.remove();
+                        iterator.remove();
                         continue;
                     }
                     int size = plot.getConnectedPlots().size();
@@ -90,7 +91,7 @@ public class Condense extends SubCommand {
                     }
                 }
                 int size = allPlots.size();
-                int minimumRadius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
+                int minimumRadius = (int) Math.ceil(Math.sqrt(size) / 2 + 1);
                 if (radius < minimumRadius) {
                     MainUtil.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
@@ -98,7 +99,7 @@ public class Condense extends SubCommand {
                 List<PlotId> toMove = new ArrayList<>(getPlots(allPlots, radius));
                 final List<PlotId> free = new ArrayList<>();
                 PlotId start = new PlotId(0, 0);
-                while ((start.x <= minimumRadius) && (start.y <= minimumRadius)) {
+                while (start.x <= minimumRadius && start.y <= minimumRadius) {
                     Plot plot = area.getPlotAbs(start);
                     if (plot != null && !plot.hasOwner()) {
                         free.add(plot.getId());
@@ -113,11 +114,11 @@ public class Condense extends SubCommand {
                 Runnable run = new Runnable() {
                     @Override
                     public void run() {
-                        if (!TASK) {
+                        if (!Condense.TASK) {
                             MainUtil.sendMessage(plr, "TASK CANCELLED.");
                         }
                         if (allPlots.isEmpty()) {
-                            TASK = false;
+                            Condense.TASK = false;
                             MainUtil.sendMessage(plr, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
                             return;
                         }
@@ -146,7 +147,7 @@ public class Condense extends SubCommand {
                             }
                         }
                         if (free.isEmpty()) {
-                            TASK = false;
+                            Condense.TASK = false;
                             MainUtil.sendMessage(plr, "TASK FAILED. NO FREE PLOTS FOUND!");
                             return;
                         }
@@ -155,20 +156,19 @@ public class Condense extends SubCommand {
                         }
                     }
                 };
-                TASK = true;
+                Condense.TASK = true;
                 TaskManager.runTaskAsync(run);
                 return true;
             }
-            case "stop": {
-                if (!TASK) {
+            case "stop":
+                if (!Condense.TASK) {
                     MainUtil.sendMessage(plr, "TASK ALREADY STOPPED");
                     return false;
                 }
-                TASK = false;
+                Condense.TASK = false;
                 MainUtil.sendMessage(plr, "TASK STOPPED");
                 return true;
-            }
-            case "info": {
+            case "info":
                 if (args.length == 2) {
                     MainUtil.sendMessage(plr, "/plot condense " + area.toString() + " info <radius>");
                     return false;
@@ -180,7 +180,7 @@ public class Condense extends SubCommand {
                 int radius = Integer.parseInt(args[2]);
                 Collection<Plot> plots = area.getPlots();
                 int size = plots.size();
-                int minimumRadius = (int) Math.ceil((Math.sqrt(size) / 2) + 1);
+                int minimumRadius = (int) Math.ceil(Math.sqrt(size) / 2 + 1);
                 if (radius < minimumRadius) {
                     MainUtil.sendMessage(plr, "RADIUS TOO SMALL");
                     return false;
@@ -196,7 +196,6 @@ public class Condense extends SubCommand {
                 MainUtil.sendMessage(plr, "ESTIMATED TIME: " + "No idea, times will drastically change based on the system performance and load");
                 MainUtil.sendMessage(plr, "&e - Radius is measured in plot width");
                 return true;
-            }
         }
         MainUtil.sendMessage(plr, "/plot condense " + area.worldname + " <start|stop|info> [radius]");
         return false;
@@ -205,7 +204,7 @@ public class Condense extends SubCommand {
     public Set<PlotId> getPlots(Collection<Plot> plots, int radius) {
         HashSet<PlotId> outside = new HashSet<>();
         for (Plot plot : plots) {
-            if ((plot.getId().x > radius) || (plot.getId().x < -radius) || (plot.getId().y > radius) || (plot.getId().y < -radius)) {
+            if (plot.getId().x > radius || plot.getId().x < -radius || plot.getId().y > radius || plot.getId().y < -radius) {
                 outside.add(plot.getId());
             }
         }

@@ -162,10 +162,10 @@ public abstract class SchematicHandler {
                         }
                     }
 
-                    Dimension demensions = schematic.getSchematicDimension();
-                    final int WIDTH = demensions.getX();
-                    final int LENGTH = demensions.getZ();
-                    final int HEIGHT = demensions.getY();
+                    Dimension dimension = schematic.getSchematicDimension();
+                    final int WIDTH = dimension.getX();
+                    final int LENGTH = dimension.getZ();
+                    final int HEIGHT = dimension.getY();
                     // Validate dimensions
                     RegionWrapper region = plot.getLargestRegion();
                     if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || ((region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT
@@ -468,8 +468,8 @@ public abstract class SchematicHandler {
         }
         return schem;
     }
-    
-    public abstract void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schem);
+
+    public abstract void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schematic);
 
     /**
      * Get a schematic
@@ -616,11 +616,11 @@ public abstract class SchematicHandler {
      * Create a compound tag from blocks
      *  - Untested
      * @param blocks
-     * @param blockdata
+     * @param blockData
      * @param dimension
      * @return
      */
-    public CompoundTag createTag(byte[] blocks, byte[] blockdata, Dimension dimension) {
+    public CompoundTag createTag(byte[] blocks, byte[] blockData, Dimension dimension) {
         HashMap<String, Tag> schematic = new HashMap<>();
         schematic.put("Width", new ShortTag("Width", (short) dimension.getX()));
         schematic.put("Length", new ShortTag("Length", (short) dimension.getZ()));
@@ -633,7 +633,7 @@ public abstract class SchematicHandler {
         schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
         schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
         schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
-        schematic.put("Data", new ByteArrayTag("Data", blockdata));
+        schematic.put("Data", new ByteArrayTag("Data", blockData));
         schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
         schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, new ArrayList<Tag>()));
         return new CompoundTag("Schematic", schematic);

@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -237,9 +238,9 @@ public class Cluster extends SubCommand {
                     return false;
                 }
                 HashSet<Plot> existing = area.getPlotSelectionOwned(cluster.getP1(), cluster.getP2());
-                HashSet<Plot> newplots = area.getPlotSelectionOwned(pos1, pos2);
+                HashSet<Plot> newPlots = area.getPlotSelectionOwned(pos1, pos2);
                 HashSet<Plot> removed = (HashSet<Plot>) existing.clone();
-                removed.removeAll(newplots);
+                removed.removeAll(newPlots);
                 // Check expand / shrink
                 if (!removed.isEmpty()) {
                     if (!Permissions.hasPermission(plr, "plots.cluster.resize.shrink")) {
@@ -247,8 +248,8 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                newplots.removeAll(existing);
-                if (!newplots.isEmpty()) {
+                newPlots.removeAll(existing);
+                if (!newPlots.isEmpty()) {
                     if (!Permissions.hasPermission(plr, "plots.cluster.resize.expand")) {
                         MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.resize.expand");
                         return false;
@@ -544,7 +545,7 @@ public class Cluster extends SubCommand {
             }
             case "sh":
             case "setspawn":
-            case "sethome": {
+            case "sethome":
                 if (!Permissions.hasPermission(plr, "plots.cluster.sethome")) {
                     MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.cluster.sethome");
                     return false;
@@ -574,7 +575,6 @@ public class Cluster extends SubCommand {
                 cluster.settings.setPosition(blockloc);
                 DBFunc.setPosition(cluster, relative.getX() + "," + relative.getY() + "," + relative.getZ());
                 return MainUtil.sendMessage(plr, C.POSITION_SET);
-            }
         }
         MainUtil.sendMessage(plr, C.CLUSTER_AVAILABLE_ARGS);
         return false;

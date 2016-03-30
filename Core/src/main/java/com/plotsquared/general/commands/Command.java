@@ -14,6 +14,7 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringComparison;
 import com.intellectualcrafters.plot.util.StringMan;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -101,8 +102,8 @@ public abstract class Command {
     }
 
     public String getFullId() {
-        if (parent != null && parent.getParent() != null) {
-            return parent.getFullId() + "." + id;
+        if (this.parent != null && this.parent.getParent() != null) {
+            return this.parent.getFullId() + "." + this.id;
         }
         return this.id;
     }
@@ -118,16 +119,16 @@ public abstract class Command {
     }
 
     public List<Command> getCommands(CommandCategory cat, PlotPlayer player) {
-        List<Command> cmds = getCommands(player);
+        List<Command> commands = getCommands(player);
         if (cat != null) {
-            Iterator<Command> iter = cmds.iterator();
-            while (iter.hasNext()) {
-                if (iter.next().category != cat) {
-                    iter.remove();
+            Iterator<Command> iterator = commands.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().category != cat) {
+                    iterator.remove();
                 }
             }
         }
-        return cmds;
+        return commands;
     }
 
     public List<Command> getCommands() {
@@ -301,29 +302,27 @@ public abstract class Command {
             }
             // Command recommendation
             MainUtil.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
-            {
-                List<Command> cmds = getCommands(player);
-                if (cmds.isEmpty()) {
-                    MainUtil.sendMessage(player, C.DID_YOU_MEAN, MainCommand.getInstance().help.getUsage());
-                    return;
-                }
-                HashSet<String> setargs = new HashSet<>(args.length);
-                for (String arg : args) {
-                    setargs.add(arg.toLowerCase());
-                }
-                String[] allargs = setargs.toArray(new String[setargs.size()]);
-                int best = 0;
-                for (Command current : cmds) {
-                    int match = getMatch(allargs, current);
-                    if (match > best) {
-                        cmd = current;
-                    }
-                }
-                if (cmd == null) {
-                    cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
-                }
-                MainUtil.sendMessage(player, C.DID_YOU_MEAN, cmd.getUsage());
+            List<Command> commands = getCommands(player);
+            if (commands.isEmpty()) {
+                MainUtil.sendMessage(player, C.DID_YOU_MEAN, MainCommand.getInstance().help.getUsage());
+                return;
             }
+            HashSet<String> setargs = new HashSet<>(args.length);
+            for (String arg : args) {
+                setargs.add(arg.toLowerCase());
+            }
+            String[] allargs = setargs.toArray(new String[setargs.size()]);
+            int best = 0;
+            for (Command current : commands) {
+                int match = getMatch(allargs, current);
+                if (match > best) {
+                    cmd = current;
+                }
+            }
+            if (cmd == null) {
+                cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
+            }
+            MainUtil.sendMessage(player, C.DID_YOU_MEAN, cmd.getUsage());
             return;
         }
         String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -335,7 +334,7 @@ public abstract class Command {
 
     public boolean checkArgs(PlotPlayer player, String[] args) {
         Argument<?>[] reqArgs = getRequiredArguments();
-        if ((reqArgs != null) && (reqArgs.length > 0)) {
+        if (reqArgs != null && reqArgs.length > 0) {
             boolean failed = args.length < reqArgs.length;
             String[] baseSplit = getCommandString().split(" ");
             String[] fullSplit = getUsage().split(" ");

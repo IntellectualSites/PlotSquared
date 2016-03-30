@@ -97,9 +97,9 @@ public class FastQueue extends SlowQueue {
             ClassInheritanceMultiMap<Entity>[] entities = nmsChunk.getEntityLists();
             // Trim tiles
             Set<Entry<BlockPos, TileEntity>> entryset = tiles.entrySet();
-            Iterator<Entry<BlockPos, TileEntity>> iter = entryset.iterator();
-            while (iter.hasNext()) {
-                Entry<BlockPos,TileEntity> tile = iter.next();
+            Iterator<Entry<BlockPos, TileEntity>> iterator = entryset.iterator();
+            while (iterator.hasNext()) {
+                Entry<BlockPos, TileEntity> tile = iterator.next();
                 BlockPos pos = tile.getKey();
                 int lx = pos.getX() & 15;
                 int ly = pos.getY();
@@ -111,7 +111,7 @@ public class FastQueue extends SlowQueue {
                     continue;
                 }
                 if (array[k] != 0) {
-                    iter.remove();
+                    iterator.remove();
                 }
             }
             // Trim entities
@@ -206,7 +206,7 @@ public class FastQueue extends SlowQueue {
                 spongeChunk.unloadChunk();
                 spongeChunk.loadChunk(false);
             }
-            // TODO load adjaced chunks
+            // TODO load adjacent chunks
             nmsChunk.generateSkylightMap();
             if (bc.getTotalRelight() == 0 && !fixAll) {
                 return true;

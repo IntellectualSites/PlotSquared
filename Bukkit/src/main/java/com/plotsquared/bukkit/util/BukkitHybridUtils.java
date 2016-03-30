@@ -275,9 +275,9 @@ public class BukkitHybridUtils extends HybridUtils {
     }
 
     @Override
-    public int checkModified(String worldname, int x1, int x2, int y1, int y2, int z1, int z2,
+    public int checkModified(String worldName, int x1, int x2, int y1, int y2, int z1, int z2,
             PlotBlock[] blocks) {
-        World world = BukkitUtil.getWorld(worldname);
+        World world = BukkitUtil.getWorld(worldName);
         int count = 0;
         for (int y = y1; y <= y2; y++) {
             for (int x = x1; x <= x2; x++) {
@@ -301,8 +301,8 @@ public class BukkitHybridUtils extends HybridUtils {
     }
 
     @Override
-    public int get_ey(String worldname, int sx, int ex, int sz, int ez, int sy) {
-        World world = BukkitUtil.getWorld(worldname);
+    public int get_ey(String worldName, int sx, int ex, int sz, int ez, int sy) {
+        World world = BukkitUtil.getWorld(worldName);
         int maxY = world.getMaxHeight();
         int ey = sy;
         for (int x = sx; x <= ex; x++) {

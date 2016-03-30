@@ -11,7 +11,7 @@ public abstract class RunnableVal<T> implements Runnable {
 
     @Override
     public void run() {
-        run(value);
+        run(this.value);
     }
     
     public abstract void run(T value);

@@ -11,8 +11,8 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     public int ROAD_OFFSET_X = 0;
     public int ROAD_OFFSET_Z = 0;
 
-    public SquarePlotWorld(String worldname, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
-        super(worldname, id, generator, min, max);
+    public SquarePlotWorld(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
+        super(worldName, id, generator, min, max);
     }
     
     @Override

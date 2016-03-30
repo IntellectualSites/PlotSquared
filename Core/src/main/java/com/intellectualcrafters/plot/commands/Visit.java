@@ -9,6 +9,7 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,15 +45,14 @@ public class Visit extends SubCommand {
         int page = Integer.MIN_VALUE;
         Collection<Plot> unsorted = null;
         switch (args.length) {
-            case 2: {
+            case 2:
                 if (!MathMan.isInteger(args[1])) {
                     sendMessage(player, C.NOT_VALID_NUMBER, "(1, ∞)");
                     sendMessage(player, C.COMMAND_SYNTAX, "/plot visit " + args[0] + " [#]");
                     return false;
                 }
                 page = Integer.parseInt(args[1]);
-            }
-            case 1: {
+            case 1:
                 UUID user = UUIDHandler.getCachedUUID(args[0], null);
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
@@ -68,15 +68,12 @@ public class Visit extends SubCommand {
                     }
                 }
                 break;
-            }
-            case 0: {
+            case 0:
                 page = 1;
                 unsorted = PS.get().getPlots(player);
                 break;
-            }
-            default: {
+            default:
 
-            }
         }
         if (page == Integer.MIN_VALUE) {
             page = 1;
@@ -85,10 +82,10 @@ public class Visit extends SubCommand {
             sendMessage(player, C.FOUND_NO_PLOTS);
             return false;
         }
-        Iterator<Plot> iter = unsorted.iterator();
-        while (iter.hasNext()) {
-            if (!iter.next().isBasePlot()) {
-                iter.remove();
+        Iterator<Plot> iterator = unsorted.iterator();
+        while (iterator.hasNext()) {
+            if (!iterator.next().isBasePlot()) {
+                iterator.remove();
             }
         }
         if (page < 1 || page > unsorted.size()) {

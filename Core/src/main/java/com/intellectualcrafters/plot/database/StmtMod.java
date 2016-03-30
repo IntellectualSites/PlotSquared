@@ -11,7 +11,7 @@ public abstract class StmtMod<T> {
 
     public String getCreateMySQL(int size, String query, int params) {
         StringBuilder statement = new StringBuilder(query);
-        for (int i = 0; i < (size - 1); i++) {
+        for (int i = 0; i < size - 1; i++) {
             statement.append("(" + StringMan.repeat(",?", params).substring(1) + "),");
         }
         statement.append("(" + StringMan.repeat(",?", params).substring(1) + ")");
@@ -21,7 +21,7 @@ public abstract class StmtMod<T> {
     public String getCreateSQLite(int size, String query, int params) {
         StringBuilder statement = new StringBuilder(query);
         String modParams = StringMan.repeat(",?", params).substring(1);
-        for (int i = 0; i < (size - 1); i++) {
+        for (int i = 0; i < size - 1; i++) {
             statement.append("UNION SELECT " + modParams + " ");
         }
         return statement.toString();

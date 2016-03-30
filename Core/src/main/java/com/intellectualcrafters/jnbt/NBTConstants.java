@@ -9,14 +9,16 @@ import java.nio.charset.StandardCharsets;
 public final class NBTConstants {
 
     public static final Charset CHARSET = StandardCharsets.UTF_8;
-    public static final int TYPE_END = 0, TYPE_BYTE = 1, TYPE_SHORT = 2, TYPE_INT = 3, TYPE_LONG = 4, TYPE_FLOAT = 5, TYPE_DOUBLE = 6, TYPE_BYTE_ARRAY = 7, TYPE_STRING = 8, TYPE_LIST = 9,
-    TYPE_COMPOUND = 10, TYPE_INT_ARRAY = 11;
-    
+    public static final int TYPE_END = 0, TYPE_BYTE = 1, TYPE_SHORT = 2, TYPE_INT = 3, TYPE_LONG = 4, TYPE_FLOAT = 5, TYPE_DOUBLE = 6,
+            TYPE_BYTE_ARRAY = 7, TYPE_STRING = 8, TYPE_LIST = 9,
+            TYPE_COMPOUND = 10, TYPE_INT_ARRAY = 11;
+
     /**
      * Default private constructor.
      */
-    private NBTConstants() {}
-    
+    private NBTConstants() {
+    }
+
     /**
      * Convert a type ID to its corresponding {@link Tag} class.
      *
@@ -26,7 +28,7 @@ public final class NBTConstants {
      *
      * @throws IllegalArgumentException thrown if the tag ID is not valid
      */
-    public static Class<? extends Tag> getClassFromType(final int id) {
+    public static Class<? extends Tag> getClassFromType(int id) {
         switch (id) {
             case TYPE_END:
                 return EndTag.class;

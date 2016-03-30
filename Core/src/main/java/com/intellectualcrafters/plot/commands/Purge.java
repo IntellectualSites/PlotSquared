@@ -47,52 +47,46 @@ public class Purge extends SubCommand {
             }
             switch (split[0].toLowerCase()) {
                 case "world":
-                case "w": {
+                case "w":
                     world = split[1];
                     break;
-                }
                 case "area":
-                case "a": {
+                case "a":
                     area = PS.get().getPlotAreaByString(split[1]);
                     if (area == null) {
                         C.NOT_VALID_PLOT_WORLD.send(plr, split[1]);
                         return false;
                     }
                     break;
-                }
                 case "plotid":
-                case "id": {
+                case "id":
                     id = PlotId.fromString(split[1]);
                     if (id == null) {
                         C.NOT_VALID_PLOT_ID.send(plr, split[1]);
                         return false;
                     }
                     break;
-                }
                 case "owner":
-                case "o": {
+                case "o":
                     owner = UUIDHandler.getUUID(split[1], null);
                     if (owner == null) {
                         C.INVALID_PLAYER.send(plr, split[1]);
                         return false;
                     }
                     break;
-                }
                 case "shared":
-                case "s": {
+                case "s":
                     added = UUIDHandler.getUUID(split[1], null);
                     if (added == null) {
                         C.INVALID_PLAYER.send(plr, split[1]);
                         return false;
                     }
                     break;
-                }
                 case "unknown":
                 case "?":
-                case "u": {
+                case "u":
                     unknown = Boolean.parseBoolean(split[1]);
                     break;
-                }
             }
         }
         final HashSet<Plot> toDelete = new HashSet<>();
@@ -121,8 +115,8 @@ public class Purge extends SubCommand {
         }
         if (PS.get().plots_tmp != null) {
             for (Entry<String, HashMap<PlotId, Plot>> entry : PS.get().plots_tmp.entrySet()) {
-                String worldname = entry.getKey();
-                if (world != null && !world.equalsIgnoreCase(worldname)) {
+                String worldName = entry.getKey();
+                if (world != null && !world.equalsIgnoreCase(worldName)) {
                     continue;
                 }
                 for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {

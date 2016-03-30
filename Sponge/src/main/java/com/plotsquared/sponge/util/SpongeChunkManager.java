@@ -126,8 +126,8 @@ public class SpongeChunkManager extends ChunkManager {
     
     @Override
     public void clearAllEntities(Location pos1, Location pos2) {
-        String worldname = pos1.getWorld();
-        World world = SpongeUtil.getWorld(worldname);
+        String worldName = pos1.getWorld();
+        World world = SpongeUtil.getWorld(worldName);
         int bx = pos1.getX();
         int bz = pos1.getZ();
         int tx = pos2.getX();

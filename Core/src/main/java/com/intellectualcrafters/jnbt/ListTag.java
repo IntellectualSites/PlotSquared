@@ -10,22 +10,22 @@ import java.util.NoSuchElementException;
  * The {@code TAG_List} tag.
  */
 public final class ListTag extends Tag {
+
     private final Class<? extends Tag> type;
     private final List<Tag> value;
-    
+
     /**
      * Creates the tag with an empty name.
      *
      * @param type  the type of tag
      * @param value the value of the tag
      */
-    public ListTag(final Class<? extends Tag> type, final List<? extends Tag> value) {
-        super();
+    public ListTag(Class<? extends Tag> type, List<? extends Tag> value) {
         checkNotNull(value);
         this.type = type;
         this.value = Collections.unmodifiableList(value);
     }
-    
+
     /**
      * Creates the tag.
      *
@@ -33,27 +33,27 @@ public final class ListTag extends Tag {
      * @param type  the type of tag
      * @param value the value of the tag
      */
-    public ListTag(final String name, final Class<? extends Tag> type, final List<? extends Tag> value) {
+    public ListTag(String name, Class<? extends Tag> type, List<? extends Tag> value) {
         super(name);
         checkNotNull(value);
         this.type = type;
         this.value = Collections.unmodifiableList(value);
     }
-    
+
     /**
      * Gets the type of item in this list.
      *
      * @return The type of item in this list.
      */
     public Class<? extends Tag> getType() {
-        return type;
+        return this.type;
     }
-    
+
     @Override
     public List<Tag> getValue() {
-        return value;
+        return this.value;
     }
-    
+
     /**
      * Create a new list tag with this tag's name and type.
      *
@@ -61,10 +61,10 @@ public final class ListTag extends Tag {
      *
      * @return a new list tag
      */
-    public ListTag setValue(final List<Tag> list) {
+    public ListTag setValue(List<Tag> list) {
         return new ListTag(getName(), getType(), list);
     }
-    
+
     /**
      * Get the tag if it exists at the given index.
      *
@@ -72,14 +72,14 @@ public final class ListTag extends Tag {
      *
      * @return the tag or null
      */
-    public Tag getIfExists(final int index) {
+    public Tag getIfExists(int index) {
         try {
-            return value.get(index);
-        } catch (final NoSuchElementException e) {
+            return this.value.get(index);
+        } catch (NoSuchElementException e) {
             return null;
         }
     }
-    
+
     /**
      * Get a byte array named with the given index.  <p> If the index does not exist or its value is not a byte
      * array tag, then an empty byte array will be returned. </p>
@@ -88,15 +88,15 @@ public final class ListTag extends Tag {
      *
      * @return a byte array
      */
-    public byte[] getByteArray(final int index) {
-        final Tag tag = getIfExists(index);
+    public byte[] getByteArray(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof ByteArrayTag) {
             return ((ByteArrayTag) tag).getValue();
         } else {
             return new byte[0];
         }
     }
-    
+
     /**
      * Get a byte named with the given index.  <p> If the index does not exist or its value is not a byte tag, then
      * {@code 0} will be returned. </p>
@@ -105,15 +105,15 @@ public final class ListTag extends Tag {
      *
      * @return a byte
      */
-    public byte getByte(final int index) {
-        final Tag tag = getIfExists(index);
+    public byte getByte(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof ByteTag) {
             return ((ByteTag) tag).getValue();
         } else {
             return (byte) 0;
         }
     }
-    
+
     /**
      * Get a double named with the given index.  <p> If the index does not exist or its value is not a double tag,
      * then {@code 0} will be returned. </p>
@@ -122,15 +122,15 @@ public final class ListTag extends Tag {
      *
      * @return a double
      */
-    public double getDouble(final int index) {
-        final Tag tag = getIfExists(index);
+    public double getDouble(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof DoubleTag) {
             return ((DoubleTag) tag).getValue();
         } else {
             return 0;
         }
     }
-    
+
     /**
      * Get a double named with the given index, even if it's another type of number.  <p> If the index does not
      * exist or its value is not a number, then {@code 0} will be returned. </p>
@@ -139,8 +139,8 @@ public final class ListTag extends Tag {
      *
      * @return a double
      */
-    public double asDouble(final int index) {
-        final Tag tag = getIfExists(index);
+    public double asDouble(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof ByteTag) {
             return ((ByteTag) tag).getValue();
         } else if (tag instanceof ShortTag) {
@@ -157,7 +157,7 @@ public final class ListTag extends Tag {
             return 0;
         }
     }
-    
+
     /**
      * Get a float named with the given index.  <p> If the index does not exist or its value is not a float tag,
      * then {@code 0} will be returned. </p>
@@ -166,15 +166,15 @@ public final class ListTag extends Tag {
      *
      * @return a float
      */
-    public float getFloat(final int index) {
-        final Tag tag = getIfExists(index);
+    public float getFloat(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof FloatTag) {
             return ((FloatTag) tag).getValue();
         } else {
             return 0;
         }
     }
-    
+
     /**
      * Get a {@code int[]} named with the given index.  <p> If the index does not exist or its value is not an int
      * array tag, then an empty array will be returned. </p>
@@ -183,15 +183,15 @@ public final class ListTag extends Tag {
      *
      * @return an int array
      */
-    public int[] getIntArray(final int index) {
-        final Tag tag = getIfExists(index);
+    public int[] getIntArray(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof IntArrayTag) {
             return ((IntArrayTag) tag).getValue();
         } else {
             return new int[0];
         }
     }
-    
+
     /**
      * Get an int named with the given index.  <p> If the index does not exist or its value is not an int tag, then
      * {@code 0} will be returned. </p>
@@ -200,15 +200,15 @@ public final class ListTag extends Tag {
      *
      * @return an int
      */
-    public int getInt(final int index) {
-        final Tag tag = getIfExists(index);
+    public int getInt(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof IntTag) {
             return ((IntTag) tag).getValue();
         } else {
             return 0;
         }
     }
-    
+
     /**
      * Get an int named with the given index, even if it's another type of number.  <p> If the index does not exist
      * or its value is not a number, then {@code 0} will be returned. </p>
@@ -217,8 +217,8 @@ public final class ListTag extends Tag {
      *
      * @return an int
      */
-    public int asInt(final int index) {
-        final Tag tag = getIfExists(index);
+    public int asInt(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof ByteTag) {
             return ((ByteTag) tag).getValue();
         } else if (tag instanceof ShortTag) {
@@ -235,7 +235,7 @@ public final class ListTag extends Tag {
             return 0;
         }
     }
-    
+
     /**
      * Get a list of tags named with the given index.  <p> If the index does not exist or its value is not a list
      * tag, then an empty list will be returned. </p>
@@ -244,15 +244,15 @@ public final class ListTag extends Tag {
      *
      * @return a list of tags
      */
-    public List<Tag> getList(final int index) {
-        final Tag tag = getIfExists(index);
+    public List<Tag> getList(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof ListTag) {
             return ((ListTag) tag).getValue();
         } else {
             return Collections.emptyList();
         }
     }
-    
+
     /**
      * Get a {@code TagList} named with the given index.  <p> If the index does not exist or its value is not a list
      * tag, then an empty tag list will be returned. </p>
@@ -261,15 +261,15 @@ public final class ListTag extends Tag {
      *
      * @return a tag list instance
      */
-    public ListTag getListTag(final int index) {
-        final Tag tag = getIfExists(index);
+    public ListTag getListTag(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof ListTag) {
             return (ListTag) tag;
         } else {
-            return new ListTag(StringTag.class, Collections.<Tag> emptyList());
+            return new ListTag(StringTag.class, Collections.<Tag>emptyList());
         }
     }
-    
+
     /**
      * Get a list of tags named with the given index.  <p> If the index does not exist or its value is not a list
      * tag, then an empty list will be returned. If the given index references a list but the list of of a different
@@ -282,10 +282,10 @@ public final class ListTag extends Tag {
      * @return a list of tags
      */
     @SuppressWarnings("unchecked")
-    public <T extends Tag> List<T> getList(final int index, final Class<T> listType) {
-        final Tag tag = getIfExists(index);
+    public <T extends Tag> List<T> getList(int index, Class<T> listType) {
+        Tag tag = getIfExists(index);
         if (tag instanceof ListTag) {
-            final ListTag listTag = (ListTag) tag;
+            ListTag listTag = (ListTag) tag;
             if (listTag.getType().equals(listType)) {
                 return (List<T>) listTag.getValue();
             } else {
@@ -295,7 +295,7 @@ public final class ListTag extends Tag {
             return Collections.emptyList();
         }
     }
-    
+
     /**
      * Get a long named with the given index.  <p> If the index does not exist or its value is not a long tag, then
      * {@code 0} will be returned. </p>
@@ -304,15 +304,15 @@ public final class ListTag extends Tag {
      *
      * @return a long
      */
-    public long getLong(final int index) {
-        final Tag tag = getIfExists(index);
+    public long getLong(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof LongTag) {
             return ((LongTag) tag).getValue();
         } else {
             return 0L;
         }
     }
-    
+
     /**
      * Get a long named with the given index, even if it's another type of number.  <p> If the index does not exist
      * or its value is not a number, then {@code 0} will be returned. </p>
@@ -321,8 +321,8 @@ public final class ListTag extends Tag {
      *
      * @return a long
      */
-    public long asLong(final int index) {
-        final Tag tag = getIfExists(index);
+    public long asLong(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof ByteTag) {
             return ((ByteTag) tag).getValue();
         } else if (tag instanceof ShortTag) {
@@ -339,7 +339,7 @@ public final class ListTag extends Tag {
             return 0;
         }
     }
-    
+
     /**
      * Get a short named with the given index.  <p> If the index does not exist or its value is not a short tag,
      * then {@code 0} will be returned. </p>
@@ -348,15 +348,15 @@ public final class ListTag extends Tag {
      *
      * @return a short
      */
-    public short getShort(final int index) {
-        final Tag tag = getIfExists(index);
+    public short getShort(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof ShortTag) {
             return ((ShortTag) tag).getValue();
         } else {
             return 0;
         }
     }
-    
+
     /**
      * Get a string named with the given index.  <p> If the index does not exist or its value is not a string tag,
      * then {@code ""} will be returned. </p>
@@ -365,25 +365,27 @@ public final class ListTag extends Tag {
      *
      * @return a string
      */
-    public String getString(final int index) {
-        final Tag tag = getIfExists(index);
+    public String getString(int index) {
+        Tag tag = getIfExists(index);
         if (tag instanceof StringTag) {
             return ((StringTag) tag).getValue();
         } else {
             return "";
         }
     }
-    
+
     @Override
     public String toString() {
-        final String name = getName();
+        String name = getName();
         String append = "";
-        if ((name != null) && !name.equals("")) {
+        if (name != null && !name.equals("")) {
             append = "(\"" + getName() + "\")";
         }
-        final StringBuilder bldr = new StringBuilder();
-        bldr.append("TAG_List").append(append).append(": ").append(value.size()).append(" entries of type ").append(NBTUtils.getTypeName(type)).append("\r\n{\r\n");
-        for (final Tag t : value) {
+        StringBuilder bldr = new StringBuilder();
+        bldr.append("TAG_List").append(append).append(": ").append(this.value.size()).append(" entries of type ")
+                .append(NBTUtils.getTypeName(this.type))
+                .append("\r\n{\r\n");
+        for (Tag t : this.value) {
             bldr.append("   ").append(t.toString().replaceAll("\r\n", "\r\n   ")).append("\r\n");
         }
         bldr.append("}");

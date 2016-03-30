@@ -123,7 +123,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void onEnable() {
-        THIS = this;
+        BukkitMain.THIS = this;
         new PS(this, "Bukkit");
     }
 
@@ -131,12 +131,12 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public void onDisable() {
         PS.get().disable();
         Bukkit.getScheduler().cancelTasks(this);
-        THIS = null;
+        BukkitMain.THIS = null;
     }
 
     @Override
     public void log(String message) {
-        if (THIS != null) {
+        if (BukkitMain.THIS != null) {
             try {
                 message = C.color(message);
                 if (!Settings.CONSOLE_COLOR) {
@@ -153,7 +153,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void disable() {
-        if (THIS != null) {
+        if (BukkitMain.THIS != null) {
             onDisable();
         }
     }
@@ -170,11 +170,11 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void registerCommands() {
-        BukkitCommand bcmd = new BukkitCommand();
+        BukkitCommand bukkitCommand = new BukkitCommand();
         PluginCommand plotCommand = getCommand("plots");
-        plotCommand.setExecutor(bcmd);
+        plotCommand.setExecutor(bukkitCommand);
         plotCommand.setAliases(Arrays.asList("p", "ps", "plotme", "plot"));
-        plotCommand.setTabCompleter(bcmd);
+        plotCommand.setTabCompleter(bukkitCommand);
     }
 
     @Override
@@ -224,10 +224,9 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case LIGHTNING:
                                     case WITHER_SKULL:
                                     case UNKNOWN:
-                                    case PLAYER: {
-                                        // non moving / unremovable
+                                    case PLAYER:
+                                        // non moving / unmovable
                                         continue;
-                                    }
                                     case THROWN_EXP_BOTTLE:
                                     case SPLASH_POTION:
                                     case SNOWBALL:
@@ -235,15 +234,13 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case SPECTRAL_ARROW:
                                     case TIPPED_ARROW:
                                     case ENDER_PEARL:
-                                    case ARROW: {
+                                    case ARROW:
                                         // managed elsewhere | projectile
                                         continue;
-                                    }
                                     case ARMOR_STAND:
                                     case ITEM_FRAME:
-                                    case PAINTING: {
+                                    case PAINTING:
                                         // TEMPORARILY CLASSIFY AS VEHICLE
-                                    }
                                     case MINECART:
                                     case MINECART_CHEST:
                                     case MINECART_COMMAND:
@@ -278,15 +275,13 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case SMALL_FIREBALL:
                                     case FIREBALL:
                                     case DRAGON_FIREBALL:
-                                    case DROPPED_ITEM: {
+                                    case DROPPED_ITEM:
                                         // dropped item
                                         continue;
-                                    }
                                     case PRIMED_TNT:
-                                    case FALLING_BLOCK: {
+                                    case FALLING_BLOCK:
                                         // managed elsewhere
                                         continue;
-                                    }
                                     case BAT:
                                     case BLAZE:
                                     case CAVE_SPIDER:
@@ -320,7 +315,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case WOLF:
                                     case ZOMBIE:
                                     case SHULKER:
-                                    default: {
+                                    default:
                                         if (!Settings.KILL_ROAD_MOBS) {
                                             continue;
                                         }
@@ -332,7 +327,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                                 entity.remove();
                                             }
                                         }
-                                    }
                                 }
                             }
                         } catch (Throwable e) {
@@ -383,7 +377,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     @Override
     public boolean initWorldEdit() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            BukkitMain.worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+            worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
             getServer().getPluginManager().registerEvents(new WEListener(), this);
             return true;
         }

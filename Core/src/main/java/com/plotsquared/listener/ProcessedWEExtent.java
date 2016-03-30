@@ -13,6 +13,7 @@ import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.Extent;
+import com.sk89q.worldedit.extent.NullExtent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BaseBiome;
 
@@ -81,7 +82,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             case 29:
             case 33:
             case 151:
-            case 178: {
+            case 178:
                 if (this.BSblocked) {
                     return false;
                 }
@@ -96,7 +97,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                             try {
                                 Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
                                 field.setAccessible(true);
-                                field.set(this.parent, new com.sk89q.worldedit.extent.NullExtent());
+                                field.set(this.parent, new NullExtent());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -107,8 +108,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                     return super.setBlock(location, block);
                 }
                 break;
-            }
-            default: {
+            default:
                 int x = location.getBlockX();
                 int y = location.getBlockY();
                 int z = location.getBlockZ();
@@ -118,7 +118,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                             try {
                                 Field field = AbstractDelegateExtent.class.getDeclaredField("extent");
                                 field.setAccessible(true);
-                                field.set(this.parent, new com.sk89q.worldedit.extent.NullExtent());
+                                field.set(this.parent, new NullExtent());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -208,26 +208,23 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                         case 189:
                         case 190:
                         case 191:
-                        case 192: {
+                        case 192:
                             if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
                                 SetQueue.IMP.setBlock(this.world, x, y, z, id);
                             } else {
                                 super.setBlock(location, block);
                             }
                             break;
-                        }
-                        default: {
+                        default:
                             if (Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT) {
                                 SetQueue.IMP.setBlock(this.world, x, y, z, new PlotBlock((short) id, (byte) block.getData()));
                             } else {
                                 super.setBlock(location, block);
                             }
                             break;
-                        }
                     }
                     return true;
                 }
-            }
 
         }
         return false;

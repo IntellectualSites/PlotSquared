@@ -26,7 +26,6 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * Creates an empty {@link FileConfiguration} with no default values.
      */
     public FileConfiguration() {
-        super();
     }
     
     /**
@@ -35,7 +34,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *
      * @param defaults Default value provider
      */
-    public FileConfiguration(final Configuration defaults) {
+    public FileConfiguration(Configuration defaults) {
         super(defaults);
     }
     
@@ -54,13 +53,13 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *     any reason.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void save(final File file) throws IOException {
+    public void save(File file) throws IOException {
         if (file == null) {
             throw new NullPointerException("File cannot be null");
         }
         file.getParentFile().mkdirs();
-        
-        final String data = saveToString();
+
+        String data = saveToString();
 
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             writer.write(data);
@@ -82,7 +81,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *     any reason.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void save(final String file) throws IOException {
+    public void save(String file) throws IOException {
         if (file == null) {
             throw new NullPointerException("File cannot be null");
         }
@@ -116,12 +115,12 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *     a valid Configuration.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void load(final File file) throws IOException, InvalidConfigurationException {
+    public void load(File file) throws IOException, InvalidConfigurationException {
         if (file == null) {
             throw new NullPointerException("File cannot be null");
         }
-        
-        final FileInputStream stream = new FileInputStream(file);
+
+        FileInputStream stream = new FileInputStream(file);
         
         load(new InputStreamReader(stream, StandardCharsets.UTF_8));
     }
@@ -139,9 +138,9 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *      represent a valid Configuration
      * @throws IllegalArgumentException thrown when reader is null
      */
-    public void load(final Reader reader) throws IOException, InvalidConfigurationException {
+    public void load(Reader reader) throws IOException, InvalidConfigurationException {
 
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
 
         try (BufferedReader input = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader)) {
             String line;
@@ -173,7 +172,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *     a valid Configuration.
      * @throws IllegalArgumentException Thrown when file is null.
      */
-    public void load(final String file) throws IOException, InvalidConfigurationException {
+    public void load(String file) throws IOException, InvalidConfigurationException {
         if (file == null) {
             throw new NullPointerException("File cannot be null");
         }
@@ -196,7 +195,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *     invalid.
      * @throws IllegalArgumentException Thrown if contents is null.
      */
-    public abstract void loadFromString(final String contents) throws InvalidConfigurationException;
+    public abstract void loadFromString(String contents) throws InvalidConfigurationException;
     
     /**
      * Compiles the header for this {@link FileConfiguration} and returns the
@@ -212,10 +211,10 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     
     @Override
     public FileConfigurationOptions options() {
-        if (options == null) {
-            options = new FileConfigurationOptions(this);
+        if (this.options == null) {
+            this.options = new FileConfigurationOptions(this);
         }
-        
-        return (FileConfigurationOptions) options;
+
+        return (FileConfigurationOptions) this.options;
     }
 }

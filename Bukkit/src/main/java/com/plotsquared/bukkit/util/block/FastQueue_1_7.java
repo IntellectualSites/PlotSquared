@@ -34,8 +34,7 @@ public class FastQueue_1_7 extends SlowQueue {
     private final RefMethod methodA;
     private final RefMethod methodGetById;
     private final RefMethod methodInitLighting;
-
-    private final SendChunk chunksender;
+    private final SendChunk sendChunk;
 
     private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
@@ -45,7 +44,7 @@ public class FastQueue_1_7 extends SlowQueue {
         this.methodA = this.classChunk.getMethod("a", int.class, int.class, int.class, this.classBlock, int.class);
         this.methodGetById = this.classBlock.getMethod("getById", int.class);
         this.methodInitLighting = this.classChunk.getMethod("initLighting");
-        this.chunksender = new SendChunk();
+        this.sendChunk = new SendChunk();
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
@@ -82,7 +81,7 @@ public class FastQueue_1_7 extends SlowQueue {
             return;
         }
         try {
-            this.chunksender.sendChunk(chunks);
+            this.sendChunk.sendChunk(chunks);
         } catch (Throwable e) {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
@@ -175,6 +174,6 @@ public class FastQueue_1_7 extends SlowQueue {
             ChunkWrapper wrapper = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
             this.toUpdate.remove(wrapper);
         }
-        this.chunksender.sendChunk(world, locations);
+        this.sendChunk.sendChunk(world, locations);
     }
 }

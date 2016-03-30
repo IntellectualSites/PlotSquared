@@ -78,7 +78,7 @@ public class Database extends SubCommand {
             com.intellectualcrafters.plot.database.Database implementation;
             String prefix = "";
             switch (args[0].toLowerCase()) {
-                case "import": {
+                case "import":
                     if (args.length < 2) {
                         MainUtil.sendMessage(player, "/plot database import [sqlite file] [prefix]");
                         return false;
@@ -90,7 +90,7 @@ public class Database extends SubCommand {
                     }
                     MainUtil.sendMessage(player, "&6Starting...");
                     implementation = new SQLite(file.getPath());
-                    SQLManager manager = new SQLManager(implementation, (args.length == 3) ? args[2] : "", true);
+                    SQLManager manager = new SQLManager(implementation, args.length == 3 ? args[2] : "", true);
                     HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
@@ -122,7 +122,6 @@ public class Database extends SubCommand {
                         }
                     });
                     return true;
-                }
                 case "mysql":
                     if (args.length < 6) {
                         return MainUtil.sendMessage(player, "/plot database mysql [host] [port] [username] [password] [database] {prefix}");
@@ -148,7 +147,7 @@ public class Database extends SubCommand {
             }
             try {
                 SQLManager manager = new SQLManager(implementation, prefix, true);
-                insertPlots(manager, plots, player);
+                Database.insertPlots(manager, plots, player);
                 return true;
             } catch (ClassNotFoundException | SQLException e) {
                 MainUtil.sendMessage(player, "$1Failed to save plots, read stacktrace for info");

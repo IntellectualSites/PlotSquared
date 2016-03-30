@@ -1,4 +1,3 @@
-
 package com.intellectualcrafters.plot.api;
 
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
@@ -43,32 +42,40 @@ import java.util.UUID;
  * @see com.intellectualcrafters.plot.object.Location
  * @see PlotArea
  * @see PS
+ * @version 3.3.1
+>>>>>>> origin/master
  */
 public class PlotAPI {
 
     /**
-     * Permission that allows for admin access, this permission node will allow the player to use any part of the
-     * plugin, without limitations.
+     * Permission that allows for admin access, this permission node will allow
+     * the player to use any part of the plugin, without limitations.
      * @deprecated Use C.PERMISSION_ADMIN instead
      */
     @Deprecated
     public static final String ADMIN_PERMISSION = C.PERMISSION_ADMIN.s();
 
     /**
-     * @deprecated Use new PlotAPI() instead
+     * Deprecated, does nothing.
+     * @param plugin not needed
+     * @deprecated Not needed
      */
     @Deprecated
     public PlotAPI(JavaPlugin plugin) {
     }
 
     /**
-     * @see PS
+     * Default Constructor that does nothing.
      *
-     * @deprecated Use this class if you just want to do a few simple things.<br>
-     *  - It will remain stable for future versions of the plugin
-     *  - The PlotPlayer and Plot class should be considered relatively safe
-     *  - For more advanced/intensive tasks you should consider using other classes
-     *
+     * @deprecated Use this class if you just want to do a few simple things
+     *      <ul>
+     *          <li>It will remain stable for future versions
+     *              of the plugin</li>
+     *          <li>The PlotPlayer and Plot class should be considered
+     *              relatively safe</li>
+     *          <li>For more advanced/intensive tasks you should consider
+     *              using other classes</li>
+     *      </ul>
      *
      */
     @Deprecated
@@ -108,6 +115,7 @@ public class PlotAPI {
     }
 
     /**
+     * Returns the PlotSquared configurations file.
      * @return main configuration
      *
      * @see PS#config
@@ -117,6 +125,7 @@ public class PlotAPI {
     }
 
     /**
+     * Get the PlotSquared storage file.
      * @return storage configuration
      *
      * @see PS#storage
@@ -126,8 +135,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get the main class for this plugin <br> - Contains a lot of fields and methods - not very well organized <br>
-     * Only use this if you really need it
+     * Get the main class for this plugin. Only use this if you really need it.
      *
      * @return PlotSquared PlotSquared Main Class
      *
@@ -138,12 +146,14 @@ public class PlotAPI {
     }
 
     /**
-     * ChunkManager class contains several useful methods<br>
-     *  - Chunk deletion<br>
-     *  - Moving or copying regions<br>
-     *  - plot swapping<br>
-     *  - Entity tracking<br>
-     *  - region regeneration<br>
+     * ChunkManager class contains several useful methods.
+     * <ul>
+     *     <li>Chunk deletion</li>
+     *     <li>Moving or copying regions</li>
+     *     <li>Plot swapping</li>
+     *     <li>Entity Tracking</li>
+     *     <li>Region Regeneration</li>
+     * </ul>
      *
      * @return ChunkManager
      *
@@ -162,7 +172,8 @@ public class PlotAPI {
     }
 
     /**
-     * UUIDWrapper class has basic methods for getting UUIDS (it's recommended to use the UUIDHandler class instead)
+     * UUIDWrapper class has basic methods for getting UUIDS. It's recommended
+     * to use the UUIDHandler class instead.
      *
      * @return UUIDWrapper
      *
@@ -178,7 +189,7 @@ public class PlotAPI {
      *
      * @return FlagManager
      *
-     * @see com.intellectualcrafters.plot.flag.FlagManager
+     * @deprecated Use {@link FlagManager} directly
      */
     @Deprecated
     public FlagManager getFlagManager() {
@@ -187,11 +198,9 @@ public class PlotAPI {
 
     /**
      * Do not use this. Instead use MainUtil.[method] in your code.
-     *  - Basic plot management stuff
      *
      * @return MainUtil
-     *
-     * @see MainUtil
+     * @deprecated Use {@link MainUtil} directly
      */
     @Deprecated
     public MainUtil getMainUtil() {
@@ -200,11 +209,11 @@ public class PlotAPI {
 
     /**
      * Do not use this. Instead use C.PERMISSION_[method] in your code.
-     *  - Basic permission management stuff
      *
      * @return Array of strings
      *
      * @see com.intellectualcrafters.plot.util.Permissions
+     * @deprecated Use {@link C} to list all the permissions
      */
     @Deprecated
     public String[] getPermissions() {
@@ -218,7 +227,8 @@ public class PlotAPI {
     }
 
     /**
-     * SchematicHandler class contains methods related to pasting, reading and writing schematics
+     * SchematicHandler class contains methods related to pasting, reading
+     * and writing schematics.
      *
      * @return SchematicHandler
      *
@@ -232,8 +242,7 @@ public class PlotAPI {
      * Use C.[caption] instead
      *
      * @return C
-     *
-     * @see com.intellectualcrafters.plot.config.C
+     * @deprecated Use {@link C}
      */
     @Deprecated
     public C[] getCaptions() {
@@ -241,7 +250,8 @@ public class PlotAPI {
     }
 
     /**
-     * Get the plot manager for a world. - Most of these methods can be accessed through the MainUtil
+     * Get the plot manager for a world. Most of these methods can be accessed
+     * through the MainUtil.
      *
      * @param world Which manager to get
      *
@@ -258,6 +268,11 @@ public class PlotAPI {
         return getPlotManager(world.getName());
     }
 
+    /**
+     * Get a list of PlotAreas in the world.
+     * @param world The world to check for plot areas
+     * @return A set of PlotAreas
+     */
     public Set<PlotArea> getPlotAreas(World world) {
         if (world == null) {
             return new HashSet<>();
@@ -266,10 +281,10 @@ public class PlotAPI {
     }
 
     /**
-     * Get the plot manager for a world. - Contains useful low level methods for plot merging, clearing, and
-     * tessellation
+     * Get the plot manager for a world. Contains useful low level methods for
+     * plot merging, clearing, and tessellation.
      *
-     * @param world
+     * @param world The world
      *
      * @return PlotManager
      *
@@ -291,12 +306,13 @@ public class PlotAPI {
     }
 
     /**
-     * Get the settings for a world (settings bundled in PlotArea class) - You will need to downcast for the specific
-     * settings a Generator has. e.g. DefaultPlotWorld class implements PlotArea
+     * Get the settings for a world (settings bundled in PlotArea class). You
+     * will need to downcast for the specific settings a Generator has. e.g.
+     * DefaultPlotWorld class implements PlotArea
      *
-     * @param world (to get settings of)
+     * @param world The World
      *
-     * @return PlotArea class for that world ! will return null if not a plot world world
+     * @return The {@link PlotArea} for the world or null if not in plotworld
      *
      * @see #getPlotAreas(World)
      * @see com.intellectualcrafters.plot.object.PlotArea
@@ -310,11 +326,11 @@ public class PlotAPI {
     }
 
     /**
-     * Get the settings for a world (settings bundled in PlotArea class)
+     * Get the settings for a world.
      *
-     * @param world (to get settings of)
+     * @param world The world
      *
-     * @return PlotArea class for that world ! will return null if not a plot world world
+     * @return The {@link PlotArea} for the world or null if not in plotworld
      *
      * @see PS#getPlotArea(String, String)
      * @see com.intellectualcrafters.plot.object.PlotArea
@@ -340,17 +356,16 @@ public class PlotAPI {
      * Send a message to a player.
      *
      * @param player Player that will receive the message
-     * @param c      (Caption)
+     * @param caption Caption
      *
      * @see MainUtil#sendMessage(PlotPlayer, C, String...)
-     * com.intellectualcrafters.plot.config.C, String...)
      */
-    public void sendMessage(Player player, C c) {
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), c);
+    public void sendMessage(Player player, C caption) {
+        MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
     }
 
     /**
-     * Send a message to a player. - Supports color codes
+     * Send a message to a player. Supports color codes.
      *
      * @param player Player that will receive the message
      * @param string The message
@@ -362,30 +377,30 @@ public class PlotAPI {
     }
 
     /**
-     * Send a message to the console. - Supports color codes
+     * Send a message to the console. Supports color codes.
      *
-     * @param msg Message that should be sent to the console
+     * @param message Message that should be sent to the console
      *
      * @see MainUtil#sendConsoleMessage(C, String...)
      */
-    public void sendConsoleMessage(String msg) {
-        PS.log(msg);
+    public void sendConsoleMessage(String message) {
+        PS.log(message);
     }
 
     /**
-     * Send a message to the console
+     * Send a message to the console.
      *
-     * @param c (Caption)
+     * @param caption The caption
      *
      * @see #sendConsoleMessage(String)
      * @see com.intellectualcrafters.plot.config.C
      */
-    public void sendConsoleMessage(C c) {
-        sendConsoleMessage(c.s());
+    public void sendConsoleMessage(C caption) {
+        sendConsoleMessage(caption.s());
     }
 
     /**
-     * Register a flag for use in plots
+     * Register a flag for use in plots.
      *
      * @param flag Flag that should be registered
      *
@@ -397,7 +412,7 @@ public class PlotAPI {
     }
 
     /**
-     * get all the currently registered flags
+     * get all the currently registered flags.
      *
      * @return array of Flag[]
      *
@@ -412,8 +427,8 @@ public class PlotAPI {
      * Get a plot based on the ID.
      *
      * @param world World in which the plot is located
-     * @param x     Plot Location X Co-ord
-     * @param z     Plot Location Z Co-ord
+     * @param x The PlotID x coordinate
+     * @param z The PlotID y coordinate
      *
      * @return plot, null if ID is wrong
      *
@@ -434,17 +449,17 @@ public class PlotAPI {
     /**
      * Get a plot based on the location.
      *
-     * @param l The location that you want to to retrieve the plot from
+     * @param location The location to retrieve the plot from
      *
-     * @return plot if found, otherwise it creates a temporary plot-
+     * @return plot if found, otherwise it creates a temporary plot
      *
      * @see Plot
      */
-    public Plot getPlot(Location l) {
-        if (l == null) {
+    public Plot getPlot(Location location) {
+        if (location == null) {
             return null;
         }
-        return BukkitUtil.getLocation(l).getPlot();
+        return BukkitUtil.getLocation(location).getPlot();
     }
 
     /**
@@ -465,7 +480,7 @@ public class PlotAPI {
      * Check whether or not a player has a plot.
      *
      * @param player Player that you want to check for
-     *
+     * @param world The world to check
      * @return true if player has a plot, false if not.
      *
      * @see #getPlots(World, Player, boolean)
@@ -478,9 +493,10 @@ public class PlotAPI {
     /**
      * Get all plots for the player.
      *
-     * @param world
+     * @param world The world to retrieve plots from
      * @param player The player to search for
      * @param justOwner should we just search for owner? Or with rights?
+     * @return An array of plots for the player
      */
     @Deprecated
     public Plot[] getPlots(World world, Player player, boolean justOwner) {
@@ -530,9 +546,9 @@ public class PlotAPI {
     }
 
     /**
-     * Get if plot world
+     * Get if plotworld.
      *
-     * @param world (to check if plot world)
+     * @param world The world to check
      *
      * @return boolean (if plot world or not)
      *
@@ -544,9 +560,9 @@ public class PlotAPI {
     }
 
     /**
-     * Get plot locations
+     * Get plot locations.
      *
-     * @param p Plot that you want to get the locations for
+     * @param plot Plot to get the locations for
      *
      * @return [0] = bottomLc, [1] = topLoc, [2] = home
      *
@@ -555,27 +571,30 @@ public class PlotAPI {
      * @see Plot
      */
     @Deprecated
-    public Location[] getLocations(Plot p) {
-        return new Location[]{BukkitUtil.getLocation(p.getBottom()), BukkitUtil.getLocation(p.getTop()), BukkitUtil.getLocation(p.getHome())};
+    public Location[] getLocations(Plot plot) {
+        Location bukkitBottom = BukkitUtil.getLocation(plot.getCorners()[0]);
+        Location bukkitTop = BukkitUtil.getLocation(plot.getCorners()[1]);
+        Location bukkitHome = BukkitUtil.getLocation(plot.getHome());
+        return new Location[]{bukkitBottom, bukkitTop, bukkitHome};
     }
 
     /**
-     * Get home location
+     * Get home location.
      *
-     * @param p Plot that you want to get the location for
+     * @param plot Plot that you want to get the location for
      *
      * @return plot bottom location
      *
      * @see Plot
      */
-    public Location getHomeLocation(Plot p) {
-        return BukkitUtil.getLocation(p.getHome());
+    public Location getHomeLocation(Plot plot) {
+        return BukkitUtil.getLocation(plot.getHome());
     }
 
     /**
-     * Get Bottom Location (min, min, min)
+     * Get Bottom Location (min, min, min).
      *
-     * @param p Plot that you want to get the location for
+     * @param plot Plot that you want to get the location for
      *
      * @return plot bottom location
      *
@@ -584,14 +603,14 @@ public class PlotAPI {
      * @see Plot
      */
     @Deprecated
-    public Location getBottomLocation(Plot p) {
-        return BukkitUtil.getLocation(p.getBottom());
+    public Location getBottomLocation(Plot plot) {
+        return BukkitUtil.getLocation(plot.getBottom());
     }
 
     /**
-     * Get Top Location (max, max, max)
+     * Get Top Location (max, max, max).
      *
-     * @param p Plot that you want to get the location for
+     * @param plot Plot that you want to get the location for
      *
      * @return plot top location
      *
@@ -600,12 +619,12 @@ public class PlotAPI {
      * @see Plot
      */
     @Deprecated
-    public Location getTopLocation(Plot p) {
-        return BukkitUtil.getLocation(p.getTop());
+    public Location getTopLocation(Plot plot) {
+        return BukkitUtil.getLocation(plot.getTop());
     }
 
     /**
-     * Check whether or not a player is in a plot
+     * Check whether or not a player is in a plot.
      *
      * @param player who we're checking for
      *
@@ -617,7 +636,7 @@ public class PlotAPI {
     }
 
     /**
-     * Register a subcommand
+     * Register a subcommand.
      * @deprecated Command registration is done on object creation
      * @param c SubCommand, that we want to register
      * @see com.intellectualcrafters.plot.commands.SubCommand
@@ -628,7 +647,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get the PlotSquared class
+     * Get the PlotSquared class.
      *
      * @return PlotSquared Class
      *
@@ -639,7 +658,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get the player plot count
+     * Get the player plot count.
      *
      * @param world  Specify the world we want to select the plots from
      * @param player Player, for whom we're getting the plot count
@@ -655,7 +674,7 @@ public class PlotAPI {
     }
 
     /**
-     * Get a collection containing the players plots
+     * Get a collection containing the players plots.
      *
      * @param world  Specify the world we want to select the plots from
      * @param player Player, for whom we're getting the plots
@@ -674,9 +693,9 @@ public class PlotAPI {
     }
 
     /**
-     * Get the numbers of plots, which the player is able to build in
+     * Get the numbers of plots, which the player is able to build in.
      *
-     * @param player Player, for whom we're getting the plots (trusted, member and owner)
+     * @param player Player, for whom we're getting the plots
      *
      * @return the number of allowed plots
      *
@@ -687,50 +706,54 @@ public class PlotAPI {
     }
 
     /**
-     * Get the PlotPlayer for a player<br>
-     *  - The PlotPlayer is usually cached and will provide useful functions relating to players
+     * Get the PlotPlayer for a player. The PlotPlayer is usually cached and
+     * will provide useful functions relating to players.
      *
      * @see PlotPlayer#wrap(Object)
      *
-     * @param player
-     * @return
+     * @param player The player to wrap
+     * @return A PlotPlayer
      */
     public PlotPlayer wrapPlayer(Player player) {
         return PlotPlayer.wrap(player);
     }
 
     /**
-     * Get the PlotPlayer for a UUID (Please note that PlotSquared can be configured to provide different UUIDs than bukkit)
+     * Get the PlotPlayer for a UUID.
+     *
+     * <p><i>Please note that PlotSquared can be configured to provide
+     * different UUIDs than bukkit</i></p>
      *
      * @see PlotPlayer#wrap(Object)
      *
-     * @param uuid
-     * @return
+     * @param uuid The uuid of the player to wrap
+     * @return A PlotPlayer
      */
     public PlotPlayer wrapPlayer(UUID uuid) {
         return PlotPlayer.wrap(uuid);
     }
 
     /**
-     * Get the PlotPlayer for a username
+     * Get the PlotPlayer for a username.
      *
      * @see PlotPlayer#wrap(Object)
      *
-     * @param player
-     * @return
+     * @param player The player to wrap
+     * @return The PlotPlayer
      */
     public PlotPlayer wrapPlayer(String player) {
         return PlotPlayer.wrap(player);
     }
 
     /**
-     * Get the PlotPlayer for an offline player<br>
-     * Note that this will work if the player is offline, however not all functionality will work
+     * Get the PlotPlayer for an offline player.
+     * <p>Note that this will work if the player is offline, however not all
+     * functionality will work</p>
      *
      * @see PlotPlayer#wrap(Object)
      *
-     * @param player
-     * @return
+     * @param player The player to wrap
+     * @return The PlotPlayer
      */
     public PlotPlayer wrapPlayer(OfflinePlayer player) {
         return PlotPlayer.wrap(player);

@@ -13,7 +13,7 @@ public abstract class RunnableVal2<T, U> implements Runnable {
 
     @Override
     public void run() {
-        run(value1, value2);
+        run(this.value1, this.value2);
     }
     
     public abstract void run(T value1, U value2);

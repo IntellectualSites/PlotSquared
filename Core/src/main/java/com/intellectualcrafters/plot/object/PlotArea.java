@@ -72,8 +72,8 @@ public abstract class PlotArea {
     private ConcurrentHashMap<String, Object> meta;
     private QuadMap<PlotCluster> clusters;
 
-    public PlotArea(String worldname, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
-        this.worldname = worldname;
+    public PlotArea(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
+        this.worldname = worldName;
         this.id = id;
         this.manager = generator != null ? generator.getNewPlotManager() : null;
         this.generator = generator;
@@ -87,7 +87,7 @@ public abstract class PlotArea {
             this.min = min;
             this.max = max;
         }
-        this.worldhash = worldname.hashCode();
+        this.worldhash = worldName.hashCode();
     }
 
     /**
@@ -303,7 +303,7 @@ public abstract class PlotArea {
     public abstract void loadConfiguration(ConfigurationSection config);
     
     /**
-     * Saving core plotarea settings
+     * Saving core PlotArea settings
      *
      * @param config Configuration Section
      */
@@ -457,16 +457,16 @@ public abstract class PlotArea {
     }
     
     public Set<Plot> getPlotsAbs(final UUID uuid) {
-        final HashSet<Plot> myplots = new HashSet<>();
+        final HashSet<Plot> myPlots = new HashSet<>();
         foreachPlotAbs(new RunnableVal<Plot>() {
             @Override
             public void run(Plot value) {
                 if (value.owner.equals(uuid)) {
-                    myplots.add(value);
+                    myPlots.add(value);
                 }
             }
         });
-        return myplots;
+        return myPlots;
     }
     
     public Set<Plot> getPlots(UUID uuid) {
@@ -595,14 +595,14 @@ public abstract class PlotArea {
     }
     
     public Set<Plot> getBasePlots() {
-        HashSet<Plot> myplots = new HashSet<>(getPlots());
-        Iterator<Plot> iter = myplots.iterator();
-        while (iter.hasNext()) {
-            if (!iter.next().isBasePlot()) {
-                iter.remove();
+        HashSet<Plot> myPlots = new HashSet<>(getPlots());
+        Iterator<Plot> iterator = myPlots.iterator();
+        while (iterator.hasNext()) {
+            if (!iterator.next().isBasePlot()) {
+                iterator.remove();
             }
         }
-        return myplots;
+        return myPlots;
     }
 
     public void foreachPlotAbs(RunnableVal<Plot> run) {

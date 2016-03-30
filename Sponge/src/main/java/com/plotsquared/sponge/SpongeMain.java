@@ -315,11 +315,11 @@ public class SpongeMain implements IPlotMain {
     }
 
     @Override
-    public void setGenerator(String worldname) {
-        World world = SpongeUtil.getWorld(worldname);
+    public void setGenerator(String worldName) {
+        World world = SpongeUtil.getWorld(worldName);
         if (world == null) {
             // create world
-            ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldname);
+            ConfigurationSection worldConfig = PS.get().config.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", "PlotSquared");
             String generator = worldConfig.getString("generator.init", manager);
 
@@ -331,15 +331,15 @@ public class SpongeMain implements IPlotMain {
             setup.type = type;
             setup.terrain = terrain;
             setup.step = new ConfigurationNode[0];
-            setup.world = worldname;
+            setup.world = worldName;
             SetupUtils.manager.setupWorld(setup);
         } else {
-            throw new IllegalArgumentException("World already loaded: " + worldname + "???");
+            throw new IllegalArgumentException("World already loaded: " + worldName + "???");
         }
         WorldGenerator wg = world.getWorldGenerator();
         GenerationPopulator gen = wg.getBaseGenerationPopulator();
         if (gen instanceof SpongePlotGenerator) {
-            PS.get().loadWorld(worldname, (SpongePlotGenerator) gen);
+            PS.get().loadWorld(worldName, (SpongePlotGenerator) gen);
         } else {
             throw new UnsupportedOperationException("NOT IMPLEMENTED YET!");
         }

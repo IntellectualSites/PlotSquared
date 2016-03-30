@@ -6,11 +6,13 @@ import java.util.Map;
  * A class which contains NBT-related utility methods.
  */
 public final class NBTUtils {
+
     /**
      * Default private constructor.
      */
-    private NBTUtils() {}
-    
+    private NBTUtils() {
+    }
+
     /**
      * Gets the type name of a tag.
      *
@@ -18,7 +20,7 @@ public final class NBTUtils {
      *
      * @return The type name.
      */
-    public static String getTypeName(final Class<? extends Tag> clazz) {
+    public static String getTypeName(Class<? extends Tag> clazz) {
         if (clazz.equals(ByteArrayTag.class)) {
             return "TAG_Byte_Array";
         } else if (clazz.equals(ByteTag.class)) {
@@ -47,7 +49,7 @@ public final class NBTUtils {
             throw new IllegalArgumentException("Invalid tag class (" + clazz.getName() + ").");
         }
     }
-    
+
     /**
      * Gets the type code of a tag class.
      *
@@ -57,7 +59,7 @@ public final class NBTUtils {
      *
      * @throws IllegalArgumentException if the tag class is invalid.
      */
-    public static int getTypeCode(final Class<? extends Tag> clazz) {
+    public static int getTypeCode(Class<? extends Tag> clazz) {
         if (clazz.equals(ByteArrayTag.class)) {
             return NBTConstants.TYPE_BYTE_ARRAY;
         } else if (clazz.equals(ByteTag.class)) {
@@ -86,7 +88,7 @@ public final class NBTUtils {
             throw new IllegalArgumentException("Invalid tag class (" + clazz.getName() + ").");
         }
     }
-    
+
     /**
      * Gets the class of a type of tag.
      *
@@ -96,7 +98,7 @@ public final class NBTUtils {
      *
      * @throws IllegalArgumentException if the tag type is invalid.
      */
-    public static Class<? extends Tag> getTypeClass(final int type) {
+    public static Class<? extends Tag> getTypeClass(int type) {
         switch (type) {
             case NBTConstants.TYPE_END:
                 return EndTag.class;
@@ -126,7 +128,7 @@ public final class NBTUtils {
                 throw new IllegalArgumentException("Invalid tag type : " + type + ".");
         }
     }
-    
+
     /**
      * Get child tag of a NBT structure.
      *
@@ -137,11 +139,12 @@ public final class NBTUtils {
      *
      * @return child tag
      */
-    public static <T extends Tag> T getChildTag(final Map<String, Tag> items, final String key, final Class<T> expected) throws IllegalArgumentException {
+    public static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected)
+            throws IllegalArgumentException {
         if (!items.containsKey(key)) {
             throw new IllegalArgumentException("Missing a \"" + key + "\" tag");
         }
-        final Tag tag = items.get(key);
+        Tag tag = items.get(key);
         if (!expected.isInstance(tag)) {
             throw new IllegalArgumentException(key + " tag is not of tag type " + expected.getName());
         }

@@ -15,10 +15,11 @@ import java.util.Map;
  * may be found at @linktourl http://www.minecraft.net/docs/NBT.txt"> http://www.minecraft.net/docs/NBT.txt.
  */
 public final class NBTInputStream implements Closeable {
+
     private final DataInputStream is;
-    
+
     private int count;
-    
+
     /**
      * Creates a new {@code NBTInputStream}, which will source its data from the specified input stream.
      *
@@ -26,10 +27,10 @@ public final class NBTInputStream implements Closeable {
      *
      * @throws IOException if an I/O error occurs
      */
-    public NBTInputStream(final InputStream is) {
+    public NBTInputStream(InputStream is) {
         this.is = new DataInputStream(is);
     }
-    
+
     /**
      * Reads an NBT tag from the stream.
      *
@@ -40,7 +41,7 @@ public final class NBTInputStream implements Closeable {
     public Tag readTag() throws IOException {
         return readTag(0, Integer.MAX_VALUE);
     }
-    
+
     /**
      * Reads an NBT tag from the stream.
      *
@@ -48,10 +49,10 @@ public final class NBTInputStream implements Closeable {
      *
      * @throws IOException if an I/O error occurs.
      */
-    public Tag readTag(final int maxDepth) throws IOException {
+    public Tag readTag(int maxDepth) throws IOException {
         return readTag(0, maxDepth);
     }
-    
+
     /**
      * Reads an NBT from the stream.
      *
@@ -61,23 +62,23 @@ public final class NBTInputStream implements Closeable {
      *
      * @throws IOException if an I/O error occurs.
      */
-    private Tag readTag(final int depth, final int maxDepth) throws IOException {
-        if ((count++) > maxDepth) {
-            throw new IOException("Exceeds max depth: " + count);
+    private Tag readTag(int depth, int maxDepth) throws IOException {
+        if (this.count++ > maxDepth) {
+            throw new IOException("Exceeds max depth: " + this.count);
         }
-        final int type = is.readByte() & 0xFF;
+        int type = this.is.readByte() & 0xFF;
         String name;
         if (type != NBTConstants.TYPE_END) {
-            final int nameLength = is.readShort() & 0xFFFF;
-            final byte[] nameBytes = new byte[nameLength];
-            is.readFully(nameBytes);
+            int nameLength = this.is.readShort() & 0xFFFF;
+            byte[] nameBytes = new byte[nameLength];
+            this.is.readFully(nameBytes);
             name = new String(nameBytes, NBTConstants.CHARSET);
         } else {
             name = "";
         }
         return readTagPayload(type, name, depth, maxDepth);
     }
-    
+
     /**
      * Reads the payload of a tag, given the name and type.
      *
@@ -89,11 +90,11 @@ public final class NBTInputStream implements Closeable {
      *
      * @throws IOException if an I/O error occurs.
      */
-    private Tag readTagPayload(final int type, final String name, final int depth, final int maxDepth) throws IOException {
-        if ((count++) > maxDepth) {
-            throw new IOException("Exceeds max depth: " + count);
+    private Tag readTagPayload(int type, String name, int depth, int maxDepth) throws IOException {
+        if (this.count++ > maxDepth) {
+            throw new IOException("Exceeds max depth: " + this.count);
         }
-        count++;
+        this.count++;
         switch (type) {
             case NBTConstants.TYPE_END:
                 if (depth == 0) {
@@ -102,54 +103,54 @@ public final class NBTInputStream implements Closeable {
                     return new EndTag();
                 }
             case NBTConstants.TYPE_BYTE:
-                return new ByteTag(name, is.readByte());
+                return new ByteTag(name, this.is.readByte());
             case NBTConstants.TYPE_SHORT:
-                return new ShortTag(name, is.readShort());
+                return new ShortTag(name, this.is.readShort());
             case NBTConstants.TYPE_INT:
-                return new IntTag(name, is.readInt());
+                return new IntTag(name, this.is.readInt());
             case NBTConstants.TYPE_LONG:
-                return new LongTag(name, is.readLong());
+                return new LongTag(name, this.is.readLong());
             case NBTConstants.TYPE_FLOAT:
-                return new FloatTag(name, is.readFloat());
+                return new FloatTag(name, this.is.readFloat());
             case NBTConstants.TYPE_DOUBLE:
-                return new DoubleTag(name, is.readDouble());
+                return new DoubleTag(name, this.is.readDouble());
             case NBTConstants.TYPE_BYTE_ARRAY:
-                int length = is.readInt();
-                
+                int length = this.is.readInt();
+
                 // Max depth
-                if ((count += length) > maxDepth) {
-                    throw new IOException("Exceeds max depth: " + count);
+                if ((this.count += length) > maxDepth) {
+                    throw new IOException("Exceeds max depth: " + this.count);
                     //
                 }
-                
+
                 byte[] bytes = new byte[length];
-                is.readFully(bytes);
+                this.is.readFully(bytes);
                 return new ByteArrayTag(name, bytes);
             case NBTConstants.TYPE_STRING:
-                length = is.readShort();
-                
+                length = this.is.readShort();
+
                 // Max depth
-                if ((count += length) > maxDepth) {
-                    throw new IOException("Exceeds max depth: " + count);
+                if ((this.count += length) > maxDepth) {
+                    throw new IOException("Exceeds max depth: " + this.count);
                     //
                 }
-                
+
                 bytes = new byte[length];
-                is.readFully(bytes);
+                this.is.readFully(bytes);
                 return new StringTag(name, new String(bytes, NBTConstants.CHARSET));
             case NBTConstants.TYPE_LIST:
-                final int childType = is.readByte();
-                length = is.readInt();
-                
+                int childType = this.is.readByte();
+                length = this.is.readInt();
+
                 // Max depth
-                if ((count += length) > maxDepth) {
-                    throw new IOException("Exceeds max depth: " + count);
+                if ((this.count += length) > maxDepth) {
+                    throw new IOException("Exceeds max depth: " + this.count);
                     //
                 }
-                
-                final List<Tag> tagList = new ArrayList<Tag>();
+
+                List<Tag> tagList = new ArrayList<Tag>();
                 for (int i = 0; i < length; ++i) {
-                    final Tag tag = readTagPayload(childType, "", depth + 1, maxDepth);
+                    Tag tag = readTagPayload(childType, "", depth + 1, maxDepth);
                     if (tag instanceof EndTag) {
                         throw new IOException("TAG_End not permitted in a list.");
                     }
@@ -157,9 +158,9 @@ public final class NBTInputStream implements Closeable {
                 }
                 return new ListTag(name, NBTUtils.getTypeClass(childType), tagList);
             case NBTConstants.TYPE_COMPOUND:
-                final Map<String, Tag> tagMap = new HashMap<String, Tag>();
+                Map<String, Tag> tagMap = new HashMap<String, Tag>();
                 while (true) {
-                    final Tag tag = readTag(depth + 1, maxDepth);
+                    Tag tag = readTag(depth + 1, maxDepth);
                     if (tag instanceof EndTag) {
                         break;
                     } else {
@@ -168,24 +169,24 @@ public final class NBTInputStream implements Closeable {
                 }
                 return new CompoundTag(name, tagMap);
             case NBTConstants.TYPE_INT_ARRAY:
-                length = is.readInt();
+                length = this.is.readInt();
                 // Max depth
-                if ((count += length) > maxDepth) {
-                    throw new IOException("Exceeds max depth: " + count);
+                if ((this.count += length) > maxDepth) {
+                    throw new IOException("Exceeds max depth: " + this.count);
                 }
                 //
-                final int[] data = new int[length];
+                int[] data = new int[length];
                 for (int i = 0; i < length; i++) {
-                    data[i] = is.readInt();
+                    data[i] = this.is.readInt();
                 }
                 return new IntArrayTag(name, data);
             default:
                 throw new IOException("Invalid tag type: " + type + ".");
         }
     }
-    
+
     @Override
     public void close() throws IOException {
-        is.close();
+        this.is.close();
     }
 }
