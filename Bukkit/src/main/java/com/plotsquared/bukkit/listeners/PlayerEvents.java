@@ -90,6 +90,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -266,6 +267,29 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             default:
                 break;
+        }
+    }
+
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        Projectile entity = event.getEntity();
+        if (!(entity instanceof ThrownPotion)) {
+            return;
+        }
+        ProjectileSource shooter = entity.getShooter();
+        if (!(shooter instanceof Player)) {
+            return;
+        }
+        ThrownPotion potion = (ThrownPotion) entity;
+        Location l = BukkitUtil.getLocation(potion);
+        if (!PS.get().hasPlotArea(l.getWorld())) {
+            return;
+        }
+        PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
+        Plot plot = l.getOwnedPlot();
+        if (plot != null && !plot.isAdded(pp.getUUID())) {
+            entity.remove();
+            event.setCancelled(true);
         }
     }
 
