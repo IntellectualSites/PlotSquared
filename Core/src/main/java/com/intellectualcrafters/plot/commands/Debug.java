@@ -33,12 +33,12 @@ public class Debug extends SubCommand {
         PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override
             public void run(PlotArea value) {
-                worlds.append(value.toString()).append(" ");
+                worlds.append(value.toString()).append(", ");
             }
         });
         information.append(header);
         information.append(getSection(section, "PlotArea"));
-        information.append(getLine(line, "Plot Worlds", worlds));
+        information.append(getLine(line, "Plot Worlds", worlds.substring(0, worlds.length() - 2)));
         information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", C.values().length));
