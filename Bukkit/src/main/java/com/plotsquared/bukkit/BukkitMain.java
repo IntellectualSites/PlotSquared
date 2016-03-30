@@ -42,6 +42,7 @@ import com.plotsquared.bukkit.listeners.ForceFieldListener;
 import com.plotsquared.bukkit.listeners.PlayerEvents;
 import com.plotsquared.bukkit.listeners.PlayerEvents183;
 import com.plotsquared.bukkit.listeners.PlayerEvents_1_8;
+import com.plotsquared.bukkit.listeners.PlayerEvents_1_9;
 import com.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.plotsquared.bukkit.listeners.WorldEvents;
 import com.plotsquared.bukkit.listeners.worldedit.WEListener;
@@ -72,6 +73,12 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -85,13 +92,6 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
@@ -349,12 +349,16 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void registerPlayerEvents() {
-        getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
+        PlayerEvents main = new PlayerEvents();
+        getServer().getPluginManager().registerEvents(main, this);
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
             getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 3)) {
             getServer().getPluginManager().registerEvents(new PlayerEvents183(), this);
+        }
+        if (PS.get().checkVersion(getServerVersion(), 1, 9, 0)) {
+            getServer().getPluginManager().registerEvents(new PlayerEvents_1_9(main), this);
         }
     }
 

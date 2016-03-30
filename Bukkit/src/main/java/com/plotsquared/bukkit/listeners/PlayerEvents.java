@@ -28,6 +28,16 @@ import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -107,17 +117,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -271,15 +270,15 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler
-    public void onProjectileHit(ProjectileHitEvent event) {
+    public boolean onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
         Location loc = BukkitUtil.getLocation(entity);
         if (!PS.get().hasPlotArea(loc.getWorld())) {
-            return;
+            return true;
         }
         PlotArea area = loc.getPlotArea();
         if (area == null) {
-            return;
+            return true;
         }
         Plot plot = area.getPlotAbs(loc);
         //
@@ -289,28 +288,32 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_PROJECTILE_UNOWNED)) {
                     entity.remove();
+                    return false;
                 }
-                return;
+                return true;
             }
             if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_PROJECTILE_OTHER)) {
-                return;
+                return true;
             }
             entity.remove();
+            return false;
         } else if (!(shooter instanceof Entity) && shooter != null) {
             if (plot == null) {
                 entity.remove();
-                return;
+                return false;
             }
             Location sLoc = BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
             if (!area.contains(sLoc.getX(), sLoc.getZ())) {
                 entity.remove();
-                return;
+                return false;
             }
             Plot sPlot = area.getOwnedPlotAbs(sLoc);
             if (sPlot == null || !PlotHandler.sameOwners(plot, sPlot)) {
                 entity.remove();
+                return false;
             }
         }
+        return true;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -2035,10 +2038,15 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (!PS.get().hasPlotArea(l.getWorld())) {
             return;
         }
+        int count = 0;
         for (LivingEntity victim : event.getAffectedEntities()) {
             if (!entityDamage(damager, victim)) {
                 event.setIntensity(victim, 0);
+                count++;
             }
+        }
+        if ((count > 0 && count == event.getAffectedEntities().size()) || !onProjectileHit(event)) {
+            event.setCancelled(true);
         }
     }
 
