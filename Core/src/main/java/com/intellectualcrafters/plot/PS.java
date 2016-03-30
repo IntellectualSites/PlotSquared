@@ -1470,7 +1470,7 @@ public class PS {
                 }
                 String name = areaId.substring(0, i1);
                 String rest = areaId.substring(i1 + 1);
-                int i3 = rest.indexOf("-", i2);
+                int i3 = rest.indexOf("-",  i2 - name.length() - 1);
                 PlotId pos1 = PlotId.fromString(rest.substring(0, i3));
                 PlotId pos2 = PlotId.fromString(rest.substring(i3 + 1));
                 if (pos1 == null || pos2 == null || name.isEmpty()) {

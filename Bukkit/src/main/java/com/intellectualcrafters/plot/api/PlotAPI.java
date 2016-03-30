@@ -34,7 +34,7 @@ import java.util.UUID;
 /**
  * PlotSquared API.
  * <br>
- * @version API 3.3.1
+ * @version API 3.3.2
  * <br>
  * Useful classes:<br>
  * @see BukkitUtil
