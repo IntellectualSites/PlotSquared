@@ -50,6 +50,7 @@ abstract class APlotMeConnector {
         int height = plotConfig.getInt("worlds." + world + ".RoadHeight"); //
         PS.get().config.set("worlds." + actualWorldName + ".road.height", height);
         PS.get().config.set("worlds." + actualWorldName + ".plot.height", height);
+        PS.get().config.set("worlds." + actualWorldName + ".wall.height", height);
     }
 
     public Location getPlotTopLocAbs(int path, int plot, PlotId plotid) {
