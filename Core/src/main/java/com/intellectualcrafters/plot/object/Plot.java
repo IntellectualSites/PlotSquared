@@ -1929,6 +1929,10 @@ public class Plot {
     public void setMerged(boolean[] merged) {
         this.getSettings().setMerged(merged);
         DBFunc.setMerged(this, merged);
+        clearCache();
+    }
+
+    public void clearCache() {
         connected_cache = null;
         regions_cache = null;
         if (this.origin != null) {

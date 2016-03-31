@@ -29,7 +29,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class SpongeSchematicHandler extends SchematicHandler {
-    
+
+    @Override
+    public void restoreTile(String world, CompoundTag tag, int x, int y, int z) {
+        // TODO Auto-generated method stub
+        // This method should place the compound tag at a location e.g. chest contents
+        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
+    }
+
     @Override
     public void getCompoundTag(String world, Set<RegionWrapper> regions, RunnableVal<CompoundTag> whenDone) {
         // async
@@ -294,12 +301,5 @@ public class SpongeSchematicHandler extends SchematicHandler {
             }
         });
     }
-    
-    @Override
-    public void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schematic) {
-        // TODO Auto-generated method stub
-        // This method should place the compound tag at a location e.g. chest contents
-        throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
-    }
-    
+
 }

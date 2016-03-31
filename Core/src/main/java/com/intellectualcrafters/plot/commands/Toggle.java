@@ -67,10 +67,10 @@ public class Toggle extends Command {
             description = "Toggle plot title messages")
     public void titles(Command command, PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone) {
-        if (toggle(player, "titles")) {
-            MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
-        } else {
+        if (toggle(player, "disabletitles")) {
             MainUtil.sendMessage(player, C.TOGGLE_ENABLED, command.toString());
+        } else {
+            MainUtil.sendMessage(player, C.TOGGLE_DISABLED, command.toString());
         }
     }
 

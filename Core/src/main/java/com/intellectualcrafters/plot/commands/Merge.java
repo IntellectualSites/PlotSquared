@@ -85,20 +85,20 @@ public class Merge extends SubCommand {
         }
         int direction = -1;
         if (args.length == 0) {
-            //            switch (direction(plr.getLocationFull().getYaw())) {
-            //                case "NORTH":
-            //                    direction = 0;
-            //                    break;
-            //                case "EAST":
-            //                    direction = 1;
-            //                    break;
-            //                case "SOUTH":
-            //                    direction = 2;
-            //                    break;
-            //                case "WEST":
-            //                    direction = 3;
-            //                    break;
-            //            }
+            switch (direction(plr.getLocationFull().getYaw())) {
+                case "NORTH":
+                    direction = 0;
+                    break;
+                case "EAST":
+                    direction = 1;
+                    break;
+                case "SOUTH":
+                    direction = 2;
+                    break;
+                case "WEST":
+                    direction = 3;
+                    break;
+            }
         } else {
             if ("all".equalsIgnoreCase(args[0]) || "auto".equalsIgnoreCase(args[0])) {
                 boolean terrain = Settings.MERGE_REMOVES_ROADS;
