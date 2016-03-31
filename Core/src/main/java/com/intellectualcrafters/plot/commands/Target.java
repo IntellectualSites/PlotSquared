@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.StringMan;
+import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(
@@ -17,6 +18,10 @@ import com.plotsquared.general.commands.CommandDeclaration;
         requiredType = RequiredType.NONE,
         category = CommandCategory.INFO)
 public class Target extends SubCommand {
+
+    public Target() {
+        super(Argument.PlotID);
+    }
 
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
