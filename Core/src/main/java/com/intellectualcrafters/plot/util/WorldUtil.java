@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.schematic.PlotItem;
@@ -29,8 +30,10 @@ public abstract class WorldUtil {
     public abstract boolean isWorld(String worldName);
 
     public abstract String[] getSign(Location location);
-    
+
     public abstract Location getSpawn(String world);
+
+    public abstract Location getSpawn(PlotPlayer pp);
 
     public abstract void setSpawn(Location location);
 

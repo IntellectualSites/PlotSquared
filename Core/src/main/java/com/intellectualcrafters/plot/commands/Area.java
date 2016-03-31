@@ -394,6 +394,8 @@ public class Area extends SubCommand {
                 }, "/plot area list", C.AREA_LIST_HEADER_PAGED.s());
                 return true;
             case "regen":
+            case "clear":
+            case "reset":
             case "regenerate": {
                 if (!Permissions.hasPermission(plr, "plots.area.regen")) {
                     C.NO_PERMISSION.send(plr, "plots.area.regen");

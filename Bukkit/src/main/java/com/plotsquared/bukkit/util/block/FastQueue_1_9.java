@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.util.block;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -12,32 +10,31 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefConstructor;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod.RefExecutor;
-import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.bukkit.util.SendChunk;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_9 extends SlowQueue {
 
     private final Object air;
-    private final SendChunk chunkSender;
-    private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
+//    private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     private final RefMethod methodGetHandleChunk;
     private final RefMethod methodInitLighting;
     private final RefConstructor classBlockPositionConstructor;
@@ -52,7 +49,8 @@ public class FastQueue_1_9 extends SlowQueue {
     private final RefMethod methodGetCombinedId;
     private final RefMethod methodGetByCombinedId;
     private final RefMethod methodGetWorld;
-    private final RefField tileEntityUnload;
+
+    private final RefField tileEntityListTick;
 
 
     public FastQueue_1_9() throws RuntimeException {
@@ -63,7 +61,7 @@ public class FastQueue_1_9 extends SlowQueue {
         RefClass classBlockPosition = getRefClass("{nms}.BlockPosition");
         this.classBlockPositionConstructor = classBlockPosition.getConstructor(int.class, int.class, int.class);
         RefClass classWorld = getRefClass("{nms}.World");
-        this.tileEntityUnload = classWorld.getField("tileEntityListUnload");
+        this.tileEntityListTick = classWorld.getField("tileEntityListTick");
         this.methodGetWorld = classChunk.getMethod("getWorld");
         this.methodW = classWorld.getMethod("w", classBlockPosition.getRealClass());
         this.fieldSections = classChunk.getField("sections");
@@ -79,48 +77,7 @@ public class FastQueue_1_9 extends SlowQueue {
         this.methodAreNeighborsLoaded = classChunk.getMethod("areNeighborsLoaded", int.class);
         this.classChunkSectionConstructor = classChunkSection.getConstructor(int.class, boolean.class, char[].class);
         this.air = this.methodGetByCombinedId.call(0);
-        this.chunkSender = new SendChunk();
-        TaskManager.runTaskRepeat(new Runnable() {
-            @Override
-            public void run() {
-                if (FastQueue_1_9.this.toUpdate.isEmpty()) {
-                    return;
-                }
-                int count = 0;
-                ArrayList<Chunk> chunks = new ArrayList<>();
-                Iterator<Entry<ChunkWrapper, Chunk>> i = FastQueue_1_9.this.toUpdate.entrySet().iterator();
-                while (i.hasNext() && count < 128) {
-                    chunks.add(i.next().getValue());
-                    i.remove();
-                    count++;
-                }
-                if (count == 0) {
-                    return;
-                }
-                update(chunks);
-            }
-        }, 1);
         MainUtil.initCache();
-    }
-
-    public void update(Collection<Chunk> chunks) {
-        if (chunks.isEmpty()) {
-            return;
-        }
-        if (!MainUtil.canSendChunk) {
-            for (Chunk chunk : chunks) {
-                chunk.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
-                chunk.unload(true, true);
-                chunk.load();
-            }
-            return;
-        }
-        try {
-            this.chunkSender.sendChunk(chunks);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            MainUtil.canSendChunk = false;
-        }
     }
 
     /**
@@ -128,14 +85,11 @@ public class FastQueue_1_9 extends SlowQueue {
      * @param plotChunk
      */
     @Override
-    public void execute(PlotChunk<Chunk> plotChunk) {
-        FastChunk_1_9 fs = (FastChunk_1_9) plotChunk;
+    public void execute(final PlotChunk<Chunk> plotChunk) {
+        final FastChunk_1_9 fs = (FastChunk_1_9) plotChunk;
         Chunk chunk = plotChunk.getChunk();
         World world = chunk.getWorld();
         ChunkWrapper wrapper = plotChunk.getChunkWrapper();
-        if (!this.toUpdate.containsKey(wrapper)) {
-            this.toUpdate.put(wrapper, chunk);
-        }
         chunk.load(true);
         try {
             boolean flag = world.getEnvironment() == Environment.NORMAL;
@@ -149,16 +103,15 @@ public class FastQueue_1_9 extends SlowQueue {
             sf.setAccessible(true);
             Field tf = clazz.getDeclaredField("tileEntities");
             Field entitySlices = clazz.getDeclaredField("entitySlices");
-
             Object[] sections = (Object[]) sf.get(c);
             HashMap<?, ?> tiles = (HashMap<?, ?>) tf.get(c);
-            Collection<Object> tilesUnload = (Collection<Object>) this.tileEntityUnload.of(w).get();
             Collection<?>[] entities = (Collection<?>[]) entitySlices.get(c);
 
             Method xm = null;
             Method ym = null;
             Method zm = null;
             // Trim tiles
+            boolean removed = false;
             Set<Entry<?, ?>> entrySet = (Set<Entry<?, ?>>) (Set<?>) tiles.entrySet();
             Iterator<Entry<?, ?>> iterator = entrySet.iterator();
             while (iterator.hasNext()) {
@@ -180,9 +133,12 @@ public class FastQueue_1_9 extends SlowQueue {
                     continue;
                 }
                 if (array[k] != 0) {
-                    tilesUnload.add(tile.getValue());
+                    removed = true;
                     iterator.remove();
                 }
+            }
+            if (removed) {
+                ((Collection) this.tileEntityListTick.of(w).get()).clear();
             }
 
             // Trim entities
@@ -264,6 +220,12 @@ public class FastQueue_1_9 extends SlowQueue {
                 }
             }
         }
+        TaskManager.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                sendChunk(fs.getChunkWrapper().world, Arrays.asList(new ChunkLoc(fs.getX(), fs.getZ())));
+            }
+        }, 1);
     }
 
     public Object newChunkSection(int i, boolean flag, char[] ids) {
@@ -442,7 +404,6 @@ public class FastQueue_1_9 extends SlowQueue {
         if (section == null) {
             return 0;
         }
-        //        Object array = getBlocks(section);
         return getId(section, x, y, z);
     }
 
@@ -455,14 +416,7 @@ public class FastQueue_1_9 extends SlowQueue {
     public void sendChunk(final String world, final Collection<ChunkLoc> locations) {
         World worldObj = BukkitUtil.getWorld(world);
         for (ChunkLoc loc : locations) {
-            ChunkWrapper wrapper = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
-            this.toUpdate.remove(wrapper);
+            worldObj.refreshChunk(loc.x, loc.z);
         }
-        TaskManager.runTaskLater(new Runnable() {
-            @Override
-            public void run() {
-                FastQueue_1_9.this.chunkSender.sendChunk(world, locations);
-            }
-        }, 1);
     }
 }

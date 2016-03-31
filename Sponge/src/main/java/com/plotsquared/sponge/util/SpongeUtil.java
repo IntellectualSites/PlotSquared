@@ -345,7 +345,13 @@ public class SpongeUtil extends WorldUtil {
         BlockState state = SpongeUtil.getWorld(location.getWorld()).getBlock(location.getX(), location.getY(), location.getZ());
         return SpongeUtil.getPlotBlock(state);
     }
-    
+
+    @Override
+    public Location getSpawn(PlotPlayer pp) {
+        throw new NotImplementedException("TODO IMPLEMENT THIS");    // TODO FIXME
+        // Probably can call a respawn event and get the location from there
+    }
+
     @Override
     public Location getSpawn(String world) {
         Location result = SpongeUtil.getLocation(world, SpongeUtil.getWorld(world).getSpawnLocation());

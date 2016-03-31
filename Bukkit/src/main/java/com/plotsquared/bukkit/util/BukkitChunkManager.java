@@ -513,10 +513,11 @@ public class BukkitChunkManager extends ChunkManager {
             for (short y = 0; y <= maxY; y++) {
                 Block block = world.getBlockAt(x, y, z);
                 Material id = block.getType();
+                if (storeNormal) {
+                    int typeId = id.getId();
+                    ids[y] = new PlotBlock((short) typeId, typeId == 0 ? 0 : block.getData());
+                }
                 if (!id.equals(Material.AIR)) {
-                    if (storeNormal) {
-                        ids[y] = new PlotBlock((short) id.getId(), block.getData());
-                    }
                     try {
                         BlockLoc bl = new BlockLoc(x + offsetX, y, z + offsetZ);
                         if (block.getState() instanceof InventoryHolder) {

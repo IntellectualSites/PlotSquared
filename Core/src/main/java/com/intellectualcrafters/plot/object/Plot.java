@@ -20,7 +20,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
-
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -777,23 +776,14 @@ public class Plot {
                             TaskManager.runTask(whenDone);
                         }
                     };
-                    if (isDelete) {
-                        for (Plot current : plots) {
-                            manager.unclaimPlot(Plot.this.area, current, new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (finished.incrementAndGet() >= plots.size()) {
-                                        run.run();
-                                    }
-                                }
-                            });
-                        }
-                    } else {
-                        for (Plot current : plots) {
+                    for (Plot current : plots) {
+                        if (isDelete || current.owner == null) {
+                            manager.unclaimPlot(Plot.this.area, current, null);
+                        } else {
                             manager.claimPlot(Plot.this.area, current);
                         }
-                        SetQueue.IMP.addTask(run);
                     }
+                    SetQueue.IMP.addTask(run);
                     return;
                 }
                 Plot current = queue.poll();
@@ -804,7 +794,16 @@ public class Plot {
                 manager.clearPlot(Plot.this.area, current, this);
             }
         };
-        run.run();
+        if (!isMerged() && area.getRegion().equals(getLargestRegion())) {
+            ChunkManager.largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<ChunkLoc>() {
+                @Override
+                public void run(ChunkLoc value) {
+                    ChunkManager.manager.regenerateChunk(area.worldname, value);
+                }
+            }, whenDone);
+        } else {
+            run.run();
+        }
         return true;
     }
 
@@ -1137,8 +1136,8 @@ public class Plot {
             if (this.area.DEFAULT_HOME.x == Integer.MAX_VALUE && this.area.DEFAULT_HOME.z == Integer.MAX_VALUE) {
                 // center
                 RegionWrapper largest = plot.getLargestRegion();
-                x = (largest.maxX - largest.minX) / 2 + largest.minX;
-                z = (largest.maxZ - largest.minZ) / 2 + largest.minZ;
+                x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
+                z = (largest.maxZ >> 1) - (largest.minZ >> 1) + largest.minZ;
             } else {
                 // specific
                 Location bot = plot.getBottomAbs();
@@ -1150,11 +1149,19 @@ public class Plot {
         }
         // Side
         RegionWrapper largest = plot.getLargestRegion();
-        int x = (largest.maxX - largest.minX) / 2 + largest.minX;
+        int x = (largest.maxX >> 1) - (largest.minX >> 1) + largest.minX;
         int z = largest.minZ - 1;
         PlotManager manager = plot.getManager();
         int y = Math.max(WorldUtil.IMP.getHighestBlock(plot.area.worldname, x, z), manager.getSignLoc(plot.area, plot).getY());
         return new Location(plot.area.worldname, x, y + 1, z);
+    }
+
+    public double getVolume() {
+        double count = 0;
+        for (RegionWrapper region : getRegions()) {
+            count += (region.maxX - (double) region.minX + 1) * (region.maxZ - (double) region.minZ + 1) * 256;
+        }
+        return count;
     }
 
     /**
@@ -2201,6 +2208,10 @@ public class Plot {
         return this.area.getPlotAbs(this.id.getRelative(x, y));
     }
 
+    public Plot getRelative(PlotArea area, int x, int y) {
+        return area.getPlotAbs(this.id.getRelative(x, y));
+    }
+
     /**
      * Get the plot in a relative direction<br>
      * 0 = north<br>
@@ -2470,9 +2481,9 @@ public class Plot {
     public RegionWrapper getLargestRegion() {
         HashSet<RegionWrapper> regions = this.getRegions();
         RegionWrapper max = null;
-        int area = 0;
+        double area = Double.NEGATIVE_INFINITY;
         for (RegionWrapper region : regions) {
-            int current = (region.maxX - region.minX + 1) * (region.maxZ - region.minZ + 1);
+            double current = ((region.maxX - (double) region.minX + 1)) * (region.maxZ - (double) region.minZ + 1);
             if (current > area) {
                 max = region;
                 area = current;
@@ -2680,7 +2691,7 @@ public class Plot {
      * @return
      */
     public boolean move(final Plot destination, final Runnable whenDone, boolean allowSwap) {
-        PlotId offset = new PlotId(destination.getId().x - this.getId().x, destination.getId().y - this.getId().y);
+        final PlotId offset = new PlotId(destination.getId().x - this.getId().x, destination.getId().y - this.getId().y);
         Location db = destination.getBottomAbs();
         Location ob = this.getBottomAbs();
         final int offsetX = db.getX() - ob.getX();
@@ -2692,21 +2703,24 @@ public class Plot {
         boolean occupied = false;
         HashSet<Plot> plots = this.getConnectedPlots();
         for (Plot plot : plots) {
-            Plot other = plot.getRelative(offset.x, offset.y);
+            Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             if (other.hasOwner()) {
                 if (!allowSwap) {
                     TaskManager.runTaskLater(whenDone, 1);
                     return false;
                 }
                 occupied = true;
+            } else {
+                plot.removeSign();
             }
         }
         // world border
         destination.updateWorldBorder();
         final ArrayDeque<RegionWrapper> regions = new ArrayDeque<>(this.getRegions());
         // move / swap data
+        final PlotArea originArea = getArea();
         for (Plot plot : plots) {
-            Plot other = plot.getRelative(offset.x, offset.y);
+            Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             plot.swapData(other, null);
         }
         // copy terrain
@@ -2714,6 +2728,13 @@ public class Plot {
             @Override
             public void run() {
                 if (regions.isEmpty()) {
+                    Plot plot = destination.getRelative(0, 0);
+                    for (Plot current : plot.getConnectedPlots()) {
+                        getManager().claimPlot(current.getArea(), current);
+                        Plot originPlot = originArea.getPlotAbs(new PlotId(current.id.x - offset.x, current.id.y - offset.y));
+                        originPlot.getManager().unclaimPlot(originArea, originPlot, null);
+                    }
+                    plot.setSign();
                     TaskManager.runTask(whenDone);
                     return;
                 }
@@ -2728,7 +2749,7 @@ public class Plot {
                     @Override
                     public void run() {
                         ChunkManager.manager.regenerateRegion(pos1, pos2, false, task);
-                   }
+                    }
                 });
             }
         };
@@ -2776,7 +2797,7 @@ public class Plot {
         }
         HashSet<Plot> plots = this.getConnectedPlots();
         for (Plot plot : plots) {
-            Plot other = plot.getRelative(offset.x, offset.y);
+            Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             if (other.hasOwner()) {
                 TaskManager.runTaskLater(whenDone, 1);
                 return false;
@@ -2786,7 +2807,7 @@ public class Plot {
         destination.updateWorldBorder();
         // copy data
         for (Plot plot : plots) {
-            Plot other = plot.getRelative(offset.x, offset.y);
+            Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             other.create(plot.owner, false);
             if (!plot.getFlags().isEmpty()) {
                 other.getSettings().flags = plot.getFlags();
@@ -2820,6 +2841,10 @@ public class Plot {
             @Override
             public void run() {
                 if (regions.isEmpty()) {
+                    for (Plot current : getConnectedPlots()) {
+                        destination.getManager().claimPlot(destination.getArea(), destination);
+                    }
+                    destination.setSign();
                     TaskManager.runTask(whenDone);
                     return;
                 }

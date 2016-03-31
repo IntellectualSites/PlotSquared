@@ -38,6 +38,7 @@ public class Relight extends Command {
         }, new Runnable() {
             @Override
             public void run() {
+                plot.refreshChunks();
                 C.SET_BLOCK_ACTION_FINISHED.send(player);
             }
         }, 5);

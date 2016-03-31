@@ -49,7 +49,19 @@ public class Kick extends SubCommand {
             C.CANNOT_KICK_PLAYER.send(plr, player.getName());
             return false;
         }
-        player.teleport(WorldUtil.IMP.getSpawn(loc.getWorld()));
+        Location spawn = WorldUtil.IMP.getSpawn(loc.getWorld());
+        C.YOU_GOT_KICKED.send(player);
+        if (plot.equals(spawn.getPlot())) {
+            Location newSpawn = WorldUtil.IMP.getSpawn(player);
+            if (plot.equals(newSpawn.getPlot())) {
+                // Kick from server if you can't be teleported to spawn
+                player.kick(C.YOU_GOT_KICKED.s());
+            } else {
+                player.teleport(newSpawn);
+            }
+        } else {
+            player.teleport(spawn);
+        }
         return true;
     }
 }

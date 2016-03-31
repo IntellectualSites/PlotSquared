@@ -33,7 +33,6 @@ import java.util.UUID;
 /**
  * PlotSquared API.
  * <br>
- * @version API 3.3.2
  * <br>
  * Useful classes:<br>
  * @see BukkitUtil
@@ -42,7 +41,7 @@ import java.util.UUID;
  * @see com.intellectualcrafters.plot.object.Location
  * @see PlotArea
  * @see PS
- * @version 3.3.1
+ * @version 3.3.3
 >>>>>>> origin/master
  */
 public class PlotAPI {

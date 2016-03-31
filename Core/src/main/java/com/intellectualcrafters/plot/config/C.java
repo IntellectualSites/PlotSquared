@@ -271,6 +271,7 @@ public enum C {
     /*
      * Schematic Stuff
      */
+    SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!", "Schematics"),
     SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1test <name>$2 , $1save$2 , $1paste $2, $1exportall", "Schematics"),
     SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s", "Schematics"),
     SCHEMATIC_VALID("$2That is a valid schematic", "Schematics"),
@@ -535,6 +536,10 @@ public enum C {
     DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot denied remove <name>", "Deny"),
     WAS_NOT_DENIED("$2That player was not denied on this plot", "Deny"),
     YOU_GOT_DENIED("$4You are denied from the plot you were previously on, and got teleported to spawn", "Deny"),
+    /*
+     * Kick
+     */
+    YOU_GOT_KICKED("$4You got kicked!", "Kick"),
     /*
      * Rain
      */

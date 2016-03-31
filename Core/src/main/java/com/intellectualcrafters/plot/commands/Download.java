@@ -51,6 +51,10 @@ public class Download extends SubCommand {
             return false;
         }
         if (args.length == 0 || (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
+            if (plot.getVolume() > 512d * 512d * 256d) {
+                C.SCHEMATIC_TOO_LARGE.send(plr);
+                return false;
+            }
             plot.addRunning();
             SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                 @Override
@@ -71,6 +75,10 @@ public class Download extends SubCommand {
         } else if (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "bo3", "bo2", "b03", "b02")) {
             if (!Permissions.hasPermission(plr, "plots.download.bo3")) {
                 C.NO_PERMISSION.send(plr, "plots.download.bo3");
+            }
+            if (plot.getVolume() > 128d * 128d * 256) {
+                C.SCHEMATIC_TOO_LARGE.send(plr);
+                return false;
             }
             plot.addRunning();
             BO3Handler.upload(plot, null, null, new RunnableVal<URL>() {

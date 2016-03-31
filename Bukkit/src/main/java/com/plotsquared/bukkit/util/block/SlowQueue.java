@@ -8,14 +8,13 @@ import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.PlotQueue;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
-import org.bukkit.Chunk;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import org.bukkit.Chunk;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 
 public class SlowQueue implements PlotQueue<Chunk> {
 
