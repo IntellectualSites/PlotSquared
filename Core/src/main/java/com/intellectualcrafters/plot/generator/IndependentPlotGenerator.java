@@ -30,6 +30,10 @@ public abstract class IndependentPlotGenerator {
      */
     public abstract void generateChunk(PlotChunk<?> result, PlotArea settings, PseudoRandom random);
 
+    public boolean populateChunk(PlotChunk<?> result, PlotArea settings, PseudoRandom random) {
+        return false;
+    }
+
     /**
      * Return a new PlotArea object.
      * @param world world name

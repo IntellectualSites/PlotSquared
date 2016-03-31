@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.generator.ClassicPlotWorld;
+import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -23,8 +24,6 @@ import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,7 +40,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -349,7 +347,10 @@ public abstract class SchematicHandler {
                                 SetQueue.IMP.addTask(new Runnable() {
                                     @Override
                                     public void run() {
-                                        pasteStates(schematic, plot, xOffset, zOffset);
+                                        for (Map.Entry<BlockLoc, CompoundTag> entry : schematic.getTiles().entrySet()) {
+                                            BlockLoc loc = entry.getKey();
+                                            restoreTile(plot.getArea().worldname, entry.getValue(), p1x + xOffset + loc.x, loc.y + y_offset_actual, p1z + zOffset + loc.z);
+                                        }
                                         if (whenDone != null) {
                                             whenDone.value = true;
                                             whenDone.run();
@@ -365,35 +366,6 @@ public abstract class SchematicHandler {
                 }
             }
         });
-    }
-
-    public boolean pasteStates(Schematic schematic, Plot plot, int xOffset, int zOffset) {
-        if (schematic == null) {
-            PS.debug("Schematic == null :|");
-            return false;
-        }
-        HashSet<PlotItem> items = schematic.getItems();
-        if (items == null) {
-            return false;
-        }
-        RegionWrapper region = plot.getLargestRegion();
-        Location location = new Location(plot.getArea().worldname, region.minX + xOffset, 1, region.minZ + zOffset);
-        int sy = MainUtil.getHeighestBlock(plot.getArea().worldname, location.getX() + 1, location.getZ() + 1);
-        Dimension demensions = schematic.getSchematicDimension();
-        int height = demensions.getY();
-        if (height < 255) {
-            location = location.add(0, sy - 1, 0);
-        }
-        int x = location.getX() + xOffset;
-        int y = location.getY();
-        int z = location.getZ() + zOffset;
-        for (PlotItem item : items) {
-            item.x += x;
-            item.y += y;
-            item.z += z;
-            WorldUtil.IMP.addItems(plot.getArea().worldname, item);
-        }
-        return true;
     }
 
     public Schematic getSchematic(CompoundTag tag) {
@@ -447,7 +419,6 @@ public abstract class SchematicHandler {
 
         Dimension dimensions = new Dimension(width, height, length);
         Schematic schem = new Schematic(block, data, dimensions, flags);
-        
         // Slow
         try {
             List<Tag> blockStates = ListTag.class.cast(tagMap.get("TileEntities")).getValue();
@@ -458,7 +429,7 @@ public abstract class SchematicHandler {
                     short x = IntTag.class.cast(state.get("x")).getValue().shortValue();
                     short y = IntTag.class.cast(state.get("y")).getValue().shortValue();
                     short z = IntTag.class.cast(state.get("z")).getValue().shortValue();
-                    manager.restoreTag(ct, x, y, z, schem);
+                    schem.addTile(new BlockLoc(x, y, z), ct);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -469,7 +440,7 @@ public abstract class SchematicHandler {
         return schem;
     }
 
-    public abstract void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schematic);
+    public abstract void restoreTile(String world, CompoundTag tag, int x, int y, int z);
 
     /**
      * Get a schematic
@@ -700,7 +671,7 @@ public abstract class SchematicHandler {
         private final byte[] datas;
         private final Dimension schematicDimension;
         private Map<String, Tag> flags;
-        private HashSet<PlotItem> items;
+        private HashMap<BlockLoc, CompoundTag> tiles;
 
         public Schematic(short[] i, byte[] b, Dimension d, Map<String, Tag> flags) {
             this.ids = i;
@@ -718,22 +689,23 @@ public abstract class SchematicHandler {
         }
 
         /**
-         * Add an item to the schematic
-         * @param item
+         * Add a tile entity
+         * @param loc
+         * @param tag
          */
-        public void addItem(PlotItem item) {
-            if (this.items == null) {
-                this.items = new HashSet<>();
+        public void addTile(BlockLoc loc, CompoundTag tag) {
+            if (this.tiles == null) {
+                this.tiles = new HashMap<>();
             }
-            this.items.add(item);
+            this.tiles.put(loc, tag);
         }
 
         /**
-         * Get any items associated with this schematic.
-         * @return
+         * Get the tile entities
+         * @return Map of block location to tag
          */
-        public HashSet<PlotItem> getItems() {
-            return this.items;
+        public HashMap<BlockLoc, CompoundTag> getTiles() {
+            return this.tiles;
         }
 
         /**

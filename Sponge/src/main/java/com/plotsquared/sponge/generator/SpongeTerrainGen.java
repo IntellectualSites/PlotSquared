@@ -52,6 +52,7 @@ public class SpongeTerrainGen implements GenerationPopulator {
             // Fill the result data
             PlotArea area = PS.get().getPlotArea(world.getName(), null);
             child.generateChunk(result, area, random);
+            child.populateChunk(result, area, random);
             ChunkManager.postProcessChunk(result);
             return;
         } catch (Throwable e) {

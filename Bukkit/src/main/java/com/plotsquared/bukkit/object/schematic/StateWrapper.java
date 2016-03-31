@@ -6,19 +6,20 @@ import com.intellectualcrafters.jnbt.ListTag;
 import com.intellectualcrafters.jnbt.ShortTag;
 import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.object.schematic.ItemType;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
-import org.bukkit.block.BlockState;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-
+import com.plotsquared.bukkit.util.BukkitUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 public class StateWrapper {
 
@@ -33,32 +34,52 @@ public class StateWrapper {
         this.tag = tag;
     }
 
-    public boolean restoreTag(short x, short y, short z, Schematic schematic) {
+    public boolean restoreTag(String worldName, int x, int y, int z) {
         if (this.tag == null) {
             return false;
         }
-        List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
-        int length = itemsTag.size();
-        short[] ids = new short[length];
-        byte[] datas = new byte[length];
-        byte[] amounts = new byte[length];
-        for (int i = 0; i < length; i++) {
-            Tag itemTag = itemsTag.get(i);
-            CompoundTag itemComp = (CompoundTag) itemTag;
-            short id = itemComp.getShort("id");
-            String idStr = itemComp.getString("id");
-            if (idStr != null && !MathMan.isInteger(idStr)) {
-                idStr = idStr.split(":")[0].toLowerCase();
-                id = (short) ItemType.getId(idStr);
+        switch (tag.getString("id").toLowerCase()) {
+            case "chest": {
+                List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
+                int length = itemsTag.size();
+                short[] ids = new short[length];
+                byte[] datas = new byte[length];
+                byte[] amounts = new byte[length];
+                byte[] slots = new byte[length];
+                for (int i = 0; i < length; i++) {
+                    Tag itemTag = itemsTag.get(i);
+                    CompoundTag itemComp = (CompoundTag) itemTag;
+                    short id = itemComp.getShort("id");
+                    String idStr = itemComp.getString("id");
+                    if (idStr != null && !MathMan.isInteger(idStr)) {
+                        idStr = idStr.split(":")[1].toLowerCase();
+                        id = (short) ItemType.getId(idStr);
+                    }
+                    ids[i] = id;
+                    datas[i] = (byte) itemComp.getShort("Damage");
+                    amounts[i] = itemComp.getByte("Count");
+                    slots[i] = itemComp.getByte("Slot");
+                }
+                World world = BukkitUtil.getWorld(worldName);
+                Block block = world.getBlockAt(x, y, z);
+                if (block == null) {
+                    return false;
+                }
+                BlockState state = block.getState();
+                if (state instanceof InventoryHolder) {
+                    InventoryHolder holder = (InventoryHolder) state;
+                    Inventory inv = holder.getInventory();
+                    for (int i = 0; i < ids.length; i++) {
+                        ItemStack item = new ItemStack(ids[i], amounts[i], datas[i]);
+                        inv.addItem(item);
+                    }
+                    state.update(true);
+                    return true;
+                } else {
+                }
             }
-            ids[i] = id;
-            datas[i] = (byte) itemComp.getShort("Damage");
-            amounts[i] = itemComp.getByte("Count");
         }
-        if (length != 0) {
-            schematic.addItem(new PlotItem(x, y, z, ids, datas, amounts));
-        }
-        return true;
+        return false;
     }
 
     public CompoundTag getTag() {

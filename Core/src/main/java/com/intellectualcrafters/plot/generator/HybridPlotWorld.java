@@ -1,21 +1,21 @@
 package com.intellectualcrafters.plot.generator;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
+import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.object.schematic.PlotItem;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
-
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Map;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
@@ -25,7 +25,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public short PATH_WIDTH_LOWER;
     public short PATH_WIDTH_UPPER;
     public HashMap<Integer, HashMap<Integer, PlotBlock>> G_SCH;
-    public HashMap<Integer, HashSet<PlotItem>> G_SCH_STATE;
+    public HashMap<Integer, HashMap<Integer, CompoundTag>> G_SCH_STATE;
 
     public HybridPlotWorld(String worldName, String id, IndependentPlotGenerator generator, PlotId min, PlotId max) {
         super(worldName, id, generator, min, max);
@@ -181,10 +181,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
         Schematic schematic3 = SchematicHandler.manager.getSchematic(schem3File);
         int shift = this.ROAD_WIDTH / 2;
-        int oddshift = 0;
-        if ((this.ROAD_WIDTH & 1) != 0) {
-            oddshift = 1;
-        }
+        int oddshift = (this.ROAD_WIDTH & 1) == 0 ? 0 : 1;
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
             short[] ids = schematic3.getIds();
@@ -215,24 +212,21 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     }
                 }
             }
-            HashSet<PlotItem> items = schematic3.getItems();
-            if (items != null) {
+            HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
+            if (items.size() > 0) {
                 this.G_SCH_STATE = new HashMap<>();
-                for (PlotItem item : items) {
-                    item.x += shift + oddshift + centerShiftX;
-                    item.z += shift + oddshift + centerShiftZ;
-                    item.y += this.PLOT_HEIGHT;
-                    short x = (short) item.x;
-                    short z = (short) item.z;
+                for (Map.Entry<BlockLoc, CompoundTag> entry : items.entrySet()) {
+                    BlockLoc loc = entry.getKey();
+                    short x = (short) (loc.x + shift + oddshift + centerShiftX);
+                    short z = (short) (loc.z + shift + oddshift + centerShiftZ);
+                    short y = (short) (loc.y + this.PLOT_HEIGHT);
                     int pair = MathMan.pair(x, z);
-
-
-                    HashSet<PlotItem> existing = this.G_SCH_STATE.get(pair);
+                    HashMap<Integer, CompoundTag> existing = this.G_SCH_STATE.get(pair);
                     if (existing == null) {
-                        existing = new HashSet<>();
+                        existing = new HashMap<>();
                         this.G_SCH_STATE.put(pair, existing);
                     }
-                    existing.add(item);
+                    existing.put((int) y, entry.getValue());
                 }
             }
         }

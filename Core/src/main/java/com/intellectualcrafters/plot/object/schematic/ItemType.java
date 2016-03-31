@@ -598,7 +598,23 @@ public enum ItemType {
     STRAD_DISC("record_strad", 2264),
     WARD_DISC("record_ward", 2265),
     DISC_11("record_11", 2266),
-    WAIT_DISC("record_wait", 2267);
+    WAIT_DISC("record_wait", 2267),
+    END_ROD("end_rod",198),
+    CHORUS_PLANT("chorus_plant",199),
+    CHORUS_FLOWER("chorus_flower",200),
+    PURPUR_BLOCK("purpur_block",201),
+    PURPUR_PILLAR("purpur_pillar",202),
+    PURPUR_STAIRS("purpur_stairs",203),
+    PURPUR_DOUBLE_SLAB("purpur_double_slab",204),
+    PURPUR_SLAB("purpur_slab",205),
+    END_BRICKS("end_bricks",206),
+    BEETROOTS("beetroots",207),
+    GRASS_PATH("grass_path",208),
+    END_GATEWAY("end_gateway",209),
+    REPEATING_COMMAND_BLOCK("repeating_command_block",210),
+    CHAIN_COMMAND_BLOCK("chain_command_block",211),
+    FROSTED_ICE("frosted_ice",212),
+    STRUCTURE_BLOCK("structure_block",255);
 
     private static final Map<String, Integer> ids = new HashMap<>();
     private static final Map<String, Byte> datas = new HashMap<>();

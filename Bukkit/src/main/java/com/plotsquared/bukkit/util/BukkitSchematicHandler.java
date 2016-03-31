@@ -303,7 +303,7 @@ public class BukkitSchematicHandler extends SchematicHandler {
     }
 
     @Override
-    public void restoreTag(CompoundTag ct, short x, short y, short z, Schematic schematic) {
-        new StateWrapper(ct).restoreTag(x, y, z, schematic);
+    public void restoreTile(String world, CompoundTag ct, int x, int y, int z) {
+        new StateWrapper(ct).restoreTag(world, x, y, z);
     }
 }

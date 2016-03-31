@@ -169,6 +169,7 @@ public class AugmentedUtils {
                 toReturn = true;
             }
             generator.generateChunk(secondaryMask, area, r);
+            generator.populateChunk(secondaryMask, area, r);
         }
         if (lazyChunk.get() != null) {
             lazyChunk.get().addToQueue();

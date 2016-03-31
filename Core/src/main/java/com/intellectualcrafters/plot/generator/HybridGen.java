@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.generator;
 
+import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -7,7 +8,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.PlotChunk;
-
+import com.intellectualcrafters.plot.util.SchematicHandler;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -167,7 +168,8 @@ public class HybridGen extends IndependentPlotGenerator {
                         }
                         result.setBlock(x, hpw.PLOT_HEIGHT, z, hpw.TOP_BLOCK[random.random(hpw.TOP_BLOCK.length)]);
                         if (hpw.PLOT_SCHEMATIC) {
-                            HashMap<Integer, PlotBlock> map = sch.get(MathMan.pair(rx[x], rz[z]));
+                            int pair = MathMan.pair(rx[x], rz[z]);
+                            HashMap<Integer, PlotBlock> map = sch.get(pair);
                             if (map != null) {
                                 for (Entry<Integer, PlotBlock> entry : map.entrySet()) {
                                     result.setBlock(x, entry.getKey(), z, entry.getValue());
@@ -178,6 +180,59 @@ public class HybridGen extends IndependentPlotGenerator {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean populateChunk(PlotChunk<?> result, PlotArea settings, PseudoRandom random) {
+        HybridPlotWorld hpw = (HybridPlotWorld) settings;
+        if (hpw.G_SCH_STATE != null) {
+            int cx = result.getX();
+            int cz = result.getZ();
+            int p1x = cx << 4;
+            int p1z = cz << 4;
+            int bx = p1x - hpw.ROAD_OFFSET_X;
+            int bz = p1z - hpw.ROAD_OFFSET_Z;
+            short rbx;
+            if (bx < 0) {
+                rbx = (short) (hpw.SIZE + (bx % hpw.SIZE));
+            } else {
+                rbx = (short) (bx % hpw.SIZE);
+            }
+            short rbz;
+            if (bz < 0) {
+                rbz = (short) (hpw.SIZE + (bz % hpw.SIZE));
+            } else {
+                rbz = (short) (bz % hpw.SIZE);
+            }
+            short[] rx = new short[16];
+            for (short i = 0; i < 16; i++) {
+                short v = (short) (rbx + i);
+                if (v >= hpw.SIZE) {
+                    v -= hpw.SIZE;
+                }
+                rx[i] = v;
+            }
+            short[] rz = new short[16];
+            for (short i = 0; i < 16; i++) {
+                short v = (short) (rbz + i);
+                if (v >= hpw.SIZE) {
+                    v -= hpw.SIZE;
+                }
+                rz[i] = v;
+            }
+            for (short x = 0; x < 16; x++) {
+                for (short z = 0; z < 16; z++) {
+                    int pair = MathMan.pair(rx[x], rz[z]);
+                    HashMap<Integer, CompoundTag> map = hpw.G_SCH_STATE.get(pair);
+                    if (map != null) {
+                        for (Entry<Integer, CompoundTag> entry : map.entrySet()) {
+                            SchematicHandler.manager.restoreTile(hpw.worldname, entry.getValue(), p1x + x, entry.getKey(), p1z + z);
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
