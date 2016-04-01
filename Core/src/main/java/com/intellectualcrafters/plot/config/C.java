@@ -3,7 +3,6 @@ package com.intellectualcrafters.plot.config;
 import com.intellectualcrafters.configuration.ConfigurationSection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandCaller;
 
@@ -622,13 +621,13 @@ public enum C {
      */
     private final String category;
     /**
-     * Translated.
-     */
-    private String s;
-    /**
      * Should the string be prefixed.
      */
     private final boolean prefix;
+    /**
+     * Translated.
+     */
+    private String s;
 
     /**
      * Constructor.
@@ -799,7 +798,7 @@ public enum C {
     public void send(CommandCaller plr, Object... args) {
         String msg = format(this, args);
         if (plr == null) {
-            ConsolePlayer.getConsole().sendMessage(msg);
+            PS.log(msg);
         } else {
             plr.sendMessage(msg);
         }

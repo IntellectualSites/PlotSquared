@@ -2,12 +2,12 @@ package com.intellectualcrafters.plot.util;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -239,7 +239,7 @@ public abstract class ChunkManager {
                 for (ChunkLoc loc : chunks) {
                     String directory = world + File.separator + "region" + File.separator + "r." + loc.x + "." + loc.z + ".mca";
                     File file = new File(PS.get().IMP.getWorldContainer(), directory);
-                    ConsolePlayer.getConsole().sendMessage("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                    PS.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                     if (file.exists()) {
                         file.delete();
                     }

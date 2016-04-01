@@ -15,15 +15,16 @@ import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.block.GenChunk;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
     
@@ -56,11 +57,11 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                         }
                     }
                 }
-                random.state = c.getX() << 16 | c.getZ() & 0xFFFF;
+                BukkitPlotGenerator.this.random.state = c.getX() << 16 | c.getZ() & 0xFFFF;
                 PlotArea area = PS.get().getPlotArea(world.getName(), null);
                 SetQueue.ChunkWrapper wrap = SetQueue.IMP.new ChunkWrapper(area.worldname, c.getX(), c.getZ());
                 PlotChunk<?> chunk = SetQueue.IMP.queue.getChunk(wrap);
-                if (plotGenerator.populateChunk(chunk, area, random)) {
+                if (BukkitPlotGenerator.this.plotGenerator.populateChunk(chunk, area, BukkitPlotGenerator.this.random)) {
                     chunk.addToQueue();
                 }
             }
@@ -212,12 +213,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (world == null) {
-            return populators;
-        }
         ArrayList<BlockPopulator> toAdd = new ArrayList<BlockPopulator>();
         List<BlockPopulator> existing = world.getPopulators();
-        for (BlockPopulator populator : populators) {
+        for (BlockPopulator populator : this.populators) {
             if (!existing.contains(populator)) {
                 toAdd.add(populator);
             }

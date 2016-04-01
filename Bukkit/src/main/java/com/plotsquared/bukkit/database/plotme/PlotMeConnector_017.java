@@ -19,7 +19,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 public class PlotMeConnector_017 extends APlotMeConnector {
@@ -131,8 +130,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
             Plot plot = new Plot(PlotArea.createGeneric(world), id, owner);
             plots.put(key, plot);
         }
-        for (Entry<Integer, Plot> entry : plots.entrySet()) {
-            Plot plot = entry.getValue();
+        for (Plot plot : plots.values()) {
             HashMap<PlotId, boolean[]> mergeMap = merges.get(plot.getArea().worldname);
             if (mergeMap != null) {
                 if (mergeMap.containsKey(plot.getId())) {
@@ -180,8 +178,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
         }
         HashMap<String, HashMap<PlotId, Plot>> processed = new HashMap<>();
 
-        for (Entry<Integer, Plot> entry : plots.entrySet()) {
-            Plot plot = entry.getValue();
+        for (Plot plot : plots.values()) {
             HashMap<PlotId, Plot> map = processed.get(plot.getArea().worldname);
             if (map == null) {
                 map = new HashMap<>();

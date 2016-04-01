@@ -67,7 +67,7 @@ public abstract class PlotArea {
     public int MAX_BUILD_HEIGHT = 256;
     public int MIN_BUILD_HEIGHT = 1;
     public PlotGameMode GAMEMODE = PlotGameMode.CREATIVE;
-    int hash;
+    private int hash;
     private RegionWrapper region;
     private ConcurrentHashMap<String, Object> meta;
     private QuadMap<PlotCluster> clusters;
@@ -180,13 +180,13 @@ public abstract class PlotArea {
 
     /**
      * Check if a PlotArea is compatible (move/copy etc)
-     * @param plotarea
+     * @param plotArea
      * @return
      */
-    public boolean isCompatible(PlotArea plotarea) {
+    public boolean isCompatible(PlotArea plotArea) {
         ConfigurationSection section = PS.get().config.getConfigurationSection("worlds");
-        for (ConfigurationNode setting : plotarea.getSettingNodes()) {
-            Object constant = section.get(plotarea.worldname + "." + setting.getConstant());
+        for (ConfigurationNode setting : plotArea.getSettingNodes()) {
+            Object constant = section.get(plotArea.worldname + "." + setting.getConstant());
             if (constant == null) {
                 return false;
             }
@@ -358,7 +358,11 @@ public abstract class PlotArea {
     
     @Override
     public String toString() {
-        return this.id == null ? this.worldname : this.worldname + ";" + this.id;
+        if (this.id == null) {
+            return this.worldname;
+        } else {
+            return this.worldname + ";" + this.id;
+        }
     }
     
     @Override

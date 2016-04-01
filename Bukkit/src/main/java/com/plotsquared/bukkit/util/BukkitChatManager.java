@@ -45,7 +45,7 @@ public class BukkitChatManager extends ChatManager<FancyMessage> {
 
     @Override
     public void send(PlotMessage m, PlotPlayer player) {
-        if (ConsolePlayer.isConsole(player)) {
+        if (player instanceof ConsolePlayer) {
             player.sendMessage(m.$(this).toOldMessageFormat());
         } else {
             m.$(this).send(((BukkitPlayer) player).player);

@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -155,9 +156,9 @@ public class Inbox extends SubCommand {
                         sendMessage(player, C.NO_PERM_INBOX_MODIFY);
                     }
                     inbox.clearInbox(plot);
-                    ArrayList<PlotComment> comments = plot.getSettings().getComments(inbox.toString());
-                    if (comments != null) {
-                        plot.getSettings().removeComments(comments);
+                    Optional<ArrayList<PlotComment>> comments = plot.getSettings().getComments(inbox.toString());
+                    if (comments.isPresent()) {
+                        plot.getSettings().removeComments(comments.get());
                     }
                     MainUtil.sendMessage(player, C.COMMENT_REMOVED, "*");
                     return true;

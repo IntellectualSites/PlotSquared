@@ -76,10 +76,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Created by robin on 01/11/2014
- */
-
 @Plugin(id = "com.plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.", url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.3")
 public class SpongeMain implements IPlotMain {
     public static SpongeMain THIS;
@@ -169,7 +165,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public int[] getPluginVersion() {
         PluginContainer plugin = this.game.getPluginManager().fromInstance(this).get();
-        String version = plugin.getVersion().get();
+        String version = plugin.getVersion().orElse("");
         String[] split = version.split("\\.");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
     }

@@ -39,10 +39,6 @@ public class ConsolePlayer extends PlotPlayer {
         return instance;
     }
 
-    public static boolean isConsole(PlotPlayer plr) {
-        return plr instanceof ConsolePlayer;
-    }
-    
     @Override
     public long getPreviousLogin() {
         return 0;
@@ -133,7 +129,7 @@ public class ConsolePlayer extends PlotPlayer {
     
     @Override
     public PlotGameMode getGameMode() {
-        return PlotGameMode.CREATIVE;
+        return PlotGameMode.NOT_SET;
     }
     
     @Override

@@ -601,7 +601,8 @@ public class MainUtil {
     public static boolean sendMessage(PlotPlayer player, String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
-                ConsolePlayer.getConsole().sendMessage((prefix ? C.PREFIX.s() : "") + msg);
+                String message = (prefix ? C.PREFIX.s() : "") + msg;
+                PS.log(message);
             } else {
                 player.sendMessage((prefix ? C.PREFIX.s() : "") + C.color(msg));
             }
@@ -638,7 +639,7 @@ public class MainUtil {
             public void run() {
                 String m = C.format(c, args);
                 if (plr == null) {
-                    ConsolePlayer.getConsole().sendMessage(m);
+                    PS.log(m);
                 } else {
                     plr.sendMessage(m);
                 }

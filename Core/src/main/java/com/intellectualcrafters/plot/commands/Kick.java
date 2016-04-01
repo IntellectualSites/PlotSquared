@@ -26,8 +26,8 @@ public class Kick extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
-        Location loc = plr.getLocation();
-        Plot plot = loc.getPlot();
+        Location location = plr.getLocation();
+        Plot plot = location.getPlot();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }
@@ -40,8 +40,8 @@ public class Kick extends SubCommand {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        Location otherLoc = player.getLocation();
-        if (!plr.getLocation().getWorld().equals(otherLoc.getWorld()) || !plot.equals(otherLoc.getPlot())) {
+        Location location2 = player.getLocation();
+        if (!plr.getLocation().getWorld().equals(location2.getWorld()) || !plot.equals(location2.getPlot())) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
@@ -49,7 +49,7 @@ public class Kick extends SubCommand {
             C.CANNOT_KICK_PLAYER.send(plr, player.getName());
             return false;
         }
-        Location spawn = WorldUtil.IMP.getSpawn(loc.getWorld());
+        Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
         C.YOU_GOT_KICKED.send(player);
         if (plot.equals(spawn.getPlot())) {
             Location newSpawn = WorldUtil.IMP.getSpawn(player);

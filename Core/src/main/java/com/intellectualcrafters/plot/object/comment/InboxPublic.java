@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.object.comment;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -42,13 +43,13 @@ public class InboxPublic extends CommentInbox {
     }
     
     @Override
-    public boolean getComments(final Plot plot, final RunnableVal whenDone) {
-        if ((plot == null) || (plot.owner == null)) {
+    public boolean getComments(final Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
+        if (plot.owner == null) {
             return false;
         }
-        ArrayList<PlotComment> comments = plot.getSettings().getComments(toString());
-        if (comments != null) {
-            whenDone.value = comments;
+        Optional<ArrayList<PlotComment>> comments = plot.getSettings().getComments(toString());
+        if (comments.isPresent()) {
+            whenDone.value = comments.get();
             TaskManager.runTask(whenDone);
             return true;
         }
@@ -69,7 +70,7 @@ public class InboxPublic extends CommentInbox {
     
     @Override
     public boolean addComment(Plot plot, PlotComment comment) {
-        if ((plot == null) || (plot.owner == null)) {
+        if (plot.owner == null) {
             return false;
         }
         plot.getSettings().addComment(comment);

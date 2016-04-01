@@ -24,7 +24,7 @@ import java.util.UUID;
         description = "Purge all plots for a world",
         category = CommandCategory.ADMINISTRATION,
         requiredType = RequiredType.CONSOLE,
-        confirmation=true)
+        confirmation = true)
 public class Purge extends SubCommand {
 
     @Override
@@ -145,12 +145,14 @@ public class Purge extends SubCommand {
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                HashSet<Integer> ids = new HashSet<Integer>();
+                HashSet<Integer> ids = new HashSet<>();
                 for (Plot plot : toDelete) {
                     if (plot.temp != Integer.MAX_VALUE) {
                         ids.add(plot.temp);
-                        PlotArea area = plot.getArea();
                         plot.getArea().removePlot(plot.getId());
+                        for (PlotPlayer plotPlayer : plot.getPlayersInPlot()) {
+                            plotPlayer.deleteMeta("lastplot");
+                        }
                     }
                 }
                 DBFunc.purgeIds(ids);

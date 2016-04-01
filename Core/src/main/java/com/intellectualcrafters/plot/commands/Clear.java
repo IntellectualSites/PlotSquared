@@ -12,6 +12,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.Set;
 
 @CommandDeclaration(command = "clear",
@@ -20,7 +21,7 @@ import java.util.Set;
         category = CommandCategory.APPEARANCE,
         usage = "/plot clear [id]",
         aliases = "reset",
-        confirmation=true)
+        confirmation = true)
 public class Clear extends SubCommand {
 
     @Override

@@ -19,7 +19,7 @@ public abstract class EconHandler {
     }
 
     public double getMoney(PlotPlayer player) {
-        if (ConsolePlayer.isConsole(player)) {
+        if (player instanceof ConsolePlayer) {
             return Double.MAX_VALUE;
         }
         return getBalance(player);

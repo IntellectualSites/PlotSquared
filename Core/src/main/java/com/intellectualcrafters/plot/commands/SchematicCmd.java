@@ -141,7 +141,7 @@ public class SchematicCmd extends SubCommand {
             //            }
             case "saveall":
             case "exportall": {
-                if (!ConsolePlayer.isConsole(plr)) {
+                if (!(plr instanceof ConsolePlayer)) {
                     MainUtil.sendMessage(plr, C.NOT_CONSOLE);
                     return false;
                 }
@@ -197,10 +197,9 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
                     return false;
                 }
-                Plot p2 = plot;
                 loc.getWorld();
                 Collection<Plot> plots = new ArrayList<Plot>();
-                plots.add(p2);
+                plots.add(plot);
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
                     @Override
                     public void run() {

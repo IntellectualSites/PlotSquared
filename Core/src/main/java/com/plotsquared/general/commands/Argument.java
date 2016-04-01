@@ -1,10 +1,6 @@
 package com.plotsquared.general.commands;
 
-import com.intellectualcrafters.plot.object.ConsolePlayer;
-import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
-import com.intellectualcrafters.plot.util.MainUtil;
 
 public abstract class Argument<T> {
 
@@ -37,22 +33,16 @@ public abstract class Argument<T> {
             return in;
         }
     };
-    public static Argument<String> PlayerName = new Argument<String>("PlayerName", "Dinnerbone") {
+    public static final Argument<String> PlayerName = new Argument<String>("PlayerName", "Dinnerbone") {
         @Override
         public String parse(String in) {
             return in.length() <= 16 ? in : null;
         }
     };
-    public static Argument<PlotId> PlotID = new Argument<PlotId>("PlotID", new PlotId(-6, 3)) {
+    public static final Argument<PlotId> PlotID = new Argument<PlotId>("PlotID", new PlotId(-6, 3)) {
         @Override
         public PlotId parse(String in) {
             return PlotId.fromString(in);
-        }
-    };
-    public static Argument<Plot> Plot = new Argument<Plot>("Plot", new Plot(PlotArea.createGeneric("world"), new PlotId(3, -6), null)) {
-        @Override
-        public Plot parse(String in) {
-            return MainUtil.getPlotFromString(ConsolePlayer.getConsole(), in, false);
         }
     };
     private final String name;

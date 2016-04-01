@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,17 +33,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LikePlotMeConverter {
-
-    private final String plugin;
-
-    /**
-     * Constructor.
-     *
-     * @param plugin Plugin Used to run the converter
-     */
-    public LikePlotMeConverter(String plugin) {
-        this.plugin = plugin;
-    }
 
     public static String getWorld(String world) {
         for (World newWorld : Bukkit.getWorlds()) {
@@ -58,11 +48,7 @@ public class LikePlotMeConverter {
     }
 
     public String getPlotMePath() {
-        return new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + this.plugin + File.separator;
-    }
-
-    public String getAthionPlotsPath() {
-        return new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + this.plugin + File.separator;
+        return new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe" + File.separator;
     }
 
     public FileConfiguration getPlotMeConfig(String dataFolder) {
@@ -131,31 +117,31 @@ public class LikePlotMeConverter {
 
             PS.debug("&3Using connector: " + connector.getClass().getCanonicalName());
 
-            Connection connection = connector.getPlotMeConnection(this.plugin, plotConfig, dataFolder);
+            Connection connection = connector.getPlotMeConnection("PlotMe", plotConfig, dataFolder);
 
             if (!connector.isValidConnection(connection)) {
                 sendMessage("Cannot connect to PlotMe DB. Conversion process will not continue");
                 return false;
             }
 
-            sendMessage(this.plugin + " conversion has started. To disable this, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
+            sendMessage("PlotMe conversion has started. To disable this, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
 
-            mergeWorldYml(this.plugin, plotConfig);
+            mergeWorldYml("PlotMe", plotConfig);
 
-            sendMessage("Connecting to " + this.plugin + " DB");
+            sendMessage("Connecting to PlotMe DB");
 
             ArrayList<Plot> createdPlots = new ArrayList<>();
 
             sendMessage("Collecting plot data");
 
-            String dbPrefix = this.plugin.toLowerCase();
+            String dbPrefix = "PlotMe".toLowerCase();
             sendMessage(" - " + dbPrefix + "Plots");
             final Set<String> worlds = getPlotMeWorlds(plotConfig);
 
             if (Settings.CONVERT_PLOTME) {
                 sendMessage("Updating bukkit.yml");
-                updateWorldYml(this.plugin, "bukkit.yml");
-                updateWorldYml(this.plugin, "plugins/Multiverse-Core/worlds.yml");
+                updateWorldYml("PlotMe", "bukkit.yml");
+                updateWorldYml("PlotMe", "plugins/Multiverse-Core/worlds.yml");
                 for (String world : plotConfig.getConfigurationSection("worlds").getKeys(false)) {
                     sendMessage("Copying config for: " + world);
                     try {
@@ -188,24 +174,17 @@ public class LikePlotMeConverter {
                     for (String world : plots.keySet()) {
                         String actualWorldName = getWorld(world);
                         String plotMeWorldName = world.toLowerCase();
-                        Integer pathwidth = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
-                        /*
-                         * TODO: dead code
-                         * 
-                        if (pathwidth == null) {
-                            pathwidth = 7;
-                        }
-                        */
-                        PS.get().config.set("worlds." + world + ".road.width", pathwidth);
+                        Integer pathWidth = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
+                        PS.get().config.set("worlds." + world + ".road.width", pathWidth);
 
-                        Integer pathheight = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
-                        if (pathheight == 0) {
-                            pathheight = 64;
+                        int pathHeight = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
+                        if (pathHeight == 0) {
+                            pathHeight = 64;
                         }
-                        PS.get().config.set("worlds." + world + ".road.height", pathheight);
-                        PS.get().config.set("worlds." + world + ".wall.height", pathheight);
-                        PS.get().config.set("worlds." + world + ".plot.height", pathheight);
-                        Integer plotSize = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PlotSize"); //
+                        PS.get().config.set("worlds." + world + ".road.height", pathHeight);
+                        PS.get().config.set("worlds." + world + ".wall.height", pathHeight);
+                        PS.get().config.set("worlds." + world + ".plot.height", pathHeight);
+                        int plotSize = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PlotSize", 32); //
                         if (plotSize == 0) {
                             plotSize = 32;
                         }
@@ -218,7 +197,7 @@ public class LikePlotMeConverter {
                         PS.get().config.set("worlds." + world + ".plot.filling", Collections.singletonList(filling));
                         String road = plotmeDgYml.getString("worlds." + plotMeWorldName + ".RoadMainBlock", "5");
                         PS.get().config.set("worlds." + world + ".road.block", road);
-                        Integer height = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
+                        int height = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
                         if (height == 0) {
                             height = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".GroundHeight"); //
                             if (height == 0) {
@@ -364,7 +343,7 @@ public class LikePlotMeConverter {
                     }
                 }
             });
-        } catch (Exception e) {
+        } catch (InterruptedException | SQLException e) {
             e.printStackTrace();
             PS.debug("&/end/");
         }

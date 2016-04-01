@@ -28,16 +28,6 @@ import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -52,6 +42,7 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
@@ -118,6 +109,17 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -361,7 +363,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         }
         Player player = event.getPlayer();
-        BukkitPlayer pp = (BukkitPlayer) BukkitUtil.getPlayer(player);
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = pp.getCurrentPlot();
         if (plot == null) {
             return;
@@ -564,14 +566,13 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-        PlotPlayer plr = BukkitUtil.getPlayer(player);
-        Location loc = plr.getLocation();
-        PlotArea area = loc.getPlotArea();
-        if (area == null || (!area.PLOT_CHAT && !plr.getAttribute("chat"))) {
+        PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
+        Location location = plotPlayer.getLocation();
+        PlotArea area = location.getPlotArea();
+        if (area == null || (!area.PLOT_CHAT && !plotPlayer.getAttribute("chat"))) {
             return;
         }
-        Plot plot = area.getPlot(loc);
+        Plot plot = area.getPlot(location);
         if (plot == null) {
             return;
         }
@@ -606,7 +607,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void BlockDestroy(BlockBreakEvent event) {
+    public void blockDestroy(BlockBreakEvent event) {
         Player player = event.getPlayer();
         Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
         PlotArea area = loc.getPlotArea();
@@ -745,7 +746,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Entity e = event.getEntity();
-        if (!(e instanceof org.bukkit.entity.FallingBlock)) {
+        if (!(e instanceof FallingBlock)) {
             event.setCancelled(true);
         }
     }

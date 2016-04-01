@@ -113,29 +113,22 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         try {
                             byte[] bytes = resultSet.getBytes(column);
                             if (bytes != null) {
-                                try {
-                                    ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                    long high = bb.getLong();
-                                    long low = bb.getLong();
-                                    owner = new UUID(high, low);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    owner = UUID.nameUUIDFromBytes(bytes);
-                                }
+                                ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                long high = bb.getLong();
+                                long low = bb.getLong();
+                                owner = new UUID(high, low);
                                 UUIDHandler.add(new StringWrapper(name), owner);
                             }
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
                     }
-                    if (owner == null) {
-                        if (name.isEmpty()) {
-                            PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
-                            missing++;
-                            continue;
-                        }
-                        owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
+                    if (name.isEmpty()) {
+                        PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
+                        missing++;
+                        continue;
                     }
+                    owner = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
                 }
             } else {
                 UUIDHandler.add(new StringWrapper(name), owner);
@@ -183,15 +176,10 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         try {
                             byte[] bytes = resultSet.getBytes("playerid");
                             if (bytes != null) {
-                                try {
-                                    ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                    long high = bb.getLong();
-                                    long low = bb.getLong();
-                                    denied = new UUID(high, low);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    denied = UUID.nameUUIDFromBytes(bytes);
-                                }
+                                ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                long mostSigBits = bb.getLong();
+                                long leastSigBits = bb.getLong();
+                                denied = new UUID(mostSigBits, leastSigBits);
                                 UUIDHandler.add(new StringWrapper(name), denied);
                             }
                         } catch (SQLException e) {
@@ -227,15 +215,10 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                         try {
                             byte[] bytes = resultSet.getBytes("playerid");
                             if (bytes != null) {
-                                try {
-                                    ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                    long high = bb.getLong();
-                                    long low = bb.getLong();
-                                    helper = new UUID(high, low);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    helper = UUID.nameUUIDFromBytes(bytes);
-                                }
+                                ByteBuffer bb = ByteBuffer.wrap(bytes);
+                                long mostSigBits = bb.getLong();
+                                long leastSigBits = bb.getLong();
+                                helper = new UUID(mostSigBits, leastSigBits);
                                 UUIDHandler.add(new StringWrapper(name), helper);
                             }
                         } catch (SQLException e) {

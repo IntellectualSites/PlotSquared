@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.object.PlotManager;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.UUIDHandler;
@@ -156,7 +157,7 @@ public class PlotAPI {
      *
      * @return ChunkManager
      *
-     * @see com.intellectualcrafters.plot.util.ChunkManager
+     * @see ChunkManager
      */
     public ChunkManager getChunkManager() {
         return ChunkManager.manager;
@@ -176,7 +177,7 @@ public class PlotAPI {
      *
      * @return UUIDWrapper
      *
-     * @see com.intellectualcrafters.plot.uuid.UUIDWrapper
+     * @see UUIDWrapper
      */
     public UUIDWrapper getUUIDWrapper() {
         return UUIDHandler.getUUIDWrapper();
@@ -211,7 +212,7 @@ public class PlotAPI {
      *
      * @return Array of strings
      *
-     * @see com.intellectualcrafters.plot.util.Permissions
+     * @see Permissions
      * @deprecated Use {@link C} to list all the permissions
      */
     @Deprecated
@@ -231,7 +232,7 @@ public class PlotAPI {
      *
      * @return SchematicHandler
      *
-     * @see com.intellectualcrafters.plot.util.SchematicHandler
+     * @see SchematicHandler
      */
     public SchematicHandler getSchematicHandler() {
         return SchematicHandler.manager;
@@ -256,7 +257,7 @@ public class PlotAPI {
      *
      * @return PlotManager
      *
-     * @see com.intellectualcrafters.plot.object.PlotManager
+     * @see PlotManager
      * @see PS#getPlotManager(Plot)
      */
     @Deprecated
@@ -288,7 +289,7 @@ public class PlotAPI {
      * @return PlotManager
      *
      * @see PS#getPlotManager(Plot)
-     * @see com.intellectualcrafters.plot.object.PlotManager
+     * @see PlotManager
      */
     @Deprecated
     public PlotManager getPlotManager(String world) {
@@ -314,7 +315,7 @@ public class PlotAPI {
      * @return The {@link PlotArea} for the world or null if not in plotworld
      *
      * @see #getPlotAreas(World)
-     * @see com.intellectualcrafters.plot.object.PlotArea
+     * @see PlotArea
      */
     @Deprecated
     public PlotArea getWorldSettings(World world) {
@@ -332,7 +333,7 @@ public class PlotAPI {
      * @return The {@link PlotArea} for the world or null if not in plotworld
      *
      * @see PS#getPlotArea(String, String)
-     * @see com.intellectualcrafters.plot.object.PlotArea
+     * @see PlotArea
      */
     @Deprecated
     public PlotArea getWorldSettings(String world) {
@@ -392,7 +393,7 @@ public class PlotAPI {
      * @param caption The caption
      *
      * @see #sendConsoleMessage(String)
-     * @see com.intellectualcrafters.plot.config.C
+     * @see C
      */
     public void sendConsoleMessage(C caption) {
         sendConsoleMessage(caption.s());
@@ -403,8 +404,8 @@ public class PlotAPI {
      *
      * @param flag Flag that should be registered
      *
-     * @see com.intellectualcrafters.plot.flag.FlagManager#addFlag(com.intellectualcrafters.plot.flag.AbstractFlag)
-     * @see com.intellectualcrafters.plot.flag.AbstractFlag
+     * @see FlagManager#addFlag(AbstractFlag)
+     * @see AbstractFlag
      */
     public void addFlag(AbstractFlag flag) {
         FlagManager.addFlag(flag);
@@ -415,8 +416,8 @@ public class PlotAPI {
      *
      * @return array of Flag[]
      *
-     * @see com.intellectualcrafters.plot.flag.FlagManager#getFlags()
-     * @see com.intellectualcrafters.plot.flag.AbstractFlag
+     * @see FlagManager#getFlags()
+     * @see AbstractFlag
      */
     public AbstractFlag[] getFlags() {
         return FlagManager.getFlags().toArray(new AbstractFlag[FlagManager.getFlags().size()]);
@@ -468,7 +469,7 @@ public class PlotAPI {
      *
      * @return plot if found, otherwise it creates a temporary plot
      *
-     * @see #getPlot(org.bukkit.Location)
+     * @see #getPlot(Location)
      * @see Plot
      */
     public Plot getPlot(Player player) {
@@ -638,7 +639,7 @@ public class PlotAPI {
      * Register a subcommand.
      * @deprecated Command registration is done on object creation
      * @param c SubCommand, that we want to register
-     * @see com.intellectualcrafters.plot.commands.SubCommand
+     * @see SubCommand
      */
     @Deprecated
     public void registerCommand(SubCommand c) {

@@ -7,7 +7,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -97,7 +96,7 @@ public abstract class UUIDHandlerImplementation {
             try {
                 this.unknown.add(uuid);
             } catch (Exception e) {
-                ConsolePlayer.getConsole().sendMessage("&c(minor) Invalid UUID mapping: " + uuid);
+                PS.log("&c(minor) Invalid UUID mapping: " + uuid);
                 e.printStackTrace();
             }
             return false;

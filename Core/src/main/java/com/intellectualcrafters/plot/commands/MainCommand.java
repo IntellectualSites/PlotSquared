@@ -14,6 +14,7 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.Arrays;
 
 /**
@@ -113,14 +114,6 @@ public class MainCommand extends Command {
         return instance;
     }
 
-    @Deprecated
-    /**
-     * @Deprecated legacy
-     */
-    public void addCommand(SubCommand command) {
-        PS.debug("Command registration is now done during instantiation");
-    }
-
     public static boolean onCommand(final PlotPlayer player, String... args) {
         if (args.length >= 1 && args[0].contains(":")) {
             String[] split2 = args[0].split(":");
@@ -181,6 +174,14 @@ public class MainCommand extends Command {
         return true;
     }
 
+    @Deprecated
+    /**
+     * @Deprecated legacy
+     */
+    public void addCommand(SubCommand command) {
+        PS.debug("Command registration is now done during instantiation");
+    }
+
     @Override
     public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm, RunnableVal2<Command, CommandResult> whenDone) {
         // Clear perm caching //
@@ -192,7 +193,8 @@ public class MainCommand extends Command {
         if (args.length >= 2) {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
-            if (newPlot != null && (ConsolePlayer.isConsole(player) || newPlot.getArea().equals(area) || Permissions.hasPermission(player, C.PERMISSION_ADMIN)) && !newPlot.isDenied(player.getUUID())) {
+            if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea().equals(area) || Permissions
+                    .hasPermission(player, C.PERMISSION_ADMIN)) && !newPlot.isDenied(player.getUUID())) {
                 // Save meta
                 loc = player.getMeta("location");
                 plot = player.getMeta("lastplot");

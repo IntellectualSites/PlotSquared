@@ -37,6 +37,7 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
 import com.plotsquared.listener.WEManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -46,6 +47,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -145,7 +147,7 @@ public class DebugExec extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
-        java.util.List<String> allowed_params =
+        List<String> allowed_params =
                 Arrays.asList("calibrate-analysis", "remove-flag", "stop-expire", "start-expire", "show-expired", "update-expired", "seen", "list-scripts");
         if (args.length > 0) {
             String arg = args[0].toLowerCase();
@@ -331,7 +333,7 @@ public class DebugExec extends SubCommand {
                     }
                     break;
                 case "list-scripts":
-                    final String path = PS.get().IMP.getDirectory() + File.separator + "scripts";
+                    String path = PS.get().IMP.getDirectory() + File.separator + "scripts";
                     File folder = new File(path);
                     File[] filesArray = folder.listFiles();
 
@@ -416,7 +418,7 @@ public class DebugExec extends SubCommand {
                 default:
                     script = StringMan.join(args, " ");
             }
-            if (!ConsolePlayer.isConsole(player)) {
+            if (!(player instanceof ConsolePlayer)) {
                 MainUtil.sendMessage(player, C.NOT_CONSOLE);
                 return false;
             }
@@ -436,13 +438,13 @@ public class DebugExec extends SubCommand {
                             } catch (ScriptException e) {
                                 e.printStackTrace();
                             }
-                            ConsolePlayer.getConsole().sendMessage("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                            PS.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                         }
                     });
                 } else {
                     long start = System.currentTimeMillis();
                     Object result = this.engine.eval(script, this.scope);
-                    ConsolePlayer.getConsole().sendMessage("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                    PS.log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
                 }
                 return true;
             } catch (ScriptException e) {
