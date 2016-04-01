@@ -10,7 +10,7 @@ buildscript {
 }
 
 group = 'com.intellectualcrafters'
-version = '3.3.3'
+version = '3.4.0-SNAPSHOT'
 description = """PlotSquared"""
 
 subprojects {
