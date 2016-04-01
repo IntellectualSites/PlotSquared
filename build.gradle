@@ -24,7 +24,9 @@ subprojects {
             exclude(module: 'bukkit-classloader-check')
         }
     }
-
+    clean{
+        delete file("../target")
+    }
     repositories {
         mavenCentral()
         maven {url "http://empcraft.com/maven2"}
