@@ -726,7 +726,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             plotExit(pp, plot);
         }
 
-        if (BukkitMain.worldEdit != null) {
+        if (BukkitMain.worldEdit != null && PS.get().worldedit != null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_WORLDEDIT_BYPASS)) {
                 if (pp.getAttribute("worldedit")) {
                     pp.removeAttribute("worldedit");

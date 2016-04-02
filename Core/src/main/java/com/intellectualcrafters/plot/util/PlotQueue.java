@@ -26,5 +26,7 @@ public interface PlotQueue<T> {
     PlotChunk<T> next(ChunkWrapper wrap, boolean fixLighting);
 
     void clear();
+
+    void regenerateChunk(String world, ChunkLoc loc);
 }
 

@@ -674,22 +674,6 @@ public class BukkitChunkManager extends ChunkManager {
     }
 
     @Override
-    public void regenerateChunk(String world, ChunkLoc loc) {
-        World worldObj = Bukkit.getWorld(world);
-        worldObj.regenerateChunk(loc.x, loc.z);
-        SetQueue.IMP.queue.sendChunk(world, Collections.singletonList(loc));
-        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            PlotPlayer pp = entry.getValue();
-            Location pLoc = pp.getLocation();
-            if (!StringMan.isEqual(world, pLoc.getWorld()) || !pLoc.getChunkLoc().equals(loc)) {
-                continue;
-            }
-            pLoc.setY(WorldUtil.IMP.getHighestBlock(world, pLoc.getX(), pLoc.getZ()));
-            pp.teleport(pLoc);
-        }
-    }
-
-    @Override
     public boolean copyRegion(Location pos1, Location pos2, Location newPos, final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();

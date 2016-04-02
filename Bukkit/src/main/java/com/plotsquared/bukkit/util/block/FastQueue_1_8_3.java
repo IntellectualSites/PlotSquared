@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod.RefExecutor;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
+import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -37,6 +38,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
     private final SendChunk sendChunk;
     private final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
     private final RefMethod methodGetHandleChunk;
+    private final RefMethod methodGetHandleWorld;
     private final RefMethod methodInitLighting;
     private final RefConstructor classBlockPositionConstructor;
     private final RefConstructor classChunkSectionConstructor;
@@ -50,6 +52,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
 
     public FastQueue_1_8_3() throws RuntimeException {
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
+        RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
@@ -64,6 +67,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
         this.methodAreNeighborsLoaded = classChunk.getMethod("areNeighborsLoaded", int.class);
         this.classChunkSectionConstructor = classChunkSection.getConstructor(int.class, boolean.class, char[].class);
         this.tileEntityListTick = classWorld.getField("tileEntityList");
+        this.methodGetHandleWorld = classCraftWorld.getMethod("getHandle");
         this.methodGetWorld = classChunk.getMethod("getWorld");
         this.sendChunk = new SendChunk();
         TaskManager.runTaskRepeat(new Runnable() {
@@ -255,6 +259,17 @@ public class FastQueue_1_8_3 extends SlowQueue {
     @Override
     public PlotChunk<Chunk> getChunk(ChunkWrapper wrap) {
         return new FastChunk_1_8_3(wrap);
+    }
+
+    @Override
+    public void regenerateChunk(String worldname, ChunkLoc loc) {
+        World world = BukkitUtil.getWorld(worldname);
+        Chunk chunk = world.getChunkAt(loc.x, loc.z);
+        if (chunk.getTileEntities().length > 0) {
+            Object w = methodGetHandleWorld.of(world).call();
+            ((Collection) this.tileEntityListTick.of(w).get()).clear();
+        }
+        super.regenerateChunk(worldname, loc);
     }
 
     /**
