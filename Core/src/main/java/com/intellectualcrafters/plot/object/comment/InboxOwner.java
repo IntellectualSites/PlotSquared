@@ -12,45 +12,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InboxOwner extends CommentInbox {
-    
+
     @Override
     public boolean canRead(Plot plot, PlotPlayer player) {
-        if (plot == null) {
-            return Permissions.hasPermission(player, "plots.inbox.read." + toString());
+        if (Permissions.hasPermission(player, "plots.inbox.read." + toString())) {
+            if (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.read." + toString() + ".other")) {
+                return true;
+            }
         }
-        return Permissions.hasPermission(player, "plots.inbox.read." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
-        .hasPermission(player, "plots.inbox.read."
-        + toString()
-                + ".other"));
+        return false;
     }
-    
+
     @Override
     public boolean canWrite(Plot plot, PlotPlayer player) {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.write." + toString());
         }
         return Permissions.hasPermission(player, "plots.inbox.write." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.write."
-        + toString()
-                        + ".other"));
+                .hasPermission(player, "plots.inbox.write." + toString() + ".other"));
     }
-    
+
     @Override
     public boolean canModify(Plot plot, PlotPlayer player) {
-        if (plot == null) {
-            return Permissions.hasPermission(player, "plots.inbox.modify." + toString());
+        if (Permissions.hasPermission(player, "plots.inbox.modify." + toString())) {
+            if (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.modify." + toString() + ".other")) {
+                return true;
+            }
         }
-        return Permissions.hasPermission(player, "plots.inbox.modify." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.modify."
-        + toString()
-                        + ".other"));
+        return false;
     }
-    
+
     @Override
     public boolean getComments(final Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
-        if ((plot == null) || (plot.owner == null)) {
-            return false;
-        }
         Optional<ArrayList<PlotComment>> comments = plot.getSettings().getComments(toString());
         if (comments.isPresent()) {
             whenDone.value = comments.get();
@@ -73,7 +66,7 @@ public class InboxOwner extends CommentInbox {
         });
         return true;
     }
-    
+
     @Override
     public boolean addComment(Plot plot, PlotComment comment) {
         if (plot.owner == null) {
@@ -83,27 +76,10 @@ public class InboxOwner extends CommentInbox {
         DBFunc.setComment(plot, comment);
         return true;
     }
-    
+
     @Override
     public String toString() {
         return "owner";
     }
-    
-    @Override
-    public boolean removeComment(Plot plot, PlotComment comment) {
-        if ((plot == null) || (plot.owner == null)) {
-            return false;
-        }
-        DBFunc.removeComment(plot, comment);
-        return false;
-    }
-    
-    @Override
-    public boolean clearInbox(Plot plot) {
-        if (plot == null || plot.owner == null) {
-            return false;
-        }
-        DBFunc.clearInbox(plot, this.toString());
-        return false;
-    }
+
 }

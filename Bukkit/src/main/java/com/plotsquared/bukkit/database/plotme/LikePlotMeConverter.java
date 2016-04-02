@@ -63,10 +63,10 @@ public class LikePlotMeConverter {
         return plotConfig.getConfigurationSection("worlds").getKeys(false);
     }
 
-    public void mergeWorldYml(String plugin, FileConfiguration plotConfig) {
+    public void mergeWorldYml(FileConfiguration plotConfig) {
         try {
             File genConfig =
-                    new File("plugins" + File.separator + plugin + File.separator + "PlotMe-DefaultGenerator" + File.separator + "config.yml");
+                    new File("plugins" + File.separator + "PlotMe" + File.separator + "PlotMe-DefaultGenerator" + File.separator + "config.yml");
             if (genConfig.exists()) {
                 YamlConfiguration yml = YamlConfiguration.loadConfiguration(genConfig);
                 for (String key : yml.getKeys(true)) {
@@ -83,7 +83,7 @@ public class LikePlotMeConverter {
         }
     }
 
-    public void updateWorldYml(String plugin, String location) {
+    public void updateWorldYml(String location) {
         try {
             Path path = Paths.get(location);
             File file = new File(location);
@@ -92,7 +92,7 @@ public class LikePlotMeConverter {
             }
             String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
             content = content.replaceAll("PlotMe-DefaultGenerator", "PlotSquared");
-            content = content.replaceAll(plugin, "PlotSquared");
+            content = content.replaceAll("PlotMe", "PlotSquared");
             Files.write(path, content.getBytes(StandardCharsets.UTF_8));
         } catch (IOException ignored) {
             //ignored
@@ -117,7 +117,7 @@ public class LikePlotMeConverter {
 
             PS.debug("&3Using connector: " + connector.getClass().getCanonicalName());
 
-            Connection connection = connector.getPlotMeConnection("PlotMe", plotConfig, dataFolder);
+            Connection connection = connector.getPlotMeConnection(plotConfig, dataFolder);
 
             if (!connector.isValidConnection(connection)) {
                 sendMessage("Cannot connect to PlotMe DB. Conversion process will not continue");
@@ -126,7 +126,7 @@ public class LikePlotMeConverter {
 
             sendMessage("PlotMe conversion has started. To disable this, please set 'plotme-convert.enabled' to false in the 'settings.yml'");
 
-            mergeWorldYml("PlotMe", plotConfig);
+            mergeWorldYml(plotConfig);
 
             sendMessage("Connecting to PlotMe DB");
 
@@ -140,8 +140,8 @@ public class LikePlotMeConverter {
 
             if (Settings.CONVERT_PLOTME) {
                 sendMessage("Updating bukkit.yml");
-                updateWorldYml("PlotMe", "bukkit.yml");
-                updateWorldYml("PlotMe", "plugins/Multiverse-Core/worlds.yml");
+                updateWorldYml("bukkit.yml");
+                updateWorldYml("plugins/Multiverse-Core/worlds.yml");
                 for (String world : plotConfig.getConfigurationSection("worlds").getKeys(false)) {
                     sendMessage("Copying config for: " + world);
                     try {

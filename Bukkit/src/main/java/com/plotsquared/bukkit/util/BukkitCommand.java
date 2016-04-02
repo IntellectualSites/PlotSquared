@@ -53,6 +53,6 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         for (Object o : objects) {
             result.add(o.toString());
         }
-        return result.size() == 0 ? null : result;
+        return result.isEmpty() ? null : result;
     }
 }

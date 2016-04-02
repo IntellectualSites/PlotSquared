@@ -42,9 +42,8 @@ public class HackTitleManager {
      * Create a new 1.8 title.
      *
      * @param title Title
-     * @throws ClassNotFoundException NMS Error.
      */
-    public HackTitleManager(String title) throws ClassNotFoundException {
+    public HackTitleManager(String title) {
         this.title = title;
         loadClasses();
     }
@@ -54,9 +53,8 @@ public class HackTitleManager {
      *
      * @param title Title text
      * @param subtitle Subtitle text
-     * @throws ClassNotFoundException NMS Error
      */
-    public HackTitleManager(String title, String subtitle) throws ClassNotFoundException {
+    public HackTitleManager(String title, String subtitle) {
         this.title = title;
         this.subtitle = subtitle;
         loadClasses();
@@ -66,9 +64,8 @@ public class HackTitleManager {
      * Copy 1.8 title.
      *
      * @param title Title
-     * @throws ClassNotFoundException NMS Error
      */
-    public HackTitleManager(HackTitleManager title) throws ClassNotFoundException {
+    public HackTitleManager(HackTitleManager title) {
         // Copy title
         this.title = title.title;
         this.subtitle = title.subtitle;
@@ -89,9 +86,8 @@ public class HackTitleManager {
      * @param fadeInTime Fade in time
      * @param stayTime Stay on screen time
      * @param fadeOutTime Fade out time
-     * @throws ClassNotFoundException NMS error
      */
-    public HackTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) throws ClassNotFoundException {
+    public HackTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
         this.title = title;
         this.subtitle = subtitle;
         this.fadeInTime = fadeInTime;

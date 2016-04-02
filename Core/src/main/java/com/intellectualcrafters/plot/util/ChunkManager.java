@@ -111,7 +111,7 @@ public abstract class ChunkManager {
         Runnable smallTask = new Runnable() {
             @Override
             public void run() {
-                if (regions.size() == 0) {
+                if (regions.isEmpty()) {
                     TaskManager.runTask(whenDone);
                     return;
                 }

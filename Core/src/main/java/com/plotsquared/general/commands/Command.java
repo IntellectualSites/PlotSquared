@@ -459,13 +459,13 @@ public abstract class Command {
     }
 
     public String getUsage() {
-        if (this.usage != null && this.usage.length() != 0) {
+        if (this.usage != null && !this.usage.isEmpty()) {
             if (this.usage.startsWith("/")) {
                 return this.usage;
             }
             return getCommandString() + " " + this.usage;
         }
-        if (this.allCommands.size() == 0) {
+        if (this.allCommands.isEmpty()) {
             return getCommandString();
         }
         StringBuilder args = new StringBuilder("[");
@@ -511,7 +511,7 @@ public abstract class Command {
 
     @Override
     public String toString() {
-        return this.aliases.size() > 0 ? this.aliases.get(0) : this.id;
+        return !this.aliases.isEmpty() ? this.aliases.get(0) : this.id;
     }
 
     @Override

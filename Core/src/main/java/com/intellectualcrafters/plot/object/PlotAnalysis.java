@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlotAnalysis {
 
-    public static PlotAnalysis MODIFIERS = new PlotAnalysis();
+    public static final PlotAnalysis MODIFIERS = new PlotAnalysis();
     public static boolean running = false;
     public int changes;
     public int faces;

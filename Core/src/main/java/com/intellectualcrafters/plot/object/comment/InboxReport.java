@@ -13,11 +13,13 @@ public class InboxReport extends CommentInbox {
 
     @Override
     public boolean canRead(Plot plot, PlotPlayer player) {
-        if (plot == null) {
-            return Permissions.hasPermission(player, "plots.inbox.read." + toString());
+        if (Permissions.hasPermission(player, "plots.inbox.read." + toString())) {
+            if (plot.isOwner(player.getUUID()) || Permissions
+                    .hasPermission(player, "plots.inbox.read." + toString() + ".other")) {
+                return true;
+            }
         }
-        return Permissions.hasPermission(player, "plots.inbox.read." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.read." + toString() + ".other"));
+        return false;
     }
 
     @Override
@@ -31,11 +33,12 @@ public class InboxReport extends CommentInbox {
 
     @Override
     public boolean canModify(Plot plot, PlotPlayer player) {
-        if (plot == null) {
-            return Permissions.hasPermission(player, "plots.inbox.modify." + toString());
+        if (Permissions.hasPermission(player, "plots.inbox.modify." + toString())) {
+            if (plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.inbox.modify." + toString() + ".other")) {
+                return true;
+            }
         }
-        return Permissions.hasPermission(player, "plots.inbox.modify." + toString()) && (plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.modify." + toString() + ".other"));
+        return false;
     }
 
     @Override
@@ -64,21 +67,4 @@ public class InboxReport extends CommentInbox {
         return "report";
     }
 
-    @Override
-    public boolean removeComment(Plot plot, PlotComment comment) {
-        if (plot.owner == null) {
-            return false;
-        }
-        DBFunc.removeComment(plot, comment);
-        return false;
-    }
-
-    @Override
-    public boolean clearInbox(Plot plot) {
-        if (plot == null || plot.owner == null) {
-            return false;
-        }
-        DBFunc.clearInbox(plot, this.toString());
-        return false;
-    }
 }

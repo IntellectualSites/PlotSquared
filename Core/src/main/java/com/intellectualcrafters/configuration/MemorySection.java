@@ -537,16 +537,16 @@ public class MemorySection implements ConfigurationSection {
 
     @Override
     public List<String> getStringList(String path) {
-        final List<?> list = getList(path);
+        List<?> list = getList(path);
 
         if (list == null) {
             return new ArrayList<>(0);
         }
 
-        final List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<>();
 
-        for (final Object object : list) {
-            if ((object instanceof String) || (isPrimitiveWrapper(object))) {
+        for (Object object : list) {
+            if ((object instanceof String) || isPrimitiveWrapper(object)) {
                 result.add(String.valueOf(object));
             }
         }

@@ -26,8 +26,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
     private String plugin;
 
     @Override
-    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
-        this.plugin = plugin.toLowerCase();
+    public Connection getPlotMeConnection(FileConfiguration plotConfig, String dataFolder) {
+        this.plugin = this.plugin.toLowerCase();
         try {
             if (plotConfig.getBoolean("usemySQL")) {
                 String user = plotConfig.getString("mySQLuname");
@@ -109,14 +109,10 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                     owner = DBFunc.everyone;
                 } else {
                     if (checkUUID) {
-                        try {
-                            byte[] bytes = resultSet.getBytes("ownerid");
-                            if (bytes != null) {
-                                owner = UUID.nameUUIDFromBytes(bytes);
-                                UUIDHandler.add(new StringWrapper(name), owner);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        byte[] bytes = resultSet.getBytes("ownerid");
+                        if (bytes != null) {
+                            owner = UUID.nameUUIDFromBytes(bytes);
+                            UUIDHandler.add(new StringWrapper(name), owner);
                         }
                     }
                     if (owner == null) {

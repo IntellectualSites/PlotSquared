@@ -214,7 +214,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
             HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
-            if (items.size() > 0) {
+            if (!items.isEmpty()) {
                 this.G_SCH_STATE = new HashMap<>();
                 for (Map.Entry<BlockLoc, CompoundTag> entry : items.entrySet()) {
                     BlockLoc loc = entry.getKey();

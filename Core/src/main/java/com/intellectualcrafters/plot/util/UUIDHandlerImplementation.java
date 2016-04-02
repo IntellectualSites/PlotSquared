@@ -24,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class UUIDHandlerImplementation {
 
     public final ConcurrentHashMap<String, PlotPlayer> players;
+    public final HashSet<UUID> unknown = new HashSet<>();
     public UUIDWrapper uuidWrapper = null;
-    public HashSet<UUID> unknown = new HashSet<>();
     private boolean cached = false;
     private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 

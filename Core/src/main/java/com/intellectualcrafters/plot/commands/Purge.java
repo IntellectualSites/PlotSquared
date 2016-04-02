@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+import com.plotsquared.listener.PlotListener;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -150,9 +151,10 @@ public class Purge extends SubCommand {
                     if (plot.temp != Integer.MAX_VALUE) {
                         ids.add(plot.temp);
                         plot.getArea().removePlot(plot.getId());
-                        for (PlotPlayer plotPlayer : plot.getPlayersInPlot()) {
-                            plotPlayer.deleteMeta("lastplot");
+                        for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                            PlotListener.plotEntry(pp, plot);
                         }
+                        plot.removeSign();
                     }
                 }
                 DBFunc.purgeIds(ids);

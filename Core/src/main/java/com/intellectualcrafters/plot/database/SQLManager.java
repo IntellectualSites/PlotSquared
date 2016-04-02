@@ -3147,7 +3147,7 @@ public class SQLManager implements AbstractDB {
 
     public abstract class UniqueStatement {
 
-        public String method;
+        public final String method;
 
         public UniqueStatement(String method) {
             this.method = method;

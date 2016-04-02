@@ -43,9 +43,8 @@ public class DefaultTitleManager {
      * Create a new 1.8 title.
      *
      * @param title Title
-     * @throws ClassNotFoundException
      */
-    public DefaultTitleManager(String title) throws ClassNotFoundException {
+    public DefaultTitleManager(String title) {
         this.title = title;
         loadClasses();
     }
@@ -55,9 +54,8 @@ public class DefaultTitleManager {
      *
      * @param title Title text
      * @param subtitle Subtitle text
-     * @throws ClassNotFoundException
      */
-    public DefaultTitleManager(String title, String subtitle) throws ClassNotFoundException {
+    public DefaultTitleManager(String title, String subtitle) {
         this.title = title;
         this.subtitle = subtitle;
         loadClasses();
@@ -67,9 +65,8 @@ public class DefaultTitleManager {
      * Copy 1.8 title.
      *
      * @param title Title
-     * @throws ClassNotFoundException
      */
-    public DefaultTitleManager(DefaultTitleManager title) throws ClassNotFoundException {
+    public DefaultTitleManager(DefaultTitleManager title) {
         // Copy title
         this.title = title.title;
         this.subtitle = title.subtitle;
@@ -90,10 +87,8 @@ public class DefaultTitleManager {
      * @param fadeInTime Fade in time
      * @param stayTime Stay on screen time
      * @param fadeOutTime Fade out time
-     * @throws ClassNotFoundException
      */
-    public DefaultTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime)
-            throws ClassNotFoundException {
+    public DefaultTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
         this.title = title;
         this.subtitle = subtitle;
         this.fadeInTime = fadeInTime;

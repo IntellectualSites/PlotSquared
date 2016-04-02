@@ -10,50 +10,50 @@ public class PlotMessage {
     public PlotMessage() {
         reset(ChatManager.manager);
     }
-    
-    public <T> T $(final ChatManager<T> manager) {
-        return (T) builder;
-    }
-    
-    public PlotMessage(final String text) {
+
+    public PlotMessage(String text) {
         this();
         text(text);
     }
 
-    public <T> T reset(ChatManager<T> manager) {
-        return (T) (builder = manager.builder());
+    public <T> T $(ChatManager<T> manager) {
+        return (T) this.builder;
     }
-    
-    public PlotMessage text(final String text) {
+
+    public <T> T reset(ChatManager<T> manager) {
+        return (T) (this.builder = manager.builder());
+    }
+
+    public PlotMessage text(String text) {
         ChatManager.manager.text(this, text);
         return this;
     }
-    
-    public PlotMessage tooltip(final PlotMessage... tooltip) {
+
+    public PlotMessage tooltip(PlotMessage... tooltip) {
         ChatManager.manager.tooltip(this, tooltip);
         return this;
     }
-    
-    public PlotMessage tooltip(final String tooltip) {
+
+    public PlotMessage tooltip(String tooltip) {
         return tooltip(new PlotMessage(tooltip));
     }
-    
-    public PlotMessage command(final String command) {
+
+    public PlotMessage command(String command) {
         ChatManager.manager.command(this, command);
         return this;
     }
-    
-    public PlotMessage suggest(final String command) {
+
+    public PlotMessage suggest(String command) {
         ChatManager.manager.suggest(this, command);
         return this;
     }
-    
-    public PlotMessage color(final String color) {
+
+    public PlotMessage color(String color) {
         ChatManager.manager.color(this, C.color(color));
         return this;
     }
-    
-    public void send(final PlotPlayer player) {
+
+    public void send(PlotPlayer player) {
         ChatManager.manager.send(this, player);
     }
 }

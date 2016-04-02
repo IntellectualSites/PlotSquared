@@ -30,16 +30,15 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
     private String prefix;
 
     @Override
-    public Connection getPlotMeConnection(String plugin, FileConfiguration plotConfig, String dataFolder) {
-        this.plugin = plugin.toLowerCase();
-        this.prefix = plotConfig.getString("mySQLprefix", plugin.toLowerCase());
+    public Connection getPlotMeConnection(FileConfiguration plotConfig, String dataFolder) {
+        this.plugin = this.plugin.toLowerCase();
+        this.prefix = plotConfig.getString("mySQLprefix", this.plugin.toLowerCase());
         try {
             if (plotConfig.getBoolean("usemySQL")) {
                 String user = plotConfig.getString("mySQLuname");
                 String password = plotConfig.getString("mySQLpass");
                 String con = plotConfig.getString("mySQLconn");
                 return DriverManager.getConnection(con, user, password);
-                //                return new MySQL(plotsquared, hostname, port, database, username, password)
             } else {
                 return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
             }
@@ -110,17 +109,13 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     owner = DBFunc.everyone;
                 } else {
                     if (checkUUID || checkUUID2) {
-                        try {
-                            byte[] bytes = resultSet.getBytes(column);
-                            if (bytes != null) {
-                                ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                long high = bb.getLong();
-                                long low = bb.getLong();
-                                owner = new UUID(high, low);
-                                UUIDHandler.add(new StringWrapper(name), owner);
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        byte[] bytes = resultSet.getBytes(column);
+                        if (bytes != null) {
+                            ByteBuffer bb = ByteBuffer.wrap(bytes);
+                            long high = bb.getLong();
+                            long low = bb.getLong();
+                            owner = new UUID(high, low);
+                            UUIDHandler.add(new StringWrapper(name), owner);
                         }
                     }
                     if (name.isEmpty()) {
@@ -173,17 +168,13 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     if ("*".equals(name)) {
                         denied = DBFunc.everyone;
                     } else if (DBFunc.hasColumn(resultSet, "playerid")) {
-                        try {
-                            byte[] bytes = resultSet.getBytes("playerid");
-                            if (bytes != null) {
-                                ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                long mostSigBits = bb.getLong();
-                                long leastSigBits = bb.getLong();
-                                denied = new UUID(mostSigBits, leastSigBits);
-                                UUIDHandler.add(new StringWrapper(name), denied);
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        byte[] bytes = resultSet.getBytes("playerid");
+                        if (bytes != null) {
+                            ByteBuffer bb = ByteBuffer.wrap(bytes);
+                            long mostSigBits = bb.getLong();
+                            long leastSigBits = bb.getLong();
+                            denied = new UUID(mostSigBits, leastSigBits);
+                            UUIDHandler.add(new StringWrapper(name), denied);
                         }
                     }
                     if (denied == null) {
@@ -212,17 +203,13 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
                     if ("*".equals(name)) {
                         helper = DBFunc.everyone;
                     } else if (DBFunc.hasColumn(resultSet, "playerid")) {
-                        try {
-                            byte[] bytes = resultSet.getBytes("playerid");
-                            if (bytes != null) {
-                                ByteBuffer bb = ByteBuffer.wrap(bytes);
-                                long mostSigBits = bb.getLong();
-                                long leastSigBits = bb.getLong();
-                                helper = new UUID(mostSigBits, leastSigBits);
-                                UUIDHandler.add(new StringWrapper(name), helper);
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        byte[] bytes = resultSet.getBytes("playerid");
+                        if (bytes != null) {
+                            ByteBuffer bb = ByteBuffer.wrap(bytes);
+                            long mostSigBits = bb.getLong();
+                            long leastSigBits = bb.getLong();
+                            helper = new UUID(mostSigBits, leastSigBits);
+                            UUIDHandler.add(new StringWrapper(name), helper);
                         }
                     }
                     if (helper == null) {

@@ -67,8 +67,14 @@ public class Inbox extends SubCommand {
 
     @Override
     public boolean onCommand(final PlotPlayer player, String[] args) {
-
         final Plot plot = player.getCurrentPlot();
+        if (plot == null) {
+            sendMessage(player, C.NOT_IN_PLOT);
+            return false;
+        } else if (!plot.hasOwner()) {
+            sendMessage(player, C.PLOT_UNOWNED);
+            return false;
+        }
         if (args.length == 0) {
             sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
@@ -183,11 +189,7 @@ public class Inbox extends SubCommand {
                 displayComments(player, value, page);
             }
         })) {
-            if (plot == null) {
-                sendMessage(player, C.NOT_IN_PLOT);
-            } else {
-                sendMessage(player, C.PLOT_UNOWNED);
-            }
+            sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
         return true;
