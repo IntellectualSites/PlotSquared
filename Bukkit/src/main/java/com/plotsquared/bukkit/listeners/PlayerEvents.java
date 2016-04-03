@@ -616,7 +616,6 @@ public class PlayerEvents extends PlotListener implements Listener {
         Plot plot = area.getPlotAbs(loc);
         if (plot != null) {
             PlotPlayer pp = BukkitUtil.getPlayer(player);
-            // TODO test
             if (event.getBlock().getY() == 0) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL);
