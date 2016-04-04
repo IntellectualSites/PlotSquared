@@ -28,16 +28,6 @@ import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.listener.PlayerBlockEventType;
 import com.plotsquared.listener.PlotListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -118,6 +108,16 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Player Events involving plots.
@@ -615,11 +615,14 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = area.getPlotAbs(loc);
         if (plot != null) {
-            if (event.getBlock().getY() == 0) {
-                event.setCancelled(true);
-                return;
-            }
             PlotPlayer pp = BukkitUtil.getPlayer(player);
+            if (event.getBlock().getY() == 0) {
+                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL);
+                    event.setCancelled(true);
+                    return;
+                }
+            }
             if (!plot.hasOwner()) {
                 if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
