@@ -96,6 +96,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -459,6 +460,13 @@ public class PlayerEvents extends PlotListener implements Listener {
                 EventUtil.manager.doJoinTask(pp);
             }
         }, 20);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void playerRespawn(PlayerRespawnEvent event) {
+        final Player player = event.getPlayer();
+        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        EventUtil.manager.doDeathTask(pp);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
