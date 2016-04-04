@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
@@ -11,7 +12,9 @@ import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class ChunkManager {
@@ -226,7 +229,19 @@ public abstract class ChunkManager {
         return chunks;
     }
 
-    public abstract void regenerateChunk(String world, ChunkLoc loc);
+    public void regenerateChunk(String world, ChunkLoc loc) {
+        SetQueue.IMP.regenerateChunk(world, loc);
+        SetQueue.IMP.queue.sendChunk(world, Collections.singletonList(loc));
+        for (Map.Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
+            PlotPlayer pp = entry.getValue();
+            Location pLoc = pp.getLocation();
+            if (!StringMan.isEqual(world, pLoc.getWorld()) || !pLoc.getChunkLoc().equals(loc)) {
+                continue;
+            }
+            pLoc.setY(WorldUtil.IMP.getHighestBlock(world, pLoc.getX(), pLoc.getZ()));
+            pp.teleport(pLoc);
+        }
+    }
     
     public void deleteRegionFiles(String world, Collection<ChunkLoc> chunks) {
         deleteRegionFiles(world, chunks, null);

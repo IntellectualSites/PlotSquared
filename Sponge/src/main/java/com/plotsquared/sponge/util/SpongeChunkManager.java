@@ -1,23 +1,19 @@
 package com.plotsquared.sponge.util;
 
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.TaskManager;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderServer;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
-
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
 
 public class SpongeChunkManager extends ChunkManager {
     
@@ -68,55 +64,6 @@ public class SpongeChunkManager extends ChunkManager {
         return super.getChunkChunks(world);
     }
 
-    @Override
-    public void regenerateChunk(String world, ChunkLoc loc) {
-        World spongeWorld = SpongeUtil.getWorld(world);
-        net.minecraft.world.World nmsWorld = (net.minecraft.world.World) spongeWorld;
-        Optional<Chunk> chunkOpt = spongeWorld.getChunk(loc.x, 0, loc.z);
-        if (chunkOpt.isPresent()) {
-            try {
-                Chunk spongeChunk = chunkOpt.get();
-                IChunkProvider provider = nmsWorld.getChunkProvider();
-                if (!(provider instanceof ChunkProviderServer)) {
-                    PS.debug("Not valid world generator for: " + world);
-                    return;
-                }
-/*                ChunkProviderServer chunkServer = (ChunkProviderServer) provider;
-                IChunkProvider chunkProvider = chunkServer.serverChunkGenerator;
-
-                long pos = ChunkCoordIntPair.chunkXZ2Int(loc.x, loc.z);
-                net.minecraft.world.chunk.Chunk mcChunk = (net.minecraft.world.chunk.Chunk) spongeChunk;
-                if (chunkServer.chunkExists(loc.x, loc.z)) {
-                    mcChunk = chunkServer.loadChunk(loc.x, loc.z);
-                    mcChunk.onChunkUnload();
-                }
-                Field fieldDroppedChunksSet;
-                try {
-                    fieldDroppedChunksSet = chunkServer.getClass().getField("droppedChunksSet");
-                } catch (Throwable t) {
-                    fieldDroppedChunksSet = ReflectionUtils.findField(chunkServer.getClass(), Set.class);
-                }
-                Set<Long> set = (Set<Long>) fieldDroppedChunksSet.get(chunkServer);
-                set.remove(pos);
-                ReflectionUtils.findField(chunkServer.getClass(),)
-                chunkServer.id2ChunkMap.remove(pos);
-                mcChunk = chunkProvider.provideChunk(loc.x, loc.z);
-                chunkServer.id2ChunkMap.add(pos, mcChunk);
-                chunkServer.loadedChunks.add(mcChunk);
-                if (mcChunk != null) {
-                    mcChunk.onChunkLoad();
-                    mcChunk.populateChunk(chunkProvider, chunkProvider, loc.x, loc.z);
-                    SetQueue.IMP.queue.sendChunk(world, Arrays.asList(loc));
-                }
-                else {
-                    PS.debug("CHUNK IS NULL!?");
-                }*/
-            } catch (Throwable e){
-                e.printStackTrace();
-            }
-        }
-    }
-    
     @Override
     public boolean copyRegion(Location pos1, Location pos2, Location newPos, Runnable whenDone) {
         // TODO copy a region

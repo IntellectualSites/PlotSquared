@@ -8,6 +8,7 @@ import com.intellectualcrafters.plot.util.PlotChunk;
 import com.intellectualcrafters.plot.util.PlotQueue;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
+import com.plotsquared.bukkit.util.BukkitUtil;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -101,6 +102,11 @@ public class SlowQueue implements PlotQueue<Chunk> {
     @Override
     public void clear() {
         this.blocks.clear();
+    }
+
+    @Override
+    public void regenerateChunk(String world, ChunkLoc loc) {
+        BukkitUtil.getWorld(world).regenerateChunk(loc.x, loc.z);
     }
 
     /**

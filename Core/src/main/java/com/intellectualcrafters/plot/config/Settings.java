@@ -11,10 +11,10 @@ import java.util.List;
  */
 public class Settings {
     public static boolean USE_SQLUUIDHANDLER = false;
-    
+
     public static boolean AUTO_PURGE = false;
     /**
-     * 
+     *
      */
     public static boolean UPDATE_NOTIFICATIONS = true;
 
@@ -26,7 +26,7 @@ public class Settings {
     public static boolean PERMISSION_CACHING = true;
     public static boolean CACHE_RATINGS = true;
     public static boolean UUID_FROM_DISK = false;
-    
+
     /**
      * Web
      */
@@ -82,6 +82,10 @@ public class Settings {
      * Teleport to path on login
      */
     public static boolean TELEPORT_ON_LOGIN = false;
+    /**
+     * Teleport to path on death
+     */
+    public static boolean TELEPORT_ON_DEATH = false;
     /**
      * Display titles
      */
@@ -156,7 +160,7 @@ public class Settings {
      * Use global plot limit?
      */
     public static boolean GLOBAL_LIMIT = false;
-    
+
     /**
      * Database settings
      *

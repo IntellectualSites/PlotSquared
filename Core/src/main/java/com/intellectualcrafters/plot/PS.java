@@ -53,7 +53,6 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -2030,6 +2029,7 @@ public class PS {
 
         // Teleportation
         options.put("teleport.on_login", Settings.TELEPORT_ON_LOGIN);
+        options.put("teleport.on_death", Settings.TELEPORT_ON_DEATH);
         options.put("teleport.delay", Settings.TELEPORT_DELAY);
 
         // WorldEdit
@@ -2140,6 +2140,7 @@ public class PS {
         // Teleportation
         Settings.TELEPORT_DELAY = this.config.getInt("teleport.delay");
         Settings.TELEPORT_ON_LOGIN = this.config.getBoolean("teleport.on_login");
+        Settings.TELEPORT_ON_DEATH = this.config.getBoolean("teleport.on_death");
 
         // WorldEdit
         Settings.QUEUE_COMMANDS = this.config.getBoolean("worldedit.queue-commands");
