@@ -15,7 +15,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
         usage = "/plot target <<plot>|nearest>",
         description = "Target a plot with your compass",
         permission = "plots.target",
-        requiredType = RequiredType.NONE,
+        requiredType = RequiredType.PLAYER,
         category = CommandCategory.INFO)
 public class Target extends SubCommand {
 

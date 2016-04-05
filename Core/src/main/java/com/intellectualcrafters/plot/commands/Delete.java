@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.HashSet;
 
 @CommandDeclaration(
@@ -21,7 +22,7 @@ import java.util.HashSet;
         aliases = {"dispose", "del"},
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.NONE,
-        confirmation=true)
+        confirmation = true)
 public class Delete extends SubCommand {
 
     @Override

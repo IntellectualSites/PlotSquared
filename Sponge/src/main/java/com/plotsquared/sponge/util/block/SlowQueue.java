@@ -10,17 +10,17 @@ import com.intellectualcrafters.plot.util.PlotQueue;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.plotsquared.sponge.util.SpongeUtil;
-import java.util.Optional;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.world.Chunk;
+import org.spongepowered.api.world.World;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import org.spongepowered.api.world.World;
 
 public class SlowQueue implements PlotQueue<Chunk> {
     
@@ -148,7 +148,7 @@ public class SlowQueue implements PlotQueue<Chunk> {
                 else {
                     PS.debug("CHUNK IS NULL!?");
                 }*/
-            } catch (Throwable e){
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         }

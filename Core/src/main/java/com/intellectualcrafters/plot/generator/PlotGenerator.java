@@ -7,7 +7,7 @@ import com.intellectualcrafters.plot.object.SetupObject;
 
 public abstract class PlotGenerator<T> {
 
-    public T generator;
+    public final T generator;
 
     public PlotGenerator(T generator) {
         this.generator = generator;

@@ -31,8 +31,8 @@ public class Deny extends SubCommand {
     @Override
     public boolean onCommand(PlotPlayer plr, String[] args) {
 
-        Location loc = plr.getLocation();
-        Plot plot = loc.getPlotAbs();
+        Location location = plr.getLocation();
+        Plot plot = location.getPlotAbs();
         if (plot == null) {
             return !sendMessage(plr, C.NOT_IN_PLOT);
         }

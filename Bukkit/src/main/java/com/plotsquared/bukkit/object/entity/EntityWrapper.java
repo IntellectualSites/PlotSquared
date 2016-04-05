@@ -34,14 +34,14 @@ import org.bukkit.util.Vector;
 
 public class EntityWrapper {
 
+    public final EntityType type;
+    public final float yaw;
+    public final float pitch;
+    public final short depth;
     private final int hash;
-    public EntityType type;
-    public float yaw;
-    public float pitch;
     public double x;
     public double y;
     public double z;
-    public short depth;
     public EntityBaseStats base = null;
     // Extended
     public ItemStack stack;

@@ -23,35 +23,35 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
      * @param defaults Default value provider
      * @throws IllegalArgumentException Thrown if defaults is null
      */
-    public MemoryConfiguration(final Configuration defaults) {
+    public MemoryConfiguration(Configuration defaults) {
         this.defaults = defaults;
     }
     
     @Override
-    public void addDefault(final String path, final Object value) {
+    public void addDefault(String path, Object value) {
         if (path == null) {
             throw new NullPointerException("Path may not be null");
         }
-        if (defaults == null) {
-            defaults = new MemoryConfiguration();
+        if (this.defaults == null) {
+            this.defaults = new MemoryConfiguration();
         }
-        
-        defaults.set(path, value);
+
+        this.defaults.set(path, value);
     }
     
     @Override
-    public void addDefaults(final Map<String, Object> defaults) {
+    public void addDefaults(Map<String, Object> defaults) {
         if (defaults == null) {
             throw new NullPointerException("Defaults may not be null");
         }
-        
-        for (final Map.Entry<String, Object> entry : defaults.entrySet()) {
+
+        for (Map.Entry<String, Object> entry : defaults.entrySet()) {
             addDefault(entry.getKey(), entry.getValue());
         }
     }
     
     @Override
-    public void addDefaults(final Configuration defaults) {
+    public void addDefaults(Configuration defaults) {
         if (defaults == null) {
             throw new NullPointerException("Defaults may not be null");
         }
@@ -60,17 +60,17 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     }
     
     @Override
-    public void setDefaults(final Configuration defaults) {
+    public Configuration getDefaults() {
+        return this.defaults;
+    }
+
+    @Override
+    public void setDefaults(Configuration defaults) {
         if (defaults == null) {
             throw new NullPointerException("Defaults may not be null");
         }
-        
+
         this.defaults = defaults;
-    }
-    
-    @Override
-    public Configuration getDefaults() {
-        return defaults;
     }
     
     @Override
@@ -80,10 +80,10 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     
     @Override
     public MemoryConfigurationOptions options() {
-        if (options == null) {
-            options = new MemoryConfigurationOptions(this);
+        if (this.options == null) {
+            this.options = new MemoryConfigurationOptions(this);
         }
-        
-        return options;
+
+        return this.options;
     }
 }

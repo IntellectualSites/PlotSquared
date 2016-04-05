@@ -3,11 +3,6 @@ package com.intellectualcrafters.plot.object;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.util.MathMan;
 
-/**
- * Created 2015-02-11 for PlotSquared
- *
-
- */
 public class Location implements Cloneable, Comparable<Location> {
 
     private int x;
@@ -27,7 +22,7 @@ public class Location implements Cloneable, Comparable<Location> {
     }
 
     public Location() {
-        this("", 0, 0, 0, 0, 0);
+        this.world = "";
     }
 
     public Location(String world, int x, int y, int z) {

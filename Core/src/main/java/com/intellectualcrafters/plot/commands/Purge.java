@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.CmdConfirm;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+import com.plotsquared.listener.PlotListener;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +25,7 @@ import java.util.UUID;
         description = "Purge all plots for a world",
         category = CommandCategory.ADMINISTRATION,
         requiredType = RequiredType.CONSOLE,
-        confirmation=true)
+        confirmation = true)
 public class Purge extends SubCommand {
 
     @Override
@@ -145,12 +146,15 @@ public class Purge extends SubCommand {
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                HashSet<Integer> ids = new HashSet<Integer>();
+                HashSet<Integer> ids = new HashSet<>();
                 for (Plot plot : toDelete) {
                     if (plot.temp != Integer.MAX_VALUE) {
                         ids.add(plot.temp);
-                        PlotArea area = plot.getArea();
                         plot.getArea().removePlot(plot.getId());
+                        for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                            PlotListener.plotEntry(pp, plot);
+                        }
+                        plot.removeSign();
                     }
                 }
                 DBFunc.purgeIds(ids);

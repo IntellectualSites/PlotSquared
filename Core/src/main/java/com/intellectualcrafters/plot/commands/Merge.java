@@ -22,8 +22,8 @@ import java.util.UUID;
         description = "Merge the plot you are standing on, with another plot",
         permission = "plots.merge", usage = "/plot merge <all|n|e|s|w> [removeroads]",
         category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
-        confirmation=true)
+        requiredType = RequiredType.PLAYER,
+        confirmation = true)
 public class Merge extends SubCommand {
 
     public static final String[] values = new String[]{"north", "east", "south", "west", "auto"};

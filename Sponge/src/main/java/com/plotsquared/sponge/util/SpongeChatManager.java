@@ -22,7 +22,7 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
     }
 
     @Override
-    public void color(final PlotMessage m, final String color) {
+    public void color(PlotMessage m, String color) {
         TextColor tc = null;
         TextStyle ts = null;
         switch (color.charAt(1)) {
@@ -114,10 +114,10 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
     }
 
     @Override
-    public void tooltip(final PlotMessage m, final PlotMessage... tooltips) {
-        final Text.Builder builder = Text.builder();
+    public void tooltip(PlotMessage m, PlotMessage... tooltips) {
+        Text.Builder builder = Text.builder();
         boolean lb = false;
-        for (final PlotMessage tooltip : tooltips) {
+        for (PlotMessage tooltip : tooltips) {
             if (lb) {
                 builder.append(Text.of("\n"));
             }
@@ -128,18 +128,18 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
     }
 
     @Override
-    public void command(final PlotMessage m, final String command) {
+    public void command(PlotMessage m, String command) {
         apply(m, getChild(m).onClick(TextActions.runCommand(command)));
     }
 
     @Override
-    public void text(final PlotMessage m, final String text) {
+    public void text(PlotMessage m, String text) {
         m.$(this).append(SpongeUtil.getText(text));
     }
 
     @Override
-    public void send(final PlotMessage m, final PlotPlayer player) {
-        if (ConsolePlayer.isConsole(player)) {
+    public void send(PlotMessage m, PlotPlayer player) {
+        if (player instanceof ConsolePlayer) {
             player.sendMessage(m.$(this).build().toPlain());
         } else {
             ((SpongePlayer) player).player.sendMessage(m.$(this).build());
@@ -147,7 +147,7 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
     }
 
     @Override
-    public void suggest(final PlotMessage m, final String command) {
+    public void suggest(PlotMessage m, String command) {
         apply(m, getChild(m).onClick(TextActions.suggestCommand(command)));
     }
 }

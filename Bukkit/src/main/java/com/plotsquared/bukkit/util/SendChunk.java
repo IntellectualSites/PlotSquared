@@ -50,6 +50,7 @@ public class SendChunk {
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
+        //TODO in 1.7.10 this is PacketPlayOutMapChunk(Chunk chunk, boolean flag, int i, int version)
         this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
         RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
         this.connection = classEntityPlayer.getField("playerConnection");

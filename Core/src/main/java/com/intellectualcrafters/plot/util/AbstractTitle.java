@@ -7,7 +7,7 @@ public abstract class AbstractTitle {
     public static AbstractTitle TITLE_CLASS;
 
     public static void sendTitle(PlotPlayer player, String head, String sub) {
-        if (ConsolePlayer.isConsole(player)) {
+        if (player instanceof ConsolePlayer) {
             return;
         }
         if (TITLE_CLASS != null && !player.getAttribute("disabletitles")) {

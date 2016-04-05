@@ -26,6 +26,10 @@ import java.util.Set;
  */
 public class FlagManager {
 
+    //TODO Default Flags
+    public static final IntegerFlag MUSIC = new IntegerFlag("music");
+
+
     private static final HashSet<String> reserved = new HashSet<>();
 
     private static final HashSet<AbstractFlag> flags = new HashSet<>();

@@ -42,6 +42,7 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.HumanEntity;
@@ -109,6 +110,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -362,7 +364,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         }
         Player player = event.getPlayer();
-        BukkitPlayer pp = (BukkitPlayer) BukkitUtil.getPlayer(player);
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = pp.getCurrentPlot();
         if (plot == null) {
             return;
@@ -464,8 +466,8 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void playerRespawn(PlayerRespawnEvent event) {
-        final Player player = event.getPlayer();
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        Player player = event.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
         EventUtil.manager.doDeathTask(pp);
     }
 
@@ -572,14 +574,13 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-        PlotPlayer plr = BukkitUtil.getPlayer(player);
-        Location loc = plr.getLocation();
-        PlotArea area = loc.getPlotArea();
-        if (area == null || (!area.PLOT_CHAT && !plr.getAttribute("chat"))) {
+        PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
+        Location location = plotPlayer.getLocation();
+        PlotArea area = location.getPlotArea();
+        if (area == null || (!area.PLOT_CHAT && !plotPlayer.getAttribute("chat"))) {
             return;
         }
-        Plot plot = area.getPlot(loc);
+        Plot plot = area.getPlot(location);
         if (plot == null) {
             return;
         }
@@ -614,7 +615,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void BlockDestroy(BlockBreakEvent event) {
+    public void blockDestroy(BlockBreakEvent event) {
         Player player = event.getPlayer();
         Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
         PlotArea area = loc.getPlotArea();
@@ -756,7 +757,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Entity e = event.getEntity();
-        if (!(e instanceof org.bukkit.entity.FallingBlock)) {
+        if (!(e instanceof FallingBlock)) {
             event.setCancelled(true);
         }
     }
@@ -773,20 +774,16 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBS(BlockSpreadEvent e) {
-        Block b = e.getBlock();
-        Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (loc.isPlotRoad()) {
-            e.setCancelled(true);
-        }
+    public void onBlockSpread(BlockSpreadEvent event) {
+        onBlockForm(event); //send to super class.
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBF(BlockFormEvent e) {
-        Block b = e.getBlock();
-        Location loc = BukkitUtil.getLocation(b.getLocation());
+    public void onBlockForm(BlockFormEvent event) {
+        Block block = event.getBlock();
+        Location loc = BukkitUtil.getLocation(block.getLocation());
         if (loc.isPlotRoad()) {
-            e.setCancelled(true);
+            event.setCancelled(true);
         }
     }
 

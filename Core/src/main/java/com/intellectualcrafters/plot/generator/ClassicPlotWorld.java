@@ -34,18 +34,18 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     @Override
     public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[] {
-                new ConfigurationNode("plot.height", this.PLOT_HEIGHT, "Plot height", Configuration.INTEGER, true),
-                new ConfigurationNode("plot.size", this.PLOT_WIDTH, "Plot width", Configuration.INTEGER, true),
-                new ConfigurationNode("plot.filling", this.MAIN_BLOCK, "Plot block", Configuration.BLOCKLIST, true),
-                new ConfigurationNode("plot.floor", this.TOP_BLOCK, "Plot floor block", Configuration.BLOCKLIST, true),
-                new ConfigurationNode("wall.block", this.WALL_BLOCK, "Top wall block", Configuration.BLOCK, true),
-                new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK, "Wall block (claimed)", Configuration.BLOCK, true),
-                new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width", Configuration.INTEGER, true),
-                new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height", Configuration.INTEGER, true),
-                new ConfigurationNode("road.block", this.ROAD_BLOCK, "Road block", Configuration.BLOCK, true),
-                new ConfigurationNode("wall.filling", this.WALL_FILLING, "Wall filling block", Configuration.BLOCK, true),
-                new ConfigurationNode("wall.height", this.WALL_HEIGHT, "Wall height", Configuration.INTEGER, true),
-                new ConfigurationNode("plot.bedrock", this.PLOT_BEDROCK, "Plot bedrock generation", Configuration.BOOLEAN, true)};
+                new ConfigurationNode("plot.height", this.PLOT_HEIGHT, "Plot height", Configuration.INTEGER),
+                new ConfigurationNode("plot.size", this.PLOT_WIDTH, "Plot width", Configuration.INTEGER),
+                new ConfigurationNode("plot.filling", this.MAIN_BLOCK, "Plot block", Configuration.BLOCKLIST),
+                new ConfigurationNode("plot.floor", this.TOP_BLOCK, "Plot floor block", Configuration.BLOCKLIST),
+                new ConfigurationNode("wall.block", this.WALL_BLOCK, "Top wall block", Configuration.BLOCK),
+                new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK, "Wall block (claimed)", Configuration.BLOCK),
+                new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width", Configuration.INTEGER),
+                new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height", Configuration.INTEGER),
+                new ConfigurationNode("road.block", this.ROAD_BLOCK, "Road block", Configuration.BLOCK),
+                new ConfigurationNode("wall.filling", this.WALL_FILLING, "Wall filling block", Configuration.BLOCK),
+                new ConfigurationNode("wall.height", this.WALL_HEIGHT, "Wall height", Configuration.INTEGER),
+                new ConfigurationNode("plot.bedrock", this.PLOT_BEDROCK, "Plot bedrock generation", Configuration.BOOLEAN)};
     }
     
     /**

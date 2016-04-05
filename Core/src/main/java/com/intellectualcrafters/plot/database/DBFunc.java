@@ -290,7 +290,7 @@ public class DBFunc {
      * @param comment
      */
     public static void removeComment(Plot plot, PlotComment comment) {
-        if (plot != null && plot.temp == -1) {
+        if (plot.temp == -1) {
             return;
         }
         DBFunc.dbManager.removeComment(plot, comment);

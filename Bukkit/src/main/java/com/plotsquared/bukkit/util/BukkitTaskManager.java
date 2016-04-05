@@ -6,35 +6,41 @@ import org.bukkit.Bukkit;
 
 public class BukkitTaskManager extends TaskManager {
 
+    private final BukkitMain bukkitMain;
+
+    public BukkitTaskManager(BukkitMain bukkitMain) {
+        this.bukkitMain = bukkitMain;
+    }
+
     @Override
     public int taskRepeat(Runnable runnable, int interval) {
-        return BukkitMain.THIS.getServer().getScheduler().scheduleSyncRepeatingTask(BukkitMain.THIS, runnable, interval, interval);
+        return this.bukkitMain.getServer().getScheduler().scheduleSyncRepeatingTask(this.bukkitMain, runnable, interval, interval);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public int taskRepeatAsync(Runnable runnable, int interval) {
-        return BukkitMain.THIS.getServer().getScheduler().scheduleAsyncRepeatingTask(BukkitMain.THIS, runnable, interval, interval);
+        return this.bukkitMain.getServer().getScheduler().scheduleAsyncRepeatingTask(this.bukkitMain, runnable, interval, interval);
     }
 
     @Override
     public void taskAsync(Runnable runnable) {
-        BukkitMain.THIS.getServer().getScheduler().runTaskAsynchronously(BukkitMain.THIS, runnable).getTaskId();
+        this.bukkitMain.getServer().getScheduler().runTaskAsynchronously(this.bukkitMain, runnable).getTaskId();
     }
 
     @Override
     public void task(Runnable runnable) {
-        BukkitMain.THIS.getServer().getScheduler().runTask(BukkitMain.THIS, runnable).getTaskId();
+        this.bukkitMain.getServer().getScheduler().runTask(this.bukkitMain, runnable).getTaskId();
     }
 
     @Override
     public void taskLater(Runnable runnable, int delay) {
-        BukkitMain.THIS.getServer().getScheduler().runTaskLater(BukkitMain.THIS, runnable, delay).getTaskId();
+        this.bukkitMain.getServer().getScheduler().runTaskLater(this.bukkitMain, runnable, delay).getTaskId();
     }
 
     @Override
     public void taskLaterAsync(Runnable runnable, int delay) {
-        BukkitMain.THIS.getServer().getScheduler().runTaskLaterAsynchronously(BukkitMain.THIS, runnable, delay);
+        this.bukkitMain.getServer().getScheduler().runTaskLaterAsynchronously(this.bukkitMain, runnable, delay);
     }
 
     @Override
