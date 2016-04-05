@@ -705,7 +705,7 @@ public abstract class SchematicHandler {
          * @return Map of block location to tag
          */
         public HashMap<BlockLoc, CompoundTag> getTiles() {
-            return this.tiles;
+            return this.tiles == null ? new HashMap<BlockLoc, CompoundTag>() : tiles;
         }
 
         /**

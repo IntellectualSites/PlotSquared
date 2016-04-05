@@ -1301,7 +1301,7 @@ public class Plot {
         PlotArea plotworld = getArea();
         if (plotworld.SCHEMATIC_ON_CLAIM) {
             SchematicHandler.Schematic sch;
-            if (schematic.isEmpty()) {
+            if (schematic == null || schematic.isEmpty()) {
                 sch = SchematicHandler.manager.getSchematic(plotworld.SCHEMATIC_FILE);
             } else {
                 sch = SchematicHandler.manager.getSchematic(schematic);
