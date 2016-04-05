@@ -1318,14 +1318,18 @@ public class PS {
     }
 
     /**
-     * This method is called by the PlotGenerator class normally<br>
-     *  - Initializes the PlotArea and PlotManager classes<br>
-     *  - Registers the PlotArea and PlotManager classes<br>
-     *  - Loads (and/or generates) the PlotArea configuration<br>
-     *  - Sets up the world border if configured<br>
-     *  If loading an augmented plot world:<br>
-     *  - Creates the AugmentedPopulator classes<br>
-     *  - Injects the AugmentedPopulator classes if required
+     * This method is called by the PlotGenerator class normally.
+     * <ul>
+     *     <li>Initializes the PlotArea and PlotManager classes</li>
+     *     <li>Registers the PlotArea and PlotManager classes</li>
+     *     <li>Loads (and/or generates) the PlotArea configuration</li>
+     *     <li>Sets up the world border if configured</li>
+     * </ul>
+     *  If loading an augmented plot world:
+     *  <ul>
+     *      <li>Creates the AugmentedPopulator classes</li>
+     *      <li>Injects the AugmentedPopulator classes if required</li>
+     *  </ul>
      * @param world The world to load
      * @param baseGenerator The generator for that world, or null if no generator
      */
@@ -1464,14 +1468,14 @@ public class PS {
             }
             for (String areaId : areasSection.getKeys(false)) {
                 PS.log(C.PREFIX + "&3 - " + areaId);
-                int i1 = areaId.indexOf("-");
-                int i2 = areaId.indexOf(";");
+                int i1 = areaId.indexOf('-');
+                int i2 = areaId.indexOf(';');
                 if (i1 == -1 || i2 == -1) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<pos1>-<pos2>`");
                 }
                 String name = areaId.substring(0, i1);
                 String rest = areaId.substring(i1 + 1);
-                int i3 = rest.indexOf("-",  i2 - name.length() - 1);
+                int i3 = rest.indexOf('-', i2 - name.length() - 1);
                 PlotId pos1 = PlotId.fromString(rest.substring(0, i3));
                 PlotId pos2 = PlotId.fromString(rest.substring(i3 + 1));
                 if (pos1 == null || pos2 == null || name.isEmpty()) {
@@ -1537,8 +1541,10 @@ public class PS {
     }
 
     /**
-     * Setup the configuration for a plot world based on world arguments<br>
-     * e.g. /mv create <world> normal -g PlotSquared:<args>
+     * Setup the configuration for a plot world based on world arguments.
+     * <p>
+     *     <i>e.g. /mv create <world> normal -g PlotSquared:<args></i>
+     * </p>
      * @param world The name of the world
      * @param args The arguments
      * @return boolean | if valid arguments were provided
@@ -1794,7 +1800,7 @@ public class PS {
     }
 
     /**
-     * Setup the default flags for PlotSquared<br>
+     * Setup the default flags for PlotSquared.
      *  - Create the flags
      *  - Register with FlagManager and parse raw flag values
      */

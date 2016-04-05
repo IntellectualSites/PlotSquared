@@ -453,6 +453,7 @@ public enum C {
      * Info
      */
     NONE("None", "Info"),
+    NEVER("Never", "Info"),
     UNKNOWN("Unknown", "Info"),
     EVERYONE("Everyone", "Info"),
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
@@ -464,6 +465,7 @@ public enum C {
             + "$1Biome: $2%biome%$1&-"
             + "$1Can Build: $2%build%$1&-"
             + "$1Rating: $2%rating%&-"
+            + "$1Expires: $2%expires%&-"
             + "$1Trusted: $2%trusted%$1&-"
             + "$1Members: $2%members%$1&-"
             + "$1Denied: $2%denied%$1&-"
@@ -479,6 +481,7 @@ public enum C {
     PLOT_INFO_ID("$1ID:$2 %id%", "Info"),
     PLOT_INFO_ALIAS("$1Alias:$2 %alias%", "Info"),
     PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
+    PLOT_INFO_EXPIRES("$1Expires:$2 %expires%", "Info"),
     PLOT_USER_LIST(" $1%user%$2,", "Info"),
     INFO_SYNTAX_CONSOLE("$2/plot info X;Y", "Info"),
     /*
