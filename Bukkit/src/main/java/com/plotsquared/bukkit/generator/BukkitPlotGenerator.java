@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -16,6 +17,7 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.block.GenChunk;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -35,16 +37,34 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     private final boolean full;
     private boolean loaded = false;
 
+    HashMap<ChunkLoc, byte[][]> dataMap = new HashMap<>();
+
     public BukkitPlotGenerator(IndependentPlotGenerator generator) {
         this.plotGenerator = generator;
         this.platformGenerator = this;
         this.populators.add(new BlockPopulator() {
             @Override
             public void populate(World world, Random r, Chunk c) {
-                GenChunk result = (GenChunk) BukkitPlotGenerator.this.chunkSetter;
-                if (result.result_data != null) {
-                    for (int i = 0; i < result.result_data.length; i++) {
-                        byte[] section = result.result_data[i];
+                ChunkLoc loc = new ChunkLoc(c.getX(), c.getZ());
+                byte[][] resultData;
+                if (!dataMap.containsKey(loc)) {
+                    GenChunk result = (GenChunk) chunkSetter;
+                    // Set the chunk location
+                    result.setChunkWrapper(SetQueue.IMP.new ChunkWrapper(world.getName(), loc.x, loc.z));
+                    // Set the result data
+                    result.result = new short[16][];
+                    result.result_data = new byte[16][];
+                    result.grid = null;
+                    result.cd = null;
+                    // Catch any exceptions (as exceptions usually thrown)
+                    generate(world, loc.x, loc.z, result);
+                    resultData = result.result_data;
+                } else {
+                    resultData = dataMap.remove(loc);
+                }
+                if (resultData != null) {
+                    for (int i = 0; i < resultData.length; i++) {
+                        byte[] section = resultData[i];
                         if (section == null) {
                             continue;
                         }
@@ -250,7 +270,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         return result.cd;
     }
     
-    public void generate(World world, int cx, int cz, GenChunk result) {
+    public void generate(World world, int cx, int cz, PlotChunk<?> result) {
         // Load if improperly loaded
         if (!this.loaded) {
             String name = world.getName();
@@ -285,6 +305,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 return this.platformGenerator.generateExtBlockSections(world, r, cx, cz, grid);
             } else {
                 generate(world, cx, cz, result);
+                dataMap.put(new ChunkLoc(cx, cz), result.result_data);
+
             }
         } catch (Throwable e) {
             e.printStackTrace();
