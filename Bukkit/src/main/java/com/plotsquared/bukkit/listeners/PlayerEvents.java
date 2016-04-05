@@ -110,16 +110,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -476,8 +466,8 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void playerRespawn(PlayerRespawnEvent event) {
-        final Player player = event.getPlayer();
-        final PlotPlayer pp = BukkitUtil.getPlayer(player);
+        Player player = event.getPlayer();
+        PlotPlayer pp = BukkitUtil.getPlayer(player);
         EventUtil.manager.doDeathTask(pp);
     }
 
@@ -784,20 +774,16 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBS(BlockSpreadEvent e) {
-        Block b = e.getBlock();
-        Location loc = BukkitUtil.getLocation(b.getLocation());
-        if (loc.isPlotRoad()) {
-            e.setCancelled(true);
-        }
+    public void onBlockSpread(BlockSpreadEvent event) {
+        onBlockForm(event); //send to super class.
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBF(BlockFormEvent e) {
-        Block b = e.getBlock();
-        Location loc = BukkitUtil.getLocation(b.getLocation());
+    public void onBlockForm(BlockFormEvent event) {
+        Block block = event.getBlock();
+        Location loc = BukkitUtil.getLocation(block.getLocation());
         if (loc.isPlotRoad()) {
-            e.setCancelled(true);
+            event.setCancelled(true);
         }
     }
 

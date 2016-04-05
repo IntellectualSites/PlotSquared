@@ -48,38 +48,12 @@ import java.util.UUID;
 public class PlotAPI {
 
     /**
-     * Permission that allows for admin access, this permission node will allow
-     * the player to use any part of the plugin, without limitations.
-     * @deprecated Use C.PERMISSION_ADMIN instead
-     */
-    @Deprecated
-    public static final String ADMIN_PERMISSION = C.PERMISSION_ADMIN.s();
-
-    /**
      * Deprecated, does nothing.
      * @param plugin not needed
      * @deprecated Not needed
      */
     @Deprecated
     public PlotAPI(JavaPlugin plugin) {
-    }
-
-    /**
-     * Default Constructor that does nothing.
-     *
-     * @deprecated Use this class if you just want to do a few simple things
-     *      <ul>
-     *          <li>It will remain stable for future versions
-     *              of the plugin</li>
-     *          <li>The PlotPlayer and Plot class should be considered
-     *              relatively safe</li>
-     *          <li>For more advanced/intensive tasks you should consider
-     *              using other classes</li>
-     *      </ul>
-     *
-     */
-    @Deprecated
-    public PlotAPI() {
     }
 
     /**

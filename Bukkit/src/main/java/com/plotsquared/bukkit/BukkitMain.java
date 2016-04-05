@@ -75,6 +75,7 @@ import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -96,7 +97,6 @@ import java.util.UUID;
 
 public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
-    public static BukkitMain THIS;
     public static WorldEditPlugin worldEdit;
 
     private int[] version;
@@ -124,7 +124,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public void onEnable() {
-        BukkitMain.THIS = this;
         new PS(this, "Bukkit");
     }
 
@@ -132,40 +131,35 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     public void onDisable() {
         PS.get().disable();
         Bukkit.getScheduler().cancelTasks(this);
-        BukkitMain.THIS = null;
     }
 
     @Override
     public void log(String message) {
-        if (BukkitMain.THIS != null) {
-            try {
-                message = C.color(message);
-                if (!Settings.CONSOLE_COLOR) {
-                    message = ChatColor.stripColor(message);
-                }
-                this.getServer().getConsoleSender().sendMessage(message);
-                return;
-            } catch (Throwable ignored) {
-                //ignored
+        try {
+            message = C.color(message);
+            if (!Settings.CONSOLE_COLOR) {
+                message = ChatColor.stripColor(message);
             }
+            this.getServer().getConsoleSender().sendMessage(message);
+            return;
+        } catch (Throwable ignored) {
+            //ignored
         }
         System.out.println(ConsoleColors.fromString(message));
     }
 
     @Override
     public void disable() {
-        if (BukkitMain.THIS != null) {
-            onDisable();
-        }
+        onDisable();
     }
 
     @Override
     public int[] getPluginVersion() {
-        String version = getDescription().getVersion();
-        if (version.contains("-SNAPSHOT")) {
-            version = version.split("-SNAPSHOT")[0];
+        String ver = getDescription().getVersion();
+        if (ver.contains("-SNAPSHOT")) {
+            ver = ver.split("-SNAPSHOT")[0];
         }
-        String[] split = version.split("\\.");
+        String[] split = ver.split("\\.");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
     }
 
@@ -190,7 +184,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     @Override
     public TaskManager getTaskManager() {
-        return new BukkitTaskManager();
+        return new BukkitTaskManager(this);
     }
 
     @Override
@@ -403,7 +397,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
     }
 
     @Override
-    public PlotQueue initPlotQueue() {
+    public PlotQueue<Chunk> initPlotQueue() {
         try {
             new SendChunk();
             MainUtil.canSendChunk = true;

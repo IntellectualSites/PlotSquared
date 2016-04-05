@@ -286,7 +286,7 @@ public class MainListener {
 
     public void onNotifyNeighborBlock(NotifyNeighborBlockEvent event) throws Exception {
         AtomicBoolean cancelled = new AtomicBoolean(false);
-//        SpongeUtil.printCause("physics", event.getCause());
+        //        SpongeUtil.printCause("physics", event.getCause());
         //        PlotArea area = plotloc.getPlotArea();
         //        event.filterDirections(new Predicate<Direction>() {
         //            

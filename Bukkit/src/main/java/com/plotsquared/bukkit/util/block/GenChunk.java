@@ -41,7 +41,9 @@ public class GenChunk extends PlotChunk<Chunk> {
 
     @Override
     public void setBiome(int x, int z, int biome) {
-        this.grid.setBiome(x, z, this.biomes[biome]);
+        if (this.grid != null) {
+            this.grid.setBiome(x, z, this.biomes[biome]);
+        }
     }
 
     public void setBiome(int x, int z, Biome biome) {

@@ -36,25 +36,25 @@ public class SpongeEventUtil extends EventUtil {
     public EventManager events;
     
     public SpongeEventUtil() {
-        events = SpongeMain.THIS.getGame().getEventManager();
+        this.events = SpongeMain.THIS.getGame().getEventManager();
     }
-    
-    public boolean callEvent(final Event event) {
-        return !events.post(event);
+
+    public boolean callEvent(Event event) {
+        return !this.events.post(event);
     }
     
     @Override
-    public boolean callClaim(final PlotPlayer player, final Plot plot, final boolean auto) {
+    public boolean callClaim(PlotPlayer player, Plot plot, boolean auto) {
         return callEvent(new PlayerClaimPlotEvent(SpongeUtil.getPlayer(player), plot, auto));
     }
     
     @Override
-    public boolean callTeleport(final PlotPlayer player, final Location from, final Plot plot) {
+    public boolean callTeleport(PlotPlayer player, Location from, Plot plot) {
         return callEvent(new PlayerTeleportToPlotEvent(SpongeUtil.getPlayer(player), from, plot));
     }
     
     @Override
-    public boolean callClear(final Plot plot) {
+    public boolean callClear(Plot plot) {
         return callEvent(new PlotClearEvent(plot));
     }
     
@@ -64,59 +64,59 @@ public class SpongeEventUtil extends EventUtil {
     }
     
     @Override
-    public boolean callFlagAdd(final Flag flag, final Plot plot) {
+    public boolean callFlagAdd(Flag flag, Plot plot) {
         return callEvent(new PlotFlagAddEvent(flag, plot));
     }
     
     @Override
-    public boolean callFlagRemove(final Flag flag, final Plot plot) {
+    public boolean callFlagRemove(Flag flag, Plot plot) {
         return callEvent(new PlotFlagRemoveEvent(flag, plot));
     }
     
     @Override
-    public boolean callMerge(final Plot plot, final ArrayList<PlotId> plots) {
+    public boolean callMerge(Plot plot, ArrayList<PlotId> plots) {
         return callEvent(new PlotMergeEvent(SpongeUtil.getWorld(plot.getArea().worldname), plot, plots));
     }
     
     @Override
-    public boolean callUnlink(final PlotArea area, final ArrayList<PlotId> plots) {
+    public boolean callUnlink(PlotArea area, ArrayList<PlotId> plots) {
         return callEvent(new PlotUnlinkEvent(SpongeUtil.getWorld(area.worldname), plots));
     }
     
     @Override
-    public void callEntry(final PlotPlayer player, final Plot plot) {
+    public void callEntry(PlotPlayer player, Plot plot) {
         callEvent(new PlayerEnterPlotEvent(SpongeUtil.getPlayer(player), plot));
     }
     
     @Override
-    public void callLeave(final PlotPlayer player, final Plot plot) {
+    public void callLeave(PlotPlayer player, Plot plot) {
         callEvent(new PlayerLeavePlotEvent(SpongeUtil.getPlayer(player), plot));
     }
     
     @Override
-    public void callDenied(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added) {
+    public void callDenied(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
         callEvent(new PlayerPlotDeniedEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
     
     @Override
-    public void callTrusted(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added) {
+    public void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
         callEvent(new PlayerPlotHelperEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
     
     @Override
-    public void callMember(final PlotPlayer initiator, final Plot plot, final UUID player, final boolean added) {
+    public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
         callEvent(new PlayerPlotTrustedEvent(SpongeUtil.getPlayer(initiator), plot, player, added));
     }
     
     @Override
-    public boolean callFlagRemove(final Flag flag, final PlotCluster cluster) {
+    public boolean callFlagRemove(Flag flag, PlotCluster cluster) {
         return callEvent(new ClusterFlagRemoveEvent(flag, cluster));
     }
     
     @Override
-    public Rating callRating(final PlotPlayer player, final Plot plot, final Rating rating) {
-        final PlotRateEvent event = new PlotRateEvent(player, rating, plot);
-        events.post(event);
+    public Rating callRating(PlotPlayer player, Plot plot, Rating rating) {
+        PlotRateEvent event = new PlotRateEvent(player, rating, plot);
+        this.events.post(event);
         return event.getRating();
     }
     

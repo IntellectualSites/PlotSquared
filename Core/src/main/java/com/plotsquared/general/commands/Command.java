@@ -477,7 +477,7 @@ public abstract class Command {
         return getCommandString() + " " + args + "]";
     }
 
-    public Collection tab(PlotPlayer player, String[] args, boolean space) {
+    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         switch (args.length) {
             case 0:
                 return this.allCommands;

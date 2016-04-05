@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
+import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotManager;
@@ -22,6 +23,7 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -34,6 +36,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     private final List<BlockPopulator> populators = new ArrayList<>();
     private final ChunkGenerator platformGenerator;
     private final boolean full;
+    private final HashMap<ChunkLoc, byte[][]> dataMap = new HashMap<>();
     private boolean loaded = false;
 
     public BukkitPlotGenerator(IndependentPlotGenerator generator) {
@@ -42,10 +45,26 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         this.populators.add(new BlockPopulator() {
             @Override
             public void populate(World world, Random r, Chunk c) {
-                GenChunk result = (GenChunk) BukkitPlotGenerator.this.chunkSetter;
-                if (result.result_data != null) {
-                    for (int i = 0; i < result.result_data.length; i++) {
-                        byte[] section = result.result_data[i];
+                ChunkLoc loc = new ChunkLoc(c.getX(), c.getZ());
+                byte[][] resultData;
+                if (!BukkitPlotGenerator.this.dataMap.containsKey(loc)) {
+                    GenChunk result = (GenChunk) BukkitPlotGenerator.this.chunkSetter;
+                    // Set the chunk location
+                    result.setChunkWrapper(SetQueue.IMP.new ChunkWrapper(world.getName(), loc.x, loc.z));
+                    // Set the result data
+                    result.result = new short[16][];
+                    result.result_data = new byte[16][];
+                    result.grid = null;
+                    result.cd = null;
+                    // Catch any exceptions (as exceptions usually thrown)
+                    generate(world, loc.x, loc.z, result);
+                    resultData = result.result_data;
+                } else {
+                    resultData = BukkitPlotGenerator.this.dataMap.remove(loc);
+                }
+                if (resultData != null) {
+                    for (int i = 0; i < resultData.length; i++) {
+                        byte[] section = resultData[i];
                         if (section == null) {
                             continue;
                         }
@@ -247,8 +266,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         // Return the result data
         return result.cd;
     }
-    
-    public void generate(World world, int cx, int cz, GenChunk result) {
+
+    public void generate(World world, int cx, int cz, PlotChunk<?> result) {
         // Load if improperly loaded
         if (!this.loaded) {
             String name = world.getName();
@@ -283,6 +302,8 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 return this.platformGenerator.generateExtBlockSections(world, r, cx, cz, grid);
             } else {
                 generate(world, cx, cz, result);
+                this.dataMap.put(new ChunkLoc(cx, cz), result.result_data);
+
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -306,7 +327,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     @Override
     public String toString() {
         if (this.platformGenerator == this) {
-            return "" + this.plotGenerator;
+            return this.plotGenerator.getName();
         }
         if (this.platformGenerator == null) {
             return "null";

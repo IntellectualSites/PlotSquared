@@ -64,6 +64,7 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.profile.GameProfileManager;
+import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
@@ -217,7 +218,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public TaskManager getTaskManager() {
-        return new SpongeTaskManager();
+        return new SpongeTaskManager(this);
     }
 
     @Override
@@ -370,7 +371,7 @@ public class SpongeMain implements IPlotMain {
     }
     
     @Override
-    public PlotQueue initPlotQueue() {
+    public PlotQueue<Chunk> initPlotQueue() {
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
             try {
                 MainUtil.canSendChunk = true;

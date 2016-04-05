@@ -19,7 +19,7 @@ public class ConfigurationNode {
     private final SettingValue type;
     private Object value;
 
-    public ConfigurationNode(String constant, Object defaultValue, String description, SettingValue type, boolean required) {
+    public ConfigurationNode(String constant, Object defaultValue, String description, SettingValue type) {
         this.constant = constant;
         this.defaultValue = defaultValue;
         this.description = description;

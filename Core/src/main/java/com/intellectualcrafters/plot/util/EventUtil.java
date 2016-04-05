@@ -15,6 +15,7 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.Rating;
 import com.plotsquared.listener.PlayerBlockEventType;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;

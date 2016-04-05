@@ -139,8 +139,7 @@ public interface AbstractDB {
     
     /**
      * Set plot flags.
-     *
-     * @param plot  Plot Object
+     *  @param plot  Plot Object
      * @param flags flags to set (flag[])
      */
     void setFlags(Plot plot, Collection<Flag> flags);

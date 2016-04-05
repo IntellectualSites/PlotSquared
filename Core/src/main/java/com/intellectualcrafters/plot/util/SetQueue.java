@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.util;
 
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PlotBlock;
+
 import java.util.ArrayDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -150,7 +151,7 @@ public class SetQueue {
     }
 
     public void regenerateChunk(String world, ChunkLoc loc) {
-        queue.regenerateChunk(world, loc);
+        this.queue.regenerateChunk(world, loc);
     }
 
     public class ChunkWrapper {

@@ -91,7 +91,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Create a new PlotArea object with no functionality/information<br>
+     * Create a new PlotArea object with no functionality/information.
      *     - Mainly used during startup before worlds are created as a temporary object
      * @param world
      * @return
@@ -106,8 +106,9 @@ public abstract class PlotArea {
     }
 
     /**
-     * Returns the region for this PlotArea or a RegionWrapper encompassing the whole world if none exists
-     * @NotNull
+     * Returns the region for this PlotArea or a RegionWrapper encompassing
+     * the whole world if none exists.
+     *
      * @return RegionWrapper
      */
     public RegionWrapper getRegion() {
@@ -119,7 +120,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Returns the region for this PlotArea
+     * Returns the region for this PlotArea.
      *
      * @return RegionWrapper or null if no applicable region
      */
@@ -135,7 +136,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Returns the min PlotId
+     * Returns the min PlotId.
      * @return
      */
     public PlotId getMin() {
@@ -143,7 +144,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Returns the max PlotId
+     * Returns the max PlotId.
      * @return
      */
     public PlotId getMax() {
@@ -151,7 +152,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Get the implementation independent generator for this area
+     * Get the implementation independent generator for this area.
      *
      * @return
      */
@@ -179,7 +180,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Check if a PlotArea is compatible (move/copy etc)
+     * Check if a PlotArea is compatible (move/copy etc).
      * @param plotArea
      * @return
      */
@@ -198,7 +199,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * When a world is created, the following method will be called for each
+     * When a world is created, the following method will be called for each.
      *
      * @param config Configuration Section
      */

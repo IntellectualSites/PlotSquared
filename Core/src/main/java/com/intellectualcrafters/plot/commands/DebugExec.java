@@ -357,8 +357,7 @@ public class DebugExec extends SubCommand {
 
                         @Override
                         public void run(Integer i, File file, PlotMessage message) {
-                            String name;
-                            name = file.getName();
+                            String name = file.getName();
 
                             message.text("[").color("$3")
                                     .text(i + "").color("$1")

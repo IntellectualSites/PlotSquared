@@ -8,75 +8,8 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
-/**
- * Minecraft 1.8 Title.
- *
- * @version 1.0.4
- * @author Maxim Van de Wynckel
- */
-public class HackTitleManager {
-
-    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
-    /* Title packet */
-    private Class<?> packetTitle;
-    /* Title packet actions ENUM */
-    private Class<?> packetActions;
-    /* Chat serializer */
-    private Class<?> nmsChatSerializer;
-    /* Title text and color */
-    private String title = "";
-    private ChatColor titleColor = ChatColor.WHITE;
-    /* Subtitle text and color */
-    private String subtitle = "";
-    private ChatColor subtitleColor = ChatColor.WHITE;
-    /* Title timings. */
-    private int fadeInTime = -1;
-    private int stayTime = -1;
-    private int fadeOutTime = -1;
-    private boolean ticks = false;
-
-    /**
-     * Create a new 1.8 title.
-     *
-     * @param title Title
-     */
-    public HackTitleManager(String title) {
-        this.title = title;
-        loadClasses();
-    }
-
-    /**
-     * Create a new 1.8 title.
-     *
-     * @param title Title text
-     * @param subtitle Subtitle text
-     */
-    public HackTitleManager(String title, String subtitle) {
-        this.title = title;
-        this.subtitle = subtitle;
-        loadClasses();
-    }
-
-    /**
-     * Copy 1.8 title.
-     *
-     * @param title Title
-     */
-    public HackTitleManager(HackTitleManager title) {
-        // Copy title
-        this.title = title.title;
-        this.subtitle = title.subtitle;
-        this.titleColor = title.titleColor;
-        this.subtitleColor = title.subtitleColor;
-        this.fadeInTime = title.fadeInTime;
-        this.fadeOutTime = title.fadeOutTime;
-        this.stayTime = title.stayTime;
-        this.ticks = title.ticks;
-        loadClasses();
-    }
+public class HackTitleManager extends TitleManager {
 
     /**
      * Create a new 1.8 title.
@@ -88,12 +21,7 @@ public class HackTitleManager {
      * @param fadeOutTime Fade out time
      */
     public HackTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
-        this.title = title;
-        this.subtitle = subtitle;
-        this.fadeInTime = fadeInTime;
-        this.stayTime = stayTime;
-        this.fadeOutTime = fadeOutTime;
-        loadClasses();
+        super(title, subtitle, fadeInTime, stayTime, fadeOutTime);
     }
 
     private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
@@ -111,105 +39,11 @@ public class HackTitleManager {
     /**
      * Load spigot and NMS classes.
      */
-    private void loadClasses() {
+    @Override
+    void loadClasses() {
         this.packetTitle = getClass("org.spigotmc.ProtocolInjector$PacketTitle");
         this.packetActions = getClass("org.spigotmc.ProtocolInjector$PacketTitle$Action");
         this.nmsChatSerializer = Reflection.getNMSClass("ChatSerializer");
-    }
-
-    /**
-     * Get title text.
-     *
-     * @return Title text
-     */
-    public String getTitle() {
-        return this.title;
-    }
-
-    /**
-     * Set title text.
-     *
-     * @param title Title
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * Get subtitle text.
-     *
-     * @return Subtitle text
-     */
-    public String getSubtitle() {
-        return this.subtitle;
-    }
-
-    /**
-     * Set subtitle text.
-     *
-     * @param subtitle Subtitle text
-     */
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
-    }
-
-    /**
-     * Set the title color.
-     *
-     * @param color Chat color
-     */
-    public void setTitleColor(ChatColor color) {
-        this.titleColor = color;
-    }
-
-    /**
-     * Set the subtitle color.
-     *
-     * @param color Chat color
-     */
-    public void setSubtitleColor(ChatColor color) {
-        this.subtitleColor = color;
-    }
-
-    /**
-     * Set title fade in time.
-     *
-     * @param time Time
-     */
-    public void setFadeInTime(int time) {
-        this.fadeInTime = time;
-    }
-
-    /**
-     * Set title fade out time.
-     *
-     * @param time Time
-     */
-    public void setFadeOutTime(int time) {
-        this.fadeOutTime = time;
-    }
-
-    /**
-     * Set title stay time.
-     *
-     * @param time Time
-     */
-    public void setStayTime(int time) {
-        this.stayTime = time;
-    }
-
-    /**
-     * Set timings to ticks.
-     */
-    public void setTimingsToTicks() {
-        this.ticks = true;
-    }
-
-    /**
-     * Set timings to seconds.
-     */
-    public void setTimingsToSeconds() {
-        this.ticks = false;
     }
 
     /**
@@ -218,7 +52,7 @@ public class HackTitleManager {
      * @param player Player
      * @throws Exception on NMS error
      */
-    public void send(Player player) throws Exception {
+    @Override public void send(Player player) throws Exception {
         if ((getProtocolVersion(player) >= 47) && isSpigot() && (this.packetTitle != null)) {
             // First reset previous settings
             resetTitle(player);
@@ -237,14 +71,15 @@ public class HackTitleManager {
             }
             // Send title
             Object serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
-                    "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.title) + "\",color:" + this.titleColor.name().toLowerCase() + "}");
+                    "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.getTitle()) + "\",color:" + this.titleColor.name().toLowerCase()
+                            + "}");
             packet = this.packetTitle.getConstructor(this.packetActions, Reflection.getNMSClass("IChatBaseComponent"))
                     .newInstance(actions[0], serialized);
             sendPacket.invoke(connection, packet);
-            if (!this.subtitle.isEmpty()) {
+            if (!this.getSubtitle().isEmpty()) {
                 // Send subtitle if present
                 serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
-                        "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.subtitle) + "\",color:" + this.subtitleColor.name()
+                        "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.getSubtitle()) + "\",color:" + this.subtitleColor.name()
                                 .toLowerCase() + "}");
                 packet = this.packetTitle.getConstructor(this.packetActions, Reflection.getNMSClass("IChatBaseComponent"))
                         .newInstance(actions[1], serialized);
@@ -254,22 +89,12 @@ public class HackTitleManager {
     }
 
     /**
-     * Broadcast the title to all players.
-     * @throws Exception on NMS Error
-     */
-    public void broadcast() throws Exception {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            send(p);
-        }
-    }
-
-    /**
      * Clear the title.
      *
      * @param player Player
      * @throws Exception on NMS Error
      */
-    public void clearTitle(Player player) throws Exception {
+    @Override public void clearTitle(Player player) throws Exception {
         if ((getProtocolVersion(player) >= 47) && isSpigot()) {
             // Send timings first
             Object handle = getHandle(player);
@@ -287,7 +112,7 @@ public class HackTitleManager {
      * @param player Player
      * @throws Exception on NMS error.
      */
-    public void resetTitle(Player player) throws Exception {
+    @Override public void resetTitle(Player player) throws Exception {
         if ((getProtocolVersion(player) >= 47) && isSpigot()) {
             // Send timings first
             Object handle = getHandle(player);
@@ -344,19 +169,6 @@ public class HackTitleManager {
         Field f = getField(name, obj.getClass());
         f.setAccessible(true);
         return f.get(obj);
-    }
-
-    private Class<?> getPrimitiveType(Class<?> clazz) {
-        return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
-    }
-
-    private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {
-        int a = classes != null ? classes.length : 0;
-        Class<?>[] types = new Class<?>[a];
-        for (int i = 0; i < a; i++) {
-            types[i] = getPrimitiveType(classes[i]);
-        }
-        return types;
     }
 
     private Object getHandle(Object obj) {

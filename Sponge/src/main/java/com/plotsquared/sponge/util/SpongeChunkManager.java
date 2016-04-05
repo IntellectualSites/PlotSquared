@@ -5,15 +5,16 @@ import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.util.ChunkManager;
 import com.intellectualcrafters.plot.util.TaskManager;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
+
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class SpongeChunkManager extends ChunkManager {
     
