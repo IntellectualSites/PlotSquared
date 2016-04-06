@@ -1,9 +1,12 @@
 package com.plotsquared.bukkit.object.entity;
 
-public class HorseStats {
-    public double jump;
-    public boolean chest;
-    public int variant;
-    public int color;
-    public int style;
+import org.bukkit.entity.Horse;
+
+class HorseStats {
+
+    double jump;
+    boolean chest;
+    Horse.Variant variant;
+    Horse.Color color;
+    Horse.Style style;
 }

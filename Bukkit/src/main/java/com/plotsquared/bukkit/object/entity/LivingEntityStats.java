@@ -5,23 +5,24 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.Collection;
 
-public class LivingEntityStats {
-    public boolean loot;
-    public String name;
-    public boolean visible;
-    public float health;
-    public short air;
-    public boolean persistent;
-    public boolean leashed;
-    public short leash_x;
-    public short leash_y;
-    public short leash_z;
-    public boolean equipped;
-    public ItemStack mainHand;
-    public ItemStack helmet;
-    public ItemStack boots;
-    public ItemStack leggings;
-    public ItemStack chestplate;
-    public Collection<PotionEffect> potions;
-    public ItemStack offHand;
+class LivingEntityStats {
+
+    boolean loot;
+    String name;
+    boolean visible;
+    float health;
+    short air;
+    boolean persistent;
+    boolean leashed;
+    short leash_x;
+    short leash_y;
+    short leash_z;
+    boolean equipped;
+    ItemStack mainHand;
+    ItemStack helmet;
+    ItemStack boots;
+    ItemStack leggings;
+    ItemStack chestplate;
+    Collection<PotionEffect> potions;
+    ItemStack offHand;
 }
