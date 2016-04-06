@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommentManager {
 
-    public static HashMap<String, CommentInbox> inboxes = new HashMap<>();
+    public static final HashMap<String, CommentInbox> inboxes = new HashMap<>();
 
     public static void sendTitle(final PlotPlayer player, final Plot plot) {
         if (!Settings.COMMENT_NOTIFICATIONS || !plot.isOwner(player.getUUID())) {

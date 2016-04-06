@@ -17,7 +17,7 @@ public class PlotId {
      * @param x The plot x coordinate
      * @param y The plot y coordinate
      */
-    public PlotId(final int x, final int y) {
+    public PlotId(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -29,11 +29,11 @@ public class PlotId {
      *
      * @return null if the string is invalid
      */
-    public static PlotId fromString(final String string) {
+    public static PlotId fromString(String string) {
         if (string == null) {
             return null;
         }
-        final String[] parts = string.split(";");
+        String[] parts = string.split(";");
         if (parts.length < 2) {
             return null;
         }
@@ -42,7 +42,7 @@ public class PlotId {
         try {
             x = Integer.parseInt(parts[0]);
             y = Integer.parseInt(parts[1]);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             return null;
         }
         return new PlotId(x, y);
@@ -67,7 +67,7 @@ public class PlotId {
      * @param direction
      * @return PlotId
      */
-    public PlotId getRelative(final int direction) {
+    public PlotId getRelative(int direction) {
         switch (direction) {
             case 0:
                 return new PlotId(this.x, this.y - 1);
@@ -92,7 +92,7 @@ public class PlotId {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -105,8 +105,8 @@ public class PlotId {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PlotId other = (PlotId) obj;
-        return x == other.x && y == other.y;
+        PlotId other = (PlotId) obj;
+        return this.x == other.x && this.y == other.y;
     }
 
     /**
@@ -116,7 +116,7 @@ public class PlotId {
      */
     @Override
     public String toString() {
-        return x + ";" + y;
+        return this.x + ";" + this.y;
     }
 
     /**
@@ -125,15 +125,15 @@ public class PlotId {
      * TODO maybe make x/y values private and add this to the mutators
      */
     public void recalculateHash() {
-        hash = 0;
+        this.hash = 0;
         hashCode();
     }
     
     @Override
     public int hashCode() {
-        if (hash == 0) {
-            hash = (x << 16) | (y & 0xFFFF);
+        if (this.hash == 0) {
+            this.hash = (this.x << 16) | (this.y & 0xFFFF);
         }
-        return hash;
+        return this.hash;
     }
 }

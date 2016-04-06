@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ import java.util.Map;
         usage = "/plot flag <set|remove|add|list|info> <flag> <value>",
         description = "Set plot flags",
         category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
+        requiredType = RequiredType.PLAYER,
         permission = "plots.flag")
 public class FlagCmd extends SubCommand {
 
@@ -75,18 +76,18 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
                     return false;
                 }
-                AbstractFlag af = FlagManager.getFlag(args[1]);
-                if (af == null) {
+                AbstractFlag flag = FlagManager.getFlag(args[1]);
+                if (flag == null) {
                     MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
                     return false;
                 }
                 // flag key
-                MainUtil.sendMessage(player, C.FLAG_KEY, af.getKey());
+                MainUtil.sendMessage(player, C.FLAG_KEY, flag.getKey());
                 // flag type
-                MainUtil.sendMessage(player, C.FLAG_TYPE, af.value.getClass().getSimpleName());
+                MainUtil.sendMessage(player, C.FLAG_TYPE, flag.value.getClass().getSimpleName());
                 // Flag type description
-                MainUtil.sendMessage(player, C.FLAG_DESC, af.getValueDesc());
+                MainUtil.sendMessage(player, C.FLAG_DESC, flag.getValueDesc());
                 return true;
             }
             case "set": {
@@ -167,7 +168,7 @@ public class FlagCmd extends SubCommand {
                 MainUtil.sendMessage(player, C.FLAG_REMOVED);
                 return true;
             }
-            case "add": {
+            case "add":
                 if (!Permissions.hasPermission(player, "plots.flag.add")) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.flag.add");
                     return false;
@@ -206,7 +207,6 @@ public class FlagCmd extends SubCommand {
                 }
                 MainUtil.sendMessage(player, C.FLAG_ADDED);
                 return true;
-            }
             case "list":
                 if (!Permissions.hasPermission(player, "plots.flag.list")) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.flag.list");
@@ -217,12 +217,12 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 HashMap<String, ArrayList<String>> flags = new HashMap<>();
-                for (AbstractFlag af : FlagManager.getFlags()) {
-                    String type = af.value.getClass().getSimpleName().replaceAll("Value", "");
+                for (AbstractFlag flag1 : FlagManager.getFlags()) {
+                    String type = flag1.value.getClass().getSimpleName().replaceAll("Value", "");
                     if (!flags.containsKey(type)) {
                         flags.put(type, new ArrayList<String>());
                     }
-                    flags.get(type).add(af.getKey());
+                    flags.get(type).add(flag1.getKey());
                 }
                 String message = "";
                 String prefix = "";

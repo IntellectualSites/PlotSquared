@@ -4,9 +4,12 @@ import com.intellectualcrafters.plot.commands.MainCommand;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.commands.DebugUUID;
-import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.ProxiedCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
@@ -22,41 +25,19 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(final CommandSender commandSender, org.bukkit.command.Command command, final String commandLabel, String[] args) {
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
         if (commandSender instanceof Player) {
             return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), args);
         }
-        if (commandSender.getClass() == Bukkit.getConsoleSender().getClass()) {
+        if (commandSender instanceof ConsoleCommandSender || commandSender instanceof ProxiedCommandSender
+                || commandSender instanceof RemoteConsoleCommandSender) {
             return MainCommand.onCommand(ConsolePlayer.getConsole(), args);
         }
-        @SuppressWarnings("deprecation")
-        ConsolePlayer sender = new ConsolePlayer() {
-            @Override
-            public void sendMessage(String message) {
-                commandSender.sendMessage(commandLabel);
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return commandSender.hasPermission(commandLabel);
-            }
-
-            @Override
-            public String getName() {
-                if (commandSender.getName().equals("CONSOLE")) {
-                    return "*";
-                }
-                return commandSender.getName();
-            }
-        };
-        sender.teleport(ConsolePlayer.getConsole().getLocationFull());
-        boolean result = MainCommand.onCommand(sender, args);
-        ConsolePlayer.getConsole().teleport(sender.getLocationFull());
-        return result;
+        return false;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String s, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         if (!(commandSender instanceof Player)) {
             return null;
         }
@@ -72,6 +53,6 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         for (Object o : objects) {
             result.add(o.toString());
         }
-        return result.size() == 0 ? null : result;
+        return result.isEmpty() ? null : result;
     }
 }

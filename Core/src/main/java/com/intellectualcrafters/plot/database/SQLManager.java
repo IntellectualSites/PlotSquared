@@ -1443,18 +1443,19 @@ public class SQLManager implements AbstractDB {
             if (plot.temp > 0) {
                 return plot.temp;
             }
-            PreparedStatement stmt = this.connection.prepareStatement(
-                    "SELECT `id` FROM `" + this.prefix + "plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC");
-            stmt.setInt(1, plot.getId().x);
-            stmt.setInt(2, plot.getId().y);
-            stmt.setString(3, plot.getArea().toString());
-            ResultSet r = stmt.executeQuery();
-            int id = Integer.MAX_VALUE;
-            while (r.next()) {
-                id = r.getInt("id");
+            int id;
+            try (PreparedStatement statement = this.connection.prepareStatement(
+                    "SELECT `id` FROM `" + this.prefix + "plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC")) {
+                statement.setInt(1, plot.getId().x);
+                statement.setInt(2, plot.getId().y);
+                statement.setString(3, plot.getArea().toString());
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    id = Integer.MAX_VALUE;
+                    while (resultSet.next()) {
+                        id = resultSet.getInt("id");
+                    }
+                }
             }
-            r.close();
-            stmt.close();
             if (id == Integer.MAX_VALUE || id == 0) {
                 if (plot.temp > 0) {
                     return plot.temp;
@@ -1625,17 +1626,17 @@ public class SQLManager implements AbstractDB {
             /*
              * Getting plots
              */
-            Statement stmt = this.connection.createStatement();
+            Statement statement = this.connection.createStatement();
             int id;
             String o;
             UUID user;
-            try (ResultSet r = stmt
+            try (ResultSet resultSet = statement
                     .executeQuery("SELECT `id`, `plot_id_x`, `plot_id_z`, `owner`, `world`, `timestamp` FROM `" + this.prefix + "plot`")) {
                 ArrayList<Integer> toDelete = new ArrayList<>();
-                while (r.next()) {
-                    PlotId plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
-                    id = r.getInt("id");
-                    String areaid = r.getString("world");
+                while (resultSet.next()) {
+                    PlotId plot_id = new PlotId(resultSet.getInt("plot_id_x"), resultSet.getInt("plot_id_z"));
+                    id = resultSet.getInt("id");
+                    String areaid = resultSet.getString("world");
                     if (!areas.contains(areaid)) {
                         if (Settings.AUTO_PURGE) {
                             toDelete.add(id);
@@ -1649,13 +1650,13 @@ public class SQLManager implements AbstractDB {
                             }
                         }
                     }
-                    o = r.getString("owner");
+                    o = resultSet.getString("owner");
                     user = uuids.get(o);
                     if (user == null) {
                         user = UUID.fromString(o);
                         uuids.put(o, user);
                     }
-                    Timestamp timestamp = r.getTimestamp("timestamp");
+                    Timestamp timestamp = resultSet.getTimestamp("timestamp");
                     long time = timestamp.getTime();
                     Plot p = new Plot(plot_id, user, new HashSet<UUID>(), new HashSet<UUID>(), new HashSet<UUID>(), "", null, null, null,
                             new boolean[]{false, false, false, false}, time, id);
@@ -1682,7 +1683,7 @@ public class SQLManager implements AbstractDB {
                 deleteRows(toDelete, this.prefix + "plot", "id");
             }
             if (Settings.CACHE_RATINGS) {
-                try (ResultSet r = stmt.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + this.prefix + "plot_rating`")) {
+                try (ResultSet r = statement.executeQuery("SELECT `plot_plot_id`, `player`, `rating` FROM `" + this.prefix + "plot_rating`")) {
                     ArrayList<Integer> toDelete = new ArrayList<>();
                     while (r.next()) {
                         id = r.getInt("plot_plot_id");
@@ -1709,7 +1710,7 @@ public class SQLManager implements AbstractDB {
             /*
              * Getting helpers
              */
-            try (ResultSet r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_helpers`")) {
+            try (ResultSet r = statement.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_helpers`")) {
                 ArrayList<Integer> toDelete = new ArrayList<>();
                 while (r.next()) {
                     id = r.getInt("plot_plot_id");
@@ -1735,7 +1736,7 @@ public class SQLManager implements AbstractDB {
             /*
              * Getting trusted
              */
-            try (ResultSet r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_trusted`")) {
+            try (ResultSet r = statement.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_trusted`")) {
                 ArrayList<Integer> toDelete = new ArrayList<>();
                 while (r.next()) {
                     id = r.getInt("plot_plot_id");
@@ -1761,7 +1762,7 @@ public class SQLManager implements AbstractDB {
             /*
              * Getting denied
              */
-            try (ResultSet r = stmt.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_denied`")) {
+            try (ResultSet r = statement.executeQuery("SELECT `user_uuid`, `plot_plot_id` FROM `" + this.prefix + "plot_denied`")) {
                 ArrayList<Integer> toDelete = new ArrayList<>();
                 while (r.next()) {
                     id = r.getInt("plot_plot_id");
@@ -1783,7 +1784,7 @@ public class SQLManager implements AbstractDB {
                 deleteRows(toDelete, this.prefix + "plot_denied", "plot_plot_id");
             }
 
-            try (ResultSet r = stmt.executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
+            try (ResultSet r = statement.executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
                 ArrayList<Integer> toDelete = new ArrayList<>();
                 while (r.next()) {
                     id = r.getInt("plot_plot_id");
@@ -1860,7 +1861,7 @@ public class SQLManager implements AbstractDB {
                                 + ".yml.");
                     }
                 }
-                stmt.close();
+                statement.close();
                 deleteRows(toDelete, this.prefix + "plot_settings", "plot_plot_id");
             }
             if (!plots.entrySet().isEmpty()) {
@@ -2012,7 +2013,7 @@ public class SQLManager implements AbstractDB {
                             stmt_prefix = " OR `id` = ";
                         }
                         stmt_prefix = "";
-                        StringBuilder idstr = new StringBuilder("");
+                        StringBuilder idstr = new StringBuilder();
                         for (Integer id : uniqueIds) {
                             idstr.append(stmt_prefix).append(id);
                             stmt_prefix = " OR `plot_plot_id` = ";
@@ -3146,7 +3147,7 @@ public class SQLManager implements AbstractDB {
 
     public abstract class UniqueStatement {
 
-        public String method;
+        public final String method;
 
         public UniqueStatement(String method) {
             this.method = method;

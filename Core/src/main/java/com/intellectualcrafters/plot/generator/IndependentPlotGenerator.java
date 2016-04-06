@@ -9,8 +9,8 @@ import com.intellectualcrafters.plot.object.SetupObject;
 import com.intellectualcrafters.plot.util.PlotChunk;
 
 /**
- * This class allows for implementation independent world generation<br>
- *     - Sponge/Bukkit API<br><br>
+ * This class allows for implementation independent world generation.
+ *     - Sponge/Bukkit API
  * Use the specify method to get the generator for that platform.
  */
 public abstract class IndependentPlotGenerator {

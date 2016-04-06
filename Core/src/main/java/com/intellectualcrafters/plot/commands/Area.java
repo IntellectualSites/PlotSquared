@@ -43,46 +43,46 @@ import java.util.Set;
 public class Area extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
-            C.COMMAND_SYNTAX.send(plr, getUsage());
+            C.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
         switch (args[0].toLowerCase()) {
             case "c":
             case "setup":
             case "create":
-                if (!Permissions.hasPermission(plr, "plots.area.create")) {
-                    C.NO_PERMISSION.send(plr, "plots.area.create");
+                if (!Permissions.hasPermission(player, "plots.area.create")) {
+                    C.NO_PERMISSION.send(player, "plots.area.create");
                     return false;
                 }
                 switch (args.length) {
                     case 1:
-                        C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                        C.COMMAND_SYNTAX.send(player, "/plot area create [world[:id]] [<modifier>=<value>]...");
                         return false;
                     case 2:
                         switch (args[1].toLowerCase()) {
                             case "pos1": { // Set position 1
-                                HybridPlotWorld area = plr.getMeta("area_create_area");
+                                HybridPlotWorld area = player.getMeta("area_create_area");
                                 if (area == null) {
-                                    C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                    C.COMMAND_SYNTAX.send(player, "/plot area create [world[:id]] [<modifier>=<value>]...");
                                     return false;
                                 }
-                                Location location = plr.getLocation();
-                                plr.setMeta("area_pos1", location);
-                                C.SET_ATTRIBUTE.send(plr, "area_pos1", location.getX() + "," + location.getZ());
-                                MainUtil.sendMessage(plr, "You will now set pos2: /plot area create pos2"
+                                Location location = player.getLocation();
+                                player.setMeta("area_pos1", location);
+                                C.SET_ATTRIBUTE.send(player, "area_pos1", location.getX() + "," + location.getZ());
+                                MainUtil.sendMessage(player, "You will now set pos2: /plot area create pos2"
                                         + "\nNote: The chosen plot size may result in the created area not exactly matching your second position.");
                                 return true;
                             }
                             case "pos2":  // Set position 2 and finish creation for type=2 (partial)
-                                final HybridPlotWorld area = plr.getMeta("area_create_area");
+                                final HybridPlotWorld area = player.getMeta("area_create_area");
                                 if (area == null) {
-                                    C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                    C.COMMAND_SYNTAX.send(player, "/plot area create [world[:id]] [<modifier>=<value>]...");
                                     return false;
                                 }
-                                Location pos1 = plr.getLocation();
-                                Location pos2 = plr.getMeta("area_pos1");
+                                Location pos1 = player.getLocation();
+                                Location pos2 = player.getMeta("area_pos1");
                                 int dx = Math.abs(pos1.getX() - pos2.getX());
                                 int dz = Math.abs(pos1.getZ() - pos2.getZ());
                                 int numX = Math.max(1, (dx + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
@@ -99,7 +99,7 @@ public class Area extends SubCommand {
                                 final RegionWrapper region = new RegionWrapper(bx, tx, bz, tz);
                                 Set<PlotArea> areas = PS.get().getPlotAreas(area.worldname, region);
                                 if (!areas.isEmpty()) {
-                                    C.CLUSTER_INTERSECTION.send(plr, areas.iterator().next().toString());
+                                    C.CLUSTER_INTERSECTION.send(player, areas.iterator().next().toString());
                                     return false;
                                 }
                                 final SetupObject object = new SetupObject();
@@ -125,8 +125,8 @@ public class Area extends SubCommand {
                                         final String world = SetupUtils.manager.setupWorld(object);
                                         if (WorldUtil.IMP.isWorld(world)) {
                                             PS.get().loadWorld(world, null);
-                                            C.SETUP_FINISHED.send(plr);
-                                            plr.teleport(WorldUtil.IMP.getSpawn(world));
+                                            C.SETUP_FINISHED.send(player);
+                                            player.teleport(WorldUtil.IMP.getSpawn(world));
                                             if (area.TERRAIN != 3) {
                                                 ChunkManager.largeRegionTask(world, region, new RunnableVal<ChunkLoc>() {
                                                     @Override
@@ -136,12 +136,12 @@ public class Area extends SubCommand {
                                                 }, null);
                                             }
                                         } else {
-                                            MainUtil.sendMessage(plr, "An error occurred while creating the world: " + area.worldname);
+                                            MainUtil.sendMessage(player, "An error occurred while creating the world: " + area.worldname);
                                         }
                                     }
                                 };
-                                if (hasConfirmation(plr)) {
-                                    CmdConfirm.addPending(plr, "/plot area create pos2 (Creates world)", run);
+                                if (hasConfirmation(player)) {
+                                    CmdConfirm.addPending(player, getCommandString() + " create pos2 (Creates world)", run);
                                 } else {
                                     run.run();
                                 }
@@ -160,7 +160,7 @@ public class Area extends SubCommand {
                         final HybridPlotWorld pa = new HybridPlotWorld(object.world, id, new HybridGen(), null, null);
                         PlotArea other = PS.get().getPlotArea(pa.worldname, id);
                         if (other != null && Objects.equals(pa.id, other.id)) {
-                            C.SETUP_WORLD_TAKEN.send(plr, pa.toString());
+                            C.SETUP_WORLD_TAKEN.send(player, pa.toString());
                             return false;
                         }
                         Set<PlotArea> areas = PS.get().getPlotAreas(pa.worldname);
@@ -172,7 +172,7 @@ public class Area extends SubCommand {
                         for (int i = 2; i < args.length; i++) {
                             String[] pair = args[i].split("=");
                             if (pair.length != 2) {
-                                C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                C.COMMAND_SYNTAX.send(player, getCommandString() + " create [world[:id]] [<modifier>=<value>]...");
                                 return false;
                             }
                             switch (pair[0].toLowerCase()) {
@@ -218,13 +218,13 @@ public class Area extends SubCommand {
                                     object.type = pa.TYPE;
                                     break;
                                 default:
-                                    C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                    C.COMMAND_SYNTAX.send(player, getCommandString() + " create [world[:id]] [<modifier>=<value>]...");
                                     return false;
                             }
                         }
                         if (pa.TYPE != 2) {
                             if (WorldUtil.IMP.isWorld(pa.worldname)) {
-                                C.SETUP_WORLD_TAKEN.send(plr, pa.worldname);
+                                C.SETUP_WORLD_TAKEN.send(player, pa.worldname);
                                 return false;
                             }
                             Runnable run = new Runnable() {
@@ -241,10 +241,10 @@ public class Area extends SubCommand {
                                     object.setupGenerator = "PlotSquared";
                                     String world = SetupUtils.manager.setupWorld(object);
                                     if (WorldUtil.IMP.isWorld(world)) {
-                                        C.SETUP_FINISHED.send(plr);
-                                        plr.teleport(WorldUtil.IMP.getSpawn(world));
+                                        C.SETUP_FINISHED.send(player);
+                                        player.teleport(WorldUtil.IMP.getSpawn(world));
                                     } else {
-                                        MainUtil.sendMessage(plr, "An error occurred while creating the world: " + pa.worldname);
+                                        MainUtil.sendMessage(player, "An error occurred while creating the world: " + pa.worldname);
                                     }
                                     try {
                                         PS.get().config.save(PS.get().configFile);
@@ -253,55 +253,55 @@ public class Area extends SubCommand {
                                     }
                                 }
                             };
-                            if (hasConfirmation(plr)) {
-                                CmdConfirm.addPending(plr, "/plot area " + StringMan.join(args, " "), run);
+                            if (hasConfirmation(player)) {
+                                CmdConfirm.addPending(player, getCommandString() + " " + StringMan.join(args, " "), run);
                             } else {
                                 run.run();
                             }
                             return true;
                         }
                         if (pa.id == null) {
-                            C.COMMAND_SYNTAX.send(plr, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                            C.COMMAND_SYNTAX.send(player, getCommandString() + " create [world[:id]] [<modifier>=<value>]...");
                             return false;
                         }
                         if (WorldUtil.IMP.isWorld(pa.worldname)) {
-                            if (!plr.getLocation().getWorld().equals(pa.worldname)) {
-                                plr.teleport(WorldUtil.IMP.getSpawn(pa.worldname));
+                            if (!player.getLocation().getWorld().equals(pa.worldname)) {
+                                player.teleport(WorldUtil.IMP.getSpawn(pa.worldname));
                             }
                         } else {
                             object.terrain = 0;
                             object.type = 0;
                             SetupUtils.manager.setupWorld(object);
-                            plr.teleport(WorldUtil.IMP.getSpawn(pa.worldname));
+                            player.teleport(WorldUtil.IMP.getSpawn(pa.worldname));
                         }
-                        plr.setMeta("area_create_area", pa);
-                        MainUtil.sendMessage(plr, "$1Go to the first corner and use: $2/plot area create pos1");
+                        player.setMeta("area_create_area", pa);
+                        MainUtil.sendMessage(player, "$1Go to the first corner and use: $2 " + getCommandString() + " create pos1");
                         break;
                 }
                 return true;
             case "i":
             case "info": {
-                if (!Permissions.hasPermission(plr, "plots.area.info")) {
-                    C.NO_PERMISSION.send(plr, "plots.area.info");
+                if (!Permissions.hasPermission(player, "plots.area.info")) {
+                    C.NO_PERMISSION.send(player, "plots.area.info");
                     return false;
                 }
                 PlotArea area;
                 switch (args.length) {
                     case 1:
-                        area = plr.getApplicablePlotArea();
+                        area = player.getApplicablePlotArea();
                         break;
                     case 2:
                         area = PS.get().getPlotAreaByString(args[1]);
                         break;
                     default:
-                        C.COMMAND_SYNTAX.send(plr, "/plot area info [area]");
+                        C.COMMAND_SYNTAX.send(player, getCommandString() + " info [area]");
                         return false;
                 }
                 if (area == null) {
                     if (args.length == 2) {
-                        C.NOT_VALID_PLOT_WORLD.send(plr, args[1]);
+                        C.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     } else {
-                        C.NOT_IN_PLOT_WORLD.send(plr);
+                        C.NOT_IN_PLOT_WORLD.send(player);
                     }
                     return false;
                 }
@@ -331,13 +331,13 @@ public class Area extends SubCommand {
                         + "\n$1Clusters: $2" + clusters
                         + "\n$1Region: $2" + region
                         + "\n$1Generator: $2" + generator;
-                MainUtil.sendMessage(plr, C.PLOT_INFO_HEADER.s() + '\n' + value + '\n' + C.PLOT_INFO_FOOTER.s(), false);
+                MainUtil.sendMessage(player, C.PLOT_INFO_HEADER.s() + '\n' + value + '\n' + C.PLOT_INFO_FOOTER.s(), false);
                 return true;
             }
             case "l":
             case "list":
-                if (!Permissions.hasPermission(plr, "plots.area.list")) {
-                    C.NO_PERMISSION.send(plr, "plots.area.list");
+                if (!Permissions.hasPermission(player, "plots.area.list")) {
+                    C.NO_PERMISSION.send(player, "plots.area.list");
                     return false;
                 }
                 int page;
@@ -351,11 +351,11 @@ public class Area extends SubCommand {
                             break;
                         }
                     default:
-                        C.COMMAND_SYNTAX.send(plr, "/plot area list [#]");
+                        C.COMMAND_SYNTAX.send(player, getCommandString() + " list [#]");
                         return false;
                 }
                 ArrayList<PlotArea> areas = new ArrayList<>(PS.get().getPlotAreas());
-                paginate(plr, areas, 8, page, new RunnableVal3<Integer, PlotArea, PlotMessage>() {
+                paginate(player, areas, 8, page, new RunnableVal3<Integer, PlotArea, PlotMessage>() {
                     @Override
                     public void run(Integer i, PlotArea area, PlotMessage message) {
                         String name;
@@ -388,7 +388,8 @@ public class Area extends SubCommand {
                         message.text("[").color("$3")
                                 .text(i + "").command(visit).tooltip(visit).color("$1")
                                 .text("]").color("$3")
-                                .text(" " + name).tooltip(tooltip).command("/plot area info " + area).color("$1").text(" - ").color("$2")
+                                .text(" " + name).tooltip(tooltip).command(getCommandString() + " info " + area).color("$1").text(" - ")
+                                .color("$2")
                                 .text(area.TYPE + ":" + area.TERRAIN).color("$3");
                     }
                 }, "/plot area list", C.AREA_LIST_HEADER_PAGED.s());
@@ -397,17 +398,17 @@ public class Area extends SubCommand {
             case "clear":
             case "reset":
             case "regenerate": {
-                if (!Permissions.hasPermission(plr, "plots.area.regen")) {
-                    C.NO_PERMISSION.send(plr, "plots.area.regen");
+                if (!Permissions.hasPermission(player, "plots.area.regen")) {
+                    C.NO_PERMISSION.send(player, "plots.area.regen");
                     return false;
                 }
-                final PlotArea area = plr.getApplicablePlotArea();
+                final PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    C.NOT_IN_PLOT_WORLD.send(plr);
+                    C.NOT_IN_PLOT_WORLD.send(player);
                     return false;
                 }
                 if (area.TYPE != 2) {
-                    MainUtil.sendMessage(plr, "$4Stop the server and delete: " + area.worldname + "/region");
+                    MainUtil.sendMessage(player, "$4Stop the server and delete: " + area.worldname + "/region");
                     return false;
                 }
                 ChunkManager.largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<ChunkLoc>() {
@@ -423,17 +424,17 @@ public class Area extends SubCommand {
             case "teleport":
             case "visit":
             case "tp":
-                if (!Permissions.hasPermission(plr, "plots.area.tp")) {
-                    C.NO_PERMISSION.send(plr, "plots.area.tp");
+                if (!Permissions.hasPermission(player, "plots.area.tp")) {
+                    C.NO_PERMISSION.send(player, "plots.area.tp");
                     return false;
                 }
                 if (args.length != 2) {
-                    C.COMMAND_SYNTAX.send(plr, "/plot visit [area]");
+                    C.COMMAND_SYNTAX.send(player, "/plot visit [area]");
                     return false;
                 }
                 PlotArea area = PS.get().getPlotAreaByString(args[1]);
                 if (area == null) {
-                    C.NOT_VALID_PLOT_WORLD.send(plr, args[1]);
+                    C.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;
                 }
                 Location center;
@@ -445,18 +446,18 @@ public class Area extends SubCommand {
                             region.minZ + (region.maxZ - region.minZ) / 2);
                     center.setY(WorldUtil.IMP.getHighestBlock(area.worldname, center.getX(), center.getZ()));
                 }
-                plr.teleport(center);
+                player.teleport(center);
                 return true;
             case "delete":
             case "remove":
-                MainUtil.sendMessage(plr, "$1World creation settings may be stored in multiple locations:"
+                MainUtil.sendMessage(player, "$1World creation settings may be stored in multiple locations:"
                         + "\n$3 - $2Bukkit bukkit.yml"
                         + "\n$3 - $2PlotSquared settings.yml"
                         + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
                         + "\n$1Stop the server and delete it from these locations.");
                 return true;
         }
-        C.COMMAND_SYNTAX.send(plr, getUsage());
+        C.COMMAND_SYNTAX.send(player, getUsage());
         return false;
     }
 

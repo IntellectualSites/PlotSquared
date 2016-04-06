@@ -82,6 +82,7 @@ public class Info extends SubCommand {
                     "&cAlias: &6" + plot.getAlias(),
                     "&cBiome: &6" + plot.getBiome().replaceAll("_", "").toLowerCase(),
                     "&cCan Build: &6" + plot.isAdded(uuid),
+                    "&cExpires: &6" + plot.isAdded(uuid),
                     "&cIs Denied: &6" + plot.isDenied(uuid)));
             inv.setItem(1, new PlotItemStack(388, (short) 0, 1, "&cTrusted", "&cAmount: &6" + plot.getTrusted().size(),
                     "&8Click to view a list of the trusted users"));
@@ -109,8 +110,8 @@ public class Info extends SubCommand {
             info = getCaption(arg);
             if (info == null) {
                 MainUtil.sendMessage(player,
-                        "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, &aowner&7, "
-                                + "&arating");
+                        "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aexpires&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
+                                + "&aowner&7, " + "&arating");
                 return false;
             }
             full = true;
@@ -148,6 +149,8 @@ public class Info extends SubCommand {
                 return C.PLOT_INFO_OWNER.s();
             case "rating":
                 return C.PLOT_INFO_RATING.s();
+            case "expires":
+                return C.PLOT_INFO_EXPIRES.s();
             default:
                 return null;
         }

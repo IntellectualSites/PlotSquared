@@ -13,7 +13,7 @@ public class HackTitle extends AbstractTitle {
         try {
             HackTitleManager title = new HackTitleManager(head, sub, in, delay, out);
             title.send(((BukkitPlayer) player).player);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             PS.debug("&cYour server version does not support titles!");
             Settings.TITLES = false;
             AbstractTitle.TITLE_CLASS = null;

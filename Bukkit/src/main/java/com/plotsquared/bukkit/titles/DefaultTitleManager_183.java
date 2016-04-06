@@ -1,87 +1,13 @@
 package com.plotsquared.bukkit.titles;
 
 import com.plotsquared.bukkit.chat.Reflection;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
-/**
- * [ PlotSquared DefaultTitleManager by Maxim Van de Wynckel ]
- *
- * @version 1.1.0
- * @author Maxim Van de Wynckel
- *
- */
-public class DefaultTitleManager_183 {
-
-    private static final Map<Class<?>, Class<?>> CORRESPONDING_TYPES = new HashMap<>();
-    /* Title packet */
-    private Class<?> packetTitle;
-    /* Title packet actions ENUM */
-    private Class<?> packetActions;
-    /* Chat serializer */
-    private Class<?> nmsChatSerializer;
-    private Class<?> chatBaseComponent;
-    /* Title text and color */
-    private String title = "";
-    private ChatColor titleColor = ChatColor.WHITE;
-    /* Subtitle text and color */
-    private String subtitle = "";
-    private ChatColor subtitleColor = ChatColor.WHITE;
-    /* Title timings */
-    private int fadeInTime = -1;
-    private int stayTime = -1;
-    private int fadeOutTime = -1;
-    private boolean ticks = false;
-
-    /**
-     * Create a new 1.8 title
-     *
-     * @param title
-     *            Title
-     * @throws ClassNotFoundException
-     */
-    public DefaultTitleManager_183(String title) throws ClassNotFoundException {
-        this.title = title;
-        loadClasses();
-    }
-
-    /**
-     * Create a new 1.8 title.
-     *
-     * @param title Title text
-     * @param subtitle Subtitle text
-     * @throws ClassNotFoundException
-     */
-    public DefaultTitleManager_183(String title, String subtitle) throws ClassNotFoundException {
-        this.title = title;
-        this.subtitle = subtitle;
-        loadClasses();
-    }
-
-    /**
-     * Copy 1.8 title.
-     *
-     * @param title Title
-     * @throws ClassNotFoundException
-     */
-    public DefaultTitleManager_183(DefaultTitleManager_183 title) throws ClassNotFoundException {
-        // Copy title
-        this.title = title.title;
-        this.subtitle = title.subtitle;
-        this.titleColor = title.titleColor;
-        this.subtitleColor = title.subtitleColor;
-        this.fadeInTime = title.fadeInTime;
-        this.fadeOutTime = title.fadeOutTime;
-        this.stayTime = title.stayTime;
-        this.ticks = title.ticks;
-        loadClasses();
-    }
+public class DefaultTitleManager_183 extends TitleManager {
 
     /**
      * Create a new 1.8 title.
@@ -91,15 +17,9 @@ public class DefaultTitleManager_183 {
      * @param fadeInTime Fade in time
      * @param stayTime Stay on screen time
      * @param fadeOutTime Fade out time
-     * @throws ClassNotFoundException
      */
-    public DefaultTitleManager_183(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) throws ClassNotFoundException {
-        this.title = title;
-        this.subtitle = subtitle;
-        this.fadeInTime = fadeInTime;
-        this.stayTime = stayTime;
-        this.fadeOutTime = fadeOutTime;
-        loadClasses();
+    public DefaultTitleManager_183(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
+        super(title, subtitle, fadeInTime, stayTime, fadeOutTime);
     }
 
     private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
@@ -117,7 +37,8 @@ public class DefaultTitleManager_183 {
     /**
      * Load spigot and NMS classes.
      */
-    private void loadClasses() {
+    @Override
+    void loadClasses() {
         this.packetTitle = Reflection.getNMSClass("PacketPlayOutTitle");
         this.chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
         this.packetActions = Reflection.getNMSClass("PacketPlayOutTitle$EnumTitleAction");
@@ -125,108 +46,7 @@ public class DefaultTitleManager_183 {
 
     }
 
-    /**
-     * Get title text.
-     *
-     * @return Title text
-     */
-    public String getTitle() {
-        return this.title;
-    }
-
-    /**
-     * Set title text.
-     *
-     * @param title Title
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * Get subtitle text.
-     *
-     * @return Subtitle text
-     */
-    public String getSubtitle() {
-        return this.subtitle;
-    }
-
-    /**
-     * Set subtitle text.
-     *
-     * @param subtitle Subtitle text
-     */
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
-    }
-
-    /**
-     * Set the title color.
-     *
-     * @param color Chat color
-     */
-    public void setTitleColor(ChatColor color) {
-        this.titleColor = color;
-    }
-
-    /**
-     * Set the subtitle color.
-     *
-     * @param color Chat color
-     */
-    public void setSubtitleColor(ChatColor color) {
-        this.subtitleColor = color;
-    }
-
-    /**
-     * Set title fade in time.
-     *
-     * @param time
-     *            Time
-     */
-    public void setFadeInTime(int time) {
-        this.fadeInTime = time;
-    }
-
-    /**
-     * Set title fade out time.
-     *
-     * @param time Time
-     */
-    public void setFadeOutTime(int time) {
-        this.fadeOutTime = time;
-    }
-
-    /**
-     * Set title stay time.
-     *
-     * @param time Time
-     */
-    public void setStayTime(int time) {
-        this.stayTime = time;
-    }
-
-    /**
-     * Set timings to ticks.
-     */
-    public void setTimingsToTicks() {
-        this.ticks = true;
-    }
-
-    /**
-     * Set timings to seconds.
-     */
-    public void setTimingsToSeconds() {
-        this.ticks = false;
-    }
-
-    /**
-     * Send the title to a player.
-     *
-     * @param player Player
-     * @throws Exception
-     */
+    @Override
     public void send(Player player) throws Exception {
         if (this.packetTitle != null) {
             // First reset previous settings
@@ -247,27 +67,18 @@ public class DefaultTitleManager_183 {
             }
             // Send title
             Object serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
-                    "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.title) + "\",color:" + this.titleColor.name().toLowerCase() + "}");
+                    "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.getTitle()) + "\",color:" + this.titleColor.name().toLowerCase()
+                            + "}");
             packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[0], serialized);
             sendPacket.invoke(connection, packet);
-            if (!this.subtitle.isEmpty()) {
+            if (!this.getSubtitle().isEmpty()) {
                 // Send subtitle if present
                 serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
-                        "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.subtitle) + "\",color:" + this.subtitleColor.name()
+                        "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.getSubtitle()) + "\",color:" + this.subtitleColor.name()
                                 .toLowerCase() + "}");
                 packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[1], serialized);
                 sendPacket.invoke(connection, packet);
             }
-        }
-    }
-
-    /**
-     * Broadcast the title to all players.
-     * @throws Exception
-     */
-    public void broadcast() throws Exception {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            send(p);
         }
     }
 
@@ -277,6 +88,7 @@ public class DefaultTitleManager_183 {
      * @param player Player
      * @throws Exception
      */
+    @Override
     public void clearTitle(Player player) throws Exception {
         // Send timings first
         Object handle = getHandle(player);
@@ -293,6 +105,7 @@ public class DefaultTitleManager_183 {
      * @param player Player
      * @throws Exception
      */
+    @Override
     public void resetTitle(Player player) throws Exception {
         // Send timings first
         Object handle = getHandle(player);
@@ -301,19 +114,6 @@ public class DefaultTitleManager_183 {
         Method sendPacket = getMethod(connection.getClass(), "sendPacket");
         Object packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[4], null);
         sendPacket.invoke(connection, packet);
-    }
-
-    private Class<?> getPrimitiveType(Class<?> clazz) {
-        return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES.get(clazz) : clazz;
-    }
-
-    private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {
-        int a = classes != null ? classes.length : 0;
-        Class<?>[] types = new Class<?>[a];
-        for (int i = 0; i < a; i++) {
-            types[i] = getPrimitiveType(classes[i]);
-        }
-        return types;
     }
 
     private Object getHandle(Object obj) {

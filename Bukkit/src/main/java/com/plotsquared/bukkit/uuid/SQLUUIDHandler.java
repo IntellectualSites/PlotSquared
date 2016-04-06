@@ -74,14 +74,14 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
             public void run() {
                 try {
                     HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
-                    PreparedStatement statement = getConnection().prepareStatement("SELECT `uuid`, `username` FROM `usercache`");
-                    ResultSet resultSet = statement.executeQuery();
-                    while (resultSet.next()) {
-                        StringWrapper username = new StringWrapper(resultSet.getString("username"));
-                        UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-                        toAdd.put(new StringWrapper(username.value), uuid);
+                    try (PreparedStatement statement = getConnection().prepareStatement("SELECT `uuid`, `username` FROM `usercache`");
+                            ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            StringWrapper username = new StringWrapper(resultSet.getString("username"));
+                            UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                            toAdd.put(new StringWrapper(username.value), uuid);
+                        }
                     }
-                    statement.close();
                     add(toAdd);
                     add(new StringWrapper("*"), DBFunc.everyone);
 

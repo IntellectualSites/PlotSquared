@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
@@ -151,17 +152,17 @@ public class PlotSettings {
         return "";
     }
 
-    public ArrayList<PlotComment> getComments(String inbox) {
+    public Optional<ArrayList<PlotComment>> getComments(String inbox) {
         ArrayList<PlotComment> c = new ArrayList<>();
         if (this.comments == null) {
-            return null;
+            return Optional.absent();
         }
         for (PlotComment comment : this.comments) {
             if (comment.inbox.equals(inbox)) {
                 c.add(comment);
             }
         }
-        return c;
+        return Optional.of(c);
     }
 
     public void setComments(List<PlotComment> comments) {

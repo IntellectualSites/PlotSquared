@@ -12,7 +12,6 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SendChunk;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -370,7 +369,6 @@ public class FastQueue_1_8 extends SlowQueue {
      */
     @Override
     public void sendChunk(String world, Collection<ChunkLoc> locations) {
-        World worldObj = BukkitUtil.getWorld(world);
         for (ChunkLoc loc : locations) {
             ChunkWrapper wrapper = SetQueue.IMP.new ChunkWrapper(world, loc.x, loc.z);
             this.toUpdate.remove(wrapper);

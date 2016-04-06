@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
 /**
@@ -601,7 +602,8 @@ public class MainUtil {
     public static boolean sendMessage(PlotPlayer player, String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
-                ConsolePlayer.getConsole().sendMessage((prefix ? C.PREFIX.s() : "") + msg);
+                String message = (prefix ? C.PREFIX.s() : "") + msg;
+                PS.log(message);
             } else {
                 player.sendMessage((prefix ? C.PREFIX.s() : "") + C.color(msg));
             }
@@ -638,7 +640,7 @@ public class MainUtil {
             public void run() {
                 String m = C.format(c, args);
                 if (plr == null) {
-                    ConsolePlayer.getConsole().sendMessage(m);
+                    PS.log(m);
                 } else {
                     plr.sendMessage(m);
                 }
@@ -703,7 +705,32 @@ public class MainUtil {
         String trusted = getPlayerList(plot.getTrusted());
         String members = getPlayerList(plot.getMembers());
         String denied = getPlayerList(plot.getDenied());
-
+        String expires = C.UNKNOWN.s();
+        if (Settings.AUTO_CLEAR) {
+            if (plot.hasOwner()) {
+                Flag keep = plot.getFlag("keep");
+                if (keep != null) {
+                    Object value = keep.getValue();
+                    if (value instanceof Boolean) {
+                        if (Boolean.TRUE.equals(value)) {
+                            expires = C.NONE.s();
+                        }
+                    } else if (value instanceof Long) {
+                        if ((Long) value > System.currentTimeMillis()) {
+                            long l = System.currentTimeMillis() - (long) value;
+                            expires = String.format("%d days", TimeUnit.MILLISECONDS.toDays(l));
+                        }
+                    }
+                } else {
+                    long timestamp = ExpireManager.IMP.getTimestamp(plot.owner);
+                    long compared = System.currentTimeMillis() - timestamp;
+                    long l = Settings.AUTO_CLEAR_DAYS - TimeUnit.MILLISECONDS.toDays(compared);
+                    expires = String.format("%d days", l);
+                }
+            }
+        } else {
+            expires = C.NEVER.s();
+        }
         Flag descriptionFlag = FlagManager.getPlotFlagRaw(plot, "description");
         String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
 
@@ -729,6 +756,7 @@ public class MainUtil {
         info = info.replaceAll("%trusted%", trusted);
         info = info.replaceAll("%helpers%", members);
         info = info.replaceAll("%denied%", denied);
+        info = info.replaceAll("%expires%", expires);
         info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
         info = info.replaceAll("%build%", build + "");
         info = info.replaceAll("%desc%", "No description set.");
@@ -746,6 +774,10 @@ public class MainUtil {
                         String rating = "";
                         String prefix = "";
                         double[] ratings = MainUtil.getAverageRatings(plot);
+                        for (double v : ratings) {
+
+                        }
+
                         for (int i = 0; i < ratings.length; i++) {
                             rating += prefix + Settings.RATING_CATEGORIES.get(i) + "=" + String.format("%.1f", ratings[i]);
                             prefix = ",";

@@ -3,28 +3,28 @@ package com.intellectualcrafters.plot.object;
 public class PlotLoc {
     public int x;
     public int z;
-    
-    public PlotLoc(final int x, final int z) {
+
+    public PlotLoc(int x, int z) {
         this.x = x;
         this.z = z;
     }
     
     @Override
     public int hashCode() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
-        result = (prime * result) + x;
-        result = (prime * result) + z;
+        result = (prime * result) + this.x;
+        result = (prime * result) + this.z;
         return result;
     }
 
     @Override
     public String toString() {
-        return x + "," + z;
+        return this.x + "," + this.z;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -34,7 +34,7 @@ public class PlotLoc {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PlotLoc other = (PlotLoc) obj;
-        return ((x == other.x) && (z == other.z));
+        PlotLoc other = (PlotLoc) obj;
+        return (this.x == other.x) && (this.z == other.z);
     }
 }

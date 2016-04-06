@@ -4,6 +4,7 @@ import static com.intellectualcrafters.plot.PS.log;
 
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONObject;
+import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.util.StringMan;
 
 import java.io.BufferedReader;
@@ -28,8 +29,10 @@ public class Updater {
 
             return buffer.toString();
         } catch (IOException e) {
-            log("&dCould not check for updates (0)");
-            e.printStackTrace();
+            log("&dCould not check for updates");
+            if (Settings.DEBUG) {
+                e.printStackTrace();
+            }
         } finally {
             try {
                 if (reader != null) {

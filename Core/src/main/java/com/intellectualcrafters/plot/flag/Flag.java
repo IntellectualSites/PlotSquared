@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class Flag<T> implements Cloneable {
+
     private AbstractFlag key;
     private Object value;
     private String name;
@@ -33,7 +34,7 @@ public class Flag<T> implements Cloneable {
             throw new IllegalArgumentException(key.getValueDesc() + " (" + value + ")");
         }
     }
-    
+
     /**
      * Warning: Unchecked
      * @param key
@@ -47,7 +48,7 @@ public class Flag<T> implements Cloneable {
     public Flag(String name) {
         this.name = name;
     }
-    
+
     /**
      * Get the AbstractFlag used in creating the flag.
      *
@@ -56,7 +57,7 @@ public class Flag<T> implements Cloneable {
     public AbstractFlag getAbstractFlag() {
         return this.key;
     }
-    
+
     /**
      * Get the key for the AbstractFlag.
      *
@@ -81,11 +82,11 @@ public class Flag<T> implements Cloneable {
     public Object getValue() {
         return this.value;
     }
-    
+
     public String getValueString() {
         return this.key.toString(this.value);
     }
-    
+
     @Override
     public String toString() {
         if ("".equals(this.value)) {
@@ -93,7 +94,7 @@ public class Flag<T> implements Cloneable {
         }
         return this.key + ":" + getValueString();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -108,12 +109,12 @@ public class Flag<T> implements Cloneable {
         Flag other = (Flag) obj;
         return this.key.getKey().equals(other.key.getKey()) && this.value.equals(other.value);
     }
-    
+
     @Override
     public int hashCode() {
         return this.key.getKey().hashCode();
     }
-    
+
     @Override
     protected Object clone() {
         try {
@@ -128,7 +129,8 @@ public class Flag<T> implements Cloneable {
                 return new Flag(this.key, method.invoke(this.value));
             }
             return new Flag(this.key, this.key.parseValueRaw(this.key.toString(this.value)));
-        } catch (CloneNotSupportedException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
+        } catch (CloneNotSupportedException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException |
+                InvocationTargetException e) {
             e.printStackTrace();
         }
         return this;

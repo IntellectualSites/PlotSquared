@@ -9,6 +9,8 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Bat;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Guardian;
@@ -16,6 +18,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Horse.Variant;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
@@ -25,6 +28,7 @@ import org.bukkit.entity.Rabbit.Type;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
+import org.bukkit.entity.Slime;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.InventoryHolder;
@@ -34,15 +38,15 @@ import org.bukkit.util.Vector;
 
 public class EntityWrapper {
 
+    public final EntityType type;
+    public final float yaw;
+    public final float pitch;
+    public final short depth;
     private final int hash;
-    public EntityType type;
-    public float yaw;
-    public float pitch;
+    private final EntityBaseStats base = new EntityBaseStats();
     public double x;
     public double y;
     public double z;
-    public short depth;
-    public EntityBaseStats base = null;
     // Extended
     public ItemStack stack;
     public ItemStack[] inventory;
@@ -52,10 +56,9 @@ public class EntityWrapper {
     public LivingEntityStats lived;
     public AgeableStats aged;
     public TameableStats tamed;
+    ArmorStandStats stand;
     private HorseStats horse;
-    private ArmorStandStats stand;
-    
-    @SuppressWarnings("deprecation")
+
     public EntityWrapper(Entity entity, short depth) {
         this.hash = entity.getEntityId();
         this.depth = depth;
@@ -69,10 +72,9 @@ public class EntityWrapper {
         if (depth == 0) {
             return;
         }
-        this.base = new EntityBaseStats();
-        Entity p = entity.getPassenger();
-        if (p != null) {
-            this.base.passenger = new EntityWrapper(p, depth);
+        Entity passenger = entity.getPassenger();
+        if (passenger != null) {
+            this.base.passenger = new EntityWrapper(passenger, depth);
         }
         this.base.fall = entity.getFallDistance();
         this.base.fire = (short) entity.getFireTicks();
@@ -168,10 +170,10 @@ public class EntityWrapper {
                 this.horse.variant = getOrdinal(Variant.values(), horse.getVariant());
                 this.horse.style = getOrdinal(Style.values(), horse.getStyle());
                 this.horse.color = getOrdinal(Color.values(), horse.getColor());
-                storeTameable((Tameable) entity);
-                storeAgeable((Ageable) entity);
-                storeLiving((LivingEntity) entity);
-                storeInventory((InventoryHolder) entity);
+                storeTameable(horse);
+                storeAgeable(horse);
+                storeLiving(horse);
+                storeInventory(horse);
                 return;
             // END INVENTORY HOLDER //
             case WOLF:
@@ -185,8 +187,8 @@ public class EntityWrapper {
                 Sheep sheep = (Sheep) entity;
                 this.dataByte = (byte) (sheep.isSheared() ? 1 : 0);
                 this.dataByte2 = sheep.getColor().getDyeData();
-                storeAgeable((Ageable) entity);
-                storeLiving((LivingEntity) entity);
+                storeAgeable(sheep);
+                storeLiving(sheep);
                 return;
             case VILLAGER:
             case CHICKEN:
@@ -196,26 +198,25 @@ public class EntityWrapper {
                 storeAgeable((Ageable) entity);
                 storeLiving((LivingEntity) entity);
                 return;
-            case RABBIT:  // NEW
+            case RABBIT:
                 this.dataByte = getOrdinal(Type.values(), ((Rabbit) entity).getRabbitType());
                 storeAgeable((Ageable) entity);
                 storeLiving((LivingEntity) entity);
                 return;
             // END AGEABLE //
-            case GUARDIAN:  // NEW
+            case GUARDIAN:
                 this.dataByte = (byte) (((Guardian) entity).isElder() ? 1 : 0);
                 storeLiving((LivingEntity) entity);
                 return;
-            case SKELETON:  // NEW
+            case SKELETON:
                 this.dataByte = (byte) ((Skeleton) entity).getSkeletonType().getId();
                 storeLiving((LivingEntity) entity);
                 return;
-            case ARMOR_STAND:  // NEW
-                // CHECK positions
+            case ARMOR_STAND:
                 ArmorStand stand = (ArmorStand) entity;
                 this.inventory = new ItemStack[]{stand.getItemInHand().clone(), stand.getHelmet().clone(), stand.getChestplate().clone(),
                         stand.getLeggings().clone(), stand.getBoots().clone()};
-                storeLiving((LivingEntity) entity);
+                storeLiving(stand);
                 this.stand = new ArmorStandStats();
 
                 EulerAngle head = stand.getHeadPose();
@@ -264,9 +265,19 @@ public class EntityWrapper {
                     this.stand.small = true;
                 }
                 return;
-            case ENDERMITE: // NEW
+            case ENDERMITE:
+                return;
             case BAT:
+                if (((Bat) entity).isAwake()) {
+                    this.dataByte = (byte) 1;
+                } else {
+                    this.dataByte = (byte) 0;
+                }
+                return;
             case ENDER_DRAGON:
+                EnderDragon entity1 = (EnderDragon) entity;
+                this.dataByte = (byte) entity1.getPhase().ordinal();
+                return;
             case GHAST:
             case MAGMA_CUBE:
             case SQUID:
@@ -283,8 +294,16 @@ public class EntityWrapper {
             case BLAZE:
             case SHULKER:
             case SNOWMAN:
-            case IRON_GOLEM:
                 storeLiving((LivingEntity) entity);
+                return;
+            case IRON_GOLEM:
+                if (((IronGolem) entity).isPlayerCreated()) {
+                    this.dataByte = (byte) 1;
+                } else {
+                    this.dataByte = (byte) 0;
+                }
+                storeLiving((LivingEntity) entity);
+                return;
                 // END LIVING //
         }
     }
@@ -303,7 +322,7 @@ public class EntityWrapper {
         this.inventory = held.getInventory().getContents().clone();
     }
 
-    private void restoreLiving(LivingEntity entity) {
+    void restoreLiving(LivingEntity entity) {
         entity.setCanPickupItems(this.lived.loot);
         if (this.lived.name != null) {
             entity.setCustomName(this.lived.name);
@@ -315,12 +334,7 @@ public class EntityWrapper {
         entity.setRemainingAir(this.lived.air);
         entity.setRemoveWhenFarAway(this.lived.persistent);
         if (this.lived.equipped) {
-            EntityEquipment equipment = entity.getEquipment();
-            equipment.setItemInHand(this.lived.hands);
-            equipment.setHelmet(this.lived.helmet);
-            equipment.setChestplate(this.lived.chestplate);
-            equipment.setLeggings(this.lived.leggings);
-            equipment.setBoots(this.lived.boots);
+            this.restoreEquipment(entity);
         }
         if (this.lived.leashed) {
             // TODO leashes
@@ -329,6 +343,20 @@ public class EntityWrapper {
             // .floor(z) + lived.leash_z), EntityType.LEASH_HITCH);
             //            entity.setLeashHolder(leash);
         }
+    }
+
+    void restoreEquipment(LivingEntity entity) {
+        EntityEquipment equipment = entity.getEquipment();
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 0)) {
+            equipment.setItemInMainHand(this.lived.mainHand);
+            equipment.setItemInOffHand(this.lived.offHand);
+        } else {
+            equipment.setItemInHand(this.lived.mainHand);
+        }
+        equipment.setHelmet(this.lived.helmet);
+        equipment.setChestplate(this.lived.chestplate);
+        equipment.setLeggings(this.lived.leggings);
+        equipment.setBoots(this.lived.boots);
     }
 
     private void restoreInventory(InventoryHolder entity) {
@@ -354,12 +382,22 @@ public class EntityWrapper {
         EntityEquipment equipment = lived.getEquipment();
         this.lived.equipped = equipment != null;
         if (this.lived.equipped) {
-            this.lived.hands = equipment.getItemInHand().clone();
-            this.lived.boots = equipment.getBoots().clone();
-            this.lived.leggings = equipment.getLeggings().clone();
-            this.lived.chestplate = equipment.getChestplate().clone();
-            this.lived.helmet = equipment.getHelmet().clone();
+            storeEquipment(equipment);
         }
+    }
+
+    void storeEquipment(EntityEquipment equipment) {
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 0)) {
+            this.lived.mainHand = equipment.getItemInMainHand().clone();
+            this.lived.offHand = equipment.getItemInOffHand().clone();
+        } else {
+            this.lived.mainHand = equipment.getItemInHand().clone();
+            this.lived.offHand = null;
+        }
+        this.lived.boots = equipment.getBoots().clone();
+        this.lived.leggings = equipment.getLeggings().clone();
+        this.lived.chestplate = equipment.getChestplate().clone();
+        this.lived.helmet = equipment.getHelmet().clone();
     }
 
     private void restoreTameable(Tameable entity) {
@@ -394,7 +432,6 @@ public class EntityWrapper {
         this.tamed.tamed = tamed.isTamed();
     }
 
-    @SuppressWarnings("deprecation")
     public Entity spawn(World world, int x_offset, int z_offset) {
         Location loc = new Location(world, this.x + x_offset, this.y, this.z + z_offset);
         loc.setYaw(this.yaw);
@@ -449,6 +486,7 @@ public class EntityWrapper {
             case ENDER_CRYSTAL:
             case ENDER_PEARL:
             case ENDER_SIGNAL:
+            case DROPPED_ITEM:
             case EXPERIENCE_ORB:
             case FALLING_BLOCK:
             case FIREBALL:
@@ -463,11 +501,19 @@ public class EntityWrapper {
             case PLAYER:
             case PRIMED_TNT:
             case SLIME:
+                ((Slime) entity).setSize(this.dataByte);
+                return entity;
             case SMALL_FIREBALL:
             case SNOWBALL:
             case SPLASH_POTION:
             case THROWN_EXP_BOTTLE:
             case WEATHER:
+            case TIPPED_ARROW:
+            case SPECTRAL_ARROW:
+            case SHULKER_BULLET:
+            case LINGERING_POTION:
+            case AREA_EFFECT_CLOUD:
+            case DRAGON_FIREBALL:
             case WITHER_SKULL:
             case MINECART_FURNACE:
             case UNKNOWN:
@@ -503,10 +549,10 @@ public class EntityWrapper {
                 horse.setVariant(Variant.values()[this.horse.variant]);
                 horse.setStyle(Style.values()[this.horse.style]);
                 horse.setColor(Color.values()[this.horse.color]);
-                restoreTameable((Tameable) entity);
-                restoreAgeable((Ageable) entity);
-                restoreLiving((LivingEntity) entity);
-                restoreInventory((InventoryHolder) entity);
+                restoreTameable(horse);
+                restoreAgeable(horse);
+                restoreLiving(horse);
+                restoreInventory(horse);
                 return entity;
             // END INVENTORY HOLDER //
             case WOLF:
@@ -524,9 +570,9 @@ public class EntityWrapper {
                 if (this.dataByte2 != 0) {
                     sheep.setColor(DyeColor.getByDyeData(this.dataByte2));
                 }
-                restoreAgeable((Ageable) entity);
-                restoreLiving((LivingEntity) entity);
-                return entity;
+                restoreAgeable(sheep);
+                restoreLiving(sheep);
+                return sheep;
             case VILLAGER:
             case CHICKEN:
             case COW:
@@ -536,26 +582,26 @@ public class EntityWrapper {
                 restoreLiving((LivingEntity) entity);
                 return entity;
             // END AGEABLE //
-            case RABBIT:  // NEW
+            case RABBIT:
                 if (this.dataByte != 0) {
                     ((Rabbit) entity).setRabbitType(Type.values()[this.dataByte]);
                 }
                 restoreAgeable((Ageable) entity);
                 restoreLiving((LivingEntity) entity);
                 return entity;
-            case GUARDIAN:  // NEW
+            case GUARDIAN:
                 if (this.dataByte != 0) {
                     ((Guardian) entity).setElder(true);
                 }
                 restoreLiving((LivingEntity) entity);
                 return entity;
-            case SKELETON:  // NEW
+            case SKELETON:
                 if (this.dataByte != 0) {
                     ((Skeleton) entity).setSkeletonType(SkeletonType.values()[this.dataByte]);
                 }
                 storeLiving((LivingEntity) entity);
                 return entity;
-            case ARMOR_STAND:  // NEW
+            case ARMOR_STAND:
                 // CHECK positions
                 ArmorStand stand = (ArmorStand) entity;
                 if (this.inventory[0] != null) {
@@ -612,11 +658,21 @@ public class EntityWrapper {
                 if (this.stand.small) {
                     stand.setSmall(true);
                 }
+                restoreLiving(stand);
+                return stand;
+            case BAT:
+                if (this.dataByte != 0) {
+                    ((Bat) entity).setAwake(true);
+                }
                 restoreLiving((LivingEntity) entity);
                 return entity;
-            case ENDERMITE: // NEW
-            case BAT:
             case ENDER_DRAGON:
+                if (this.dataByte != 0) {
+                    ((EnderDragon) entity).setPhase(EnderDragon.Phase.values()[this.dataByte]);
+                }
+                restoreLiving((LivingEntity) entity);
+                return entity;
+            case ENDERMITE:
             case GHAST:
             case MAGMA_CUBE:
             case SQUID:
@@ -632,7 +688,13 @@ public class EntityWrapper {
             case CREEPER:
             case BLAZE:
             case SNOWMAN:
+            case SHULKER:
+                restoreLiving((LivingEntity) entity);
+                return entity;
             case IRON_GOLEM:
+                if (this.dataByte != 0) {
+                    ((IronGolem) entity).setPlayerCreated(true);
+                }
                 restoreLiving((LivingEntity) entity);
                 return entity;
             // END LIVING //

@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.HashSet;
 
 @CommandDeclaration(
@@ -21,7 +22,7 @@ import java.util.HashSet;
         aliases = {"dispose", "del"},
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.NONE,
-        confirmation=true)
+        confirmation = true)
 public class Delete extends SubCommand {
 
     @Override
@@ -59,7 +60,7 @@ public class Delete extends SubCommand {
                                 sendMessage(plr, C.ADDED_BALANCE, value + "");
                             }
                         }
-                        MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                        MainUtil.sendMessage(plr, C.CLEARING_DONE, System.currentTimeMillis() - start);
                     }
                 });
                 if (result) {
@@ -70,7 +71,7 @@ public class Delete extends SubCommand {
             }
         };
         if (hasConfirmation(plr)) {
-            CmdConfirm.addPending(plr, "/plot delete " + plot.getId(), run);
+            CmdConfirm.addPending(plr, getCommandString() + ' ' + plot.getId(), run);
         } else {
             TaskManager.runTask(run);
         }

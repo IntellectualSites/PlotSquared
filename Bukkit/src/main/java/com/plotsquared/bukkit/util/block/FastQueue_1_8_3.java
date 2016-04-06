@@ -1,5 +1,7 @@
 package com.plotsquared.bukkit.util.block;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -14,6 +16,12 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.SendChunk;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,14 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_8_3 extends SlowQueue {
 

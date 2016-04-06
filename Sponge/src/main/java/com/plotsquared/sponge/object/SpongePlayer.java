@@ -19,6 +19,7 @@ import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.service.ban.BanService;
 import org.spongepowered.api.text.chat.ChatTypes;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.world.World;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -94,7 +95,7 @@ public class SpongePlayer extends PlotPlayer {
         if (!world.equals(location.getWorld())) {
             this.player.transferToWorld(location.getWorld(), new Vector3d(location.getX(), location.getY(), location.getZ()));
         } else {
-            org.spongepowered.api.world.Location current = this.player.getLocation();
+            org.spongepowered.api.world.Location<World> current = this.player.getLocation();
             current = current.setPosition(new Vector3d(location.getX(), location.getY(), location.getZ()));
             this.player.setLocation(current);
         }

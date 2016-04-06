@@ -23,6 +23,7 @@ subprojects {
         compile(group: 'com.sk89q', name: 'worldedit', version:'6.0.0-SNAPSHOT') {
             exclude(module: 'bukkit-classloader-check')
         }
+        compile 'com.google.guava:guava:10.0'
     }
     clean{
         delete file("../target")

@@ -53,6 +53,7 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -89,6 +90,7 @@ import java.util.zip.ZipInputStream;
 public class PS {
 
     private static PS instance;
+    public final IPlotMain IMP;
     private final HashSet<Integer> plotAreaHashCheck = new HashSet<>();
     /**
      * All plot areas mapped by world (quick world access).
@@ -98,6 +100,9 @@ public class PS {
      * All plot areas mapped by location (quick location based access).
      */
     private final HashMap<String, QuadMap<PlotArea>> plotAreaGrid = new HashMap<>();
+    private final int[] version;
+    private final String platform;
+    private final Thread thread;
     public HashMap<String, Set<PlotCluster>> clusters_tmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     public File styleFile;
@@ -108,7 +113,6 @@ public class PS {
     public YamlConfiguration config;
     public YamlConfiguration storage;
     public YamlConfiguration commands;
-    public IPlotMain IMP = null;
     public TaskManager TASK;
     public WorldEdit worldedit;
     public URL update;
@@ -117,25 +121,23 @@ public class PS {
      * All plot areas (quick global access).
      */
     private PlotArea[] plotAreas = new PlotArea[0];
-
     private File storageFile;
     private File file = null; // This file
-    private int[] version;
     private int[] lastVersion;
-    private String platform = null;
     private Database database;
-    private Thread thread;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
-     * @param imp_class
+     * @param iPlotMain Implementation of {@link IPlotMain} used
+     * @param platform The platform being used
      */
-    public PS(IPlotMain imp_class, String platform) {
+    public PS(IPlotMain iPlotMain, String platform) {
+        PS.instance = this;
+        this.thread = Thread.currentThread();
+        this.IMP = iPlotMain;
+        this.platform = platform;
+        this.version = this.IMP.getPluginVersion();
         try {
-            PS.instance = this;
-            this.thread = Thread.currentThread();
-            SetupUtils.generators = new HashMap<>();
-            this.IMP = imp_class;
             new ReflectionUtils(this.IMP.getNMSPackage());
             try {
                 URL url = PS.class.getProtectionDomain().getCodeSource().getLocation();
@@ -147,8 +149,6 @@ public class PS {
                     this.file = new File(this.IMP.getDirectory().getParentFile(), "PlotSquared-" + platform + ".jar");
                 }
             }
-            this.version = this.IMP.getPluginVersion();
-            this.platform = platform;
             if (getJavaVersion() < 1.7) {
                 PS.log(C.CONSOLE_JAVA_OUTDATED_1_7);
                 this.IMP.disable();
@@ -200,50 +200,7 @@ public class PS {
             }
             // create UUIDWrapper
             UUIDHandler.implementation = this.IMP.initUUIDHandler();
-            TaskManager.runTaskLater(new Runnable() {
-                @Override
-                public void run() {
-                    debug("Starting UUID caching");
-                    UUIDHandler.startCaching(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (Plot plot : getPlots()) {
-                                if (plot.hasOwner() && plot.temp != -1) {
-                                    if (UUIDHandler.getName(plot.owner) == null) {
-                                        UUIDHandler.implementation.unknown.add(plot.owner);
-                                    }
-                                }
-                            }
-                            // Auto clearing
-                            if (Settings.AUTO_CLEAR) {
-                                ExpireManager.IMP = new ExpireManager();
-                                if (Settings.AUTO_CLEAR_CONFIRMATION) {
-                                    ExpireManager.IMP.runConfirmedTask();
-                                } else {
-                                    ExpireManager.IMP.runAutomatedTask();
-                                }
-                            }
-                            // PlotMe
-                            if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
-                                TaskManager.runTaskLater(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        if (PS.this.IMP.initPlotMeConverter()) {
-                                            PS.log("&c=== IMPORTANT ===");
-                                            PS.log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
-                                            PS.log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
-                                            PS.log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
-                                            PS.log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the "
-                                                    + "'settings.yml'");
-                                        }
-                                    }
-                                }, 20);
-                            }
-                        }
-                    });
-                }
-            }, 20);
+            startUuidCatching();
             // create event util class
             EventUtil.manager = this.IMP.initEventUtil();
             // create Hybrid utility class
@@ -354,10 +311,6 @@ public class PS {
         PS.get().IMP.log(StringMan.getString(message));
     }
 
-    public static void stacktrace() {
-        System.err.println(StringMan.join(new Exception().getStackTrace(), "\n\tat "));
-    }
-
     /**
      * Log a message to the IPlotMain logger.
      *
@@ -368,6 +321,53 @@ public class PS {
         if (Settings.DEBUG) {
             PS.log(message);
         }
+    }
+
+    private void startUuidCatching() {
+        TaskManager.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                debug("Starting UUID caching");
+                UUIDHandler.startCaching(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (Plot plot : getPlots()) {
+                            if (plot.hasOwner() && plot.temp != -1) {
+                                if (UUIDHandler.getName(plot.owner) == null) {
+                                    UUIDHandler.implementation.unknown.add(plot.owner);
+                                }
+                            }
+                        }
+                        // Auto clearing
+                        if (Settings.AUTO_CLEAR) {
+                            ExpireManager.IMP = new ExpireManager();
+                            if (Settings.AUTO_CLEAR_CONFIRMATION) {
+                                ExpireManager.IMP.runConfirmedTask();
+                            } else {
+                                ExpireManager.IMP.runAutomatedTask();
+                            }
+                        }
+                        // PlotMe
+                        if (Settings.CONVERT_PLOTME || Settings.CACHE_PLOTME) {
+                            TaskManager.runTaskLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    if (PS.this.IMP.initPlotMeConverter()) {
+                                        PS.log("&c=== IMPORTANT ===");
+                                        PS.log("&cTHIS MESSAGE MAY BE EXTREMELY HELPFUL IF YOU HAVE TROUBLE CONVERTING PLOTME!");
+                                        PS.log("&c - Make sure 'UUID.read-from-disk' is disabled (false)!");
+                                        PS.log("&c - Sometimes the database can be locked, deleting PlotMe.jar beforehand will fix the issue!");
+                                        PS.log("&c - After the conversion is finished, please set 'plotme-convert.enabled' to false in the "
+                                                + "'settings.yml'");
+                                    }
+                                }
+                            }, 20);
+                        }
+                    }
+                });
+            }
+        }, 20);
     }
 
     public boolean isMainThread(Thread thread) {
@@ -1324,14 +1324,18 @@ public class PS {
     }
 
     /**
-     * This method is called by the PlotGenerator class normally<br>
-     *  - Initializes the PlotArea and PlotManager classes<br>
-     *  - Registers the PlotArea and PlotManager classes<br>
-     *  - Loads (and/or generates) the PlotArea configuration<br>
-     *  - Sets up the world border if configured<br>
-     *  If loading an augmented plot world:<br>
-     *  - Creates the AugmentedPopulator classes<br>
-     *  - Injects the AugmentedPopulator classes if required
+     * This method is called by the PlotGenerator class normally.
+     * <ul>
+     *     <li>Initializes the PlotArea and PlotManager classes</li>
+     *     <li>Registers the PlotArea and PlotManager classes</li>
+     *     <li>Loads (and/or generates) the PlotArea configuration</li>
+     *     <li>Sets up the world border if configured</li>
+     * </ul>
+     *  If loading an augmented plot world:
+     *  <ul>
+     *      <li>Creates the AugmentedPopulator classes</li>
+     *      <li>Injects the AugmentedPopulator classes if required</li>
+     *  </ul>
      * @param world The world to load
      * @param baseGenerator The generator for that world, or null if no generator
      */
@@ -1470,14 +1474,14 @@ public class PS {
             }
             for (String areaId : areasSection.getKeys(false)) {
                 PS.log(C.PREFIX + "&3 - " + areaId);
-                int i1 = areaId.indexOf("-");
-                int i2 = areaId.indexOf(";");
+                int i1 = areaId.indexOf('-');
+                int i2 = areaId.indexOf(';');
                 if (i1 == -1 || i2 == -1) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId + ". Expected form `<name>-<pos1>-<pos2>`");
                 }
                 String name = areaId.substring(0, i1);
                 String rest = areaId.substring(i1 + 1);
-                int i3 = rest.indexOf("-",  i2 - name.length() - 1);
+                int i3 = rest.indexOf('-', i2 - name.length() - 1);
                 PlotId pos1 = PlotId.fromString(rest.substring(0, i3));
                 PlotId pos2 = PlotId.fromString(rest.substring(i3 + 1));
                 if (pos1 == null || pos2 == null || name.isEmpty()) {
@@ -1543,8 +1547,10 @@ public class PS {
     }
 
     /**
-     * Setup the configuration for a plot world based on world arguments<br>
-     * e.g. /mv create <world> normal -g PlotSquared:<args>
+     * Setup the configuration for a plot world based on world arguments.
+     * <p>
+     *     <i>e.g. /mv create <world> normal -g PlotSquared:<args></i>
+     * </p>
      * @param world The name of the world
      * @param args The arguments
      * @return boolean | if valid arguments were provided
@@ -1800,7 +1806,7 @@ public class PS {
     }
 
     /**
-     * Setup the default flags for PlotSquared<br>
+     * Setup the default flags for PlotSquared.
      *  - Create the flags
      *  - Register with FlagManager and parse raw flag values
      */
@@ -2402,10 +2408,6 @@ public class PS {
             count += area.getPlotCount();
         }
         return count;
-    }
-
-    public int getPlotAreaCount(String world) {
-        return this.plotAreaMap.size();
     }
 
     public Set<PlotArea> getPlotAreas() {

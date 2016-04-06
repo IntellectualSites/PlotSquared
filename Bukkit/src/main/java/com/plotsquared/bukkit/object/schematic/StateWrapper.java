@@ -8,11 +8,6 @@ import com.intellectualcrafters.jnbt.Tag;
 import com.intellectualcrafters.plot.object.schematic.ItemType;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -20,6 +15,12 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class StateWrapper {
 
@@ -38,8 +39,8 @@ public class StateWrapper {
         if (this.tag == null) {
             return false;
         }
-        switch (tag.getString("id").toLowerCase()) {
-            case "chest": {
+        switch (this.tag.getString("id").toLowerCase()) {
+            case "chest":
                 List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
                 int length = itemsTag.size();
                 short[] ids = new short[length];
@@ -75,9 +76,7 @@ public class StateWrapper {
                     }
                     state.update(true);
                     return true;
-                } else {
                 }
-            }
         }
         return false;
     }

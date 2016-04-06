@@ -11,7 +11,7 @@ public class DefaultTitle_183 extends AbstractTitle {
         try {
             DefaultTitleManager_183 title = new DefaultTitleManager_183(head, sub, in, delay, out);
             title.send(((BukkitPlayer) player).player);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             AbstractTitle.TITLE_CLASS = new HackTitle();
             AbstractTitle.TITLE_CLASS.sendTitle(player, head, sub, in, delay, out);
         }

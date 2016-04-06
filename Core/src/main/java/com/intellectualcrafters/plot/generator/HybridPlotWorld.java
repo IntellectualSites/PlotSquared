@@ -13,6 +13,7 @@ import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SchematicHandler.Dimension;
 import com.intellectualcrafters.plot.util.SchematicHandler.Schematic;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -163,11 +164,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     @Override
-    public boolean isCompatible(PlotArea plotworld) {
-        if (!(plotworld instanceof SquarePlotWorld)) {
+    public boolean isCompatible(PlotArea plotArea) {
+        if (!(plotArea instanceof SquarePlotWorld)) {
             return false;
         }
-        return ((SquarePlotWorld) plotworld).PLOT_WIDTH == this.PLOT_WIDTH;
+        return ((SquarePlotWorld) plotArea).PLOT_WIDTH == this.PLOT_WIDTH;
     }
 
     public void setupSchematics() {
@@ -213,7 +214,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
             HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
-            if (items.size() > 0) {
+            if (!items.isEmpty()) {
                 this.G_SCH_STATE = new HashMap<>();
                 for (Map.Entry<BlockLoc, CompoundTag> entry : items.entrySet()) {
                     BlockLoc loc = entry.getKey();

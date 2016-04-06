@@ -11,10 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class TaskManager {
 
-    public static HashSet<String> TELEPORT_QUEUE = new HashSet<>();
-
+    public static final HashSet<String> TELEPORT_QUEUE = new HashSet<>();
+    public static final HashMap<Integer, Integer> tasks = new HashMap<>();
     public static AtomicInteger index = new AtomicInteger(0);
-    public static HashMap<Integer, Integer> tasks = new HashMap<>();
 
     public static int runTaskRepeat(Runnable runnable, int interval) {
         if (runnable != null) {

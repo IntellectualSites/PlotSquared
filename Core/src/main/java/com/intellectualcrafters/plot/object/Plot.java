@@ -20,6 +20,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
+
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -765,8 +766,8 @@ public class Plot {
             @Override
             public void run() {
                 if (queue.isEmpty()) {
-                    final AtomicInteger finished = new AtomicInteger(0);
-                    final Runnable run = new Runnable() {
+                    AtomicInteger finished = new AtomicInteger(0);
+                    Runnable run = new Runnable() {
                         @Override
                         public void run() {
                             for (RegionWrapper region : regions) {
@@ -794,11 +795,11 @@ public class Plot {
                 manager.clearPlot(Plot.this.area, current, this);
             }
         };
-        if (!isMerged() && area.getRegion().equals(getLargestRegion())) {
-            ChunkManager.largeRegionTask(area.worldname, area.getRegion(), new RunnableVal<ChunkLoc>() {
+        if (!isMerged() && this.area.getRegion().equals(getLargestRegion())) {
+            ChunkManager.largeRegionTask(this.area.worldname, this.area.getRegion(), new RunnableVal<ChunkLoc>() {
                 @Override
                 public void run(ChunkLoc value) {
-                    ChunkManager.manager.regenerateChunk(area.worldname, value);
+                    ChunkManager.manager.regenerateChunk(Plot.this.area.worldname, value);
                 }
             }, whenDone);
         } else {
@@ -1773,7 +1774,7 @@ public class Plot {
      * Upload this plot as a world file<br>
      *  - The mca files are each 512x512, so depending on the plot size it may also download adjacent plots<br>
      *  - Works best when (plot width + road width) % 512 == 0<br>
-     *  @see com.intellectualcrafters.plot.util.WorldUtil
+     *  @see WorldUtil
      * @param whenDone
      */
     public void uploadWorld(RunnableVal<URL> whenDone) {
@@ -1784,7 +1785,7 @@ public class Plot {
      * Upload this plot as a BO3<br>
      *     - May not work on non default generator<br>
      *     - BO3 includes flags/ignores plot main/floor block<br>
-     * @see com.intellectualcrafters.plot.util.BO3Handler
+     * @see BO3Handler
      * @param whenDone
      */
     public void uploadBO3(RunnableVal<URL> whenDone) {
@@ -1991,8 +1992,6 @@ public class Plot {
                 int index = caption.indexOf("%plr%");
                 if (index == -1) {
                     continue;
-                } else if (index < -1) {
-                    PS.debug("This should NEVER happen. Seriously, it's impossible.");
                 }
                 String line = lines[i - 1];
                 if (line.length() <= index) {
@@ -2487,7 +2486,7 @@ public class Plot {
         RegionWrapper max = null;
         double area = Double.NEGATIVE_INFINITY;
         for (RegionWrapper region : regions) {
-            double current = ((region.maxX - (double) region.minX + 1)) * (region.maxZ - (double) region.minZ + 1);
+            double current = (region.maxX - (double) region.minX + 1) * (region.maxZ - (double) region.minZ + 1);
             if (current > area) {
                 max = region;
                 area = current;

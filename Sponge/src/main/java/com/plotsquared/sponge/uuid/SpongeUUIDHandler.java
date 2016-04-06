@@ -12,22 +12,22 @@ import org.spongepowered.api.profile.GameProfile;
 import java.util.UUID;
 
 public class SpongeUUIDHandler extends UUIDHandlerImplementation {
-    
-    public SpongeUUIDHandler(final UUIDWrapper wrapper) {
+
+    public SpongeUUIDHandler(UUIDWrapper wrapper) {
         super(wrapper);
     }
     
     @Override
-    public boolean startCaching(final Runnable whenDone) {
+    public boolean startCaching(Runnable whenDone) {
         if (!super.startCaching(whenDone)) {
             return false;
         }
         return cache(whenDone);
     }
-    
-    public boolean cache(final Runnable whenDone) {
+
+    public boolean cache(Runnable whenDone) {
         add(new StringWrapper("*"), DBFunc.everyone);
-        for (final GameProfile profile : SpongeMain.THIS.getResolver().getCachedProfiles()) {
+        for (GameProfile profile : SpongeMain.THIS.getServer().getGameProfileManager().getCache().getProfiles()) {
             String name = profile.getName().orElse(null);
             if (name != null) {
                 add(new StringWrapper(name), profile.getUniqueId());
@@ -37,11 +37,11 @@ public class SpongeUUIDHandler extends UUIDHandlerImplementation {
     }
     
     @Override
-    public void fetchUUID(final String name, final RunnableVal<UUID> ifFetch) {
+    public void fetchUUID(String name, RunnableVal<UUID> ifFetch) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                ifFetch.value = uuidWrapper.getUUID(name);
+                ifFetch.value = SpongeUUIDHandler.this.uuidWrapper.getUUID(name);
                 TaskManager.runTask(ifFetch);
             }
         });

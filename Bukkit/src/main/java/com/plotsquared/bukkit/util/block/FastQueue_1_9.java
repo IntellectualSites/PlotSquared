@@ -85,7 +85,7 @@ public class FastQueue_1_9 extends SlowQueue {
      * @param plotChunk
      */
     @Override
-    public void execute(final PlotChunk<Chunk> plotChunk) {
+    public void execute(PlotChunk<Chunk> plotChunk) {
         final FastChunk_1_9 fs = (FastChunk_1_9) plotChunk;
         Chunk chunk = plotChunk.getChunk();
         World world = chunk.getWorld();
@@ -413,7 +413,7 @@ public class FastQueue_1_9 extends SlowQueue {
      * @param locations
      */
     @Override
-    public void sendChunk(final String world, final Collection<ChunkLoc> locations) {
+    public void sendChunk(String world, Collection<ChunkLoc> locations) {
         World worldObj = BukkitUtil.getWorld(world);
         for (ChunkLoc loc : locations) {
             worldObj.refreshChunk(loc.x, loc.z);

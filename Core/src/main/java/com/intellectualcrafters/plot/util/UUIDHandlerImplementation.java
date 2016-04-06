@@ -7,7 +7,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -25,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class UUIDHandlerImplementation {
 
     public final ConcurrentHashMap<String, PlotPlayer> players;
-    public UUIDWrapper uuidWrapper = null;
-    public HashSet<UUID> unknown = new HashSet<>();
+    public final HashSet<UUID> unknown = new HashSet<>();
+    public UUIDWrapper uuidWrapper;
     private boolean cached = false;
     private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 
@@ -97,7 +96,7 @@ public abstract class UUIDHandlerImplementation {
             try {
                 this.unknown.add(uuid);
             } catch (Exception e) {
-                ConsolePlayer.getConsole().sendMessage("&c(minor) Invalid UUID mapping: " + uuid);
+                PS.log("&c(minor) Invalid UUID mapping: " + uuid);
                 e.printStackTrace();
             }
             return false;
@@ -182,7 +181,6 @@ public abstract class UUIDHandlerImplementation {
     public void handleShutdown() {
         this.players.clear();
         this.uuidMap.clear();
-        this.uuidWrapper = null;
     }
 
     public String getName(UUID uuid) {
