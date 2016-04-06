@@ -141,7 +141,7 @@ public class Area extends SubCommand {
                                     }
                                 };
                                 if (hasConfirmation(player)) {
-                                    CmdConfirm.addPending(player, "/plot area create pos2 (Creates world)", run);
+                                    CmdConfirm.addPending(player, getCommandString() + " create pos2 (Creates world)", run);
                                 } else {
                                     run.run();
                                 }
@@ -172,7 +172,7 @@ public class Area extends SubCommand {
                         for (int i = 2; i < args.length; i++) {
                             String[] pair = args[i].split("=");
                             if (pair.length != 2) {
-                                C.COMMAND_SYNTAX.send(player, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                C.COMMAND_SYNTAX.send(player, getCommandString() + " create [world[:id]] [<modifier>=<value>]...");
                                 return false;
                             }
                             switch (pair[0].toLowerCase()) {
@@ -218,7 +218,7 @@ public class Area extends SubCommand {
                                     object.type = pa.TYPE;
                                     break;
                                 default:
-                                    C.COMMAND_SYNTAX.send(player, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                    C.COMMAND_SYNTAX.send(player, getCommandString() + " create [world[:id]] [<modifier>=<value>]...");
                                     return false;
                             }
                         }
@@ -254,14 +254,14 @@ public class Area extends SubCommand {
                                 }
                             };
                             if (hasConfirmation(player)) {
-                                CmdConfirm.addPending(player, "/plot area " + StringMan.join(args, " "), run);
+                                CmdConfirm.addPending(player, getCommandString() + " " + StringMan.join(args, " "), run);
                             } else {
                                 run.run();
                             }
                             return true;
                         }
                         if (pa.id == null) {
-                            C.COMMAND_SYNTAX.send(player, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                            C.COMMAND_SYNTAX.send(player, getCommandString() + " create [world[:id]] [<modifier>=<value>]...");
                             return false;
                         }
                         if (WorldUtil.IMP.isWorld(pa.worldname)) {
@@ -275,7 +275,7 @@ public class Area extends SubCommand {
                             player.teleport(WorldUtil.IMP.getSpawn(pa.worldname));
                         }
                         player.setMeta("area_create_area", pa);
-                        MainUtil.sendMessage(player, "$1Go to the first corner and use: $2/plot area create pos1");
+                        MainUtil.sendMessage(player, "$1Go to the first corner and use: $2 " + getCommandString() + " create pos1");
                         break;
                 }
                 return true;
@@ -294,7 +294,7 @@ public class Area extends SubCommand {
                         area = PS.get().getPlotAreaByString(args[1]);
                         break;
                     default:
-                        C.COMMAND_SYNTAX.send(player, "/plot area info [area]");
+                        C.COMMAND_SYNTAX.send(player, getCommandString() + " info [area]");
                         return false;
                 }
                 if (area == null) {
@@ -351,7 +351,7 @@ public class Area extends SubCommand {
                             break;
                         }
                     default:
-                        C.COMMAND_SYNTAX.send(player, "/plot area list [#]");
+                        C.COMMAND_SYNTAX.send(player, getCommandString() + " list [#]");
                         return false;
                 }
                 ArrayList<PlotArea> areas = new ArrayList<>(PS.get().getPlotAreas());
@@ -388,7 +388,8 @@ public class Area extends SubCommand {
                         message.text("[").color("$3")
                                 .text(i + "").command(visit).tooltip(visit).color("$1")
                                 .text("]").color("$3")
-                                .text(" " + name).tooltip(tooltip).command("/plot area info " + area).color("$1").text(" - ").color("$2")
+                                .text(" " + name).tooltip(tooltip).command(getCommandString() + " info " + area).color("$1").text(" - ")
+                                .color("$2")
                                 .text(area.TYPE + ":" + area.TERRAIN).color("$3");
                     }
                 }, "/plot area list", C.AREA_LIST_HEADER_PAGED.s());

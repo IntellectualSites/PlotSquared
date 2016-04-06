@@ -60,7 +60,7 @@ public class Delete extends SubCommand {
                                 sendMessage(plr, C.ADDED_BALANCE, value + "");
                             }
                         }
-                        MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
+                        MainUtil.sendMessage(plr, C.CLEARING_DONE, System.currentTimeMillis() - start);
                     }
                 });
                 if (result) {
@@ -71,7 +71,7 @@ public class Delete extends SubCommand {
             }
         };
         if (hasConfirmation(plr)) {
-            CmdConfirm.addPending(plr, "/plot delete " + plot.getId(), run);
+            CmdConfirm.addPending(plr, getCommandString() + ' ' + plot.getId(), run);
         } else {
             TaskManager.runTask(run);
         }

@@ -22,7 +22,6 @@ import com.intellectualcrafters.plot.util.RegExUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
-import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.object.BukkitLazyBlock;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -738,7 +737,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             plotExit(pp, plot);
         }
 
-        if (BukkitMain.worldEdit != null && PS.get().worldedit != null) {
+        if (true && PS.get().worldedit != null) {
             if (!Permissions.hasPermission(pp, C.PERMISSION_WORLDEDIT_BYPASS)) {
                 if (pp.getAttribute("worldedit")) {
                     pp.removeAttribute("worldedit");

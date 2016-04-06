@@ -25,7 +25,7 @@ public abstract class UUIDHandlerImplementation {
 
     public final ConcurrentHashMap<String, PlotPlayer> players;
     public final HashSet<UUID> unknown = new HashSet<>();
-    public UUIDWrapper uuidWrapper = null;
+    public UUIDWrapper uuidWrapper;
     private boolean cached = false;
     private BiMap<StringWrapper, UUID> uuidMap = HashBiMap.create(new HashMap<StringWrapper, UUID>());
 
@@ -181,7 +181,6 @@ public abstract class UUIDHandlerImplementation {
     public void handleShutdown() {
         this.players.clear();
         this.uuidMap.clear();
-        this.uuidWrapper = null;
     }
 
     public String getName(UUID uuid) {

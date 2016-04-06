@@ -854,25 +854,20 @@ public class BukkitChunkManager extends ChunkManager {
                     BlockState state = block.getState();
                     if (state instanceof Skull) {
                         Object[] data = blockLocEntry.getValue();
-                        if (data[0] != null) {
-                            ((Skull) state).setOwner((String) data[0]);
+                        if ((Boolean) data[0]) {
+                            ((Skull) state).setOwner((String) data[1]);
                         }
-                        if ((Integer) data[1] != 0) {
-                            ((Skull) state).setRotation(BlockFace.values()[(int) data[1]]);
-                        }
-                        if ((Integer) data[2] != 0) {
-                            ((Skull) state).setSkullType(SkullType.values()[(int) data[2]]);
-                        }
+                        ((Skull) state).setRotation((BlockFace) data[2]);
+                        ((Skull) state).setSkullType((SkullType) data[3]);
                         state.update(true);
                     } else {
                         PS.debug("&c[WARN] Plot clear failed to restore skull: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                .getKey().y
-                                + "," + (
-                                blockLocEntry.getKey().z + zOffset));
+                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (Exception e) {
                     PS.debug("&c[WARN] Plot clear failed to regenerate skull (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
                             .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    e.printStackTrace();
                 }
             }
             for (Entry<BlockLoc, ItemStack[]> blockLocEntry : this.hopperContents.entrySet()) {
@@ -989,10 +984,7 @@ public class BukkitChunkManager extends ChunkManager {
                     }
                 } catch (IllegalArgumentException e) {
                     PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand (e): " + (blockLocEntry.getKey().x + xOffset) + ","
-                            + blockLocEntry
-                            .getKey().y + "," + (
-                            blockLocEntry.getKey().z
-                                    + zOffset));
+                            + blockLocEntry.getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, Short[]> blockLocEntry : this.furnaceTime.entrySet()) {
@@ -1007,14 +999,12 @@ public class BukkitChunkManager extends ChunkManager {
                     } else {
                         PS.debug(
                                 "&c[WARN] Plot clear failed to restore furnace cooking: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                        .getKey().y + "," + (
-                                        blockLocEntry.getKey().z + zOffset));
+                                        .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (Exception e) {
                     PS.debug(
                             "&c[WARN] Plot clear failed to restore furnace cooking (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                    .getKey().y + "," + (
-                                    blockLocEntry.getKey().z + zOffset));
+                                    .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, ItemStack[]> blockLocEntry : this.furnaceContents.entrySet()) {
@@ -1048,15 +1038,11 @@ public class BukkitChunkManager extends ChunkManager {
                         state.update(true);
                     } else {
                         PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + (blockLocByteEntry.getKey().x + xOffset) + ","
-                                + blockLocByteEntry
-                                .getKey().y + "," + (
-                                blockLocByteEntry.getKey().z + zOffset));
+                                + blockLocByteEntry.getKey().y + "," + (blockLocByteEntry.getKey().z + zOffset));
                     }
                 } catch (Exception e) {
                     PS.debug("&c[WARN] Plot clear failed to regenerate banner (e): " + (blockLocByteEntry.getKey().x + xOffset) + ","
-                            + blockLocByteEntry
-                            .getKey().y + "," + (
-                            blockLocByteEntry.getKey().z + zOffset));
+                            + blockLocByteEntry.getKey().y + "," + (blockLocByteEntry.getKey().z + zOffset));
                 }
             }
         }
@@ -1134,11 +1120,7 @@ public class BukkitChunkManager extends ChunkManager {
                             }
                         } else if (block.getState() instanceof Skull) {
                             Skull skull = (Skull) block.getState();
-                            String o = skull.getOwner();
-                            byte skullType = getOrdinal(SkullType.values(), skull.getSkullType());
-                            skull.getRotation();
-                            short rot = getOrdinal(BlockFace.values(), skull.getRotation());
-                            this.skullData.put(bl, new Object[]{o, rot, skullType});
+                            this.skullData.put(bl, new Object[]{skull.hasOwner(), skull.getOwner(), skull.getRotation(), skull.getSkullType()});
                         } else if (block.getState() instanceof Banner) {
                             Banner banner = (Banner) block.getState();
                             DyeColor base = banner.getBaseColor();
