@@ -80,18 +80,6 @@ public class FastQueue_1_9 extends SlowQueue {
         MainUtil.initCache();
     }
 
-    @Override
-    public void regenerateChunk(String worldname, ChunkLoc loc) {
-        World world = BukkitUtil.getWorld(worldname);
-        Chunk chunk = world.getChunkAt(loc.x, loc.z);
-        if (chunk.getTileEntities().length > 0) {
-            Object c = methodGetHandleChunk.of(chunk).call();
-            Object w = methodGetWorld.of(c).call();
-            ((Collection) this.tileEntityListTick.of(w).get()).clear();
-        }
-        super.regenerateChunk(worldname, loc);
-    }
-
     /**
      * This should be overridden by any specialized queues
      * @param plotChunk
