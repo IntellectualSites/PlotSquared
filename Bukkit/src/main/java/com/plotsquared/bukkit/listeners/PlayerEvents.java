@@ -571,7 +571,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
         PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
@@ -603,14 +603,11 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             }
         }
-        String full = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", sender).replaceAll("%msg%", message);
+        String full = format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender).replace("%msg%", message);
         full = ChatColor.translateAlternateColorCodes('&', full);
-//        format = format.replaceAll("%plot_id%", id.x + ";" + id.y).replaceAll("%sender%", "%s").replaceAll("%msg%", "%s");
-//        format = ChatColor.translateAlternateColorCodes('&', format);
         for (Player receiver : recipients) {
             receiver.sendMessage(full);
         }
-//        event.setFormat(format);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

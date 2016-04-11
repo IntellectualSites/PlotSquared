@@ -1,7 +1,5 @@
 package com.plotsquared.bukkit.util.block;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -15,12 +13,6 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod.RefExecutor;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,6 +22,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_9 extends SlowQueue {
 
@@ -78,18 +78,6 @@ public class FastQueue_1_9 extends SlowQueue {
         this.classChunkSectionConstructor = classChunkSection.getConstructor(int.class, boolean.class, char[].class);
         this.air = this.methodGetByCombinedId.call(0);
         MainUtil.initCache();
-    }
-
-    @Override
-    public void regenerateChunk(String worldname, ChunkLoc loc) {
-        World world = BukkitUtil.getWorld(worldname);
-        Chunk chunk = world.getChunkAt(loc.x, loc.z);
-        if (chunk.getTileEntities().length > 0) {
-            Object c = this.methodGetHandleChunk.of(chunk).call();
-            Object w = this.methodGetWorld.of(c).call();
-            ((Collection) this.tileEntityListTick.of(w).get()).clear();
-        }
-        super.regenerateChunk(worldname, loc);
     }
 
     /**

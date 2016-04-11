@@ -171,10 +171,16 @@ public class PS {
             if (Settings.KILL_ROAD_MOBS || Settings.KILL_ROAD_VEHICLES) {
                 this.IMP.runEntityTask();
             }
-            if (this.IMP.initWorldEdit()) {
-                this.worldedit = WorldEdit.getInstance();
-                WorldEdit.getInstance().getEventBus().register(new WESubscriber());
-                new WE_Anywhere();
+            try {
+                if (this.IMP.initWorldEdit()) {
+                    this.worldedit = WorldEdit.getInstance();
+                    WorldEdit.getInstance().getEventBus().register(new WESubscriber());
+                    new WE_Anywhere();
+
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+                PS.debug("Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
             }
 
             // Events

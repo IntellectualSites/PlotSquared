@@ -134,7 +134,7 @@ public class MainCommand extends Command {
             @Override
             public void run(final Command cmd, final Runnable success, final Runnable failure) {
                 if (cmd.hasConfirmation(player) ) {
-                    CmdConfirm.addPending(player, "/plot area create pos2 (Creates world)", new Runnable() {
+                    CmdConfirm.addPending(player, cmd.getUsage(), new Runnable() {
                         @Override
                         public void run() {
                             if (EconHandler.manager != null) {

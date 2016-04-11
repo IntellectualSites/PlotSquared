@@ -290,7 +290,6 @@ public enum C {
     TASK_START("Starting task...", "Core"),
     PREFIX("$3[$1P2$3] $2", "Core"),
     ENABLED("$1PlotSquared is now enabled", "Core"),
-    EXAMPLE_MESSAGE("$2This is an example message &k!!!", "Core"),
     /*
      * Reload
      */

@@ -1635,7 +1635,7 @@ public class Plot {
     public boolean removeDenied(UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : getDenied()) {
+            for (UUID other : new HashSet<>(getDenied())) {
                 result = result || rmvDenied(other);
             }
             return result;
@@ -1662,7 +1662,7 @@ public class Plot {
     public boolean removeTrusted(UUID uuid) {
         if (uuid == DBFunc.everyone) {
             boolean result = false;
-            for (UUID other : getTrusted()) {
+            for (UUID other : new HashSet<>(getTrusted())) {
                 result = result || rmvTrusted(other);
             }
             return result;

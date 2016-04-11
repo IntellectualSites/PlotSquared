@@ -721,7 +721,7 @@ public class MainUtil {
                             expires = String.format("%d days", TimeUnit.MILLISECONDS.toDays(l));
                         }
                     }
-                } else {
+                } else if (ExpireManager.IMP != null) {
                     long timestamp = ExpireManager.IMP.getTimestamp(plot.owner);
                     long compared = System.currentTimeMillis() - timestamp;
                     long l = Settings.AUTO_CLEAR_DAYS - TimeUnit.MILLISECONDS.toDays(compared);
