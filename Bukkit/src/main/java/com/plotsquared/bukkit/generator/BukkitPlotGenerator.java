@@ -200,8 +200,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         return this.platformGenerator;
     }
 
-
-
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
         try {
