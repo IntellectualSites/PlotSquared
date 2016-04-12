@@ -287,7 +287,12 @@ public class ListCmd extends SubCommand {
                     C.COMMAND_SYNTAX.send(plr, "/plot list fuzzy <search...> [#]");
                     return false;
                 }
-                String term = StringMan.join(Arrays.copyOfRange(args, 1, args.length - 2), " ");
+                String term;
+                if (MathMan.isInteger(args[args.length - 1])) {
+                    term = StringMan.join(Arrays.copyOfRange(args, 1, args.length - 1), " ");
+                } else {
+                    term = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
+                }
                 plots = MainUtil.getPlotsBySearch(term);
                 sort = false;
                 break;
