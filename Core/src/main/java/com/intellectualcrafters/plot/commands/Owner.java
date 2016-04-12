@@ -44,7 +44,7 @@ public class Owner extends SetCommand {
         if (uuid == null) {
             if (value.equalsIgnoreCase("none")) {
                 HashSet<Plot> connected = plot.getConnectedPlots();
-                plot.unlink();
+                plot.unlinkPlot(false, false);
                 for (Plot current : connected) {
                     current.unclaim();
                     current.removeSign();

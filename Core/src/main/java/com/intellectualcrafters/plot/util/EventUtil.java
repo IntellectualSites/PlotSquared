@@ -235,8 +235,7 @@ public abstract class EventUtil {
                     value = (HashSet<PlotBlock>) flag.getValue();
                 }
                 if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    // TODO: fix the commented dead code
-                    return true; //!(!false || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_DEVICE_INTERACT.s()));
+                    return false; //!(!false || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_DEVICE_INTERACT.s()));
                 }
                 return true;
             }
