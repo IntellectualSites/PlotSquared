@@ -42,7 +42,7 @@ public class Trust extends SubCommand {
             return true;
         }
         UUID uuid;
-        if (args[0].equalsIgnoreCase("*")) {
+        if (args[0].equalsIgnoreCase("*") && (Permissions.hasPermission(plr, "plots.trust.everyone") || Permissions.hasPermission(plr, "plots.admin.command.trust"))) {
             uuid = DBFunc.everyone;
         } else {
             uuid = UUIDHandler.getUUID(args[0], null);
