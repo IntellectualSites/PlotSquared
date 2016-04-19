@@ -63,22 +63,16 @@ public class ConsoleColors {
                 return ConsoleColor.RESET;
         }
     }
-    
-    static enum ConsoleColor {
+
+    enum ConsoleColor {
         RESET("\u001B[0m"), BLACK("\u001B[30m"), RED("\u001B[31m"), GREEN("\u001B[32m"), YELLOW("\u001B[33m"), BLUE("\u001B[34m"), PURPLE("\u001B[35m"), CYAN("\u001B[36m"), WHITE("\u001B[37m"), BOLD(
         "\033[1m"), UNDERLINE("\033[0m"), ITALIC("\033[3m");
-        private final String win;
         private final String lin;
         
         ConsoleColor(final String lin) {
             this.lin = lin;
-            win = lin;
         }
-        
-        public String getWin() {
-            return win;
-        }
-        
+
         public String getLin() {
             return lin;
         }

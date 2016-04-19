@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.commands;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -62,7 +63,7 @@ public class Clear extends SubCommand {
             MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
             return false;
         }
-        if ((FlagManager.getPlotFlagRaw(plot, "done") != null)
+        if (plot.getFlag(Flags.DONE).isPresent()
                 && (!Permissions.hasPermission(plr, "plots.continue") || (Settings.DONE_COUNTS_TOWARDS_LIMIT && (plr.getAllowedPlots() >= plr
                 .getPlotCount())))) {
             MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
@@ -81,11 +82,11 @@ public class Clear extends SubCommand {
                             public void run() {
                                 plot.removeRunning();
                                 // If the state changes, then mark it as no longer done
-                                if (FlagManager.getPlotFlagRaw(plot, "done") != null) {
-                                    FlagManager.removePlotFlag(plot, "done");
+                                if (plot.getFlag(Flags.DONE).isPresent()) {
+                                    FlagManager.removePlotFlag(plot, Flags.DONE);
                                 }
-                                if (FlagManager.getPlotFlagRaw(plot, "analysis") != null) {
-                                    FlagManager.removePlotFlag(plot, "analysis");
+                                if (plot.getFlag(Flags.ANALYSIS).isPresent()) {
+                                    FlagManager.removePlotFlag(plot, Flags.ANALYSIS);
                                 }
                                 MainUtil.sendMessage(plr, C.CLEARING_DONE, "" + (System.currentTimeMillis() - start));
                             }

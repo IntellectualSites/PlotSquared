@@ -69,7 +69,7 @@ public class SpongeEventUtil extends EventUtil {
     }
     
     @Override
-    public boolean callFlagRemove(Flag flag, Plot plot) {
+    public boolean callFlagRemove(Flag<?> flag, Plot plot, Object value) {
         return callEvent(new PlotFlagRemoveEvent(flag, plot));
     }
     
@@ -109,7 +109,7 @@ public class SpongeEventUtil extends EventUtil {
     }
     
     @Override
-    public boolean callFlagRemove(Flag flag, PlotCluster cluster) {
+    public boolean callFlagRemove(Flag flag, Object object, PlotCluster cluster) {
         return callEvent(new ClusterFlagRemoveEvent(flag, cluster));
     }
     

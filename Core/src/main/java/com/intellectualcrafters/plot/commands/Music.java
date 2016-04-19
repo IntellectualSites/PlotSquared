@@ -1,8 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotBlock;
@@ -41,9 +40,9 @@ public class Music extends SubCommand {
                 }
                 int id = item.id == 7 ? 0 : item.id;
                 if (id == 0) {
-                    FlagManager.removePlotFlag(plot, "music");
+                    plot.removeFlag(Flags.MUSIC);
                 } else {
-                    FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("music"), id));
+                    plot.setFlag(Flags.MUSIC, id);
                 }
                 return false;
             }

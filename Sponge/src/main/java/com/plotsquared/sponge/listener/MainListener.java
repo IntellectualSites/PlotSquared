@@ -4,8 +4,7 @@ import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -27,7 +26,6 @@ import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.explosive.Explosive;
 import org.spongepowered.api.entity.living.Ambient;
@@ -61,6 +59,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
+@SuppressWarnings("Guava")
 public class MainListener {
     
     /*
@@ -203,16 +202,16 @@ public class MainListener {
             //        }
 
             if (entity.getType() == EntityTypes.ITEM) {
-                return !FlagManager.isPlotFlagFalse(plot, "item-drop");
+                return plot.getFlag(Flags.ITEM_DROP).or(true);
             }
             int[] mobs = null;
             if (entity instanceof Living) {
                 if (!loc.getPlotArea().MOB_SPAWNING) {
                     return false;
                 }
-                Flag mobCap = FlagManager.getPlotFlagRaw(plot, "mob-cap");
-                if (mobCap != null) {
-                    Integer cap = (Integer) mobCap.getValue();
+                com.google.common.base.Optional<Integer> mobCap = plot.getFlag(Flags.MOB_CAP);
+                if (mobCap.isPresent()) {
+                    Integer cap = mobCap.get();
                     if (cap == 0) {
                         return false;
                     }
@@ -222,9 +221,9 @@ public class MainListener {
                     }
                 }
                 if (entity instanceof Ambient || entity instanceof Animal) {
-                    Flag animalFlag = FlagManager.getPlotFlagRaw(plot, "animal-cap");
-                    if (animalFlag != null) {
-                        int cap = (Integer) animalFlag.getValue();
+                    com.google.common.base.Optional<Integer> animalFlag = plot.getFlag(Flags.ANIMAL_CAP);
+                    if (animalFlag.isPresent()) {
+                        int cap = animalFlag.get();
                         if (cap == 0) {
                             return false;
                         }
@@ -236,9 +235,9 @@ public class MainListener {
                         }
                     }
                 } else if (entity instanceof Monster) {
-                    Flag monsterFlag = FlagManager.getPlotFlagRaw(plot, "hostile-cap");
-                    if (monsterFlag != null) {
-                        int cap = (Integer) monsterFlag.getValue();
+                    com.google.common.base.Optional<Integer> monsterFlag = plot.getFlag(Flags.HOSTILE_CAP);
+                    if (monsterFlag.isPresent()) {
+                        int cap = monsterFlag.get();
                         if (cap == 0) {
                             return false;
                         }
@@ -252,9 +251,9 @@ public class MainListener {
                 }
                 return true;
             } else if (entity instanceof Minecart || entity instanceof Boat) {
-                Flag vehicleFlag = FlagManager.getPlotFlagRaw(plot, "vehicle-cap");
-                if (vehicleFlag != null) {
-                    int cap = (Integer) vehicleFlag.getValue();
+                com.google.common.base.Optional<Integer> vehicleFlag = plot.getFlag(Flags.VEHICLE_CAP);
+                if (vehicleFlag.isPresent()) {
+                    int cap = vehicleFlag.get();
                     if (cap == 0) {
                         return false;
                     }
@@ -264,9 +263,9 @@ public class MainListener {
                     }
                 }
             }
-            Flag entityCap = FlagManager.getPlotFlagRaw(plot, "entity-cap");
-            if (entityCap != null) {
-                Integer cap = (Integer) entityCap.getValue();
+            com.google.common.base.Optional<Integer> entityCap = plot.getFlag(Flags.ENTITY_CAP);
+            if (entityCap.isPresent()) {
+                Integer cap = entityCap.get();
                 if (cap == 0) {
                     return false;
                 }
@@ -356,8 +355,8 @@ public class MainListener {
         if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER)) {
             return;
         } else {
-            Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
-            if (flag != null && ((HashSet<PlotBlock>) flag.getValue()).contains(SpongeUtil.getPlotBlock(l.getBlock()))) {
+            com.google.common.base.Optional<HashSet<PlotBlock>> flag = plot.getFlag(Flags.USE);
+            if (flag.isPresent() && flag.get().contains(SpongeUtil.getPlotBlock(l.getBlock()))) {
                 return;
             }
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_INTERACT_OTHER);
@@ -396,22 +395,12 @@ public class MainListener {
                     return;
                 }
             }
-            if (!FlagManager.isPlotFlagTrue(currentPlot, "explosion")) {
+            if (!currentPlot.getFlag(Flags.EXPLOSION).or(false)) {
                 event.filterAll();
                 return;
             }
-            event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
-                @Override
-                public boolean test(org.spongepowered.api.world.Location<World> loc) {
-                    return currentPlot.equals(SpongeUtil.getLocation(loc.getExtent().getName(), loc).getPlot());
-                }
-            });
-            event.filterEntities(new Predicate<Entity>() {
-                @Override
-                public boolean test(Entity entity) {
-                    return currentPlot.equals(SpongeUtil.getLocation(entity).getPlot());
-                }
-            });
+            event.filter(loc -> currentPlot.equals(SpongeUtil.getLocation(loc.getExtent().getName(), loc).getPlot()));
+            event.filterEntities(entity -> currentPlot.equals(SpongeUtil.getLocation(entity).getPlot()));
         }
     }
     
@@ -432,12 +421,7 @@ public class MainListener {
             event.setCancelled(true);
             return;
         }
-        event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
-            @Override
-            public boolean test(org.spongepowered.api.world.Location<World> loc) {
-                return !SpongeUtil.getLocation(worldName, loc).isPlotRoad();
-            }
-        });
+        event.filter(loc1 -> !SpongeUtil.getLocation(worldName, loc1).isPlotRoad());
     }
 
     @Listener
@@ -494,9 +478,9 @@ public class MainListener {
                 return;
             } else {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
-                Flag destroy = FlagManager.getPlotFlagRaw(plot, "break");
+                com.google.common.base.Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 BlockState state = pos.getState();
-                if (destroy == null || !((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
+                if (!destroy.isPresent() || !destroy.get().contains(SpongeUtil.getPlotBlock(state))) {
                     event.setCancelled(true);
                     return;
                 }
@@ -524,9 +508,9 @@ public class MainListener {
                 if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return true;
                 } else {
-                    Flag destroy = FlagManager.getPlotFlagRaw(plot, "break");
+                    com.google.common.base.Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                     BlockState state = l.getBlock();
-                    if (destroy != null && ((HashSet<PlotBlock>) destroy.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
+                    if (destroy.isPresent() && destroy.get().contains(SpongeUtil.getPlotBlock(state))) {
                         return true;
                     }
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
@@ -563,24 +547,25 @@ public class MainListener {
                 return;
             }
         } else if (transactions.size() == 1) {
-            if (!plot.hasOwner()) {
+            if (plot.hasOwner()) {
+                if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    return;
+                } else {
+                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                    com.google.common.base.Optional<HashSet<PlotBlock>> BUILD = plot.getFlag(Flags.PLACE);
+                    BlockState state = pos.getState();
+                    if (!BUILD.isPresent() || !BUILD.get().contains(SpongeUtil.getPlotBlock(state))) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            } else {
                 if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     return;
                 }
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_UNOWNED);
                 event.setCancelled(true);
                 return;
-            }
-            if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
-                return;
-            } else {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
-                Flag BUILD = FlagManager.getPlotFlagRaw(plot, C.FLAG_PLACE.s());
-                BlockState state = pos.getState();
-                if (BUILD == null || !((HashSet<PlotBlock>) BUILD.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
-                    event.setCancelled(true);
-                    return;
-                }
             }
         }
         event.filter(new Predicate<org.spongepowered.api.world.Location<World>>() {
@@ -605,9 +590,9 @@ public class MainListener {
                 if (plot.isAdded(pp.getUUID()) || Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                     return true;
                 } else {
-                    Flag build = FlagManager.getPlotFlagRaw(plot, C.FLAG_PLACE.s());
+                    com.google.common.base.Optional<HashSet<PlotBlock>> build = plot.getFlag(Flags.PLACE);
                     BlockState state = l.getBlock();
-                    if (build != null && ((HashSet<PlotBlock>) build.getValue()).contains(SpongeUtil.getPlotBlock(state))) {
+                    if (build.isPresent() && build.get().contains(SpongeUtil.getPlotBlock(state))) {
                         return true;
                     }
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);

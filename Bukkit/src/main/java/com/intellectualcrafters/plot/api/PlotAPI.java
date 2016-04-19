@@ -386,18 +386,6 @@ public class PlotAPI {
     }
 
     /**
-     * get all the currently registered flags.
-     *
-     * @return array of Flag[]
-     *
-     * @see FlagManager#getFlags()
-     * @see AbstractFlag
-     */
-    public AbstractFlag[] getFlags() {
-        return FlagManager.getFlags().toArray(new AbstractFlag[FlagManager.getFlags().size()]);
-    }
-
-    /**
      * Get a plot based on the ID.
      *
      * @param world World in which the plot is located
@@ -663,7 +651,7 @@ public class PlotAPI {
         if (world == null) {
             return new HashSet<>();
         }
-        return BukkitUtil.getPlayer(player).getPlots(world.getName());
+        return PlotPlayer.wrap(player).getPlots(world.getName());
     }
 
     /**
@@ -675,7 +663,7 @@ public class PlotAPI {
      *
      */
     public int getAllowedPlots(Player player) {
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        PlotPlayer pp = PlotPlayer.wrap(player);
         return pp.getAllowedPlots();
     }
 

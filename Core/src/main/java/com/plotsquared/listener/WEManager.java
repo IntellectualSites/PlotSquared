@@ -2,7 +2,7 @@ package com.plotsquared.listener;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -46,7 +46,7 @@ public class WEManager {
             return regions;
         }
         for (Plot plot : area.getPlots()) {
-            if (!plot.isBasePlot() || (Settings.DONE_RESTRICTS_BUILDING && (FlagManager.getPlotFlagRaw(plot, "done") != null))) {
+            if (!plot.isBasePlot() || (Settings.DONE_RESTRICTS_BUILDING && (plot.getFlag(Flags.DONE).isPresent()))) {
                 continue;
             }
             if (Settings.WE_ALLOW_HELPER && plot.isAdded(uuid) || !Settings.WE_ALLOW_HELPER && (plot.isOwner(uuid) || plot.getTrusted()

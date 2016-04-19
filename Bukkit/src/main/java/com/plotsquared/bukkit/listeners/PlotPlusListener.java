@@ -1,7 +1,7 @@
 package com.plotsquared.bukkit.listeners;
 
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.google.common.base.Optional;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
@@ -88,7 +88,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (plot == null) {
             return;
         }
-        if (FlagManager.isBooleanFlag(plot, "instabreak", false)) {
+        if (plot.getFlag(Flags.INSTABREAK).or(false)) {
             event.getBlock().breakNaturally();
         }
     }
@@ -103,7 +103,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
         if (plot == null) {
             return;
         }
-        if (FlagManager.isBooleanFlag(plot, "invincible", false)) {
+        if (plot.getFlag(Flags.INVINCIBLE).or(false)) {
             event.setCancelled(true);
         }
     }
@@ -117,7 +117,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         UUID uuid = pp.getUUID();
-        if (plot.isAdded(uuid) && FlagManager.isBooleanFlag(plot, "drop-protection", false)) {
+        if (plot.isAdded(uuid) && plot.getFlag(Flags.DROP_PROTECTION).or(false)) {
             event.setCancelled(true);
         }
     }
@@ -131,7 +131,7 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         UUID uuid = pp.getUUID();
-        if (plot.isAdded(uuid) && FlagManager.isBooleanFlag(plot, "item-drop", false)) {
+        if (plot.isAdded(uuid) && plot.getFlag(Flags.ITEM_DROP).or(false)) {
             event.setCancelled(true);
         }
     }
@@ -140,14 +140,14 @@ public class PlotPlusListener extends PlotListener implements Listener {
     public void onPlotEnter(PlayerEnterPlotEvent event) {
         Player player = event.getPlayer();
         Plot plot = event.getPlot();
-        Flag feed = FlagManager.getPlotFlagRaw(plot, "feed");
-        if (feed != null) {
-            Integer[] value = (Integer[]) feed.getValue();
+        Optional<Integer[]> feed = plot.getFlag(Flags.FEED);
+        if (feed.isPresent()) {
+            Integer[] value = feed.get();
             feedRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
         }
-        Flag heal = FlagManager.getPlotFlagRaw(plot, "heal");
-        if (heal != null) {
-            Integer[] value = (Integer[]) heal.getValue();
+        Optional<Integer[]> heal = plot.getFlag(Flags.HEAL);
+        if (heal.isPresent()) {
+            Integer[] value = heal.get();
             healRunnable.put(player.getName(), new Interval(value[0], value[1], 20));
         }
     }

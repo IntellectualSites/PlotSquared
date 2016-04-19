@@ -16,35 +16,35 @@ public class BukkitPlainChatManager extends ChatManager<List<StringBuilder>> {
     }
 
     @Override
-    public void color(PlotMessage m, String color) {
-        List<StringBuilder> parts = m.$(this);
+    public void color(PlotMessage message, String color) {
+        List<StringBuilder> parts = message.$(this);
         parts.get(parts.size() - 1).insert(0, color);
     }
 
     @Override
-    public void tooltip(PlotMessage m, PlotMessage... tooltips) {
+    public void tooltip(PlotMessage message, PlotMessage... tooltips) {
     }
 
     @Override
-    public void command(PlotMessage m, String command) {
+    public void command(PlotMessage message, String command) {
     }
 
     @Override
-    public void text(PlotMessage m, String text) {
-        m.$(this).add(new StringBuilder(ChatColor.stripColor(text)));
+    public void text(PlotMessage message, String text) {
+        message.$(this).add(new StringBuilder(ChatColor.stripColor(text)));
     }
 
     @Override
-    public void send(PlotMessage m, PlotPlayer player) {
+    public void send(PlotMessage plotMessage, PlotPlayer player) {
         StringBuilder built = new StringBuilder();
-        for (StringBuilder sb : m.$(this)) {
+        for (StringBuilder sb : plotMessage.$(this)) {
             built.append(sb);
         }
         player.sendMessage(built.toString());
     }
 
     @Override
-    public void suggest(PlotMessage m, String command) {
+    public void suggest(PlotMessage plotMessage, String command) {
     }
 
 }

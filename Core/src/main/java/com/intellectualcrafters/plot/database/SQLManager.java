@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -790,31 +789,32 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void setMySQL(PreparedStatement stmt, int i, SettingsPair pair) throws SQLException {
-                stmt.setInt(i * 10 + 1, pair.id); // id
-                stmt.setNull(i * 10 + 2, 4); // biome
-                stmt.setNull(i * 10 + 3, 4); // rain
-                stmt.setNull(i * 10 + 4, 4); // custom_time
-                stmt.setNull(i * 10 + 5, 4); // time
-                stmt.setNull(i * 10 + 6, 4); // deny_entry
+            public void setMySQL(PreparedStatement statement, int i, SettingsPair pair) throws SQLException {
+                statement.setInt(i * 10 + 1, pair.id); // id
+                statement.setNull(i * 10 + 2, 4); // biome
+                statement.setNull(i * 10 + 3, 4); // rain
+                statement.setNull(i * 10 + 4, 4); // custom_time
+                statement.setNull(i * 10 + 5, 4); // time
+                statement.setNull(i * 10 + 6, 4); // deny_entry
                 if (pair.settings.getAlias().isEmpty()) {
-                    stmt.setNull(i * 10 + 7, 4);
+                    statement.setNull(i * 10 + 7, 4);
                 } else {
-                    stmt.setString(i * 10 + 7, pair.settings.getAlias());
+                    statement.setString(i * 10 + 7, pair.settings.getAlias());
                 }
                 StringBuilder flag_string = new StringBuilder();
                 int k = 0;
-                for (Flag flag : pair.settings.flags.values()) {
+                for (Entry<Flag<?>, ?> flag : pair.settings.flags.entrySet()) {
                     if (k != 0) {
                         flag_string.append(",");
                     }
-                    flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
+                    flag_string.append(flag.getKey().getName() + ":" + flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
+                            .replaceAll(",", "´"));
                     k++;
                 }
-                stmt.setString(i * 10 + 8, flag_string.toString());
+                statement.setString(i * 10 + 8, flag_string.toString());
                 boolean[] merged = pair.settings.getMerged();
                 int hash = MainUtil.hash(merged);
-                stmt.setInt(i * 10 + 9, hash);
+                statement.setInt(i * 10 + 9, hash);
                 BlockLoc loc = pair.settings.getPosition();
                 String position;
                 if (loc.y == 0) {
@@ -822,7 +822,7 @@ public class SQLManager implements AbstractDB {
                 } else {
                     position = loc.x + "," + loc.y + "," + loc.z;
                 }
-                stmt.setString(i * 10 + 10, position);
+                statement.setString(i * 10 + 10, position);
             }
 
             @Override
@@ -840,11 +840,12 @@ public class SQLManager implements AbstractDB {
                 }
                 StringBuilder flag_string = new StringBuilder();
                 int k = 0;
-                for (Flag flag : pair.settings.flags.values()) {
+                for (Entry<Flag<?>, ?> flag : pair.settings.flags.entrySet()) {
                     if (k != 0) {
                         flag_string.append(",");
                     }
-                    flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
+                    flag_string.append(flag.getKey().getName() + ":" + flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
+                            .replaceAll(",", "´"));
                     k++;
                 }
                 stmt.setString(i * 10 + 8, flag_string.toString());
@@ -1784,18 +1785,18 @@ public class SQLManager implements AbstractDB {
                 deleteRows(toDelete, this.prefix + "plot_denied", "plot_plot_id");
             }
 
-            try (ResultSet r = statement.executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
+            try (ResultSet resultSet = statement.executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
                 ArrayList<Integer> toDelete = new ArrayList<>();
-                while (r.next()) {
-                    id = r.getInt("plot_plot_id");
+                while (resultSet.next()) {
+                    id = resultSet.getInt("plot_plot_id");
                     Plot plot = plots.get(id);
                     if (plot != null) {
                         plots.remove(id);
-                        String alias = r.getString("alias");
+                        String alias = resultSet.getString("alias");
                         if (alias != null) {
                             plot.getSettings().setAlias(alias);
                         }
-                        String pos = r.getString("position");
+                        String pos = resultSet.getString("position");
                         switch (pos.toLowerCase()) {
                             case "":
                             case "default":
@@ -1808,14 +1809,14 @@ public class SQLManager implements AbstractDB {
                                 } catch (Exception ignored) {
                                 }
                         }
-                        Integer m = r.getInt("merged");
+                        Integer m = resultSet.getInt("merged");
                         boolean[] merged = new boolean[4];
                         for (int i = 0; i < 4; i++) {
                             merged[3 - i] = (m & 1 << i) != 0;
                         }
                         plot.getSettings().setMerged(merged);
                         String[] flags_string;
-                        String myflags = r.getString("flags");
+                        String myflags = resultSet.getString("flags");
                         if (myflags == null) {
                             flags_string = new String[] {};
                         } else {
@@ -1825,15 +1826,15 @@ public class SQLManager implements AbstractDB {
                                 flags_string = new String[] {};
                             }
                         }
-                        HashMap<String, Flag> flags = new HashMap<>();
+                        HashMap<Flag<?>, Object> flags = new HashMap<>();
                         boolean exception = false;
                         for (String element : flags_string) {
                             if (element.contains(":")) {
                                 String[] split = element.split(":");
                                 try {
                                     String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
-                                    Flag flag = new Flag(FlagManager.getFlag(split[0], true), flag_str);
-                                    flags.put(flag.getKey(), flag);
+                                    Flag<?> flag = FlagManager.getFlag(split[0]);
+                                    flags.put(flag, flag_str);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     exception = true;
@@ -1841,8 +1842,8 @@ public class SQLManager implements AbstractDB {
                             } else {
                                 element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                                 if (StringMan.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
-                                    Flag flag = new Flag(FlagManager.getFlag(element, true), "");
-                                    flags.put(flag.getKey(), flag);
+                                    Flag flag = FlagManager.getFlag(element);
+                                    flags.put(flag, "");
                                 } else {
                                     PS.debug("INVALID FLAG: " + element);
                                 }
@@ -1851,7 +1852,7 @@ public class SQLManager implements AbstractDB {
                         if (exception) {
                             PS.debug("&cPlot " + id + " | " + plot + " had an invalid flag. A fix has been attempted.");
                             PS.debug("&c" + myflags);
-                            this.setFlags(plot, flags.values());
+                            this.setFlags(plot, flags);
                         }
                         plot.getSettings().flags = flags;
                     } else if (Settings.AUTO_PURGE) {
@@ -1962,8 +1963,8 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setFlags(final Plot plot, Collection<Flag> flags) {
-        final String flag_string = FlagManager.toString(flags);
+    public void setFlags(final Plot plot, HashMap<Flag<?>, Object> flags) {
+        final String flag_string = FlagManager.toString(flags); //todo MattBDev: Fix this for flags to work.
         addPlotTask(plot, new UniqueStatement("setFlags") {
             @Override
             public void set(PreparedStatement stmt) throws SQLException {
@@ -2641,22 +2642,22 @@ public class SQLManager implements AbstractDB {
                             flags_string = new String[] {};
                         }
                     }
-                    HashMap<String, Flag> flags = new HashMap<>();
+                    HashMap<Flag<?>, Object> flags = new HashMap<>();
                     boolean exception = false;
                     for (String element : flags_string) {
                         if (element.contains(":")) {
                             String[] split = element.split(":");
                             try {
                                 String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("�", ",");
-                                Flag flag = new Flag(FlagManager.getFlag(split[0], true), flag_str);
-                                flags.put(flag.getKey(), flag);
+                                Flag flag = FlagManager.getFlag(split[0]);
+                                flags.put(flag, flag_str);
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 exception = true;
                             }
                         } else {
-                            Flag flag = new Flag(FlagManager.getFlag(element, true), "");
-                            flags.put(flag.getKey(), flag);
+                            Flag flag = FlagManager.getFlag(element);
+                            flags.put(flag, "");
                         }
                     }
                     if (exception) {
@@ -2687,14 +2688,15 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void setFlags(final PlotCluster cluster, Collection<Flag> flags) {
+    public void setFlags(final PlotCluster cluster, HashMap<Flag<?>, Object> flags) {
         final StringBuilder flag_string = new StringBuilder();
         int i = 0;
-        for (Flag flag : flags) {
+        for (Entry<Flag<?>, Object> flag : flags.entrySet()) {
             if (i != 0) {
                 flag_string.append(",");
             }
-            flag_string.append(flag.getKey() + ":" + flag.getValueString().replaceAll(":", "\u00AF").replaceAll(",", "\u00B4"));
+            flag_string.append(flag.getKey().getName() + ":" + flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯").replaceAll(",",
+                    "´"));
             i++;
         }
         addClusterTask(cluster, new UniqueStatement("setFlags") {
@@ -3019,12 +3021,12 @@ public class SQLManager implements AbstractDB {
                 PS.debug("&8 - &7Correcting merge for: " + plot);
                 setMerged(dataPlot, plot.getMerged());
             }
-            HashMap<String, Flag> pf = plot.getFlags();
-            HashMap<String, Flag> df = dataPlot.getFlags();
+            HashMap<Flag<?>, Object> pf = plot.getFlags();
+            HashMap<Flag<?>, Object> df = dataPlot.getFlags();
             if (!pf.isEmpty() && !df.isEmpty()) {
                 if (pf.size() != df.size() || !StringMan.isEqual(StringMan.joinOrdered(pf.values(), ","), StringMan.joinOrdered(df.values(), ","))) {
                     PS.debug("&8 - &7Correcting flags for: " + plot);
-                    setFlags(plot, pf.values());
+                    setFlags(plot, pf);
                 }
             }
         }

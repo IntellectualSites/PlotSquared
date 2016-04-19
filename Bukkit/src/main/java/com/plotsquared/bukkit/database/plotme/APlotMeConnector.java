@@ -5,8 +5,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,15 +18,6 @@ abstract class APlotMeConnector {
     public abstract HashMap<String, HashMap<PlotId, Plot>> getPlotMePlots(Connection connection) throws SQLException;
 
     public abstract boolean accepts(String version);
-
-    public String getWorld(String world) {
-        for (World newWorld : Bukkit.getWorlds()) {
-            if (newWorld.getName().equalsIgnoreCase(world)) {
-                return newWorld.getName();
-            }
-        }
-        return world;
-    }
 
     public boolean isValidConnection(Connection connection) {
         return connection != null;
