@@ -75,4 +75,13 @@ public class BukkitEconHandler extends EconHandler {
     public double getBalance(PlotPlayer player) {
         return this.econ.getBalance(player.getName());
     }
+
+    public void setPermission(String world, String player, String perm, boolean value) {
+        if (value) {
+            this.perms.playerAdd(world, player, perm);
+        } else {
+            this.perms.playerRemove(world, player, perm);
+        }
+    }
+
 }
