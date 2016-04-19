@@ -1,11 +1,12 @@
 package com.intellectualcrafters.plot.util;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
 import com.intellectualcrafters.plot.object.Location;
@@ -708,9 +709,9 @@ public class MainUtil {
         String expires = C.UNKNOWN.s();
         if (Settings.AUTO_CLEAR) {
             if (plot.hasOwner()) {
-                Flag keep = plot.getFlag("keep");
-                if (keep != null) {
-                    Object value = keep.getValue();
+                Optional<Object> keep = plot.getFlag(Flags.KEEP);
+                if (keep.isPresent()) {
+                    Object value = keep.get();
                     if (value instanceof Boolean) {
                         if (Boolean.TRUE.equals(value)) {
                             expires = C.NONE.s();
@@ -731,8 +732,8 @@ public class MainUtil {
         } else {
             expires = C.NEVER.s();
         }
-        Flag descriptionFlag = FlagManager.getPlotFlagRaw(plot, "description");
-        String description = descriptionFlag == null ? C.NONE.s() : descriptionFlag.getValueString();
+        Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
+        String description = !descriptionFlag.isPresent() ? C.NONE.s() : Flags.DESCRIPTION.valueToString(descriptionFlag.get());
 
         String flags;
         if (!StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "").isEmpty()) {

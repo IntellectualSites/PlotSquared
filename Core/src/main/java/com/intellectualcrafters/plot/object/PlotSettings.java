@@ -2,7 +2,7 @@ package com.intellectualcrafters.plot.object;
 
 import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 import java.util.ArrayList;
@@ -49,21 +49,13 @@ public class PlotSettings {
      * @deprecated Raw access
      */
     @Deprecated
-    public HashMap<String, Flag> flags;
+    public HashMap<Flag<?>, Object> flags = new HashMap<>();
     /**
      * Home Position.
      * @deprecated Raw access
      */
     @Deprecated
     private BlockLoc position;
-
-    /**
-     * Constructor
-     *
-     */
-    public PlotSettings() {
-        this.flags = new HashMap<>();
-    }
 
     /**
      * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
@@ -131,7 +123,7 @@ public class PlotSettings {
     }
 
     public String getJoinMessage(PlotArea area) {
-        Flag greeting = FlagManager.getSettingFlag(area, this, "greeting");
+        Flag greeting = Flags.GREETING;
         if (greeting != null) {
             return greeting.getValueString();
         }
@@ -145,7 +137,7 @@ public class PlotSettings {
      * @return Farewell flag
      */
     public String getLeaveMessage(PlotArea plotArea) {
-        Flag farewell = FlagManager.getSettingFlag(plotArea, this, "farewell");
+        Flag farewell = Flags.FAREWELL;
         if (farewell != null) {
             return farewell.getValueString();
         }

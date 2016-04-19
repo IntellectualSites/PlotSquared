@@ -20,41 +20,41 @@ public class BukkitChatManager extends ChatManager<FancyMessage> {
     }
 
     @Override
-    public void color(PlotMessage m, String color) {
-        m.$(this).color(ChatColor.getByChar(C.color(color).substring(1)));
+    public void color(PlotMessage message, String color) {
+        message.$(this).color(ChatColor.getByChar(C.color(color).substring(1)));
     }
 
     @Override
-    public void tooltip(PlotMessage m, PlotMessage... tooltips) {
+    public void tooltip(PlotMessage message, PlotMessage... tooltips) {
         List<FancyMessage> lines = new ArrayList<>();
         for (PlotMessage tooltip : tooltips) {
             lines.add(tooltip.$(this));
         }
-        m.$(this).formattedTooltip(lines);
+        message.$(this).formattedTooltip(lines);
     }
 
     @Override
-    public void command(PlotMessage m, String command) {
-        m.$(this).command(command);
+    public void command(PlotMessage message, String command) {
+        message.$(this).command(command);
     }
 
     @Override
-    public void text(PlotMessage m, String text) {
-        m.$(this).then(ChatColor.stripColor(text));
+    public void text(PlotMessage message, String text) {
+        message.$(this).then(ChatColor.stripColor(text));
     }
 
     @Override
-    public void send(PlotMessage m, PlotPlayer player) {
+    public void send(PlotMessage plotMessage, PlotPlayer player) {
         if (player instanceof ConsolePlayer) {
-            player.sendMessage(m.$(this).toOldMessageFormat());
+            player.sendMessage(plotMessage.$(this).toOldMessageFormat());
         } else {
-            m.$(this).send(((BukkitPlayer) player).player);
+            plotMessage.$(this).send(((BukkitPlayer) player).player);
         }
     }
 
     @Override
-    public void suggest(PlotMessage m, String command) {
-        m.$(this).suggest(command);
+    public void suggest(PlotMessage plotMessage, String command) {
+        plotMessage.$(this).suggest(command);
     }
 
 }

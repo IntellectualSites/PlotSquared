@@ -1830,8 +1830,8 @@ public class PS {
         for (String flag : intFlags) {
             FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
         }
-        FlagManager.addFlag(new AbstractFlag("done", new FlagValue.StringValue()), true);
-        FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.IntegerListValue()), true);
+        FlagManager.addFlag(new AbstractFlag("done", new FlagValue.StringValue()));
+        FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.IntegerListValue()));
         FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
@@ -1858,6 +1858,10 @@ public class PS {
         FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
         FlagManager.addFlag(new AbstractFlag("blocked-cmds", new FlagValue.StringListValue()));
         FlagManager.addFlag(new AbstractFlag("ice-melt", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("soil-dry", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("grass-grow", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("mycel-grow", new FlagValue.BooleanValue()));
+        FlagManager.addFlag(new AbstractFlag("vine-grow", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("block-ignition", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("block-burn", new FlagValue.BooleanValue()));
         FlagManager.addFlag(new AbstractFlag("fire-spread", new FlagValue.BooleanValue()));
@@ -1878,10 +1882,6 @@ public class PS {
                 }
             }
 
-            @Override
-            public String getValueDesc() {
-                return "Flag value must a timestamp or a boolean";
-            }
         });
         FlagManager.addFlag(new AbstractFlag("gamemode") {
 
@@ -1908,10 +1908,6 @@ public class PS {
                 }
             }
 
-            @Override
-            public String getValueDesc() {
-                return "Flag value must be a gamemode: 'creative' , 'survival', 'adventure' or 'spectator'";
-            }
         });
         FlagManager.addFlag(new AbstractFlag("price", new FlagValue.UnsignedDoubleValue()));
         FlagManager.addFlag(new AbstractFlag("time", new FlagValue.LongValue()));
@@ -1935,12 +1931,8 @@ public class PS {
                 }
             }
 
-            @Override
-            public String getValueDesc() {
-                return "Flag value must be weather type: 'clear' or 'rain'";
-            }
         });
-        FlagManager.addFlag(new AbstractFlag("description", new FlagValue.StringValue()), true);
+        FlagManager.addFlag(new AbstractFlag("description", new FlagValue.StringValue()));
     }
 
     /**

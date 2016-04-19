@@ -12,25 +12,10 @@ import java.util.List;
 
 public abstract class FlagValue<T> {
 
-    private final Class<T> clazz;
-
-    @SuppressWarnings("unchecked")
     public FlagValue() {
-        this.clazz = (Class<T>) getClass();
     }
 
-    public FlagValue(Class<T> clazz) {
-        if (clazz == null) {
-            throw new NullPointerException();
-        }
-        this.clazz = clazz;
-    }
-
-    public boolean validValue(Object value) {
-        return value != null && value.getClass() == this.clazz;
-    }
-
-    public String toString(Object t) {
+    public String toString(T t) {
         return t.toString();
     }
 
@@ -40,7 +25,7 @@ public abstract class FlagValue<T> {
 
     public abstract String getDescription();
 
-    public interface ListValue extends Cloneable {
+    interface ListValue extends Cloneable {
 
         void add(Object t, String value);
 
@@ -103,9 +88,8 @@ public abstract class FlagValue<T> {
     public static class IntervalValue extends FlagValue<Integer[]> {
 
         @Override
-        public String toString(Object t) {
-            Integer[] value = (Integer[]) t;
-            return value[0] + " " + value[1];
+        public String toString(Integer[] t) {
+            return t[0] + " " + t[1];
         }
 
         @Override
@@ -306,8 +290,8 @@ public abstract class FlagValue<T> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String toString(Object t) {
-            return StringMan.join((HashSet<PlotBlock>) t, ",");
+        public String toString(HashSet<PlotBlock> t) {
+            return StringMan.join(t, ",");
         }
 
         @SuppressWarnings("unchecked")
@@ -318,7 +302,7 @@ public abstract class FlagValue<T> {
 
         @Override
         public HashSet<PlotBlock> parse(String t) {
-            HashSet<PlotBlock> list = new HashSet<PlotBlock>();
+            HashSet<PlotBlock> list = new HashSet<>();
             for (String item : t.split(",")) {
                 PlotBlock block;
                 try {
@@ -377,8 +361,8 @@ public abstract class FlagValue<T> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public String toString(Object t) {
-            return StringMan.join((List<Integer>) t, ",");
+        public String toString(List<Integer> t) {
+            return StringMan.join(t, ",");
         }
 
         @SuppressWarnings("unchecked")
@@ -390,7 +374,7 @@ public abstract class FlagValue<T> {
         @Override
         public List<Integer> parse(String t) {
             String[] split = t.split(",");
-            ArrayList<Integer> numbers = new ArrayList<Integer>();
+            ArrayList<Integer> numbers = new ArrayList<>();
             for (String element : split) {
                 numbers.add(Integer.parseInt(element));
             }
@@ -423,12 +407,11 @@ public abstract class FlagValue<T> {
         }
     }
 
-    @SuppressWarnings("ALL")
     public static class StringListValue extends FlagValue<List<String>> implements ListValue {
 
         @Override
-        public String toString(final Object t) {
-            return StringMan.join((List<String>) t, ",");
+        public String toString(final List<String> t) {
+            return StringMan.join(t, ",");
         }
 
         @Override
@@ -463,54 +446,6 @@ public abstract class FlagValue<T> {
                 }
             } catch (final Exception ignored) {
                 ignored.printStackTrace();
-            }
-        }
-    }
-
-    public static class DoubleListValue extends FlagValue<List<Double>> implements ListValue {
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public String toString(Object t) {
-            return StringMan.join((List<Double>) t, ",");
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public List<Double> getValue(Object t) {
-            return (List<Double>) t;
-        }
-
-        @Override
-        public List<Double> parse(String t) {
-            String[] split = t.split(",");
-            ArrayList<Double> numbers = new ArrayList<Double>();
-            for (String element : split) {
-                numbers.add(Double.parseDouble(element));
-            }
-            return numbers;
-        }
-
-        @Override
-        public String getDescription() {
-            return "Flag value must be a integer list";
-        }
-
-        @Override
-        public void add(Object t, String value) {
-            try {
-                ((List<Double>) t).addAll(parse(value));
-            } catch (Exception e) {
-            }
-        }
-
-        @Override
-        public void remove(Object t, String value) {
-            try {
-                for (Double item : parse(value)) {
-                    ((List<Double>) t).remove(item);
-                }
-            } catch (Exception e) {
             }
         }
     }

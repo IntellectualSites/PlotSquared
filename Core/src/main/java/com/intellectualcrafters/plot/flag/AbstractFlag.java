@@ -1,16 +1,14 @@
 package com.intellectualcrafters.plot.flag;
 
-import com.intellectualcrafters.plot.util.StringMan;
-
 /**
  * Created 2014-09-23 for PlotSquared
  *
 
 
  */
-public class AbstractFlag {
+public class AbstractFlag<T extends FlagValue> {
     public final String key;
-    public final FlagValue<?> value;
+    public final T value = null;
 
     public AbstractFlag(String key) {
         this(key, new FlagValue.StringValue());
@@ -22,18 +20,12 @@ public class AbstractFlag {
      * @param key
      */
     public AbstractFlag(String key, FlagValue<?> value) {
-        if (!StringMan.isAlpha(key.replaceAll("_", "").replaceAll("-", ""))) {
-            throw new IllegalArgumentException("Flag must be alphabetic characters");
-        }
-        if (key.length() > 16) {
-            throw new IllegalArgumentException("Key must be <= 16 characters");
-        }
         this.key = key.toLowerCase();
-        if (value == null) {
-            this.value = new FlagValue.StringValue();
-        } else {
-            this.value = value;
-        }
+        //if (value == null) {
+        //    this.value = new FlagValue.StringValue();
+        //} else {
+        //    this.value = value;
+        //}
     }
     
     public boolean isList() {
@@ -51,11 +43,7 @@ public class AbstractFlag {
     public String toString(Object t) {
         return this.value.toString(t);
     }
-    
-    public String getValueDesc() {
-        return this.value.getDescription();
-    }
-    
+
     /**
      * AbstractFlag key
      *

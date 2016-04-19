@@ -3,8 +3,8 @@ package com.intellectualcrafters.plot.generator;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -89,8 +89,7 @@ public abstract class HybridUtils {
                     result.add(whenDone.value.data_sd);
                     result.add(whenDone.value.air_sd);
                     result.add(whenDone.value.variety_sd);
-                    Flag flag = new Flag(FlagManager.getFlag("analysis"), result);
-                    FlagManager.addPlotFlag(origin, flag);
+                    FlagManager.addPlotFlag(origin, Flags.ANALYSIS, result);
                     TaskManager.runTask(whenDone);
                     return;
                 }

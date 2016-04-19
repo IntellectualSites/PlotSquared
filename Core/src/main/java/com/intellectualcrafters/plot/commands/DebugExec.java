@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.ConsolePlayer;
@@ -211,8 +212,9 @@ public class DebugExec extends SubCommand {
                     }
                     String flag = args[1];
                     for (Plot plot : PS.get().getBasePlots()) {
-                        if (FlagManager.getPlotFlagRaw(plot, flag) != null) {
-                            FlagManager.removePlotFlag(plot, flag);
+                        Flag<?> flag1 = FlagManager.getFlag(flag);
+                        if (plot.getFlag(flag1).isPresent()) {
+                            FlagManager.removePlotFlag(plot, flag1);
                         }
                     }
                     return MainUtil.sendMessage(player, "Cleared flag: " + flag);

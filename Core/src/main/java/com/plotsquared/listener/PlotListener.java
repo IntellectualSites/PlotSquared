@@ -1,9 +1,11 @@
 package com.plotsquared.listener;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -41,19 +43,19 @@ public class PlotListener {
         pp.setMeta("lastplot", plot);
         EventUtil.manager.callEntry(pp, plot);
         if (plot.hasOwner()) {
-            HashMap<String, Flag> flags = FlagManager.getPlotFlags(plot);
+            HashMap<Flag<?>, Object> flags = FlagManager.getPlotFlags(plot);
             int size = flags.size();
             boolean titles = Settings.TITLES;
             final String greeting;
 
             if (size != 0) {
-                Flag titleFlag = flags.get("titles");
-                if (titleFlag != null) {
-                    titles = (Boolean) titleFlag.getValue();
+                Optional<Boolean> titleFlag = plot.getFlag(Flags.TITLES);
+                if (titleFlag.isPresent()) {
+                    titles = titleFlag.get();
                 }
-                Flag greetingFlag = flags.get("greeting");
-                if (greetingFlag != null) {
-                    greeting = (String) greetingFlag.getValue();
+                Optional<String> greetingFlag = plot.getFlag(Flags.GREETING);
+                if (greetingFlag.isPresent()) {
+                    greeting = greetingFlag.get();
                     MainUtil.format(C.PREFIX_GREETING.s() + greeting, plot, pp, false, new RunnableVal<String>() {
                         @Override
                         public void run(String value) {
@@ -63,8 +65,8 @@ public class PlotListener {
                 } else {
                     greeting = "";
                 }
-                Flag enter = flags.get("notify-enter");
-                if (enter != null && (Boolean) enter.getValue()) {
+                Optional<Boolean> enter = plot.getFlag(Flags.NOTIFY_ENTER);
+                if (enter.isPresent() && enter.get()) {
                     if (!Permissions.hasPermission(pp, "plots.flag.notify-enter.bypass")) {
                         for (UUID uuid : plot.getOwners()) {
                             PlotPlayer owner = UUIDHandler.getPlayer(uuid);
@@ -75,38 +77,38 @@ public class PlotListener {
                         }
                     }
                 }
-                Flag gamemodeFlag = flags.get("gamemode");
-                if (gamemodeFlag != null) {
-                    if (pp.getGameMode() != gamemodeFlag.getValue()) {
+                Optional<PlotGameMode> gamemodeFlag = plot.getFlag(Flags.GAMEMODE);
+                if (gamemodeFlag.isPresent()) {
+                    if (pp.getGameMode() != gamemodeFlag.get()) {
                         if (!Permissions.hasPermission(pp, "plots.gamemode.bypass")) {
-                            pp.setGameMode((PlotGameMode) gamemodeFlag.getValue());
+                            pp.setGameMode(gamemodeFlag.get());
                         } else {
                             MainUtil.sendMessage(pp,
-                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.getValue()));
+                                    StringMan.replaceAll(C.GAMEMODE_WAS_BYPASSED.s(), "{plot}", plot.getId(), "{gamemode}", gamemodeFlag.get()));
                         }
                     }
                 }
-                Flag flyFlag = flags.get("fly");
-                if (flyFlag != null) {
-                    pp.setFlight((boolean) flyFlag.getValue());
+                Optional<Boolean> flyFlag = plot.getFlag(Flags.FLY);
+                if (flyFlag.isPresent()) {
+                    pp.setFlight(flyFlag.get());
                 }
-                Flag timeFlag = flags.get("time");
-                if (timeFlag != null) {
+                Optional<Long> timeFlag = plot.getFlag(Flags.TIME);
+                if (timeFlag.isPresent()) {
                     try {
-                        long time = (long) timeFlag.getValue();
+                        long time = timeFlag.get();
                         pp.setTime(time);
                     } catch (Exception e) {
-                        FlagManager.removePlotFlag(plot, "time");
+                        FlagManager.removePlotFlag(plot, Flags.TIME);
                     }
                 }
-                Flag weatherFlag = flags.get("weather");
-                if (weatherFlag != null) {
-                    pp.setWeather((PlotWeather) weatherFlag.getValue());
+                Optional<PlotWeather> weatherFlag = plot.getFlag(Flags.WEATHER);
+                if (weatherFlag.isPresent()) {
+                    pp.setWeather(weatherFlag.get());
                 }
 
-                Flag musicFlag = flags.get("music");
-                if (musicFlag != null) {
-                    Integer id = (Integer) musicFlag.getValue();
+                Optional<Integer> musicFlag = plot.getFlag(Flags.MUSIC);
+                if (musicFlag.isPresent()) {
+                    Integer id = musicFlag.get();
                     if ((id >= 2256 && id <= 2267) || (id == 0)) {
                         Location loc = pp.getLocation();
                         Location lastLoc = pp.getMeta("music");
@@ -172,7 +174,7 @@ public class PlotListener {
             if (pw == null) {
                 return true;
             }
-            if (FlagManager.getPlotFlagRaw(plot, "gamemode") != null) {
+            if (plot.getFlag(Flags.GAMEMODE).isPresent()) {
                 if (pp.getGameMode() != pw.GAMEMODE) {
                     if (!Permissions.hasPermission(pp, "plots.gamemode.bypass")) {
                         pp.setGameMode(pw.GAMEMODE);
@@ -182,17 +184,17 @@ public class PlotListener {
                     }
                 }
             }
-            Flag farewell = FlagManager.getPlotFlagRaw(plot, "farewell");
-            if (farewell != null) {
-                MainUtil.format(C.PREFIX_FAREWELL.s() + farewell.getValueString(), plot, pp, false, new RunnableVal<String>() {
+            Optional<String> farewell = plot.getFlag(Flags.FAREWELL);
+            if (farewell.isPresent()) {
+                MainUtil.format(C.PREFIX_FAREWELL.s() + farewell.get(), plot, pp, false, new RunnableVal<String>() {
                     @Override
                     public void run(String value) {
                         MainUtil.sendMessage(pp, value);
                     }
                 });
             }
-            Flag leave = FlagManager.getPlotFlagRaw(plot, "notify-leave");
-            if ((leave != null) && (Boolean) leave.getValue()) {
+            Optional<Boolean> leave = plot.getFlag(Flags.NOTIFY_LEAVE);
+            if (leave.isPresent() && leave.get()) {
                 if (!Permissions.hasPermission(pp, "plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
                         PlotPlayer owner = UUIDHandler.getPlayer(uuid);
@@ -202,16 +204,16 @@ public class PlotListener {
                     }
                 }
             }
-            if (FlagManager.getPlotFlagRaw(plot, "fly") != null) {
+            if (plot.getFlag(Flags.FLY).isPresent()) {
                 PlotGameMode gamemode = pp.getGameMode();
                 if (gamemode == PlotGameMode.SURVIVAL || (gamemode == PlotGameMode.ADVENTURE)) {
                     pp.setFlight(false);
                 }
             }
-            if (FlagManager.getPlotFlagRaw(plot, "time") != null) {
+            if (plot.getFlag(Flags.TIME).isPresent()) {
                 pp.setTime(Long.MAX_VALUE);
             }
-            if (FlagManager.getPlotFlagRaw(plot, "weather") != null) {
+            if (plot.getFlag(Flags.WEATHER).isPresent()) {
                 pp.setWeather(PlotWeather.RESET);
             }
             Location lastLoc = pp.getMeta("music");

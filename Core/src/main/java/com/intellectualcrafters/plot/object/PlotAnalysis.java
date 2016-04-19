@@ -1,9 +1,9 @@
 package com.intellectualcrafters.plot.object;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.util.MathMan;
 import com.intellectualcrafters.plot.util.TaskManager;
@@ -34,10 +34,10 @@ public class PlotAnalysis {
     private int complexity;
 
     public static PlotAnalysis getAnalysis(Plot plot) {
-        Flag flag = FlagManager.getPlotFlagRaw(plot, "analysis");
-        if (flag != null) {
+        Optional<List<Integer>> flag = plot.getFlag(Flags.ANALYSIS);
+        if (flag.isPresent()) {
             PlotAnalysis analysis = new PlotAnalysis();
-            List<Integer> values = (List<Integer>) flag.getValue();
+            List<Integer> values = flag.get();
             analysis.changes = values.get(0); // 2126
             analysis.faces = values.get(1); // 90
             analysis.data = values.get(2); // 0

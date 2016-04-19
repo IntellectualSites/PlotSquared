@@ -1,11 +1,12 @@
 package com.intellectualcrafters.plot.util;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.OfflinePlotPlayer;
 import com.intellectualcrafters.plot.object.Plot;
@@ -155,7 +156,7 @@ public class ExpireManager {
                                 if ((changed.changes != 0) && (changed.getComplexity() > Settings.CLEAR_THRESHOLD)) {
                                     PS.debug("$2[&5Expire&dManager$2] &bIgnoring modified plot: " + plot + " : " + changed.getComplexity() + " - "
                                             + changed.changes);
-                                    FlagManager.addPlotFlag(plot, new Flag(FlagManager.getFlag("analysis"), changed.asList()));
+                                    FlagManager.addPlotFlag(plot, Flags.ANALYSIS, changed.asList());
                                     TaskManager.runTaskLaterAsync(task, Settings.CLEAR_INTERVAL * 20);
                                 } else {
                                     expiredTask.run(plot, new Runnable() {
@@ -263,9 +264,9 @@ public class ExpireManager {
         if (!plot.hasOwner() || Objects.equals(DBFunc.everyone, plot.owner) || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
             return false;
         }
-        Flag keep = plot.getFlag("keep");
-        if (keep != null) {
-            Object value = keep.getValue();
+        Optional<Object> keep = plot.getFlag(Flags.KEEP);
+        if (keep.isPresent()) {
+            Object value = keep.get();
             if (value instanceof Boolean) {
                 if (Boolean.TRUE.equals(value)) {
                     return false;

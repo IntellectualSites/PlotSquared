@@ -1,9 +1,9 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.Set;
 
 @CommandDeclaration(
@@ -59,14 +60,14 @@ public class Buy extends SubCommand {
         if (currentPlots > plr.getAllowedPlots()) {
             return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
         }
-        Flag flag = FlagManager.getPlotFlagRaw(plot, "price");
-        if (flag == null) {
+        Optional<Double> flag = plot.getFlag(Flags.PRICE);
+        if (!flag.isPresent()) {
             return sendMessage(plr, C.NOT_FOR_SALE);
         }
         if (plot.isOwner(plr.getUUID())) {
             return sendMessage(plr, C.CANNOT_BUY_OWN);
         }
-        double price = (double) flag.getValue();
+        double price = flag.get();
         if ((EconHandler.manager != null) && (price > 0d)) {
             if (EconHandler.manager.getMoney(plr) < price) {
                 return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + price);
@@ -78,7 +79,7 @@ public class Buy extends SubCommand {
             if (owner != null) {
                 sendMessage(plr, C.PLOT_SOLD, plot.getId() + "", plr.getName(), price + "");
             }
-            FlagManager.removePlotFlag(plot, "price");
+            plot.removeFlag(Flags.PRICE);
         }
         plot.setOwner(plr.getUUID());
         MainUtil.sendMessage(plr, C.CLAIMED);

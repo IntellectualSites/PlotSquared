@@ -1,8 +1,8 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -21,12 +21,11 @@ public class Desc extends SetCommand {
     @Override
     public boolean set(PlotPlayer plr, Plot plot, String desc) {
         if (desc.isEmpty()) {
-            plot.removeFlag("description");
+            plot.removeFlag(Flags.DESCRIPTION);
             MainUtil.sendMessage(plr, C.DESC_UNSET);
             return true;
         }
-        Flag flag = new Flag(FlagManager.getFlag("description"), desc);
-        boolean result = FlagManager.addPlotFlag(plot, flag);
+        boolean result = FlagManager.addPlotFlag(plot, Flags.DESCRIPTION, desc);
         if (!result) {
             MainUtil.sendMessage(plr, C.FLAG_NOT_ADDED);
             return false;
