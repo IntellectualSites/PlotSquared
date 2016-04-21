@@ -142,7 +142,7 @@ public class FlagCmd extends SubCommand {
                     String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                     Optional<? extends Collection> flag1 = plot.getFlag((Flag<? extends Collection<?>>) flag);
                     if (flag1.isPresent()) {
-                        boolean o = flag1.get().remove(flag.parseValue(value));
+                        boolean o = flag1.get().removeAll((Collection) flag.parseValue(value));
                         if (o) {
                             MainUtil.sendMessage(player, C.FLAG_REMOVED);
                         } else {
