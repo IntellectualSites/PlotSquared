@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,15 +25,14 @@ import java.util.Set;
 public class FlagManager {
 
 
-    private static final HashSet<? extends Flag<?>>
-            reserved = Sets.newHashSet();//todo MattBDev: Ask Empire what a reserved flag is
+    private static final HashSet<Flag<?>> reserved = Sets.newHashSet(Flags.ANALYSIS, Flags.DONE);
 
     /**
      * Reserve a flag so that it cannot be set by players
      * @param flag
      */
-    public static void reserveFlag(String flag) {
-        //reserved.add(flag);
+    public static void reserveFlag(Flag<?> flag) {
+        reserved.add(flag);
     }
 
     /**
@@ -48,36 +48,21 @@ public class FlagManager {
      * Get the reserved flags
      * @return
      */
-    public static HashSet<Flag<?>> getReservedFlags() {
-        return (HashSet<Flag<?>>) reserved.clone();
+    public static Set<Flag<?>> getReservedFlags() {
+        return Collections.unmodifiableSet(reserved);
     }
 
     /**
      * Unreserve a flag
      * @param flag
      */
-    public static void unreserveFlag(String flag) {
+    public static void unreserveFlag(Flag<?> flag) {
         reserved.remove(flag);
     }
 
-    /**
-     * Register an AbstractFlag with PlotSquared
-     *
-     * @param af Flag to register
-     *
-     * @return boolean success
-     */
-    public static boolean addFlag(AbstractFlag af) {
-        //todo MattBDev: Remove this
-        return true;
-        //return addFlag(af, false);
-    }
-
     public static String toString(HashMap<Flag<?>, Object> flags) {
-        //todo MattBDev: Fix this for flags to work.
-        //noinspection StringBufferReplaceableByString,MismatchedQueryAndUpdateOfStringBuilder
         StringBuilder flag_string = new StringBuilder();
-/*        int i = 0;
+        int i = 0;
         Flag<?> flag;
         for (Map.Entry<Flag<?>, Object> entry : flags.entrySet()) {
             flag = entry.getKey();
@@ -86,7 +71,7 @@ public class FlagManager {
             }
            flag_string.append(flag.getName() + ":" + flag.valueToString(entry.getValue()).replaceAll(":", "¯").replaceAll(",", "´"));
             i++;
-        }*/
+        }
         return flag_string.toString();
     }
 
@@ -122,14 +107,14 @@ public class FlagManager {
      * @param flag
      * @param value
      */
-    public static <V> boolean addPlotFlag(Plot origin, Flag<V> flag, V value) {
+    public static <V> boolean addPlotFlag(Plot origin, Flag<V> flag, Object value) {
         boolean result = EventUtil.manager.callFlagAdd(flag, origin);
         if (!result) {
             return false;
         }
         for (Plot plot : origin.getConnectedPlots()) {
             plot.getFlags().put(flag, value);
-            plot.reEnter();
+            plot.reEnter(); //TODO fix this so FlagTest will run during compile
             DBFunc.setFlags(plot, plot.getFlags());
         }
         return true;
@@ -246,7 +231,7 @@ public class FlagManager {
      */
     public static List<Flag> getFlags(PlotPlayer player) {
         List<Flag> returnFlags = new ArrayList<>();
-        for (Flag flag : Flags.flags) {
+        for (Flag flag : Flags.getFlags()) {
             if (Permissions.hasPermission(player, "plots.set.flag." + flag.getName().toLowerCase())) {
                 returnFlags.add(flag);
             }
@@ -262,39 +247,20 @@ public class FlagManager {
      * @return AbstractFlag
      */
     public static Flag<?> getFlag(String string) {
-        for (Flag flag : Flags.flags) {
+        for (Flag flag : Flags.getFlags()) {
             if (flag.getName().equalsIgnoreCase(string)) {
+                if (isReserved(flag)) {
+                    return null;
+                }
                 return flag;
             }
         }
         return null;
     }
 
-    /**
-     * Get an AbstractFlag by a string
-     *
-     * @param string Flag Key
-     * @param create If to create the flag if it does not exist
-     *
-     * @return AbstractFlag
-     */
-    public static Flag getFlag(String string, boolean create) {
-        for (Flag flag : Flags.getFlags()) {
-            if (flag.getName().equalsIgnoreCase(string)) {
-                return flag;
-            }
-        }
-
-        if (getFlag(string) == null && create) {
-            //return new AbstractFlag(string);
-        }
-        return getFlag(string);
-    }
-
     public static HashMap<Flag<?>, Object> parseFlags(List<String> flagstrings) {
         HashMap<Flag<?>, Object> map = new HashMap<>();
-        //todo MattBDev: Fix this
-/*
+
         for (String key : flagstrings) {
             String[] split;
             if (key.contains(";")) {
@@ -302,15 +268,11 @@ public class FlagManager {
             } else {
                 split = key.split(":");
             }
-            Flag flag;
-            if (split.length == 1) {
-                flag = new Flag(getFlag(split[0]), "");
-            } else {
-                flag = new Flag(getFlag(split[0], true), split[1]);
-            }
-            map.put(flag.getKey(), flag);
+            Flag<?> flag = getFlag(split[0]);
+            Object value = flag.parseValue(split[1]);
+            map.put(flag, value);
         }
-*/
+
         return map;
     }
 }

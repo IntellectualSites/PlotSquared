@@ -1,18 +1,26 @@
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.util.StringMan;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class StringListFlag extends ListFlag<List<String>> {
 
-    /**
-     * Flag object used to store basic information for a Plot. Flags are a
-     * key/value pair. For a flag to be usable by a player, you need to
-     * register it with PlotSquared.
-     *
-
-     * @param name Flag name
-     */
     public StringListFlag(String name) {
         super(name);
+    }
+
+    @Override public String valueToString(Object value) {
+        return StringMan.join((List<String>) value, ",");
+    }
+
+    @Override public List<String> parseValue(String value) {
+        return new ArrayList<>(Arrays.asList(value.split(",")));
+    }
+
+    @Override public String getValueDescription() {
+        return "Flag value must be a string list";
     }
 }

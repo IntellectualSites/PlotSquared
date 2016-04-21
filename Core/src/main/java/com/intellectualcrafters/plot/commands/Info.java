@@ -111,7 +111,7 @@ public class Info extends SubCommand {
             if (info == null) {
                 MainUtil.sendMessage(player,
                         "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aexpires&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                                + "&aowner&7, " + "&arating");
+                                + "&aowner&7, &arating");
                 return false;
             }
             full = true;

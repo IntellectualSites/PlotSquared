@@ -35,7 +35,7 @@ public class PlotBlockListFlag extends ListFlag<HashSet<PlotBlock>> {
                 }
                 short id = Short.parseShort(split[0]);
                 block = new PlotBlock(id, data);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 StringComparison<PlotBlock>.ComparisonResult str = WorldUtil.IMP.getClosestBlock(value);
                 if (str == null || str.match > 1) {
                     continue;
@@ -48,6 +48,6 @@ public class PlotBlockListFlag extends ListFlag<HashSet<PlotBlock>> {
     }
 
     @Override public String getValueDescription() {
-        return null;
+        return "Flag value must be a block list";
     }
 }

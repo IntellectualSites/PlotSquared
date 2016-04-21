@@ -709,7 +709,7 @@ public class MainUtil {
         String expires = C.UNKNOWN.s();
         if (Settings.AUTO_CLEAR) {
             if (plot.hasOwner()) {
-                Optional<Object> keep = plot.getFlag(Flags.KEEP);
+                Optional<?> keep = plot.getFlag(Flags.KEEP);
                 if (keep.isPresent()) {
                     Object value = keep.get();
                     if (value instanceof Boolean) {

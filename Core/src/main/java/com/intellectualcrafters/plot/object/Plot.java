@@ -943,7 +943,7 @@ public class Plot {
      * @param value
      */
     public <V> boolean setFlag(Flag<V> flag, Object value) {
-        return FlagManager.addPlotFlag(this, flag, (V) value);
+        return FlagManager.addPlotFlag(this, flag, value);
     }
 
     /**

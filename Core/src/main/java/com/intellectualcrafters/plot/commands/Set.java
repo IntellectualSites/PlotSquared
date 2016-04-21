@@ -2,7 +2,8 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Configuration;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.Flag;
+import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -160,13 +161,8 @@ public class Set extends SubCommand {
             return this.component.onCommand(plr, Arrays.copyOfRange(args, 0, args.length));
         }
         // flag
-        AbstractFlag af;
-        try {
-            af = new AbstractFlag(args[0].toLowerCase());
-        } catch (Exception e) {
-            af = new AbstractFlag("");
-        }
-        if (Flags.getFlags().contains(af)) {
+        Flag<?> flag = FlagManager.getFlag(args[0].toLowerCase());
+        if (Flags.getFlags().contains(flag)) {
             StringBuilder a = new StringBuilder();
             if (args.length > 1) {
                 for (int x = 1; x < args.length; x++) {

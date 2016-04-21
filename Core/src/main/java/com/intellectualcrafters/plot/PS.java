@@ -12,9 +12,6 @@ import com.intellectualcrafters.plot.database.Database;
 import com.intellectualcrafters.plot.database.MySQL;
 import com.intellectualcrafters.plot.database.SQLManager;
 import com.intellectualcrafters.plot.database.SQLite;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
-import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
@@ -40,8 +37,6 @@ import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.InventoryUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
-import com.intellectualcrafters.plot.util.PlotGameMode;
-import com.intellectualcrafters.plot.util.PlotWeather;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetQueue;
@@ -164,7 +159,6 @@ public class PS {
             setupConfigs();
             this.translationFile = new File(this.IMP.getDirectory() + File.separator + "translations" + File.separator + "PlotSquared.use_THIS.yml");
             C.load(this.translationFile);
-            setupDefaultFlags();
             setupDatabase();
             CommentManager.registerDefaultInboxes();
             // Tasks
@@ -488,21 +482,18 @@ public class PS {
 
     public PlotArea getPlotArea(String world, String id) {
         PlotArea[] areas = this.plotAreaMap.get(world);
-        if (areas == null) {
+        if (areas == null || id == null) {
             return null;
         }
         if (areas.length == 1) {
             return areas[0];
-        } else if (id == null) {
-            return null;
-        } else {
-            for (PlotArea area : areas) {
-                if (StringMan.isEqual(id, area.id)) {
-                    return area;
-                }
-            }
-            return null;
         }
+        for (PlotArea area : areas) {
+            if (StringMan.isEqual(id, area.id)) {
+                return area;
+            }
+        }
+        return null;
     }
 
     public PlotArea getPlotAreaAbs(String world, String id) {
@@ -1346,28 +1337,38 @@ public class PS {
         if (!this.plotAreaHasCollision && !this.plotAreaHashCheck.add(world.hashCode())) {
             this.plotAreaHasCollision = true;
         }
-        Set<String> worlds = this.config.contains("worlds") ? this.config.getConfigurationSection("worlds").getKeys(false) : new HashSet<String>();
+        Set<String> worlds;
+        if (this.config.contains("worlds")) {
+            worlds = this.config.getConfigurationSection("worlds").getKeys(false);
+        } else {
+            worlds = new HashSet<>();
+        }
         String path = "worlds." + world;
         ConfigurationSection worldSection = this.config.getConfigurationSection(path);
-        int type = worldSection != null ? worldSection.getInt("generator.type") : 0;
+        int type;
+        if (worldSection != null) {
+            type = worldSection.getInt("generator.type", 0);
+        } else {
+            type = 0;
+        }
         if (type == 0) {
             if (this.plotAreaMap.containsKey(world)) {
                 debug("World possibly already loaded: " + world);
                 return;
             }
-            IndependentPlotGenerator pg;
+            IndependentPlotGenerator plotGenerator;
             if (baseGenerator != null && baseGenerator.isFull()) {
-                pg = baseGenerator.getPlotGenerator();
+                plotGenerator = baseGenerator.getPlotGenerator();
             } else if (worldSection != null) {
                 String secondaryGeneratorName = worldSection.getString("generator.plugin");
                 GeneratorWrapper<?> secondaryGenerator = this.IMP.getGenerator(world, secondaryGeneratorName);
                 if (secondaryGenerator != null && secondaryGenerator.isFull()) {
-                    pg = secondaryGenerator.getPlotGenerator();
+                    plotGenerator = secondaryGenerator.getPlotGenerator();
                 } else {
                     String primaryGeneratorName = worldSection.getString("generator.init");
                     GeneratorWrapper<?> primaryGenerator = this.IMP.getGenerator(world, primaryGeneratorName);
                     if (primaryGenerator != null && primaryGenerator.isFull()) {
-                        pg = primaryGenerator.getPlotGenerator();
+                        plotGenerator = primaryGenerator.getPlotGenerator();
                     } else {
                         return;
                     }
@@ -1376,10 +1377,10 @@ public class PS {
                 return;
             }
             // Conventional plot generator
-            PlotArea plotArea = pg.getNewPlotArea(world, null, null, null);
-            PlotManager plotManager = pg.getNewPlotManager();
+            PlotArea plotArea = plotGenerator.getNewPlotArea(world, null, null, null);
+            PlotManager plotManager = plotGenerator.getNewPlotManager();
             PS.log(C.PREFIX + "&aDetected world load for '" + world + "'");
-            PS.log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + pg);
+            PS.log(C.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);
             PS.log(C.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
             PS.log(C.PREFIX + "&3 - manager: &7" + plotManager.getClass().getName());
             if (!this.config.contains(path)) {
@@ -1395,7 +1396,7 @@ public class PS {
             }
             // Now add it
             addPlotArea(plotArea);
-            pg.initialize(plotArea);
+            plotGenerator.initialize(plotArea);
             plotArea.setupBorder();
         } else {
             if (!worlds.contains(world)) {
@@ -1803,136 +1804,6 @@ public class PS {
             PS.log("&6Please go to the PlotSquared 'storage.yml' and configure the database correctly.");
             this.IMP.disable();
         }
-    }
-
-    /**
-     * Setup the default flags for PlotSquared.
-     *  - Create the flags
-     *  - Register with FlagManager and parse raw flag values
-     */
-    public void setupDefaultFlags() {
-        List<String> booleanFlags =
-                Arrays.asList("notify-enter", "notify-leave", "item-drop", "invincible", "instabreak", "drop-protection", "forcefield", "titles",
-                        "pve", "pvp",
-                        "no-worldedit", "redstone");
-        List<String> intervalFlags = Arrays.asList("feed", "heal");
-        List<String> stringFlags = Arrays.asList("greeting", "farewell");
-        List<String> intFlags = Arrays.asList("misc-cap", "entity-cap", "mob-cap", "animal-cap", "hostile-cap", "vehicle-cap", "music");
-        for (String flag : stringFlags) {
-            FlagManager.addFlag(new AbstractFlag(flag));
-        }
-        for (String flag : intervalFlags) {
-            FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.IntervalValue()));
-        }
-        for (String flag : booleanFlags) {
-            FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.BooleanValue()));
-        }
-        for (String flag : intFlags) {
-            FlagManager.addFlag(new AbstractFlag(flag, new FlagValue.UnsignedIntegerValue()));
-        }
-        FlagManager.addFlag(new AbstractFlag("done", new FlagValue.StringValue()));
-        FlagManager.addFlag(new AbstractFlag("analysis", new FlagValue.IntegerListValue()));
-        FlagManager.addFlag(new AbstractFlag("disable-physics", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("fly", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("explosion", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("mob-place", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("hostile-interact", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("hostile-attack", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("animal-interact", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("animal-attack", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("tamed-interact", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("tamed-attack", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("player-interact", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("misc-interact", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("misc-place", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("misc-break", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("hanging-interact", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("hanging-place", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("hanging-break", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("vehicle-use", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("vehicle-place", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("vehicle-break", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("device-interact", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("place", new FlagValue.PlotBlockListValue()));
-        FlagManager.addFlag(new AbstractFlag("break", new FlagValue.PlotBlockListValue()));
-        FlagManager.addFlag(new AbstractFlag("use", new FlagValue.PlotBlockListValue()));
-        FlagManager.addFlag(new AbstractFlag("blocked-cmds", new FlagValue.StringListValue()));
-        FlagManager.addFlag(new AbstractFlag("ice-melt", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("soil-dry", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("grass-grow", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("mycel-grow", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("vine-grow", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("block-ignition", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("block-burn", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("fire-spread", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("snow-melt", new FlagValue.BooleanValue()));
-        FlagManager.addFlag(new AbstractFlag("keep") {
-            @Override
-            public Object parseValueRaw(String value) {
-                if (MathMan.isInteger(value)) {
-                    return Long.parseLong(value);
-                }
-                switch (value.toLowerCase()) {
-                    case "true":
-                        return true;
-                    case "false":
-                        return false;
-                    default:
-                        return MainUtil.timeToSec(value) * 1000 + System.currentTimeMillis();
-                }
-            }
-
-        });
-        FlagManager.addFlag(new AbstractFlag("gamemode") {
-
-            @Override
-            public PlotGameMode parseValueRaw(String value) {
-                switch (value.toLowerCase()) {
-                    case "survival":
-                    case "s":
-                    case "0":
-                        return PlotGameMode.SURVIVAL;
-                    case "creative":
-                    case "c":
-                    case "1":
-                        return PlotGameMode.CREATIVE;
-                    case "adventure":
-                    case "a":
-                    case "2":
-                        return PlotGameMode.ADVENTURE;
-                    case "spectator":
-                    case "3":
-                        return PlotGameMode.SPECTATOR;
-                    default:
-                        return PlotGameMode.NOT_SET;
-                }
-            }
-
-        });
-        FlagManager.addFlag(new AbstractFlag("price", new FlagValue.UnsignedDoubleValue()));
-        FlagManager.addFlag(new AbstractFlag("time", new FlagValue.LongValue()));
-        FlagManager.addFlag(new AbstractFlag("weather") {
-
-            @Override
-            public PlotWeather parseValueRaw(String value) {
-                switch (value.toLowerCase()) {
-                    case "rain":
-                    case "storm":
-                    case "on":
-                    case "lightning":
-                    case "thunder":
-                        return PlotWeather.RAIN;
-                    case "clear":
-                    case "off":
-                    case "sun":
-                        return PlotWeather.CLEAR;
-                    default:
-                        return null;
-                }
-            }
-
-        });
-        FlagManager.addFlag(new AbstractFlag("description", new FlagValue.StringValue()));
     }
 
     /**

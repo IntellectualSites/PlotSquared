@@ -193,7 +193,7 @@ public class Condense extends SubCommand {
                 MainUtil.sendMessage(plr, "=== INPUT EVAL ===");
                 MainUtil.sendMessage(plr, "INPUT RADIUS: " + radius);
                 MainUtil.sendMessage(plr, "ESTIMATED MOVES: " + userMove);
-                MainUtil.sendMessage(plr, "ESTIMATED TIME: " + "No idea, times will drastically change based on the system performance and load");
+                MainUtil.sendMessage(plr, "ESTIMATED TIME: No idea, times will drastically change based on the system performance and load");
                 MainUtil.sendMessage(plr, "&e - Radius is measured in plot width");
                 return true;
         }

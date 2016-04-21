@@ -349,6 +349,7 @@ public abstract class PlotArea {
         }
         for (Entry<String, Object> stringObjectEntry : options.entrySet()) {
             if (!config.contains(stringObjectEntry.getKey())) {
+                PS.get().IMP.log(stringObjectEntry.toString());
                 config.set(stringObjectEntry.getKey(), stringObjectEntry.getValue());
             }
         }
