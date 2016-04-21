@@ -177,17 +177,11 @@ public class LikePlotMeConverter {
                         Integer pathWidth = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PathWidth"); //
                         PS.get().config.set("worlds." + world + ".road.width", pathWidth);
 
-                        int pathHeight = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
-                        if (pathHeight == 0) {
-                            pathHeight = 64;
-                        }
+                        int pathHeight = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight", 64); //
                         PS.get().config.set("worlds." + world + ".road.height", pathHeight);
                         PS.get().config.set("worlds." + world + ".wall.height", pathHeight);
                         PS.get().config.set("worlds." + world + ".plot.height", pathHeight);
                         int plotSize = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".PlotSize", 32); //
-                        if (plotSize == 0) {
-                            plotSize = 32;
-                        }
                         PS.get().config.set("worlds." + world + ".plot.size", plotSize);
                         String wallblock = plotmeDgYml.getString("worlds." + plotMeWorldName + ".WallBlock", "44"); //
                         PS.get().config.set("worlds." + world + ".wall.block", wallblock);
@@ -199,10 +193,7 @@ public class LikePlotMeConverter {
                         PS.get().config.set("worlds." + world + ".road.block", road);
                         int height = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".RoadHeight"); //
                         if (height == 0) {
-                            height = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".GroundHeight"); //
-                            if (height == 0) {
-                                height = 64;
-                            }
+                            height = plotmeDgYml.getInt("worlds." + plotMeWorldName + ".GroundHeight", 64); //
                         }
                         PS.get().config.set("worlds." + actualWorldName + ".road.height", height);
                         PS.get().config.set("worlds." + actualWorldName + ".plot.height", height);

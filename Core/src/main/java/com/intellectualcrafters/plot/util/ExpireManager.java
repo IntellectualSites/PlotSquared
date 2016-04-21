@@ -263,7 +263,7 @@ public class ExpireManager {
         if (!plot.hasOwner() || DBFunc.everyone.equals(plot.owner) || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
             return false;
         }
-        Optional<Object> keep = plot.getFlag(Flags.KEEP);
+        Optional<?> keep = plot.getFlag(Flags.KEEP);
         if (keep.isPresent()) {
             Object value = keep.get();
             if (value instanceof Boolean) {

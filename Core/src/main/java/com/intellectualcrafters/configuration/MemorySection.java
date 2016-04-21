@@ -1,5 +1,7 @@
 package com.intellectualcrafters.configuration;
 
+import com.intellectualcrafters.plot.PS;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -540,6 +542,7 @@ public class MemorySection implements ConfigurationSection {
         List<?> list = getList(path);
 
         if (list == null) {
+            PS.get().IMP.log(path + " is null");
             return new ArrayList<>(0);
         }
 

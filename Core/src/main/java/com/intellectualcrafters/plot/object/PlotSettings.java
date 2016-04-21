@@ -123,11 +123,11 @@ public class PlotSettings {
     }
 
     public String getJoinMessage(PlotArea area) {
-        Flag greeting = Flags.GREETING;
-        if (greeting != null) {
-            return greeting.getValueString();
+        if (flags.containsKey(Flags.GREETING)) {
+            return (String) flags.get(Flags.GREETING);
+        } else {
+            return "";
         }
-        return "";
     }
 
     /**
@@ -137,11 +137,11 @@ public class PlotSettings {
      * @return Farewell flag
      */
     public String getLeaveMessage(PlotArea plotArea) {
-        Flag farewell = Flags.FAREWELL;
-        if (farewell != null) {
-            return farewell.getValueString();
+        if (flags.containsKey(Flags.FAREWELL)) {
+            return (String) flags.get(Flags.FAREWELL);
+        } else {
+            return "";
         }
-        return "";
     }
 
     public Optional<ArrayList<PlotComment>> getComments(String inbox) {

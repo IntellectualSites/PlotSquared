@@ -12,9 +12,9 @@ public abstract class StmtMod<T> {
     public String getCreateMySQL(int size, String query, int params) {
         StringBuilder statement = new StringBuilder(query);
         for (int i = 0; i < size - 1; i++) {
-            statement.append("(" + StringMan.repeat(",?", params).substring(1) + "),");
+            statement.append("(").append(StringMan.repeat(",?", params).substring(1)).append("),");
         }
-        statement.append("(" + StringMan.repeat(",?", params).substring(1) + ")");
+        statement.append("(").append(StringMan.repeat(",?", params).substring(1)).append(")");
         return statement.toString();
     }
 
@@ -22,7 +22,7 @@ public abstract class StmtMod<T> {
         StringBuilder statement = new StringBuilder(query);
         String modParams = StringMan.repeat(",?", params).substring(1);
         for (int i = 0; i < size - 1; i++) {
-            statement.append("UNION SELECT " + modParams + " ");
+            statement.append("UNION SELECT ").append(modParams).append(" ");
         }
         return statement.toString();
     }

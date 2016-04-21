@@ -4,8 +4,9 @@ import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.SubCommand;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -378,11 +379,9 @@ public class PlotAPI {
      *
      * @param flag Flag that should be registered
      *
-     * @see FlagManager#addFlag(AbstractFlag)
-     * @see AbstractFlag
      */
-    public void addFlag(AbstractFlag flag) {
-        FlagManager.addFlag(flag);
+    public void addFlag(Flag<?> flag) {
+        Flags.getFlags().add(flag);
     }
 
     /**

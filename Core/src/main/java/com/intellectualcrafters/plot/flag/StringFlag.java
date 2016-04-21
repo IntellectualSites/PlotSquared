@@ -8,14 +8,14 @@ public class StringFlag extends Flag<String> {
     }
 
     @Override public String valueToString(Object value) {
-        return ((String) value);
+        return value.toString();
     }
 
     @Override public String parseValue(String value) {
-        return null;
+        return value;
     }
 
     @Override public String getValueDescription() {
-        return null;
+        return "Flag value must be alphanumeric. Some special characters are allowed.";
     }
 }

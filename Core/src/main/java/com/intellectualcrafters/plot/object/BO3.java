@@ -64,7 +64,7 @@ public class BO3 {
 
     public String getFilename() {
         if (this.chunk.x == 0 && this.chunk.z == 0) {
-            return this.name + "" + ".bo3";
+            return this.name + ".bo3";
         } else {
             return this.name + ("_" + this.chunk.x + "_" + this.chunk.z) + ".bo3";
         }

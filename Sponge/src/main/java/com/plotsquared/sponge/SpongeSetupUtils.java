@@ -58,11 +58,11 @@ public class SpongeSetupUtils extends SetupUtils {
             PS.get().config.set("worlds." + world + "." + step.getConstant(), step.getValue());
         }
         if (object.type != 0) {
-            PS.get().config.set("worlds." + world + "." + "generator.type", object.type);
-            PS.get().config.set("worlds." + world + "." + "generator.terrain", object.terrain);
-            PS.get().config.set("worlds." + world + "." + "generator.plugin", object.plotManager);
+            PS.get().config.set("worlds." + world + ".generator.type", object.type);
+            PS.get().config.set("worlds." + world + ".generator.terrain", object.terrain);
+            PS.get().config.set("worlds." + world + ".generator.plugin", object.plotManager);
             if ((object.setupGenerator != null) && !object.setupGenerator.equals(object.plotManager)) {
-                PS.get().config.set("worlds." + world + "." + "generator.init", object.setupGenerator);
+                PS.get().config.set("worlds." + world + ".generator.init", object.setupGenerator);
             }
             final PlotGenerator<WorldGenerator> gen = (PlotGenerator<WorldGenerator>) generators.get(object.setupGenerator);
             if ((gen != null) && (gen.generator instanceof SpongePlotGenerator)) {

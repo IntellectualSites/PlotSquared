@@ -8,7 +8,8 @@ public class IntervalFlag extends Flag<Integer[]> {
 
     @Override
     public String valueToString(Object value) {
-        return null;
+        Integer[] value1 = (Integer[]) value;
+        return value1[0] + " " + value1[1];
     }
 
     @Override public Integer[] parseValue(String value) {

@@ -68,7 +68,7 @@ public abstract class PlotManager {
 
     public void exportTemplate(PlotArea plotworld) throws IOException {
         HashSet<FileBytes> files = new HashSet<>(
-                Collections.singletonList(new FileBytes("templates/" + "tmp-data.yml", Template.getBytes(plotworld))));
+                Collections.singletonList(new FileBytes("templates/tmp-data.yml", Template.getBytes(plotworld))));
         Template.zipAll(plotworld.worldname, files);
     }
 

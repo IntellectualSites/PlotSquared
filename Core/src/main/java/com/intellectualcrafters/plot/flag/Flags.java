@@ -1,12 +1,14 @@
 package com.intellectualcrafters.plot.flag;
 
 import com.google.common.collect.Sets;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.MathMan;
 
 import java.util.HashSet;
 
 public class Flags {
 
-    public static final NumericFlag<Integer> MUSIC = new NumericFlag<>("music");
+    public static final IntegerFlag MUSIC = new IntegerFlag("music");
     public static final StringFlag DESCRIPTION = new StringFlag("description");
     public static final IntegerListFlag ANALYSIS = new IntegerListFlag("analysis");
     public static final StringFlag GREETING = new StringFlag("greeting");
@@ -20,10 +22,9 @@ public class Flags {
     public static final BooleanFlag NOTIFY_LEAVE = new BooleanFlag("notify-leave");
     public static final BooleanFlag TITLES = new BooleanFlag("titles");
     public static final BooleanFlag NOTIFY_ENTER = new BooleanFlag("notify-enter");
-    public static final NumericFlag<Long> TIME = new NumericFlag<>("time");
+    public static final LongFlag TIME = new LongFlag("time");
     public static final PlotWeatherFlag WEATHER = new PlotWeatherFlag("weather");
-    public static final Flag<Object> KEEP = new Flag<>("keep");
-    public static final NumericFlag<Double> PRICE = new NumericFlag<>("price");
+    public static final DoubleFlag PRICE = new DoubleFlag("price");
     public static final BooleanFlag EXPLOSION = new BooleanFlag("explosion");
     public static final BooleanFlag GRASS_GROW = new BooleanFlag("grass-grow");
     public static final BooleanFlag VINE_GROW = new BooleanFlag("vine-grow");
@@ -65,20 +66,46 @@ public class Flags {
     public static final BooleanFlag PVP = new BooleanFlag("pvp");
     public static final BooleanFlag PVE = new BooleanFlag("pve");
     public static final BooleanFlag NO_WORLDEDIT = new BooleanFlag("no-worldedit");
-    public static final NumericFlag<Integer> MISC_CAP = new NumericFlag<>("misc-cap");
-    public static final NumericFlag<Integer> ENTITY_CAP = new NumericFlag<>("entity-cap");
-    public static final NumericFlag<Integer> MOB_CAP = new NumericFlag<>("mob-cap");
-    public static final NumericFlag<Integer> ANIMAL_CAP = new NumericFlag<>("animal-cap");
-    public static final NumericFlag<Integer> HOSTILE_CAP = new NumericFlag<>("hostile-cap");
-    public static final NumericFlag<Integer> VEHICLE_CAP = new NumericFlag<>("vehicle-cap");
-    static final HashSet<? extends Flag<?>> flags = Sets.newHashSet(MUSIC, ANIMAL_CAP, HOSTILE_CAP, PVP, PVE, NO_WORLDEDIT);
+    public static final IntegerFlag MISC_CAP = new IntegerFlag("misc-cap");
+    public static final IntegerFlag ENTITY_CAP = new IntegerFlag("entity-cap");
+    public static final IntegerFlag MOB_CAP = new IntegerFlag("mob-cap");
+    public static final IntegerFlag ANIMAL_CAP = new IntegerFlag("animal-cap");
+    public static final IntegerFlag HOSTILE_CAP = new IntegerFlag("hostile-cap");
+    public static final IntegerFlag VEHICLE_CAP = new IntegerFlag("vehicle-cap");
+    public static final Flag<?> KEEP = new Flag("keep") {
+        @Override public Object parseValue(String value) {
+            if (MathMan.isInteger(value)) {
+                return Long.parseLong(value);
+            }
+            switch (value.toLowerCase()) {
+                case "true":
+                    return true;
+                case "false":
+                    return false;
+                default:
+                    return MainUtil.timeToSec(value) * 1000 + System.currentTimeMillis();
+            }
+        }
+    };
+    private static final HashSet<Flag<?>> flags = Sets.newHashSet(MUSIC, DESCRIPTION, ANALYSIS, GREETING, FAREWELL, FEED, HEAL,
+            GAMEMODE,
+            DONE,
+            REDSTONE,
+            FLY, NOTIFY_LEAVE, NOTIFY_ENTER, TIME, WEATHER, KEEP, PRICE, EXPLOSION, GRASS_GROW, VINE_GROW, MYCEL_GROW, DISABLE_PHYSICS, SNOW_MELT,
+            ICE_MELT,
+            FIRE_SPREAD, BLOCK_BURN, BLOCK_IGNITION, SOIL_DRY, BLOCKED_CMDS, USE, BREAK, PLACE, DEVICE_INTERACT, VEHICLE_BREAK, VEHICLE_PLACE,
+            VEHICLE_USE,
+            HANGING_BREAK, HANGING_PLACE, HANGING_INTERACT, MISC_PLACE, MISC_BREAK, MISC_INTERACT, PLAYER_INTERACT, TAMED_ATTACK, TAMED_INTERACT,
+            ANIMAL_ATTACK, ANIMAL_INTERACT, HOSTILE_ATTACK, HOSTILE_INTERACT, MOB_PLACE, FORCEFIELD, INVINCIBLE, ITEM_DROP, INSTABREAK,
+            DROP_PROTECTION, PVP,
+            PVE, NO_WORLDEDIT, MISC_CAP, ENTITY_CAP, MOB_CAP, ANIMAL_CAP, HOSTILE_CAP, VEHICLE_CAP);
 
     /**
      * Get a list of registered AbstractFlag objects
      *
      * @return List (AbstractFlag)
      */
-    public static HashSet<? extends Flag<?>> getFlags() {
+    public static HashSet<Flag<?>> getFlags() {
         return flags;
     }
 }

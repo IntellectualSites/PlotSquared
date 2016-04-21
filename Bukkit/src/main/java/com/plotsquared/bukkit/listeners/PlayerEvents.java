@@ -5,7 +5,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.flag.NumericFlag;
+import com.intellectualcrafters.plot.flag.IntegerFlag;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -1370,9 +1370,9 @@ public class PlayerEvents extends PlotListener implements Listener {
         this.lastRadius = event.getRadius() + 1;
     }
 
-    public boolean checkEntity(Plot plot, NumericFlag<Integer>... flags) {
+    public boolean checkEntity(Plot plot, IntegerFlag... flags) {
         int[] mobs = null;
-        for (NumericFlag<Integer> flag : flags) {
+        for (IntegerFlag flag : flags) {
             int i;
             switch (flag.getName()) {
                 case "entity-cap":

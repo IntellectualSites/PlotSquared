@@ -1,5 +1,8 @@
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.util.StringMan;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -10,14 +13,19 @@ public class IntegerListFlag extends ListFlag<List<Integer>> {
     }
 
     @Override public String valueToString(Object value) {
-        return null;
+        return StringMan.join((List<Integer>)value, ",");
     }
 
     @Override public List<Integer> parseValue(String value) {
-        return null;
+        String[] split = value.split(",");
+        ArrayList<Integer> numbers = new ArrayList<>();
+        for (String element : split) {
+            numbers.add(Integer.parseInt(element));
+        }
+        return numbers;
     }
 
     @Override public String getValueDescription() {
-        return null;
+        return "Flag value must be a integer list";
     }
 }
