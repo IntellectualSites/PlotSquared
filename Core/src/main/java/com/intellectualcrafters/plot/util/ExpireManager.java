@@ -19,6 +19,7 @@ import com.intellectualcrafters.plot.object.RunnableVal2;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -260,7 +261,7 @@ public class ExpireManager {
     }
 
     public boolean isExpired(Plot plot) {
-        if (!plot.hasOwner() || DBFunc.everyone.equals(plot.owner) || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
+        if (!plot.hasOwner() || Objects.equals(DBFunc.everyone, plot.owner) || UUIDHandler.getPlayer(plot.owner) != null || plot.getRunning() > 0) {
             return false;
         }
         Optional<?> keep = plot.getFlag(Flags.KEEP);

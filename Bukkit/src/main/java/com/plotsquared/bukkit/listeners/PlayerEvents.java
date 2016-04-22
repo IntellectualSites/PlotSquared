@@ -601,8 +601,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             }
         }
-        String full = format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender).replace("%msg%", message);
-        full = ChatColor.translateAlternateColorCodes('&', full);
+        String partial = ChatColor.translateAlternateColorCodes('&', format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender));
+        String full = partial.replace("%msg%", message);
         for (Player receiver : recipients) {
             receiver.sendMessage(full);
         }

@@ -167,11 +167,11 @@ public class Settings {
         /**
          * SQLite enabled?
          */
-        public static boolean USE_SQLITE = false;
+        public static boolean USE_SQLITE = true;
         /**
          * MySQL Enabled?
          */
-        public static boolean USE_MYSQL = true; /* NOTE: Fixed connector */
+        public static boolean USE_MYSQL = false; /* NOTE: Fixed connector */
         /**
          * SQLite Database name
          */

@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.UUID;
 
 @CommandDeclaration(
@@ -43,7 +44,8 @@ public class Add extends SubCommand {
             return true;
         }
         UUID uuid;
-        if (args[0].equalsIgnoreCase("*")) {
+        if (args[0].equalsIgnoreCase("*") && (Permissions.hasPermission(plr, "plots.add.everyone") || Permissions
+                .hasPermission(plr, "plots.admin.command.add"))) {
             uuid = DBFunc.everyone;
         } else {
             // TODO have a runnable for fetch
