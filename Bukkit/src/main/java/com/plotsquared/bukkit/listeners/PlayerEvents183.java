@@ -1,7 +1,7 @@
 package com.plotsquared.bukkit.listeners;
 
 import com.intellectualcrafters.plot.PS;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -35,7 +35,7 @@ public class PlayerEvents183 implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlot(loc);
-        if (plot == null || !FlagManager.isPlotFlagTrue(plot, "explosion")) {
+        if (plot == null || !plot.getFlag(Flags.EXPLOSION).or(false)) {
             event.setCancelled(true);
         }
         Iterator<Block> iterator = event.blockList().iterator();

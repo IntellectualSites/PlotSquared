@@ -22,7 +22,7 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
     }
 
     @Override
-    public void color(PlotMessage m, String color) {
+    public void color(PlotMessage message, String color) {
         TextColor tc = null;
         TextStyle ts = null;
         switch (color.charAt(1)) {
@@ -94,10 +94,10 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
                 break;
         }
         if (tc != null) {
-            apply(m, getChild(m).color(tc));
+            apply(message, getChild(message).color(tc));
         }
         if (ts != null) {
-            apply(m, getChild(m).style(ts));
+            apply(message, getChild(message).style(ts));
         }
     }
 
@@ -114,7 +114,7 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
     }
 
     @Override
-    public void tooltip(PlotMessage m, PlotMessage... tooltips) {
+    public void tooltip(PlotMessage message, PlotMessage... tooltips) {
         Text.Builder builder = Text.builder();
         boolean lb = false;
         for (PlotMessage tooltip : tooltips) {
@@ -124,30 +124,30 @@ public class SpongeChatManager extends ChatManager<Text.Builder> {
             builder.append(tooltip.$(this).build());
             lb = true;
         }
-        apply(m, getChild(m).onHover(TextActions.showText(builder.toText())));
+        apply(message, getChild(message).onHover(TextActions.showText(builder.toText())));
     }
 
     @Override
-    public void command(PlotMessage m, String command) {
-        apply(m, getChild(m).onClick(TextActions.runCommand(command)));
+    public void command(PlotMessage message, String command) {
+        apply(message, getChild(message).onClick(TextActions.runCommand(command)));
     }
 
     @Override
-    public void text(PlotMessage m, String text) {
-        m.$(this).append(SpongeUtil.getText(text));
+    public void text(PlotMessage message, String text) {
+        message.$(this).append(SpongeUtil.getText(text));
     }
 
     @Override
-    public void send(PlotMessage m, PlotPlayer player) {
+    public void send(PlotMessage plotMessage, PlotPlayer player) {
         if (player instanceof ConsolePlayer) {
-            player.sendMessage(m.$(this).build().toPlain());
+            player.sendMessage(plotMessage.$(this).build().toPlain());
         } else {
-            ((SpongePlayer) player).player.sendMessage(m.$(this).build());
+            ((SpongePlayer) player).player.sendMessage(plotMessage.$(this).build());
         }
     }
 
     @Override
-    public void suggest(PlotMessage m, String command) {
-        apply(m, getChild(m).onClick(TextActions.suggestCommand(command)));
+    public void suggest(PlotMessage plotMessage, String command) {
+        apply(plotMessage, getChild(plotMessage).onClick(TextActions.suggestCommand(command)));
     }
 }

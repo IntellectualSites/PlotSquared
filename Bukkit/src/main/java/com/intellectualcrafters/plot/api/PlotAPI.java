@@ -4,8 +4,9 @@ import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.SubCommand;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotId;
@@ -378,23 +379,9 @@ public class PlotAPI {
      *
      * @param flag Flag that should be registered
      *
-     * @see FlagManager#addFlag(AbstractFlag)
-     * @see AbstractFlag
      */
-    public void addFlag(AbstractFlag flag) {
-        FlagManager.addFlag(flag);
-    }
-
-    /**
-     * get all the currently registered flags.
-     *
-     * @return array of Flag[]
-     *
-     * @see FlagManager#getFlags()
-     * @see AbstractFlag
-     */
-    public AbstractFlag[] getFlags() {
-        return FlagManager.getFlags().toArray(new AbstractFlag[FlagManager.getFlags().size()]);
+    public void addFlag(Flag<?> flag) {
+        Flags.getFlags().add(flag);
     }
 
     /**
@@ -663,7 +650,7 @@ public class PlotAPI {
         if (world == null) {
             return new HashSet<>();
         }
-        return BukkitUtil.getPlayer(player).getPlots(world.getName());
+        return PlotPlayer.wrap(player).getPlots(world.getName());
     }
 
     /**
@@ -675,7 +662,7 @@ public class PlotAPI {
      *
      */
     public int getAllowedPlots(Player player) {
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        PlotPlayer pp = PlotPlayer.wrap(player);
         return pp.getAllowedPlots();
     }
 

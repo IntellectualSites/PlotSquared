@@ -1,10 +1,10 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.PS.SortType;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotMessage;
@@ -176,8 +176,8 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PS.get().getPlots()) {
-                    Flag flag = plot.getFlags().get("done");
-                    if (flag == null) {
+                    Optional<String> flag = plot.getFlag(Flags.DONE);
+                    if (!flag.isPresent()) {
                         continue;
                     }
                     plots.add(plot);
@@ -185,8 +185,8 @@ public class ListCmd extends SubCommand {
                 Collections.sort(plots, new Comparator<Plot>() {
                     @Override
                     public int compare(Plot a, Plot b) {
-                        String va = a.getFlags().get("done").getValueString();
-                        String vb = b.getFlags().get("done").getValueString();
+                        String va = (String) a.getFlags().get(Flags.DONE);
+                        String vb = (String) b.getFlags().get(Flags.DONE);
                         if (MathMan.isInteger(va)) {
                             if (MathMan.isInteger(vb)) {
                                 return Integer.parseInt(vb) - Integer.parseInt(va);
@@ -245,10 +245,12 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PS.get().getPlots()) {
+/*
                     Flag price = FlagManager.getPlotFlagRaw(plot, "price");
                     if (price != null) {
                         plots.add(plot);
                     }
+*/
                 }
                 break;
             case "unowned":

@@ -9,7 +9,6 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,10 +138,10 @@ public interface AbstractDB {
     
     /**
      * Set plot flags.
-     *  @param plot  Plot Object
+     * @param plot  Plot Object
      * @param flags flags to set (flag[])
      */
-    void setFlags(Plot plot, Collection<Flag> flags);
+    void setFlags(Plot plot, HashMap<Flag<?>, Object> flags);
     
     /**
      * Set cluster flags.
@@ -150,7 +149,7 @@ public interface AbstractDB {
      * @param cluster PlotCluster Object
      * @param flags flags to set (flag[])
      */
-    void setFlags(PlotCluster cluster, Collection<Flag> flags);
+    void setFlags(PlotCluster cluster, HashMap<Flag<?>, Object> flags);
     
     /**
      * Rename a cluster.

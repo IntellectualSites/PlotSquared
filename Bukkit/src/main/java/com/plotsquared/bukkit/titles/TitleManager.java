@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -199,6 +201,38 @@ public abstract class TitleManager {
             types[i] = getPrimitiveType(classes[i]);
         }
         return types;
+    }
+
+    final Object getHandle(Object obj) {
+        try {
+            return getMethod("getHandle", obj.getClass()).invoke(obj);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    final Method getMethod(String name, Class<?> clazz, Class<?>... paramTypes) {
+        Class<?>[] t = toPrimitiveTypeArray(paramTypes);
+        for (Method m : clazz.getMethods()) {
+            Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
+            if (m.getName().equals(name) && equalsTypeArray(types, t)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    final boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
+        if (a.length != o.length) {
+            return false;
+        }
+        for (int i = 0; i < a.length; i++) {
+            if (!a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

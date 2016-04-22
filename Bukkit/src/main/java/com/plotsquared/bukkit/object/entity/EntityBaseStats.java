@@ -1,12 +1,13 @@
 package com.plotsquared.bukkit.object.entity;
 
 
-public class EntityBaseStats {
-    public EntityWrapper passenger;
-    public float fall;
-    public short fire;
-    public int age;
-    public double v_z;
-    public double v_y;
-    public double v_x;
+class EntityBaseStats {
+
+    EntityWrapper passenger;
+    float fall;
+    short fire;
+    int age;
+    double v_z;
+    double v_y;
+    double v_x;
 }

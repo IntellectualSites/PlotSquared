@@ -1,5 +1,6 @@
 package com.intellectualcrafters.plot.object;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
@@ -194,7 +195,7 @@ public class Plot {
         this.settings.setMerged(merged);
         if (flags != null) {
             for (Flag flag : flags) {
-                this.settings.flags.put(flag.getKey(), flag);
+                this.settings.flags.put(flag, flag);
             }
         }
         this.timestamp = timestamp;
@@ -941,24 +942,38 @@ public class Plot {
      * @param flag
      * @param value
      */
-    public void setFlag(String flag, Object value) {
-        FlagManager.addPlotFlag(this, new Flag(FlagManager.getFlag(flag), value));
+    public <V> boolean setFlag(Flag<V> flag, Object value) {
+        return FlagManager.addPlotFlag(this, flag, value);
     }
 
     /**
      * Remove a flag from this plot
      * @param flag
      */
-    public void removeFlag(String flag) {
+    public boolean removeFlag(Flag<?> flag) {
         FlagManager.removePlotFlag(this, flag);
+        return false;
     }
 
     /**
      * Get the flag for a given key
      * @param key
      */
-    public Flag getFlag(String key) {
-        return FlagManager.getPlotFlagRaw(this, key);
+    public <V> Optional<V> getFlag(Flag<V> key) {
+        return Optional.fromNullable(FlagManager.getPlotFlagRaw(this, key));
+    }
+
+    /**
+     * Get the flag for a given key
+     * @param key
+     */
+    public <V> V getFlag(Flag<V> key, V def) {
+        V value = FlagManager.getPlotFlagRaw(this, key);
+        if (value == null) {
+            return def;
+        } else {
+            return value;
+        }
     }
 
     /**
@@ -1824,18 +1839,15 @@ public class Plot {
      *  - Does not take default flags into account<br>
      * @return
      */
-    public HashMap<String, Flag> getFlags() {
-        if (this.settings == null) {
-            return new HashMap<>(0);
-        }
-        return this.settings.flags;
+    public HashMap<Flag<?>, Object> getFlags() {
+        return this.getSettings().flags;
     }
 
     /**
      * Set a flag for this plot.
      * @param flags
      */
-    public void setFlags(Set<Flag> flags) {
+    public void setFlags(HashMap<Flag<?>, Object> flags) {
         FlagManager.setPlotFlags(this, flags);
     }
 
@@ -2142,8 +2154,8 @@ public class Plot {
      * @param b
      */
     public void mergeData(Plot b) {
-        HashMap<String, Flag> flags1 = this.getFlags();
-        HashMap<String, Flag> flags2 = b.getFlags();
+        HashMap<Flag<?>, Object> flags1 = this.getFlags();
+        HashMap<Flag<?>, Object> flags2 = b.getFlags();
         if ((!flags1.isEmpty() || !flags2.isEmpty()) && !flags1.equals(flags2)) {
             boolean greater = flags1.size() > flags2.size();
             if (greater) {
@@ -2151,7 +2163,7 @@ public class Plot {
             } else {
                 flags2.putAll(flags1);
             }
-            HashSet<Flag> net = new HashSet<>((greater ? flags1 : flags2).values());
+            HashMap<Flag<?>, Object> net = (greater ? flags1 : flags2);
             this.setFlags(net);
             b.setFlags(net);
         }
@@ -2814,7 +2826,7 @@ public class Plot {
             other.create(plot.owner, false);
             if (!plot.getFlags().isEmpty()) {
                 other.getSettings().flags = plot.getFlags();
-                DBFunc.setFlags(other, plot.getFlags().values());
+                DBFunc.setFlags(other, plot.getFlags());
             }
             if (plot.isMerged()) {
                 other.setMerged(plot.getMerged());
@@ -2862,5 +2874,9 @@ public class Plot {
         };
         run.run();
         return true;
+    }
+
+    public boolean hasFlag(Flag<?> flag) {
+        return false;
     }
 }

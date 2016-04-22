@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -48,8 +49,9 @@ public class Done extends SubCommand {
             public void run(PlotAnalysis value) {
                 plot.removeRunning();
                 if ((value == null) || (value.getComplexity() >= Settings.CLEAR_THRESHOLD)) {
-                    Flag flag = new Flag(FlagManager.getFlag("done"), System.currentTimeMillis() / 1000);
-                    FlagManager.addPlotFlag(plot, flag);
+                    long flagValue = System.currentTimeMillis() / 1000;
+                    Flag flag = Flags.DONE;
+                    FlagManager.addPlotFlag(plot, flag, flagValue);
                     MainUtil.sendMessage(plr, C.DONE_SUCCESS);
                 } else {
                     MainUtil.sendMessage(plr, C.DONE_INSUFFICIENT_COMPLEXITY);

@@ -4,7 +4,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -39,17 +38,19 @@ public class DebugFixFlags extends SubCommand {
         }
         MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
         for (Plot plot : area.getPlots()) {
-            HashMap<String, Flag> flags = plot.getFlags();
-            Iterator<Entry<String, Flag>> i = flags.entrySet().iterator();
+            HashMap<Flag<?>, Object> flags = plot.getFlags();
+            Iterator<Entry<Flag<?>, Object>> i = flags.entrySet().iterator();
             boolean changed = false;
             while (i.hasNext()) {
+/*
                 if (FlagManager.getFlag(i.next().getKey()) == null) {
                     changed = true;
                     i.remove();
                 }
+*/
             }
             if (changed) {
-                DBFunc.setFlags(plot, plot.getFlags().values());
+                DBFunc.setFlags(plot, plot.getFlags());
             }
         }
         MainUtil.sendMessage(plr, "&aDone!");

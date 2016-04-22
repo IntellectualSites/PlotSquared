@@ -1,10 +1,11 @@
 package com.intellectualcrafters.plot.util;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.LazyBlock;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -36,9 +37,9 @@ public abstract class EventUtil {
 
     public abstract boolean callFlagAdd(Flag flag, Plot plot);
 
-    public abstract boolean callFlagRemove(Flag flag, Plot plot);
+    public abstract boolean callFlagRemove(Flag<?> flag, Plot plot, Object value);
 
-    public abstract boolean callFlagRemove(Flag flag, PlotCluster cluster);
+    public abstract boolean callFlagRemove(Flag<?> flag, Object value, PlotCluster cluster);
 
     public abstract boolean callMerge(Plot plot, ArrayList<PlotId> plots);
 
@@ -119,16 +120,16 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
-                Flag use = FlagManager.getPlotFlagRaw(plot, "use");
-                if (use != null) {
-                    HashSet<PlotBlock> value = (HashSet<PlotBlock>) use.getValue();
+                Optional<HashSet<PlotBlock>> use = plot.getFlag(Flags.USE);
+                if (use.isPresent()) {
+                    HashSet<PlotBlock> value = use.get();
                     if (value.contains(PlotBlock.EVERYTHING) || value.contains(block.getPlotBlock())) {
                         return true;
                     }
                 }
-                Flag destroy = FlagManager.getPlotFlagRaw(plot, "break");
-                if (destroy != null) {
-                    HashSet<PlotBlock> value = (HashSet<PlotBlock>) destroy.getValue();
+                Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
+                if (destroy.isPresent()) {
+                    HashSet<PlotBlock> value = destroy.get();
                     if (value.contains(PlotBlock.EVERYTHING) || value.contains(block.getPlotBlock())) {
                         return true;
                     }
@@ -141,7 +142,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
-                if (FlagManager.isPlotFlagTrue(plot, "hanging-break")) {
+                if (plot.getFlag(Flags.HANGING_BREAK).or(false)) {
                     return true;
                 }
                 if (plot.hasOwner()) {
@@ -153,7 +154,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
-                if (FlagManager.isPlotFlagTrue(plot, "misc-break")) {
+                if (plot.getFlag(Flags.MISC_BREAK).or(false)) {
                     return true;
                 }
                 if (plot.hasOwner()) {
@@ -165,7 +166,7 @@ public abstract class EventUtil {
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
                 }
-                if (FlagManager.isPlotFlagTrue(plot, "vehicle-break")) {
+                if (plot.getFlag(Flags.VEHICLE_BREAK).or(false)) {
                     return true;
                 }
                 if (plot.hasOwner()) {
@@ -182,14 +183,14 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
-                Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
+                Optional<HashSet<PlotBlock>> flagValue = plot.getFlag(Flags.USE);
                 HashSet<PlotBlock> value;
-                if (flag == null) {
-                    value = null;
+                if (flagValue.isPresent()) {
+                    value = flagValue.get();
                 } else {
-                    value = (HashSet<PlotBlock>) flag.getValue();
+                    return true;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms) || !(!notifyPerms || MainUtil
                             .sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s()));
                 }
@@ -202,14 +203,14 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED.s(), notifyPerms);
                 }
-                Flag flag = FlagManager.getPlotFlagRaw(plot, "place");
+                Optional<HashSet<PlotBlock>> flagValue = plot.getFlag(Flags.PLACE);
                 HashSet<PlotBlock> value;
-                if (flag == null) {
-                    value = null;
+                if (flagValue.isPresent()) {
+                    value = flagValue.get();
                 } else {
-                    value = (HashSet<PlotBlock>) flag.getValue();
+                    return true;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER.s(), notifyPerms)) {
                         return true;
                     }
@@ -224,20 +225,17 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), false);
                 }
-                if (FlagManager.isPlotFlagTrue(plot, "device-interact")) {
+                if (plot.getFlag(Flags.DEVICE_INTERACT).or(false)) {
                     return true;
                 }
-                Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
+                Optional<HashSet<PlotBlock>> flagValue = plot.getFlag(Flags.USE);
                 HashSet<PlotBlock> value;
-                if (flag == null) {
-                    value = null;
+                if (flagValue.isPresent()) {
+                    value = flagValue.get();
                 } else {
-                    value = (HashSet<PlotBlock>) flag.getValue();
+                    return true;
                 }
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    return false; //!(!false || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_DEVICE_INTERACT.s()));
-                }
-                return true;
+                return !(value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock()));
             }
             case INTERACT_HANGING: {
                 if (plot == null) {
@@ -246,12 +244,17 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
-                if (FlagManager.isPlotFlagTrue(plot, "hanging-interact")) {
+                if (plot.getFlag(Flags.HOSTILE_INTERACT).or(false)) {
                     return true;
                 }
-                Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
-                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+                Optional<HashSet<PlotBlock>> flagValue = plot.getFlag(Flags.USE);
+                HashSet<PlotBlock> value;
+                if (flagValue.isPresent()) {
+                    value = flagValue.get();
+                } else {
+                    return true;
+                }
+                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
@@ -266,12 +269,18 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
-                if (FlagManager.isPlotFlagTrue(plot, "misc-interact")) {
+                if (plot.getFlag(Flags.MISC_INTERACT).or(false)) {
                     return true;
                 }
-                Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
-                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+
+                Optional<HashSet<PlotBlock>> flag = plot.getFlag(Flags.USE);
+                HashSet<PlotBlock> value;
+                if (flag.isPresent()) {
+                    value = flag.get();
+                } else {
+                    return true;
+                }
+                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
@@ -286,12 +295,17 @@ public abstract class EventUtil {
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
-                if (FlagManager.isPlotFlagTrue(plot, "vehicle-use")) {
+                if (plot.getFlag(Flags.VEHICLE_USE).or(false)) {
                     return true;
                 }
-                Flag flag = FlagManager.getPlotFlagRaw(plot, "use");
-                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+                Optional<HashSet<PlotBlock>> flag = plot.getFlag(Flags.USE);
+                HashSet<PlotBlock> value;
+                if (flag.isPresent()) {
+                    value = flag.get();
+                } else {
+                    return true;
+                }
+                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
@@ -307,12 +321,17 @@ public abstract class EventUtil {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
 
-                if (FlagManager.isPlotFlagTrue(plot, "mob-place")) {
+                if (plot.getFlag(Flags.MOB_PLACE).or(false)) {
                     return true;
                 }
-                Flag flag = FlagManager.getPlotFlagRaw(plot, "place");
-                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+                Optional<HashSet<PlotBlock>> flagValue = plot.getFlag(Flags.PLACE);
+                HashSet<PlotBlock> value;
+                if (flagValue.isPresent()) {
+                    value = flagValue.get();
+                } else {
+                    return true;
+                }
+                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
@@ -330,17 +349,24 @@ public abstract class EventUtil {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
 
-                if (FlagManager.isPlotFlagTrue(plot, "misc-place")) {
+                if (plot.getFlag(Flags.MISC_PLACE).or(false)) {
                     return true;
                 }
-                Flag flag = FlagManager.getPlotFlagRaw(plot, "place");
-                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+                Optional<HashSet<PlotBlock>> flag = plot.getFlag(Flags.PLACE);
+
+                HashSet<PlotBlock> value;
+                if (flag.isPresent()) {
+                    value = flag.get();
+                } else {
+                    return true;
+                }
+                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
                     return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_MISC_PLACE.s() + "/" + C.FLAG_PLACE.s()));
                 }
+
                 return true;
             }
             case PLACE_VEHICLE:
@@ -351,12 +377,17 @@ public abstract class EventUtil {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_UNOWNED.s(), notifyPerms);
                 }
 
-                if (FlagManager.isPlotFlagTrue(plot, "vehicle-place")) {
+                if (plot.getFlag(Flags.VEHICLE_PLACE).or(false)) {
                     return true;
                 }
-                Flag flag = FlagManager.getPlotFlagRaw(plot, "place");
-                HashSet<PlotBlock> value = flag == null ? null : (HashSet<PlotBlock>) flag.getValue();
-                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+                Optional<HashSet<PlotBlock>> flag = plot.getFlag(Flags.PLACE);
+                HashSet<PlotBlock> value;
+                if (flag.isPresent()) {
+                    value = flag.get();
+                } else {
+                    return true;
+                }
+                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }

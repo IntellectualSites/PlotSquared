@@ -5,7 +5,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class DefaultTitleManager extends TitleManager {
@@ -21,18 +20,6 @@ public class DefaultTitleManager extends TitleManager {
      */
     public DefaultTitleManager(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
         super(title, subtitle, fadeInTime, stayTime, fadeOutTime);
-    }
-
-    private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
-        if (a.length != o.length) {
-            return false;
-        }
-        for (int i = 0; i < a.length; i++) {
-            if (!a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i])) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -90,7 +77,8 @@ public class DefaultTitleManager extends TitleManager {
      * @param player Player
      * @throws Exception
      */
-    @Override public void clearTitle(Player player) throws Exception {
+    @Override
+    public void clearTitle(Player player) throws Exception {
         // Send timings first
         Object handle = getHandle(player);
         Object connection = getField(handle.getClass(), "playerConnection").get(handle);
@@ -106,7 +94,8 @@ public class DefaultTitleManager extends TitleManager {
      * @param player Player
      * @throws Exception
      */
-    @Override public void resetTitle(Player player) throws Exception {
+    @Override
+    public void resetTitle(Player player) throws Exception {
         // Send timings first
         Object handle = getHandle(player);
         Object connection = getField(handle.getClass(), "playerConnection").get(handle);
@@ -116,27 +105,7 @@ public class DefaultTitleManager extends TitleManager {
         sendPacket.invoke(connection, packet);
     }
 
-    private Object getHandle(Object obj) {
-        try {
-            return getMethod("getHandle", obj.getClass()).invoke(obj);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private Method getMethod(String name, Class<?> clazz, Class<?>... paramTypes) {
-        Class<?>[] t = toPrimitiveTypeArray(paramTypes);
-        for (Method m : clazz.getMethods()) {
-            Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
-            if (m.getName().equals(name) && equalsTypeArray(types, t)) {
-                return m;
-            }
-        }
-        return null;
-    }
-
-    private Field getField(Class<?> clazz, String name) {
+    Field getField(Class<?> clazz, String name) {
         try {
             Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
@@ -157,7 +126,7 @@ public class DefaultTitleManager extends TitleManager {
         return null;
     }
 
-    private boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2) {
+    boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2) {
         if (l1.length != l2.length) {
             return false;
         }

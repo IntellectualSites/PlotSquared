@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -244,14 +243,14 @@ public class DBFunc {
         DBFunc.dbManager.setMerged(plot, merged);
     }
 
-    public static void setFlags(Plot plot, Collection<Flag> flags) {
+    public static void setFlags(Plot plot, HashMap<Flag<?>, Object> flags) {
         if (plot.temp == -1) {
             return;
         }
         DBFunc.dbManager.setFlags(plot, flags);
     }
 
-    public static void setFlags(PlotCluster cluster, Collection<Flag> flags) {
+    public static void setFlags(PlotCluster cluster, HashMap<Flag<?>, Object> flags) {
         DBFunc.dbManager.setFlags(cluster, flags);
     }
     

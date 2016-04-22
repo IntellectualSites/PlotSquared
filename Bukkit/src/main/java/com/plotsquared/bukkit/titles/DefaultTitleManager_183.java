@@ -4,10 +4,9 @@ import com.plotsquared.bukkit.chat.Reflection;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class DefaultTitleManager_183 extends TitleManager {
+public class DefaultTitleManager_183 extends DefaultTitleManager {
 
     /**
      * Create a new 1.8 title.
@@ -20,18 +19,6 @@ public class DefaultTitleManager_183 extends TitleManager {
      */
     public DefaultTitleManager_183(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
         super(title, subtitle, fadeInTime, stayTime, fadeOutTime);
-    }
-
-    private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
-        if (a.length != o.length) {
-            return false;
-        }
-        for (int i = 0; i < a.length; i++) {
-            if (!a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i])) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -82,71 +69,6 @@ public class DefaultTitleManager_183 extends TitleManager {
         }
     }
 
-    /**
-     * Clear the title.
-     *
-     * @param player Player
-     * @throws Exception
-     */
-    @Override
-    public void clearTitle(Player player) throws Exception {
-        // Send timings first
-        Object handle = getHandle(player);
-        Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-        Object[] actions = this.packetActions.getEnumConstants();
-        Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-        Object packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[3], null);
-        sendPacket.invoke(connection, packet);
-    }
-
-    /**
-     * Reset the title settings.
-     *
-     * @param player Player
-     * @throws Exception
-     */
-    @Override
-    public void resetTitle(Player player) throws Exception {
-        // Send timings first
-        Object handle = getHandle(player);
-        Object connection = getField(handle.getClass(), "playerConnection").get(handle);
-        Object[] actions = this.packetActions.getEnumConstants();
-        Method sendPacket = getMethod(connection.getClass(), "sendPacket");
-        Object packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[4], null);
-        sendPacket.invoke(connection, packet);
-    }
-
-    private Object getHandle(Object obj) {
-        try {
-            return getMethod("getHandle", obj.getClass()).invoke(obj);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private Method getMethod(String name, Class<?> clazz, Class<?>... paramTypes) {
-        Class<?>[] t = toPrimitiveTypeArray(paramTypes);
-        for (Method m : clazz.getMethods()) {
-            Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
-            if (m.getName().equals(name) && equalsTypeArray(types, t)) {
-                return m;
-            }
-        }
-        return null;
-    }
-
-    private Field getField(Class<?> clazz, String name) {
-        try {
-            Field field = clazz.getDeclaredField(name);
-            field.setAccessible(true);
-            return field;
-        } catch (NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     private Method getMethod(Class<?> clazz, String name, Class<?>... args) {
         for (Method m : clazz.getMethods()) {
             if (m.getName().equals(name) && ((args.length == 0) || ClassListEqual(args, m.getParameterTypes()))) {
@@ -157,17 +79,4 @@ public class DefaultTitleManager_183 extends TitleManager {
         return null;
     }
 
-    private boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2) {
-        if (l1.length != l2.length) {
-            return false;
-        }
-        boolean equal = true;
-        for (int i = 0; i < l1.length; i++) {
-            if (l1[i] != l2[i]) {
-                equal = false;
-                break;
-            }
-        }
-        return equal;
-    }
 }

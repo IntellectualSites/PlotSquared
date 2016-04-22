@@ -224,7 +224,7 @@ public class Location implements Cloneable, Comparable<Location> {
 
     @Override
     public String toString() {
-        return "\"plotsquaredlocation\":{" + "\"x\":" + this.x + ",\"y\":" + this.y + ",\"z\":" + this.z + ",\"yaw\":" + this.yaw + ",\"pitch\":"
+        return "\"plotsquaredlocation\":{\"x\":" + this.x + ",\"y\":" + this.y + ",\"z\":" + this.z + ",\"yaw\":" + this.yaw + ",\"pitch\":"
                 + this.pitch
                 + ",\"world\":\"" + this.world + "\"}";
     }

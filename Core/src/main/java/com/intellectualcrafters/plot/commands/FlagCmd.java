@@ -1,11 +1,12 @@
 package com.intellectualcrafters.plot.commands;
 
+import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.database.DBFunc;
-import com.intellectualcrafters.plot.flag.AbstractFlag;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
-import com.intellectualcrafters.plot.flag.FlagValue;
+import com.intellectualcrafters.plot.flag.Flags;
+import com.intellectualcrafters.plot.flag.ListFlag;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -16,6 +17,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +33,7 @@ public class FlagCmd extends SubCommand {
 
     @Override
     public String getUsage() {
-        return super.getUsage().replaceAll("<flag>", StringMan.join(FlagManager.getFlags(), "|"));
+        return super.getUsage();
     }
 
     @Override
@@ -62,9 +64,13 @@ public class FlagCmd extends SubCommand {
             MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag.other");
             return false;
         }
-        if (args.length > 1 && FlagManager.isReserved(args[1])) {
-            MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
-            return false;
+        Flag<?> flag = null;
+        if (args.length > 1) {
+            flag = FlagManager.getFlag(args[1]);
+            if (flag == null || FlagManager.isReserved(flag)) {
+                MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
+                return false;
+            }
         }
         switch (args[0].toLowerCase()) {
             case "info": {
@@ -76,18 +82,12 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
                     return false;
                 }
-                AbstractFlag flag = FlagManager.getFlag(args[1]);
-                if (flag == null) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
-                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag info <flag>");
-                    return false;
-                }
                 // flag key
-                MainUtil.sendMessage(player, C.FLAG_KEY, flag.getKey());
+                MainUtil.sendMessage(player, C.FLAG_KEY, flag.getName());
                 // flag type
-                MainUtil.sendMessage(player, C.FLAG_TYPE, flag.value.getClass().getSimpleName());
+                MainUtil.sendMessage(player, C.FLAG_TYPE, flag.getClass().getSimpleName());
                 // Flag type description
-                MainUtil.sendMessage(player, C.FLAG_DESC, flag.getValueDesc());
+                MainUtil.sendMessage(player, C.FLAG_DESC, flag.getValueDescription());
                 return true;
             }
             case "set": {
@@ -99,23 +99,17 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag set <flag> <value>");
                     return false;
                 }
-                AbstractFlag af = FlagManager.getFlag(args[1].toLowerCase());
-                if (af == null) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
-                    return false;
-                }
                 String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + "." + value.toLowerCase())) {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase() + "." + value.toLowerCase());
                     return false;
                 }
-                Object parsed = af.parseValueRaw(value);
+                Object parsed = flag.parseValue(value);
                 if (parsed == null) {
-                    MainUtil.sendMessage(player, "&c" + af.getValueDesc());
+                    MainUtil.sendMessage(player, "&c" + flag.getValueDescription());
                     return false;
                 }
-                Flag flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), parsed);
-                boolean result = FlagManager.addPlotFlag(plot, flag);
+                boolean result = plot.setFlag(flag, parsed);
                 if (!result) {
                     MainUtil.sendMessage(player, C.FLAG_NOT_ADDED);
                     return false;
@@ -132,12 +126,6 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
                     return false;
                 }
-                AbstractFlag af = FlagManager.getFlag(args[1].toLowerCase());
-                if (af == null) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
-                    return false;
-                }
-                Flag flag = FlagManager.getPlotFlagAbs(plot, args[1].toLowerCase());
                 if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase())) {
                     if (args.length != 2) {
                         MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase());
@@ -150,16 +138,22 @@ public class FlagCmd extends SubCommand {
                         }
                     }
                 }
-                if (flag == null) {
-                    MainUtil.sendMessage(player, C.FLAG_NOT_IN_PLOT);
-                    return false;
-                }
-                if (args.length == 3 && flag.getAbstractFlag().isList()) {
+                if (args.length == 3 && flag instanceof ListFlag) {
                     String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                    ((FlagValue.ListValue) flag.getAbstractFlag().value).remove(flag.getValue(), value);
-                    DBFunc.setFlags(plot, plot.getFlags().values());
+                    Optional<? extends Collection> flag1 = plot.getFlag((Flag<? extends Collection<?>>) flag);
+                    if (flag1.isPresent()) {
+                        boolean o = flag1.get().removeAll((Collection) flag.parseValue(value));
+                        if (o) {
+                            MainUtil.sendMessage(player, C.FLAG_REMOVED);
+                        } else {
+                            MainUtil.sendMessage(player, C.FLAG_NOT_REMOVED);
+                            return false;
+                        }
+                    }
+                    DBFunc.setFlags(plot, plot.getFlags());
+                    return true;
                 } else {
-                    boolean result = FlagManager.removePlotFlag(plot, flag.getKey());
+                    boolean result = plot.removeFlag(flag);
                     if (!result) {
                         MainUtil.sendMessage(player, C.FLAG_NOT_REMOVED);
                         return false;
@@ -177,11 +171,6 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
                     return false;
                 }
-                AbstractFlag af = FlagManager.getFlag(args[1].toLowerCase());
-                if (af == null) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_FLAG);
-                    return false;
-                }
                 for (String entry : args[2].split(",")) {
                     if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + "." + entry)) {
                         MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase() + "." + entry);
@@ -189,18 +178,26 @@ public class FlagCmd extends SubCommand {
                     }
                 }
                 String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                Object parsed = af.parseValueRaw(value);
+                Object parsed = flag.parseValue(value);
                 if (parsed == null) {
-                    MainUtil.sendMessage(player, "&c" + af.getValueDesc());
+                    MainUtil.sendMessage(player, "&c" + flag.getValueDescription());
                     return false;
                 }
-                Flag flag = FlagManager.getPlotFlag(plot, args[1].toLowerCase());
-                if (flag == null || !flag.getAbstractFlag().isList()) {
-                    flag = new Flag(FlagManager.getFlag(args[1].toLowerCase(), true), parsed);
-                } else {
-                    ((FlagValue.ListValue) flag.getAbstractFlag().value).add(flag.getValue(), value);
+                Object val = parsed;
+                if (flag instanceof ListFlag) {
+                    Optional<? extends Collection> flag1 = plot.getFlag((Flag<? extends Collection<?>>) flag);
+                    if (flag1.isPresent()) {
+                        boolean o = flag1.get().addAll((Collection) parsed);
+                        if (o) {
+                            MainUtil.sendMessage(player, C.FLAG_ADDED);
+                            val = flag1.get();
+                        } else {
+                            MainUtil.sendMessage(player, C.FLAG_NOT_ADDED);
+                            return false;
+                        }
+                    }
                 }
-                boolean result = FlagManager.addPlotFlag(plot, flag);
+                boolean result = plot.setFlag(flag, val);
                 if (!result) {
                     MainUtil.sendMessage(player, C.FLAG_NOT_ADDED);
                     return false;
@@ -212,17 +209,17 @@ public class FlagCmd extends SubCommand {
                     MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.flag.list");
                     return false;
                 }
-                if (args.length != 1) {
+                if (args.length > 1) {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot flag list");
                     return false;
                 }
                 HashMap<String, ArrayList<String>> flags = new HashMap<>();
-                for (AbstractFlag flag1 : FlagManager.getFlags()) {
-                    String type = flag1.value.getClass().getSimpleName().replaceAll("Value", "");
+                for (Flag<?> flag1 : Flags.getFlags()) {
+                    String type = flag1.getClass().getSimpleName();
                     if (!flags.containsKey(type)) {
                         flags.put(type, new ArrayList<String>());
                     }
-                    flags.get(type).add(flag1.getKey());
+                    flags.get(type).add(flag1.getName());
                 }
                 String message = "";
                 String prefix = "";

@@ -6,7 +6,6 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridGen;
 import com.intellectualcrafters.plot.generator.HybridUtils;
@@ -95,7 +94,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
+public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
     public static WorldEditPlugin worldEdit;
 
@@ -116,7 +115,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                 e.printStackTrace();
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion()));
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
-                return new int[]{1,9,2};
+                return new int[]{1, 9, 2};
             }
         }
         return this.version;
@@ -195,14 +194,18 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
             public void run() {
                 PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
                     @Override
-                    public void run(PlotArea pw) {
-                        World world = Bukkit.getWorld(pw.worldname);
+                    public void run(PlotArea plotArea) {
+                        World world = Bukkit.getWorld(plotArea.worldname);
                         try {
                             if (world == null) {
                                 return;
                             }
                             List<Entity> entities = world.getEntities();
                             Iterator<Entity> iterator = entities.iterator();
+                            for (Entity entity : entities) {
+
+                            }
+
                             while (iterator.hasNext()) {
                                 Entity entity = iterator.next();
                                 switch (entity.getType()) {
@@ -211,6 +214,7 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
                                     case COMPLEX_PART:
                                     case FISHING_HOOK:
                                     case ENDER_SIGNAL:
+                                    case LINGERING_POTION:
                                     case AREA_EFFECT_CLOUD:
                                     case EXPERIENCE_ORB:
                                     case LEASH_HITCH:
@@ -507,7 +511,6 @@ public class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
         if (!checkVersion) {
             log(C.PREFIX + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
             Settings.TITLES = false;
-            FlagManager.removeFlag(FlagManager.getFlag("titles"));
         } else {
             AbstractTitle.TITLE_CLASS = new DefaultTitle_19();
             if (wrapper instanceof DefaultUUIDWrapper || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {

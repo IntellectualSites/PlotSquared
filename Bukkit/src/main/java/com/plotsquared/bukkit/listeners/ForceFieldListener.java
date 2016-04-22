@@ -1,6 +1,7 @@
 package com.plotsquared.bukkit.listeners;
 
-import com.intellectualcrafters.plot.flag.FlagManager;
+import com.google.common.base.Optional;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -36,7 +37,13 @@ public class ForceFieldListener implements Listener {
     private PlotPlayer hasNearbyPermitted(Player player, Plot plot) {
         for (Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
             PlotPlayer pp;
-            if (!(entity instanceof Player) || ((pp = BukkitUtil.getPlayer((Player) entity)) == null) || !plot.equals(pp.getCurrentPlot())) {
+            if (!(entity instanceof Player)) {
+                continue;
+            }
+            if ((pp = BukkitUtil.getPlayer((Player) entity)) == null) {
+                continue;
+            }
+            if (!plot.equals(pp.getCurrentPlot())) {
                 continue;
             }
             if (plot.isAdded(pp.getUUID())) {
@@ -84,8 +91,9 @@ public class ForceFieldListener implements Listener {
         if (plot == null) {
             return;
         }
-        if ((FlagManager.getPlotFlagRaw(plot, "forcefield") != null) && FlagManager.getPlotFlagRaw(plot, "forcefield").getValue().equals("true")) {
-            if (!FlagManager.isBooleanFlag(plot, "forcefield", false)) {
+        Optional<Boolean> forcefield = plot.getFlag(Flags.FORCEFIELD);
+        if (forcefield.isPresent() && forcefield.get()) {
+            if (!plot.getFlag(Flags.FORCEFIELD).or(false)) {
                 UUID uuid = pp.getUUID();
                 if (plot.isAdded(uuid)) {
                     Set<PlotPlayer> players = getNearbyPlayers(player, plot);

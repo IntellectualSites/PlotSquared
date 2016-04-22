@@ -155,7 +155,7 @@ public abstract class SchematicHandler {
                         Map<String, Tag> flags = schematic.getFlags();
                         if (!flags.isEmpty()) {
                             for (Map.Entry<String, Tag> entry : flags.entrySet()) {
-                                plot.setFlag(entry.getKey(), StringTag.class.cast(entry.getValue()).getValue());
+                                //plot.setFlag(entry.getKey(), StringTag.class.cast(entry.getValue()).getValue());
                             }
 
                         }
@@ -619,9 +619,9 @@ public abstract class SchematicHandler {
             public void run(CompoundTag value) {
                 if (!plot.getFlags().isEmpty()) {
                     HashMap<String, Tag> flagMap = new HashMap<>();
-                    for (Map.Entry<String, Flag> entry : plot.getFlags().entrySet()) {
-                        String key = entry.getKey();
-                        flagMap.put(key, new StringTag(key, entry.getValue().getValueString()));
+                    for (Map.Entry<Flag<?>, Object> entry : plot.getFlags().entrySet()) {
+                        String key = entry.getKey().getName();
+                        flagMap.put(key, new StringTag(key, entry.getKey().valueToString(entry.getValue())));
                     }
                     CompoundTag tag = new CompoundTag("Flags", flagMap);
                     HashMap<String, Tag> map = new HashMap<>(value.getValue());
