@@ -41,7 +41,8 @@ public class Download extends SubCommand {
             MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
             return false;
         }
-        if ((Settings.DOWNLOAD_REQUIRES_DONE && (FlagManager.getPlotFlagRaw(plot, "done") == null)) && !Permissions.hasPermission(plr, "plots.admin.command.download")) {
+        if ((Settings.DOWNLOAD_REQUIRES_DONE && (!plot.getFlag(Flags.DONE).isPresent())) && !Permissions
+                .hasPermission(plr, "plots.admin.command.download")) {
             MainUtil.sendMessage(plr, C.DONE_NOT_DONE);
             return false;
         }
