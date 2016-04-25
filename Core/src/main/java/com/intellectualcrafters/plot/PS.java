@@ -482,15 +482,18 @@ public class PS {
 
     public PlotArea getPlotArea(String world, String id) {
         PlotArea[] areas = this.plotAreaMap.get(world);
-        if (areas == null || id == null) {
+        if (areas == null) {
             return null;
         }
         if (areas.length == 1) {
             return areas[0];
-        }
-        for (PlotArea area : areas) {
-            if (StringMan.isEqual(id, area.id)) {
-                return area;
+        } else if (id == null) {
+            return null;
+        } else {
+            for (PlotArea area : areas) {
+                if (StringMan.isEqual(id, area.id)) {
+                    return area;
+                }
             }
         }
         return null;

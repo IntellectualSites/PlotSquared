@@ -40,6 +40,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     private boolean loaded = false;
 
     public BukkitPlotGenerator(IndependentPlotGenerator generator) {
+        if (generator == null) {
+            throw new IllegalArgumentException("Generator may not be null!");
+        }
         this.plotGenerator = generator;
         this.platformGenerator = this;
         this.populators.add(new BlockPopulator() {
@@ -279,7 +282,12 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             return;
         }
         PlotArea area = PS.get().getPlotArea(world.getName(), null);
-        this.plotGenerator.generateChunk(this.chunkSetter, area, this.random);
+        try {
+            this.plotGenerator.generateChunk(this.chunkSetter, area, this.random);
+        } catch (Throwable e) {
+            // Recover from generator error
+            e.printStackTrace();
+        }
         ChunkManager.postProcessChunk(result);
     }
     
