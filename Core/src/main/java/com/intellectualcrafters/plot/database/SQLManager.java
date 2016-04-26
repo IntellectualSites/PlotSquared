@@ -1841,7 +1841,7 @@ public class SQLManager implements AbstractDB {
                                 try {
                                     String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                                     Flag<?> flag = FlagManager.getFlag(split[0]);
-                                    flags.put(flag, flag_str);
+                                    flags.put(flag, flag.parseValue(flag_str));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     exception = true;
@@ -1850,7 +1850,7 @@ public class SQLManager implements AbstractDB {
                                 element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                                 if (StringMan.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
                                     Flag flag = FlagManager.getFlag(element);
-                                    flags.put(flag, "");
+                                    flags.put(flag, flag.parseValue(""));
                                 } else {
                                     PS.debug("INVALID FLAG: " + element);
                                 }
