@@ -133,7 +133,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
             Method getHandle = chunk.getClass().getDeclaredMethod("getHandle");
             Object c = getHandle.invoke(chunk);
             Object w = this.methodGetWorld.of(c).call();
-            Class<? extends Object> clazz = c.getClass();
+            Class<?> clazz = c.getClass();
             Field sections1 = clazz.getDeclaredField("sections");
             sections1.setAccessible(true);
             Field tileEntities = clazz.getDeclaredField("tileEntities");

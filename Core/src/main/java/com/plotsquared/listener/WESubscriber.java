@@ -84,7 +84,7 @@ public class WESubscriber {
                                 if (tool instanceof BrushTool) {
                                     hasMask = ((BrushTool) tool).getMask() != null;
                                 }
-                            } catch (Exception e) {
+                            } catch (Exception ignored) {
                             }
                         }
                         AbstractDelegateExtent extent = (AbstractDelegateExtent) event.getExtent();

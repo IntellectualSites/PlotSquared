@@ -464,7 +464,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
                     Reflection.getMethod(Reflection.getOBCClass("inventory.CraftItemStack"), "asNMSCopy", ItemStack.class).invoke(null, itemStack);
             return itemTooltip(Reflection.getMethod(Reflection.getNMSClass("ItemStack"), "save", Reflection.getNMSClass("NBTTagCompound"))
                     .invoke(nmsItem, Reflection.getNMSClass("NBTTagCompound").newInstance()).toString());
-        } catch (Exception e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
             return this;
         }

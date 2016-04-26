@@ -951,8 +951,7 @@ public class Plot {
      * @param flag
      */
     public boolean removeFlag(Flag<?> flag) {
-        FlagManager.removePlotFlag(this, flag);
-        return false;
+        return FlagManager.removePlotFlag(this, flag);
     }
 
     /**

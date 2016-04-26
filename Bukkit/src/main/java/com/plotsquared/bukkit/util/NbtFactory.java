@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.AbstractList;
@@ -314,7 +315,7 @@ public class NbtFactory {
     private static Object invokeMethod(Method method, Object target, Object... params) {
         try {
             return method.invoke(target, params);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
             throw new RuntimeException("Unable to invoke method " + method + " for " + target, e);
         }
     }
@@ -322,7 +323,7 @@ public class NbtFactory {
     private static void setFieldValue(Field field, Object target, Object value) {
         try {
             field.set(target, value);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | IllegalArgumentException e) {
             throw new RuntimeException("Unable to set " + field + " for " + target, e);
         }
     }
@@ -330,7 +331,7 @@ public class NbtFactory {
     private static Object getFieldValue(Field field, Object target) {
         try {
             return field.get(target);
-        } catch (Exception e) {
+        } catch (IllegalAccessException | IllegalArgumentException e) {
             throw new RuntimeException("Unable to retrieve " + field + " for " + target, e);
         }
     }

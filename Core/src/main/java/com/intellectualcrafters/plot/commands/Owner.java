@@ -34,7 +34,7 @@ public class Owner extends SetCommand {
             try {
                 uuid = UUID.fromString(value);
                 name = MainUtil.getName(uuid);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else {
             uuid = UUIDHandler.getUUID(value, null);

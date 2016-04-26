@@ -43,6 +43,7 @@ import org.spongepowered.api.world.biome.BiomeTypes;
 import org.spongepowered.api.world.extent.Extent;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,7 +155,8 @@ public class SpongeUtil extends WorldUtil {
                     PlotBlock plotBlock = new PlotBlock((short) (i & 0xFFF), (byte) (i >> 12 & 0xF));
                     stateArray[i] = state;
                     stateMap.put(state, plotBlock);
-                } catch (Throwable e) {}
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ignored) {
+                }
             }
             PS.debug("Done!");
         } catch (Throwable e) {

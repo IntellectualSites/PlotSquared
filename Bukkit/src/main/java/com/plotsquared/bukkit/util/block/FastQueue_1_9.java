@@ -1,5 +1,7 @@
 package com.plotsquared.bukkit.util.block;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.util.ChunkManager;
@@ -13,6 +15,12 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod.RefExecutor;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,14 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
-
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class FastQueue_1_9 extends SlowQueue {
 
@@ -118,7 +118,7 @@ public class FastQueue_1_9 extends SlowQueue {
                 Entry<?, ?> tile = iterator.next();
                 Object pos = tile.getKey();
                 if (xm == null) {
-                    Class<? extends Object> clazz2 = pos.getClass().getSuperclass();
+                    Class<?> clazz2 = pos.getClass().getSuperclass();
                     xm = clazz2.getDeclaredMethod("getX");
                     ym = clazz2.getDeclaredMethod("getY");
                     zm = clazz2.getDeclaredMethod("getZ");

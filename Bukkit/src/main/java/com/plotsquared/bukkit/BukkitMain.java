@@ -111,11 +111,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 if (split.length == 3) {
                     this.version[2] = Integer.parseInt(split[2]);
                 }
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 e.printStackTrace();
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion()));
                 PS.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
-                return new int[]{1,9,2};
+                return new int[]{1, 9, 2};
             }
         }
         return this.version;
@@ -202,10 +202,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                             }
                             List<Entity> entities = world.getEntities();
                             Iterator<Entity> iterator = entities.iterator();
-                            for (Entity entity : entities) {
-
-                            }
-
                             while (iterator.hasNext()) {
                                 Entity entity = iterator.next();
                                 switch (entity.getType()) {
@@ -593,7 +589,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 if (!PS.get().hasPlotArea(worldName)) {
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 log("Failed to reload world: " + world);
                 Bukkit.getServer().unloadWorld(world, false);
             }

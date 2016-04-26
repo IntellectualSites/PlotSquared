@@ -80,7 +80,7 @@ public class DebugExec extends SubCommand {
                     this.engine.eval(script, this.scope);
                 }
             }
-        } catch (IOException | ScriptException e) {
+        } catch (IOException | ScriptException ignored) {
         }
     }
 
@@ -214,7 +214,7 @@ public class DebugExec extends SubCommand {
                     for (Plot plot : PS.get().getBasePlots()) {
                         Flag<?> flag1 = FlagManager.getFlag(flag);
                         if (plot.getFlag(flag1).isPresent()) {
-                            FlagManager.removePlotFlag(plot, flag1);
+                            plot.removeFlag(flag1);
                         }
                     }
                     return MainUtil.sendMessage(player, "Cleared flag: " + flag);

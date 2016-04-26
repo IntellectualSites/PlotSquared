@@ -28,7 +28,7 @@ import java.util.Set;
 public class FastQueue extends SlowQueue {
 
     public final SendChunk chunkSender;
-    public HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
+    public final HashMap<ChunkWrapper, Chunk> toUpdate = new HashMap<>();
 
     public FastQueue() throws RuntimeException {
         TaskManager.runTaskRepeat(new Runnable() {
@@ -38,7 +38,7 @@ public class FastQueue extends SlowQueue {
                     return;
                 }
                 int count = 0;
-                ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+                ArrayList<Chunk> chunks = new ArrayList<>();
                 Iterator<Entry<ChunkWrapper, Chunk>> i = FastQueue.this.toUpdate.entrySet().iterator();
                 while (i.hasNext() && (count < 128)) {
                     chunks.add(i.next().getValue());

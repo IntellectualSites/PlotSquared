@@ -121,7 +121,7 @@ public class DebugUUID extends SubCommand {
                     try {
                         UUID uuid = UUID.fromString(s);
                         uuids.add(uuid);
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                         MainUtil.sendMessage(player, C.PREFIX + "Invalid playerdata: " + current);
                     }
                 }
@@ -152,7 +152,7 @@ public class DebugUUID extends SubCommand {
                     uCMap.put(uuid, uuid2);
                     uCReverse.put(uuid2, uuid);
                 }
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
                 MainUtil.sendMessage(player, C.PREFIX + "&6Invalid playerdata: " + uuid.toString() + ".dat");
             }
         }

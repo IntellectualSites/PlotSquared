@@ -315,7 +315,7 @@ public class ListCmd extends SubCommand {
                 if (uuid == null) {
                     try {
                         uuid = UUID.fromString(args[0]);
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
                 if (uuid != null) {

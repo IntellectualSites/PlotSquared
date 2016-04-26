@@ -222,7 +222,7 @@ public abstract class ChunkManager {
                     int z = Integer.parseInt(split[2]);
                     ChunkLoc loc = new ChunkLoc(x, z);
                     chunks.add(loc);
-                } catch (Exception e) {
+                } catch (NumberFormatException ignored) {
                 }
             }
         }

@@ -42,7 +42,7 @@ public class PlotId {
         try {
             x = Integer.parseInt(parts[0]);
             y = Integer.parseInt(parts[1]);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             return null;
         }
         return new PlotId(x, y);

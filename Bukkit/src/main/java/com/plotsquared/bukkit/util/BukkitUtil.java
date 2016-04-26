@@ -12,8 +12,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.bukkit.object.BukkitPlayer;
-import java.util.Arrays;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -33,6 +31,9 @@ import org.bukkit.material.Step;
 import org.bukkit.material.Tree;
 import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class BukkitUtil extends WorldUtil {
 
@@ -260,7 +261,7 @@ public class BukkitUtil extends WorldUtil {
     public String getClosestMatchingName(PlotBlock block) {
         try {
             return Material.getMaterial(block.id).name();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             return null;
         }
     }

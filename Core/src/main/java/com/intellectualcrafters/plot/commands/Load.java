@@ -127,16 +127,16 @@ public class Load extends SubCommand {
                         return;
                     }
                     plr.setMeta("plot_schematics", schematics);
-                    displaySaves(plr, 0);
+                    displaySaves(plr);
                 }
             });
         } else {
-            displaySaves(plr, 0);
+            displaySaves(plr);
         }
         return true;
     }
 
-    public void displaySaves(PlotPlayer player, int page) {
+    public void displaySaves(PlotPlayer player) {
         List<String> schematics = player.getMeta("plot_schematics");
         for (int i = 0; i < Math.min(schematics.size(), 32); i++) {
             try {

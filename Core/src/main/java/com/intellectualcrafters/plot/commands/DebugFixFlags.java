@@ -42,12 +42,10 @@ public class DebugFixFlags extends SubCommand {
             Iterator<Entry<Flag<?>, Object>> i = flags.entrySet().iterator();
             boolean changed = false;
             while (i.hasNext()) {
-/*
-                if (FlagManager.getFlag(i.next().getKey()) == null) {
+                if (i.next().getKey() == null) {
                     changed = true;
                     i.remove();
                 }
-*/
             }
             if (changed) {
                 DBFunc.setFlags(plot, plot.getFlags());

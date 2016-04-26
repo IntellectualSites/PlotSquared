@@ -5,11 +5,13 @@ import org.bukkit.Art;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Rotation;
+import org.bukkit.TreeSpecies;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Bat;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -35,25 +37,25 @@ import org.bukkit.util.Vector;
 
 public class EntityWrapper {
 
-    public final EntityType type;
-    public final float yaw;
-    public final float pitch;
-    public final short depth;
+    private final EntityType type;
+    private final float yaw;
+    private final float pitch;
+    private final short depth;
     private final int hash;
     private final EntityBaseStats base = new EntityBaseStats();
     public double x;
     public double y;
     public double z;
-    // Extended
-    public ItemStack stack;
     public ItemStack[] inventory;
-    public byte dataByte;
-    public byte dataByte2;
-    public String dataString;
-    public LivingEntityStats lived;
-    public AgeableStats aged;
-    public TameableStats tamed;
-    ArmorStandStats stand;
+    // Extended
+    private ItemStack stack;
+    private byte dataByte;
+    private byte dataByte2;
+    private String dataString;
+    private LivingEntityStats lived;
+    private AgeableStats aged;
+    private TameableStats tamed;
+    private ArmorStandStats stand;
     private HorseStats horse;
 
     public EntityWrapper(Entity entity, short depth) {
@@ -86,6 +88,10 @@ public class EntityWrapper {
         switch (entity.getType()) {
             case ARROW:
             case BOAT:
+                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 0)) {
+                    Boat boat = (Boat) entity;
+                    this.dataByte = getOrdinal(TreeSpecies.values(), boat.getWoodType());
+                }
             case COMPLEX_PART:
             case EGG:
             case ENDER_CRYSTAL:
@@ -459,7 +465,7 @@ public class EntityWrapper {
         if (this.base.passenger != null) {
             try {
                 entity.setPassenger(this.base.passenger.spawn(world, x_offset, z_offset));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         if (this.base.fall != 0) {
@@ -478,6 +484,11 @@ public class EntityWrapper {
         switch (entity.getType()) {
             case ARROW:
             case BOAT:
+                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 0)) {
+                    Boat boat = (Boat) entity;
+                    boat.setWoodType(TreeSpecies.values()[dataByte]);
+                }
+
             case COMPLEX_PART:
             case EGG:
             case ENDER_CRYSTAL:
@@ -705,5 +716,11 @@ public class EntityWrapper {
             }
         }
         return 0;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public String toString() {
+        return String.format("[%s, x=%s, y=%s, z=%s]", type.getName(), x, y, z);
     }
 }
