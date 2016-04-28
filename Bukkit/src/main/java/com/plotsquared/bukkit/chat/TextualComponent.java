@@ -192,7 +192,7 @@ public abstract class TextualComponent implements Cloneable {
         }
 
         @Override
-        public TextualComponent clone() throws CloneNotSupportedException {
+        public TextualComponent clone() {
             // Since this is a private and final class, we can just reinstantiate this class instead of casting super.clone
             return new ArbitraryTextTypeComponent(getKey(), getValue());
         }
@@ -266,7 +266,7 @@ public abstract class TextualComponent implements Cloneable {
         }
 
         @Override
-        public TextualComponent clone() throws CloneNotSupportedException {
+        public TextualComponent clone() {
             // Since this is a private and final class, we can just reinstantiate this class instead of casting super.clone
             return new ComplexTextTypeComponent(getKey(), getValue());
         }

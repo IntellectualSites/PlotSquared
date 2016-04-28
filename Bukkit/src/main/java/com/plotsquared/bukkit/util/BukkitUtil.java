@@ -194,7 +194,7 @@ public class BukkitUtil extends WorldUtil {
         try {
             Biome biome = Biome.valueOf(biomeStr.toUpperCase());
             return Arrays.asList(Biome.values()).indexOf(biome);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
             return -1;
         }
     }
@@ -252,7 +252,7 @@ public class BukkitUtil extends WorldUtil {
                 }
             }
             return false;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             return false;
         }
     }
@@ -271,8 +271,7 @@ public class BukkitUtil extends WorldUtil {
         try {
             Material material = Material.valueOf(name.toUpperCase());
             return new StringComparison<PlotBlock>().new ComparisonResult(0, new PlotBlock((short) material.getId(), (byte) 0));
-        } catch (IllegalArgumentException e) {
-            //ignored
+        } catch (IllegalArgumentException ignored) {
         }
         try {
             byte data;
@@ -297,8 +296,7 @@ public class BukkitUtil extends WorldUtil {
             StringComparison<PlotBlock> outer = new StringComparison<>();
             return outer.new ComparisonResult(match, block);
 
-        } catch (NumberFormatException e) {
-            //ignored
+        } catch (NumberFormatException ignored) {
         }
         return null;
     }

@@ -196,8 +196,9 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (plot == null) {
                     return;
                 }
-                if (plot.getFlag(Flags.REDSTONE).isPresent()) {
-                    if (plot.getFlag(Flags.REDSTONE).get()) {
+                Optional<Boolean> flag = plot.getFlag(Flags.REDSTONE);
+                if (flag.isPresent()) {
+                    if (flag.get()) {
                         return;
                     } else {
                         event.setNewCurrent(0);
@@ -245,7 +246,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (plot == null) {
                     return;
                 }
-                if (plot.getFlag(Flags.REDSTONE).isPresent() && !plot.getFlag(Flags.REDSTONE).get()) {
+                Optional<Boolean> flag = plot.getFlag(Flags.REDSTONE);
+                if (flag.isPresent() && !flag.get()) {
                     event.setCancelled(true);
                 }
                 return;
@@ -322,7 +324,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             entity.remove();
             return false;
-        } else if (!(shooter instanceof Entity) && shooter != null) {
+        }
+        if (!(shooter instanceof Entity) && shooter != null) {
             if (plot == null) {
                 entity.remove();
                 return false;
@@ -374,7 +377,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             String c = parts[0];
             if (parts[0].contains(":")) {
                 c = parts[0].split(":")[1];
-                msg = msg.replace(parts[0].split(":")[0] + ":", "");
+                msg = msg.replace(parts[0].split(":")[0] + ':', "");
             }
             String l = c;
             List<String> aliases = new ArrayList<>();
@@ -513,7 +516,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 player.teleport(event.getTo());
                 MainUtil.sendMessage(pp, C.BORDER);
                 return;
-            } else if (x2 < -border) {
+            }
+            if (x2 < -border) {
                 to.setX(-border + 4);
                 player.teleport(event.getTo());
                 MainUtil.sendMessage(pp, C.BORDER);
@@ -633,7 +637,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
                 event.setCancelled(true);
                 return;
-            } else if (!plot.isAdded(pp.getUUID())) {
+            }
+            if (!plot.isAdded(pp.getUUID())) {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
@@ -686,7 +691,8 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = area.getOwnedPlot(location);
         if (plot != null) {
-            if (plot.getFlag(Flags.EXPLOSION).isPresent() && plot.getFlag(Flags.EXPLOSION).get()) {
+            Optional<Boolean> flag = plot.getFlag(Flags.EXPLOSION);
+            if (flag.isPresent() && flag.get()) {
                 List<MetadataValue> meta = event.getEntity().getMetadata("plot");
                 Plot origin;
                 if (meta.isEmpty()) {
@@ -780,19 +786,23 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlot(location);
+        Optional<Boolean> flag;
         switch (block.getType()) {
             case GRASS:
-                if (plot.getFlag(Flags.GRASS_GROW).isPresent() && plot.getFlag(Flags.GRASS_GROW).get()) {
+                flag = plot.getFlag(Flags.GRASS_GROW);
+                if (flag.isPresent() && flag.get()) {
                     event.setCancelled(true);
                 }
                 break;
             case MYCEL:
-                if (plot.getFlag(Flags.MYCEL_GROW).isPresent() && plot.getFlag(Flags.MYCEL_GROW).get()) {
+                flag = plot.getFlag(Flags.MYCEL_GROW);
+                if (flag.isPresent() && flag.get()) {
                     event.setCancelled(true);
                 }
                 break;
             case VINE:
-                if (plot.getFlag(Flags.VINE_GROW).isPresent() && plot.getFlag(Flags.VINE_GROW).get()) {
+                flag = plot.getFlag(Flags.VINE_GROW);
+                if (flag.isPresent() && flag.get()) {
                     event.setCancelled(true);
                 }
                 break;
@@ -831,10 +841,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (!plot.isAdded(pp.getUUID())) {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
-                if (destroy.isPresent() && destroy.get().contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
-                    return;
-                }
-                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
+                if (destroy.isPresent() && destroy.get().contains(new PlotBlock((short) block.getTypeId(), block.getData())) || Permissions
+                        .hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
                 event.setCancelled(true);
@@ -850,8 +858,8 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onFade(BlockFadeEvent e) {
-        Block b = e.getBlock();
+    public void onFade(BlockFadeEvent event) {
+        Block b = event.getBlock();
         Location location = BukkitUtil.getLocation(b.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -859,7 +867,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = area.getOwnedPlot(location);
         if (plot == null) {
-            e.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
         switch (b.getType()) {
@@ -867,7 +875,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Optional<Boolean> ice_melt = plot.getFlag(Flags.ICE_MELT);
                 if (ice_melt.isPresent()) {
                     if (!ice_melt.get()) {
-                        e.setCancelled(true);
+                        event.setCancelled(true);
                     }
                 }
                 break;
@@ -875,7 +883,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Optional<Boolean> snow_melt = plot.getFlag(Flags.SNOW_MELT);
                 if (snow_melt.isPresent()) {
                     if (!snow_melt.get()) {
-                        e.setCancelled(true);
+                        event.setCancelled(true);
                     }
                 }
                 break;
@@ -883,7 +891,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 Optional<Boolean> soil_dry = plot.getFlag(Flags.SOIL_DRY);
                 if (soil_dry.isPresent()) {
                     if (!soil_dry.get()) {
-                        e.setCancelled(true);
+                        event.setCancelled(true);
                     }
                 }
                 break;
@@ -902,9 +910,8 @@ public class PlayerEvents extends PlotListener implements Listener {
         Plot plot = area.getOwnedPlot(tLocation);
         Location fLocation = BukkitUtil.getLocation(from.getLocation());
         if (plot != null) {
-            if (plot.getFlag(Flags.DISABLE_PHYSICS).or(false)) {
-                event.setCancelled(true);
-            } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(plot, area.getOwnedPlot(fLocation))) {
+            if (plot.getFlag(Flags.DISABLE_PHYSICS).or(false) || !area.contains(fLocation.getX(), fLocation.getZ()) || !Objects
+                    .equals(plot, area.getOwnedPlot(fLocation))) {
                 event.setCancelled(true);
             }
         } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(plot, area.getOwnedPlot(fLocation))) {
@@ -977,7 +984,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                             return;
                         }
                     }
-                } catch (Throwable e) {
+                } catch (Throwable ignored) {
                     this.pistonBlocks = false;
                 }
             }
@@ -1006,7 +1013,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         return;
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
                 this.pistonBlocks = false;
             }
         }
@@ -1183,7 +1190,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                     eventType = PlayerBlockEventType.INTERACT_BLOCK;
                     lb = new BukkitLazyBlock(0, block);
                     break;
-                } else if (id < 198) {
+                }
+                if (id < 198) {
                     location = BukkitUtil.getLocation(block.getRelative(event.getBlockFace()).getLocation());
                     eventType = PlayerBlockEventType.PLACE_BLOCK;
                     lb = new BukkitLazyBlock(id, block);
@@ -1341,11 +1349,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlotAbs(location);
-        if (plot == null) {
-            event.setCancelled(true);
-            return;
-        }
-        if (plot.getFlag(Flags.DISABLE_PHYSICS).or(false)) {
+        if (plot == null || plot.getFlag(Flags.DISABLE_PHYSICS).or(false)) {
             event.setCancelled(true);
             return;
         }
@@ -1411,7 +1415,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     public boolean checkEntity(Entity entity, Plot plot) {
-        if (plot == null || plot.owner == null || plot.getFlags().isEmpty() && plot.getArea().DEFAULT_FLAGS.isEmpty()) {
+        if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot.getArea().DEFAULT_FLAGS.isEmpty()) {
             return false;
         }
         switch (entity.getType()) {
@@ -1509,9 +1513,11 @@ public class PlayerEvents extends PlotListener implements Listener {
                     } else {
                         return checkEntity(plot, Flags.ENTITY_CAP, Flags.MOB_CAP);
                     }
-                } else if (entity instanceof Vehicle) {
+                }
+                if (entity instanceof Vehicle) {
                     return checkEntity(plot, Flags.ENTITY_CAP, Flags.VEHICLE_CAP);
-                } else if (entity instanceof Hanging) {
+                }
+                if (entity instanceof Hanging) {
                     return checkEntity(plot, Flags.ENTITY_CAP, Flags.MISC_CAP);
                 }
                 return checkEntity(plot, Flags.ENTITY_CAP);
@@ -1519,8 +1525,8 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockBurn(BlockBurnEvent e) {
-        Block b = e.getBlock();
+    public void onBlockBurn(BlockBurnEvent event) {
+        Block b = event.getBlock();
         Location location = BukkitUtil.getLocation(b.getLocation());
 
         PlotArea area = location.getPlotArea();
@@ -1530,8 +1536,7 @@ public class PlayerEvents extends PlotListener implements Listener {
 
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(Flags.BLOCK_BURN).or(false)) {
-            e.setCancelled(true);
-            return;
+            event.setCancelled(true);
         }
 
     }
@@ -1582,56 +1587,41 @@ public class PlayerEvents extends PlotListener implements Listener {
             } else if (!plot.getFlag(Flags.BLOCK_IGNITION).or(false)) {
                 event.setCancelled(true);
             }
-        } else if (ignitingEntity != null) {
-            if (plot == null || !plot.getFlag(Flags.BLOCK_IGNITION).or(false)) {
+        } else {
+            if (plot == null) {
                 event.setCancelled(true);
                 return;
             }
-            if (igniteCause == BlockIgniteEvent.IgniteCause.FIREBALL) {
-                if (ignitingEntity instanceof Fireball) {
-                    Projectile fireball = (Projectile) ignitingEntity;
-                    Location location = null;
-                    if (fireball.getShooter() instanceof Entity) {
-                        Entity shooter = (Entity) fireball.getShooter();
-                        location = BukkitUtil.getLocation(shooter.getLocation());
-                    } else if (fireball.getShooter() instanceof BlockProjectileSource) {
-                        Block shooter = ((BlockProjectileSource) fireball.getShooter()).getBlock();
-                        location = BukkitUtil.getLocation(shooter.getLocation());
-                    }
-                    if (location != null && (location.getPlot() == null || !location.getPlot().equals(plot))) {
-                        event.setCancelled(true);
+            if (ignitingEntity != null) {
+                if (!plot.getFlag(Flags.BLOCK_IGNITION).or(false)) {
+                    event.setCancelled(true);
+                    return;
+                }
+                if (igniteCause == BlockIgniteEvent.IgniteCause.FIREBALL) {
+                    if (ignitingEntity instanceof Fireball) {
+                        Projectile fireball = (Projectile) ignitingEntity;
+                        Location location = null;
+                        if (fireball.getShooter() instanceof Entity) {
+                            Entity shooter = (Entity) fireball.getShooter();
+                            location = BukkitUtil.getLocation(shooter.getLocation());
+                        } else if (fireball.getShooter() instanceof BlockProjectileSource) {
+                            Block shooter = ((BlockProjectileSource) fireball.getShooter()).getBlock();
+                            location = BukkitUtil.getLocation(shooter.getLocation());
+                        }
+                        if (location != null && !plot.equals(location.getPlot())) {
+                            event.setCancelled(true);
+                        }
                     }
                 }
-            }
 
-        } else if (event.getIgnitingBlock() != null) {
-            Block ignitingBlock = event.getIgnitingBlock();
-            if (igniteCause == BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL) {
-                if (plot == null || !plot.getFlag(Flags.BLOCK_IGNITION).or(false)) {
+            } else if (event.getIgnitingBlock() != null) {
+                Block ignitingBlock = event.getIgnitingBlock();
+                Plot plotIgnited = BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot();
+                if (igniteCause == BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL && (!plot.getFlag(Flags.BLOCK_IGNITION).or(false)
+                        || plotIgnited == null || !plotIgnited.equals(plot))
+                        || (igniteCause == BlockIgniteEvent.IgniteCause.SPREAD || igniteCause == BlockIgniteEvent.IgniteCause.LAVA) && (
+                        !plot.getFlag(Flags.BLOCK_IGNITION).or(false) || plotIgnited == null || !plotIgnited.equals(plot))) {
                     event.setCancelled(true);
-                    return;
-                }
-                if (BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot() == null) {
-                    event.setCancelled(true);
-                    return;
-                }
-                if (!BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot().equals(plot)) {
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-            if (igniteCause == BlockIgniteEvent.IgniteCause.SPREAD || igniteCause == BlockIgniteEvent.IgniteCause.LAVA) {
-                if (plot == null || !plot.getFlag(Flags.BLOCK_IGNITION).or(false)) {
-                    event.setCancelled(true);
-                    return;
-                }
-                if (BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot() == null) {
-                    event.setCancelled(true);
-                    return;
-                }
-                if (!BukkitUtil.getLocation(ignitingBlock.getLocation()).getPlot().equals(plot)) {
-                    event.setCancelled(true);
-                    return;
                 }
             }
         }
@@ -1931,7 +1921,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                 }
                 return;
-            } else if (!plot.isAdded(pp.getUUID())) {
+            }
+            if (!plot.isAdded(pp.getUUID())) {
                 if (!plot.getFlag(Flags.HANGING_PLACE).or(false)) {
                     if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
@@ -2055,13 +2046,13 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onVehicleDestroy(VehicleDestroyEvent e) {
-        Location l = BukkitUtil.getLocation(e.getVehicle());
+    public void onVehicleDestroy(VehicleDestroyEvent event) {
+        Location l = BukkitUtil.getLocation(event.getVehicle());
         PlotArea area = l.getPlotArea();
         if (area == null) {
             return;
         }
-        Entity d = e.getAttacker();
+        Entity d = event.getAttacker();
         if (d instanceof Player) {
             Player p = (Player) d;
             PlotPlayer pp = BukkitUtil.getPlayer(p);
@@ -2069,13 +2060,13 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.road")) {
                     MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.vehicle.break.road");
-                    e.setCancelled(true);
+                    event.setCancelled(true);
                 }
             } else {
                 if (!plot.hasOwner()) {
                     if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.unowned")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.vehicle.break.unowned");
-                        e.setCancelled(true);
+                        event.setCancelled(true);
                         return;
                     }
                     return;
@@ -2086,7 +2077,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     }
                     if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.other")) {
                         MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.vehicle.break.other");
-                        e.setCancelled(true);
+                        event.setCancelled(true);
                     }
                 }
             }
@@ -2113,15 +2104,15 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
-        Entity damager = e.getDamager();
+    public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
+        Entity damager = event.getDamager();
         Location l = BukkitUtil.getLocation(damager);
         if (!PS.get().hasPlotArea(l.getWorld())) {
             return;
         }
-        Entity victim = e.getEntity();
+        Entity victim = event.getEntity();
         if (!entityDamage(damager, victim)) {
-            e.setCancelled(true);
+            event.setCancelled(true);
         }
     }
 
@@ -2267,29 +2258,29 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerEggThrow(PlayerEggThrowEvent e) {
-        Location l = BukkitUtil.getLocation(e.getEgg().getLocation());
+    public void onPlayerEggThrow(PlayerEggThrowEvent event) {
+        Location l = BukkitUtil.getLocation(event.getEgg().getLocation());
         PlotArea area = l.getPlotArea();
         if (area == null) {
             return;
         }
-        Player p = e.getPlayer();
+        Player p = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(p);
         Plot plot = area.getPlot(l);
         if (plot == null) {
             if (!Permissions.hasPermission(pp, "plots.admin.projectile.road")) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.projectile.road");
-                e.setHatching(false);
+                event.setHatching(false);
             }
         } else if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(pp, "plots.admin.projectile.unowned")) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.projectile.unowned");
-                e.setHatching(false);
+                event.setHatching(false);
             }
         } else if (!plot.isAdded(pp.getUUID())) {
             if (!Permissions.hasPermission(pp, "plots.admin.projectile.other")) {
                 MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.projectile.other");
-                e.setHatching(false);
+                event.setHatching(false);
             }
         }
     }
@@ -2336,7 +2327,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (loc.getY() > area.MAX_BUILD_HEIGHT && loc.getY() < area.MIN_BUILD_HEIGHT && !Permissions
                     .hasPermission(pp, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
                 event.setCancelled(true);
-                MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", "" + area.MAX_BUILD_HEIGHT));
+                MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));
             }
         } else if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
             MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_ROAD);

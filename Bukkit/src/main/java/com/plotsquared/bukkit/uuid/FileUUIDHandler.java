@@ -114,7 +114,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                                     }
                                     toAdd.put(new StringWrapper(name), uuid);
                                 }
-                            } catch (Exception e) {
+                            } catch (IOException e) {
                                 e.printStackTrace();
                                 PS.debug(C.PREFIX + "Invalid playerdata: " + current);
                             }
@@ -153,7 +153,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             try {
                                 UUID uuid = UUID.fromString(s);
                                 uuids.add(uuid);
-                            } catch (Exception e) {
+                            } catch (Exception ignored) {
                                 PS.debug(C.PREFIX + "Invalid PlayerData: " + current);
                             }
                         }
@@ -198,7 +198,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             ExpireManager.IMP.storeDate(uuid, last);
                         }
                         toAdd.put(new StringWrapper(name), uuid);
-                    } catch (Throwable e) {
+                    } catch (IOException ignored) {
                         PS.debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
                     }
                 }

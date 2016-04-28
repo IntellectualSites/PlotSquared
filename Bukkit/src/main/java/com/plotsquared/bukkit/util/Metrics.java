@@ -520,11 +520,6 @@ public class Metrics {
             return graph.name.equals(this.name);
         }
 
-        /**
-         * Called when the server owner decides to opt-out of BukkitMetrics while the server is running.
-         */
-        protected void onOptOut() {
-        }
     }
 
     /**

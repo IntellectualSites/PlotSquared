@@ -24,8 +24,8 @@ import org.bukkit.block.Biome;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -223,7 +223,7 @@ public class FastQueue_1_9 extends SlowQueue {
         TaskManager.runTaskLater(new Runnable() {
             @Override
             public void run() {
-                sendChunk(fs.getChunkWrapper().world, Arrays.asList(new ChunkLoc(fs.getX(), fs.getZ())));
+                sendChunk(fs.getChunkWrapper().world, Collections.singletonList(new ChunkLoc(fs.getX(), fs.getZ())));
             }
         }, 1);
     }

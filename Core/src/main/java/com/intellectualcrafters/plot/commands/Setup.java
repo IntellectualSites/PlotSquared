@@ -65,8 +65,8 @@ public class Setup extends SubCommand {
                 if (object.setup_index > 0) {
                     object.setup_index--;
                     ConfigurationNode node = object.step[object.setup_index];
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", node.getDescription(), node.getType().getType(),
-                            node.getDefaultValue() + "");
+                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, node.getDescription(), node.getType().getType(),
+                            String.valueOf(node.getDefaultValue()));
                     return false;
                 } else if (object.current > 0) {
                     object.current--;
@@ -127,8 +127,8 @@ public class Setup extends SubCommand {
                         return true;
                     }
                     ConfigurationNode step = object.step[object.setup_index];
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(),
-                            step.getDefaultValue() + "");
+                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                            String.valueOf(step.getDefaultValue()));
                 } else {
                     if (gen.isFull()) {
                         object.plotManager = object.setupGenerator;
@@ -216,8 +216,8 @@ public class Setup extends SubCommand {
                             .getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null).getSettingNodes();
                 }
                 ConfigurationNode step = object.step[object.setup_index];
-                sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(),
-                        step.getDefaultValue() + "");
+                sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                        String.valueOf(step.getDefaultValue()));
                 break;
             }
             case 6:  // world setup
@@ -229,8 +229,8 @@ public class Setup extends SubCommand {
                 }
                 ConfigurationNode step = object.step[object.setup_index];
                 if (args.length < 1) {
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(),
-                            step.getDefaultValue() + "");
+                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                            String.valueOf(step.getDefaultValue()));
                     return false;
                 }
                 boolean valid = step.isValid(args[0]);
@@ -243,13 +243,13 @@ public class Setup extends SubCommand {
                         return false;
                     }
                     step = object.step[object.setup_index];
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(),
-                            step.getDefaultValue() + "");
+                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                            String.valueOf(step.getDefaultValue()));
                     return false;
                 } else {
                     sendMessage(plr, C.SETUP_INVALID_ARG, args[0], step.getConstant());
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1 + "", step.getDescription(), step.getType().getType(),
-                            step.getDefaultValue() + "");
+                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                            String.valueOf(step.getDefaultValue()));
                     return false;
                 }
             case 7:

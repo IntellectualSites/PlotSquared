@@ -9,9 +9,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 
-/**
- * Created by Jesse on 3/30/2016.
- */
 public class PlayerEvents_1_9 implements Listener {
 
     private final PlayerEvents parent;

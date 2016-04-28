@@ -515,7 +515,7 @@ public class PlotAnalysis {
         int SIZE = 10;
         List<Integer>[] bucket = new ArrayList[SIZE];
         for (int i = 0; i < bucket.length; i++) {
-            bucket[i] = new ArrayList<Integer>();
+            bucket[i] = new ArrayList<>();
         }
         boolean maxLength = false;
         int placement = 1;

@@ -127,9 +127,8 @@ public class AugmentedUtils {
                 }
                 if (!has) {
                     continue;
-                } else {
-                    toReturn = true;
                 }
+                toReturn = true;
                 secondaryMask = new PlotChunk<Object>(wrap) {
                     @Override
                     public Object getChunkAbs() {

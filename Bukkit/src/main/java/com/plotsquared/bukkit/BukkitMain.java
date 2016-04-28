@@ -620,11 +620,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public PlotPlayer wrapPlayer(Object player) {
         if (player instanceof Player) {
             return BukkitUtil.getPlayer((Player) player);
-        } else if (player instanceof OfflinePlayer) {
+        }
+        if (player instanceof OfflinePlayer) {
             return BukkitUtil.getPlayer((OfflinePlayer) player);
-        } else if (player instanceof String) {
+        }
+        if (player instanceof String) {
             return UUIDHandler.getPlayer((String) player);
-        } else if (player instanceof UUID) {
+        }
+        if (player instanceof UUID) {
             return UUIDHandler.getPlayer((UUID) player);
         }
         return null;

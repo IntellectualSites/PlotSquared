@@ -123,11 +123,10 @@ public class WESubscriber {
                             if (maskextent != null) {
                                 wrapper = new ExtentWrapper(maskextent);
                                 field.set(maskextent, history);
-                                event.setExtent(wrapper);
                             } else {
                                 wrapper = new ExtentWrapper(history);
-                                event.setExtent(wrapper);
                             }
+                            event.setExtent(wrapper);
                             field.set(history, reorder);
                             field.set(reorder, new ProcessedWEExtent(world, mask, max, new FastModeExtent(worldObj, true), wrapper));
                         }

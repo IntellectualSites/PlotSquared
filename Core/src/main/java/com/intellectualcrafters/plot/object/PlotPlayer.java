@@ -246,19 +246,6 @@ public abstract class PlotPlayer implements CommandCaller {
     public abstract UUID getUUID();
 
     /**
-     * Check the player's permissions<br>
-     *  - Will be cached if permission caching is enabled
-     */
-    @Override
-    public abstract boolean hasPermission(String permission);
-
-    /**
-     * Send the player a message
-     */
-    @Override
-    public abstract void sendMessage(String message);
-
-    /**
      * Teleport the player to a location
      * @param location
      */

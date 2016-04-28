@@ -742,12 +742,12 @@ public class BukkitChunkManager extends ChunkManager {
                         chest.getInventory().setContents(blockLocEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                        PS.debug("&c[WARN] Plot clear failed to regenerate chest: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                                .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (IllegalArgumentException ignored) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate chest (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    PS.debug("&c[WARN] Plot clear failed to regenerate chest (e): " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                            .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, String[]> blockLocEntry : this.signContents.entrySet()) {
@@ -765,14 +765,14 @@ public class BukkitChunkManager extends ChunkManager {
                         state.update(true);
                     } else {
                         PS.debug(
-                                "&c[WARN] Plot clear failed to regenerate sign: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
+                                "&c[WARN] Plot clear failed to regenerate sign: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
                                         .getKey().y
-                                        + "," + (
+                                        + ',' + (
                                         blockLocEntry.getKey().z + zOffset));
                     }
-                } catch (IndexOutOfBoundsException e) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry.getKey().y
-                            + "," + (
+                } catch (IndexOutOfBoundsException ignored) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate sign: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry.getKey().y
+                            + ',' + (
                             blockLocEntry.getKey().z + zOffset));
                 }
             }
@@ -785,12 +785,12 @@ public class BukkitChunkManager extends ChunkManager {
                         ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                        PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                                .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (IllegalArgumentException ignored) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                            .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, ItemStack[]> blockLocEntry : this.dropperContents.entrySet()) {
@@ -802,12 +802,12 @@ public class BukkitChunkManager extends ChunkManager {
                         ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                        PS.debug("&c[WARN] Plot clear failed to regenerate dispenser: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                                .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (IllegalArgumentException ignored) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    PS.debug("&c[WARN] Plot clear failed to regenerate dispenser (e): " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                            .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, ItemStack[]> blockLocEntry : this.beaconContents.entrySet()) {
@@ -819,12 +819,12 @@ public class BukkitChunkManager extends ChunkManager {
                         ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                        PS.debug("&c[WARN] Plot clear failed to regenerate beacon: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                                .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (IllegalArgumentException ignored) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate beacon (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    PS.debug("&c[WARN] Plot clear failed to regenerate beacon (e): " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                            .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, Material> blockLocMaterialEntry : this.jukeboxDisc.entrySet()) {
@@ -837,15 +837,15 @@ public class BukkitChunkManager extends ChunkManager {
                         ((Jukebox) state).setPlaying(blockLocMaterialEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to restore jukebox: " + (blockLocMaterialEntry.getKey().x + xOffset) + ","
+                        PS.debug("&c[WARN] Plot clear failed to restore jukebox: " + (blockLocMaterialEntry.getKey().x + xOffset) + ','
                                 + blockLocMaterialEntry
-                                .getKey().y + "," + (
+                                .getKey().y + ',' + (
                                 blockLocMaterialEntry.getKey().z + zOffset));
                     }
                 } catch (Exception ignored) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate jukebox (e): " + (blockLocMaterialEntry.getKey().x + xOffset) + ","
+                    PS.debug("&c[WARN] Plot clear failed to regenerate jukebox (e): " + (blockLocMaterialEntry.getKey().x + xOffset) + ','
                             + blockLocMaterialEntry
-                            .getKey().y + "," + (
+                            .getKey().y + ',' + (
                             blockLocMaterialEntry.getKey().z + zOffset));
                 }
             }
@@ -863,12 +863,12 @@ public class BukkitChunkManager extends ChunkManager {
                         ((Skull) state).setSkullType((SkullType) data[3]);
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to restore skull: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                        PS.debug("&c[WARN] Plot clear failed to restore skull: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                                .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (Exception e) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate skull (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    PS.debug("&c[WARN] Plot clear failed to regenerate skull (e): " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                            .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                     e.printStackTrace();
                 }
             }
@@ -881,12 +881,12 @@ public class BukkitChunkManager extends ChunkManager {
                         ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                        PS.debug("&c[WARN] Plot clear failed to regenerate hopper: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                                .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
                 } catch (IllegalArgumentException ignored) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate hopper (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                    PS.debug("&c[WARN] Plot clear failed to regenerate hopper (e): " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                            .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, Note> blockLocNoteEntry : this.noteBlockContents.entrySet()) {
@@ -898,15 +898,15 @@ public class BukkitChunkManager extends ChunkManager {
                         ((NoteBlock) state).setNote(blockLocNoteEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + (blockLocNoteEntry.getKey().x + xOffset) + ","
+                        PS.debug("&c[WARN] Plot clear failed to regenerate note block: " + (blockLocNoteEntry.getKey().x + xOffset) + ','
                                 + blockLocNoteEntry
-                                .getKey().y + "," + (
+                                .getKey().y + ',' + (
                                 blockLocNoteEntry.getKey().z + zOffset));
                     }
                 } catch (Exception ignored) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate note block (e): " + (blockLocNoteEntry.getKey().x + xOffset) + ","
+                    PS.debug("&c[WARN] Plot clear failed to regenerate note block (e): " + (blockLocNoteEntry.getKey().x + xOffset) + ','
                             + blockLocNoteEntry
-                            .getKey().y + "," + (
+                            .getKey().y + ',' + (
                             blockLocNoteEntry.getKey().z + zOffset));
                 }
             }
@@ -918,14 +918,14 @@ public class BukkitChunkManager extends ChunkManager {
                     if (state instanceof BrewingStand) {
                         ((BrewingStand) state).setBrewingTime(blockLocShortEntry.getValue());
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + (blockLocShortEntry.getKey().x + xOffset) + ","
+                        PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking: " + (blockLocShortEntry.getKey().x + xOffset) + ','
                                 + blockLocShortEntry
-                                .getKey().y + "," + (
+                                .getKey().y + ',' + (
                                 blockLocShortEntry.getKey().z + zOffset));
                     }
                 } catch (Exception ignored) {
-                    PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking (e): " + (blockLocShortEntry.getKey().x + xOffset) + ","
-                            + blockLocShortEntry.getKey().y + "," + (blockLocShortEntry.getKey().z + zOffset));
+                    PS.debug("&c[WARN] Plot clear failed to restore brewing stand cooking (e): " + (blockLocShortEntry.getKey().x + xOffset) + ','
+                            + blockLocShortEntry.getKey().y + ',' + (blockLocShortEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, EntityType> blockLocEntityTypeEntry : this.spawnerData.entrySet()) {
@@ -938,14 +938,14 @@ public class BukkitChunkManager extends ChunkManager {
                         ((CreatureSpawner) state).setSpawnedType(blockLocEntityTypeEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + (blockLocEntityTypeEntry.getKey().x + xOffset) + ","
+                        PS.debug("&c[WARN] Plot clear failed to restore spawner type: " + (blockLocEntityTypeEntry.getKey().x + xOffset) + ','
                                 + blockLocEntityTypeEntry
-                                .getKey().y + "," + (
+                                .getKey().y + ',' + (
                                 blockLocEntityTypeEntry.getKey().z + zOffset));
                     }
-                } catch (Exception e) {
-                    PS.debug("&c[WARN] Plot clear failed to restore spawner type (e): " + (blockLocEntityTypeEntry.getKey().x + xOffset) + ","
-                            + blockLocEntityTypeEntry.getKey().y + "," + (blockLocEntityTypeEntry.getKey().z + zOffset));
+                } catch (Exception ignored) {
+                    PS.debug("&c[WARN] Plot clear failed to restore spawner type (e): " + (blockLocEntityTypeEntry.getKey().x + xOffset) + ','
+                            + blockLocEntityTypeEntry.getKey().y + ',' + (blockLocEntityTypeEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, String> blockLocStringEntry : this.cmdData.entrySet()) {
@@ -957,15 +957,15 @@ public class BukkitChunkManager extends ChunkManager {
                         ((CommandBlock) state).setCommand(blockLocStringEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to restore command block: " + (blockLocStringEntry.getKey().x + xOffset) + ","
+                        PS.debug("&c[WARN] Plot clear failed to restore command block: " + (blockLocStringEntry.getKey().x + xOffset) + ','
                                 + blockLocStringEntry
-                                .getKey().y + "," + (
+                                .getKey().y + ',' + (
                                 blockLocStringEntry.getKey().z + zOffset));
                     }
-                } catch (Exception e) {
-                    PS.debug("&c[WARN] Plot clear failed to restore command block (e): " + (blockLocStringEntry.getKey().x + xOffset) + ","
+                } catch (Exception ignored) {
+                    PS.debug("&c[WARN] Plot clear failed to restore command block (e): " + (blockLocStringEntry.getKey().x + xOffset) + ','
                             + blockLocStringEntry
-                            .getKey().y + "," + (
+                            .getKey().y + ',' + (
                             blockLocStringEntry.getKey().z + zOffset));
                 }
             }
@@ -978,15 +978,15 @@ public class BukkitChunkManager extends ChunkManager {
                         ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + (blockLocEntry.getKey().x + xOffset) + ","
+                        PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand: " + (blockLocEntry.getKey().x + xOffset) + ','
                                 + blockLocEntry
-                                .getKey().y + "," + (
+                                .getKey().y + ',' + (
                                 blockLocEntry.getKey().z
                                         + zOffset));
                     }
-                } catch (IllegalArgumentException e) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand (e): " + (blockLocEntry.getKey().x + xOffset) + ","
-                            + blockLocEntry.getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                } catch (IllegalArgumentException ignored) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate brewing stand (e): " + (blockLocEntry.getKey().x + xOffset) + ','
+                            + blockLocEntry.getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, Short[]> blockLocEntry : this.furnaceTime.entrySet()) {
@@ -1000,13 +1000,13 @@ public class BukkitChunkManager extends ChunkManager {
                         ((Furnace) state).setCookTime(time[1]);
                     } else {
                         PS.debug(
-                                "&c[WARN] Plot clear failed to restore furnace cooking: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                        .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                                "&c[WARN] Plot clear failed to restore furnace cooking: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                                        .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     PS.debug(
-                            "&c[WARN] Plot clear failed to restore furnace cooking (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                    .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                            "&c[WARN] Plot clear failed to restore furnace cooking (e): " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                                    .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, ItemStack[]> blockLocEntry : this.furnaceContents.entrySet()) {
@@ -1018,12 +1018,12 @@ public class BukkitChunkManager extends ChunkManager {
                         ((InventoryHolder) state).getInventory().setContents(blockLocEntry.getValue());
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                                .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                        PS.debug("&c[WARN] Plot clear failed to regenerate furnace: " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                                .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                     }
-                } catch (IllegalArgumentException e) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate furnace (e): " + (blockLocEntry.getKey().x + xOffset) + "," + blockLocEntry
-                            .getKey().y + "," + (blockLocEntry.getKey().z + zOffset));
+                } catch (IllegalArgumentException ignored) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate furnace (e): " + (blockLocEntry.getKey().x + xOffset) + ',' + blockLocEntry
+                            .getKey().y + ',' + (blockLocEntry.getKey().z + zOffset));
                 }
             }
             for (Entry<BlockLoc, DyeColor> blockLocByteEntry : this.bannerBase.entrySet()) {
@@ -1039,12 +1039,12 @@ public class BukkitChunkManager extends ChunkManager {
                         banner.setPatterns(patterns);
                         state.update(true);
                     } else {
-                        PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + (blockLocByteEntry.getKey().x + xOffset) + ","
-                                + blockLocByteEntry.getKey().y + "," + (blockLocByteEntry.getKey().z + zOffset));
+                        PS.debug("&c[WARN] Plot clear failed to regenerate banner: " + (blockLocByteEntry.getKey().x + xOffset) + ','
+                                + blockLocByteEntry.getKey().y + ',' + (blockLocByteEntry.getKey().z + zOffset));
                     }
-                } catch (Exception e) {
-                    PS.debug("&c[WARN] Plot clear failed to regenerate banner (e): " + (blockLocByteEntry.getKey().x + xOffset) + ","
-                            + blockLocByteEntry.getKey().y + "," + (blockLocByteEntry.getKey().z + zOffset));
+                } catch (Exception ignored) {
+                    PS.debug("&c[WARN] Plot clear failed to regenerate banner (e): " + (blockLocByteEntry.getKey().x + xOffset) + ','
+                            + blockLocByteEntry.getKey().y + ',' + (blockLocByteEntry.getKey().z + zOffset));
                 }
             }
         }
@@ -1074,33 +1074,42 @@ public class BukkitChunkManager extends ChunkManager {
                         if (block.getState() instanceof InventoryHolder) {
                             InventoryHolder inventoryHolder = (InventoryHolder) block.getState();
                             ItemStack[] inventory = inventoryHolder.getInventory().getContents().clone();
-                            if (id == Material.CHEST) {
-                                this.chestContents.put(bl, inventory);
-                            } else if (id == Material.DISPENSER) {
-                                this.dispenserContents.put(bl, inventory);
-                            } else if (id == Material.BEACON) {
-                                this.beaconContents.put(bl, inventory);
-                            } else if (id == Material.DROPPER) {
-                                this.dropperContents.put(bl, inventory);
-                            } else if (id == Material.HOPPER) {
-                                this.hopperContents.put(bl, inventory);
-                            } else if (id == Material.BREWING_STAND) {
-                                BrewingStand brewingStand = (BrewingStand) inventoryHolder;
-                                short time = (short) brewingStand.getBrewingTime();
-                                if (time > 0) {
-                                    this.brewTime.put(bl, time);
-                                }
-                                ItemStack[] invBre = brewingStand.getInventory().getContents().clone();
-                                this.brewingStandContents.put(bl, invBre);
-                            } else if (id == Material.FURNACE || id == Material.BURNING_FURNACE) {
-                                Furnace furnace = (Furnace) inventoryHolder;
-                                short burn = furnace.getBurnTime();
-                                short cook = furnace.getCookTime();
-                                ItemStack[] invFur = furnace.getInventory().getContents().clone();
-                                this.furnaceContents.put(bl, invFur);
-                                if (cook != 0) {
-                                    this.furnaceTime.put(bl, new Short[]{burn, cook});
-                                }
+                            switch (id) {
+                                case CHEST:
+                                    this.chestContents.put(bl, inventory);
+                                    break;
+                                case DISPENSER:
+                                    this.dispenserContents.put(bl, inventory);
+                                    break;
+                                case BEACON:
+                                    this.beaconContents.put(bl, inventory);
+                                    break;
+                                case DROPPER:
+                                    this.dropperContents.put(bl, inventory);
+                                    break;
+                                case HOPPER:
+                                    this.hopperContents.put(bl, inventory);
+                                    break;
+                                case BREWING_STAND:
+                                    BrewingStand brewingStand = (BrewingStand) inventoryHolder;
+                                    short time = (short) brewingStand.getBrewingTime();
+                                    if (time > 0) {
+                                        this.brewTime.put(bl, time);
+                                    }
+                                    ItemStack[] invBre = brewingStand.getInventory().getContents().clone();
+                                    this.brewingStandContents.put(bl, invBre);
+                                    break;
+                                case FURNACE:
+                                case BURNING_FURNACE:
+                                    Furnace furnace = (Furnace) inventoryHolder;
+                                    short burn = furnace.getBurnTime();
+                                    short cook = furnace.getCookTime();
+                                    ItemStack[] invFur = furnace.getInventory().getContents().clone();
+                                    this.furnaceContents.put(bl, invFur);
+                                    if (cook != 0) {
+                                        this.furnaceTime.put(bl, new Short[]{burn, cook});
+                                    }
+                                    break;
                             }
                         } else if (block.getState() instanceof CreatureSpawner) {
                             CreatureSpawner spawner = (CreatureSpawner) block.getState();

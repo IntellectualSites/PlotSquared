@@ -47,7 +47,7 @@ public class RegenAllRoads extends SubCommand {
         }
         String name = args[0];
         PlotManager manager = area.getPlotManager();
-        if ((manager == null) || !(manager instanceof HybridPlotManager)) {
+        if (!(manager instanceof HybridPlotManager)) {
             MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
             return false;
         }

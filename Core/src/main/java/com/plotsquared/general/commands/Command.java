@@ -253,7 +253,7 @@ public abstract class Command {
             return;
         }
         if (page == 0 && totalPages != 0) { // Next
-            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
+            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1").command(baseCommand + " " + (0 + 2))
                     .text(C.CLICKABLE.s()).color("$2").send(player);
             return;
         }

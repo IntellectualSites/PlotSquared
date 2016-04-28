@@ -51,7 +51,6 @@ public class YamlConfiguration extends FileConfiguration {
             config.load(file);
         } catch (InvalidConfigurationException | IOException ex) {
             try {
-                file.getAbsolutePath();
                 File dest = new File(file.getAbsolutePath() + "_broken");
                 int i = 0;
                 while (dest.exists()) {
@@ -126,7 +125,7 @@ public class YamlConfiguration extends FileConfiguration {
             input = (Map<?, ?>) yaml.load(contents);
         } catch (final YAMLException e) {
             throw new InvalidConfigurationException(e);
-        } catch (final ClassCastException e) {
+        } catch (final ClassCastException ignored) {
             throw new InvalidConfigurationException("Top level is not a Map.");
         }
 
@@ -189,7 +188,7 @@ public class YamlConfiguration extends FileConfiguration {
         if (options().copyHeader()) {
             final Configuration def = getDefaults();
 
-            if (def != null && def instanceof FileConfiguration) {
+            if (def instanceof FileConfiguration) {
                 final FileConfiguration filedefaults = (FileConfiguration) def;
                 final String defaultsHeader = filedefaults.buildHeader();
 

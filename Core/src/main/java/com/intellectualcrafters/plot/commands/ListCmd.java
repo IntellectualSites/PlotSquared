@@ -245,12 +245,10 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PS.get().getPlots()) {
-/*
-                    Flag price = FlagManager.getPlotFlagRaw(plot, "price");
-                    if (price != null) {
+                    Optional<Double> price = plot.getFlag(Flags.PRICE);
+                    if (price.isPresent()) {
                         plots.add(plot);
                     }
-*/
                 }
                 break;
             case "unowned":

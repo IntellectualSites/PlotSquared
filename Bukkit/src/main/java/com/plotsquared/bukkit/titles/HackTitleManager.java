@@ -148,7 +148,7 @@ public class HackTitleManager extends TitleManager {
         return null;
     }
 
-    private Field getField(String name, Class<?> clazz) throws Exception {
+    private Field getField(String name, Class<?> clazz) throws NoSuchFieldException, SecurityException {
         return clazz.getDeclaredField(name);
     }
 

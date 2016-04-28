@@ -16,7 +16,7 @@ public class CompoundTagBuilder {
      * Create a new instance.
      */
     CompoundTagBuilder() {
-        this.entries = new HashMap<String, Tag>();
+        this.entries = new HashMap<>();
     }
 
     /**

@@ -32,11 +32,6 @@ import java.util.Map;
 public class FlagCmd extends SubCommand {
 
     @Override
-    public String getUsage() {
-        return super.getUsage();
-    }
-
-    @Override
     public boolean onCommand(PlotPlayer player, String[] args) {
 
         /*

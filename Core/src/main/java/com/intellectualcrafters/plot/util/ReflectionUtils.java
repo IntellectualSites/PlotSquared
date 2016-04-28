@@ -27,8 +27,8 @@ public class ReflectionUtils {
 
     public ReflectionUtils(String version) {
         if (version != null) {
-            preClassB += "." + version;
-            preClassM += "." + version;
+            preClassB += '.' + version;
+            preClassM += '.' + version;
         }
     }
 
@@ -73,29 +73,29 @@ public class ReflectionUtils {
                 } catch (ClassCastException ignored) {
                 }
             }
-        } catch (Throwable e) {
+        } catch (IllegalAccessException | IllegalArgumentException | SecurityException e) {
             e.printStackTrace();
         }
         return list;
     }
 
     public static Class<?> getNmsClass(String name) {
-        String className = preClassM + "." + name;
+        String className = preClassM + '.' + name;
         return getClass(className);
     }
 
     public static Class<?> getCbClass(String name) {
-        String className = preClassB + "." + name;
+        String className = preClassB + '.' + name;
         return getClass(className);
     }
 
     public static Class<?> getUtilClass(String name) {
         try {
             return Class.forName(name); //Try before 1.8 first
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException ignored) {
             try {
                 return Class.forName("net.minecraft.util." + name); //Not 1.8
-            } catch (ClassNotFoundException ex2) {
+            } catch (ClassNotFoundException ignored2) {
                 return null;
             }
         }
@@ -110,9 +110,9 @@ public class ReflectionUtils {
     public static Method makeMethod(Class<?> clazz, String methodName, Class<?>... paramaters) {
         try {
             return clazz.getDeclaredMethod(methodName, paramaters);
-        } catch (NoSuchMethodException ex) {
+        } catch (NoSuchMethodException ignored) {
             return null;
-        } catch (Exception ex) {
+        } catch (SecurityException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -127,7 +127,7 @@ public class ReflectionUtils {
             return (T) method.invoke(instance, paramaters);
         } catch (InvocationTargetException ex) {
             throw new RuntimeException(ex.getCause());
-        } catch (Exception ex) {
+        } catch (IllegalAccessException | IllegalArgumentException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -136,9 +136,9 @@ public class ReflectionUtils {
     public static <T> Constructor<T> makeConstructor(Class<?> clazz, Class<?>... paramaterTypes) {
         try {
             return (Constructor<T>) clazz.getConstructor(paramaterTypes);
-        } catch (NoSuchMethodException ex) {
+        } catch (NoSuchMethodException ignored) {
             return null;
-        } catch (Exception ex) {
+        } catch (SecurityException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -152,7 +152,7 @@ public class ReflectionUtils {
             return constructor.newInstance(paramaters);
         } catch (InvocationTargetException ex) {
             throw new RuntimeException(ex.getCause());
-        } catch (Exception ex) {
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -160,9 +160,9 @@ public class ReflectionUtils {
     public static Field makeField(Class<?> clazz, String name) {
         try {
             return clazz.getDeclaredField(name);
-        } catch (NoSuchFieldException ex) {
+        } catch (NoSuchFieldException ignored) {
             return null;
-        } catch (Exception ex) {
+        } catch (SecurityException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -175,7 +175,7 @@ public class ReflectionUtils {
         field.setAccessible(true);
         try {
             return (T) field.get(instance);
-        } catch (Exception ex) {
+        } catch (IllegalAccessException | IllegalArgumentException ex) {
             throw new RuntimeException(ex);
         }
     }

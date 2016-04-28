@@ -264,7 +264,7 @@ public class LikePlotMeConverter {
             sendMessage("Saving configuration...");
             try {
                 PS.get().config.save(PS.get().configFile);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 sendMessage(" - &cFailed to save configuration.");
             }
             TaskManager.runTask(new Runnable() {
@@ -293,7 +293,7 @@ public class LikePlotMeConverter {
                                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv unload " + actualWorldName);
                                 try {
                                     Thread.sleep(1000);
-                                } catch (InterruptedException ex) {
+                                } catch (InterruptedException ignored) {
                                     Thread.currentThread().interrupt();
                                 }
                                 // load world with MV
@@ -304,7 +304,7 @@ public class LikePlotMeConverter {
                                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mw unload " + actualWorldName);
                                 try {
                                     Thread.sleep(1000);
-                                } catch (InterruptedException ex) {
+                                } catch (InterruptedException ignored) {
                                     Thread.currentThread().interrupt();
                                 }
                                 // load world with MW

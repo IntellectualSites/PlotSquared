@@ -1330,7 +1330,7 @@ public class JSONObject {
                 }
             }
             return true;
-        } catch (Throwable exception) {
+        } catch (JSONException exception) {
             return false;
         }
     }

@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 public class WEListener implements Listener {
 
@@ -35,16 +36,16 @@ public class WEListener implements Listener {
     public final HashSet<String> rad2 = new HashSet<>(Arrays.asList("fill", "fillr", "removenear", "remove"));
     public final HashSet<String> rad2_1 = new HashSet<>(Arrays.asList("hcyl", "cyl"));
     public final HashSet<String> rad2_2 = new HashSet<>(Arrays.asList("sphere", "pyramid"));
-    public final HashSet<String> rad2_3 = new HashSet<>(Collections.singletonList("brush smooth"));
-    public final HashSet<String> rad3_1 = new HashSet<>(Collections.singletonList("brush gravity"));
+    public final Set<String> rad2_3 = Collections.singleton("brush smooth");
+    public final Set<String> rad3_1 = Collections.singleton("brush gravity");
     public final HashSet<String> rad3_2 = new HashSet<>(Arrays.asList("brush sphere", "brush cylinder"));
 
     public final HashSet<String> region = new HashSet<>(
             Arrays.asList("move", "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "naturalize", "paste", "count",
                     "distr",
                     "regen", "copy", "cut", "green", "setbiome"));
-    public final HashSet<String> regionExtend = new HashSet<>(Collections.singletonList("stack"));
-    public final HashSet<String> restricted = new HashSet<>(Collections.singletonList("up"));
+    public final Set<String> regionExtend = Collections.singleton("stack");
+    public final Set<String> restricted = Collections.singleton("up");
     public final HashSet<String> other = new HashSet<>(Arrays.asList("undo", "redo"));
 
     public String reduceCmd(String cmd, boolean single) {

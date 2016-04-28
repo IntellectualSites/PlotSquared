@@ -2,6 +2,7 @@ package com.intellectualcrafters.plot.object;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableSet;
 import com.intellectualcrafters.jnbt.CompoundTag;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
@@ -212,19 +213,19 @@ public class Plot {
         String[] split = string.split(";|,");
         if (split.length == 2) {
             if (defaultArea != null) {
-                PlotId id = PlotId.fromString(split[0] + ";" + split[1]);
+                PlotId id = PlotId.fromString(split[0] + ';' + split[1]);
                 return id != null ? defaultArea.getPlotAbs(id) : null;
             }
         } else if (split.length == 3) {
             PlotArea pa = PS.get().getPlotArea(split[0], null);
             if (pa != null) {
-                PlotId id = PlotId.fromString(split[1] + ";" + split[2]);
+                PlotId id = PlotId.fromString(split[1] + ';' + split[2]);
                 return pa.getPlotAbs(id);
             }
         } else if (split.length == 4) {
             PlotArea pa = PS.get().getPlotArea(split[0], split[1]);
             if (pa != null) {
-                PlotId id = PlotId.fromString(split[1] + ";" + split[2]);
+                PlotId id = PlotId.fromString(split[1] + ';' + split[2]);
                 return pa.getPlotAbs(id);
             }
         }
@@ -348,17 +349,17 @@ public class Plot {
     }
 
     /**
-     * Get a list of owner UUIDs for a plot (supports multi-owner mega-plots).
+     * Get a immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
      * @return
      */
-    public HashSet<UUID> getOwners() {
+    public Set<UUID> getOwners() {
         if (this.owner == null) {
             return new HashSet<>();
         }
         if (isMerged()) {
             HashSet<Plot> plots = getConnectedPlots();
             Plot[] array = plots.toArray(new Plot[plots.size()]);
-            HashSet<UUID> owners = new HashSet<UUID>(1);
+            ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
             UUID last = this.owner;
             owners.add(this.owner);
             for (Plot current : array) {
@@ -367,9 +368,9 @@ public class Plot {
                     last = current.owner;
                 }
             }
-            return owners;
+            return owners.build();
         }
-        return new HashSet<>(Collections.singletonList(this.owner));
+        return ImmutableSet.of(this.owner);
     }
 
     /**
@@ -380,10 +381,7 @@ public class Plot {
      * @return true if the player is added/trusted or is the owner
      */
     public boolean isAdded(UUID uuid) {
-        if (this.owner == null) {
-            return false;
-        }
-        if (getDenied().contains(uuid)) {
+        if (this.owner == null || getDenied().contains(uuid)) {
             return false;
         }
         if (getTrusted().contains(uuid) || getTrusted().contains(DBFunc.everyone)) {
@@ -1742,7 +1740,7 @@ public class Plot {
                     TaskManager.runTaskAsync(new Runnable() {
                         @Override
                         public void run() {
-                            String name = Plot.this.id + "," + Plot.this.area + "," + MainUtil.getName(Plot.this.owner);
+                            String name = Plot.this.id + "," + Plot.this.area + ',' + MainUtil.getName(Plot.this.owner);
                             boolean result =
                                     SchematicHandler.manager.save(value, Settings.SCHEMATIC_SAVE_PATH + File.separator + name + ".schematic");
                             if (whenDone != null) {
@@ -2034,7 +2032,7 @@ public class Plot {
                 this.create();
             }
             return this.owner;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
             return null;
         }
     }
@@ -2576,16 +2574,15 @@ public class Plot {
                         return;
                     }
                     TaskManager.TELEPORT_QUEUE.remove(name);
-                    if (!player.isOnline()) {
-                        return;
+                    if (player.isOnline()) {
+                        MainUtil.sendMessage(player, C.TELEPORTED_TO_PLOT);
+                        player.teleport(location);
                     }
-                    MainUtil.sendMessage(player, C.TELEPORTED_TO_PLOT);
-                    player.teleport(location);
                 }
             }, Settings.TELEPORT_DELAY * 20);
             return true;
         }
-        return result;
+        return false;
     }
 
     public boolean isOnline() {
@@ -2876,6 +2873,7 @@ public class Plot {
     }
 
     public boolean hasFlag(Flag<?> flag) {
+        //todo
         return false;
     }
 }

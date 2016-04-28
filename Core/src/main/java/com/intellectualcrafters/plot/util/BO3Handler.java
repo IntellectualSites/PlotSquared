@@ -254,7 +254,7 @@ public class BO3Handler {
             try (FileOutputStream fos = new FileOutputStream(bo3File)) {
                 write(fos, plot, bo3);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }

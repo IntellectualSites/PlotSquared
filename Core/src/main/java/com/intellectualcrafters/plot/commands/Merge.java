@@ -14,7 +14,6 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.HashSet;
 import java.util.UUID;
 
 @CommandDeclaration(command = "merge",
@@ -74,7 +73,7 @@ public class Merge extends SubCommand {
         final PlotArea plotworld = plot.getArea();
         final double price = plotworld.PRICES.containsKey("merge") ? plotworld.PRICES.get("merge") : 0;
         if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d && EconHandler.manager.getMoney(plr) < price) {
-            sendMessage(plr, C.CANNOT_AFFORD_MERGE, price + "");
+            sendMessage(plr, C.CANNOT_AFFORD_MERGE, String.valueOf(price));
             return false;
         }
         final int size = plot.getConnectedPlots().size();
@@ -108,7 +107,7 @@ public class Merge extends SubCommand {
                 if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
                     if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d) {
                         EconHandler.manager.withdrawMoney(plr, price);
-                        sendMessage(plr, C.REMOVED_BALANCE, price + "");
+                        sendMessage(plr, C.REMOVED_BALANCE, String.valueOf(price));
                     }
                     MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
                     return true;
@@ -138,7 +137,7 @@ public class Merge extends SubCommand {
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
             if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d) {
                 EconHandler.manager.withdrawMoney(plr, price);
-                sendMessage(plr, C.REMOVED_BALANCE, price + "");
+                sendMessage(plr, C.REMOVED_BALANCE, String.valueOf(price));
             }
             MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
             return true;
@@ -152,7 +151,7 @@ public class Merge extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PERMISSION, C.PERMISSION_MERGE_OTHER);
             return false;
         }
-        HashSet<UUID> uuids = adjacent.getOwners();
+        java.util.Set<UUID> uuids = adjacent.getOwners();
         boolean isOnline = false;
         for (final UUID owner : uuids) {
             final PlotPlayer accepter = UUIDHandler.getPlayer(owner);
@@ -173,11 +172,11 @@ public class Merge extends SubCommand {
                     }
                     if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d) {
                         if (EconHandler.manager.getMoney(plr) < price) {
-                            sendMessage(plr, C.CANNOT_AFFORD_MERGE, price + "");
+                            sendMessage(plr, C.CANNOT_AFFORD_MERGE, String.valueOf(price));
                             return;
                         }
                         EconHandler.manager.withdrawMoney(plr, price);
-                        sendMessage(plr, C.REMOVED_BALANCE, price + "");
+                        sendMessage(plr, C.REMOVED_BALANCE, String.valueOf(price));
                     }
                     MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
                 }

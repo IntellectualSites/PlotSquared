@@ -373,7 +373,7 @@ public final class CompoundTag extends Tag {
     public String toString() {
         String name = getName();
         String append = "";
-        if (name != null && !name.equals("")) {
+        if (name != null && !name.isEmpty()) {
             append = "(\"" + getName() + "\")";
         }
         StringBuilder bldr = new StringBuilder();

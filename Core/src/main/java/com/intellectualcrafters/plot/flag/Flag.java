@@ -2,7 +2,7 @@ package com.intellectualcrafters.plot.flag;
 
 public class Flag<V> {
 
-    private String name;
+    private final String name;
 
     /**
      * Flag object used to store basic information for a Plot. Flags are a
