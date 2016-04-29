@@ -10,8 +10,7 @@ public final class NBTUtils {
     /**
      * Default private constructor.
      */
-    private NBTUtils() {
-    }
+    private NBTUtils() {}
 
     /**
      * Gets the type name of a tag.

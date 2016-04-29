@@ -41,7 +41,7 @@ public class FastQueue_1_8 extends SlowQueue {
     private final RefConstructor constructorBlockPosition;
     private final SendChunk sendChunk;
 
-    public FastQueue_1_8() throws RuntimeException {
+    public FastQueue_1_8() throws NoSuchMethodException, ClassNotFoundException, NoSuchFieldException {
         this.methodInitLighting = this.classChunk.getMethod("initLighting");
         this.constructorBlockPosition = this.classBlockPosition.getConstructor(int.class, int.class, int.class);
         this.methodGetByCombinedId = this.classBlock.getMethod("getByCombinedId", int.class);
@@ -56,7 +56,7 @@ public class FastQueue_1_8 extends SlowQueue {
                     return;
                 }
                 int count = 0;
-                ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+                ArrayList<Chunk> chunks = new ArrayList<>();
                 Iterator<Entry<ChunkWrapper, Chunk>> i = FastQueue_1_8.this.toUpdate.entrySet().iterator();
                 while (i.hasNext() && count < 128) {
                     chunks.add(i.next().getValue());

@@ -43,7 +43,7 @@ public class PlotListener {
         pp.setMeta("lastplot", plot);
         EventUtil.manager.callEntry(pp, plot);
         if (plot.hasOwner()) {
-            HashMap<Flag<?>, Object> flags = FlagManager.getPlotFlags(plot);
+            Map<Flag<?>, Object> flags = FlagManager.getPlotFlags(plot);
             int size = flags.size();
             boolean titles = Settings.TITLES;
             final String greeting;
@@ -122,8 +122,7 @@ public class PlotListener {
                             try {
                                 pp.setMeta("music", loc);
                                 pp.playMusic(loc, id);
-                            } catch (Exception ignored) {
-                            }
+                            } catch (Exception ignored) {}
                         }
                     }
                 } else {

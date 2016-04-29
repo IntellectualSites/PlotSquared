@@ -101,7 +101,7 @@ public class ListCmd extends SubCommand {
                 if (page < 0) {
                     page = 0;
                 }
-            } catch (Exception e) {
+            } catch (NumberFormatException ignored) {
                 page = -1;
             }
         }
@@ -313,8 +313,7 @@ public class ListCmd extends SubCommand {
                 if (uuid == null) {
                     try {
                         uuid = UUID.fromString(args[0]);
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
                 }
                 if (uuid != null) {
                     if (!Permissions.hasPermission(plr, "plots.list.player")) {

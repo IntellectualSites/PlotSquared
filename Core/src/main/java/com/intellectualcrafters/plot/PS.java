@@ -829,7 +829,7 @@ public class PS {
         return result;
     }
 
-    public ArrayList<Plot> sortPlotsByTemp(Collection<Plot> plots) {
+    public List<Plot> sortPlotsByTemp(Collection<Plot> plots) {
         int max = 0;
         int overflowCount = 0;
         for (Plot plot : plots) {
@@ -1761,7 +1761,7 @@ public class PS {
             // Close the connection
             DBFunc.close();
             UUIDHandler.handleShutdown();
-        } catch (NullPointerException e) {
+        } catch (NullPointerException ignored) {
             PS.log("&cCould not close database connection!");
         }
     }
@@ -2099,7 +2099,7 @@ public class PS {
             }
             this.config = YamlConfiguration.loadConfiguration(this.configFile);
             setupConfig();
-        } catch (IOException err_trans) {
+        } catch (IOException ignored) {
             PS.log("Failed to save settings.yml");
         }
         try {
@@ -2111,7 +2111,7 @@ public class PS {
             }
             this.storage = YamlConfiguration.loadConfiguration(this.storageFile);
             setupStorage();
-        } catch (IOException err_trans) {
+        } catch (IOException ignored) {
             PS.log("Failed to save storage.yml");
         }
         try {
@@ -2123,7 +2123,7 @@ public class PS {
             }
             this.commands = YamlConfiguration.loadConfiguration(this.commandsFile);
             setupStorage();
-        } catch (IOException err_trans) {
+        } catch (IOException ignored) {
             PS.log("Failed to save commands.yml");
         }
         try {

@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotInventory;
 import com.intellectualcrafters.plot.object.PlotItemStack;
@@ -61,7 +62,7 @@ public class Rate extends SubCommand {
                 });
                 UUID uuid = player.getUUID();
                 for (Plot p : plots) {
-                    if ((!Settings.REQUIRE_DONE || p.getFlags().containsKey("done")) && p.isBasePlot() && (p.hasRatings() || !p.getRatings()
+                    if ((!Settings.REQUIRE_DONE || p.hasFlag(Flags.DONE)) && p.isBasePlot() && (p.hasRatings() || !p.getRatings()
                             .containsKey(uuid)) && !p.isAdded(uuid)) {
                         p.teleportPlayer(player);
                         MainUtil.sendMessage(player, C.RATE_THIS);
@@ -84,7 +85,7 @@ public class Rate extends SubCommand {
             sendMessage(player, C.RATING_NOT_YOUR_OWN);
             return false;
         }
-        if (Settings.REQUIRE_DONE && !plot.getFlags().containsKey("done")) {
+        if (Settings.REQUIRE_DONE && !plot.hasFlag(Flags.DONE)) {
             sendMessage(player, C.RATING_NOT_DONE);
             return false;
         }

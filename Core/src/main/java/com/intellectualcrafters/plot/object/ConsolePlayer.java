@@ -87,12 +87,10 @@ public class ConsolePlayer extends PlotPlayer {
     }
     
     @Override
-    public void setCompassTarget(Location location) {
-    }
+    public void setCompassTarget(Location location) {}
 
     @Override
-    public void setAttribute(String key) {
-    }
+    public void setAttribute(String key) {}
     
     @Override
     public boolean getAttribute(String key) {
@@ -100,8 +98,7 @@ public class ConsolePlayer extends PlotPlayer {
     }
     
     @Override
-    public void removeAttribute(String key) {
-    }
+    public void removeAttribute(String key) {}
     
     @Override
     public void setMeta(String key, Object value) {
@@ -124,8 +121,7 @@ public class ConsolePlayer extends PlotPlayer {
     }
     
     @Override
-    public void setWeather(PlotWeather weather) {
-    }
+    public void setWeather(PlotWeather weather) {}
     
     @Override
     public PlotGameMode getGameMode() {
@@ -133,24 +129,19 @@ public class ConsolePlayer extends PlotPlayer {
     }
     
     @Override
-    public void setGameMode(PlotGameMode gameMode) {
-    }
+    public void setGameMode(PlotGameMode gameMode) {}
     
     @Override
-    public void setTime(long time) {
-    }
+    public void setTime(long time) {}
     
     @Override
-    public void setFlight(boolean fly) {
-    }
+    public void setFlight(boolean fly) {}
     
     @Override
-    public void playMusic(Location location, int id) {
-    }
+    public void playMusic(Location location, int id) {}
     
     @Override
-    public void kick(String message) {
-    }
+    public void kick(String message) {}
 
     @Override public void stopSpectating() {}
 

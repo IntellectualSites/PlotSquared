@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class YamlConstructor extends SafeConstructor {
     
-    public YamlConstructor() {
+    YamlConstructor() {
         yamlConstructors.put(Tag.MAP, new ConstructCustomObject());
     }
     

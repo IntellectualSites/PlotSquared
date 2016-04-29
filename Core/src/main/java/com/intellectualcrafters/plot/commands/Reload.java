@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.configuration.ConfigurationSection;
+import com.intellectualcrafters.configuration.InvalidConfigurationException;
 import com.intellectualcrafters.configuration.MemorySection;
 import com.intellectualcrafters.configuration.file.YamlConfiguration;
 import com.intellectualcrafters.plot.PS;
@@ -11,6 +12,7 @@ import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.plotsquared.general.commands.CommandDeclaration;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @CommandDeclaration(command = "reload",
@@ -77,7 +79,7 @@ public class Reload extends SubCommand {
             });
             PS.get().config.save(PS.get().configFile);
             MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
-        } catch (Exception e) {
+        } catch (InvalidConfigurationException | IOException e) {
             e.printStackTrace();
             MainUtil.sendMessage(plr, C.RELOAD_FAILED);
         }

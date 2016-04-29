@@ -31,22 +31,21 @@ import java.util.Set;
 
 public class WEListener implements Listener {
 
-    public final HashSet<String> rad1 = new HashSet<>(
+    public final Set<String> other = new HashSet<>(Arrays.asList("undo", "redo"));
+    private final Set<String> rad1 = new HashSet<>(
             Arrays.asList("forestgen", "pumpkins", "drain", "fixwater", "fixlava", "replacenear", "snow", "thaw", "ex", "butcher", "size"));
-    public final HashSet<String> rad2 = new HashSet<>(Arrays.asList("fill", "fillr", "removenear", "remove"));
-    public final HashSet<String> rad2_1 = new HashSet<>(Arrays.asList("hcyl", "cyl"));
-    public final HashSet<String> rad2_2 = new HashSet<>(Arrays.asList("sphere", "pyramid"));
-    public final Set<String> rad2_3 = Collections.singleton("brush smooth");
-    public final Set<String> rad3_1 = Collections.singleton("brush gravity");
-    public final HashSet<String> rad3_2 = new HashSet<>(Arrays.asList("brush sphere", "brush cylinder"));
-
-    public final HashSet<String> region = new HashSet<>(
+    private final Set<String> rad2 = new HashSet<>(Arrays.asList("fill", "fillr", "removenear", "remove"));
+    private final Set<String> rad2_1 = new HashSet<>(Arrays.asList("hcyl", "cyl"));
+    private final Set<String> rad2_2 = new HashSet<>(Arrays.asList("sphere", "pyramid"));
+    private final Set<String> rad2_3 = Collections.singleton("brush smooth");
+    private final Set<String> rad3_1 = Collections.singleton("brush gravity");
+    private final Set<String> rad3_2 = new HashSet<>(Arrays.asList("brush sphere", "brush cylinder"));
+    private final Set<String> region = new HashSet<>(
             Arrays.asList("move", "set", "replace", "overlay", "walls", "outline", "deform", "hollow", "smooth", "naturalize", "paste", "count",
                     "distr",
                     "regen", "copy", "cut", "green", "setbiome"));
-    public final Set<String> regionExtend = Collections.singleton("stack");
-    public final Set<String> restricted = Collections.singleton("up");
-    public final HashSet<String> other = new HashSet<>(Arrays.asList("undo", "redo"));
+    private final Set<String> regionExtend = Collections.singleton("stack");
+    private final Set<String> restricted = Collections.singleton("up");
 
     public String reduceCmd(String cmd, boolean single) {
         if (cmd.startsWith("/worldedit:/")) {
@@ -75,14 +74,14 @@ public class WEListener implements Listener {
                 }
             }
             return max;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
             return 0;
         }
     }
 
     public boolean checkVolume(PlotPlayer player, long volume, long max, Cancellable e) {
         if (volume > max) {
-            MainUtil.sendMessage(player, C.WORLDEDIT_VOLUME.s().replaceAll("%current%", volume + "").replaceAll("%max%", max + ""));
+            MainUtil.sendMessage(player, C.WORLDEDIT_VOLUME.s().replaceAll("%current%", String.valueOf(volume)).replaceAll("%max%", String.valueOf(max)));
             e.setCancelled(true);
         }
         if (Permissions.hasPermission(player, "plots.worldedit.bypass")) {
@@ -181,7 +180,7 @@ public class WEListener implements Listener {
         boolean single = true;
         if (split.length >= 2) {
             String reduced = reduceCmd(split[0], single);
-            String reduced2 = reduceCmd(split[0] + " " + split[1], single);
+            String reduced2 = reduceCmd(split[0] + ' ' + split[1], single);
             if (this.rad1.contains(reduced)) {
                 if (delay(p, message, false)) {
                     e.setCancelled(true);
@@ -234,7 +233,8 @@ public class WEListener implements Listener {
                         int iterations = getInt(split[3]);
                         if (iterations > maxIterations) {
                             MainUtil.sendMessage(pp,
-                                    C.WORLDEDIT_ITERATIONS.s().replaceAll("%current%", iterations + "").replaceAll("%max%", maxIterations + ""));
+                                    C.WORLDEDIT_ITERATIONS.s().replaceAll("%current%", String.valueOf(iterations)).replaceAll("%max%",
+                                            String.valueOf(maxIterations)));
                             e.setCancelled(true);
                             if (Permissions.hasPermission(pp, "plots.worldedit.bypass")) {
                                 MainUtil.sendMessage(pp, C.WORLDEDIT_BYPASS);

@@ -30,8 +30,7 @@ public class EventUtilTest extends EventUtil {
         return false;
     }
 
-    @Override public void callDelete(Plot plot) {
-    }
+    @Override public void callDelete(Plot plot) {}
 
     @Override public boolean callFlagAdd(Flag flag, Plot plot) {
         return true;
@@ -53,18 +52,13 @@ public class EventUtilTest extends EventUtil {
         return false;
     }
 
-    @Override public void callEntry(PlotPlayer player, Plot plot) {
-    }
+    @Override public void callEntry(PlotPlayer player, Plot plot) {}
 
-    @Override public void callLeave(PlotPlayer player, Plot plot) {
-    }
+    @Override public void callLeave(PlotPlayer player, Plot plot) {}
 
-    @Override public void callDenied(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-    }
+    @Override public void callDenied(PlotPlayer initiator, Plot plot, UUID player, boolean added) {}
 
-    @Override public void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-    }
+    @Override public void callTrusted(PlotPlayer initiator, Plot plot, UUID player, boolean added) {}
 
-    @Override public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
-    }
+    @Override public void callMember(PlotPlayer initiator, Plot plot, UUID player, boolean added) {}
 }

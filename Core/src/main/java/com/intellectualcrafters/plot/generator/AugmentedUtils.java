@@ -143,8 +143,7 @@ public class AugmentedUtils {
                     }
 
                     @Override
-                    public void setBiome(int x, int z, int biome) {
-                    }
+                    public void setBiome(int x, int z, int biome) {}
 
                     @Override
                     public PlotChunk clone() {

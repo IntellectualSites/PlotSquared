@@ -200,9 +200,7 @@ public class LikePlotMeConverter {
                         PS.get().config.set("worlds." + actualWorldName + ".wall.height", height);
                         PS.get().config.save(PS.get().configFile);
                     }
-                } catch (IOException ignored) {
-                    //ignored
-                }
+                } catch (IOException ignored) {}
             }
             for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
                 String world = entry.getKey();

@@ -335,7 +335,7 @@ public class Plot {
         if (!isMerged()) {
             return false;
         }
-        HashSet<Plot> connected = getConnectedPlots();
+        Set<Plot> connected = getConnectedPlots();
         for (Plot current : connected) {
             if (uuid.equals(current.owner)) {
                 return true;
@@ -350,14 +350,14 @@ public class Plot {
 
     /**
      * Get a immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
-     * @return
+     * @return the Plot owners
      */
     public Set<UUID> getOwners() {
         if (this.owner == null) {
-            return new HashSet<>();
+            return Collections.emptySet();
         }
         if (isMerged()) {
-            HashSet<Plot> plots = getConnectedPlots();
+            Set<Plot> plots = getConnectedPlots();
             Plot[] array = plots.toArray(new Plot[plots.size()]);
             ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
             UUID last = this.owner;
@@ -747,14 +747,11 @@ public class Plot {
     }
 
     public boolean clear(boolean checkRunning, final boolean isDelete, final Runnable whenDone) {
-        if (checkRunning && this.getRunning() != 0) {
-            return false;
-        }
-        if (!EventUtil.manager.callClear(this)) {
+        if (checkRunning && this.getRunning() != 0 || !EventUtil.manager.callClear(this)) {
             return false;
         }
         final HashSet<RegionWrapper> regions = this.getRegions();
-        final HashSet<Plot> plots = this.getConnectedPlots();
+        final Set<Plot> plots = this.getConnectedPlots();
         final ArrayDeque<Plot> queue = new ArrayDeque<>(plots);
         if (isDelete) {
             this.removeSign();
@@ -841,7 +838,7 @@ public class Plot {
     }
 
     /**
-     * Unlink the plot and all connected plots
+     * Unlink the plot and all connected plots.
      * @param createSign
      * @param createRoad
      * @return
@@ -850,7 +847,7 @@ public class Plot {
         if (!this.isMerged()) {
             return false;
         }
-        HashSet<Plot> plots = this.getConnectedPlots();
+        Set<Plot> plots = this.getConnectedPlots();
         ArrayList<PlotId> ids = new ArrayList<>(plots.size());
         for (Plot current : plots) {
             current.setHome(null);
@@ -982,7 +979,7 @@ public class Plot {
         if (!this.hasOwner()) {
             return false;
         }
-        final HashSet<Plot> plots = this.getConnectedPlots();
+        final Set<Plot> plots = this.getConnectedPlots();
         this.clear(false, true, new Runnable() {
             @Override
             public void run() {
@@ -1062,9 +1059,8 @@ public class Plot {
     }
 
     /**
-     * Unclaim the plot (does not modify terrain)<br>
-     *      - Changes made to this plot will not be reflected in unclaimed plot objects<br>
-     * @return
+     * Unclaim the plot (does not modify terrain). Changes made to this plot will not be reflected in unclaimed plot objects.
+     * @return false if the Plot has no owner, otherwise true.
      */
     public boolean unclaim() {
         if (this.owner == null) {
@@ -1264,9 +1260,7 @@ public class Plot {
         });
     }
 
-    /**
-     * Remove the plot sign if it is set
-     */
+    /** Remove the plot sign if it is set. */
     public void removeSign() {
         PlotManager manager = this.area.getPlotManager();
         if (!this.area.ALLOW_SIGNS) {
@@ -1276,9 +1270,7 @@ public class Plot {
         SetQueue.IMP.setBlock(this.area.worldname, loc.getX(), loc.getY(), loc.getZ(), 0);
     }
 
-    /**
-     * Set the plot sign if plot signs are enabled.
-     */
+    /** Set the plot sign if plot signs are enabled. */
     public void setSign() {
         if (this.owner == null) {
             this.setSign("unknown");
@@ -2076,7 +2068,7 @@ public class Plot {
         }
         HashSet<Plot> visited = new HashSet<>();
         HashSet<PlotId> merged = new HashSet<>();
-        HashSet<Plot> connected = this.getConnectedPlots();
+        Set<Plot> connected = this.getConnectedPlots();
         for (Plot current : connected) {
             merged.add(current.getId());
         }
@@ -2091,8 +2083,7 @@ public class Plot {
             Set<Plot> plots;
             if ((dir == -1 || dir == 0) && !current.getMerged(0)) {
                 Plot other = current.getRelative(0);
-                if (other != null
-                        && other.isOwner(uuid)
+                if (other != null && other.isOwner(uuid)
                         && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
                     current.mergePlot(other, removeRoads);
@@ -2103,12 +2094,9 @@ public class Plot {
             }
             if (max >= 0 && (dir == -1 || dir == 1) && !current.getMerged(1)) {
                 Plot other = current.getRelative(1);
-                if (other != null
-                        && other.isOwner(uuid)
+                if (other != null && other.isOwner(uuid)
                         && (other.getBasePlot(false).equals(current.getBasePlot(false))
-                        || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) &&
-
-                        (max -= plots.size()) != -1)) {
+                        || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
                     current.mergePlot(other, removeRoads);
                     merged.add(current.getId());
                     merged.add(other.getId());
@@ -2243,14 +2231,14 @@ public class Plot {
      *  - This result is cached globally
      * @return
      */
-    public HashSet<Plot> getConnectedPlots() {
+    public Set<Plot> getConnectedPlots() {
         if (this.settings == null) {
-            return new HashSet<>(Collections.singletonList(this));
+            return Collections.singleton(this);
         }
         boolean[] merged = this.getMerged();
         int hash = MainUtil.hash(merged);
         if (hash == 0) {
-            return new HashSet<>(Collections.singletonList(this));
+            return Collections.singleton(this);
         }
         if (connected_cache != null && connected_cache.contains(this)) {
             return connected_cache;
@@ -2386,7 +2374,7 @@ public class Plot {
             regions_cache.add(new RegionWrapper(pos1.getX(), pos2.getX(), pos1.getY(), pos2.getY(), pos1.getZ(), pos2.getZ()));
             return regions_cache;
         }
-        HashSet<Plot> plots = this.getConnectedPlots();
+        Set<Plot> plots = this.getConnectedPlots();
         HashSet<RegionWrapper> regions = regions_cache = new HashSet<>();
         HashSet<PlotId> visited = new HashSet<>();
         for (Plot current : plots) {
@@ -2712,7 +2700,7 @@ public class Plot {
             return false;
         }
         boolean occupied = false;
-        HashSet<Plot> plots = this.getConnectedPlots();
+        Set<Plot> plots = this.getConnectedPlots();
         for (Plot plot : plots) {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             if (other.hasOwner()) {
@@ -2806,7 +2794,7 @@ public class Plot {
             TaskManager.runTaskLater(whenDone, 1);
             return false;
         }
-        HashSet<Plot> plots = this.getConnectedPlots();
+        Set<Plot> plots = this.getConnectedPlots();
         for (Plot plot : plots) {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             if (other.hasOwner()) {
@@ -2873,7 +2861,6 @@ public class Plot {
     }
 
     public boolean hasFlag(Flag<?> flag) {
-        //todo
-        return false;
+        return getFlags().containsKey(flag);
     }
 }

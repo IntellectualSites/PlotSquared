@@ -431,7 +431,7 @@ public class MainUtil {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+                    PS.log(C.NOT_VALID_PLOT_WORLD);
                 }
                 return null;
             }

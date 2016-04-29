@@ -285,7 +285,7 @@ public class DebugUUID extends SubCommand {
                 }
                 try {
                     PS.get().config.save(PS.get().configFile);
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                     MainUtil.sendMessage(player, "Could not save configuration. It will need to be manual set!");
                 }
 

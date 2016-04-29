@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.config.ConfigurationNode;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.generator.GridPlotWorld;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
 import com.intellectualcrafters.plot.util.EconHandler;
@@ -53,9 +54,9 @@ public abstract class PlotArea {
     public boolean SCHEMATIC_ON_CLAIM = false;
     public String SCHEMATIC_FILE = "null";
     public List<String> SCHEMATICS = null;
-    public HashMap<Flag<?>, Object> DEFAULT_FLAGS;
+    public Map<Flag<?>, Object> DEFAULT_FLAGS;
     public boolean USE_ECONOMY = false;
-    public HashMap<String, Double> PRICES = new HashMap<>();
+    public Map<String, Double> PRICES = new HashMap<>();
     public boolean SPAWN_EGGS = false;
     public boolean SPAWN_CUSTOM = true;
     public boolean SPAWN_BREEDING = false;
@@ -165,10 +166,7 @@ public abstract class PlotArea {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         PlotArea plotarea = (PlotArea) obj;
@@ -187,11 +185,8 @@ public abstract class PlotArea {
     public boolean isCompatible(PlotArea plotArea) {
         ConfigurationSection section = PS.get().config.getConfigurationSection("worlds");
         for (ConfigurationNode setting : plotArea.getSettingNodes()) {
-            Object constant = section.get(plotArea.worldname + "." + setting.getConstant());
-            if (constant == null) {
-                return false;
-            }
-            if (!constant.equals(section.get(this.worldname + "." + setting.getConstant()))) {
+            Object constant = section.get(plotArea.worldname + '.' + setting.getConstant());
+            if (constant == null || !constant.equals(section.get(this.worldname + '.' + setting.getConstant()))) {
                 return false;
             }
         }
@@ -269,7 +264,7 @@ public abstract class PlotArea {
             try {
                 String[] split = homeDefault.split(",");
                 this.DEFAULT_HOME = new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 this.DEFAULT_HOME = null;
             }
         }
@@ -283,7 +278,7 @@ public abstract class PlotArea {
                 Set<String> keys = section.getKeys(false);
                 for (String key : keys) {
                     if (!"default".equals(key)) {
-                        flags.add(key + ";" + section.get(key));
+                        flags.add(key + ';' + section.get(key));
                     }
                 }
             }
@@ -475,8 +470,8 @@ public abstract class PlotArea {
         return myPlots;
     }
     
-    public Set<Plot> getPlots(UUID uuid) {
-        HashSet<Plot> myplots = new HashSet<>();
+    public Set<Plot> getPlots(final UUID uuid) {
+        final HashSet<Plot> myplots = new HashSet<>();
         for (Plot plot : getPlots()) {
             if (plot.isBasePlot()) {
                 if (plot.isOwner(uuid)) {
@@ -488,7 +483,7 @@ public abstract class PlotArea {
     }
     
     public Set<Plot> getPlots(PlotPlayer player) {
-        return player != null ? getPlots(player.getUUID()) : new HashSet<Plot>();
+        return getPlots(player.getUUID());
     }
     
     public Set<Plot> getPlotsAbs(PlotPlayer player) {
@@ -499,7 +494,7 @@ public abstract class PlotArea {
         int count = 0;
         if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
             for (Plot plot : getPlotsAbs(uuid)) {
-                if (!plot.getFlags().containsKey("done")) {
+                if (!plot.hasFlag(Flags.DONE)) {
                     count++;
                 }
             }
@@ -617,7 +612,7 @@ public abstract class PlotArea {
         }
 
     }
-    
+
     public void foreachBasePlot(RunnableVal<Plot> run) {
         for (Plot plot : getPlots()) {
             if (plot.isBasePlot()) {

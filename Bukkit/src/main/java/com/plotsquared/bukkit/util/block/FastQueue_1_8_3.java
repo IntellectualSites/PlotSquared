@@ -49,7 +49,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
     private final RefMethod methodGetWorld;
     private final RefField tileEntityListTick;
 
-    public FastQueue_1_8_3() throws RuntimeException {
+    public FastQueue_1_8_3() throws NoSuchMethodException, ClassNotFoundException, NoSuchFieldException {
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         RefClass classCraftWorld = getRefClass("{cb}.CraftWorld");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");

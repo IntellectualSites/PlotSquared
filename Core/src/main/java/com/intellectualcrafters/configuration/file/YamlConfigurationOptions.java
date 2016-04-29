@@ -7,7 +7,7 @@ package com.intellectualcrafters.configuration.file;
 public class YamlConfigurationOptions extends FileConfigurationOptions {
     private int indent = 2;
     
-    protected YamlConfigurationOptions(final YamlConfiguration configuration) {
+    YamlConfigurationOptions(final YamlConfiguration configuration) {
         super(configuration);
     }
     

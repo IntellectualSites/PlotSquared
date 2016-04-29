@@ -298,8 +298,7 @@ public abstract class Command {
                     MainCommand.getInstance().help.execute(player, args, null, null);
                     return;
                 }
-            } catch (IllegalArgumentException ignored) {
-            }
+            } catch (IllegalArgumentException ignored) {}
             // Command recommendation
             MainUtil.sendMessage(player, C.NOT_VALID_SUBCOMMAND);
             List<Command> commands = getCommands(player);

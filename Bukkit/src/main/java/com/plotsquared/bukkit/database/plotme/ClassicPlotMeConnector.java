@@ -42,9 +42,8 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             } else {
                 return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
             }
-        } catch (SQLException | ClassNotFoundException ignored) {
-            //ignored
-            ignored.printStackTrace();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -229,9 +228,7 @@ public class ClassicPlotMeConnector extends APlotMeConnector {
             resultSet.close();
             statement.close();
 
-        } catch (SQLException ignored) {
-            //ignored
-        }
+        } catch (SQLException ignored) {}
         return plots;
     }
 

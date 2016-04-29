@@ -14,6 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.UUID;
@@ -48,11 +49,9 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     @Override
     public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
         BiMap<UUID, StringWrapper> map = UUIDHandler.getUuidMap().inverse();
-        String name;
-        try {
+        String name = null;
+        if (map.containsKey(uuid)) {
             name = map.get(uuid).value;
-        } catch (NullPointerException e) {
-            name = null;
         }
         if (name != null) {
             OfflinePlayer op = Bukkit.getOfflinePlayer(name);
@@ -81,7 +80,7 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
                 @SuppressWarnings("unchecked") Collection<? extends Player> p = (Collection<? extends Player>) players;
                 return p.toArray(new Player[p.size()]);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException ignored) {
             PS.debug("Failed to resolve online players");
             this.getOnline = null;
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();

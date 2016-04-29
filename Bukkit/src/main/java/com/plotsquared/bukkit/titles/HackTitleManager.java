@@ -143,8 +143,7 @@ public class HackTitleManager extends TitleManager {
     private Class<?> getClass(String namespace) {
         try {
             return Class.forName(namespace);
-        } catch (ClassNotFoundException ignored) {
-        }
+        } catch (ClassNotFoundException ignored) {}
         return null;
     }
 

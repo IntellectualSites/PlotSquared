@@ -11,7 +11,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @CommandDeclaration(
@@ -27,15 +27,14 @@ public class Owner extends SetCommand {
 
     @Override
     public boolean set(final PlotPlayer plr, final Plot plot, String value) {
-        HashSet<Plot> plots = plot.getConnectedPlots();
+        Set<Plot> plots = plot.getConnectedPlots();
         UUID uuid = null;
         String name = null;
         if (value.length() == 36) {
             try {
                 uuid = UUID.fromString(value);
                 name = MainUtil.getName(uuid);
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
         } else {
             uuid = UUIDHandler.getUUID(value, null);
             name = UUIDHandler.getName(uuid);
@@ -43,7 +42,7 @@ public class Owner extends SetCommand {
         }
         if (uuid == null) {
             if (value.equalsIgnoreCase("none")) {
-                HashSet<Plot> connected = plot.getConnectedPlots();
+                Set<Plot> connected = plot.getConnectedPlots();
                 plot.unlinkPlot(false, false);
                 for (Plot current : connected) {
                     current.unclaim();

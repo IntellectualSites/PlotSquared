@@ -162,8 +162,7 @@ public class Configuration {
                     if (result != null && result.match < 2) {
                         values[i] = result.best;
                     }
-                } catch (NumberFormatException ignored) {
-                }
+                } catch (NumberFormatException ignored) {}
             }
             int gcd = gcd(counts);
             for (int i = 0; i < counts.length; i++) {

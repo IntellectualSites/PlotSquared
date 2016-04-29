@@ -8,8 +8,7 @@ public final class EndTag extends Tag {
     /**
      * Creates the tag.
      */
-    public EndTag() {
-    }
+    public EndTag() {}
 
     @Override
     public Object getValue() {

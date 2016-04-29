@@ -80,8 +80,7 @@ public class DebugExec extends SubCommand {
                     this.engine.eval(script, this.scope);
                 }
             }
-        } catch (IOException | ScriptException ignored) {
-        }
+        } catch (IOException | ScriptException ignored) {}
     }
 
     public ScriptEngine getEngine() {
@@ -360,12 +359,7 @@ public class DebugExec extends SubCommand {
                         @Override
                         public void run(Integer i, File file, PlotMessage message) {
                             String name = file.getName();
-
-                            message.text("[").color("$3")
-                                    .text(i + "").color("$1")
-                                    .text("]").color("$3")
-                                    .text(" " + name).color("$1");
-
+                            message.text("[").color("$3").text(String.valueOf(i)).color("$1").text("]").color("$3").text(' ' + name).color("$1");
                         }
                     }, "/plot debugexec list-scripts", "List of scripts");
                     return true;

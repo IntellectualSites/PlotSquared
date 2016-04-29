@@ -76,8 +76,7 @@ public class MemorySection implements ConfigurationSection {
         if (obj instanceof String) {
             try {
                 return Double.parseDouble((String) obj);
-            } catch (NumberFormatException ignored) {
-            }
+            } catch (NumberFormatException ignored) {}
         } else if (obj instanceof List) {
             List<?> val = (List<?>) obj;
             if (!val.isEmpty()) {
@@ -94,8 +93,7 @@ public class MemorySection implements ConfigurationSection {
         if (obj instanceof String) {
             try {
                 return Integer.parseInt((String) obj);
-            } catch (NumberFormatException ignored) {
-            }
+            } catch (NumberFormatException ignored) {}
         } else if (obj instanceof List) {
             List<?> val = (List<?>) obj;
             if (!val.isEmpty()) {
@@ -112,8 +110,7 @@ public class MemorySection implements ConfigurationSection {
         if (obj instanceof String) {
             try {
                 return Long.parseLong((String) obj);
-            } catch (NumberFormatException ignored) {
-            }
+            } catch (NumberFormatException ignored) {}
         } else if (obj instanceof List) {
             List<?> val = (List<?>) obj;
             if (!val.isEmpty()) {
@@ -569,8 +566,7 @@ public class MemorySection implements ConfigurationSection {
             } else if (object instanceof String) {
                 try {
                     result.add(Integer.valueOf((String) object));
-                } catch (NumberFormatException ignored) {
-                }
+                } catch (NumberFormatException ignored) {}
             } else if (object instanceof Character) {
                 result.add((int) (Character) object);
             } else if (object instanceof Number) {
@@ -614,8 +610,7 @@ public class MemorySection implements ConfigurationSection {
             } else if (object instanceof String) {
                 try {
                     result.add(Double.valueOf((String) object));
-                } catch (NumberFormatException ignored) {
-                }
+                } catch (NumberFormatException ignored) {}
             } else if (object instanceof Character) {
                 result.add((double) (Character) object);
             } else if (object instanceof Number) {
@@ -638,8 +633,7 @@ public class MemorySection implements ConfigurationSection {
             } else if (object instanceof String) {
                 try {
                     result.add(Float.valueOf((String) object));
-                } catch (NumberFormatException ignored) {
-                }
+                } catch (NumberFormatException ignored) {}
             } else if (object instanceof Character) {
                 result.add((float) (Character) object);
             } else if (object instanceof Number) {
@@ -662,8 +656,7 @@ public class MemorySection implements ConfigurationSection {
             } else if (object instanceof String) {
                 try {
                     result.add(Long.valueOf((String) object));
-                } catch (NumberFormatException ignored) {
-                }
+                } catch (NumberFormatException ignored) {}
             } else if (object instanceof Character) {
                 result.add((long) (Character) object);
             } else if (object instanceof Number) {
@@ -686,8 +679,7 @@ public class MemorySection implements ConfigurationSection {
             } else if (object instanceof String) {
                 try {
                     result.add(Byte.valueOf((String) object));
-                } catch (NumberFormatException ignored) {
-                }
+                } catch (NumberFormatException ignored) {}
             } else if (object instanceof Character) {
                 result.add((byte) ((Character) object).charValue());
             } else if (object instanceof Number) {
@@ -733,8 +725,7 @@ public class MemorySection implements ConfigurationSection {
             } else if (object instanceof String) {
                 try {
                     result.add(Short.valueOf((String) object));
-                } catch (NumberFormatException ignored) {
-                }
+                } catch (NumberFormatException ignored) {}
             } else if (object instanceof Character) {
                 result.add((short) ((Character) object).charValue());
             } else if (object instanceof Number) {

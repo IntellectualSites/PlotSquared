@@ -58,6 +58,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -616,25 +617,25 @@ public class BukkitChunkManager extends ChunkManager {
 
     public static class ContentMap {
 
-        public final HashMap<BlockLoc, ItemStack[]> chestContents;
-        public final HashMap<BlockLoc, ItemStack[]> furnaceContents;
-        public final HashMap<BlockLoc, ItemStack[]> dispenserContents;
-        public final HashMap<BlockLoc, ItemStack[]> dropperContents;
-        public final HashMap<BlockLoc, ItemStack[]> brewingStandContents;
-        public final HashMap<BlockLoc, ItemStack[]> beaconContents;
-        public final HashMap<BlockLoc, ItemStack[]> hopperContents;
-        public final HashMap<BlockLoc, Short[]> furnaceTime;
-        public final HashMap<BlockLoc, Object[]> skullData;
-        public final HashMap<BlockLoc, Material> jukeboxDisc;
-        public final HashMap<BlockLoc, Short> brewTime;
-        public final HashMap<BlockLoc, EntityType> spawnerData;
-        public final HashMap<BlockLoc, String> cmdData;
-        public final HashMap<BlockLoc, String[]> signContents;
-        public final HashMap<BlockLoc, Note> noteBlockContents;
-        public final HashMap<BlockLoc, List<Pattern>> bannerPatterns;
-        public final HashMap<BlockLoc, DyeColor> bannerBase;
-        public final HashSet<EntityWrapper> entities;
-        public final HashMap<PlotLoc, PlotBlock[]> allBlocks;
+        public final Map<BlockLoc, ItemStack[]> chestContents;
+        public final Map<BlockLoc, ItemStack[]> furnaceContents;
+        public final Map<BlockLoc, ItemStack[]> dispenserContents;
+        public final Map<BlockLoc, ItemStack[]> dropperContents;
+        public final Map<BlockLoc, ItemStack[]> brewingStandContents;
+        public final Map<BlockLoc, ItemStack[]> beaconContents;
+        public final Map<BlockLoc, ItemStack[]> hopperContents;
+        public final Map<BlockLoc, Short[]> furnaceTime;
+        public final Map<BlockLoc, Object[]> skullData;
+        public final Map<BlockLoc, Material> jukeboxDisc;
+        public final Map<BlockLoc, Short> brewTime;
+        public final Map<BlockLoc, EntityType> spawnerData;
+        public final Map<BlockLoc, String> cmdData;
+        public final Map<BlockLoc, String[]> signContents;
+        public final Map<BlockLoc, Note> noteBlockContents;
+        public final Map<BlockLoc, List<Pattern>> bannerPatterns;
+        public final Map<BlockLoc, DyeColor> bannerBase;
+        public final Set<EntityWrapper> entities;
+        public final Map<PlotLoc, PlotBlock[]> allBlocks;
 
         public ContentMap() {
             this.chestContents = new HashMap<>();

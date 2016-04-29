@@ -68,14 +68,14 @@ public class Load extends SubCommand {
                 String schematic;
                 try {
                     schematic = schematics.get(Integer.parseInt(args[0]) - 1);
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException ignored) {
                     // use /plot load <index>
-                    MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ")");
+                    MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ')');
                     return false;
                 }
                 final URL url;
                 try {
-                    url = new URL(Settings.WEB_URL + "saves/" + plr.getUUID() + "/" + schematic + ".schematic");
+                    url = new URL(Settings.WEB_URL + "saves/" + plr.getUUID() + '/' + schematic + ".schematic");
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     MainUtil.sendMessage(plr, C.LOAD_FAILED);
@@ -147,7 +147,7 @@ public class Load extends SubCommand {
                 }
                 String time = secToTime((System.currentTimeMillis() / 1000) - Long.parseLong(split[0]));
                 String world = split[1];
-                PlotId id = PlotId.fromString(split[2] + ";" + split[3]);
+                PlotId id = PlotId.fromString(split[2] + ';' + split[3]);
                 String size = split[4];
                 String server = split[5].replaceAll(".schematic", "");
                 String color;
@@ -157,7 +157,7 @@ public class Load extends SubCommand {
                     color = "$1";
                 }
                 MainUtil.sendMessage(player,
-                        "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ";" + id + "$3 | " + color + size + "x" + size);
+                        "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ';' + id + "$3 | " + color + size + 'x' + size);
             } catch (Exception e) {
                 e.printStackTrace();
             }

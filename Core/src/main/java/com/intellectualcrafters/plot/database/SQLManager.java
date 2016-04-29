@@ -182,16 +182,13 @@ public class SQLManager implements AbstractDB {
                 }
 
                 @Override
-                public void set(PreparedStatement stmt) {
-                }
+                public void set(PreparedStatement stmt) {}
 
                 @Override
-                public void addBatch(PreparedStatement statement) {
-                }
+                public void addBatch(PreparedStatement statement) {}
 
                 @Override
-                public void execute(PreparedStatement statement) {
-                }
+                public void execute(PreparedStatement statement) {}
 
             };
         }
@@ -216,16 +213,13 @@ public class SQLManager implements AbstractDB {
                 }
 
                 @Override
-                public void set(PreparedStatement stmt) {
-                }
+                public void set(PreparedStatement stmt) {}
 
                 @Override
-                public void addBatch(PreparedStatement statement) {
-                }
+                public void addBatch(PreparedStatement statement) {}
 
                 @Override
-                public void execute(PreparedStatement statement) {
-                }
+                public void execute(PreparedStatement statement) {}
 
             };
         }
@@ -247,16 +241,13 @@ public class SQLManager implements AbstractDB {
                 }
 
                 @Override
-                public void set(PreparedStatement stmt) {
-                }
+                public void set(PreparedStatement stmt) {}
 
                 @Override
-                public void addBatch(PreparedStatement statement) {
-                }
+                public void addBatch(PreparedStatement statement) {}
 
                 @Override
-                public void execute(PreparedStatement statement) {
-                }
+                public void execute(PreparedStatement statement) {}
 
             };
         }
@@ -990,8 +981,7 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(PreparedStatement statement) {
-            }
+            public void execute(PreparedStatement statement) {}
 
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
@@ -1808,8 +1798,7 @@ public class SQLManager implements AbstractDB {
                                 default:
                                     try {
                                         plot.getSettings().setPosition(BlockLoc.fromString(pos));
-                                    } catch (Exception ignored) {
-                                    }
+                                    } catch (Exception ignored) {}
                             }
                             Integer m = resultSet.getInt("merged");
                             boolean[] merged = new boolean[4];
@@ -1963,7 +1952,7 @@ public class SQLManager implements AbstractDB {
 
     @Override
     public void setFlags(final Plot plot, HashMap<Flag<?>, Object> flags) {
-        final String flag_string = FlagManager.toString(flags); //todo MattBDev: Fix this for flags to work.
+        final String flag_string = FlagManager.toString(flags);
         addPlotTask(plot, new UniqueStatement("setFlags") {
             @Override
             public void set(PreparedStatement stmt) throws SQLException {
@@ -2178,8 +2167,7 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(PreparedStatement statement) {
-            }
+            public void execute(PreparedStatement statement) {}
 
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
@@ -2480,8 +2468,7 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(PreparedStatement statement) {
-            }
+            public void execute(PreparedStatement statement) {}
 
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
@@ -2621,8 +2608,7 @@ public class SQLManager implements AbstractDB {
                                 try {
                                     BlockLoc loc = BlockLoc.fromString(pos);
                                     cluster.settings.setPosition(loc);
-                                } catch (Exception ignored) {
-                                }
+                                } catch (Exception ignored) {}
                         }
                         Integer m = resultSet.getInt("merged");
                         boolean[] merged = new boolean[4];
@@ -2690,9 +2676,8 @@ public class SQLManager implements AbstractDB {
             if (i != 0) {
                 flag_string.append(',');
             }
-            flag_string.append(flag.getKey().getName()).append(":")
-                    .append(flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯").replaceAll(",",
-                            "´"));
+            flag_string.append(flag.getKey().getName()).append(':')
+                    .append(flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯").replaceAll(",", "´"));
             i++;
         }
         addClusterTask(cluster, new UniqueStatement("setFlags") {
@@ -2781,8 +2766,7 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override
-            public void execute(PreparedStatement statement) {
-            }
+            public void execute(PreparedStatement statement) {}
 
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {

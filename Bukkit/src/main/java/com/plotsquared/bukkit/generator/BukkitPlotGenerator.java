@@ -233,7 +233,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ArrayList<BlockPopulator> toAdd = new ArrayList<BlockPopulator>();
+        ArrayList<BlockPopulator> toAdd = new ArrayList<>();
         List<BlockPopulator> existing = world.getPopulators();
         for (BlockPopulator populator : this.populators) {
             if (!existing.contains(populator)) {

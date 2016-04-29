@@ -2,8 +2,6 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.flag.Flag;
-import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.object.Location;
@@ -34,7 +32,7 @@ public class Done extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (plot.getFlags().containsKey("done")) {
+        if (plot.hasFlag(Flags.DONE)) {
             MainUtil.sendMessage(plr, C.DONE_ALREADY_DONE);
             return false;
         }
@@ -50,8 +48,7 @@ public class Done extends SubCommand {
                 plot.removeRunning();
                 if ((value == null) || (value.getComplexity() >= Settings.CLEAR_THRESHOLD)) {
                     long flagValue = System.currentTimeMillis() / 1000;
-                    Flag flag = Flags.DONE;
-                    FlagManager.addPlotFlag(plot, flag, flagValue);
+                    plot.setFlag(Flags.DONE,flagValue);
                     MainUtil.sendMessage(plr, C.DONE_SUCCESS);
                 } else {
                     MainUtil.sendMessage(plr, C.DONE_INSUFFICIENT_COMPLEXITY);

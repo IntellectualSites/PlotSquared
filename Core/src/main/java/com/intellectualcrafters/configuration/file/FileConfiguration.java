@@ -25,8 +25,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     /**
      * Creates an empty {@link FileConfiguration} with no default values.
      */
-    public FileConfiguration() {
-    }
+    FileConfiguration() {}
     
     /**
      * Creates an empty {@link FileConfiguration} using the specified {@link
@@ -54,9 +53,6 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * @throws IllegalArgumentException Thrown when file is null.
      */
     public void save(File file) throws IOException {
-        if (file == null) {
-            throw new NullPointerException("File cannot be null");
-        }
         file.getParentFile().mkdirs();
 
         String data = saveToString();
@@ -65,30 +61,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
             writer.write(data);
         }
     }
-    
-    /**
-     * Saves this {@link FileConfiguration} to the specified location.
-     * <p>
-     * If the file does not exist, it will be created. If already exists, it
-     * will be overwritten. If it cannot be overwritten or created, an
-     * exception will be thrown.
-     * <p>
-     * This method will save using the system default encoding, or possibly
-     * using UTF8.
-     *
-     * @param file File to save to.
-     * @throws IOException Thrown when the given file cannot be written to for
-     *     any reason.
-     * @throws IllegalArgumentException Thrown when file is null.
-     */
-    public void save(String file) throws IOException {
-        if (file == null) {
-            throw new NullPointerException("File cannot be null");
-        }
-        
-        save(new File(file));
-    }
-    
+
     /**
      * Saves this {@link FileConfiguration} to a string, and returns it.
      *

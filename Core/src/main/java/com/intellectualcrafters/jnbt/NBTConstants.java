@@ -16,8 +16,7 @@ public final class NBTConstants {
     /**
      * Default private constructor.
      */
-    private NBTConstants() {
-    }
+    private NBTConstants() {}
 
     /**
      * Convert a type ID to its corresponding {@link Tag} class.

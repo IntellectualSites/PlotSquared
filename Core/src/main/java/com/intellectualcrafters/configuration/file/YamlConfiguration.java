@@ -21,8 +21,8 @@ import java.util.Map;
  * Note that this implementation is not synchronized.
  */
 public class YamlConfiguration extends FileConfiguration {
-    protected static final String COMMENT_PREFIX = "# ";
-    protected static final String BLANK_CONFIG = "{}\n";
+    private static final String COMMENT_PREFIX = "# ";
+    private static final String BLANK_CONFIG = "{}\n";
     private final DumperOptions yamlOptions = new DumperOptions();
     private final Representer yamlRepresenter = new YamlRepresenter();
     private final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
@@ -40,7 +40,7 @@ public class YamlConfiguration extends FileConfiguration {
      * @return Resulting configuration
      * @throws IllegalArgumentException Thrown if file is null
      */
-    public static YamlConfiguration loadConfiguration(final File file) {
+    public static YamlConfiguration loadConfiguration(File file) {
         if (file == null) {
             throw new NullPointerException("File cannot be null");
         }
@@ -163,7 +163,7 @@ public class YamlConfiguration extends FileConfiguration {
 
             if (line.startsWith(COMMENT_PREFIX)) {
                 if (i > 0) {
-                    result.append("\n");
+                    result.append('\n');
                 }
 
                 if (line.length() > COMMENT_PREFIX.length()) {
@@ -172,7 +172,7 @@ public class YamlConfiguration extends FileConfiguration {
 
                 foundHeader = true;
             } else if (foundHeader && line.isEmpty()) {
-                result.append("\n");
+                result.append('\n');
             } else if (foundHeader) {
                 readingHeader = false;
             }
@@ -189,8 +189,8 @@ public class YamlConfiguration extends FileConfiguration {
             final Configuration def = getDefaults();
 
             if (def instanceof FileConfiguration) {
-                final FileConfiguration filedefaults = (FileConfiguration) def;
-                final String defaultsHeader = filedefaults.buildHeader();
+                final FileConfiguration fileDefaults = (FileConfiguration) def;
+                final String defaultsHeader = fileDefaults.buildHeader();
 
                 if ((defaultsHeader != null) && !defaultsHeader.isEmpty()) {
                     return defaultsHeader;
@@ -207,7 +207,7 @@ public class YamlConfiguration extends FileConfiguration {
         boolean startedHeader = false;
 
         for (int i = lines.length - 1; i >= 0; i--) {
-            builder.insert(0, "\n");
+            builder.insert(0, '\n');
 
             if (startedHeader || !lines[i].isEmpty()) {
                 builder.insert(0, lines[i]);

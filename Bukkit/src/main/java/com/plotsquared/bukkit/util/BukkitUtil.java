@@ -271,8 +271,7 @@ public class BukkitUtil extends WorldUtil {
         try {
             Material material = Material.valueOf(name.toUpperCase());
             return new StringComparison<PlotBlock>().new ComparisonResult(0, new PlotBlock((short) material.getId(), (byte) 0));
-        } catch (IllegalArgumentException ignored) {
-        }
+        } catch (IllegalArgumentException ignored) {}
         try {
             byte data;
             String[] split = name.split(":");
@@ -296,8 +295,7 @@ public class BukkitUtil extends WorldUtil {
             StringComparison<PlotBlock> outer = new StringComparison<>();
             return outer.new ComparisonResult(match, block);
 
-        } catch (NumberFormatException ignored) {
-        }
+        } catch (NumberFormatException ignored) {}
         return null;
     }
 

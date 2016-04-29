@@ -152,7 +152,7 @@ public abstract class UUIDHandlerImplementation {
                 }
                 return false;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             BiMap<UUID, StringWrapper> inverse = this.uuidMap.inverse();
             if (inverse.containsKey(uuid)) {
                 if (this.uuidMap.containsKey(name)) {
