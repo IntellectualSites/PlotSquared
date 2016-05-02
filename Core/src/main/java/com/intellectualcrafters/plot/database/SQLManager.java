@@ -436,7 +436,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void createPlotsAndData(final ArrayList<Plot> myList, final Runnable whenDone) {
+    public void createPlotsAndData(final List<Plot> myList, final Runnable whenDone) {
         addGlobalTask(new Runnable() {
             @Override
             public void run() {
@@ -580,7 +580,7 @@ public class SQLManager implements AbstractDB {
      *
      * @param myList list of plots to be created
      */
-    public void createPlots(ArrayList<Plot> myList, Runnable whenDone) {
+    public void createPlots(List<Plot> myList, Runnable whenDone) {
         StmtMod<Plot> mod = new StmtMod<Plot>() {
             @Override
             public String getCreateMySQL(int size) {
@@ -638,7 +638,7 @@ public class SQLManager implements AbstractDB {
         setBulk(myList, mod, whenDone);
     }
 
-    public <T> void setBulk(ArrayList<T> objList, StmtMod<T> mod, Runnable whenDone) {
+    public <T> void setBulk(List<T> objList, StmtMod<T> mod, Runnable whenDone) {
         int size = objList.size();
         if (size == 0) {
             if (whenDone != null) {
