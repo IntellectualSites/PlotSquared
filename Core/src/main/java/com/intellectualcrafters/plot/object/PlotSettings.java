@@ -42,7 +42,7 @@ public class PlotSettings {
      * @deprecated Raw access
      */
     @Deprecated
-    public HashMap<UUID, Integer> ratings;
+    public HashMap<UUID, Integer> ratings = new HashMap<>();
 
     /**
      * Flags.
