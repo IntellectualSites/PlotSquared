@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 @CommandDeclaration(
@@ -30,7 +31,7 @@ import java.util.Map.Entry;
         usage = "/plots database [area] <sqlite|mysql|import>")
 public class Database extends SubCommand {
 
-    public static void insertPlots(final SQLManager manager, final ArrayList<Plot> plots, final PlotPlayer player) {
+    public static void insertPlots(final SQLManager manager, final List<Plot> plots, final PlotPlayer player) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -61,7 +62,7 @@ public class Database extends SubCommand {
             MainUtil.sendMessage(player, "/plot database [area] <sqlite|mysql|import>");
             return false;
         }
-        ArrayList<Plot> plots;
+        List<Plot> plots;
         PlotArea area = PS.get().getPlotAreaByString(args[0]);
         if (area != null) {
             plots = PS.get().sortPlotsByTemp(area.getPlots());

@@ -36,7 +36,7 @@ public interface AbstractDB {
      * @param plots Plots for which the default table entries should be created
      * @param whenDone
      */
-    void createPlotsAndData(ArrayList<Plot> plots, Runnable whenDone);
+    void createPlotsAndData(List<Plot> plots, Runnable whenDone);
     
     /**
      * Create a plot
