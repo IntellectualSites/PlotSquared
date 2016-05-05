@@ -19,7 +19,7 @@ public class AbstractDBTest implements AbstractDB {
 
     @Override public void setOwner(Plot plot, UUID uuid) {}
 
-    @Override public void createPlotsAndData(ArrayList<Plot> plots, Runnable whenDone) {}
+    @Override public void createPlotsAndData(List<Plot> plots, Runnable whenDone) {}
 
     @Override public void createPlot(Plot plot) {}
 
