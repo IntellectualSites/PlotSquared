@@ -733,17 +733,13 @@ public class SQLManager implements AbstractDB {
             e.printStackTrace();
             PS.debug("&cERROR 2:  | " + objList.get(0).getClass().getCanonicalName());
             PS.debug("&6[WARN] Could not bulk save!");
-            try {
-                String nonBulk = mod.getCreateSQL();
-                try (PreparedStatement preparedStmt = this.connection.prepareStatement(nonBulk)) {
-                    for (T obj : objList) {
-                        mod.setSQL(preparedStmt, obj);
-                        preparedStmt.addBatch();
-                    }
-                    PS.debug("&aBatch 3");
-                    preparedStmt.executeBatch();
-                    preparedStmt.close();
+            try (PreparedStatement preparedStmt = this.connection.prepareStatement(mod.getCreateSQL())) {
+                for (T obj : objList) {
+                    mod.setSQL(preparedStmt, obj);
+                    preparedStmt.addBatch();
                 }
+                PS.debug("&aBatch 3");
+                preparedStmt.executeBatch();
             } catch (SQLException e3) {
                 e3.printStackTrace();
                 PS.debug("&c[ERROR] Failed to save all!");
@@ -1819,9 +1815,13 @@ public class SQLManager implements AbstractDB {
                                 if (element.contains(":")) {
                                     String[] split = element.split(":");
                                     try {
-                                        String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
-                                        Flag<?> flag = FlagManager.getFlag(split[0]);
-                                        flags.put(flag, flag.parseValue(flag_str));
+                                        String flag_str = split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
+                                        Flag<?> flag = FlagManager.getFlag(split[0],false);
+                                        if (flag == null) {
+                                            PS.debug(String.format("No flag found for string value of: %s", split[0]));
+                                        } else {
+                                            flags.put(flag, flag.parseValue(flag_str));
+                                        }
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                         exception = true;
@@ -1829,8 +1829,12 @@ public class SQLManager implements AbstractDB {
                                 } else {
                                     element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                                     if (StringMan.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
-                                        Flag flag = FlagManager.getFlag(element);
-                                        flags.put(flag, flag.parseValue(""));
+                                        Flag flag = FlagManager.getFlag(element,false);
+                                        if (flag == null) {
+                                            PS.debug(String.format("No flag found for string value of: %s", element));
+                                        } else {
+                                            flags.put(flag, flag.parseValue(""));
+                                        }
                                     } else {
                                         PS.debug("INVALID FLAG: " + element);
                                     }
@@ -2624,26 +2628,24 @@ public class SQLManager implements AbstractDB {
                             flags_string = myflags.split(",");
                         }
                         HashMap<Flag<?>, Object> flags = new HashMap<>();
-                        boolean exception = false;
                         for (String element : flags_string) {
                             if (element.contains(":")) {
                                 String[] split = element.split(":");
-                                try {
-                                    String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("�", ",");
-                                    Flag flag = FlagManager.getFlag(split[0]);
+                                String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("�", ",");
+                                Flag flag = FlagManager.getFlag(split[0],false);
+                                if (flag == null) {
+                                    PS.debug(String.format("No flag found for string value of: %s", split[0]));
+                                } else {
                                     flags.put(flag, flag.parseValue(flag_str));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    exception = true;
                                 }
                             } else {
-                                Flag flag = FlagManager.getFlag(element);
-                                flags.put(flag, flag.parseValue(""));
+                                Flag flag = FlagManager.getFlag(element,false);
+                                if (flag == null) {
+                                    PS.debug(String.format("No flag found for string value of: %s", element));
+                                } else {
+                                    flags.put(flag, flag.parseValue(""));
+                                }
                             }
-                        }
-                        if (exception) {
-                            PS.debug("&cCluster " + id + " had an invalid flag. A fix has been attempted.");
-                            PS.debug("&c" + myflags);
                         }
                         cluster.settings.flags = flags;
                     } else {

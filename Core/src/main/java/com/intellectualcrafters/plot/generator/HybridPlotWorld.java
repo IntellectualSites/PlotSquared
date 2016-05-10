@@ -158,7 +158,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         try {
             setupSchematics();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             PS.debug("&c - road schematics are disabled for this world.");
         }
     }

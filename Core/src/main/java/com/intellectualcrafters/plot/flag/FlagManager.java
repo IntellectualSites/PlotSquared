@@ -257,6 +257,21 @@ public class FlagManager {
         return null;
     }
 
+    public static Flag<?> getFlag(String string, boolean ignoreReserved) {
+        for (Flag flag : Flags.getFlags()) {
+            if (flag.getName().equalsIgnoreCase(string)) {
+                if (!ignoreReserved) {
+                    if (isReserved(flag)) {
+                        return null;
+                    }
+                }
+                return flag;
+            }
+        }
+        return null;
+    }
+
+
     public static Map<Flag<?>, Object> parseFlags(List<String> flagstrings) {
         HashMap<Flag<?>, Object> map = new HashMap<>();
 
