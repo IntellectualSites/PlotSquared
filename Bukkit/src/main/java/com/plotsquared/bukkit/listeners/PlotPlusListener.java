@@ -131,8 +131,11 @@ public class PlotPlusListener extends PlotListener implements Listener {
             return;
         }
         UUID uuid = pp.getUUID();
-        if (plot.isAdded(uuid) && plot.getFlag(Flags.ITEM_DROP).or(false)) {
-            event.setCancelled(true);
+        if (plot.isAdded(uuid)) {
+            Optional<Boolean> flag = plot.getFlag(Flags.ITEM_DROP);
+            if (flag.isPresent() && !flag.get()) {
+                event.setCancelled(true);
+            }
         }
     }
     

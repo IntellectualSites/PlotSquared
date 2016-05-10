@@ -3,6 +3,7 @@ buildscript {
         mavenCentral()
         maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
+        mavenLocal()
     }
 	dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
