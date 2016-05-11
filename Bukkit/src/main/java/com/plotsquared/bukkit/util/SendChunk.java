@@ -51,7 +51,7 @@ public class SendChunk {
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
         if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
-            this.mapChunk = null; //todo
+            this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),int.class);
         } else {
             this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
         }
@@ -111,7 +111,7 @@ public class SendChunk {
                 Object con = this.connection.of(entity).get();
                 Object packet;
                 if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
-                    packet = null; //todo
+                    packet = this.mapChunk.create(c,65535);
                 } else {
                     packet = this.mapChunk.create(c, true, 65535);
                 }
