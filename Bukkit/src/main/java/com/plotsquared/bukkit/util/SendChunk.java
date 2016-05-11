@@ -50,7 +50,11 @@ public class SendChunk {
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-        this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
+            this.mapChunk = null; //todo
+        } else {
+            this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+        }
         RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
         this.connection = classEntityPlayer.getField("playerConnection");
         RefClass classPacket = getRefClass("{nms}.Packet");
@@ -105,7 +109,12 @@ public class SendChunk {
                 Object c = this.methodGetHandleChunk.of(chunk).call();
                 chunks.remove(chunk);
                 Object con = this.connection.of(entity).get();
-                Object packet = this.mapChunk.create(c, true, 65535);
+                Object packet;
+                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
+                    packet = null; //todo
+                } else {
+                    packet = this.mapChunk.create(c, true, 65535);
+                }
                 this.send.of(con).call(packet);
             }
         }
