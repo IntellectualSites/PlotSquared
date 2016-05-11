@@ -52,6 +52,11 @@ public class SendChunk {
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
         //TODO in 1.7.10 this is PacketPlayOutMapChunk(Chunk chunk, boolean flag, int i, int version)
         this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+        if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
+            this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),int.class);
+        } else {
+            this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+        }
         RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
         this.connection = classEntityPlayer.getField("playerConnection");
         RefClass classPacket = getRefClass("{nms}.Packet");
@@ -106,7 +111,12 @@ public class SendChunk {
                 Object c = this.methodGetHandleChunk.of(chunk).call();
                 chunks.remove(chunk);
                 Object con = this.connection.of(entity).get();
-                Object packet = this.mapChunk.create(c, true, 65535);
+                Object packet;
+                if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
+                    packet = this.mapChunk.create(c,65535);
+                } else {
+                    packet = this.mapChunk.create(c, true, 65535);
+                }
                 this.send.of(con).call(packet);
             }
         }
