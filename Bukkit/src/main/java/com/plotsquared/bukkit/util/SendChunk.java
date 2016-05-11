@@ -51,7 +51,11 @@ public class SendChunk {
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
         //TODO in 1.7.10 this is PacketPlayOutMapChunk(Chunk chunk, boolean flag, int i, int version)
-        this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+        if (PS.get().IMP.getNMSPackage().equalsIgnoreCase("v1_9_R2")) {
+            this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), int.class);
+        } else {
+            this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+        }
         RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
         this.connection = classEntityPlayer.getField("playerConnection");
         RefClass classPacket = getRefClass("{nms}.Packet");
