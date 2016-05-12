@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.ChunkLoc;
@@ -18,7 +19,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 
 /**
  * plot functions
@@ -737,32 +736,38 @@ public class MainUtil {
         Optional<String> descriptionFlag = plot.getFlag(Flags.DESCRIPTION);
         String description = !descriptionFlag.isPresent() ? C.NONE.s() : Flags.DESCRIPTION.valueToString(descriptionFlag.get());
 
-        String flags;
-        if (!StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "").isEmpty()) {
-            flags = StringMan.replaceFromMap(
-                    "$2" + StringMan.join(FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true).values(), "$1, $2"), C.replacements);
-        } else {
-            flags = StringMan.replaceFromMap("$2" + C.NONE.s(), C.replacements);
+        StringBuilder flags = new StringBuilder();
+        {
+            HashMap<Flag<?>, Object> flagMap = FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
+            if (flagMap.isEmpty()) {
+                    flags.append(C.NONE.s());
+            } else {
+                String prefix = "";
+                for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
+                    flags.append(prefix).append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), entry.getValue()));
+                    prefix = ", ";
+                }
+            }
         }
         boolean build = plot.isAdded(player.getUUID());
 
         String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
 
-        info = info.replaceAll("%id%", plot.getId().toString());
-        info = info.replaceAll("%alias%", alias);
-        info = info.replaceAll("%num%", num + "");
-        info = info.replaceAll("%desc%", description);
-        info = info.replaceAll("%biome%", biome);
-        info = info.replaceAll("%owner%", owner);
-        info = info.replaceAll("%members%", members);
-        info = info.replaceAll("%player%", player.getName());
-        info = info.replaceAll("%trusted%", trusted);
-        info = info.replaceAll("%helpers%", members);
-        info = info.replaceAll("%denied%", denied);
-        info = info.replaceAll("%expires%", expires);
-        info = info.replaceAll("%flags%", Matcher.quoteReplacement(flags));
-        info = info.replaceAll("%build%", build + "");
-        info = info.replaceAll("%desc%", "No description set.");
+        info = info.replace("%id%", plot.getId().toString());
+        info = info.replace("%alias%", alias);
+        info = info.replace("%num%", num + "");
+        info = info.replace("%desc%", description);
+        info = info.replace("%biome%", biome);
+        info = info.replace("%owner%", owner);
+        info = info.replace("%members%", members);
+        info = info.replace("%player%", player.getName());
+        info = info.replace("%trusted%", trusted);
+        info = info.replace("%helpers%", members);
+        info = info.replace("%denied%", denied);
+        info = info.replace("%expires%", expires);
+        info = info.replace("%flags%", flags);
+        info = info.replace("%build%", build + "");
+        info = info.replace("%desc%", "No description set.");
         if (info.contains("%rating%")) {
             final String newInfo = info;
             TaskManager.runTaskAsync(new Runnable() {
