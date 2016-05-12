@@ -1,6 +1,8 @@
 package com.intellectualcrafters.plot.flag;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
+import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -9,7 +11,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +28,35 @@ public class FlagManager {
 
 
     private static final HashSet<Flag<?>> reserved = Sets.newHashSet(Flags.ANALYSIS, Flags.DONE);
+
+    /**
+     * Some events can be called millions of times each second (e.g. physics) and reusing is a lot faster.
+     */
+    private static Optional MUTABLE_OPTIONAL;
+    private static Field MUTABLE_OPTIONAL_FIELD;
+    static {
+            MUTABLE_OPTIONAL = Optional.of(new Object());
+        try {
+            MUTABLE_OPTIONAL_FIELD = MUTABLE_OPTIONAL.getClass().getDeclaredField("reference");
+            MUTABLE_OPTIONAL_FIELD.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static <V> Optional<V> getPlotFlag(Plot plot, Flag<V> key) {
+        V value = FlagManager.getPlotFlagRaw(plot, key);
+        if (value != null) {
+            if (PS.get().isMainThread(Thread.currentThread())) {
+                try {
+                    MUTABLE_OPTIONAL_FIELD.set(MUTABLE_OPTIONAL, value);
+                    return MUTABLE_OPTIONAL;
+                } catch (IllegalAccessException e) {e.printStackTrace();}
+            }
+            return Optional.of(value);
+        }
+        return Optional.absent();
+    }
 
     /**
      * Reserve a flag so that it cannot be set by players

@@ -483,6 +483,7 @@ public enum C {
     PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
     PLOT_INFO_EXPIRES("$1Expires:$2 %expires%", "Info"),
     PLOT_USER_LIST(" $1%user%$2,", "Info"),
+    PLOT_FLAG_LIST("$1%s0:%s1$2", "Info"),
     INFO_SYNTAX_CONSOLE("$2/plot info X;Y", "Info"),
     /*
      * Generating
@@ -684,6 +685,10 @@ public enum C {
         } else {
             return format(c.s, args);
         }
+    }
+
+    public String f(final Object... args) {
+        return format(s(), args);
     }
 
     public static String color(String string) {
