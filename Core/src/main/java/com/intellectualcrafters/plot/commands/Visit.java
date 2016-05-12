@@ -10,7 +10,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,16 +25,6 @@ import java.util.UUID;
         requiredType = RequiredType.PLAYER,
         category = CommandCategory.TELEPORT)
 public class Visit extends SubCommand {
-
-    public List<Plot> getPlots(UUID uuid) {
-        List<Plot> plots = new ArrayList<>();
-        for (Plot p : PS.get().getPlots()) {
-            if (p.hasOwner() && p.isOwner(uuid)) {
-                plots.add(p);
-            }
-        }
-        return plots;
-    }
 
     @Override
     public boolean onCommand(PlotPlayer player, String[] args) {

@@ -51,7 +51,7 @@ public final class Reflection {
             return _loadedNMSClasses.get(className);
         }
 
-        String fullName = "net.minecraft.server." + getVersion() + "." + className;
+        String fullName = "net.minecraft.server." + getVersion() + '.' + className;
         Class<?> clazz;
         try {
             clazz = Class.forName(fullName);
@@ -77,7 +77,7 @@ public final class Reflection {
             return _loadedOBCClasses.get(className);
         }
 
-        String fullName = "org.bukkit.craftbukkit." + getVersion() + "." + className;
+        String fullName = "org.bukkit.craftbukkit." + getVersion() + '.' + className;
         Class<?> clazz;
         try {
             clazz = Class.forName(fullName);

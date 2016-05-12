@@ -33,13 +33,7 @@ public class HackTitleManager extends TitleManager {
         this.nmsChatSerializer = Reflection.getNMSClass("ChatSerializer");
     }
 
-    /**
-     * Send the title to a player.
-     *
-     * @param player Player
-     * @throws Exception on NMS error
-     */
-    @Override public void send(Player player) throws Exception {
+    @Override public void send(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException {
         if ((getProtocolVersion(player) >= 47) && isSpigot() && (this.packetTitle != null)) {
             // First reset previous settings
             resetTitle(player);
@@ -75,13 +69,7 @@ public class HackTitleManager extends TitleManager {
         }
     }
 
-    /**
-     * Clear the title.
-     *
-     * @param player Player
-     * @throws Exception on NMS Error
-     */
-    @Override public void clearTitle(Player player) throws Exception {
+    @Override public void clearTitle(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException {
         if ((getProtocolVersion(player) >= 47) && isSpigot()) {
             // Send timings first
             Object handle = getHandle(player);
@@ -93,13 +81,7 @@ public class HackTitleManager extends TitleManager {
         }
     }
 
-    /**
-     * Reset the title settings.
-     *
-     * @param player Player
-     * @throws Exception on NMS error.
-     */
-    @Override public void resetTitle(Player player) throws Exception {
+    @Override public void resetTitle(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException {
         if ((getProtocolVersion(player) >= 47) && isSpigot()) {
             // Send timings first
             Object handle = getHandle(player);
@@ -116,9 +98,11 @@ public class HackTitleManager extends TitleManager {
      *
      * @param player Player
      * @return Protocol version
-     * @throws Exception on NMS Error
+     * @throws IllegalArgumentException
+     * @throws ReflectiveOperationException
+     * @throws SecurityException
      */
-    private int getProtocolVersion(Player player) throws Exception {
+    private int getProtocolVersion(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException {
         Object handle = getHandle(player);
         Object connection = getField(handle.getClass(), "playerConnection").get(handle);
         Object networkManager = getValue("networkManager", connection);
@@ -151,7 +135,7 @@ public class HackTitleManager extends TitleManager {
         return clazz.getDeclaredField(name);
     }
 
-    private Object getValue(String name, Object obj) throws Exception {
+    private Object getValue(String name, Object obj) throws ReflectiveOperationException, SecurityException, IllegalArgumentException {
         Field f = getField(name, obj.getClass());
         f.setAccessible(true);
         return f.get(obj);

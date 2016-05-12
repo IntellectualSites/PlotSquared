@@ -32,13 +32,7 @@ public class DefaultTitleManager extends TitleManager {
         this.nmsChatSerializer = Reflection.getNMSClass("ChatSerializer");
     }
 
-    /**
-     * Send the title to a player.
-     *
-     * @param player Player
-     * @throws Exception
-     */
-    @Override public void send(Player player) throws Exception {
+    @Override public void send(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException {
         if (this.packetTitle != null) {
             // First reset previous settings
             resetTitle(player);
@@ -71,14 +65,8 @@ public class DefaultTitleManager extends TitleManager {
         }
     }
 
-    /**
-     * Clear the title.
-     *
-     * @param player Player
-     * @throws Exception
-     */
     @Override
-    public void clearTitle(Player player) throws Exception {
+    public void clearTitle(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException {
         // Send timings first
         Object handle = getHandle(player);
         Object connection = getField(handle.getClass(), "playerConnection").get(handle);
@@ -92,10 +80,12 @@ public class DefaultTitleManager extends TitleManager {
      * Reset the title settings.
      *
      * @param player Player
-     * @throws Exception
+     * @throws SecurityException
+     * @throws ReflectiveOperationException
+     * @throws SecurityException
      */
     @Override
-    public void resetTitle(Player player) throws Exception {
+    public void resetTitle(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException {
         // Send timings first
         Object handle = getHandle(player);
         Object connection = getField(handle.getClass(), "playerConnection").get(handle);

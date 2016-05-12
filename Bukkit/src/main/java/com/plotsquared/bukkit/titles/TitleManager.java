@@ -150,9 +150,11 @@ public abstract class TitleManager {
      * Send the title to a player.
      *
      * @param player Player
-     * @throws Exception
+     * @throws IllegalArgumentException
+     * @throws ReflectiveOperationException
+     * @throws SecurityException
      */
-    public abstract void send(Player player) throws Exception;
+    public abstract void send(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException;
 
     /**
      * Broadcast the title to all players.
@@ -169,17 +171,21 @@ public abstract class TitleManager {
      * Clear the title.
      *
      * @param player Player
-     * @throws Exception
+     * @throws IllegalArgumentException
+     * @throws ReflectiveOperationException
+     * @throws SecurityException
      */
-    public abstract void clearTitle(Player player) throws Exception;
+    public abstract void clearTitle(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException;
 
     /**
      * Reset the title settings.
      *
      * @param player Player
-     * @throws Exception
+     * @throws IllegalArgumentException
+     * @throws ReflectiveOperationException
+     * @throws SecurityException
      */
-    public abstract void resetTitle(Player player) throws Exception;
+    public abstract void resetTitle(Player player) throws  IllegalArgumentException, ReflectiveOperationException, SecurityException;
 
     private Class<?> getPrimitiveType(Class<?> clazz) {
         if (CORRESPONDING_TYPES.containsKey(clazz)) {

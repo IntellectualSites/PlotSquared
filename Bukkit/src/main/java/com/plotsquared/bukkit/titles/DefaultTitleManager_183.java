@@ -34,7 +34,7 @@ public class DefaultTitleManager_183 extends DefaultTitleManager {
     }
 
     @Override
-    public void send(Player player) throws Exception {
+    public void send(Player player) throws IllegalArgumentException, ReflectiveOperationException, SecurityException {
         if (this.packetTitle != null) {
             // First reset previous settings
             resetTitle(player);

@@ -235,7 +235,7 @@ public abstract class TextualComponent implements Cloneable {
 
         public static ComplexTextTypeComponent deserialize(Map<String, Object> map) {
             String key = null;
-            Map<String, String> value = new HashMap<String, String>();
+            Map<String, String> value = new HashMap<>();
             for (Map.Entry<String, Object> valEntry : map.entrySet()) {
                 if (valEntry.getKey().equals("key")) {
                     key = (String) valEntry.getValue();
