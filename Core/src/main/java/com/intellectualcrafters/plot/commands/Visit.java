@@ -92,7 +92,7 @@ public class Visit extends SubCommand {
             sendMessage(player, C.NOT_VALID_NUMBER, "(1, " + unsorted.size() + ")");
             return false;
         }
-        ArrayList<Plot> plots = PS.get().sortPlotsByTemp(unsorted);
+        List<Plot> plots = PS.get().sortPlotsByTemp(unsorted);
         Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, "plots.visit.unowned")) {

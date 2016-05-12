@@ -112,7 +112,7 @@ public class Area extends SubCommand {
                                 object.plotManager = "PlotSquared";
                                 object.setupGenerator = "PlotSquared";
                                 object.step = area.getSettingNodes();
-                                final String path = "worlds." + area.worldname + ".areas." + area.id + "-" + object.min + "-" + object.max;
+                                final String path = "worlds." + area.worldname + ".areas." + area.id + '-' + object.min + '-' + object.max;
                                 Runnable run = new Runnable() {
                                     @Override
                                     public void run() {
@@ -254,7 +254,7 @@ public class Area extends SubCommand {
                                 }
                             };
                             if (hasConfirmation(player)) {
-                                CmdConfirm.addPending(player, getCommandString() + " " + StringMan.join(args, " "), run);
+                                CmdConfirm.addPending(player, getCommandString() + ' ' + StringMan.join(args, " "), run);
                             } else {
                                 run.run();
                             }
@@ -310,11 +310,11 @@ public class Area extends SubCommand {
                 int claimed = area.getPlotCount();
                 int clusters = area.getClusters().size();
                 String region;
-                String generator = area.getGenerator() + "";
+                String generator = String.valueOf(area.getGenerator());
                 if (area.TYPE == 2) {
                     PlotId min = area.getMin();
                     PlotId max = area.getMax();
-                    name = area.worldname + ";" + area.id + ";" + min + ";" + max;
+                    name = area.worldname + ';' + area.id + ';' + min + ';' + max;
                     int size = (max.x - min.x + 1) * (max.y - min.y + 1);
                     percent = claimed == 0 ? 0 : size / (double) claimed;
                     region = area.getRegion().toString();
@@ -326,7 +326,7 @@ public class Area extends SubCommand {
                 String value = "&r$1NAME: " + name
                         + "\n$1Type: $2" + area.TYPE
                         + "\n$1Terrain: $2" + area.TERRAIN
-                        + "\n$1Usage: $2" + String.format("%.2f", percent) + "%"
+                        + "\n$1Usage: $2" + String.format("%.2f", percent) + '%'
                         + "\n$1Claimed: $2" + claimed
                         + "\n$1Clusters: $2" + clusters
                         + "\n$1Region: $2" + region
@@ -363,11 +363,11 @@ public class Area extends SubCommand {
                         int claimed = area.getPlotCount();
                         int clusters = area.getClusters().size();
                         String region;
-                        String generator = area.getGenerator() + "";
+                        String generator = String.valueOf(area.getGenerator());
                         if (area.TYPE == 2) {
                             PlotId min = area.getMin();
                             PlotId max = area.getMax();
-                            name = area.worldname + ";" + area.id + ";" + min + ";" + max;
+                            name = area.worldname + ';' + area.id + ';' + min + ';' + max;
                             int size = (max.x - min.x + 1) * (max.y - min.y + 1);
                             percent = claimed == 0 ? 0 : size / (double) claimed;
                             region = area.getRegion().toString();
@@ -377,18 +377,18 @@ public class Area extends SubCommand {
                             region = "N/A";
                         }
                         PlotMessage tooltip = new PlotMessage()
-                                .text("Claimed=").color("$1").text("" + claimed).color("$2")
-                                .text("\nUsage=").color("$1").text(String.format("%.2f", percent) + "%").color("$2")
-                                .text("\nClusters=").color("$1").text("" + clusters).color("$2")
+                                .text("Claimed=").color("$1").text(String.valueOf(claimed)).color("$2")
+                                .text("\nUsage=").color("$1").text(String.format("%.2f", percent) + '%').color("$2")
+                                .text("\nClusters=").color("$1").text(String.valueOf(clusters)).color("$2")
                                 .text("\nRegion=").color("$1").text(region).color("$2")
                                 .text("\nGenerator=").color("$1").text(generator).color("$2");
 
                         // type / terrain
                         String visit = "/plot area tp " + area.toString();
                         message.text("[").color("$3")
-                                .text(i + "").command(visit).tooltip(visit).color("$1")
+                                .text(String.valueOf(i)).command(visit).tooltip(visit).color("$1")
                                 .text("]").color("$3")
-                                .text(" " + name).tooltip(tooltip).command(getCommandString() + " info " + area).color("$1").text(" - ")
+                                .text(' ' + name).tooltip(tooltip).command(getCommandString() + " info " + area).color("$1").text(" - ")
                                 .color("$2")
                                 .text(area.TYPE + ":" + area.TERRAIN).color("$3");
                     }

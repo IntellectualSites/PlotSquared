@@ -42,7 +42,7 @@ public class SendChunk {
     /**
      * Constructor
      */
-    public SendChunk() {
+    public SendChunk() throws ClassNotFoundException, NoSuchMethodException, NoSuchFieldException {
         RefClass classCraftPlayer = getRefClass("{cb}.entity.CraftPlayer");
         this.methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");

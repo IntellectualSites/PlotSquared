@@ -94,9 +94,8 @@ public class FlagManager {
     public static String toString(HashMap<Flag<?>, Object> flags) {
         StringBuilder flag_string = new StringBuilder();
         int i = 0;
-        Flag<?> flag;
         for (Map.Entry<Flag<?>, Object> entry : flags.entrySet()) {
-            flag = entry.getKey();
+            Flag<?> flag = entry.getKey();
             if (i != 0) {
                 flag_string.append(",");
             }
@@ -163,7 +162,7 @@ public class FlagManager {
      * @param plot
      * @return set of flags
      */
-    public static HashMap<Flag<?>, Object> getPlotFlags(Plot plot) {
+    public static Map<Flag<?>, Object> getPlotFlags(Plot plot) {
         if (!plot.hasOwner()) {
             return null;
         }
@@ -189,7 +188,7 @@ public class FlagManager {
         return flags;
     }
 
-    public static HashMap<Flag<?>, Object> getSettingFlags(PlotArea area, PlotSettings settings) {
+    public static Map<Flag<?>, Object> getSettingFlags(PlotArea area, PlotSettings settings) {
         return getPlotFlags(area, settings, false);
     }
 
@@ -258,7 +257,7 @@ public class FlagManager {
      *
      * @param player with permissions
      *
-     * @return List (AbstractFlag)
+     * @return List (Flag)
      */
     public static List<Flag> getFlags(PlotPlayer player) {
         List<Flag> returnFlags = new ArrayList<>();
@@ -271,11 +270,11 @@ public class FlagManager {
     }
 
     /**
-     * Get an AbstractFlag by a string Returns null if flag does not exist
+     * Get an Flag by a String
      *
-     * @param string Flag Key
+     * @param string the flag name
      *
-     * @return AbstractFlag
+     * @return the flag or null if the flag the provided name does not exist
      */
     public static Flag<?> getFlag(String string) {
         for (Flag flag : Flags.getFlags()) {
@@ -289,7 +288,22 @@ public class FlagManager {
         return null;
     }
 
-    public static HashMap<Flag<?>, Object> parseFlags(List<String> flagstrings) {
+    public static Flag<?> getFlag(String string, boolean ignoreReserved) {
+        for (Flag flag : Flags.getFlags()) {
+            if (flag.getName().equalsIgnoreCase(string)) {
+                if (!ignoreReserved) {
+                    if (isReserved(flag)) {
+                        return null;
+                    }
+                }
+                return flag;
+            }
+        }
+        return null;
+    }
+
+
+    public static Map<Flag<?>, Object> parseFlags(List<String> flagstrings) {
         HashMap<Flag<?>, Object> map = new HashMap<>();
 
         for (String key : flagstrings) {

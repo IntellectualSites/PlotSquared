@@ -44,7 +44,7 @@ public final class ByteArrayTag extends Tag {
         }
         String name = getName();
         String append = "";
-        if (name != null && !name.equals("")) {
+        if (name != null && !name.isEmpty()) {
             append = "(\"" + getName() + "\")";
         }
         return "TAG_Byte_Array" + append + ": " + hex;

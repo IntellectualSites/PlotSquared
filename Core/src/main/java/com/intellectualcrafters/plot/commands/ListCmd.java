@@ -101,7 +101,7 @@ public class ListCmd extends SubCommand {
                 if (page < 0) {
                     page = 0;
                 }
-            } catch (Exception e) {
+            } catch (NumberFormatException ignored) {
                 page = -1;
             }
         }
@@ -245,12 +245,10 @@ public class ListCmd extends SubCommand {
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PS.get().getPlots()) {
-/*
-                    Flag price = FlagManager.getPlotFlagRaw(plot, "price");
-                    if (price != null) {
+                    Optional<Double> price = plot.getFlag(Flags.PRICE);
+                    if (price.isPresent()) {
                         plots.add(plot);
                     }
-*/
                 }
                 break;
             case "unowned":
@@ -315,8 +313,7 @@ public class ListCmd extends SubCommand {
                 if (uuid == null) {
                     try {
                         uuid = UUID.fromString(args[0]);
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
                 }
                 if (uuid != null) {
                     if (!Permissions.hasPermission(plr, "plots.list.player")) {

@@ -7,6 +7,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandCaller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -730,7 +731,7 @@ public enum C {
                     if (!split[0].equalsIgnoreCase(caption.category)) {
                         changed = true;
                         yml.set(key, null);
-                        yml.set(caption.category + "." + caption.name().toLowerCase(), value);
+                        yml.set(caption.category + '.' + caption.name().toLowerCase(), value);
                     }
                     captions.add(caption);
                     caption.s = value;
@@ -747,7 +748,7 @@ public enum C {
             // HashMap<String, String> replacements = new HashMap<>();
             replacements.clear();
             for (String style : styles) {
-                replacements.put("$" + style, "\u00a7" + config.getString(style));
+                replacements.put('$' + style, '§' + config.getString(style));
             }
             for (char letter : "1234567890abcdefklmnor".toCharArray()) {
                 replacements.put("&" + letter, "\u00a7" + letter);
@@ -761,14 +762,14 @@ public enum C {
                         continue;
                     }
                     changed = true;
-                    yml.set(caption.category + "." + caption.name().toLowerCase(), caption.def);
+                    yml.set(caption.category + '.' + caption.name().toLowerCase(), caption.def);
                 }
                 caption.s = StringMan.replaceFromMap(caption.s, replacements);
             }
             if (changed) {
                 yml.save(file);
             }
-        } catch (Exception e) {
+        } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
         }
     }

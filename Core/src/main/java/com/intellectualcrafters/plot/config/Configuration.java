@@ -41,7 +41,7 @@ public class Configuration {
             try {
                 Integer.parseInt(string);
                 return true;
-            } catch (Exception e) {
+            } catch (NumberFormatException ignored) {
                 return false;
             }
         }
@@ -54,12 +54,8 @@ public class Configuration {
     public static final SettingValue<Boolean> BOOLEAN = new SettingValue<Boolean>("BOOLEAN") {
         @Override
         public boolean validateValue(String string) {
-            try {
-                Boolean.parseBoolean(string);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
+            Boolean.parseBoolean(string);
+            return true;
         }
 
         @Override
@@ -73,7 +69,7 @@ public class Configuration {
             try {
                 Double.parseDouble(string);
                 return true;
-            } catch (Exception e) {
+            } catch (NumberFormatException ignored) {
                 return false;
             }
         }
@@ -89,7 +85,7 @@ public class Configuration {
             try {
                 int biome = WorldUtil.IMP.getBiomeFromString(string.toUpperCase());
                 return biome != -1;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 return false;
             }
         }
@@ -134,7 +130,7 @@ public class Configuration {
                     }
                 }
                 return true;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 return false;
             }
         }
@@ -166,8 +162,7 @@ public class Configuration {
                     if (result != null && result.match < 2) {
                         values[i] = result.best;
                     }
-                } catch (NumberFormatException ignored) {
-                }
+                } catch (NumberFormatException ignored) {}
             }
             int gcd = gcd(counts);
             for (int i = 0; i < counts.length; i++) {

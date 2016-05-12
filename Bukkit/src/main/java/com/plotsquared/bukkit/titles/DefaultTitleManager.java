@@ -57,14 +57,14 @@ public class DefaultTitleManager extends TitleManager {
             // Send title
             Object serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
                     "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.getTitle()) + "\",color:" + this.titleColor.name().toLowerCase()
-                            + "}");
+                            + '}');
             packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[0], serialized);
             sendPacket.invoke(connection, packet);
             if (!this.getSubtitle().isEmpty()) {
                 // Send subtitle if present
                 serialized = getMethod(this.nmsChatSerializer, "a", String.class).invoke(null,
                         "{text:\"" + ChatColor.translateAlternateColorCodes('&', this.getSubtitle()) + "\",color:" + this.subtitleColor.name()
-                                .toLowerCase() + "}");
+                                .toLowerCase() + '}');
                 packet = this.packetTitle.getConstructor(this.packetActions, this.chatBaseComponent).newInstance(actions[1], serialized);
                 sendPacket.invoke(connection, packet);
             }

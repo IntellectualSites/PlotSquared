@@ -8,6 +8,7 @@ import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
     
@@ -36,7 +37,7 @@ public class SpongeOnlineUUIDWrapper extends UUIDWrapper {
         String name;
         try {
             name = SpongeMain.THIS.getResolver().get(uuid, true).get().getName().orElse(null);
-        } catch (final Exception e) {
+        } catch (InterruptedException | ExecutionException ignored) {
             name = null;
         }
         final String username = name;

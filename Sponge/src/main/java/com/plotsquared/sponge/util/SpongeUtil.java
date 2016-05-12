@@ -139,13 +139,14 @@ public class SpongeUtil extends WorldUtil {
             }
         };
     }
-    
+
     private static void initBlockCache() {
         try {
             PS.debug("Caching block id/data: Please wait...");
             stateArray = new BlockState[Character.MAX_VALUE];
             stateMap = new HashMap<>();
-            Method methodGetByCombinedId = ReflectionUtils.findMethod(Class.forName("net.minecraft.block.Block"), true, Class.forName("net.minecraft.block.state.IBlockState"), int.class);
+            Method methodGetByCombinedId = ReflectionUtils
+                    .findMethod(Class.forName("net.minecraft.block.Block"), true, Class.forName("net.minecraft.block.state.IBlockState"), int.class);
             for (int i = 0; i < Character.MAX_VALUE; i++) {
                 try {
                     BlockState state = (BlockState) methodGetByCombinedId.invoke(null, i);
@@ -159,11 +160,11 @@ public class SpongeUtil extends WorldUtil {
                 }
             }
             PS.debug("Done!");
-        } catch (Throwable e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
-    
+
     public static BlockState getBlockState(int id, int data) {
         return (BlockState) Block.getBlockById(id).getStateFromMeta(data);
     }
@@ -251,15 +252,15 @@ public class SpongeUtil extends WorldUtil {
         }
         return new org.spongepowered.api.world.Location<>(world.get(), location.getX(), location.getY(), location.getZ());
     }
-    
+
     public static Location getLocation(String world, Vector3i position) {
         return new Location(world, position.getX(), position.getY(), position.getZ());
     }
-    
+
     public static Location getLocation(String world, Vector3d position) {
         return new Location(world, MathMan.roundInt(position.getX()), MathMan.roundInt(position.getY()), MathMan.roundInt(position.getZ()));
     }
-    
+
     @Override
     public boolean isBlockSolid(PlotBlock block) {
         BlockState state = SpongeUtil.getBlockState(block.id, block.data);
@@ -270,7 +271,7 @@ public class SpongeUtil extends WorldUtil {
             return false;
         }
     }
-    
+
     @Override
     public StringComparison<PlotBlock>.ComparisonResult getClosestBlock(String name) {
         try {
@@ -304,17 +305,16 @@ public class SpongeUtil extends WorldUtil {
             StringComparison<PlotBlock> outer = new StringComparison<PlotBlock>();
             return outer.new ComparisonResult(match, block);
 
-        } catch (NumberFormatException ignored) {
-        }
+        } catch (NumberFormatException ignored) {}
         return null;
     }
-    
+
     @Override
     public String getClosestMatchingName(PlotBlock block) {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @Override
     public String[] getBiomeList() {
         if (biomes == null) {
@@ -322,13 +322,13 @@ public class SpongeUtil extends WorldUtil {
         }
         return biomeMap.keySet().toArray(new String[biomeMap.size()]);
     }
-    
+
     @Override
     public boolean addItems(String world, PlotItem items) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("NOT IMPLEMENTED YET");
     }
-    
+
     @Override
     public int getBiomeFromString(String biome) {
         if (biomes == null) {
@@ -336,12 +336,12 @@ public class SpongeUtil extends WorldUtil {
         }
         return biomeMap.get(biome.toUpperCase());
     }
-    
+
     @Override
     public String getBiome(String world, int x, int z) {
         return SpongeUtil.getWorld(world).getBiome(x, z).getName().toUpperCase();
     }
-    
+
     @Override
     public PlotBlock getBlock(Location location) {
         BlockState state = SpongeUtil.getWorld(location.getWorld()).getBlock(location.getX(), location.getY(), location.getZ());
@@ -397,17 +397,17 @@ public class SpongeUtil extends WorldUtil {
         }
         return result;
     }
-    
+
     @Override
     public boolean isWorld(String worldName) {
         return SpongeUtil.getWorld(worldName) != null;
     }
-    
+
     @Override
     public String getMainWorld() {
         return Sponge.getServer().getWorlds().iterator().next().getName();
     }
-    
+
     @Override
     public int getHighestBlock(String worldName, int x, int z) {
         World world = SpongeUtil.getWorld(worldName);
@@ -422,7 +422,7 @@ public class SpongeUtil extends WorldUtil {
         }
         return 64;
     }
-    
+
     @Override
     public void setSign(String worldName, int x, int y, int z, String[] lines) {
         World world = SpongeUtil.getWorld(worldName);
@@ -442,7 +442,7 @@ public class SpongeUtil extends WorldUtil {
         }
         sign.offer(Keys.SIGN_LINES, text);
     }
-    
+
     @Override
     public void setBiomes(String worldName, RegionWrapper region, String biomename) {
         World world = SpongeUtil.getWorld(worldName);

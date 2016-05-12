@@ -22,12 +22,10 @@ public class BukkitPlainChatManager extends ChatManager<List<StringBuilder>> {
     }
 
     @Override
-    public void tooltip(PlotMessage message, PlotMessage... tooltips) {
-    }
+    public void tooltip(PlotMessage message, PlotMessage... tooltips) {}
 
     @Override
-    public void command(PlotMessage message, String command) {
-    }
+    public void command(PlotMessage message, String command) {}
 
     @Override
     public void text(PlotMessage message, String text) {
@@ -44,7 +42,6 @@ public class BukkitPlainChatManager extends ChatManager<List<StringBuilder>> {
     }
 
     @Override
-    public void suggest(PlotMessage plotMessage, String command) {
-    }
+    public void suggest(PlotMessage plotMessage, String command) {}
 
 }

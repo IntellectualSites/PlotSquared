@@ -74,7 +74,7 @@ public class BlockLoc {
         if (this.x == 0 && this.y == 0 && this.z == 0) {
             return "";
         }
-        return this.x + "," + this.y + "," + this.z + "," + this.yaw + "," + this.pitch;
+        return this.x + "," + this.y + ',' + this.z + ',' + this.yaw + ',' + this.pitch;
 
     }
 }

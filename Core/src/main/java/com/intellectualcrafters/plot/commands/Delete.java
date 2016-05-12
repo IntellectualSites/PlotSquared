@@ -12,8 +12,6 @@ import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.HashSet;
-
 @CommandDeclaration(
         command = "delete",
         permission = "plots.delete",
@@ -40,7 +38,7 @@ public class Delete extends SubCommand {
             return !sendMessage(plr, C.NO_PLOT_PERMS);
         }
         final PlotArea plotworld = plot.getArea();
-        final HashSet<Plot> plots = plot.getConnectedPlots();
+        final java.util.Set<Plot> plots = plot.getConnectedPlots();
         Runnable run = new Runnable() {
             @Override
             public void run() {
@@ -57,7 +55,7 @@ public class Delete extends SubCommand {
                             double value = plotworld.PRICES.get("sell") * plots.size();
                             if (value > 0d) {
                                 EconHandler.manager.depositMoney(plr, value);
-                                sendMessage(plr, C.ADDED_BALANCE, value + "");
+                                sendMessage(plr, C.ADDED_BALANCE, String.valueOf(value));
                             }
                         }
                         MainUtil.sendMessage(plr, C.CLEARING_DONE, System.currentTimeMillis() - start);

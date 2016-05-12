@@ -43,7 +43,7 @@ public class Buy extends SubCommand {
                     return false;
                 }
                 plots = plot.getConnectedPlots();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 return sendMessage(plr, C.NOT_VALID_PLOT_ID);
             }
         } else {

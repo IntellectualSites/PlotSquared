@@ -10,8 +10,7 @@ public abstract class Argument<T> {
             Integer value = null;
             try {
                 value = java.lang.Integer.parseInt(in);
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
             return value;
         }
     };

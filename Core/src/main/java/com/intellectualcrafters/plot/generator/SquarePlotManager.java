@@ -176,7 +176,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                     return plot.getMerged(7) ? id : null;
             }
             PS.debug("invalid location: " + Arrays.toString(merged));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             PS.debug("Invalid plot / road width in settings.yml for world: " + plotworld.worldname);
         }
         return null;

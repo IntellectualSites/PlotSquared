@@ -3,7 +3,7 @@ package com.intellectualcrafters.plot;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.base.Optional;
-import com.intellectualcrafters.plot.database.AbstractDBTEst;
+import com.intellectualcrafters.plot.database.AbstractDBTest;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.Flags;
@@ -27,7 +27,7 @@ public class FlagTest {
     @Before
     public void setUp() throws Exception {
         EventUtil.manager = new EventUtilTest();
-        DBFunc.dbManager = new AbstractDBTEst();
+        DBFunc.dbManager = new AbstractDBTest();
     }
 
     @Test

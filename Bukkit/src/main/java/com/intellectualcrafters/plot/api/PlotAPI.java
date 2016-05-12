@@ -54,8 +54,7 @@ public class PlotAPI {
      * @deprecated Not needed
      */
     @Deprecated
-    public PlotAPI(JavaPlugin plugin) {
-    }
+    public PlotAPI(JavaPlugin plugin) {}
 
     /**
      * Get all plots.

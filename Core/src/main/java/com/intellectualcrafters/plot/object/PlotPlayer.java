@@ -4,6 +4,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
+import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -145,7 +146,7 @@ public abstract class PlotPlayer implements CommandCaller {
             public void run(PlotArea value) {
                 if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
                     for (Plot plot : value.getPlotsAbs(uuid)) {
-                        if (!plot.getFlags().containsKey("done")) {
+                        if (!plot.hasFlag(Flags.DONE)) {
                             count.incrementAndGet();
                         }
                     }
@@ -244,19 +245,6 @@ public abstract class PlotPlayer implements CommandCaller {
      * @return UUID
      */
     public abstract UUID getUUID();
-
-    /**
-     * Check the player's permissions<br>
-     *  - Will be cached if permission caching is enabled
-     */
-    @Override
-    public abstract boolean hasPermission(String permission);
-
-    /**
-     * Send the player a message
-     */
-    @Override
-    public abstract void sendMessage(String message);
 
     /**
      * Teleport the player to a location

@@ -55,8 +55,7 @@ public abstract class IndependentPlotGenerator {
      *  - e.g. If setup doesn't support some standard options
      * @param setup
      */
-    public void processSetup(SetupObject setup) {
-    }
+    public void processSetup(SetupObject setup) {}
 
     /**
      * It is preferred for the PlotArea object to do most of the initialization necessary.

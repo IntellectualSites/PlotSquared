@@ -9,7 +9,7 @@ import org.yaml.snakeyaml.representer.Representer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class YamlRepresenter extends Representer {
+class YamlRepresenter extends Representer {
 
     public YamlRepresenter() {
         this.multiRepresenters.put(ConfigurationSection.class, new RepresentConfigurationSection());

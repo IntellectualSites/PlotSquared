@@ -39,7 +39,7 @@ public class SQLite extends Database {
         if (!file.exists()) {
             try {
                 file.createNewFile();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 PS.debug("&cUnable to create database!");
             }
         }

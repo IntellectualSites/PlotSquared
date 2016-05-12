@@ -20,6 +20,7 @@ import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -125,7 +126,7 @@ public class MainUtil {
             filename = "plot." + extension;
         } else {
             website = Settings.WEB_URL + "save.php?" + uuid;
-            filename = file + "." + extension;
+            filename = file + '.' + extension;
         }
         final URL url;
         try {
@@ -183,7 +184,7 @@ public class MainUtil {
                         whenDone.value = url;
                     }
                     TaskManager.runTask(whenDone);
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                     TaskManager.runTask(whenDone);
                 }
@@ -298,7 +299,8 @@ public class MainUtil {
     public static String getName(UUID owner) {
         if (owner == null) {
             return C.NONE.s();
-        } else if (owner.equals(DBFunc.everyone)) {
+        }
+        if (owner.equals(DBFunc.everyone)) {
             return C.EVERYONE.s();
         }
         String name = UUIDHandler.getName(owner);
@@ -365,7 +367,7 @@ public class MainUtil {
                     uuid = UUID.fromString(term);
                 }
                 uuids.add(uuid);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 id = PlotId.fromString(term);
                 if (id != null) {
                     continue;
@@ -429,7 +431,7 @@ public class MainUtil {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
+                    PS.log(C.NOT_VALID_PLOT_WORLD);
                 }
                 return null;
             }
@@ -772,20 +774,20 @@ public class MainUtil {
                     }
                     String info;
                     if (full && Settings.RATING_CATEGORIES != null && Settings.RATING_CATEGORIES.size() > 1) {
-                        String rating = "";
-                        String prefix = "";
                         double[] ratings = MainUtil.getAverageRatings(plot);
                         for (double v : ratings) {
 
                         }
 
+                        String rating = "";
+                        String prefix = "";
                         for (int i = 0; i < ratings.length; i++) {
-                            rating += prefix + Settings.RATING_CATEGORIES.get(i) + "=" + String.format("%.1f", ratings[i]);
+                            rating += prefix + Settings.RATING_CATEGORIES.get(i) + '=' + String.format("%.1f", ratings[i]);
                             prefix = ",";
                         }
                         info = newInfo.replaceAll("%rating%", rating);
                     } else {
-                        info = newInfo.replaceAll("%rating%", String.format("%.1f", plot.getAverageRating()) + "/" + max);
+                        info = newInfo.replaceAll("%rating%", String.format("%.1f", plot.getAverageRating()) + '/' + max);
                     }
                     whenDone.run(info);
                 }

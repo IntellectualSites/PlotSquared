@@ -182,7 +182,7 @@ public class MainListener {
     }
 
     @Listener
-    public void onSpawnEntity(SpawnEntityEvent event) throws Exception {
+    public void onSpawnEntity(SpawnEntityEvent event) {
         World world = event.getTargetWorld();
         event.filterEntities(entity -> {
             if (entity instanceof Player) {
@@ -283,7 +283,7 @@ public class MainListener {
         });
     }
 
-    public void onNotifyNeighborBlock(NotifyNeighborBlockEvent event) throws Exception {
+    public void onNotifyNeighborBlock(NotifyNeighborBlockEvent event) {
         AtomicBoolean cancelled = new AtomicBoolean(false);
         //        SpongeUtil.printCause("physics", event.getCause());
         //        PlotArea area = plotloc.getPlotArea();
@@ -320,7 +320,7 @@ public class MainListener {
     }
 
     @Listener
-    public void onInteract(InteractEvent event) throws Exception {
+    public void onInteract(InteractEvent event) {
         Player player = SpongeUtil.getCause(event.getCause(), Player.class);
         if (player == null) {
             event.setCancelled(true);
@@ -366,7 +366,7 @@ public class MainListener {
     }
     
     @Listener
-    public void onExplosion(ExplosionEvent e) throws Exception {
+    public void onExplosion(ExplosionEvent e) {
         if (e instanceof ExplosionEvent.Detonate) {
             ExplosionEvent.Detonate event = (Detonate) e;
             World world = event.getTargetWorld();

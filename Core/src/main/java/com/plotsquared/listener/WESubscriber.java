@@ -84,8 +84,7 @@ public class WESubscriber {
                                 if (tool instanceof BrushTool) {
                                     hasMask = ((BrushTool) tool).getMask() != null;
                                 }
-                            } catch (Exception ignored) {
-                            }
+                            } catch (Exception ignored) {}
                         }
                         AbstractDelegateExtent extent = (AbstractDelegateExtent) event.getExtent();
                         ChangeSetExtent history = null;
@@ -123,11 +122,10 @@ public class WESubscriber {
                             if (maskextent != null) {
                                 wrapper = new ExtentWrapper(maskextent);
                                 field.set(maskextent, history);
-                                event.setExtent(wrapper);
                             } else {
                                 wrapper = new ExtentWrapper(history);
-                                event.setExtent(wrapper);
                             }
+                            event.setExtent(wrapper);
                             field.set(history, reorder);
                             field.set(reorder, new ProcessedWEExtent(world, mask, max, new FastModeExtent(worldObj, true), wrapper));
                         }

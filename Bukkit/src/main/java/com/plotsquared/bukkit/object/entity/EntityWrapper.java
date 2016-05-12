@@ -465,8 +465,7 @@ public class EntityWrapper {
         if (this.base.passenger != null) {
             try {
                 entity.setPassenger(this.base.passenger.spawn(world, x_offset, z_offset));
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
         }
         if (this.base.fall != 0) {
             entity.setFallDistance(this.base.fall);

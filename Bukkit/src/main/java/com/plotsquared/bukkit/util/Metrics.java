@@ -95,8 +95,7 @@ public class Metrics {
             if (gzos != null) {
                 try {
                     gzos.close();
-                } catch (IOException ignore) {
-                }
+                } catch (IOException ignore) {}
             }
         }
         return baos.toByteArray();
@@ -117,7 +116,7 @@ public class Metrics {
                 Double.parseDouble(value);
                 isValueNumeric = true;
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
             isValueNumeric = false;
         }
         if (json.charAt(json.length() - 1) != '{') {
@@ -446,7 +445,7 @@ public class Metrics {
         try {
             Class.forName("mineshafter.MineServer");
             return true;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ignored) {
             return false;
         }
     }
@@ -520,11 +519,6 @@ public class Metrics {
             return graph.name.equals(this.name);
         }
 
-        /**
-         * Called when the server owner decides to opt-out of BukkitMetrics while the server is running.
-         */
-        protected void onOptOut() {
-        }
     }
 
     /**
@@ -574,8 +568,7 @@ public class Metrics {
         /**
          * Called after the website graphs have been updated
          */
-        public void reset() {
-        }
+        public void reset() {}
 
         @Override
         public int hashCode() {

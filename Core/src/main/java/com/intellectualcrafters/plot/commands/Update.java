@@ -41,7 +41,7 @@ public class Update extends SubCommand {
             MainUtil.sendMessage(plr, "&cTo manually specify an update URL: /plot update <url>");
             return false;
         }
-        if (PS.get().update(null, url) && (url == PS.get().update)) {
+        if (PS.get().update(plr, url) && (url == PS.get().update)) {
             PS.get().update = null;
         }
         return true;

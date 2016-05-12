@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.Command;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class GenerateDocs {
             String comment = GenerateDocs.getComments(lines);
 
             GenerateDocs.log("#### Description");
-            GenerateDocs.log("`" + command.getDescription() + "`");
+            GenerateDocs.log('`' + command.getDescription() + '`');
             if (!comment.isEmpty()) {
                 GenerateDocs.log("##### Comments");
                 GenerateDocs.log("``` java");
@@ -76,18 +77,18 @@ public class GenerateDocs {
                 GenerateDocs.log(" - `" + StringMan.join(usages, "`\n - `") + "`    ");
                 GenerateDocs.log("");
             } else {
-                GenerateDocs.log("`" + mainUsage + "`    ");
+                GenerateDocs.log('`' + mainUsage + "`    ");
             }
 
             if (command.getRequiredType() != RequiredType.NONE) {
                 GenerateDocs.log("#### Required callers");
-                GenerateDocs.log("`" + command.getRequiredType().name() + "`");
+                GenerateDocs.log('`' + command.getRequiredType().name() + '`');
             }
 
             List<String> aliases = command.getAliases();
             if (!aliases.isEmpty()) {
                 GenerateDocs.log("#### Aliases");
-                GenerateDocs.log("`" + StringMan.getString(command.getAliases()) + "`");
+                GenerateDocs.log('`' + StringMan.getString(command.getAliases()) + '`');
             }
 
             GenerateDocs.log("#### Permissions");
@@ -96,21 +97,21 @@ public class GenerateDocs {
                 GenerateDocs.log(" - `" + command.getPermission() + "`    ");
                 GenerateDocs.log("");
                 GenerateDocs.log("##### Other");
-                GenerateDocs.log(" - `" + StringMan.join(perms, "`\n - `") + "`");
+                GenerateDocs.log(" - `" + StringMan.join(perms, "`\n - `") + '`');
                 GenerateDocs.log("");
             } else {
-                GenerateDocs.log("`" + command.getPermission() + "`    ");
+                GenerateDocs.log('`' + command.getPermission() + "`    ");
             }
             GenerateDocs.log("***");
             GenerateDocs.log("");
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static List<String> getUsage(String cmd, List<String> lines) {
         Pattern p = Pattern.compile("\"([^\"]*)\"");
-        HashSet<String> usages = new HashSet<String>();
+        HashSet<String> usages = new HashSet<>();
         for (String line : lines) {
             if (line.contains("COMMAND_SYNTAX") && !line.contains("getUsage()")) {
                 Matcher m = p.matcher(line);
@@ -203,7 +204,7 @@ public class GenerateDocs {
             line = line.trim();
             if (line.startsWith("/** ") || line.startsWith("*/ ") || line.startsWith("* ")) {
                 line = line.replaceAll("/[*][*] ", "").replaceAll("[*]/ ", "").replaceAll("[*] ", "").trim();
-                result.append(line + "\n");
+                result.append(line + '\n');
             }
         }
         return result.toString().trim();

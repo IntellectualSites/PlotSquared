@@ -115,7 +115,7 @@ public class MathMan {
     }
 
     public static double sqrtApprox(double d) {
-        return Double.longBitsToDouble(((Double.doubleToLongBits(d) - (1l << 52)) >> 1) + (1l << 61));
+        return Double.longBitsToDouble(((Double.doubleToLongBits(d) - (1L << 52)) >> 1) + (1L << 61));
     }
 
     public static float invSqrt(float x) {

@@ -141,9 +141,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
             this.getServer().getConsoleSender().sendMessage(message);
             return;
-        } catch (Throwable ignored) {
-            //ignored
-        }
+        } catch (Throwable ignored) {}
         System.out.println(ConsoleColors.fromString(message));
     }
 
@@ -401,14 +399,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         try {
             new SendChunk();
             MainUtil.canSendChunk = true;
-        } catch (Throwable e) {
+        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
             e.printStackTrace();
             MainUtil.canSendChunk = false;
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 9, 0)) {
             try {
                 return new FastQueue_1_9();
-            } catch (Throwable e) {
+            } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
                 e.printStackTrace();
                 return new SlowQueue();
             }
@@ -416,11 +414,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
             try {
                 return new FastQueue_1_8_3();
-            } catch (Throwable e) {
+            } catch (NoSuchMethodException | ClassNotFoundException | NoSuchFieldException e) {
                 e.printStackTrace();
                 try {
                     return new FastQueue_1_8();
-                } catch (Throwable e2) {
+                } catch (NoSuchMethodException | NoSuchFieldException | ClassNotFoundException e2) {
                     e2.printStackTrace();
                     return new SlowQueue();
                 }
@@ -428,7 +426,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
         try {
             return new FastQueue_1_7();
-        } catch (Throwable e) {
+        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
             e.printStackTrace();
             return new SlowQueue();
         }
@@ -620,11 +618,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public PlotPlayer wrapPlayer(Object player) {
         if (player instanceof Player) {
             return BukkitUtil.getPlayer((Player) player);
-        } else if (player instanceof OfflinePlayer) {
+        }
+        if (player instanceof OfflinePlayer) {
             return BukkitUtil.getPlayer((OfflinePlayer) player);
-        } else if (player instanceof String) {
+        }
+        if (player instanceof String) {
             return UUIDHandler.getPlayer((String) player);
-        } else if (player instanceof UUID) {
+        }
+        if (player instanceof UUID) {
             return UUIDHandler.getPlayer((UUID) player);
         }
         return null;
@@ -654,7 +655,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public List<String> getPluginIds() {
         ArrayList<String> names = new ArrayList<>();
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            names.add(plugin.getName() + ";" + plugin.getDescription().getVersion() + ":" + plugin.isEnabled());
+            names.add(plugin.getName() + ';' + plugin.getDescription().getVersion() + ':' + plugin.isEnabled());
         }
         return names;
     }

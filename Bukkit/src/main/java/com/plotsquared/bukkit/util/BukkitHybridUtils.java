@@ -49,8 +49,7 @@ public class BukkitHybridUtils extends HybridUtils {
                 }
                 final BiomeGrid nullBiomeGrid = new BiomeGrid() {
                     @Override
-                    public void setBiome(int a, int b, Biome c) {
-                    }
+                    public void setBiome(int a, int b, Biome c) {}
 
                     @Override
                     public Biome getBiome(int a, int b) {

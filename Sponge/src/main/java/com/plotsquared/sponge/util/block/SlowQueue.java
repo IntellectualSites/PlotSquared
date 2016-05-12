@@ -116,7 +116,6 @@ public class SlowQueue implements PlotQueue<Chunk> {
                 IChunkProvider provider = nmsWorld.getChunkProvider();
                 if (!(provider instanceof ChunkProviderServer)) {
                     PS.debug("Not valid world generator for: " + world);
-                    return;
                 }
 /*                ChunkProviderServer chunkServer = (ChunkProviderServer) provider;
                 IChunkProvider chunkProvider = chunkServer.serverChunkGenerator;

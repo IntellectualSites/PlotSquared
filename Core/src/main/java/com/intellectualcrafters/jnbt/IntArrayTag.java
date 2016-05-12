@@ -48,7 +48,7 @@ public final class IntArrayTag extends Tag {
         }
         String name = getName();
         String append = "";
-        if (name != null && !name.equals("")) {
+        if (name != null && !name.isEmpty()) {
             append = "(\"" + getName() + "\")";
         }
         return "TAG_Int_Array" + append + ": " + hex;

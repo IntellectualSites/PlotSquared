@@ -27,7 +27,7 @@ public class Continue extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return false;
         }
-        if (!plot.getFlags().containsKey("done")) {
+        if (!plot.hasFlag(Flags.DONE)) {
             MainUtil.sendMessage(plr, C.DONE_NOT_DONE);
             return false;
         }

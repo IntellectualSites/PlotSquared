@@ -245,8 +245,7 @@ class XML {
                 if (value.toString().equals(string)) {
                     return value;
                 }
-            } catch (NumberFormatException ignored) {
-            }
+            } catch (NumberFormatException ignored) {}
         }
         return string;
     }

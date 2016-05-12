@@ -17,8 +17,7 @@ import java.util.logging.Logger;
 public class ConfigurationSerialization {
 
     public static final String SERIALIZED_TYPE_KEY = "==";
-    private static final Map<String, Class<? extends ConfigurationSerializable>> aliases =
-            new HashMap<String, Class<? extends ConfigurationSerializable>>();
+    private static final Map<String, Class<? extends ConfigurationSerializable>> aliases = new HashMap<>();
     private final Class<? extends ConfigurationSerializable> clazz;
 
     protected ConfigurationSerialization(Class<? extends ConfigurationSerializable> clazz) {
@@ -128,8 +127,7 @@ public class ConfigurationSerialization {
      * @param clazz Class to unregister
      */
     public static void unregisterClass(Class<? extends ConfigurationSerializable> clazz) {
-        while (aliases.values().remove(clazz)) {
-        }
+        while (aliases.values().remove(clazz)) {}
     }
 
     /**
@@ -154,7 +152,7 @@ public class ConfigurationSerialization {
         DelegateDeserialization delegate = clazz.getAnnotation(DelegateDeserialization.class);
 
         if (delegate != null) {
-            if ((delegate.value() == null) || (delegate.value() == clazz)) {
+            if (delegate.value() == clazz) {
                 delegate = null;
             } else {
                 return getAlias(delegate.value());
@@ -182,9 +180,7 @@ public class ConfigurationSerialization {
             }
 
             return method;
-        } catch (NoSuchMethodException ex) {
-            return null;
-        } catch (SecurityException ex) {
+        } catch (NoSuchMethodException | SecurityException ignored) {
             return null;
         }
     }
@@ -192,9 +188,7 @@ public class ConfigurationSerialization {
     protected Constructor<? extends ConfigurationSerializable> getConstructor() {
         try {
             return this.clazz.getConstructor(Map.class);
-        } catch (NoSuchMethodException ex) {
-            return null;
-        } catch (SecurityException ex) {
+        } catch (NoSuchMethodException | SecurityException ignored) {
             return null;
         }
     }
@@ -209,7 +203,7 @@ public class ConfigurationSerialization {
             } else {
                 return result;
             }
-        } catch (Throwable ex) {
+        } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException ex) {
             Logger.getLogger(ConfigurationSerialization.class.getName())
                     .log(Level.SEVERE, "Could not call method '" + method.toString() + "' of " + this.clazz
                                     + " for deserialization",
@@ -222,7 +216,7 @@ public class ConfigurationSerialization {
     protected ConfigurationSerializable deserializeViaCtor(Constructor<? extends ConfigurationSerializable> ctor, Map<String, ?> args) {
         try {
             return ctor.newInstance(args);
-        } catch (Throwable ex) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException ex) {
             Logger.getLogger(ConfigurationSerialization.class.getName())
                     .log(Level.SEVERE, "Could not call constructor '" + ctor.toString() + "' of " + this.clazz
                                     + " for deserialization",
@@ -238,22 +232,17 @@ public class ConfigurationSerialization {
         }
         ConfigurationSerializable result = null;
         Method method = getMethod("deserialize", true);
-
         if (method != null) {
             result = deserializeViaMethod(method, args);
         }
-
         if (result == null) {
             method = getMethod("valueOf", true);
-
             if (method != null) {
                 result = deserializeViaMethod(method, args);
             }
         }
-
         if (result == null) {
             Constructor<? extends ConfigurationSerializable> constructor = getConstructor();
-
             if (constructor != null) {
                 result = deserializeViaCtor(constructor, args);
             }

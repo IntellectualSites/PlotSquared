@@ -4,10 +4,10 @@ package com.intellectualcrafters.configuration;
  * Various settings for controlling the input and output of a {@link
  * Configuration}
  */
-public class ConfigurationOptions {
+class ConfigurationOptions {
+    private final Configuration configuration;
     private char pathSeparator = '.';
     private boolean copyDefaults = false;
-    private final Configuration configuration;
     
     protected ConfigurationOptions(final Configuration configuration) {
         this.configuration = configuration;

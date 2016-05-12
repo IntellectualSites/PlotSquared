@@ -23,7 +23,7 @@ public class ListTagBuilder {
     ListTagBuilder(Class<? extends Tag> type) {
         checkNotNull(type);
         this.type = type;
-        this.entries = new ArrayList<Tag>();
+        this.entries = new ArrayList<>();
     }
 
     /**

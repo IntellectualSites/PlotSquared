@@ -81,7 +81,7 @@ public class DBFunc {
      *
      * @param plots List containing all plot objects
      */
-    public static void createPlotsAndData(ArrayList<Plot> plots, Runnable whenDone) {
+    public static void createPlotsAndData(List<Plot> plots, Runnable whenDone) {
         DBFunc.dbManager.createPlotsAndData(plots, whenDone);
     }
     

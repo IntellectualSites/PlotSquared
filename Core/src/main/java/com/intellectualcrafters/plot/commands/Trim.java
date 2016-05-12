@@ -52,15 +52,7 @@ public class Trim extends SubCommand {
                     String name = file.getName();
                     if (name.endsWith("mca")) {
                         if (file.getTotalSpace() <= 8192) {
-                            try {
-                                String[] split = name.split("\\.");
-                                int x = Integer.parseInt(split[1]);
-                                int z = Integer.parseInt(split[2]);
-                                ChunkLoc loc = new ChunkLoc(x, z);
-                                empty.add(loc);
-                            } catch (NumberFormatException e) {
-                                PS.debug("INVALID MCA: " + name);
-                            }
+                            checkMca(name);
                         } else {
                             Path path = Paths.get(file.getPath());
                             try {
@@ -69,23 +61,25 @@ public class Trim extends SubCommand {
                                 long modification = file.lastModified();
                                 long diff = Math.abs(creation - modification);
                                 if (diff < 10000) {
-                                    try {
-                                        String[] split = name.split("\\.");
-                                        int x = Integer.parseInt(split[1]);
-                                        int z = Integer.parseInt(split[2]);
-                                        ChunkLoc loc = new ChunkLoc(x, z);
-                                        empty.add(loc);
-                                    } catch (Exception e) {
-                                        PS.debug("INVALID MCA: " + name);
-                                    }
+                                    checkMca(name);
                                 }
-                            } catch (IOException ignored) {
-                            }
+                            } catch (IOException ignored) {}
                         }
                     }
                 }
                 Trim.TASK = false;
                 TaskManager.runTaskAsync(whenDone);
+            }
+            private void checkMca(String name) {
+                try {
+                    String[] split = name.split("\\.");
+                    int x = Integer.parseInt(split[1]);
+                    int z = Integer.parseInt(split[2]);
+                    ChunkLoc loc = new ChunkLoc(x, z);
+                    empty.add(loc);
+                } catch (NumberFormatException ignored) {
+                    PS.debug("INVALID MCA: " + name);
+                }
             }
         });
         Trim.TASK = true;
