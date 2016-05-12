@@ -75,7 +75,7 @@ public final class ListTag extends Tag {
     public Tag getIfExists(int index) {
         try {
             return this.value.get(index);
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException ignored) {
             return null;
         }
     }

@@ -89,7 +89,7 @@ public class Visit extends SubCommand {
             }
         }
         if (page < 1 || page > unsorted.size()) {
-            sendMessage(player, C.NOT_VALID_NUMBER, "(1, " + unsorted.size() + ")");
+            sendMessage(player, C.NOT_VALID_NUMBER, "(1, " + unsorted.size() + ')');
             return false;
         }
         List<Plot> plots = PS.get().sortPlotsByTemp(unsorted);

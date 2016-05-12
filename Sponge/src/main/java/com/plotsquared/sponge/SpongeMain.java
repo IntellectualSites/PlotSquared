@@ -76,6 +76,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Plugin(id = "com.plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.", url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.3")
 public class SpongeMain implements IPlotMain {
@@ -258,7 +259,7 @@ public class SpongeMain implements IPlotMain {
         try {
             Class.forName("com.sk89q.worldedit.WorldEdit");
             return true;
-        } catch (Throwable e) {
+        } catch (ClassNotFoundException ignored) {
             return false;
         }
     }
@@ -306,7 +307,7 @@ public class SpongeMain implements IPlotMain {
             Metrics metrics = new Metrics(this.game, this.plugin);
             metrics.start();
             log(C.PREFIX.s() + "&6Metrics enabled.");
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             log(C.PREFIX.s() + "&cFailed to load up metrics.");
         }
     }
@@ -376,7 +377,7 @@ public class SpongeMain implements IPlotMain {
             try {
                 MainUtil.canSendChunk = true;
                 return new FastQueue();
-            } catch (Throwable e) {
+            } catch (RuntimeException e) {
                 e.printStackTrace();
             }
         }
@@ -412,10 +413,7 @@ public class SpongeMain implements IPlotMain {
     
     @Override
     public List<String> getPluginIds() {
-        ArrayList<String> names = new ArrayList<>();
-        for (PluginContainer plugin : this.game.getPluginManager().getPlugins()) {
-            names.add(plugin.getName() + ";" + plugin.getVersion() + ":" + true);
-        }
-        return names;
+        return this.game.getPluginManager().getPlugins().stream().map(plugin1 -> plugin1.getName() + ';' + plugin1.getVersion() + ':' + true)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

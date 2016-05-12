@@ -9,7 +9,7 @@ import com.plotsquared.general.commands.Command;
 
 /**
  * SubCommand class
- * @see com.plotsquared.general.commands.Command(com.plotsquared.general.commands.Command, boolean)
+ * @see Command(Command, boolean)
  * @Deprecated In favor of normal Command class
  */
 public abstract class SubCommand extends Command {

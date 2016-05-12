@@ -41,9 +41,8 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                 }
                 return new SQLite(dataFolder + File.separator + "plots.db").openConnection();
             }
-        } catch (SQLException | ClassNotFoundException ignored) {
-            //ignored
-            ignored.printStackTrace();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -116,7 +115,7 @@ public class PlotMeConnector_017 extends APlotMeConnector {
                         }
                     }
                     if (owner == null) {
-                        PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + "'");
+                        PS.log("&cCould not identify owner for plot: " + id + " -> '" + name + '\'');
                         continue;
                     }
                 }

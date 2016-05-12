@@ -101,7 +101,7 @@ public class Set extends SubCommand {
                                     }
                                 }
                             }
-                        } catch (Exception e2) {
+                        } catch (Exception ignored) {
                             MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, material);
                             return false;
                         }

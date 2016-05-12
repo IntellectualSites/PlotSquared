@@ -51,7 +51,7 @@ public class DebugClaimTest extends SubCommand {
             args[2].split(";");
             min = PlotId.fromString(args[1]);
             max = PlotId.fromString(args[2]);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             return !MainUtil.sendMessage(plr,
                     "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X;Y are the plot coords\nThe conversion "
                             + "will only check the plots in the selected area.");

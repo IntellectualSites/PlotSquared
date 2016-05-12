@@ -95,8 +95,8 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 String value = StringMan.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + "." + value.toLowerCase())) {
-                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase() + "." + value.toLowerCase());
+                if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + '.' + value.toLowerCase())) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase() + '.' + value.toLowerCase());
                     return false;
                 }
                 Object parsed = flag.parseValue(value);
@@ -127,8 +127,8 @@ public class FlagCmd extends SubCommand {
                         return false;
                     }
                     for (String entry : args[2].split(",")) {
-                        if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + "." + entry)) {
-                            MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase() + "." + entry);
+                        if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + '.' + entry)) {
+                            MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase() + '.' + entry);
                             return false;
                         }
                     }
@@ -167,8 +167,8 @@ public class FlagCmd extends SubCommand {
                     return false;
                 }
                 for (String entry : args[2].split(",")) {
-                    if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + "." + entry)) {
-                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase() + "." + entry);
+                    if (!Permissions.hasPermission(player, "plots.set.flag." + args[1].toLowerCase() + '.' + entry)) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set.flag." + args[1].toLowerCase() + '.' + entry);
                         return false;
                     }
                 }

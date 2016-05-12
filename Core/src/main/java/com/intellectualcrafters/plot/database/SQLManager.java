@@ -1467,9 +1467,7 @@ public class SQLManager implements AbstractDB {
             if (this.mySQL && !PS.get().checkVersion(oldVersion, 3, 3, 2)) {
                 try (Statement stmt = this.connection.createStatement()) {
                     stmt.executeUpdate("ALTER TABLE `" + this.prefix + "plots` DROP INDEX `unique_alias`");
-                } catch (SQLException ignore) {
-                    //ignored
-                }
+                } catch (SQLException ignored) {}
             }
             DatabaseMetaData data = this.connection.getMetaData();
             ResultSet rs = data.getColumns(null, null, this.prefix + "plot_comments", "plot_plot_id");

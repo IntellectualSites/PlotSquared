@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PlotSettings;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.Permissions;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +33,7 @@ public class FlagManager {
     /**
      * Some events can be called millions of times each second (e.g. physics) and reusing is a lot faster.
      */
-    private static Optional MUTABLE_OPTIONAL;
+    private static final Optional MUTABLE_OPTIONAL;
     private static Field MUTABLE_OPTIONAL_FIELD;
     static {
             MUTABLE_OPTIONAL = Optional.of(new Object());
@@ -51,7 +52,9 @@ public class FlagManager {
                 try {
                     MUTABLE_OPTIONAL_FIELD.set(MUTABLE_OPTIONAL, value);
                     return MUTABLE_OPTIONAL;
-                } catch (IllegalAccessException e) {e.printStackTrace();}
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
             return Optional.of(value);
         }
@@ -97,9 +100,9 @@ public class FlagManager {
         for (Map.Entry<Flag<?>, Object> entry : flags.entrySet()) {
             Flag<?> flag = entry.getKey();
             if (i != 0) {
-                flag_string.append(",");
+                flag_string.append(',');
             }
-           flag_string.append(flag.getName() + ":" + flag.valueToString(entry.getValue()).replaceAll(":", "¯").replaceAll(",", "´"));
+           flag_string.append(flag.getName() + ':' + flag.valueToString(entry.getValue()).replaceAll(":", "¯").replaceAll(",", "´"));
             i++;
         }
         return flag_string.toString();

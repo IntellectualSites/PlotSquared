@@ -276,7 +276,7 @@ public class BO3Handler {
             if (bo3.getLoc().x == 0 && bo3.getLoc().z == 0) {
                 bo3File = MainUtil.getFile(base.getParentFile(), bo3.getName() + ".bo3");
             } else {
-                bo3File = MainUtil.getFile(base.getParentFile(), bo3.getName() + "_" + bo3.getLoc().x + "_" + bo3.getLoc().z + ".bo3");
+                bo3File = MainUtil.getFile(base.getParentFile(), bo3.getName() + '_' + bo3.getLoc().x + '_' + bo3.getLoc().z + ".bo3");
             }
             bo3File.createNewFile();
             Files.write(bo3File.toPath(), StringMan.join(lines, System.getProperty("line.separator")).getBytes(), StandardOpenOption.WRITE);

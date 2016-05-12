@@ -179,7 +179,7 @@ public class JSONArray {
         Object object = get(index);
         try {
             return object instanceof Number ? ((Number) object).doubleValue() : Double.parseDouble((String) object);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
             throw new JSONException("JSONArray[" + index + "] is not a number.");
         }
     }
@@ -197,7 +197,7 @@ public class JSONArray {
         Object object = get(index);
         try {
             return object instanceof Number ? ((Number) object).intValue() : Integer.parseInt((String) object);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
             throw new JSONException("JSONArray[" + index + "] is not a number.");
         }
     }
@@ -249,7 +249,7 @@ public class JSONArray {
         Object object = get(index);
         try {
             return object instanceof Number ? ((Number) object).longValue() : Long.parseLong((String) object);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
             throw new JSONException("JSONArray[" + index + "] is not a number.");
         }
     }
@@ -348,7 +348,7 @@ public class JSONArray {
     public boolean optBoolean(int index, boolean defaultValue) {
         try {
             return getBoolean(index);
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
             return defaultValue;
         }
     }
@@ -377,7 +377,7 @@ public class JSONArray {
     public double optDouble(int index, double defaultValue) {
         try {
             return getDouble(index);
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
             return defaultValue;
         }
     }
@@ -406,7 +406,7 @@ public class JSONArray {
     public int optInt(int index, int defaultValue) {
         try {
             return getInt(index);
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
             return defaultValue;
         }
     }
@@ -460,7 +460,7 @@ public class JSONArray {
     public long optLong(int index, long defaultValue) {
         try {
             return getLong(index);
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
             return defaultValue;
         }
     }
@@ -778,7 +778,7 @@ public class JSONArray {
     public String toString() {
         try {
             return this.toString(0);
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
             return null;
         }
     }

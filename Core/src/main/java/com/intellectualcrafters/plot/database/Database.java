@@ -3,6 +3,7 @@ package com.intellectualcrafters.plot.database;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Abstract Database class, serves as a base for any connection method (MySQL, SQLite, etc.)
@@ -64,12 +65,12 @@ public abstract class Database {
     
     /**
      * Executes an Update SQL Query.
-     * See {@link java.sql.Statement#executeUpdate(String)}.
+     * See {@link Statement#executeUpdate(String)}.
      * If the connection is closed, it will be opened.
      *
      * @param query Query to be run
      *
-     * @return Result Code, see {@link java.sql.Statement#executeUpdate(String)}
+     * @return Result Code, see {@link Statement#executeUpdate(String)}
      *
      * @throws SQLException           If the query cannot be executed
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}

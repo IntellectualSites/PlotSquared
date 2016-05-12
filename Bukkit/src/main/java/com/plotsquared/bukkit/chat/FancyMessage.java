@@ -704,7 +704,7 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
         try {
             writeJson(json);
             json.close();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             throw new RuntimeException("invalid message");
         }
         this.jsonString = string.toString();

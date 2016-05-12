@@ -30,7 +30,7 @@ public class SpongeCommand implements CommandCallable {
                 UUID uuid = UUID.fromString(id);
                 Player player = SpongeMain.THIS.getServer().getPlayer(uuid).get();
                 pp = SpongeUtil.getPlayer(player);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 pp = ConsolePlayer.getConsole();
             }
             MainCommand.onCommand(pp, string.isEmpty() ? new String[]{} : string.split(" "));

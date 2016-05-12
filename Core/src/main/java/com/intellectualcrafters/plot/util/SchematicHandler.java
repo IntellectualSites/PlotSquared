@@ -80,7 +80,7 @@ public abstract class SchematicHandler {
                 }
                 final String name;
                 if (namingScheme == null) {
-                    name = plot.getId().x + ";" + plot.getId().y + "," + plot.getArea() + "," + o;
+                    name = plot.getId().x + ";" + plot.getId().y + ',' + plot.getArea() + ',' + o;
                 } else {
                     name = namingScheme.replaceAll("%owner%", o).replaceAll("%id%", plot.getId().toString()).replaceAll("%idx%", plot.getId().x + "").replaceAll("%idy%", plot.getId().y + "")
                             .replaceAll("%world%", plot.getArea().toString());
@@ -170,7 +170,7 @@ public abstract class SchematicHandler {
                     if (((region.maxX - region.minX + xOffset + 1) < WIDTH) || ((region.maxZ - region.minZ + zOffset + 1) < LENGTH) || (HEIGHT
                             > 256)) {
                         PS.debug("Schematic is too large");
-                        PS.debug("(" + WIDTH + "," + LENGTH + "," + HEIGHT + ") is bigger than (" + (region.maxX - region.minX) + "," + (region.maxZ - region.minZ) + ",256)");
+                        PS.debug("(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (region.maxX - region.minX) + ',' + (region.maxZ - region.minZ) + ",256)");
                         TaskManager.runTask(whenDone);
                         return;
                     }

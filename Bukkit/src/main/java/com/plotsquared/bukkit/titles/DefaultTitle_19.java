@@ -19,7 +19,7 @@ public class DefaultTitle_19 extends AbstractTitle {
                     playerObj.sendTitle("", "");
                 }
             }, delay * 20);
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
             AbstractTitle.TITLE_CLASS = new DefaultTitle();
             AbstractTitle.TITLE_CLASS.sendTitle(player, head, sub, in, delay, out);
         }

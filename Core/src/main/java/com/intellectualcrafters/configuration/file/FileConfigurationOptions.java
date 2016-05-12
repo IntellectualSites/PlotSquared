@@ -1,5 +1,6 @@
 package com.intellectualcrafters.configuration.file;
 
+import com.intellectualcrafters.configuration.Configuration;
 import com.intellectualcrafters.configuration.MemoryConfiguration;
 import com.intellectualcrafters.configuration.MemoryConfigurationOptions;
 
@@ -75,7 +76,7 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * <p>
      * If this is true, if a default {@link FileConfiguration} is passed to
      * {@link
-     * FileConfiguration#setDefaults(com.intellectualcrafters.configuration.Configuration)}
+     * FileConfiguration#setDefaults(Configuration)}
      * then upon saving it will use the header from that config, instead of
      * the one provided here.
      * <p>
@@ -97,7 +98,7 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * <p>
      * If this is true, if a default {@link FileConfiguration} is passed to
      * {@link
-     * FileConfiguration#setDefaults(com.intellectualcrafters.configuration.Configuration)}
+     * FileConfiguration#setDefaults(Configuration)}
      * then upon saving it will use the header from that config, instead of
      * the one provided here.
      * <p>

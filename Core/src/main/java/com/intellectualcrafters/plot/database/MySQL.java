@@ -45,7 +45,7 @@ public class MySQL extends Database {
     public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         this.connection =
-                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
+                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database, this.user, this.password);
         return this.connection;
     }
 
@@ -55,9 +55,9 @@ public class MySQL extends Database {
             return this.connection;
         }
         Class.forName("com.mysql.jdbc.Driver");
-        PS.debug("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database);
+        PS.debug("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database);
         this.connection =
-                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
+                DriverManager.getConnection("jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database, this.user, this.password);
         return this.connection;
     }
 

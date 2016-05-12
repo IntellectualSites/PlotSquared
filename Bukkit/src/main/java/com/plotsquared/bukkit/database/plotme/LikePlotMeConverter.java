@@ -94,9 +94,7 @@ public class LikePlotMeConverter {
             content = content.replaceAll("PlotMe-DefaultGenerator", "PlotSquared");
             content = content.replaceAll("PlotMe", "PlotSquared");
             Files.write(path, content.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException ignored) {
-            //ignored
-        }
+        } catch (IOException ignored) {}
     }
 
     public boolean run(APlotMeConnector connector) {

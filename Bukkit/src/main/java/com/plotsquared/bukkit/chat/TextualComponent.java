@@ -284,7 +284,7 @@ public abstract class TextualComponent implements Cloneable {
         @Override
         @SuppressWarnings("serial")
         public Map<String, Object> serialize() {
-            return new java.util.HashMap<String, Object>() {
+            return new HashMap<String, Object>() {
                 {
                     put("key", getKey());
                     for (Map.Entry<String, String> valEntry : getValue().entrySet()) {

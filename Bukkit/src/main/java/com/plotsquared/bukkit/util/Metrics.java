@@ -255,8 +255,6 @@ public class Metrics {
 
     /**
      * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
-     *
-     * @throws java.io.IOException
      */
     public void enable() {
         // Enable Task, if it is not running
@@ -267,7 +265,6 @@ public class Metrics {
 
     /**
      * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
-     *
      */
     public void disable() {
         // Disable Task, if it is running
@@ -499,7 +496,7 @@ public class Metrics {
         /**
          * Gets an <b>unmodifiable</b> set of the plotter objects in the graph
          *
-         * @return an unmodifiable {@link java.util.Set} of the plotter objects
+         * @return an unmodifiable {@link Set} of the plotter objects
          */
         public Set<Plotter> getPlotters() {
             return Collections.unmodifiableSet(this.plotters);

@@ -35,7 +35,7 @@ public class ConfigurationNode {
         try {
             Object result = this.type.parseString(string);
             return result != null;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             return false;
         }
     }
@@ -51,13 +51,15 @@ public class ConfigurationNode {
     public Object getValue() {
         if (this.value instanceof String[]) {
             return Arrays.asList((String[]) this.value);
-        } else if (this.value instanceof Object[]) {
-            List<String> values = new ArrayList<String>();
+        }
+        if (this.value instanceof Object[]) {
+            List<String> values = new ArrayList<>();
             for (Object value : (Object[]) this.value) {
                 values.add(value.toString());
             }
             return values;
-        } else if (this.value instanceof PlotBlock) {
+        }
+        if (this.value instanceof PlotBlock) {
             return this.value.toString();
         }
         return this.value;

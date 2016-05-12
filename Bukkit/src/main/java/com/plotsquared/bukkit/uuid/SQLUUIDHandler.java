@@ -50,7 +50,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
 
         try (PreparedStatement stmt = getConnection().prepareStatement(
                 "CREATE TABLE IF NOT EXISTS `usercache` (uuid VARCHAR(32) NOT NULL, username VARCHAR(32) NOT NULL, PRIMARY KEY (uuid, username)"
-                        + ")")) {
+                        + ')')) {
             stmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -176,7 +176,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     String id = (String) jsonProfile.get("id");
                     String name = (String) jsonProfile.get("name");
                     ifFetch.value = UUID.fromString(
-                            id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" + id
+                            id.substring(0, 8) + '-' + id.substring(8, 12) + '-' + id.substring(12, 16) + '-' + id.substring(16, 20) + '-' + id
                                     .substring(20, 32));
                 } catch (IOException | ParseException e) {
                     e.printStackTrace();
@@ -231,7 +231,7 @@ public class SQLUUIDHandler extends UUIDHandlerImplementation {
                     statement.setString(1, name.value);
                     statement.setString(2, uuid.toString());
                     statement.execute();
-                    PS.debug(C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + "'");
+                    PS.debug(C.PREFIX + "Name change for '" + uuid + "' to '" + name.value + '\'');
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

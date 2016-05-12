@@ -17,7 +17,7 @@ public class IntegerFlag extends Flag<Integer> {
     @Override public Integer parseValue(String value) {
         try {
             return Integer.parseInt(value);
-        } catch (IllegalArgumentException e) {
+        } catch (NumberFormatException ignored) {
             return null;
         }
     }

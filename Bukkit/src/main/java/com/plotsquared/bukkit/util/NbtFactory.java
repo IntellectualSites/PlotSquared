@@ -20,6 +20,7 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -160,7 +161,7 @@ public class NbtFactory {
     /**
      * Load the content of a file from a stream.
      *
-     * Use {@link Files#newInputStreamSupplier(java.io.File)} to provide a stream from a file.
+     * Use {@link Files#newInputStreamSupplier(File)} to provide a stream from a file.
      * @param stream - the stream supplier.
      * @param option - whether or not to decompress the input stream.
      * @return The decoded NBT compound.
@@ -195,7 +196,7 @@ public class NbtFactory {
     /**
      * Save the content of a NBT compound to a stream.
      *
-     * Use {@link Files#newOutputStreamSupplier(java.io.File)} to provide a stream supplier to a file.
+     * Use {@link Files#newOutputStreamSupplier(File)} to provide a stream supplier to a file.
      * @param source - the NBT compound to save.
      * @param stream - the stream.
      * @param option - whether or not to compress the output.
@@ -284,7 +285,7 @@ public class NbtFactory {
             Constructor<?> caller = INSTANCE.CRAFT_STACK.getDeclaredConstructor(ItemStack.class);
             caller.setAccessible(true);
             return (ItemStack) caller.newInstance(stack);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             throw new IllegalStateException("Unable to convert " + stack + " + to a CraftItemStack.");
         }
     }
@@ -396,9 +397,7 @@ public class NbtFactory {
         try {
             this.STREAM_TOOLS = loader.loadClass(nmsPackage + ".NBTCompressedStreamTools");
             this.READ_LIMITER_CLASS = loader.loadClass(nmsPackage + ".NBTReadLimiter");
-        } catch (ClassNotFoundException e) {
-            // Ignore - we will detect this later
-        }
+        } catch (ClassNotFoundException ignored) {}
     }
 
     private String getPackageName() {
@@ -435,12 +434,10 @@ public class NbtFactory {
 
         if (value instanceof Wrapper) {
             return ((Wrapper) value).getHandle();
-
         } else if (value instanceof List) {
             throw new IllegalArgumentException("Can only insert a WrappedList.");
         } else if (value instanceof Map) {
             throw new IllegalArgumentException("Can only insert a WrappedCompound.");
-
         } else {
             return createNbtTag(getPrimitiveType(value), value);
         }
@@ -652,7 +649,7 @@ public class NbtFactory {
      * All changes to this map will be reflected in the underlying NBT compound. Values may only be one of the following:
      * <ul>
      *   <li>Primitive types</li>
-     *   <li>{@link java.lang.String String}</li>
+     *   <li>{@link String String}</li>
      *   <li>{@link NbtList}</li>
      *   <li>{@link NbtCompound}</li>
      * </ul>
@@ -773,7 +770,7 @@ public class NbtFactory {
         /**
          * Save the content of a NBT compound to a stream.
          * <p>
-         * Use {@link Files#newOutputStreamSupplier(java.io.File)} to provide a stream supplier to a file.
+         * Use {@link Files#newOutputStreamSupplier(File)} to provide a stream supplier to a file.
          * @param stream - the output stream.
          * @param option - whether or not to compress the output.
          * @throws IOException If anything went wrong.

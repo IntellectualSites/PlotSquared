@@ -49,7 +49,7 @@ public class ChunkListener implements Listener {
                 RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
                 this.mustSave = classChunk.getField("mustSave");
                 this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
                 PS.debug("PlotSquared/Server not compatible for chunk processor trim/gc");
                 Settings.CHUNK_PROCESSOR_GC = false;
                 Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE = false;

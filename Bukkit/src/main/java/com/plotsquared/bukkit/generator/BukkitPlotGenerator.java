@@ -143,9 +143,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                     if (data != null) {
                         return;
                     }
-                } catch (Throwable e) {
-                    //ignored
-                }
+                } catch (Throwable ignored) {}
                 // Populator spillage
                 short[][] tmp = cg.generateExtBlockSections(w, r, result.getX(), result.getZ(), grid);
                 if (tmp != null) {

@@ -1,5 +1,7 @@
 package com.intellectualcrafters.json;
 
+import java.util.HashMap;
+
 /**
  * The XMLTokener extends the JSONTokener to provide additional methods for the parsing of XML texts.
  *
@@ -10,9 +12,9 @@ public class XMLTokener extends JSONTokener {
     /**
      * The table of entity values. It initially contains Character values for amp, apos, gt, lt, quot.
      */
-    public static final java.util.HashMap<String, Character> entity;
+    public static final HashMap<String, Character> entity;
     static {
-        entity = new java.util.HashMap<String, Character>(8);
+        entity = new HashMap<>(8);
         entity.put("amp", XML.AMP);
         entity.put("apos", XML.APOS);
         entity.put("gt", XML.GT);
@@ -37,16 +39,14 @@ public class XMLTokener extends JSONTokener {
      * @throws JSONException If the <code>]]&gt;</code> is not found.
      */
     public String nextCDATA() throws JSONException {
-        char c;
-        int i;
         final StringBuilder sb = new StringBuilder();
         for (;;) {
-            c = next();
+            char c = next();
             if (end()) {
                 throw syntaxError("Unclosed CDATA");
             }
             sb.append(c);
-            i = sb.length() - 3;
+            int i = sb.length() - 3;
             if ((i >= 0) && (sb.charAt(i) == ']') && (sb.charAt(i + 1) == ']') && (sb.charAt(i + 2) == '>')) {
                 sb.setLength(i);
                 return sb.toString();
@@ -64,7 +64,6 @@ public class XMLTokener extends JSONTokener {
      */
     public Object nextContent() throws JSONException {
         char c;
-        StringBuilder sb;
         do {
             c = next();
         } while (Character.isWhitespace(c));
@@ -74,14 +73,14 @@ public class XMLTokener extends JSONTokener {
         if (c == '<') {
             return XML.LT;
         }
-        sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         for (;;) {
             if ((c == '<') || (c == 0)) {
                 back();
                 return sb.toString().trim();
             }
             if (c == '&') {
-                sb.append(nextEntity(c));
+                sb.append(nextEntity('&'));
             } else {
                 sb.append(c);
             }
@@ -113,7 +112,7 @@ public class XMLTokener extends JSONTokener {
         }
         final String string = sb.toString();
         final Object object = entity.get(string);
-        return object != null ? object : ampersand + string + ";";
+        return object != null ? object : ampersand + string + ';';
     }
     
     /**
@@ -126,10 +125,10 @@ public class XMLTokener extends JSONTokener {
      */
     public Object nextMeta() throws JSONException {
         char c;
-        char q;
         do {
             c = next();
         } while (Character.isWhitespace(c));
+        char q;
         switch (c) {
             case 0:
                 throw syntaxError("Misshaped meta tag");
@@ -190,11 +189,11 @@ public class XMLTokener extends JSONTokener {
      */
     public Object nextToken() throws JSONException {
         char c;
-        char q;
-        StringBuilder sb;
         do {
             c = next();
         } while (Character.isWhitespace(c));
+        char q;
+        StringBuilder sb;
         switch (c) {
             case 0:
                 throw syntaxError("Misshaped element");
@@ -224,7 +223,7 @@ public class XMLTokener extends JSONTokener {
                         return sb.toString();
                     }
                     if (c == '&') {
-                        sb.append(nextEntity(c));
+                        sb.append(nextEntity('&'));
                     } else {
                         sb.append(c);
                     }
@@ -268,11 +267,8 @@ public class XMLTokener extends JSONTokener {
      * @throws JSONException
      */
     public boolean skipPast(final String to) throws JSONException {
-        boolean b;
         char c;
         int i;
-        int j;
-        int offset = 0;
         final int length = to.length();
         final char[] circle = new char[length];
         /*
@@ -287,9 +283,9 @@ public class XMLTokener extends JSONTokener {
             circle[i] = c;
         }
         /* We will loop, possibly for all of the remaining characters. */
-        for (;;) {
-            j = offset;
-            b = true;
+        for (int offset = 0; ;) {
+            int j = offset;
+            boolean b = true;
             /* Compare the circle buffer with the to string. */
             for (i = 0; i < length; i += 1) {
                 if (circle[j] != to.charAt(i)) {

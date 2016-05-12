@@ -124,7 +124,7 @@ public abstract class WorldUtil {
     }
 
     public File getMcr(String world, int x, int z) {
-        File file = new File(PS.get().IMP.getWorldContainer(), world + File.separator + "region" + File.separator + "r." + x + "." + z + ".mca");
+        File file = new File(PS.get().IMP.getWorldContainer(), world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
         if (file.exists()) {
             return file;
         }

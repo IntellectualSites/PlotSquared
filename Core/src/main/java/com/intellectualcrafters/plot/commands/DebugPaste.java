@@ -30,7 +30,7 @@ public class DebugPaste extends SubCommand {
                     String latestLOG;
                     try {
                         latestLOG = HastebinUtility.upload(new File(PS.get().IMP.getDirectory(), "../../logs/latest.log"));
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
                         MainUtil.sendMessage(plr, "&clatest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }
@@ -38,12 +38,12 @@ public class DebugPaste extends SubCommand {
                     b.append(
                             "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
                                     + "problem\n\n# We will start with some informational files\n");
-                    b.append("links.settings_yml: ").append(settingsYML).append("\n");
-                    b.append("links.latest_log: ").append(latestLOG).append("\n");
+                    b.append("links.settings_yml: ").append(settingsYML).append('\n');
+                    b.append("links.latest_log: ").append(latestLOG).append('\n');
                     b.append("\n# Server Information\n");
                     int[] sVersion = PS.get().IMP.getServerVersion();
-                    b.append("version.server: ").append(sVersion[0]).append('.').append(sVersion[1]).append('.').append(sVersion[2]).append("\n");
-                    b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(";").append(!Settings.OFFLINE_MODE).append("\n");
+                    b.append("version.server: ").append(sVersion[0]).append('.').append(sVersion[1]).append('.').append(sVersion[2]).append('\n');
+                    b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(';').append(!Settings.OFFLINE_MODE).append('\n');
                     b.append("plugins:");
                     for (String id : PS.get().IMP.getPluginIds()) {
                         String[] split = id.split(":");
@@ -51,13 +51,13 @@ public class DebugPaste extends SubCommand {
                         String enabled = split.length == 2 ? split[1] : "unknown";
                         String name = split2[0];
                         String version = split2.length == 2 ? split2[1] : "unknown";
-                        b.append("\n  ").append(name).append(":\n    ").append("version: '").append(version).append("'").append("\n    enabled: ")
+                        b.append("\n  ").append(name).append(":\n    ").append("version: '").append(version).append('\'').append("\n    enabled: ")
                                 .append(enabled);
                     }
                     b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
                     Runtime runtime = Runtime.getRuntime();
-                    b.append("memory.free: ").append(runtime.freeMemory()).append("\n");
-                    b.append("memory.max: ").append(runtime.maxMemory()).append("\n");
+                    b.append("memory.free: ").append(runtime.freeMemory()).append('\n');
+                    b.append("memory.max: ").append(runtime.maxMemory()).append('\n');
                     b.append("java.specification.version: '").append(System.getProperty("java.specification.version")).append("'\n");
                     b.append("java.vendor: '").append(System.getProperty("java.vendor")).append("'\n");
                     b.append("java.version: '").append(System.getProperty("java.version")).append("'\n");

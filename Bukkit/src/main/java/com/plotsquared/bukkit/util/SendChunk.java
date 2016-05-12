@@ -51,7 +51,6 @@ public class SendChunk {
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
         //TODO in 1.7.10 this is PacketPlayOutMapChunk(Chunk chunk, boolean flag, int i, int version)
-        this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
         if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
             this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),int.class);
         } else {
@@ -65,7 +64,7 @@ public class SendChunk {
     }
 
     public void sendChunk(Collection<Chunk> input) {
-        HashSet<Chunk> chunks = new HashSet<Chunk>(input);
+        HashSet<Chunk> chunks = new HashSet<>(input);
         HashMap<String, ArrayList<Chunk>> map = new HashMap<>();
         int view = Bukkit.getServer().getViewDistance();
         for (Chunk chunk : chunks) {
@@ -126,9 +125,9 @@ public class SendChunk {
                 public void run() {
                     try {
                         chunk.unload(true, false);
-                    } catch (Throwable e) {
+                    } catch (Throwable ignored) {
                         String worldName = chunk.getWorld().getName();
-                        PS.debug("$4Could not save chunk: " + worldName + ";" + chunk.getX() + ";" + chunk.getZ());
+                        PS.debug("$4Could not save chunk: " + worldName + ';' + chunk.getX() + ";" + chunk.getZ());
                         PS.debug("$3 - $4File may be open in another process (e.g. MCEdit)");
                         PS.debug("$3 - $4" + worldName + "/level.dat or " + worldName
                                 + "/level_old.dat may be corrupt (try repairing or removing these)");

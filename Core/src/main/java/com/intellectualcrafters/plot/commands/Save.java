@@ -68,7 +68,7 @@ public class Save extends SubCommand {
                         int size = (corners[1].getX() - corners[0].getX()) + 1;
                         PlotId id = plot.getId();
                         String world = plot.getArea().toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
-                        final String file = time + "_" + world + "_" + id.x + "_" + id.y + "_" + size + "_" + name;
+                        final String file = time + '_' + world + '_' + id.x + '_' + id.y + '_' + size + '_' + name;
                         UUID uuid = plr.getUUID();
                         SchematicHandler.manager.upload(value, uuid, file, new RunnableVal<URL>() {
                             @Override

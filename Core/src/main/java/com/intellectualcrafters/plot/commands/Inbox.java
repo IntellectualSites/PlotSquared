@@ -47,7 +47,7 @@ public class Inbox extends SubCommand {
         StringBuilder string = new StringBuilder();
         string.append(StringMan
                 .replaceAll(C.COMMENT_LIST_HEADER_PAGED.s(), "%amount%", comments.length, "%cur", page + 1, "%max", totalPages + 1, "%word", "all")
-                + "\n");
+                + '\n');
 
         // This might work xD
         for (int x = page * 12; x < max; x++) {
@@ -58,9 +58,8 @@ public class Inbox extends SubCommand {
             } else {
                 color = "&7";
             }
-            string.append(
-                    "&8[&7#" + (x + 1) + "&8][&7" + comment.world + ";" + comment.id + "&8][&6" + comment.senderName + "&8]" + color + comment.comment
-                            + "\n");
+            string.append("&8[&7#").append(x + 1).append("&8][&7").append(comment.world).append(';').append(comment.id).append("&8][&6")
+                    .append(comment.senderName).append("&8]").append(color).append(comment.comment).append('\n');
         }
         MainUtil.sendMessage(player, string.toString());
     }
@@ -71,7 +70,8 @@ public class Inbox extends SubCommand {
         if (plot == null) {
             sendMessage(player, C.NOT_IN_PLOT);
             return false;
-        } else if (!plot.hasOwner()) {
+        }
+        if (!plot.hasOwner()) {
             sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
@@ -98,7 +98,7 @@ public class Inbox extends SubCommand {
                                     } else {
                                         color = "";
                                     }
-                                    sendMessage(player, C.INBOX_ITEM, color + inbox.toString() + " (" + total + "/" + unread + ")");
+                                    sendMessage(player, C.INBOX_ITEM, color + inbox.toString() + " (" + total + '/' + unread + ')');
                                     return;
                                 }
                             }
@@ -135,7 +135,7 @@ public class Inbox extends SubCommand {
                             sendMessage(player, C.NOT_VALID_INBOX_INDEX, index + "");
                             return false;
                         }
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException ignored) {
                         sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox " + inbox.toString() + " delete <index>");
                         return false;
                     }
@@ -171,7 +171,7 @@ public class Inbox extends SubCommand {
                 default:
                     try {
                         page = Integer.parseInt(args[1]);
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException ignored) {
                         sendMessage(player, C.COMMAND_SYNTAX, "/plot inbox [inbox] [delete <index>|clear|page]");
                         return false;
                     }

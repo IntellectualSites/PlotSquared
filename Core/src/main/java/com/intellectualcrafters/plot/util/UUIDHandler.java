@@ -26,7 +26,7 @@ public class UUIDHandler {
      *
      * @return map with names + uuids
      *
-     * @see com.google.common.collect.BiMap
+     * @see BiMap
      */
     public static BiMap<StringWrapper, UUID> getUuidMap() {
         return implementation.getUUIDMap();
@@ -39,7 +39,7 @@ public class UUIDHandler {
      *
      * @return true of the uuid is cached
      *
-     * @see com.google.common.collect.BiMap#containsValue(Object)
+     * @see BiMap#containsValue(Object)
      */
     public static boolean uuidExists(UUID uuid) {
         return implementation.uuidExists(uuid);
@@ -52,7 +52,7 @@ public class UUIDHandler {
      *
      * @return true of the name is cached
      *
-     * @see com.google.common.collect.BiMap#containsKey(Object)
+     * @see BiMap#containsKey(Object)
      */
     public static boolean nameExists(StringWrapper name) {
         return implementation.nameExists(name);

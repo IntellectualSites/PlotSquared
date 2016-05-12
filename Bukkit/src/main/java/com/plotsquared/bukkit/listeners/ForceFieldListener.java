@@ -36,10 +36,10 @@ public class ForceFieldListener implements Listener {
 
     private PlotPlayer hasNearbyPermitted(Player player, Plot plot) {
         for (Entity entity : player.getNearbyEntities(5d, 5d, 5d)) {
-            PlotPlayer pp;
             if (!(entity instanceof Player)) {
                 continue;
             }
+            PlotPlayer pp;
             if ((pp = BukkitUtil.getPlayer((Player) entity)) == null) {
                 continue;
             }

@@ -137,7 +137,7 @@ public abstract class EventUtil {
                 if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                     return true;
                 }
-                return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_BREAK.s()));
+                return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + '/' + C.FLAG_BREAK.s()));
             case BREAK_HANGING:
                 if (plot == null) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_ROAD.s(), notifyPerms);
@@ -261,7 +261,7 @@ public abstract class EventUtil {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
-                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_HANGING_INTERACT.s()));
+                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + '/' + C.FLAG_HANGING_INTERACT.s()));
                 }
                 return true;
             }
@@ -287,7 +287,7 @@ public abstract class EventUtil {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
-                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_MISC_INTERACT.s()));
+                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + '/' + C.FLAG_MISC_INTERACT.s()));
                 }
                 return true;
             }
@@ -312,7 +312,7 @@ public abstract class EventUtil {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
-                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_VEHICLE_USE.s()));
+                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + '/' + C.FLAG_VEHICLE_USE.s()));
                 }
                 return true;
             }
@@ -337,7 +337,7 @@ public abstract class EventUtil {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
-                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_MOB_PLACE.s() + "/" + C.FLAG_PLACE.s()));
+                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_MOB_PLACE.s() + '/' + C.FLAG_PLACE.s()));
                 }
                 return true;
             }
@@ -364,7 +364,7 @@ public abstract class EventUtil {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
-                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_MISC_PLACE.s() + "/" + C.FLAG_PLACE.s()));
+                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_MISC_PLACE.s() + '/' + C.FLAG_PLACE.s()));
                 }
 
                 return true;
@@ -390,7 +390,7 @@ public abstract class EventUtil {
                     if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms)) {
                         return true;
                     }
-                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_VEHICLE_PLACE.s() + "/" + C.FLAG_PLACE.s()));
+                    return !(!notifyPerms || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_VEHICLE_PLACE.s() + '/' + C.FLAG_PLACE.s()));
                 }
                 return true;
             default:

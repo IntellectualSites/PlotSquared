@@ -44,11 +44,16 @@ public class PlotListener {
         EventUtil.manager.callEntry(pp, plot);
         if (plot.hasOwner()) {
             Map<Flag<?>, Object> flags = FlagManager.getPlotFlags(plot);
-            int size = flags.size();
             boolean titles = Settings.TITLES;
             final String greeting;
 
-            if (size != 0) {
+            if (flags.isEmpty()) {
+                if (titles) {
+                    greeting = "";
+                } else {
+                    return true;
+                }
+            } else {
                 Optional<Boolean> titleFlag = plot.getFlag(Flags.TITLES);
                 if (titleFlag.isPresent()) {
                     titles = titleFlag.get();
@@ -97,7 +102,7 @@ public class PlotListener {
                     try {
                         long time = timeFlag.get();
                         pp.setTime(time);
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                         FlagManager.removePlotFlag(plot, Flags.TIME);
                     }
                 }
@@ -133,10 +138,6 @@ public class PlotListener {
                     }
                 }
                 CommentManager.sendTitle(pp, plot);
-            } else if (titles) {
-                greeting = "";
-            } else {
-                return true;
             }
             if (titles) {
                 if (!C.TITLE_ENTERED_PLOT.s().isEmpty() || !C.TITLE_ENTERED_PLOT_SUB.s().isEmpty()) {
@@ -146,7 +147,7 @@ public class PlotListener {
                             Plot lastPlot = pp.getMeta("lastplot");
                             if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
                                 Map<String, String> replacements = new HashMap<>();
-                                replacements.put("%x%", lastPlot.getId().x + "");
+                                replacements.put("%x%", String.valueOf(lastPlot.getId().x));
                                 replacements.put("%z%", lastPlot.getId().y + "");
                                 replacements.put("%world%", plot.getArea().toString());
                                 replacements.put("%greeting%", greeting);

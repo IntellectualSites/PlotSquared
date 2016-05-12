@@ -67,7 +67,7 @@ public class DebugUUID extends SubCommand {
                 try {
                     Class<?> clazz = Class.forName(args[0]);
                     newWrapper = (UUIDWrapper) clazz.newInstance();
-                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ignored) {
                     MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot uuidconvert <lower|offline|online>");
                     return false;
                 }

@@ -37,7 +37,7 @@ public class DebugRoadRegen extends SubCommand {
                 if (MathMan.isInteger(args[0])) {
                     try {
                         extend = Integer.parseInt(args[0]);
-                    } catch (Exception e) {
+                    } catch (NumberFormatException ignored) {
                         C.NOT_VALID_NUMBER.send(player, "(0, <EXTEND HEIGHT>)");
                         return false;
                     }
@@ -45,7 +45,7 @@ public class DebugRoadRegen extends SubCommand {
             }
             boolean result = HybridUtils.manager.regenerateRoad(plotworld, chunk, extend);
             MainUtil.sendMessage(player,
-                    "&6Regenerating chunk: " + chunk.x + "," + chunk.z + "\n&6 - Result: " + (result ? "&aSuccess" : "&cFailed"));
+                    "&6Regenerating chunk: " + chunk.x + ',' + chunk.z + "\n&6 - Result: " + (result ? "&aSuccess" : "&cFailed"));
             MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
         } else {
             HybridPlotManager manager = (HybridPlotManager) plotworld.getPlotManager();

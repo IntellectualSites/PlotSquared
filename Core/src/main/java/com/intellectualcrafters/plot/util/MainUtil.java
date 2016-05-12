@@ -19,6 +19,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -152,7 +153,7 @@ public class MainUtil {
                         String param = "value";
                         writer.append(CRLF).append(param).append(CRLF).flush();
                         writer.append("--" + boundary).append(CRLF);
-                        writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + filename + "\"").append(CRLF);
+                        writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + filename + '"').append(CRLF);
                         writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(filename)).append(CRLF);
                         writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                         writer.append(CRLF).flush();
@@ -737,16 +738,14 @@ public class MainUtil {
         String description = !descriptionFlag.isPresent() ? C.NONE.s() : Flags.DESCRIPTION.valueToString(descriptionFlag.get());
 
         StringBuilder flags = new StringBuilder();
-        {
-            HashMap<Flag<?>, Object> flagMap = FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
-            if (flagMap.isEmpty()) {
-                    flags.append(C.NONE.s());
-            } else {
-                String prefix = "";
-                for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
-                    flags.append(prefix).append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), entry.getValue()));
-                    prefix = ", ";
-                }
+        HashMap<Flag<?>, Object> flagMap = FlagManager.getPlotFlags(plot.getArea(), plot.getSettings(), true);
+        if (flagMap.isEmpty()) {
+                flags.append(C.NONE.s());
+        } else {
+            String prefix = "";
+            for (Entry<Flag<?>, Object> entry : flagMap.entrySet()) {
+                flags.append(prefix).append(C.PLOT_FLAG_LIST.f(entry.getKey().getName(), entry.getValue()));
+                prefix = ", ";
             }
         }
         boolean build = plot.isAdded(player.getUUID());
@@ -755,7 +754,7 @@ public class MainUtil {
 
         info = info.replace("%id%", plot.getId().toString());
         info = info.replace("%alias%", alias);
-        info = info.replace("%num%", num + "");
+        info = info.replace("%num%", String.valueOf(num));
         info = info.replace("%desc%", description);
         info = info.replace("%biome%", biome);
         info = info.replace("%owner%", owner);
@@ -766,7 +765,7 @@ public class MainUtil {
         info = info.replace("%denied%", denied);
         info = info.replace("%expires%", expires);
         info = info.replace("%flags%", flags);
-        info = info.replace("%build%", build + "");
+        info = info.replace("%build%", String.valueOf(build));
         info = info.replace("%desc%", "No description set.");
         if (info.contains("%rating%")) {
             final String newInfo = info;

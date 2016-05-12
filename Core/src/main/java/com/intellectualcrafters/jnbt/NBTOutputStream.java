@@ -100,7 +100,7 @@ public final class NBTOutputStream implements Closeable {
                 writeIntArrayTagPayload((IntArrayTag) tag);
                 break;
             default:
-                throw new IOException("Invalid tag type: " + type + ".");
+                throw new IOException("Invalid tag type: " + type + '.');
         }
     }
 

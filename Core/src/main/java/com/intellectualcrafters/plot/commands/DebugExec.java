@@ -187,7 +187,7 @@ public class DebugExec extends SubCommand {
                     double threshold;
                     try {
                         threshold = Integer.parseInt(args[1]) / 100d;
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException ignored) {
                         MainUtil.sendMessage(player, "$2Invalid threshold: " + args[1]);
                         MainUtil.sendMessage(player, "$1<threshold> $2= $1The percentage of plots you want to clear as a number between 0 - 100");
                         return false;

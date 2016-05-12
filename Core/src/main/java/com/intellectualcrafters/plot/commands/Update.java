@@ -27,7 +27,7 @@ public class Update extends SubCommand {
         } else if (args.length == 1) {
             try {
                 url = new URL(args[0]);
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException ignored) {
                 MainUtil.sendMessage(plr, "&cInvalid URL: " + args[0]);
                 MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot update [url]");
                 return false;

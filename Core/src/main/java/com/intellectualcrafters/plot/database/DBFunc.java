@@ -11,7 +11,6 @@ import com.intellectualcrafters.plot.object.comment.PlotComment;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +57,7 @@ public class DBFunc {
                 }
             }
             return false;
-        } catch (SQLException e) {
+        } catch (SQLException ignored) {
             return false;
         }
     }

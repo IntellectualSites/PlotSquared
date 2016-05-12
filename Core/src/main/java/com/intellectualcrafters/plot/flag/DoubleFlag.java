@@ -13,7 +13,7 @@ public class DoubleFlag extends Flag<Double> {
     @Override public Double parseValue(String value) {
         try {
             return Double.parseDouble(value);
-        } catch (IllegalArgumentException e) {
+        } catch (NumberFormatException ignored) {
             return null;
         }
 
