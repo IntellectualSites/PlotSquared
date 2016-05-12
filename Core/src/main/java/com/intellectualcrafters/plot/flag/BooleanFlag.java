@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.object.Plot;
+
 public class BooleanFlag extends Flag<Boolean> {
 
     public BooleanFlag(String name) {
@@ -33,5 +35,15 @@ public class BooleanFlag extends Flag<Boolean> {
 
     @Override public String getValueDescription() {
         return "Flag value must be a boolean (true|false)";
+    }
+
+    public boolean isTrue(Plot plot) {
+        Boolean value = FlagManager.getPlotFlagRaw(plot, this);
+        return Boolean.TRUE == value;
+    }
+
+    public boolean isFalse(Plot plot) {
+        Boolean value = FlagManager.getPlotFlagRaw(plot, this);
+        return Boolean.FALSE == value;
     }
 }

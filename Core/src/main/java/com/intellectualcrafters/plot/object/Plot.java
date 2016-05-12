@@ -959,7 +959,7 @@ public class Plot {
      * @param key
      */
     public <V> Optional<V> getFlag(Flag<V> key) {
-        return Optional.fromNullable(FlagManager.getPlotFlagRaw(this, key));
+        return FlagManager.getPlotFlag(this, key);
     }
 
     /**

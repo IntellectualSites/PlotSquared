@@ -1,5 +1,7 @@
 package com.intellectualcrafters.plot.flag;
 
+import com.intellectualcrafters.plot.object.Plot;
+
 public class Flag<V> {
 
     private String name;
@@ -34,5 +36,9 @@ public class Flag<V> {
 
     public final String getName() {
         return this.name;
+    }
+
+    public boolean isSet(Plot plot) {
+        return FlagManager.getPlotFlagRaw(plot, this) != null;
     }
 }
