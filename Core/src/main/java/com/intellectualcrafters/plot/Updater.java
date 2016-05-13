@@ -1,52 +1,19 @@
 package com.intellectualcrafters.plot;
 
-import static com.intellectualcrafters.plot.PS.log;
-
 import com.intellectualcrafters.json.JSONArray;
 import com.intellectualcrafters.json.JSONObject;
-import com.intellectualcrafters.plot.config.Settings;
+import com.intellectualcrafters.plot.util.HttpUtil;
 import com.intellectualcrafters.plot.util.StringMan;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static com.intellectualcrafters.plot.PS.log;
+
 public class Updater {
 
-    private static String readUrl(String urlString) {
-        BufferedReader reader = null;
-        try {
-            URL url = new URL(urlString);
-            reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            StringBuilder buffer = new StringBuilder();
-            int read;
-            char[] chars = new char[1024];
-            while ((read = reader.read(chars)) != -1) {
-                buffer.append(chars, 0, read);
-            }
-
-            return buffer.toString();
-        } catch (IOException e) {
-            log("&dCould not check for updates");
-            if (Settings.DEBUG) {
-                e.printStackTrace();
-            }
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
     public static URL getUpdate() {
-        String str = readUrl("https://api.github.com/repos/IntellectualSites/PlotSquared/releases/latest");
+        String str = HttpUtil.readUrl("https://api.github.com/repos/IntellectualSites/PlotSquared/releases/latest");
         JSONObject release = new JSONObject(str);
         JSONArray assets = (JSONArray) release.get("assets");
         String downloadURL = String.format("PlotSquared-%s.jar", PS.get().getPlatform());
