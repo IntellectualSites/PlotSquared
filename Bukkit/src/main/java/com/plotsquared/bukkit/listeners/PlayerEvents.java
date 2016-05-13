@@ -464,7 +464,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        EventUtil.manager.doDeathTask(pp);
+        EventUtil.manager.doRespawnTask(pp);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

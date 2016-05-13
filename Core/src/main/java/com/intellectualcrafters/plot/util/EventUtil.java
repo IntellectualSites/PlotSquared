@@ -79,7 +79,7 @@ public abstract class EventUtil {
         }
     }
 
-    public void doDeathTask(final PlotPlayer pp) {
+    public void doRespawnTask(final PlotPlayer pp) {
         final Plot plot = pp.getCurrentPlot();
         if (Settings.TELEPORT_ON_DEATH && plot != null) {
             TaskManager.runTask(new Runnable() {
