@@ -188,9 +188,9 @@ public abstract class EventUtil {
                 if (flagValue.isPresent()) {
                     value = flagValue.get();
                 } else {
-                    return true;
+                    value = null;
                 }
-                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
                     return Permissions.hasPermission(pp, C.PERMISSION_ADMIN_INTERACT_OTHER.s(), notifyPerms) || !(!notifyPerms || MainUtil
                             .sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s()));
                 }
@@ -233,10 +233,13 @@ public abstract class EventUtil {
                 if (flagValue.isPresent()) {
                     value = flagValue.get();
                 } else {
-                    return true;
+                    value = null;
                 }
-                if (!value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
-                    return true; //!(!false || MainUtil.sendMessage(pp, C.FLAG_TUTORIAL_USAGE, C.FLAG_USE.s() + "/" + C.FLAG_DEVICE_INTERACT.s()));
+                if (value == null || !value.contains(PlotBlock.EVERYTHING) && !value.contains(block.getPlotBlock())) {
+                    if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER.s(), false)) {
+                        return true;
+                    }
+                    return false;
                 }
                 return true;
             }
@@ -275,7 +278,6 @@ public abstract class EventUtil {
                 if (plot.getFlag(Flags.MISC_INTERACT).or(false)) {
                     return true;
                 }
-
                 Optional<HashSet<PlotBlock>> flag = plot.getFlag(Flags.USE);
                 HashSet<PlotBlock> value;
                 if (flag.isPresent()) {
