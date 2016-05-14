@@ -138,10 +138,6 @@ public class Settings {
     public static int CLEAR_THRESHOLD = 1;
     public static int CLEAR_INTERVAL = 120;
     /**
-     * API Location
-     */
-    public static String API_URL = "http://www.intellectualsites.com/minecraft.php";
-    /**
      * Use the custom API
      */
     public static boolean CUSTOM_API = true;
