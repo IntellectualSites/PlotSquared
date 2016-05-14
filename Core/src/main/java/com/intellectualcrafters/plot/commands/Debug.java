@@ -2,10 +2,9 @@ package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
-import com.intellectualcrafters.plot.object.PlotArea;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 @CommandDeclaration(command = "debug",
@@ -29,16 +28,9 @@ public class Debug extends SubCommand {
         String header = C.DEBUG_HEADER.s();
         String line = C.DEBUG_LINE.s();
         String section = C.DEBUG_SECTION.s();
-        final StringBuilder worlds = new StringBuilder("");
-        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
-            @Override
-            public void run(PlotArea value) {
-                worlds.append(value.toString()).append(", ");
-            }
-        });
         information.append(header);
         information.append(getSection(section, "PlotArea"));
-        information.append(getLine(line, "Plot Worlds", worlds.substring(0, worlds.length() - 2)));
+        information.append(getLine(line, "Plot Worlds", StringMan.join(PS.get().getPlotAreas(), ", ")));
         information.append(getLine(line, "Owned Plots", PS.get().getPlots().size()));
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", C.values().length));

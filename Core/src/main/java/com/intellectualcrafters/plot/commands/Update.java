@@ -1,6 +1,7 @@
 package com.intellectualcrafters.plot.commands;
 
 import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.Updater;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.MainUtil;
@@ -23,7 +24,7 @@ public class Update extends SubCommand {
     public boolean onCommand(PlotPlayer plr, String[] args) {
         URL url;
         if (args.length == 0) {
-            url = PS.get().update;
+            url = Updater.getUpdate();
         } else if (args.length == 1) {
             try {
                 url = new URL(args[0]);
