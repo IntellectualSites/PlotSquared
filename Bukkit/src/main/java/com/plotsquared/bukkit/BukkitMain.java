@@ -72,6 +72,12 @@ import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -86,13 +92,6 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
@@ -345,13 +344,25 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         PlayerEvents main = new PlayerEvents();
         getServer().getPluginManager().registerEvents(main, this);
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
-            getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
+            try {
+                getServer().getPluginManager().registerEvents(new PlayerEvents_1_8(), this);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 8, 3)) {
-            getServer().getPluginManager().registerEvents(new PlayerEvents183(), this);
+            try {
+                getServer().getPluginManager().registerEvents(new PlayerEvents183(), this);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
         if (PS.get().checkVersion(getServerVersion(), 1, 9, 0)) {
-            getServer().getPluginManager().registerEvents(new PlayerEvents_1_9(main), this);
+            try {
+                getServer().getPluginManager().registerEvents(new PlayerEvents_1_9(main), this);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
     }
 
