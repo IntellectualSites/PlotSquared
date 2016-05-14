@@ -2182,7 +2182,6 @@ public class PS {
             settings.put("Auto Clear Enabled", "" + Settings.AUTO_CLEAR);
             settings.put("Auto Clear Days", "" + Settings.AUTO_CLEAR_DAYS);
             settings.put("Schematics Save Path", "" + Settings.SCHEMATIC_SAVE_PATH);
-            settings.put("API Location", "" + Settings.API_URL);
             for (Entry<String, String> setting : settings.entrySet()) {
                 PS.log(C.PREFIX + String.format("&cKey: &6%s&c, Value: &6%s", setting.getKey(), setting.getValue()));
             }
