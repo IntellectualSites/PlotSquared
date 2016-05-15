@@ -1079,7 +1079,6 @@ public class PlayerEvents extends PlotListener implements Listener {
 
             // Are plot and origin not the same AND are both plots merged
             if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
-                System.out.println("Removing all blocks (last)");
                 event.getBlocks().remove(i);
             }
         }
