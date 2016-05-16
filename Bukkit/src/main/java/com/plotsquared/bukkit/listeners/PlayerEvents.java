@@ -1072,7 +1072,13 @@ public class PlayerEvents extends PlotListener implements Listener {
         for (int i = blocks.size() - 1; i >= 0; i--) {
             location = BukkitUtil.getLocation(blocks.get(i).getLocation());
             Plot plot = area.getOwnedPlot(location);
-            if (!Objects.equals(plot, origin)) {
+            /*
+             * plot -> the base plot of the merged area
+             * origin -> the plot where the event gets called
+             */
+
+            // Are plot and origin not the same AND are both plots merged
+            if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
                 event.getBlocks().remove(i);
             }
         }
