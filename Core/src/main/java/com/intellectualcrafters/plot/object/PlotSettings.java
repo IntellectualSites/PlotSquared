@@ -84,7 +84,11 @@ public class PlotSettings {
     }
 
     public Map<UUID, Integer> getRatings() {
-        return this.ratings == null ? new HashMap<UUID, Integer>() : this.ratings;
+        if (this.ratings == null) {
+            this.ratings = new HashMap<>();
+
+        }
+        return this.ratings;
     }
 
     public boolean setMerged(int direction, boolean merged) {
