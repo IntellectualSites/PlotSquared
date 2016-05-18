@@ -251,6 +251,7 @@ public class BO3Handler {
         try {
             File bo3File = bo3.getFile();
             bo3File.createNewFile();
+            bo3File.getParentFile().mkdirs();
             try (FileOutputStream fos = new FileOutputStream(bo3File)) {
                 write(fos, plot, bo3);
             }
