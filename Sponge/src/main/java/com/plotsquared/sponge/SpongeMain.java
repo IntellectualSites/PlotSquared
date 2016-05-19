@@ -331,6 +331,7 @@ public class SpongeMain implements IPlotMain {
             setup.step = new ConfigurationNode[0];
             setup.world = worldName;
             SetupUtils.manager.setupWorld(setup);
+            world = SpongeUtil.getWorld(worldName);
         } else {
             throw new IllegalArgumentException("World already loaded: " + worldName + "???");
         }
