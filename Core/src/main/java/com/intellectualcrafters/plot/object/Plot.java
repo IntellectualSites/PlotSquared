@@ -22,7 +22,6 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
-
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -558,6 +557,7 @@ public class Plot {
             case 7:
                 int i = direction - 4;
                 int i2 = 0;
+                System.out.println("CHECK 7 " + this + " | " + this.id.getRelative(i) + " | " + this.id.getRelative(i2) + " | " + i + " | " + i2);
                 if (this.getSettings().getMerged(i2)) {
                     if (this.getSettings().getMerged(i)) {
                         if (this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)) {
@@ -2643,15 +2643,17 @@ public class Plot {
                 lesserPlot.setMerged(2, true);
                 greaterPlot.setMerged(0, true);
                 lesserPlot.mergeData(greaterPlot);
+                System.out.println(greaterPlot + " | " + lesserPlot);
                 if (removeRoads) {
                     lesserPlot.removeRoadSouth();
-                    Plot other = this.getRelative(3);
-                    if (other.getMerged(2) && other.getMerged(1)) {
-                        greaterPlot.mergePlot(other, removeRoads);
-                        other.removeRoadEast();
-                    }
-                    if (lesserPlot.getMerged(5)) {
+                    Plot diagonal = greaterPlot.getRelative(1);
+                    if (diagonal.getMerged(7)) {
+                        System.out.println(lesserPlot + " SOUTHEAST 1");
                         lesserPlot.removeRoadSouthEast();
+                    }
+                    Plot below = greaterPlot.getRelative(3);
+                    if (below.getMerged(4)) {
+                        below.getRelative(0).removeRoadSouthEast();
                     }
                 }
             }
@@ -2667,16 +2669,18 @@ public class Plot {
                 lesserPlot.setMerged(1, true);
                 greaterPlot.setMerged(3, true);
                 lesserPlot.mergeData(greaterPlot);
+                System.out.println(greaterPlot + " | " + lesserPlot);
                 if (removeRoads) {
-                    Plot other = lesserPlot.getRelative(0);
-                    if (other.getMerged(2) && other.getMerged(1)) {
-                        greaterPlot.mergePlot(other, removeRoads);
-                        other.removeRoadSouthEast();
-                    }
-                    if (lesserPlot.getMerged(5)) {
+                    Plot diagonal = greaterPlot.getRelative(1);
+                    if (diagonal.getMerged(7)) {
+                        System.out.println(lesserPlot + " SOUTHEAST 2");
                         lesserPlot.removeRoadSouthEast();
                     }
                     lesserPlot.removeRoadEast();
+                }
+                Plot below = greaterPlot.getRelative(0);
+                if (below.getMerged(6)) {
+                    below.getRelative(3).removeRoadSouthEast();
                 }
             }
         }
