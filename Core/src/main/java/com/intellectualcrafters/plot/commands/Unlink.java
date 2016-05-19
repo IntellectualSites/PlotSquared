@@ -39,11 +39,11 @@ public class Unlink extends SubCommand {
         }
         final boolean createRoad;
         if (args.length != 0) {
-            if (args.length != 1 || StringMan.isEqualIgnoreCaseToAny(args[0], "true", "false")) {
+            if (args.length != 1 || !StringMan.isEqualIgnoreCaseToAny(args[0], "true", "false")) {
                 C.COMMAND_SYNTAX.send(plr, getUsage());
                 return false;
             }
-            createRoad = Boolean.parseBoolean(args[1]);
+            createRoad = Boolean.parseBoolean(args[0]);
         } else {
             createRoad = true;
         }
