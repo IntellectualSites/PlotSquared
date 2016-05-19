@@ -7,11 +7,17 @@ buildscript {
     }
 	dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'org.ajoberstar:grgit:1.7.0'
     }
 }
 
 group = 'com.intellectualcrafters'
-version = '3.4.0-SNAPSHOT'
+def revision = ""
+ext {
+    git = org.ajoberstar.grgit.Grgit.open(file(".git"))
+    revision = "-${git.head().abbreviatedId}"
+}
+version = "3.4.0${revision}"
 description = """PlotSquared"""
 
 subprojects {
