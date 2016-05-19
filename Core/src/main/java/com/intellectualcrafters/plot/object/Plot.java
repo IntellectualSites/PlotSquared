@@ -557,7 +557,6 @@ public class Plot {
             case 7:
                 int i = direction - 4;
                 int i2 = 0;
-                System.out.println("CHECK 7 " + this + " | " + this.id.getRelative(i) + " | " + this.id.getRelative(i2) + " | " + i + " | " + i2);
                 if (this.getSettings().getMerged(i2)) {
                     if (this.getSettings().getMerged(i)) {
                         if (this.area.getPlotAbs(this.id.getRelative(i)).getMerged(i2)) {
@@ -2643,12 +2642,10 @@ public class Plot {
                 lesserPlot.setMerged(2, true);
                 greaterPlot.setMerged(0, true);
                 lesserPlot.mergeData(greaterPlot);
-                System.out.println(greaterPlot + " | " + lesserPlot);
                 if (removeRoads) {
                     lesserPlot.removeRoadSouth();
                     Plot diagonal = greaterPlot.getRelative(1);
                     if (diagonal.getMerged(7)) {
-                        System.out.println(lesserPlot + " SOUTHEAST 1");
                         lesserPlot.removeRoadSouthEast();
                     }
                     Plot below = greaterPlot.getRelative(3);
@@ -2669,11 +2666,9 @@ public class Plot {
                 lesserPlot.setMerged(1, true);
                 greaterPlot.setMerged(3, true);
                 lesserPlot.mergeData(greaterPlot);
-                System.out.println(greaterPlot + " | " + lesserPlot);
                 if (removeRoads) {
                     Plot diagonal = greaterPlot.getRelative(1);
                     if (diagonal.getMerged(7)) {
-                        System.out.println(lesserPlot + " SOUTHEAST 2");
                         lesserPlot.removeRoadSouthEast();
                     }
                     lesserPlot.removeRoadEast();

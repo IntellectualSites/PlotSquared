@@ -58,7 +58,7 @@ public class SpongeAugmentedGenerator implements GenerationPopulator {
                     }
                     @Override
                     public void setBiome(int x, int z, int biome) {
-                        System.out.println("TODO set biome: " + biome); // TODO FIXME
+                        // TODO FIXME
                     }
                     @Override
                     public PlotChunk clone() {
