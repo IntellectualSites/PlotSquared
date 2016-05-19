@@ -19,7 +19,6 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,9 +34,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -690,6 +691,35 @@ public class MainUtil {
             ratings[i] /= rating.size();
         }
         return ratings;
+    }
+
+    public static Set<UUID> getUUIDsFromString(String list) {
+        String[] split = list.split(",");
+        HashSet<UUID> result = new HashSet<UUID>();
+        for (String name : split) {
+            if (name.length() == 0) {
+                // Invalid
+                return null;
+            }
+            if (name.equals("*")) {
+                result.add(DBFunc.everyone);
+                continue;
+            }
+            if (name.length() > 16) {
+                try {
+                    result.add(UUID.fromString(name));
+                    continue;
+                } catch (IllegalArgumentException e) {
+                    return null;
+                }
+            }
+            UUID uuid = UUIDHandler.getUUID(name, null);
+            if (uuid == null) {
+                return null;
+            }
+            result.add(uuid);
+        }
+        return result;
     }
 
     /**

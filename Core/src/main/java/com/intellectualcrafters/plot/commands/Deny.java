@@ -14,7 +14,8 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.Set;
 
 @CommandDeclaration(command = "deny",
         aliases = {"d", "ban"},
@@ -44,36 +45,41 @@ public class Deny extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
-        UUID uuid;
-        if (args[0].equalsIgnoreCase("*")) {
-            uuid = DBFunc.everyone;
-        } else {
-            uuid = UUIDHandler.getUUID(args[0], null);
-        }
-        if (uuid == null) {
+        Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
+        if (uuids == null || uuids.isEmpty()) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        if (plot.isOwner(uuid)) {
-            MainUtil.sendMessage(plr, C.ALREADY_OWNER);
-            return false;
-        }
-
-        if (plot.getDenied().contains(uuid)) {
-            MainUtil.sendMessage(plr, C.ALREADY_ADDED);
-            return false;
-        }
-        plot.removeMember(uuid);
-        plot.removeTrusted(uuid);
-        plot.addDenied(uuid);
-        EventUtil.manager.callDenied(plr, plot, uuid, true);
-        MainUtil.sendMessage(plr, C.DENIED_ADDED);
-        if (!uuid.equals(DBFunc.everyone)) {
-            handleKick(UUIDHandler.getPlayer(uuid), plot);
-        } else {
-            for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                handleKick(pp, plot);
+        Iterator<UUID> iter = uuids.iterator();
+        while (iter.hasNext()) {
+            UUID uuid = iter.next();
+            if (uuid == DBFunc.everyone && !(Permissions.hasPermission(plr, "plots.deny.everyone") || Permissions.hasPermission(plr, "plots.admin.command.deny"))) {
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, MainUtil.getName(uuid));
+                continue;
             }
+            if (plot.isOwner(uuid)) {
+                MainUtil.sendMessage(plr, C.ALREADY_OWNER, MainUtil.getName(uuid));
+                return false;
+            }
+
+            if (plot.getDenied().contains(uuid)) {
+                MainUtil.sendMessage(plr, C.ALREADY_ADDED, MainUtil.getName(uuid));
+                return false;
+            }
+            plot.removeMember(uuid);
+            plot.removeTrusted(uuid);
+            plot.addDenied(uuid);
+            EventUtil.manager.callDenied(plr, plot, uuid, true);
+            if (!uuid.equals(DBFunc.everyone)) {
+                handleKick(UUIDHandler.getPlayer(uuid), plot);
+            } else {
+                for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                    handleKick(pp, plot);
+                }
+            }
+        }
+        if (!uuids.isEmpty()) {
+            MainUtil.sendMessage(plr, C.DENIED_ADDED);
         }
         return true;
     }

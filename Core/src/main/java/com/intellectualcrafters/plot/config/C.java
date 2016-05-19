@@ -574,8 +574,8 @@ public enum C {
      * Member
      */
     REMOVED_PLAYERS("$2Removed %s players from this plot.", "Member"),
-    ALREADY_OWNER("$2That user is already the plot owner.", "Member"),
-    ALREADY_ADDED("$2That user is already added to that category.", "Member"),
+    ALREADY_OWNER("$2That user is already the plot owner: %s0", "Member"),
+    ALREADY_ADDED("$2That user is already added to that category: %s0", "Member"),
     MEMBER_ADDED("$4That user can now build while the plot owner is online", "Member"),
     MEMBER_REMOVED("$1You successfully removed a user from the plot", "Member"),
     MEMBER_WAS_NOT_ADDED("$2That player was not added as a user on this plot", "Member"),

@@ -61,9 +61,7 @@ public class MainCommand extends Command {
             new Trust();
             new Add();
             new Deny();
-            new Untrust();
             new Remove();
-            new Undeny();
             new Info();
             new ListCmd();
             new Debug();

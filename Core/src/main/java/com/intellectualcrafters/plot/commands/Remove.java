@@ -10,13 +10,12 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
+import java.util.Set;
 
 @CommandDeclaration(
         command = "remove",
-        aliases = {"r"},
+        aliases = {"r","untrust", "ut", "undeny", "ud"},
         description = "Remove a player from a plot",
         usage = "/plot remove <player>",
         category = CommandCategory.SETTINGS,
@@ -64,36 +63,22 @@ public class Remove extends SubCommand {
                 }
                 break;
             }
-            case "*":
-                ArrayList<UUID> toRemove = new ArrayList<>();
-                HashSet<UUID> all = new HashSet<>();
-                all.addAll(plot.getMembers());
-                all.addAll(plot.getTrusted());
-                all.addAll(plot.getDenied());
-                for (UUID uuid : all) {
-                    toRemove.add(uuid);
-                    count++;
-                }
-                for (UUID uuid : toRemove) {
-                    plot.removeDenied(uuid);
-                    plot.removeTrusted(uuid);
-                    plot.removeMember(uuid);
-                }
-                break;
             default:
-                UUID uuid = UUIDHandler.getUUID(args[0], null);
-                if (uuid != null) {
-                    if (plot.getTrusted().contains(uuid)) {
-                        if (plot.removeTrusted(uuid)) {
-                            count++;
-                        }
-                    } else if (plot.getMembers().contains(uuid)) {
-                        if (plot.removeMember(uuid)) {
-                            count++;
-                        }
-                    } else if (plot.getDenied().contains(uuid)) {
-                        if (plot.removeDenied(uuid)) {
-                            count++;
+                Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
+                if (uuids != null) {
+                    for (UUID uuid : uuids) {
+                        if (plot.getTrusted().contains(uuid)) {
+                            if (plot.removeTrusted(uuid)) {
+                                count++;
+                            }
+                        } else if (plot.getMembers().contains(uuid)) {
+                            if (plot.removeMember(uuid)) {
+                                count++;
+                            }
+                        } else if (plot.getDenied().contains(uuid)) {
+                            if (plot.removeDenied(uuid)) {
+                                count++;
+                            }
                         }
                     }
                 }

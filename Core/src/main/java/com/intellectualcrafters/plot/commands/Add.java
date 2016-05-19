@@ -8,9 +8,10 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
-import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 
 @CommandDeclaration(
@@ -42,40 +43,46 @@ public class Add extends SubCommand {
             MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
             return true;
         }
-        UUID uuid;
-        if (args[0].equalsIgnoreCase("*") && (Permissions.hasPermission(plr, "plots.add.everyone") || Permissions.hasPermission(plr, "plots.admin.command.add"))) {
-            uuid = DBFunc.everyone;
-        } else {
-            // TODO have a runnable for fetch
-            uuid = UUIDHandler.getUUID(args[0], null);
-        }
-        if (uuid == null) {
+        Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
+        if (uuids == null || uuids.isEmpty()) {
             MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        if (plot.isOwner(uuid)) {
-            MainUtil.sendMessage(plr, C.ALREADY_OWNER);
-            return false;
-        }
-
-        if (plot.getMembers().contains(uuid)) {
-            MainUtil.sendMessage(plr, C.ALREADY_ADDED);
-            return false;
-        }
-        if (plot.removeTrusted(uuid)) {
-            plot.addMember(uuid);
-        } else {
-            if ((plot.getMembers().size() + plot.getTrusted().size()) >= plot.getArea().MAX_PLOT_MEMBERS) {
-                MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
-                return false;
+        Iterator<UUID> iter = uuids.iterator();
+        while (iter.hasNext()) {
+            UUID uuid = iter.next();
+            if (uuid == DBFunc.everyone && !(Permissions.hasPermission(plr, "plots.add.everyone") || Permissions.hasPermission(plr, "plots.admin.command.add"))) {
+                MainUtil.sendMessage(plr, C.INVALID_PLAYER, MainUtil.getName(uuid));
+                continue;
             }
-            if (plot.getDenied().contains(uuid)) {
-                plot.removeDenied(uuid);
+            if (plot.isOwner(uuid)) {
+                MainUtil.sendMessage(plr, C.ALREADY_OWNER, MainUtil.getName(uuid));
+                iter.remove();
+                continue;
             }
-            plot.addMember(uuid);
+            if (plot.getMembers().contains(uuid)) {
+                MainUtil.sendMessage(plr, C.ALREADY_ADDED, MainUtil.getName(uuid));
+                iter.remove();
+                continue;
+            }
+            if (plot.removeTrusted(uuid)) {
+                plot.addMember(uuid);
+            } else {
+                if ((plot.getMembers().size() + plot.getTrusted().size()) >= plot.getArea().MAX_PLOT_MEMBERS) {
+                    MainUtil.sendMessage(plr, C.PLOT_MAX_MEMBERS);
+                    iter.remove();
+                    continue;
+                }
+                if (plot.getDenied().contains(uuid)) {
+                    plot.removeDenied(uuid);
+                }
+                plot.addMember(uuid);
+            }
+            EventUtil.manager.callMember(plr, plot, uuid, true);
         }
-        EventUtil.manager.callMember(plr, plot, uuid, true);
-        MainUtil.sendMessage(plr, C.MEMBER_ADDED);
+        if (!uuids.isEmpty()) {
+            MainUtil.sendMessage(plr, C.MEMBER_ADDED);
+        }
         return true;
     }
 }
