@@ -152,8 +152,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override
     public int[] getPluginVersion() {
         String ver = getDescription().getVersion();
-        if (ver.contains("-SNAPSHOT")) {
-            ver = ver.split("-SNAPSHOT")[0];
+        if (ver.contains("-")) {
+            ver = ver.split("-")[0];
         }
         String[] split = ver.split("\\.");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
