@@ -77,7 +77,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Plugin(id = "plotSquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.",
+@Plugin(id = "plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.",
         url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.3")
 public class SpongeMain implements IPlotMain {
 
