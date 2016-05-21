@@ -122,17 +122,17 @@ public class SpongeMain implements IPlotMain {
 
     @Listener
     public void init(GameInitializationEvent event) {
-        log("PlotSquared: Game init");
+        PS.log("PlotSquared: Game init");
     }
 
     @Listener
     public void onInit(GamePreInitializationEvent event) {
-        log("PlotSquared: Game pre init");
+        PS.log("PlotSquared: Game pre init");
     }
 
     @Listener
     public void onServerAboutToStart(GameAboutToStartServerEvent event) {
-        log("PlotSquared: Server init");
+        PS.log("PlotSquared: Server init");
         THIS = this;
         new PS(this, "Sponge");
         this.server = this.game.getServer();
@@ -177,7 +177,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public int[] getServerVersion() {
-        log("Checking minecraft version: Sponge: ");
+        PS.log("Checking minecraft version: Sponge: ");
         String version = this.game.getPlatform().getMinecraftVersion().getName();
         String[] split = version.split("\\.");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
@@ -248,13 +248,13 @@ public class SpongeMain implements IPlotMain {
     @Override
     public void registerPlotPlusEvents() {
         // TODO Auto-generated method stub
-        log("registerPlotPlusEvents is not implemented!");
+        PS.log("registerPlotPlusEvents is not implemented!");
     }
 
     @Override
     public void registerForceFieldEvents() {
         // TODO Auto-generated method stub
-        log("registerForceFieldEvents is not implemented!");
+        PS.log("registerForceFieldEvents is not implemented!");
     }
 
     @Override
@@ -308,9 +308,9 @@ public class SpongeMain implements IPlotMain {
         try {
             SpongeMetrics metrics = new SpongeMetrics(this.game, this.plugin);
             metrics.start();
-            log(C.PREFIX.s() + "&6Metrics enabled.");
+            PS.log(C.PREFIX.s() + "&6Metrics enabled.");
         } catch (IOException ignored) {
-            log(C.PREFIX.s() + "&cFailed to load up metrics.");
+            PS.log(C.PREFIX.s() + "&cFailed to load up metrics.");
         }
     }
 

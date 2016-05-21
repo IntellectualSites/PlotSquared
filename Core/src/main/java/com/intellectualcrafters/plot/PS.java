@@ -16,6 +16,7 @@ import com.intellectualcrafters.plot.generator.GeneratorWrapper;
 import com.intellectualcrafters.plot.generator.HybridPlotWorld;
 import com.intellectualcrafters.plot.generator.HybridUtils;
 import com.intellectualcrafters.plot.generator.IndependentPlotGenerator;
+import com.intellectualcrafters.plot.logger.ILogger;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotAnalysis;
@@ -48,7 +49,6 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.util.area.QuadMap;
 import com.plotsquared.listener.WESubscriber;
 import com.sk89q.worldedit.WorldEdit;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -86,6 +86,7 @@ public class PS {
 
     private static PS instance;
     public final IPlotMain IMP;
+    public ILogger LOGGER;
     private final HashSet<Integer> plotAreaHashCheck = new HashSet<>();
     /**
      * All plot areas mapped by world (quick world access).
@@ -130,6 +131,7 @@ public class PS {
         PS.instance = this;
         this.thread = Thread.currentThread();
         this.IMP = iPlotMain;
+        this.LOGGER = iPlotMain;
         this.platform = platform;
         this.version = this.IMP.getPluginVersion();
         try {
@@ -296,13 +298,34 @@ public class PS {
     }
 
     /**
+     * Set the logger
+     * @see com.intellectualcrafters.plot.logger.DelegateLogger
+     * @see #getLogger()
+     * @param logger
+     */
+    public void setLogger(ILogger logger) {
+        if (logger == null) {
+            throw new IllegalArgumentException("Logger may not be null");
+        }
+        LOGGER = logger;
+    }
+
+    /**
+     * Get the current logger
+     * @return
+     */
+    public ILogger getLogger() {
+        return LOGGER;
+    }
+
+    /**
      * Log a message to the IPlotMain logger.
      *
      * @param message Message to log
      * @see IPlotMain#log(String)
      */
     public static void log(Object message) {
-        PS.get().IMP.log(StringMan.getString(message));
+        PS.get().LOGGER.log(StringMan.getString(message));
     }
 
     /**

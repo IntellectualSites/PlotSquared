@@ -539,7 +539,7 @@ public class MemorySection implements ConfigurationSection {
         List<?> list = getList(path);
 
         if (list == null) {
-            PS.get().IMP.log(path + " is null");
+            PS.get().log(path + " is null");
             return new ArrayList<>(0);
         }
 

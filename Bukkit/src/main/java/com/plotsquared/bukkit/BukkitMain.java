@@ -185,7 +185,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override
     public void runEntityTask() {
-        log(C.PREFIX + "KillAllEntities started.");
+        PS.log(C.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
@@ -514,7 +514,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             Settings.OFFLINE_MODE = true;
         }
         if (!checkVersion) {
-            log(C.PREFIX + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
+            PS.log(C.PREFIX + " &c[WARN] Titles are disabled - please update your version of Bukkit to support this feature.");
             Settings.TITLES = false;
         } else {
             AbstractTitle.TITLE_CLASS = new DefaultTitle_19();
@@ -523,11 +523,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
         }
         if (Settings.OFFLINE_MODE) {
-            log(C.PREFIX
+            PS.log(C.PREFIX
                     + " &6PlotSquared is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
                     + "Bukkit");
         } else {
-            log(C.PREFIX + " &6PlotSquared is using online UUIDs");
+            PS.log(C.PREFIX + " &6PlotSquared is using online UUIDs");
         }
         if (Settings.USE_SQLUUIDHANDLER) {
             return new SQLUUIDHandler(wrapper);
@@ -575,7 +575,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public void startMetrics() {
         Metrics metrics = new Metrics(this);
         metrics.start();
-        log(C.PREFIX + "&6Metrics enabled.");
+        PS.log(C.PREFIX + "&6Metrics enabled.");
     }
 
     @Override
@@ -599,7 +599,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
             } catch (Exception ignored) {
-                log("Failed to reload world: " + world);
+                PS.log("Failed to reload world: " + world);
                 Bukkit.getServer().unloadWorld(world, false);
             }
         }
