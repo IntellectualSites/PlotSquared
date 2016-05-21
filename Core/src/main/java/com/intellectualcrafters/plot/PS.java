@@ -1903,7 +1903,7 @@ public class PS {
         this.config.set("clear.ignore-if-modified", null);
 
         // Done
-        options.put("approval.ratings.require-done", Settings.REQUIRE_DONE);
+        options.put("approval.ratings.check-done", Settings.REQUIRE_DONE);
         options.put("approval.done.counts-towards-limit", Settings.DONE_COUNTS_TOWARDS_LIMIT);
         options.put("approval.done.restrict-building", Settings.DONE_RESTRICTS_BUILDING);
         options.put("approval.done.required-for-download", Settings.DOWNLOAD_REQUIRES_DONE);
@@ -1932,18 +1932,13 @@ public class PS {
         options.put("teleport.delay", Settings.TELEPORT_DELAY);
 
         // WorldEdit
-        options.put("worldedit.require-selection-in-mask", Settings.REQUIRE_SELECTION);
-        options.put("worldedit.queue-commands", Settings.QUEUE_COMMANDS);
         options.put("worldedit.enable-for-helpers", Settings.WE_ALLOW_HELPER);
-        options.put("worldedit.max-volume", Settings.WE_MAX_VOLUME);
-        options.put("worldedit.max-iterations", Settings.WE_MAX_ITERATIONS);
         options.put("worldedit.blacklist", Arrays.asList("cs", ".s", "restore", "snapshot", "delchunks", "listchunks"));
 
         // Chunk processor
         options.put("chunk-processor.enabled", Settings.CHUNK_PROCESSOR);
         options.put("chunk-processor.auto-unload", Settings.CHUNK_PROCESSOR_GC);
         options.put("chunk-processor.experimental-fast-async-worldedit", Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT);
-        options.put("chunk-processor.auto-trim", Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE);
         options.put("chunk-processor.max-blockstates", Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES);
         options.put("chunk-processor.max-entities", Settings.CHUNK_PROCESSOR_MAX_ENTITIES);
         options.put("chunk-processor.disable-physics", Settings.CHUNK_PROCESSOR_DISABLE_PHYSICS);
@@ -2011,7 +2006,7 @@ public class PS {
         Settings.AUTO_CLEAR_CONFIRMATION = this.config.getBoolean("clear.auto.confirmation"); // TODO FIXME
 
         // Done
-        Settings.REQUIRE_DONE = this.config.getBoolean("approval.ratings.require-done");
+        Settings.REQUIRE_DONE = this.config.getBoolean("approval.ratings.check-done");
         Settings.DONE_COUNTS_TOWARDS_LIMIT = this.config.getBoolean("approval.done.counts-towards-limit");
         Settings.DONE_RESTRICTS_BUILDING = this.config.getBoolean("approval.done.restrict-building");
         Settings.DOWNLOAD_REQUIRES_DONE = this.config.getBoolean("approval.done.required-for-download");
@@ -2042,17 +2037,11 @@ public class PS {
         Settings.TELEPORT_ON_DEATH = this.config.getBoolean("teleport.on_death");
 
         // WorldEdit
-        Settings.QUEUE_COMMANDS = this.config.getBoolean("worldedit.queue-commands");
-        Settings.REQUIRE_SELECTION = this.config.getBoolean("worldedit.require-selection-in-mask");
         Settings.WE_ALLOW_HELPER = this.config.getBoolean("worldedit.enable-for-helpers");
-        Settings.WE_MAX_VOLUME = this.config.getLong("worldedit.max-volume");
-        Settings.WE_MAX_ITERATIONS = this.config.getLong("worldedit.max-iterations");
-        Settings.WE_BLACKLIST = this.config.getStringList("worldedit.blacklist");
 
         // Chunk processor
         Settings.CHUNK_PROCESSOR = this.config.getBoolean("chunk-processor.enabled");
         Settings.CHUNK_PROCESSOR_GC = this.config.getBoolean("chunk-processor.auto-unload");
-        Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE = this.config.getBoolean("chunk-processor.auto-trim");
         Settings.EXPERIMENTAL_FAST_ASYNC_WORLDEDIT = this.config.getBoolean("chunk-processor.experimental-fast-async-worldedit");
         Settings.CHUNK_PROCESSOR_MAX_BLOCKSTATES = this.config.getInt("chunk-processor.max-blockstates");
         Settings.CHUNK_PROCESSOR_MAX_ENTITIES = this.config.getInt("chunk-processor.max-entities");

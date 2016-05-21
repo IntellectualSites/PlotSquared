@@ -44,7 +44,6 @@ import com.plotsquared.bukkit.listeners.PlayerEvents_1_8;
 import com.plotsquared.bukkit.listeners.PlayerEvents_1_9;
 import com.plotsquared.bukkit.listeners.PlotPlusListener;
 import com.plotsquared.bukkit.listeners.WorldEvents;
-import com.plotsquared.bukkit.listeners.worldedit.WEListener;
 import com.plotsquared.bukkit.titles.DefaultTitle_19;
 import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
@@ -387,7 +386,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     public boolean initWorldEdit() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
             worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-            getServer().getPluginManager().registerEvents(new WEListener(), this);
             return true;
         }
         return false;

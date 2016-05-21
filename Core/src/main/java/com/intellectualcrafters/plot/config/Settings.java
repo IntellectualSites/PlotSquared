@@ -1,6 +1,5 @@
 package com.intellectualcrafters.plot.config;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,7 +49,6 @@ public class Settings {
      */
     public static boolean CHUNK_PROCESSOR = false;
     public static boolean EXPERIMENTAL_FAST_ASYNC_WORLDEDIT = false;
-    public static boolean CHUNK_PROCESSOR_TRIM_ON_SAVE = false;
     public static boolean CHUNK_PROCESSOR_GC = false;
     public static int CHUNK_PROCESSOR_MAX_BLOCKSTATES = 4096;
     public static int CHUNK_PROCESSOR_MAX_ENTITIES = 512;
@@ -65,14 +63,9 @@ public class Settings {
      */
     public static int MAX_AUTO_SIZE = 4;
     /**
-     * Default worldedit-require-selection-in-mask: false
+     * Default worldedit-check-selection-in-mask: false
      */
-    public static boolean REQUIRE_SELECTION = true;
-    public static boolean QUEUE_COMMANDS = false;
     public static boolean WE_ALLOW_HELPER = false;
-    public static long WE_MAX_VOLUME = 500000;
-    public static long WE_MAX_ITERATIONS = 1000;
-    public static List<String> WE_BLACKLIST = new ArrayList<>();
     /**
      * Teleport to path on login
      */

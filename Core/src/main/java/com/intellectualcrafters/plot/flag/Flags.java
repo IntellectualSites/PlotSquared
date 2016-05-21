@@ -31,7 +31,18 @@ public class Flags {
     public static final BooleanFlag NOTIFY_ENTER = new BooleanFlag("notify-enter");
     public static final LongFlag TIME = new LongFlag("time");
     public static final PlotWeatherFlag WEATHER = new PlotWeatherFlag("weather");
-    public static final DoubleFlag PRICE = new DoubleFlag("price");
+    public static final DoubleFlag PRICE = new DoubleFlag("price") {
+        @Override
+        public Double parseValue(String input) {
+            Double value = super.parseValue(input);
+            return value != null && value > 0 ? value : null;
+        }
+
+        @Override
+        public String getValueDescription() {
+            return "Flag value must be a positive number.";
+        }
+    };
     public static final BooleanFlag EXPLOSION = new BooleanFlag("explosion");
     public static final BooleanFlag GRASS_GROW = new BooleanFlag("grass-grow");
     public static final BooleanFlag VINE_GROW = new BooleanFlag("vine-grow");

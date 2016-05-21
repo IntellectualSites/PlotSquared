@@ -5,20 +5,13 @@ import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.util.PlotGameMode;
 import com.intellectualcrafters.plot.util.PlotWeather;
-
-import java.util.HashMap;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer {
     
     private static ConsolePlayer instance;
-    private final HashMap<String, Object> meta;
-    
-    /**
-     * Direct access is deprecated.
-     */
-    @Deprecated
-    public ConsolePlayer() {
+
+    private ConsolePlayer() {
         PlotArea area = PS.get().getFirstPlotArea();
         Location loc;
         if (area != null) {
@@ -27,7 +20,6 @@ public class ConsolePlayer extends PlotPlayer {
         } else {
             loc = new Location("world", 0, 0, 0);
         }
-        this.meta = new HashMap<>();
         setMeta("location", loc);
     }
 
@@ -46,12 +38,12 @@ public class ConsolePlayer extends PlotPlayer {
     
     @Override
     public Location getLocation() {
-        return (Location) getMeta("location");
+        return this.<Location>getMeta("location");
     }
     
     @Override
     public Location getLocationFull() {
-        return (Location) getMeta("location");
+        return getLocation();
     }
     
     @Override
@@ -71,8 +63,7 @@ public class ConsolePlayer extends PlotPlayer {
     
     @Override
     public void teleport(Location location) {
-        Plot plot = location.getPlot();
-        setMeta("lastplot", plot);
+        setMeta("lastplot", location.getPlot());
         setMeta("location", location);
     }
     
@@ -99,21 +90,6 @@ public class ConsolePlayer extends PlotPlayer {
     
     @Override
     public void removeAttribute(String key) {}
-    
-    @Override
-    public void setMeta(String key, Object value) {
-        this.meta.put(key, value);
-    }
-    
-    @Override
-    public Object getMeta(String key) {
-        return this.meta.get(key);
-    }
-    
-    @Override
-    public Object deleteMeta(String key) {
-        return this.meta.remove(key);
-    }
     
     @Override
     public RequiredType getSuperCaller() {

@@ -271,7 +271,7 @@ public abstract class Command {
      * @return
      */
     public void execute(PlotPlayer player, String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
-            RunnableVal2<Command, CommandResult> whenDone) {
+            RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 0 || args[0] == null) {
             if (this.parent == null) {
                 MainCommand.getInstance().help.displayHelp(player, null, 0);
@@ -536,5 +536,34 @@ public abstract class Command {
     public enum CommandResult {
         FAILURE,
         SUCCESS
+    }
+
+    public void checkTrue(boolean mustBeTrue, C message, Object... args) {
+        if (!mustBeTrue) {
+            throw new CommandException(message, args);
+        }
+    }
+
+    public <T extends Object> T check(T object, C message, Object... args) {
+        if (object == null) {
+            throw new CommandException(message, args);
+        }
+        return object;
+    }
+
+    public static class CommandException extends RuntimeException {
+        private final Object[] args;
+        private final C message;
+
+        public CommandException(C message, Object... args) {
+            this.message = message;
+            this.args = args;
+        }
+
+        public void perform(PlotPlayer player) {
+            if (player != null && message != null) {
+                message.send(player, args);
+            }
+        }
     }
 }

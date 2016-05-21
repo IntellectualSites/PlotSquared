@@ -1,18 +1,15 @@
 package com.plotsquared.bukkit.listeners;
 
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
-
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
-import com.intellectualcrafters.plot.object.ChunkLoc;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
-import com.intellectualcrafters.plot.util.UUIDHandler;
+import java.lang.reflect.Method;
+import java.util.HashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -31,9 +28,8 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map.Entry;
+
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
 
 public class ChunkListener implements Listener {
 
@@ -43,7 +39,7 @@ public class ChunkListener implements Listener {
 
     
     public ChunkListener() {
-        if (Settings.CHUNK_PROCESSOR_GC || Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE) {
+        if (Settings.CHUNK_PROCESSOR_GC) {
             try {
                 RefClass classChunk = getRefClass("{nms}.Chunk");
                 RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
@@ -52,130 +48,60 @@ public class ChunkListener implements Listener {
             } catch (Throwable ignored) {
                 PS.debug("PlotSquared/Server not compatible for chunk processor trim/gc");
                 Settings.CHUNK_PROCESSOR_GC = false;
-                Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE = false;
             }
         }
         if (!Settings.CHUNK_PROCESSOR_GC) {
             return;
         }
-        TaskManager.runTask(new Runnable() {
+        for (World world : Bukkit.getWorlds()) {
+            world.setAutoSave(false);
+        }
+        TaskManager.runTaskRepeat(new Runnable() {
             @Override
             public void run() {
-                int distance = Bukkit.getViewDistance() + 2;
-                HashMap<String, HashMap<ChunkLoc, Integer>> players = new HashMap<>();
-                for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-                    PlotPlayer pp = entry.getValue();
-                    Location location = pp.getLocation();
-                    String world = location.getWorld();
-                    if (!PS.get().hasPlotArea(world)) {
-                        continue;
-                    }
-                    HashMap<ChunkLoc, Integer> map = players.get(world);
-                    if (map == null) {
-                        map = new HashMap<>();
-                        players.put(world, map);
-                    }
-                    ChunkLoc origin = new ChunkLoc(location.getX() >> 4, location.getZ() >> 4);
-                    Integer val = map.get(origin);
-                    int check;
-                    if (val != null) {
-                        if (val == distance) {
+                try {
+                    HashSet<Chunk> toUnload = new HashSet<>();
+                    for (World world : Bukkit.getWorlds()) {
+                        String worldName = world.getName();
+                        if (!PS.get().hasPlotArea(worldName)) {
                             continue;
                         }
-                        check = distance - val;
-                    } else {
-                        check = distance;
-                        map.put(origin, distance);
-                    }
-                    for (int x = -distance; x <= distance; x++) {
-                        if (x >= check || -x >= check) {
-                            continue;
-                        }
-                        for (int z = -distance; z <= distance; z++) {
-                            if (z >= check || -z >= check) {
+                        Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
+                        Object chunkMap = w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
+                        Method methodIsChunkInUse = chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
+                        Chunk[] chunks = world.getLoadedChunks();
+                        for (Chunk chunk : chunks) {
+                            if ((boolean) methodIsChunkInUse.invoke(chunkMap, chunk.getX(), chunk.getZ())) {
                                 continue;
                             }
-                            int weight = distance - Math.max(Math.abs(x), Math.abs(z));
-                            ChunkLoc chunk = new ChunkLoc(x + origin.x, z + origin.z);
-                            val = map.get(chunk);
-                            if (val == null || val < weight) {
-                                map.put(chunk, weight);
+                            int x = chunk.getX();
+                            int z = chunk.getZ();
+                            if (!shouldSave(worldName, x, z)) {
+                                unloadChunk(worldName, chunk, false);
+                                continue;
                             }
-
-                        }
-                    }
-                }
-                int time = 300;
-                for (World world : Bukkit.getWorlds()) {
-                    String name = world.getName();
-                    if (!PS.get().hasPlotArea(name)) {
-                        continue;
-                    }
-                    boolean autoSave = world.isAutoSave();
-                    if (autoSave) {
-                        world.setAutoSave(false);
-                    }
-                    HashMap<ChunkLoc, Integer> map = players.get(name);
-                    if (map == null || map.isEmpty()) {
-                        continue;
-                    }
-                    Chunk[] chunks = world.getLoadedChunks();
-                    ArrayDeque<Chunk> toUnload = new ArrayDeque<>();
-                    for (Chunk chunk : chunks) {
-                        int x = chunk.getX();
-                        int z = chunk.getZ();
-                        if (!map.containsKey(new ChunkLoc(x, z))) {
                             toUnload.add(chunk);
                         }
                     }
-                    if (!toUnload.isEmpty()) {
-                        long start = System.currentTimeMillis();
-                        Chunk chunk;
-                        while ((chunk = toUnload.poll()) != null && System.currentTimeMillis() - start < 5) {
-                            if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE || !unloadChunk(name, chunk)) {
-                                if (chunk.isLoaded()) {
-                                    chunk.unload(true, false);
-                                }
-                            }
-                        }
-                        if (!toUnload.isEmpty()) {
-                            time = 1;
-                        }
+                    if (toUnload.isEmpty()) {
+                        return;
                     }
-                    if (!Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE && autoSave) {
-                        world.setAutoSave(true);
+                    long start = System.currentTimeMillis();
+                    for (Chunk chunk : toUnload) {
+                        if (System.currentTimeMillis() - start > 5) {
+                            return;
+                        }
+                        chunk.unload(true, false);
                     }
+                } catch (Throwable e) {
+                    e.printStackTrace();
                 }
-                TaskManager.runTaskLater(this, time);
             }
-        });
+        }, 1);
     }
 
-    public boolean unloadChunk(String world, Chunk chunk) {
-        int X = chunk.getX();
-        int Z = chunk.getZ();
-        int x = X << 4;
-        int z = Z << 4;
-        int x2 = x + 15;
-        int z2 = z + 15;
-        Plot plot = new Location(world, x, 1, z).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
-            return false;
-        }
-        plot = new Location(world, x2, 1, z2).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
-            return false;
-        }
-        plot = new Location(world, x2, 1, z).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
-            return false;
-        }
-        plot = new Location(world, x, 1, z2).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
-            return false;
-        }
-        plot = new Location(world, x + 7, 1, z + 7).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
+    public boolean unloadChunk(String world, Chunk chunk, boolean safe) {
+        if (safe && shouldSave(world, chunk.getX(), chunk.getZ())) {
             return false;
         }
         Object c = this.methodGetHandleChunk.of(chunk).call();
@@ -185,14 +111,42 @@ public class ChunkListener implements Listener {
         }
         return true;
     }
-    
+
+    public boolean shouldSave(String world, int X, int Z) {
+        int x = X << 4;
+        int z = Z << 4;
+        int x2 = x + 15;
+        int z2 = z + 15;
+        Plot plot = new Location(world, x, 1, z).getOwnedPlotAbs();
+        if (plot != null && plot.hasOwner()) {
+            return true;
+        }
+        plot = new Location(world, x2, 1, z2).getOwnedPlotAbs();
+        if (plot != null && plot.hasOwner()) {
+            return true;
+        }
+        plot = new Location(world, x2, 1, z).getOwnedPlotAbs();
+        if (plot != null && plot.hasOwner()) {
+            return true;
+        }
+        plot = new Location(world, x, 1, z2).getOwnedPlotAbs();
+        if (plot != null && plot.hasOwner()) {
+            return true;
+        }
+        plot = new Location(world, x + 7, 1, z + 7).getOwnedPlotAbs();
+        if (plot != null && plot.hasOwner()) {
+            return true;
+        }
+        return false;
+    }
+
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        if (Settings.CHUNK_PROCESSOR_TRIM_ON_SAVE) {
+        if (Settings.CHUNK_PROCESSOR_GC) {
             Chunk chunk = event.getChunk();
             String world = chunk.getWorld().getName();
             if (PS.get().hasPlotArea(world)) {
-                if (unloadChunk(world, chunk)) {
+                if (unloadChunk(world, chunk, true)) {
                     return;
                 }
             }

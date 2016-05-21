@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.commands.RequiredType;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.database.DBFunc;
 import com.intellectualcrafters.plot.flag.Flags;
+import com.intellectualcrafters.plot.util.EconHandler;
 import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.ExpireManager;
 import com.intellectualcrafters.plot.util.Permissions;
@@ -449,4 +450,20 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     public abstract void stopSpectating();
+
+    public double getMoney() {
+        return EconHandler.manager == null ? 0 : EconHandler.manager.getMoney(this);
+    }
+
+    public void withdraw(double amount) {
+        if (EconHandler.manager != null) {
+            EconHandler.manager.withdrawMoney(this, amount);
+        }
+    }
+
+    public void deposit(double amount) {
+        if (EconHandler.manager != null) {
+            EconHandler.manager.depositMoney(this, amount);
+        }
+    }
 }

@@ -128,46 +128,58 @@ public class MainCommand extends Command {
                 args = tmp;
             }
         }
-        getInstance().execute(player, args, new RunnableVal3<Command, Runnable, Runnable>() {
-            @Override
-            public void run(final Command cmd, final Runnable success, final Runnable failure) {
-                if (cmd.hasConfirmation(player) ) {
-                    CmdConfirm.addPending(player, cmd.getUsage(), new Runnable() {
-                        @Override
-                        public void run() {
-                            if (EconHandler.manager != null) {
-                                PlotArea area = player.getApplicablePlotArea();
-                                if (area != null) {
-                                    Double price = area.PRICES.get(cmd.getFullId());
-                                    if (price != null && EconHandler.manager.getMoney(player) < price) {
-                                        failure.run();
-                                        return;
+        try {
+            getInstance().execute(player, args, new RunnableVal3<Command, Runnable, Runnable>() {
+                @Override
+                public void run(final Command cmd, final Runnable success, final Runnable failure) {
+                    if (cmd.hasConfirmation(player)) {
+                        CmdConfirm.addPending(player, cmd.getUsage(), new Runnable() {
+                            @Override
+                            public void run() {
+                                if (EconHandler.manager != null) {
+                                    PlotArea area = player.getApplicablePlotArea();
+                                    if (area != null) {
+                                        Double price = area.PRICES.get(cmd.getFullId());
+                                        if (price != null && EconHandler.manager.getMoney(player) < price) {
+                                            if (failure != null) {
+                                                failure.run();
+                                            }
+                                            return;
+                                        }
                                     }
                                 }
+                                if (success != null) {
+                                    success.run();
+                                }
                             }
-                            success.run();
-                        }
-                    });
-                    return;
-                }
-                if (EconHandler.manager != null) {
-                    PlotArea area = player.getApplicablePlotArea();
-                    if (area != null) {
-                        Double price = area.PRICES.get(cmd.getFullId());
-                        if (price != null && EconHandler.manager.getMoney(player) < price) {
-                            failure.run();
-                            return;
+                        });
+                        return;
+                    }
+                    if (EconHandler.manager != null) {
+                        PlotArea area = player.getApplicablePlotArea();
+                        if (area != null) {
+                            Double price = area.PRICES.get(cmd.getFullId());
+                            if (price != null && EconHandler.manager.getMoney(player) < price) {
+                                if (failure != null) {
+                                    failure.run();
+                                }
+                                return;
+                            }
                         }
                     }
+                    if (success != null) {
+                        success.run();
+                    }
                 }
-                success.run();
-            }
-        }, new RunnableVal2<Command, CommandResult>() {
-            @Override
-            public void run(Command cmd, CommandResult result) {
-                // Post command stuff!?
-            }
-        });
+            }, new RunnableVal2<Command, CommandResult>() {
+                @Override
+                public void run(Command cmd, CommandResult result) {
+                    // Post command stuff!?
+                }
+            });
+        } catch (CommandException e) {
+            e.perform(player);
+        }
         // Always true
         return true;
     }
@@ -191,8 +203,7 @@ public class MainCommand extends Command {
         if (args.length >= 2) {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
-            if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea().equals(area) || Permissions
-                    .hasPermission(player, C.PERMISSION_ADMIN)) && !newPlot.isDenied(player.getUUID())) {
+            if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea().equals(area) || Permissions.hasPermission(player, C.PERMISSION_ADMIN)) && !newPlot.isDenied(player.getUUID())) {
                 // Save meta
                 loc = player.getMeta("location");
                 plot = player.getMeta("lastplot");
@@ -206,7 +217,7 @@ public class MainCommand extends Command {
         }
         super.execute(player, args, confirm, whenDone);
         // Reset command scope //
-        if (tp) {
+        if (tp && !(player instanceof ConsolePlayer)) {
             if (loc == null) {
                 player.deleteMeta("location");
             } else {
