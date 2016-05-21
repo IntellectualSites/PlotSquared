@@ -52,13 +52,6 @@ import com.plotsquared.sponge.util.block.SlowQueue;
 import com.plotsquared.sponge.uuid.SpongeLowerOfflineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeOnlineUUIDWrapper;
 import com.plotsquared.sponge.uuid.SpongeUUIDHandler;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -77,13 +70,26 @@ import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
-@Plugin(id = "com.plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.", url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.3")
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Plugin(id = "PlotSquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.", url = "https://github"
+        + ".com/IntellectualSites/PlotSquared", version = "3.3.3")
 public class SpongeMain implements IPlotMain {
+
     public static SpongeMain THIS;
+
+    @Inject
     public PluginContainer plugin;
 
     @Inject
     private Logger logger;
+
     @Inject
     private Game game;
     private Server server;
@@ -123,12 +129,11 @@ public class SpongeMain implements IPlotMain {
     public void onInit(GamePreInitializationEvent event) {
         log("PlotSquared: Game pre init");
     }
-    
+
     @Listener
     public void onServerAboutToStart(GameAboutToStartServerEvent event) {
         log("PlotSquared: Server init");
         THIS = this;
-        THIS.plugin = this.game.getPluginManager().fromInstance(this).get();
         new PS(this, "Sponge");
         this.server = this.game.getServer();
         this.game.getRegistry().register(WorldGeneratorModifier.class, (WorldGeneratorModifier) new HybridGen().specify());
@@ -154,7 +159,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public File getWorldContainer() {
-        return new File("world");
+        return game.getSavesDirectory().toFile();
     }
 
     @Override
@@ -165,8 +170,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public int[] getPluginVersion() {
-        PluginContainer plugin = this.game.getPluginManager().fromInstance(this).get();
-        String version = plugin.getVersion().orElse("");
+        String version = this.plugin.getVersion().orElse("");
         String[] split = version.split("\\.");
         return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 3 ? Integer.parseInt(split[2]) : 0};
     }
@@ -266,7 +270,7 @@ public class SpongeMain implements IPlotMain {
     @Override
     public UUIDHandlerImplementation initUUIDHandler() {
         UUIDWrapper wrapper;
-        if (Settings.OFFLINE_MODE || !PS.get().checkVersion(getServerVersion(), 1, 7, 6)) {
+        if (Settings.OFFLINE_MODE) {
             wrapper = new SpongeLowerOfflineUUIDWrapper();
         } else {
             wrapper = new SpongeOnlineUUIDWrapper();
@@ -276,7 +280,6 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public boolean initPlotMeConverter() {
-        // PlotMe was never ported to sponge
         return false;
     }
 
@@ -370,25 +373,23 @@ public class SpongeMain implements IPlotMain {
     public ChatManager<?> initChatManager() {
         return new SpongeChatManager();
     }
-    
+
     @Override
     public PlotQueue<Chunk> initPlotQueue() {
-        if (PS.get().checkVersion(getServerVersion(), 1, 8, 0)) {
-            try {
-                MainUtil.canSendChunk = true;
-                return new FastQueue();
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
+        try {
+            MainUtil.canSendChunk = true;
+            return new FastQueue();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         }
         return new SlowQueue();
     }
-    
+
     @Override
     public WorldUtil initWorldUtil() {
         return new SpongeUtil();
     }
-    
+
     @Override
     public GeneratorWrapper<?> getGenerator(String world, String name) {
         if (name == null) {
@@ -405,12 +406,12 @@ public class SpongeMain implements IPlotMain {
         }
         return new SpongePlotGenerator(new HybridGen());
     }
-    
+
     @Override
     public GeneratorWrapper<?> wrapPlotGenerator(IndependentPlotGenerator generator) {
         return new SpongePlotGenerator(generator);
     }
-    
+
     @Override
     public List<String> getPluginIds() {
         return this.game.getPluginManager().getPlugins().stream().map(plugin1 -> plugin1.getName() + ';' + plugin1.getVersion() + ':' + true)

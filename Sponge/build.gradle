@@ -6,10 +6,10 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-        maven {url = "http://repo.minecrell.net/snapshots"}
+        maven {url = "http://repo.minecrell.net/releases"}
     }
     dependencies {
-        classpath 'net.minecrell:VanillaGradle:2.0.3-SNAPSHOT'
+        classpath 'net.minecrell:VanillaGradle:2.0.3_1'
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
@@ -20,7 +20,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 dependencies {
     compile project(':Core')
     compile 'org.spongepowered:spongeapi:4.+'
-    compile 'org.mcstats.sponge:metrics:R8-SNAPSHOT'
+    //compile 'org.mcstats.sponge:metrics:R8-SNAPSHOT'
 }
 
 sourceCompatibility = 1.8
@@ -57,9 +57,9 @@ processResources {
 shadowJar {
     dependencies {
         include(dependency(':Core'))
-        include(dependency('org.mcstats.sponge:metrics:R8-SNAPSHOT'))
+        //include(dependency('org.mcstats.sponge:metrics:R8-SNAPSHOT'))
     }
-    relocate 'org.mcstats', 'com.plotsquared.stats'
+    //relocate 'org.mcstats', 'com.plotsquared.stats'
     archiveName = "${parent.name}-${project.name}-${parent.version}.jar"
     destinationDir = file '../target'
 }
