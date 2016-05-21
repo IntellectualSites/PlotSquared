@@ -37,7 +37,7 @@ public class Help extends Command {
                 if (MathMan.isInteger(args[0])) {
                     try {
                         displayHelp(player, null, Integer.parseInt(args[0]));
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException ignored) {
                         displayHelp(player, null, 1);
                     }
                 } else {
@@ -48,7 +48,7 @@ public class Help extends Command {
                 if (MathMan.isInteger(args[1])) {
                     try {
                         displayHelp(player, args[1], Integer.parseInt(args[1]));
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException ignored) {
                         displayHelp(player, args[1], 1);
                     }
                 }

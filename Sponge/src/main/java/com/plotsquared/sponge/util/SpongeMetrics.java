@@ -30,6 +30,13 @@ package com.plotsquared.sponge.util;
 
 import com.google.inject.Inject;
 import com.intellectualcrafters.plot.PS;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.spongepowered.api.Game;
+import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,12 +51,6 @@ import java.net.URLEncoder;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPOutputStream;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.spongepowered.api.Game;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.Task;
 
 public class SpongeMetrics {
 
@@ -112,7 +113,7 @@ public class SpongeMetrics {
     private volatile Task task = null;
 
     @Inject
-    public SpongeMetrics(final Game game, final PluginContainer plugin) throws IOException {
+    public SpongeMetrics(final Game game, final PluginContainer plugin) {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null");
         }
@@ -156,9 +157,9 @@ public class SpongeMetrics {
      * @param json
      * @param key
      * @param value
-     * @throws java.io.UnsupportedEncodingException
+     * @throws UnsupportedEncodingException
      */
-    private static void appendJSONPair(final StringBuilder json, final String key, final String value) throws UnsupportedEncodingException {
+    private static void appendJSONPair(final StringBuilder json, final String key, final String value) {
         boolean isValueNumeric = false;
 
         try {
@@ -166,7 +167,7 @@ public class SpongeMetrics {
                 Double.parseDouble(value);
                 isValueNumeric = true;
             }
-        } catch (final NumberFormatException e) {
+        } catch (final NumberFormatException ignored) {
             isValueNumeric = false;
         }
 
@@ -341,7 +342,7 @@ public class SpongeMetrics {
     /**
      * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
      *
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public void enable() throws IOException {
         // This has to be synchronized or it can collide with the check in the task.
@@ -362,7 +363,7 @@ public class SpongeMetrics {
     /**
      * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
      *
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public void disable() throws IOException {
         // This has to be synchronized or it can collide with the check in the task.
@@ -510,7 +511,7 @@ public class SpongeMetrics {
         try {
             Class.forName("mineshafter.MineServer");
             return true;
-        } catch (final Exception e) {
+        } catch (final Exception ignored) {
             return false;
         }
     }

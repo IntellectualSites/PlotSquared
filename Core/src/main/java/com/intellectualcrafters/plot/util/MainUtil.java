@@ -19,6 +19,7 @@ import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.object.RunnableVal;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -709,7 +710,7 @@ public class MainUtil {
                 try {
                     result.add(UUID.fromString(name));
                     continue;
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException ignored) {
                     return null;
                 }
             }

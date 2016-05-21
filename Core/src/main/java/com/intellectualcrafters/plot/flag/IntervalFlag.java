@@ -20,14 +20,14 @@ public class IntervalFlag extends Flag<Integer[]> {
             seconds = 1;
             try {
                 amount = Integer.parseInt(values[0]);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 return null;
             }
         } else if (values.length == 2) {
             try {
                 amount = Integer.parseInt(values[0]);
                 seconds = Integer.parseInt(values[1]);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 return null;
             }
         } else {
