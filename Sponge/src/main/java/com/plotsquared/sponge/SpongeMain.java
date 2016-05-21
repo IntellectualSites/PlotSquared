@@ -71,15 +71,14 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Plugin(id = "PlotSquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.", url = "https://github"
-        + ".com/IntellectualSites/PlotSquared", version = "3.3.3")
+@Plugin(id = "plotSquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.",
+        url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.3")
 public class SpongeMain implements IPlotMain {
 
     public static SpongeMain THIS;
@@ -305,13 +304,9 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public void startMetrics() {
-        try {
-            SpongeMetrics metrics = new SpongeMetrics(this.game, this.plugin);
-            metrics.start();
-            PS.log(C.PREFIX.s() + "&6Metrics enabled.");
-        } catch (IOException ignored) {
-            PS.log(C.PREFIX.s() + "&cFailed to load up metrics.");
-        }
+        SpongeMetrics metrics = new SpongeMetrics(this.game, this.plugin);
+        metrics.start();
+        PS.log(C.PREFIX.s() + "&6Metrics enabled.");
     }
 
     @Override
