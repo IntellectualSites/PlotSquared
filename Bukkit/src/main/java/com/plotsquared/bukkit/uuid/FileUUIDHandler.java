@@ -198,7 +198,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             ExpireManager.IMP.storeDate(uuid, last);
                         }
                         toAdd.put(new StringWrapper(name), uuid);
-                    } catch (IOException ignored) {
+                    } catch (Exception ignored) {
                         PS.debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
                     }
                 }
