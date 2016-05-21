@@ -55,10 +55,6 @@ public class Download extends SubCommand {
             return false;
         }
         if (args.length == 0 || (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
-            if (plot.getVolume() > 512d * 512d * 256d) {
-                C.SCHEMATIC_TOO_LARGE.send(plr);
-                return false;
-            }
             plot.addRunning();
             SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                 @Override
