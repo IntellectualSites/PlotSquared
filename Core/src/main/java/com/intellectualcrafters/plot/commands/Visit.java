@@ -42,7 +42,7 @@ public class Visit extends SubCommand {
                 }
                 page = Integer.parseInt(args[1]);
             case 1:
-                UUID user = UUIDHandler.getCachedUUID(args[0], null);
+                UUID user = (args.length == 2 || !MathMan.isInteger(args[0])) ? UUIDHandler.getCachedUUID(args[0], null) : null;
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
                     unsorted = PS.get().getBasePlots(player);
