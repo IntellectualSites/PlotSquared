@@ -5,9 +5,6 @@ public class DelegateLogger implements ILogger {
     private final ILogger parent;
 
     public DelegateLogger(ILogger parent) {
-        if (parent == null) {
-            throw new IllegalArgumentException("Parent cannot be null");
-        }
         this.parent = parent;
     }
 
