@@ -1,10 +1,17 @@
 package com.intellectualcrafters.plot.flag;
 
 import com.google.common.collect.Sets;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
+import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.MathMan;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class Flags {
 
@@ -73,6 +80,10 @@ public class Flags {
     public static final IntegerFlag HOSTILE_CAP = new IntegerFlag("hostile-cap");
     public static final IntegerFlag VEHICLE_CAP = new IntegerFlag("vehicle-cap");
     public static final Flag<?> KEEP = new Flag("keep") {
+        @Override public String valueToString(Object value) {
+            return value.toString();
+        }
+
         @Override public Object parseValue(String value) {
             if (MathMan.isInteger(value)) {
                 return Long.parseLong(value);
@@ -85,6 +96,10 @@ public class Flags {
                 default:
                     return MainUtil.timeToSec(value) * 1000 + System.currentTimeMillis();
             }
+        }
+
+        @Override public String getValueDescription() {
+            return "Flag value must a timestamp or a boolean";
         }
     };
     private static final HashSet<Flag<?>> flags = Sets.newHashSet(MUSIC, DESCRIPTION, ANALYSIS, GREETING, FAREWELL, FEED, HEAL,
@@ -101,11 +116,55 @@ public class Flags {
             PVE, NO_WORLDEDIT, MISC_CAP, ENTITY_CAP, MOB_CAP, ANIMAL_CAP, HOSTILE_CAP, VEHICLE_CAP);
 
     /**
-     * Get a list of registered AbstractFlag objects
+     * Get an immutable set of registered flags.
      *
-     * @return List (AbstractFlag)
+     * @return a set of registered flags.
      */
-    public static HashSet<Flag<?>> getFlags() {
-        return flags;
+    public static Set<Flag<?>> getFlags() {
+        return Collections.unmodifiableSet(flags);
+    }
+
+    public static void registerFlag(final Flag<?> flag) {
+        Iterator<Flag<?>> iterator = flags.iterator();
+        Flag<?> duplicate = null;
+        while (iterator.hasNext()){
+            duplicate = iterator.next();
+            if (flag.getName().equalsIgnoreCase(duplicate.getName())) {
+                iterator.remove();
+                flags.add(flag);
+                break;
+            }
+        }
+        final Flag<?> dupFinal = duplicate;
+        PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
+            @Override public void run(PlotArea value) {
+                if (dupFinal != null) {
+                    Object remove = null;
+                    if (value.DEFAULT_FLAGS.containsKey(dupFinal)) {
+                        remove = value.DEFAULT_FLAGS.remove(dupFinal);
+                    }
+                    if (!(remove instanceof String)) {
+                        //error message? maybe?
+                        return;
+                    }
+                    value.DEFAULT_FLAGS.put(flag,flag.parseValue((String) remove));
+                }
+            }
+        });
+        PS.get().foreachPlotRaw(new RunnableVal<Plot>() {
+            @Override public void run(Plot value) {
+                if (dupFinal != null) {
+                    Object remove = null;
+                    if (value.getFlags().containsKey(dupFinal)) {
+                        remove = value.getFlags().remove(dupFinal);
+                    }
+                    if (!(remove instanceof String)) {
+                        //error message? maybe?
+                        return;
+                    }
+                    value.getFlags().put(flag,flag.parseValue((String) remove));
+                }
+            }
+        });
     }
 }

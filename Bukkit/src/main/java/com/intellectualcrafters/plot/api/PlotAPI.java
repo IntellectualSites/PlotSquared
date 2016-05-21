@@ -380,7 +380,7 @@ public class PlotAPI {
      *
      */
     public void addFlag(Flag<?> flag) {
-        Flags.getFlags().add(flag);
+        Flags.registerFlag(flag);
     }
 
     /**
