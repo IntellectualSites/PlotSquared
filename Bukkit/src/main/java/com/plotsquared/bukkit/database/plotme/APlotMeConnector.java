@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 
-abstract class APlotMeConnector {
+public abstract class APlotMeConnector {
 
     public abstract Connection getPlotMeConnection(FileConfiguration plotConfig, String dataFolder);
 

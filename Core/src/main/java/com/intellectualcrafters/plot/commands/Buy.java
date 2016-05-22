@@ -33,19 +33,19 @@ public class Buy extends Command {
         check(EconHandler.manager, C.ECON_DISABLED);
         final Plot plot;
         if (args.length != 0) {
-            check(args.length == 1, C.COMMAND_SYNTAX, getUsage());
+            checkTrue(args.length == 1, C.COMMAND_SYNTAX, getUsage());
             plot = check(MainUtil.getPlotFromString(player, args[0], true), null);
         } else {
             plot = check(player.getCurrentPlot(), C.NOT_IN_PLOT);
         }
-        check(plot.hasOwner(), C.PLOT_UNOWNED);
-        check(!plot.isOwner(player.getUUID()), C.CANNOT_BUY_OWN);
+        checkTrue(plot.hasOwner(), C.PLOT_UNOWNED);
+        checkTrue(!plot.isOwner(player.getUUID()), C.CANNOT_BUY_OWN);
         Set<Plot> plots = plot.getConnectedPlots();
-        check(player.getPlotCount() + plots.size() <= player.getAllowedPlots(), C.CANT_CLAIM_MORE_PLOTS);
+        checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(), C.CANT_CLAIM_MORE_PLOTS);
         Optional<Double> flag = plot.getFlag(Flags.PRICE);
-        check(flag.isPresent(), C.NOT_FOR_SALE);
+        checkTrue(flag.isPresent(), C.NOT_FOR_SALE);
         final double price = flag.get();
-        check(player.getMoney() >= price, C.CANNOT_AFFORD_PLOT);
+        checkTrue(player.getMoney() >= price, C.CANNOT_AFFORD_PLOT);
         player.withdraw(price);
         confirm.run(this, new Runnable() {
             @Override // Success
