@@ -452,10 +452,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         TaskManager.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
-                if (new LikePlotMeConverter().run(new ClassicPlotMeConnector())) {
+                if (new LikePlotMeConverter("PlotMe").run(new ClassicPlotMeConnector())) {
                     return;
                 }
-                if (new LikePlotMeConverter().run(new PlotMeConnector_017())) {
+                if (new LikePlotMeConverter("PlotMe").run(new PlotMeConnector_017())) {
                     return;
                 }
             }

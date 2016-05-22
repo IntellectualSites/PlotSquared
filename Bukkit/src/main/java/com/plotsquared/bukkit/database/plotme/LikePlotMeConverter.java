@@ -34,6 +34,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LikePlotMeConverter {
 
+    private final String plugin;
+
+    public LikePlotMeConverter(String plugin) {
+        this.plugin = plugin;
+    }
+
     public static String getWorld(String world) {
         for (World newWorld : Bukkit.getWorlds()) {
             if (newWorld.getName().equalsIgnoreCase(world)) {
@@ -48,7 +54,7 @@ public class LikePlotMeConverter {
     }
 
     public String getPlotMePath() {
-        return new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + "PlotMe" + File.separator;
+        return new File(".").getAbsolutePath() + File.separator + "plugins" + File.separator + plugin + File.separator;
     }
 
     public FileConfiguration getPlotMeConfig(String dataFolder) {
@@ -66,7 +72,7 @@ public class LikePlotMeConverter {
     public void mergeWorldYml(FileConfiguration plotConfig) {
         try {
             File genConfig =
-                    new File("plugins" + File.separator + "PlotMe" + File.separator + "PlotMe-DefaultGenerator" + File.separator + "config.yml");
+                    new File("plugins" + File.separator + plugin + File.separator + "PlotMe-DefaultGenerator" + File.separator + "config.yml");
             if (genConfig.exists()) {
                 YamlConfiguration yml = YamlConfiguration.loadConfiguration(genConfig);
                 for (String key : yml.getKeys(true)) {
@@ -91,8 +97,10 @@ public class LikePlotMeConverter {
                 return;
             }
             String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-            content = content.replaceAll("PlotMe-DefaultGenerator", "PlotSquared");
-            content = content.replaceAll("PlotMe", "PlotSquared");
+            content = content.replace("PlotMe-DefaultGenerator", "PlotSquared");
+            content = content.replace("PlotMe", "PlotSquared");
+            content = content.replace("AthionPlots", "PlotSquared");
+            content = content.replace("PlotZWorld", "PlotSquared");
             Files.write(path, content.getBytes(StandardCharsets.UTF_8));
         } catch (IOException ignored) {}
     }
