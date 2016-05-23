@@ -59,7 +59,7 @@ public class Add extends Command {
             size += plot.getTrusted().contains(uuid) ? 0 : 1;
         }
         checkTrue(!uuids.isEmpty(), null);
-        checkTrue(size <= plot.getArea().MAX_PLOT_MEMBERS, C.PLOT_MAX_MEMBERS);
+        checkTrue(size <= plot.getArea().MAX_PLOT_MEMBERS || Permissions.hasPermission(player, "plots.admin.command.trust"), C.PLOT_MAX_MEMBERS);
         confirm.run(this, new Runnable() {
             @Override // Success
             public void run() {
