@@ -25,7 +25,7 @@ public class BO3 {
     public void addChild(BO3 child) {
         ChunkLoc childloc = child.getLoc();
         this.children.append("Branch(").append(childloc.x - this.chunk.x).append(",0,").append(childloc.z - this.chunk.z).append(',')
-                .append(this.name).append('_').append(childloc.x).append('_').append(childloc.z).append(")\n");
+                .append(this.name).append('_').append(childloc.x).append('_').append(childloc.z).append(",NORTH,100)\n");
     }
 
     public ChunkLoc getLoc() {
