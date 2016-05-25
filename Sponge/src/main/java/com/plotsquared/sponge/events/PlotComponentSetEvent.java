@@ -11,9 +11,10 @@ public class PlotComponentSetEvent extends AbstractEvent {
     private final String component;
 
     /**
-     * PlotDeleteEvent: Called when a plot is deleted
+     * PlotComponentSetEvent: Called when a plot component is set
      *
-     * @param plot    The plot that was deleted
+     * @param plot        The plot
+     * @param component   The component which was set
      */
     public PlotComponentSetEvent(Plot plot, String component) {
         this.plot = plot;
