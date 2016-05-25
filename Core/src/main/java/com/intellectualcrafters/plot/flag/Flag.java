@@ -2,7 +2,7 @@ package com.intellectualcrafters.plot.flag;
 
 import com.intellectualcrafters.plot.object.Plot;
 
-public class Flag<V> {
+public abstract class Flag<V> {
 
     private final String name;
 
@@ -11,28 +11,22 @@ public class Flag<V> {
      * key/value pair. For a flag to be usable by a player, you need to
      * register it with PlotSquared.
      *
-     * @param name Flag name
+     * @param name the flag name
      */
     public Flag(String name) {
         this.name = name;
     }
 
-    public String valueToString(Object value) {
-        return null;
-    }
+    public abstract String valueToString(Object value);
 
     @Override
-    public String toString() {
+    public final String toString() {
         return "Flag { name='" + getName() + "'}";
     }
 
-    public V parseValue(String value) {
-        return null;
-    }
+    public abstract V parseValue(String value);
 
-    public String getValueDescription() {
-        return "";
-    }
+    public abstract String getValueDescription();
 
     public final String getName() {
         return this.name;

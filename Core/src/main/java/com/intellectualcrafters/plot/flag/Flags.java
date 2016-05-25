@@ -113,6 +113,8 @@ public class Flags {
             return "Flag value must a timestamp or a boolean";
         }
     };
+    public static final BooleanFlag SLEEP = new BooleanFlag("sleep");
+
     private static final HashSet<Flag<?>> flags = Sets.newHashSet(MUSIC, DESCRIPTION, ANALYSIS, GREETING, FAREWELL, FEED, HEAL,
             GAMEMODE,
             DONE,

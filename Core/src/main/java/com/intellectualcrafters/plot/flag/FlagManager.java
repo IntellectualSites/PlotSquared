@@ -62,36 +62,38 @@ public class FlagManager {
     }
 
     /**
-     * Reserve a flag so that it cannot be set by players
-     * @param flag
+     * Reserve a flag so that it cannot be set by players.
+     * @param flag the flag to reserve
+     * @return false if the flag was already reserved, otherwise true
      */
-    public static void reserveFlag(Flag<?> flag) {
-        reserved.add(flag);
+    public static boolean reserveFlag(Flag<?> flag) {
+        return reserved.add(flag);
     }
 
     /**
-     * Get if a flag is reserved
-     * @param flag
-     * @return
+     * Check if a flag is reserved.
+     * @param flag the flag to check
+     * @return true if the flag is reserved, false otherwise
      */
     public static boolean isReserved(Flag<?> flag) {
         return reserved.contains(flag);
     }
 
     /**
-     * Get the reserved flags
-     * @return
+     * Get an immutable set of reserved flags.
+     * @return a set of reserved flags
      */
     public static Set<Flag<?>> getReservedFlags() {
         return Collections.unmodifiableSet(reserved);
     }
 
     /**
-     * Unreserve a flag
-     * @param flag
+     * Unreserve a flag.
+     * @param flag the flag to unreserve
+     * @return true if the flag was unreserved
      */
-    public static void unreserveFlag(Flag<?> flag) {
-        reserved.remove(flag);
+    public static boolean unreserveFlag(Flag<?> flag) {
+        return reserved.remove(flag);
     }
 
     public static String toString(HashMap<Flag<?>, Object> flags) {
@@ -162,12 +164,12 @@ public class FlagManager {
 
     /**
      *
-     * @param plot
-     * @return set of flags
+     * @param plot the plot
+     * @return a map of flags and their values
      */
     public static Map<Flag<?>, Object> getPlotFlags(Plot plot) {
         if (!plot.hasOwner()) {
-            return null;
+            return Collections.emptyMap();
         }
         return getSettingFlags(plot.getArea(), plot.getSettings());
     }
@@ -195,6 +197,12 @@ public class FlagManager {
         return getPlotFlags(area, settings, false);
     }
 
+    /**
+     * Removes a flag from a certain plot.
+     * @param plot the plot to remove the flag from
+     * @param id the flag to remove
+     * @return true if the plot contained the flag and was removed successfully
+     */
     public static boolean removePlotFlag(Plot plot, Flag<?> id) {
         Object value = plot.getFlags().remove(id);
         if (value == null) {
@@ -273,11 +281,11 @@ public class FlagManager {
     }
 
     /**
-     * Get an Flag by a String
+     * Get a {@link Flag} specified by a {@code String}.
      *
      * @param string the flag name
      *
-     * @return the flag or null if the flag the provided name does not exist
+     * @return the {@code Flag} object defined by {@code string}
      */
     public static Flag<?> getFlag(String string) {
         for (Flag flag : Flags.getFlags()) {
@@ -306,10 +314,10 @@ public class FlagManager {
     }
 
 
-    public static Map<Flag<?>, Object> parseFlags(List<String> flagstrings) {
+    public static Map<Flag<?>, Object> parseFlags(List<String> flagStrings) {
         HashMap<Flag<?>, Object> map = new HashMap<>();
 
-        for (String key : flagstrings) {
+        for (String key : flagStrings) {
             String[] split;
             if (key.contains(";")) {
                 split = key.split(";");

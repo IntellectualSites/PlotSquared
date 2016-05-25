@@ -22,6 +22,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
+
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -126,9 +127,9 @@ public class Plot {
      *
      * @see Plot#getPlot(Location) for existing plots
      *
-     * @param area
-     * @param id
-     * @param owner
+     * @param area the PlotArea where the plot is located
+     * @param id the plot id
+     * @param owner the plot owner
      */
     public Plot(PlotArea area, PlotId id, UUID owner) {
         this.area = area;
@@ -142,8 +143,8 @@ public class Plot {
      *
      * @see Plot#getPlot(Location) for existing plots
      *
-     * @param area
-     * @param id
+     * @param area the PlotArea where the plot is located
+     * @param id the plot id
      */
     public Plot(PlotArea area, PlotId id) {
         this.area = area;
@@ -157,9 +158,9 @@ public class Plot {
      *
      * @see Plot#getPlot(Location) for existing plots
      *
-     * @param area
-     * @param id
-     * @param owner
+     * @param area the PlotArea where the plot is located
+     * @param id the plot id
+     * @param owner the owner of the plot
      * @param temp
      */
     public Plot(PlotArea area, PlotId id, UUID owner, int temp) {
@@ -174,8 +175,8 @@ public class Plot {
      *
      * @see Plot#getPlot(Location) for existing plots
      *
-     * @param id
-     * @param owner
+     * @param id the plot id
+     * @param owner the plot owner
      * @param trusted
      * @param denied
      * @param merged
@@ -236,7 +237,7 @@ public class Plot {
      *
      * @see PlotPlayer#getCurrentPlot() if a player is expected here.
      *
-     * @param location
+     * @param location the location of the plot
      * @return
      */
     public static Plot getPlot(Location location) {
@@ -314,7 +315,7 @@ public class Plot {
     }
 
     /**
-     * Check if the plot has a set owner
+     * Check if the plot has an owner.
      *
      * @return false if there is no owner
      */
@@ -324,8 +325,8 @@ public class Plot {
 
     /**
      * Check if a UUID is a plot owner (merged plots may have multiple owners)
-     * @param uuid
-     * @return
+     * @param uuid the player uuid
+     * @return if the provided uuid is the owner of the plot
      */
     public boolean isOwner(UUID uuid) {
         if (uuid.equals(this.owner)) {
@@ -349,11 +350,11 @@ public class Plot {
 
     /**
      * Get a immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
-     * @return the Plot owners
+     * @return the plot owners
      */
     public Set<UUID> getOwners() {
         if (this.owner == null) {
-            return Collections.emptySet();
+            return ImmutableSet.of();
         }
         if (isMerged()) {
             Set<Plot> plots = getConnectedPlots();
@@ -508,7 +509,7 @@ public class Plot {
 
     /**
      * Check if the plot is merged in any direction.
-     * @return
+     * @return is the plot merged or not
      */
     public boolean isMerged() {
         return getSettings().getMerged(0) || getSettings().getMerged(2) || getSettings().getMerged(1) || getSettings().getMerged(3);
@@ -518,7 +519,7 @@ public class Plot {
      * Get the timestamp of when the plot was created (unreliable)<br>
      * - not accurate if the plot was created before this was implemented<br>
      *  - Milliseconds since the epoch<br>
-     * @return
+     * @return the creation date of the plot
      */
     public long getTimestamp() {
         if (this.timestamp == 0) {
@@ -583,7 +584,7 @@ public class Plot {
 
     /**
      * Get the denied users.
-     * @return
+     * @return a set of denied users
      */
     public HashSet<UUID> getDenied() {
         if (this.denied == null) {
@@ -613,7 +614,7 @@ public class Plot {
 
     /**
      * Get the trusted users.
-     * @return
+     * @return a set of trusted users
      */
     public HashSet<UUID> getTrusted() {
         if (this.trusted == null) {
@@ -643,7 +644,7 @@ public class Plot {
 
     /**
      * Get the members
-     * @return
+     * @return a set of members
      */
     public HashSet<UUID> getMembers() {
         if (this.members == null) {
@@ -673,7 +674,7 @@ public class Plot {
 
     /**
      * Deny someone (updates database as well)
-     * @param uuid
+     * @param uuid the uuid of the player to deny.
      */
     public void addDenied(UUID uuid) {
         for (Plot current : getConnectedPlots()) {
@@ -686,7 +687,7 @@ public class Plot {
     /**
      * Add someone as a helper (updates database as well)
      *
-     * @param uuid
+     * @param uuid the uuid of the player to trust
      */
     public void addTrusted(UUID uuid) {
         for (Plot current : getConnectedPlots()) {
@@ -699,7 +700,7 @@ public class Plot {
     /**
      * Add someone as a trusted user (updates database as well)
      *
-     * @param uuid
+     * @param uuid the uuid of the player to add as a member
      */
     public void addMember(UUID uuid) {
         for (Plot current : getConnectedPlots()) {
@@ -942,7 +943,8 @@ public class Plot {
 
     /**
      * Remove a flag from this plot
-     * @param flag
+     * @param flag the flag to remove
+     * @return
      */
     public boolean removeFlag(Flag<?> flag) {
         return FlagManager.removePlotFlag(this, flag);
@@ -958,7 +960,8 @@ public class Plot {
 
     /**
      * Get the flag for a given key
-     * @param key
+     * @param key the flag
+     * @param def if the key is null, the value to return
      */
     public <V> V getFlag(Flag<V> key, V def) {
         V value = FlagManager.getPlotFlagRaw(this, key);
@@ -1289,18 +1292,18 @@ public class Plot {
         return this.create(this.owner, true);
     }
 
-    public boolean claim(final PlotPlayer pp, boolean teleport, String schematic) {
-        if (!canClaim(pp)) {
+    public boolean claim(final PlotPlayer player, boolean teleport, String schematic) {
+        if (!canClaim(player)) {
             return false;
         }
-        boolean result = EventUtil.manager.callClaim(pp, this, false);
-        if (!result || !create(pp.getUUID(), true)) {
+        boolean result = EventUtil.manager.callClaim(player, this, false);
+        if (!result || !create(player.getUUID(), true)) {
             return false;
         }
-        setSign(pp.getName());
-        MainUtil.sendMessage(pp, C.CLAIMED);
+        setSign(player.getName());
+        MainUtil.sendMessage(player, C.CLAIMED);
         if (teleport) {
-            teleportPlayer(pp);
+            teleportPlayer(player);
         }
         PlotArea plotworld = getArea();
         if (plotworld.SCHEMATIC_ON_CLAIM) {
@@ -1317,9 +1320,9 @@ public class Plot {
                 @Override
                 public void run(Boolean value) {
                     if (value) {
-                        MainUtil.sendMessage(pp, C.SCHEMATIC_PASTE_SUCCESS);
+                        MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
                     } else {
-                        MainUtil.sendMessage(pp, C.SCHEMATIC_PASTE_FAILED);
+                        MainUtil.sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
                     }
                 }
             });
@@ -1333,7 +1336,7 @@ public class Plot {
      *  - The plot will not be created if the owner is null<br>
      *  - Any setting from before plot creation will not be saved until the server is stopped properly. i.e. Set any values/options after plot
      *  creation.
-     * @param uuid
+     * @param uuid the uuid of the plot owner
      * @param notify
      * @return true if plot was created successfully
      */
@@ -1384,6 +1387,7 @@ public class Plot {
 
     /**
      * Get the biome.
+     * @return the name of the biome
      */
     public String getBiome() {
         Location loc = this.getBottomAbs();
@@ -1408,8 +1412,8 @@ public class Plot {
 
     /**
      * Swap the settings for two plots.
-     * @param plot
-     * @param whenDone
+     * @param plot the plot to swap data with
+     * @param whenDone the task to run at the end of this method.
      * @return
      */
     public boolean swapData(Plot plot, Runnable whenDone) {
@@ -1444,27 +1448,27 @@ public class Plot {
 
     /**
      * Move the settings for a plot.
-     * @param pos2
+     * @param plot the plot to move
      * @param whenDone
      * @return
      */
-    public boolean moveData(Plot pos2, Runnable whenDone) {
+    public boolean moveData(Plot plot, Runnable whenDone) {
         if (this.owner == null) {
-            PS.debug(pos2 + " is unowned (single)");
+            PS.debug(plot + " is unowned (single)");
             TaskManager.runTask(whenDone);
             return false;
         }
-        if (pos2.hasOwner()) {
-            PS.debug(pos2 + " is unowned (multi)");
+        if (plot.hasOwner()) {
+            PS.debug(plot + " is unowned (multi)");
             TaskManager.runTask(whenDone);
             return false;
         }
         this.area.removePlot(this.id);
-        this.getId().x = pos2.getId().x;
-        this.getId().y = pos2.getId().y;
+        this.getId().x = plot.getId().x;
+        this.getId().y = plot.getId().y;
         this.getId().recalculateHash();
         this.area.addPlotAbs(this);
-        DBFunc.movePlot(this, pos2);
+        DBFunc.movePlot(this, plot);
         TaskManager.runTaskLater(whenDone, 1);
         return true;
     }
@@ -1585,7 +1589,7 @@ public class Plot {
 
     /**
      * @deprecated in favor of getCorners()[1];
-     * @return
+     * @return the top corner of the plot
      */
     @Deprecated
     public Location getTop() {
@@ -2532,8 +2536,8 @@ public class Plot {
 
     /**
      * Teleport a player to a plot and send them the teleport message.
-     * @param player The player
-     * @return If the teleportation is allowed.
+     * @param player the player
+     * @return if the teleport succeeded
      */
     public boolean teleportPlayer(final PlotPlayer player) {
         Plot plot = this.getBasePlot(false);
@@ -2623,7 +2627,7 @@ public class Plot {
     }
 
     /**
-     * Merges 2 plots Removes the road inbetween <br>- Assumes plots are directly next to each other <br> - saves to DB
+     * Merges 2 plots Removes the road in-between <br>- Assumes plots are directly next to each other <br> - saves to DB
      *
      * @param lesserPlot
      * @param removeRoads

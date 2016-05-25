@@ -1271,9 +1271,6 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void MobSpawn(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof Player) {
-            return;
-        }
         Location location = BukkitUtil.getLocation(entity.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -2128,7 +2125,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             plot = null;
             stub = "road";
         } else {
-            // Priorize plots for close to seamless pvp zones
+            // Prioritize plots for close to seamless pvp zones
             if (victim.getTicksLived() > damager.getTicksLived()) {
                 if (dplot == null || !(victim instanceof Player)) {
                     if (vplot == null) {

@@ -8,7 +8,6 @@ import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.RunnableVal;
 import com.intellectualcrafters.plot.object.comment.PlotComment;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -251,8 +250,8 @@ public interface AbstractDB {
     void removeDenied(Plot plot, UUID uuid);
     
     /**
-     * @param plot   Plot Object
-     * @param uuid Player uuid that should be added
+     * @param plot the plot
+     * @param uuid the uuid of the player to deny
      */
     void setDenied(Plot plot, UUID uuid);
     
