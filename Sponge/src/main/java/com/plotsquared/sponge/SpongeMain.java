@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
@@ -71,6 +72,7 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -91,7 +93,12 @@ public class SpongeMain implements IPlotMain {
 
     @Inject
     private Game game;
+
     private Server server;
+
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    private Path privateConfigDir;
 
     private GameProfileManager resolver;
 
@@ -153,7 +160,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public File getDirectory() {
-        return new File("mods/PlotSquared");
+        return privateConfigDir.toFile();
     }
 
     @Override
