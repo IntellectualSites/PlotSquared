@@ -62,6 +62,7 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
@@ -73,6 +74,7 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
+import java.nio.file.Path;
 
 @Plugin(id = "plotsquared", name = "PlotSquared", description = "Easy, yet powerful Plot World generation and management.",
         url = "https://github.com/IntellectualSites/PlotSquared", version = "3.3.3")
@@ -88,7 +90,12 @@ public class SpongeMain implements IPlotMain {
 
     @Inject
     private Game game;
+
     private Server server;
+
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    private Path privateConfigDir;
 
     private GameProfileManager resolver;
 
@@ -139,7 +146,7 @@ public class SpongeMain implements IPlotMain {
 
     @Override
     public File getDirectory() {
-        return new File("mods/PlotSquared");
+        return privateConfigDir.toFile();
     }
 
     @Override

@@ -664,9 +664,8 @@ public class PS {
                 }
             }
         } else {
-            for (Entry<PlotId, Plot> entry : plots.entrySet()) {
-                Plot plot = entry.getValue();
-                plot.setArea(plotArea);
+            for (Plot entry : plots.values()) {
+                entry.setArea(plotArea);
             }
         }
         Set<PlotCluster> clusters = this.clusters_tmp.remove(plotArea.toString());
@@ -821,8 +820,7 @@ public class PS {
                 }
                 map.putAll(entry.getValue());
             } else {
-                for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
-                    Plot plot = entry2.getValue();
+                for (Plot plot : entry.getValue().values()) {
                     plot.setArea(area);
                     area.addPlot(plot);
                 }
@@ -2081,7 +2079,7 @@ public class PS {
      *  - Translation: PlotSquared.use_THIS.yml, style.yml<br>
      */
     public void setupConfigs() {
-        File folder = new File(this.IMP.getDirectory() + File.separator + "config");
+        File folder = new File(this.IMP.getDirectory(),"config");
         if (!folder.exists() && !folder.mkdirs()) {
             PS.log(C.PREFIX + "&cFailed to create the /plugins/config folder. Please create it manually.");
         }
@@ -2102,11 +2100,9 @@ public class PS {
             PS.log("failed to save style.yml");
         }
         try {
-            this.configFile = new File(this.IMP.getDirectory() + File.separator + "config" + File.separator + "settings.yml");
-            if (!this.configFile.exists()) {
-                if (!this.configFile.createNewFile()) {
-                    PS.log("Could not create the settings file, please create \"settings.yml\" manually.");
-                }
+            this.configFile = new File(folder,"settings.yml");
+            if (!this.configFile.exists() && !this.configFile.createNewFile()) {
+                PS.log("Could not create the settings file, please create \"settings.yml\" manually.");
             }
             this.config = YamlConfiguration.loadConfiguration(this.configFile);
             setupConfig();
@@ -2114,11 +2110,9 @@ public class PS {
             PS.log("Failed to save settings.yml");
         }
         try {
-            this.storageFile = new File(this.IMP.getDirectory() + File.separator + "config" + File.separator + "storage.yml");
-            if (!this.storageFile.exists()) {
-                if (!this.storageFile.createNewFile()) {
-                    PS.log("Could not the storage settings file, please create \"storage.yml\" manually.");
-                }
+            this.storageFile = new File(folder,"storage.yml");
+            if (!this.storageFile.exists() && !this.storageFile.createNewFile()) {
+                PS.log("Could not the storage settings file, please create \"storage.yml\" manually.");
             }
             this.storage = YamlConfiguration.loadConfiguration(this.storageFile);
             setupStorage();
@@ -2126,11 +2120,9 @@ public class PS {
             PS.log("Failed to save storage.yml");
         }
         try {
-            this.commandsFile = new File(this.IMP.getDirectory() + File.separator + "config" + File.separator + "commands.yml");
-            if (!this.commandsFile.exists()) {
-                if (!this.commandsFile.createNewFile()) {
-                    PS.log("Could not the storage settings file, please create \"commands.yml\" manually.");
-                }
+            this.commandsFile = new File(folder,"commands.yml");
+            if (!this.commandsFile.exists() && !this.commandsFile.createNewFile()) {
+                PS.log("Could not the storage settings file, please create \"commands.yml\" manually.");
             }
             this.commands = YamlConfiguration.loadConfiguration(this.commandsFile);
             setupStorage();
@@ -2245,9 +2237,9 @@ public class PS {
             }
         }
         if (this.plots_tmp != null) {
-            for (Entry<String, HashMap<PlotId, Plot>> entry : this.plots_tmp.entrySet()) {
-                for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
-                    runnable.run(entry2.getValue());
+            for (HashMap<PlotId, Plot> entry : this.plots_tmp.values()) {
+                for (Plot entry2 : entry.values()) {
+                    runnable.run(entry2);
                 }
             }
         }
@@ -2298,8 +2290,8 @@ public class PS {
     @Deprecated
     public Set<String> getPlotWorldStrings() {
         HashSet<String> set = new HashSet<>(this.plotAreaMap.size());
-        for (Entry<String, PlotArea[]> entry : this.plotAreaMap.entrySet()) {
-            set.add(entry.getKey());
+        for (String entry : this.plotAreaMap.keySet()) {
+            set.add(entry);
         }
         return set;
     }

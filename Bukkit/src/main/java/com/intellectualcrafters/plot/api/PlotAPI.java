@@ -302,7 +302,7 @@ public class PlotAPI {
     /**
      * Get the settings for a world.
      *
-     * @param world The world
+     * @param world the world to retrieve settings from
      *
      * @return The {@link PlotArea} for the world or null if not in plotworld
      *
@@ -329,8 +329,8 @@ public class PlotAPI {
     /**
      * Send a message to a player.
      *
-     * @param player Player that will receive the message
-     * @param caption Caption
+     * @param player the recipient of the message
+     * @param caption the message
      *
      * @see MainUtil#sendMessage(PlotPlayer, C, String...)
      */
@@ -339,10 +339,10 @@ public class PlotAPI {
     }
 
     /**
-     * Send a message to a player. Supports color codes.
+     * Send a message to a player. The message supports color codes.
      *
-     * @param player Player that will receive the message
-     * @param string The message
+     * @param player the recipient of the message
+     * @param string the message
      *
      * @see MainUtil#sendMessage(PlotPlayer, String)
      */
@@ -351,9 +351,9 @@ public class PlotAPI {
     }
 
     /**
-     * Send a message to the console. Supports color codes.
+     * Send a message to the console. The message supports color codes.
      *
-     * @param message Message that should be sent to the console
+     * @param message the message
      *
      * @see MainUtil#sendConsoleMessage(C, String...)
      */
@@ -364,7 +364,7 @@ public class PlotAPI {
     /**
      * Send a message to the console.
      *
-     * @param caption The caption
+     * @param caption the message
      *
      * @see #sendConsoleMessage(String)
      * @see C
@@ -376,7 +376,7 @@ public class PlotAPI {
     /**
      * Register a flag for use in plots.
      *
-     * @param flag Flag that should be registered
+     * @param flag the flag being registered
      *
      */
     public void addFlag(Flag<?> flag) {
@@ -386,7 +386,7 @@ public class PlotAPI {
     /**
      * Get a plot based on the ID.
      *
-     * @param world World in which the plot is located
+     * @param world the world the plot is located in
      * @param x The PlotID x coordinate
      * @param z The PlotID y coordinate
      *
@@ -409,7 +409,7 @@ public class PlotAPI {
     /**
      * Get a plot based on the location.
      *
-     * @param location The location to retrieve the plot from
+     * @param location the location to check
      *
      * @return plot if found, otherwise it creates a temporary plot
      *
@@ -425,7 +425,7 @@ public class PlotAPI {
     /**
      * Get a plot based on the player location.
      *
-     * @param player Get the current plot for the player location
+     * @param player the player to check
      *
      * @return plot if found, otherwise it creates a temporary plot
      *
