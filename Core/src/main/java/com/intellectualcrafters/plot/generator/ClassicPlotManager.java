@@ -9,7 +9,6 @@ import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetQueue;
-
 import java.util.ArrayList;
 
 /**
