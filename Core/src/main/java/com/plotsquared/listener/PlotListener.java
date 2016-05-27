@@ -54,7 +54,9 @@ public class PlotListener {
                     return true;
                 }
             } else {
-                titles = plot.getFlag(Flags.TITLES, true);
+                if (Settings.TITLES) {
+                    titles = plot.getFlag(Flags.TITLES, true);
+                }
                 Optional<String> greetingFlag = plot.getFlag(Flags.GREETING);
                 if (greetingFlag.isPresent()) {
                     greeting = greetingFlag.get();
