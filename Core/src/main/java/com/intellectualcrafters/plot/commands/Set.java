@@ -111,7 +111,7 @@ public class Set extends SubCommand {
                         }
                         plot.addRunning();
                         for (Plot current : plot.getConnectedPlots()) {
-                            manager.setComponent(plotworld, current.getId(), component, blocks);
+                            current.setComponent(component, blocks);
                         }
                         MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
                         SetQueue.IMP.addTask(new Runnable() {

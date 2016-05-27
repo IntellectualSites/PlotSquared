@@ -7,7 +7,6 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotId;
 import com.intellectualcrafters.plot.object.PseudoRandom;
 import com.intellectualcrafters.plot.object.RegionWrapper;
-import com.intellectualcrafters.plot.util.EventUtil;
 import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.SetQueue;
 import java.util.ArrayList;
@@ -22,35 +21,27 @@ public class ClassicPlotManager extends SquarePlotManager {
         switch (component) {
             case "floor":
                 setFloor(plotworld, plotid, blocks);
-                EventUtil.manager.callComponentSet(plotworld.getPlot(plotid), component);
                 return true;
             case "wall":
                 setWallFilling(plotworld, plotid, blocks);
-                EventUtil.manager.callComponentSet(plotworld.getPlot(plotid), component);
                 return true;
             case "all":
                 setAll(plotworld, plotid, blocks);
-                EventUtil.manager.callComponentSet(plotworld.getPlot(plotid), component);
                 return true;
             case "air":
                 setAir(plotworld, plotid, blocks);
-                EventUtil.manager.callComponentSet(plotworld.getPlot(plotid), component);
                 return true;
             case "main":
                 setMain(plotworld, plotid, blocks);
-                EventUtil.manager.callComponentSet(plotworld.getPlot(plotid), component);
                 return true;
             case "middle":
                 setMiddle(plotworld, plotid, blocks);
-                EventUtil.manager.callComponentSet(plotworld.getPlot(plotid), component);
                 return true;
             case "outline":
                 setOutline(plotworld, plotid, blocks);
-                EventUtil.manager.callComponentSet(plotworld.getPlot(plotid), component);
                 return true;
             case "border":
                 setWall(plotworld, plotid, blocks);
-                EventUtil.manager.callComponentSet(plotworld.getPlot(plotid), component);
                 return true;
         }
         return false;

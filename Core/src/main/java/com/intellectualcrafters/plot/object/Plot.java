@@ -18,12 +18,12 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.SchematicHandler;
 import com.intellectualcrafters.plot.util.SetQueue;
+import com.intellectualcrafters.plot.util.StringMan;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
-
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.io.File;
@@ -2600,6 +2600,9 @@ public class Plot {
      * @return
      */
     public boolean setComponent(String component, PlotBlock[] blocks) {
+        if (StringMan.isEqualToAny(component, getManager().getPlotComponents(this.area, this.getId()))) {
+            EventUtil.manager.callComponentSet(this, component);
+        }
         return this.getManager().setComponent(this.area, this.getId(), component, blocks);
     }
 
