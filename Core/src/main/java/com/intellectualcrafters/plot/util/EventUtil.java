@@ -31,6 +31,8 @@ public abstract class EventUtil {
 
     public abstract boolean callTeleport(PlotPlayer player, Location from, Plot plot);
 
+    public abstract boolean callComponentSet(Plot plot, String component);
+
     public abstract boolean callClear(Plot plot);
 
     public abstract void callDelete(Plot plot);

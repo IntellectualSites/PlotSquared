@@ -26,6 +26,8 @@ public class EventUtilTest extends EventUtil {
         return false;
     }
 
+    @Override public  boolean callComponentSet(Plot plot, String component) { return false; }
+
     @Override public boolean callClear(Plot plot) {
         return false;
     }

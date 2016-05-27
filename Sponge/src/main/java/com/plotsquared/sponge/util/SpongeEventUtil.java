@@ -19,6 +19,7 @@ import com.plotsquared.sponge.events.PlayerPlotHelperEvent;
 import com.plotsquared.sponge.events.PlayerPlotTrustedEvent;
 import com.plotsquared.sponge.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.sponge.events.PlotClearEvent;
+import com.plotsquared.sponge.events.PlotComponentSetEvent;
 import com.plotsquared.sponge.events.PlotDeleteEvent;
 import com.plotsquared.sponge.events.PlotFlagAddEvent;
 import com.plotsquared.sponge.events.PlotFlagRemoveEvent;
@@ -51,6 +52,11 @@ public class SpongeEventUtil extends EventUtil {
     @Override
     public boolean callTeleport(PlotPlayer player, Location from, Plot plot) {
         return callEvent(new PlayerTeleportToPlotEvent(SpongeUtil.getPlayer(player), from, plot));
+    }
+
+    @Override
+    public boolean callComponentSet(Plot plot, String component) {
+        return callEvent(new PlotComponentSetEvent(plot, component));
     }
     
     @Override
