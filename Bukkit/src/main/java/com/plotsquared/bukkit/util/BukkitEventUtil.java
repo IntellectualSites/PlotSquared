@@ -18,6 +18,7 @@ import com.plotsquared.bukkit.events.PlayerPlotHelperEvent;
 import com.plotsquared.bukkit.events.PlayerPlotTrustedEvent;
 import com.plotsquared.bukkit.events.PlayerTeleportToPlotEvent;
 import com.plotsquared.bukkit.events.PlotClearEvent;
+import com.plotsquared.bukkit.events.PlotComponentSetEvent;
 import com.plotsquared.bukkit.events.PlotDeleteEvent;
 import com.plotsquared.bukkit.events.PlotFlagAddEvent;
 import com.plotsquared.bukkit.events.PlotFlagRemoveEvent;
@@ -55,6 +56,11 @@ public class BukkitEventUtil extends EventUtil {
     @Override
     public boolean callTeleport(PlotPlayer player, Location from, Plot plot) {
         return callEvent(new PlayerTeleportToPlotEvent(getPlayer(player), from, plot));
+    }
+
+    @Override
+    public boolean callComponentSet(Plot plot, String component) {
+        return callEvent(new PlotComponentSetEvent(plot, component));
     }
 
     @Override
