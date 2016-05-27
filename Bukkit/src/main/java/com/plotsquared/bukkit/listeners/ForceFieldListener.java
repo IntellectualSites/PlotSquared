@@ -5,15 +5,14 @@ import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-import com.plotsquared.bukkit.events.PlayerEnterPlotEvent;
 import com.plotsquared.bukkit.object.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -53,7 +52,7 @@ public class ForceFieldListener implements Listener {
         return null;
     }
 
-    public Vector calculateVelocity(PlotPlayer pp, PlotPlayer e) {
+    private Vector calculateVelocity(PlotPlayer pp, PlotPlayer e) {
         Location playerLocation = pp.getLocationFull();
         Location oPlayerLocation = e.getLocation();
         double playerX = playerLocation.getX();
@@ -84,29 +83,27 @@ public class ForceFieldListener implements Listener {
     }
 
     @EventHandler
-    public void onPlotEntry(PlayerEnterPlotEvent event) {
+    public void onPlotEntry(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        Plot plot = event.getPlot();
+        Plot plot = pp.getCurrentPlot();
         if (plot == null) {
             return;
         }
         Optional<Boolean> forcefield = plot.getFlag(Flags.FORCEFIELD);
         if (forcefield.isPresent() && forcefield.get()) {
-            if (!plot.getFlag(Flags.FORCEFIELD).or(false)) {
-                UUID uuid = pp.getUUID();
-                if (plot.isAdded(uuid)) {
-                    Set<PlotPlayer> players = getNearbyPlayers(player, plot);
-                    for (PlotPlayer oPlayer : players) {
-                        ((BukkitPlayer) oPlayer).player.setVelocity(calculateVelocity(pp, oPlayer));
-                    }
-                } else {
-                    PlotPlayer oPlayer = hasNearbyPermitted(player, plot);
-                    if (oPlayer == null) {
-                        return;
-                    }
-                    player.setVelocity(calculateVelocity(oPlayer, pp));
+            UUID uuid = pp.getUUID();
+            if (plot.isAdded(uuid)) {
+                Set<PlotPlayer> players = getNearbyPlayers(player, plot);
+                for (PlotPlayer oPlayer : players) {
+                    ((BukkitPlayer) oPlayer).player.setVelocity(calculateVelocity(pp, oPlayer));
                 }
+            } else {
+                PlotPlayer oPlayer = hasNearbyPermitted(player, plot);
+                if (oPlayer == null) {
+                    return;
+                }
+                player.setVelocity(calculateVelocity(oPlayer, pp));
             }
         }
     }
