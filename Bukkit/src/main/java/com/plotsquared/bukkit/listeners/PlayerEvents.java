@@ -780,8 +780,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlot(location);
-        Optional<Boolean> flag;
-        switch (block.getType()) {
+        switch (event.getSource().getType()) {
             case GRASS:
                 if (Flags.GRASS_GROW.isFalse(plot)) {
                     event.setCancelled(true);
