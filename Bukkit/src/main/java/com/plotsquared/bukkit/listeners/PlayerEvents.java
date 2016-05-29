@@ -780,6 +780,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlot(location);
+        if (plot == null) {
+            return;
+        }
         switch (event.getSource().getType()) {
             case GRASS:
                 if (Flags.GRASS_GROW.isFalse(plot)) {
