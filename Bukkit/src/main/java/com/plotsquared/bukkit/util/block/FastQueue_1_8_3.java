@@ -23,7 +23,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -220,8 +219,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
                 }
             }
             // Clear
-        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException
-                | NoSuchFieldException e) {
+        } catch (IllegalArgumentException | SecurityException | ReflectiveOperationException e) {
             e.printStackTrace();
         }
         int[][] biomes = fs.biomes;
@@ -243,7 +241,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
         }
     }
 
-    public Object newChunkSection(int i, boolean flag, char[] ids) {
+    public Object newChunkSection(int i, boolean flag, char[] ids) throws ReflectiveOperationException {
         return this.classChunkSectionConstructor.create(i, flag, ids);
     }
 

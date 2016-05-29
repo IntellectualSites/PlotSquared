@@ -319,7 +319,12 @@ public class FastQueue_1_8 extends SlowQueue {
                 // End blockstate workaround //
 
                 // check sign
-                Object pos = this.constructorBlockPosition.create(x, y, z);
+                Object pos = null;
+                try {
+                    pos = this.constructorBlockPosition.create(x, y, z);
+                } catch (ReflectiveOperationException e) {
+                    e.printStackTrace();
+                }
                 Object combined = this.methodGetByCombinedId.call(newBlock.id + (newBlock.data << 12));
                 this.methodA.of(chunk).call(pos, combined);
             }

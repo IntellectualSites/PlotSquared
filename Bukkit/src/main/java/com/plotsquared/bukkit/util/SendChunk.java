@@ -43,6 +43,7 @@ public class SendChunk {
      * Constructor
      */
     public SendChunk() throws ClassNotFoundException, NoSuchMethodException, NoSuchFieldException {
+        RefConstructor tempMapChunk;
         RefClass classCraftPlayer = getRefClass("{cb}.entity.CraftPlayer");
         this.methodGetHandlePlayer = classCraftPlayer.getMethod("getHandle");
         RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
@@ -50,12 +51,16 @@ public class SendChunk {
         RefClass classChunk = getRefClass("{nms}.Chunk");
         this.methodInitLighting = classChunk.getMethod("initLighting");
         RefClass classMapChunk = getRefClass("{nms}.PacketPlayOutMapChunk");
-        //TODO in 1.7.10 this is PacketPlayOutMapChunk(Chunk chunk, boolean flag, int i, int version)
         if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
-            this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),int.class);
+            tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),int.class);
         } else {
-            this.mapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+            try {
+                tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(), boolean.class, int.class);
+            } catch (NoSuchMethodException ignored) {
+                tempMapChunk = classMapChunk.getConstructor(classChunk.getRealClass(),boolean.class, int.class, int.class);
+            }
         }
+        this.mapChunk = tempMapChunk;
         RefClass classEntityPlayer = getRefClass("{nms}.EntityPlayer");
         this.connection = classEntityPlayer.getField("playerConnection");
         RefClass classPacket = getRefClass("{nms}.Packet");
@@ -110,11 +115,24 @@ public class SendChunk {
                 Object c = this.methodGetHandleChunk.of(chunk).call();
                 chunks.remove(chunk);
                 Object con = this.connection.of(entity).get();
-                Object packet;
+                Object packet = null;
                 if (PS.get().checkVersion(PS.get().IMP.getServerVersion(), 1, 9, 4)) {
-                    packet = this.mapChunk.create(c,65535);
+                    try {
+                        packet = this.mapChunk.create(c,65535);
+                    } catch (Exception ignored) {}
                 } else {
-                    packet = this.mapChunk.create(c, true, 65535);
+                    try {
+                        packet = this.mapChunk.create(c, true, 65535);
+                    } catch (ReflectiveOperationException | IllegalArgumentException e) {
+                        try {
+                            packet = this.mapChunk.create(c, true, 65535, 5);
+                        } catch (ReflectiveOperationException | IllegalArgumentException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+                if (packet == null) {
+                    PS.debug("Error with PacketPlayOutMapChunk reflection.");
                 }
                 this.send.of(con).call(packet);
             }

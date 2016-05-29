@@ -609,14 +609,11 @@ public class ReflectionUtils {
          *
          * @return new object
          *
-         * @throws RuntimeException if something went wrong
+         * @throws ReflectiveOperationException
+         * @throws IllegalArgumentException
          */
-        public Object create(Object... params) {
-            try {
+        public Object create(Object... params) throws ReflectiveOperationException, IllegalArgumentException {
                 return this.constructor.newInstance(params);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
