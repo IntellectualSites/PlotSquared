@@ -306,7 +306,6 @@ public class EntityWrapper {
                     this.dataByte = (byte) 0;
                 }
                 storeLiving((LivingEntity) entity);
-                return;
                 // END LIVING //
         }
     }
@@ -507,6 +506,7 @@ public class EntityWrapper {
             case MINECART_TNT:
             case PLAYER:
             case PRIMED_TNT:
+                return entity;
             case SLIME:
                 ((Slime) entity).setSize(this.dataByte);
                 return entity;
