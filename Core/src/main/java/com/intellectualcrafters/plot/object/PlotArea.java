@@ -137,7 +137,7 @@ public abstract class PlotArea {
     }
 
     /**
-     * Returns the min PlotId.
+     * Returns the minimum value of a {@link PlotId}.
      * @return
      */
     public PlotId getMin() {
@@ -491,19 +491,18 @@ public abstract class PlotArea {
     }
     
     public int getPlotCount(UUID uuid) {
-        int count = 0;
         if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
+            int count = 0;
             for (Plot plot : getPlotsAbs(uuid)) {
                 if (!plot.hasFlag(Flags.DONE)) {
                     count++;
                 }
             }
-        } else {
-            count += getPlotsAbs(uuid).size();
+            return count;
         }
-        return count;
+        return getPlotsAbs(uuid).size();
     }
-    
+
     public int getPlotCount(PlotPlayer player) {
         return player != null ? getPlotCount(player.getUUID()) : 0;
     }
@@ -529,7 +528,12 @@ public abstract class PlotArea {
         }
         return plot.getBasePlot(false);
     }
-    
+
+    /**
+     * Retrieves the number of claimed plot in the {@code PlotArea}.
+     *
+     * @return the number of claimed plots
+     */
     public int getPlotCount() {
         return this.plots.size();
     }
@@ -590,7 +594,11 @@ public abstract class PlotArea {
         }
         return null;
     }
-    
+
+    /**
+     * A collection of the claimed plots in this {@code PlotArea}.
+     * @return
+     */
     public Collection<Plot> getPlots() {
         return this.plots.values();
     }

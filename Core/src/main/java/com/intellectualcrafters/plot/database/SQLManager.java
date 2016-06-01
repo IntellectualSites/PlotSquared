@@ -5,6 +5,7 @@ import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.flag.FlagManager;
+import com.intellectualcrafters.plot.flag.StringFlag;
 import com.intellectualcrafters.plot.object.BlockLoc;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotArea;
@@ -795,7 +796,7 @@ public class SQLManager implements AbstractDB {
                     if (k != 0) {
                         flag_string.append(',');
                     }
-                    flag_string.append(flag.getKey().getName() + ':' + flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
+                    flag_string.append(flag.getKey().getName()).append(':').append(flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
                             .replaceAll(",", "´"));
                     k++;
                 }
@@ -832,7 +833,7 @@ public class SQLManager implements AbstractDB {
                     if (k != 0) {
                         flag_string.append(',');
                     }
-                    flag_string.append(flag.getKey().getName() + ':' + flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
+                    flag_string.append(flag.getKey().getName()).append(':').append(flag.getKey().valueToString(flag.getValue()).replaceAll(":", "¯")
                             .replaceAll(",", "´"));
                     k++;
                 }
@@ -1814,12 +1815,15 @@ public class SQLManager implements AbstractDB {
                                     String[] split = element.split(":");
                                     try {
                                         String flag_str = split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
-                                        Flag<?> flag = FlagManager.getFlag(split[0],false);
+                                        Flag<?> flag = FlagManager.getFlag(split[0],true);
                                         if (flag == null) {
-                                            PS.debug(String.format("No flag found for string value of: %s", split[0]));
-                                        } else {
-                                            flags.put(flag, flag.parseValue(flag_str));
+                                            flag = new StringFlag(split[0]) {
+                                                @Override public String getValueDescription() {
+                                                    return "Generic Filler Flag";
+                                                }
+                                            };
                                         }
+                                        flags.put(flag, flag.parseValue(flag_str));
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                         exception = true;
@@ -1827,12 +1831,15 @@ public class SQLManager implements AbstractDB {
                                 } else {
                                     element = element.replaceAll("\u00AF", ":").replaceAll("\u00B4", ",");
                                     if (StringMan.isAlpha(element.replaceAll("_", "").replaceAll("-", ""))) {
-                                        Flag flag = FlagManager.getFlag(element,false);
+                                        Flag flag = FlagManager.getFlag(element,true);
                                         if (flag == null) {
-                                            PS.debug(String.format("No flag found for string value of: %s", element));
-                                        } else {
-                                            flags.put(flag, flag.parseValue(""));
+                                            flag = new StringFlag(element) {
+                                                @Override public String getValueDescription() {
+                                                    return "Generic Filler Flag";
+                                                }
+                                            };
                                         }
+                                        flags.put(flag, flag.parseValue(""));
                                     } else {
                                         PS.debug("INVALID FLAG: " + element);
                                     }
@@ -2630,19 +2637,25 @@ public class SQLManager implements AbstractDB {
                             if (element.contains(":")) {
                                 String[] split = element.split(":");
                                 String flag_str = split[1].replaceAll("\u00AF", ":").replaceAll("�", ",");
-                                Flag flag = FlagManager.getFlag(split[0],false);
+                                Flag flag = FlagManager.getFlag(split[0],true);
                                 if (flag == null) {
-                                    PS.debug(String.format("No flag found for string value of: %s", split[0]));
-                                } else {
-                                    flags.put(flag, flag.parseValue(flag_str));
+                                    flag = new StringFlag(split[0]) {
+                                        @Override public String getValueDescription() {
+                                            return "Generic Filler Flag";
+                                        }
+                                    };
                                 }
+                                flags.put(flag, flag.parseValue(flag_str));
                             } else {
-                                Flag flag = FlagManager.getFlag(element,false);
+                                Flag flag = FlagManager.getFlag(element,true);
                                 if (flag == null) {
-                                    PS.debug(String.format("No flag found for string value of: %s", element));
-                                } else {
-                                    flags.put(flag, flag.parseValue(""));
+                                    flag = new StringFlag(element) {
+                                        @Override public String getValueDescription() {
+                                            return "Generic Filler Flag";
+                                        }
+                                    };
                                 }
+                                flags.put(flag, flag.parseValue(""));
                             }
                         }
                         cluster.settings.flags = flags;

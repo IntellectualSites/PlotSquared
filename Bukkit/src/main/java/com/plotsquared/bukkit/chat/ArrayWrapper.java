@@ -9,9 +9,9 @@ import java.util.Collection;
 /**
  * Represents a wrapper around an array class of an arbitrary reference type,
  * which properly implements "value" hash code and equality functions.
- * <p>
- * This class is intended for use as a key to a map.
- * </p>
+ *
+ * <p>This class is intended for use as a key to a map.
+ *
  * @author Glen Husman
  * @param <E> The type of elements in the array.
  * @see Arrays

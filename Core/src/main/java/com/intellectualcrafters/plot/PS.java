@@ -100,7 +100,6 @@ public class PS {
     private final int[] version;
     private final String platform;
     private final Thread thread;
-    public ILogger logger;
     public HashMap<String, Set<PlotCluster>> clusters_tmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     public File styleFile;
@@ -114,6 +113,7 @@ public class PS {
     public TaskManager TASK;
     public WorldEdit worldedit;
     public URL update;
+    private ILogger logger;
     private boolean plotAreaHasCollision = false;
     /**
      * All plot areas (quick global access).
@@ -148,11 +148,6 @@ public class PS {
                     this.file = new File(this.IMP.getDirectory().getParentFile(), "PlotSquared-" + platform + ".jar");
                 }
             }
-            if (getJavaVersion() < 1.7) {
-                PS.log(C.CONSOLE_JAVA_OUTDATED_1_7);
-                this.IMP.disable();
-                return;
-            }
             if (getJavaVersion() < 1.8) {
                 PS.log(C.CONSOLE_JAVA_OUTDATED_1_8);
             }
@@ -176,8 +171,7 @@ public class PS {
                     new WE_Anywhere();
 
                 }
-            } catch (Throwable e) {
-                e.printStackTrace();
+            } catch (Exception e) {
                 PS.debug("Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
             }
 
@@ -238,8 +232,7 @@ public class PS {
                         PS.log("&aThanks for installing PlotSquared!");
                     } else if (!get().checkVersion(PS.this.lastVersion, PS.this.version)) {
                         PS.log("&aThanks for updating from " + StringMan.join(PS.this.lastVersion, ".") + " to " + StringMan
-                                .join(PS.this.version, ".")
-                                + "!");
+                                .join(PS.this.version, ".") + "!");
                         DBFunc.dbManager.updateTables(PS.this.lastVersion);
                     }
                 }
@@ -291,9 +284,9 @@ public class PS {
     }
 
     /**
-     * Get the instance of PlotSquared.
+     * Get an instance of PlotSquared.
      *
-     * @return the instance created by IPlotMain
+     * @return instance of PlotSquared
      */
     public static PS get() {
         return PS.instance;
@@ -323,6 +316,7 @@ public class PS {
 
     /**
      * Get the current logger
+     *
      * @return
      */
     public ILogger getLogger() {
@@ -418,19 +412,20 @@ public class PS {
     }
 
     /**
-     * <p>Get the server platform this plugin is running on this is running on.
-     * This will be either <b>Bukkit</b> or <b>Sponge</b></p>
-     * @return The server platform
+     * Get the server platform this plugin is running on this is running on.
+     *
+     * <p>This will be either <b>Bukkit</b> or <b>Sponge</b></p>
+     * @return the server implementation
      */
     public String getPlatform() {
         return this.platform;
     }
 
     /**
-     * Get the database object.
+     * Get the {@link Database} object.
      *
-     * @return Database object
-     * @see Database#getConnection() To get the database connection
+     * @return the database
+     * @see Database#getConnection() to get the database connection
      */
     public Database getDatabase() {
         return this.database;
@@ -643,7 +638,7 @@ public class PS {
     /**
      * Add a global reference to a plot world.
      *
-     * @param plotArea The PlotArea
+     * @param plotArea the {@code PlotArea} to add.
      * @see #removePlotArea(PlotArea) To remove the reference
      */
     public void addPlotArea(PlotArea plotArea) {
@@ -710,8 +705,7 @@ public class PS {
     /**
      * Remove a plot world reference.
      *
-     * @param area The PlotArea
-     * @see #addPlotArea(PlotArea) To add a reference
+     * @param area the {@code PlotArea} to remove
      */
     public void removePlotArea(PlotArea area) {
         Set<PlotArea> areas = getPlotAreas(area.worldname);
@@ -1135,8 +1129,7 @@ public class PS {
      * @return Set of plot
      */
     public Set<Plot> getPlots(String world, PlotPlayer player) {
-        UUID uuid = player.getUUID();
-        return getPlots(world, uuid);
+        return getPlots(world, player.getUUID());
     }
 
     /**
@@ -1146,8 +1139,7 @@ public class PS {
      * @return Set of plot
      */
     public Set<Plot> getPlots(PlotArea area, PlotPlayer player) {
-        UUID uuid = player.getUUID();
-        return getPlots(area, uuid);
+        return getPlots(area, player.getUUID());
     }
 
     /**
@@ -2209,10 +2201,10 @@ public class PS {
     }
 
     /**
-     * Get the java version.
-     * @return Java version as a double
+     * Get the Java version.
+     * @return the java version
      */
-    public double getJavaVersion() {
+    private double getJavaVersion() {
         return Double.parseDouble(System.getProperty("java.specification.version"));
     }
 

@@ -73,10 +73,10 @@ public enum C {
     /*
      * Static console
      */
-    CONSOLE_JAVA_OUTDATED_1_7("&cYour java version is outdated. Please update to at least 1.7.\n&cURL: &6https://java.com/en/download/index.jsp",
-            "static.console"),
-    CONSOLE_JAVA_OUTDATED_1_8("&cIt's really recommended to run Java 1.8, as it increases performance", "static.console"),
-    CONSOLE_PLEASE_ENABLE_METRICS("&dUsing metrics will allow us to improve the plugin, please consider it :)", "static.console"),
+    CONSOLE_JAVA_OUTDATED_1_8("&cYour version of java is outdated. It is highly recommended that you update to Java 8 as it increases performance "
+            + "and security. PlotSquared will require Java 9 in a future update.", "static.console"),
+    CONSOLE_PLEASE_ENABLE_METRICS("&dPlease enable metrics for PlotSquared. Using metrics improves plugin stabability, performance, and features. "
+            + "Bug fixes and new features are influenced on metrics.", "static.console"),
     /*
      * Confirm
      */
@@ -111,8 +111,7 @@ public enum C {
      */
     CLUSTER_AVAILABLE_ARGS(
             "$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, "
-                    + "$4members$2, $4info$2, $4tp$2, $4sethome",
-            "Cluster"),
+                    + "$4members$2, $4info$2, $4tp$2, $4sethome", "Cluster"),
     CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
     CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster"),
     CLUSTER_INTERSECTION("$2The proposed area overlaps with: %s0", "Cluster"),
@@ -262,12 +261,10 @@ public enum C {
     SETUP_WORLD_TAKEN("$2%s is already a registered plotworld", "Setup"),
     SETUP_MISSING_WORLD(
             "$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 -"
-                    + " $1/plot setup back&-$2 - $1/plot setup cancel",
-            "Setup"),
+                    + " $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
     SETUP_MISSING_GENERATOR(
             "$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - "
-                    + "$1/plot setup back&-$2 - $1/plot setup cancel",
-            "Setup"),
+                    + "$1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
     SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
     /*
      * Schematic Stuff
@@ -687,10 +684,6 @@ public enum C {
         }
     }
 
-    public String f(final Object... args) {
-        return format(s(), args);
-    }
-
     public static String color(String string) {
         return StringMan.replaceFromMap(string, replacements);
     }
@@ -777,6 +770,10 @@ public enum C {
         } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
         }
+    }
+
+    public String f(final Object... args) {
+        return format(s(), args);
     }
 
     @Override

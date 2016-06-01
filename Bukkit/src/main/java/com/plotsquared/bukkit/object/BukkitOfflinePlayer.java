@@ -10,8 +10,8 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
     public final OfflinePlayer player;
 
     /**
-     * <p>Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
-     * as it caches player objects.</p>
+     * Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
+     * as it caches player objects.
      *
      * @param player
      */

@@ -23,6 +23,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.listener.PlotListener;
+
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -1957,8 +1958,8 @@ public class Plot {
     }
 
     /**
-     * Check if a plot can be claimed
-     * @param player
+     * Check if a plot can be claimed by the provided player.
+     * @param player the claiming player
      * @return
      */
     public boolean canClaim(PlotPlayer player) {

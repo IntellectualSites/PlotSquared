@@ -152,15 +152,15 @@ public class Flags {
         PS.get().foreachPlotArea(new RunnableVal<PlotArea>() {
             @Override public void run(PlotArea value) {
                 if (dupFinal != null) {
-                    Object remove = null;
+                    Object remove;
                     if (value.DEFAULT_FLAGS.containsKey(dupFinal)) {
                         remove = value.DEFAULT_FLAGS.remove(dupFinal);
+                        if (!(remove instanceof String)) {
+                            //error message? maybe?
+                            return;
+                        }
+                        value.DEFAULT_FLAGS.put(flag,flag.parseValue((String) remove));
                     }
-                    if (!(remove instanceof String)) {
-                        //error message? maybe?
-                        return;
-                    }
-                    value.DEFAULT_FLAGS.put(flag,flag.parseValue((String) remove));
                 }
             }
         });

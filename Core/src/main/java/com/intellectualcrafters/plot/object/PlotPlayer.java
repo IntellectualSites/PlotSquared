@@ -58,7 +58,7 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Set some session only metadata for the player
+     * Set some session only metadata for the player.
      * @param key
      * @param value
      */
@@ -70,7 +70,7 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Get the metadata for a key.
+     * Get the session metadata for a key.
      * @param <T>
      * @param key
      * @return
@@ -82,6 +82,13 @@ public abstract class PlotPlayer implements CommandCaller {
         return null;
     }
 
+    /**
+     *
+     * @param key
+     * @param def
+     * @param <T>
+     * @return
+     */
     public <T> T getMeta(String key, T def) {
         if (this.meta != null) {
             T value = (T) this.meta.get(key);
@@ -161,7 +168,7 @@ public abstract class PlotPlayer implements CommandCaller {
 
     /**
      * Get the number of plots the player owns in the world.
-     * @param world
+     * @param world the name of the plotworld to check.
      * @return
      */
     public int getPlotCount(String world) {
@@ -170,7 +177,7 @@ public abstract class PlotPlayer implements CommandCaller {
         for (PlotArea area : PS.get().getPlotAreas(world)) {
             if (!Settings.DONE_COUNTS_TOWARDS_LIMIT) {
                 for (Plot plot : area.getPlotsAbs(uuid)) {
-                    if (!plot.getFlags().containsKey("done")) {
+                    if (!plot.getFlag(Flags.DONE).isPresent()) {
                         count++;
                     }
                 }
@@ -248,26 +255,26 @@ public abstract class PlotPlayer implements CommandCaller {
     public abstract UUID getUUID();
 
     /**
-     * Teleport the player to a location
-     * @param location
+     * Teleport the player to a location.
+     * @param location the target location
      */
     public abstract void teleport(Location location);
 
     /**
-     * Is the player online
-     * @return
+     * Checks if the player is online.
+     * @return true if the player is online
      */
     public abstract boolean isOnline();
 
     /**
-     * Get the player's name.
-     * @return
+     * Retrieves the name of the player.
+     * @return the players username
      */
     public abstract String getName();
 
     /**
      * Set the compass target.
-     * @param location
+     * @param location the target location
      */
     public abstract void setCompassTarget(Location location);
 
@@ -283,8 +290,10 @@ public abstract class PlotPlayer implements CommandCaller {
 
 
     /**
-     * The attribute will be either true or false.
+     * Retrieves the player attribute.
+     *
      * @param key
+     * @return the attribute will be either true or false
      */
     public boolean getAttribute(String key) {
         if (!hasPersistentMeta("attrib_" + key)) {
@@ -303,31 +312,31 @@ public abstract class PlotPlayer implements CommandCaller {
 
     /**
      * Set the player's local weather
-     * @param weather
+     * @param weather the weather visible to the player
      */
     public abstract void setWeather(PlotWeather weather);
 
     /**
      * Get the player's gamemode.
-     * @return
+     * @return the gamemode of the player.
      */
     public abstract PlotGameMode getGameMode();
 
     /**
      * Set the player's gameMode.
-     * @param gameMode
+     * @param gameMode the gamemode to set
      */
     public abstract void setGameMode(PlotGameMode gameMode);
 
     /**
      * Set the player's local time (ticks).
-     * @param time
+     * @param time the time visible to the player
      */
     public abstract void setTime(long time);
 
     /**
      * Set the player's fly mode.
-     * @param fly
+     * @param fly if the player can fly
      */
     public abstract void setFlight(boolean fly);
 
@@ -340,13 +349,13 @@ public abstract class PlotPlayer implements CommandCaller {
 
     /**
      * Check if the player is banned
-     * @return
+     * @return true if the player is banned, false otherwise.
      */
     public abstract boolean isBanned();
 
     /**
      * Kick the player from the game.
-     * @param message
+     * @param message the reason for the kick
      */
     public abstract void kick(String message);
 
@@ -389,7 +398,7 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Get the amount of clusters a player owns
+     * Get the amount of clusters a player owns.
      * @return
      */
     public int getPlayerClusterCount() {
@@ -404,9 +413,9 @@ public abstract class PlotPlayer implements CommandCaller {
     }
 
     /**
-     * Return a Set of all plots a player owns
-     * @param world
-     * @return
+     * Return a set of all plots a player owns in a certain world.
+     * @param world the world to retrieve plots from
+     * @return a set of plots the player owns in the provided world
      */
     public Set<Plot> getPlots(String world) {
         UUID uuid = getUUID();

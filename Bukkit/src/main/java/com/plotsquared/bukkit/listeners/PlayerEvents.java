@@ -109,6 +109,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -303,7 +304,6 @@ public class PlayerEvents extends PlotListener implements Listener {
             return true;
         }
         Plot plot = area.getPlotAbs(loc);
-        //
         ProjectileSource shooter = entity.getShooter();
         if (shooter instanceof Player) {
             PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
@@ -780,7 +780,6 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlot(location);
-        Optional<Boolean> flag;
         switch (block.getType()) {
             case GRASS:
                 if (Flags.GRASS_GROW.isFalse(plot)) {

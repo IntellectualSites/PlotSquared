@@ -35,7 +35,7 @@ import java.util.UUID;
 /**
  * PlotSquared API.
  *
- * <p>Useful classes:</p>
+ * <p>Useful classes:
  * <ul>
  *     <li>{@link BukkitUtil}</li>
  *     <li>{@link PlotPlayer}</li>
@@ -655,7 +655,7 @@ public class PlotAPI {
     /**
      * Get the numbers of plots, which the player is able to build in.
      *
-     * @param player Player, for whom we're getting the plots
+     * @param player player, for whom we're getting the plots
      *
      * @return the number of allowed plots
      *
@@ -671,8 +671,8 @@ public class PlotAPI {
      *
      * @see PlotPlayer#wrap(Object)
      *
-     * @param player The player to wrap
-     * @return A PlotPlayer
+     * @param player the player to wrap
+     * @return a {@code PlotPlayer}
      */
     public PlotPlayer wrapPlayer(Player player) {
         return PlotPlayer.wrap(player);
@@ -682,12 +682,12 @@ public class PlotAPI {
      * Get the PlotPlayer for a UUID.
      *
      * <p><i>Please note that PlotSquared can be configured to provide
-     * different UUIDs than bukkit</i></p>
+     * different UUIDs than bukkit</i>
      *
      * @see PlotPlayer#wrap(Object)
      *
-     * @param uuid The uuid of the player to wrap
-     * @return A PlotPlayer
+     * @param uuid the uuid of the player to wrap
+     * @return a {@code PlotPlayer}
      */
     public PlotPlayer wrapPlayer(UUID uuid) {
         return PlotPlayer.wrap(uuid);
@@ -698,8 +698,8 @@ public class PlotAPI {
      *
      * @see PlotPlayer#wrap(Object)
      *
-     * @param player The player to wrap
-     * @return The PlotPlayer
+     * @param player the player to wrap
+     * @return a {@code PlotPlayer}
      */
     public PlotPlayer wrapPlayer(String player) {
         return PlotPlayer.wrap(player);
@@ -707,13 +707,14 @@ public class PlotAPI {
 
     /**
      * Get the PlotPlayer for an offline player.
+     *
      * <p>Note that this will work if the player is offline, however not all
-     * functionality will work</p>
+     * functionality will work.
      *
      * @see PlotPlayer#wrap(Object)
      *
-     * @param player The player to wrap
-     * @return The PlotPlayer
+     * @param player the player to wrap
+     * @return a {@code PlotPlayer}
      */
     public PlotPlayer wrapPlayer(OfflinePlayer player) {
         return PlotPlayer.wrap(player);

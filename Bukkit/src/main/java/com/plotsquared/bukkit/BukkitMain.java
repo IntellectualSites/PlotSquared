@@ -70,7 +70,7 @@ import com.plotsquared.bukkit.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.SQLUUIDHandler;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.WorldEdit;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -95,7 +95,7 @@ import java.util.UUID;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
-    public static WorldEditPlugin worldEdit;
+    public static WorldEdit worldEdit;
 
     private int[] version;
 
@@ -385,7 +385,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override
     public boolean initWorldEdit() {
         if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+            worldEdit = WorldEdit.getInstance();
             return true;
         }
         return false;
