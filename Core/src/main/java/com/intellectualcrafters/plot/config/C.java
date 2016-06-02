@@ -676,11 +676,11 @@ public enum C {
         return m;
     }
 
-    public static String format(C c, Object... args) {
-        if (c.usePrefix()) {
-            return C.PREFIX.s() + format(c.s, args);
+    public static String format(C caption, Object... args) {
+        if (caption.usePrefix()) {
+            return C.PREFIX.s() + format(caption.s, args);
         } else {
-            return format(c.s, args);
+            return format(caption.s, args);
         }
     }
 
@@ -700,9 +700,9 @@ public enum C {
             HashSet<String> allNames = new HashSet<>();
             HashSet<String> categories = new HashSet<>();
             HashSet<String> toRemove = new HashSet<>();
-            for (C c : allEnums) {
-                allNames.add(c.name());
-                categories.add(c.category.toLowerCase());
+            for (C caption : allEnums) {
+                allNames.add(caption.name());
+                categories.add(caption.category.toLowerCase());
             }
             HashSet<C> captions = new HashSet<>();
             boolean changed = false;
@@ -797,16 +797,16 @@ public enum C {
         return this.category;
     }
 
-    public void send(CommandCaller plr, String... args) {
-        send(plr, (Object[]) args);
+    public void send(CommandCaller caller, String... args) {
+        send(caller, (Object[]) args);
     }
 
-    public void send(CommandCaller plr, Object... args) {
+    public void send(CommandCaller caller, Object... args) {
         String msg = format(this, args);
-        if (plr == null) {
+        if (caller == null) {
             PS.log(msg);
         } else {
-            plr.sendMessage(msg);
+            caller.sendMessage(msg);
         }
     }
 }

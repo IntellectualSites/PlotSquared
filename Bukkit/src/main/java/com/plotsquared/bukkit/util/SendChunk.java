@@ -86,23 +86,23 @@ public class SendChunk {
         for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
             PlotPlayer pp = entry.getValue();
             Plot plot = pp.getCurrentPlot();
-            Location loc = null;
+            Location location = null;
             String world;
             if (plot != null) {
                 world = plot.getArea().worldname;
             } else {
-                loc = pp.getLocation();
-                world = loc.getWorld();
+                location = pp.getLocation();
+                world = location.getWorld();
             }
             ArrayList<Chunk> list = map.get(world);
             if (list == null) {
                 continue;
             }
-            if (loc == null) {
-                loc = pp.getLocation();
+            if (location == null) {
+                location = pp.getLocation();
             }
-            int cx = loc.getX() >> 4;
-            int cz = loc.getZ() >> 4;
+            int cx = location.getX() >> 4;
+            int cz = location.getZ() >> 4;
             Player player = ((BukkitPlayer) pp).player;
             Object entity = this.methodGetHandlePlayer.of(player).call();
 

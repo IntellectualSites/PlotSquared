@@ -1,5 +1,7 @@
 package com.plotsquared.bukkit.listeners;
 
+import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.Settings;
 import com.intellectualcrafters.plot.object.Location;
@@ -8,8 +10,6 @@ import com.intellectualcrafters.plot.util.ReflectionUtils.RefClass;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefField;
 import com.intellectualcrafters.plot.util.ReflectionUtils.RefMethod;
 import com.intellectualcrafters.plot.util.TaskManager;
-import java.lang.reflect.Method;
-import java.util.HashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -28,8 +28,8 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-
-import static com.intellectualcrafters.plot.util.ReflectionUtils.getRefClass;
+import java.lang.reflect.Method;
+import java.util.HashSet;
 
 public class ChunkListener implements Listener {
 
@@ -134,10 +134,7 @@ public class ChunkListener implements Listener {
             return true;
         }
         plot = new Location(world, x + 7, 1, z + 7).getOwnedPlotAbs();
-        if (plot != null && plot.hasOwner()) {
-            return true;
-        }
-        return false;
+        return plot != null && plot.hasOwner();
     }
 
     @EventHandler

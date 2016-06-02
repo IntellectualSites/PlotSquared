@@ -26,39 +26,39 @@ import java.util.Set;
 public class RegenAllRoads extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         int height = 0;
         if (args.length == 2) {
             try {
                 height = Integer.parseInt(args[1]);
             } catch (NumberFormatException ignored) {
-                MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(0, 256)");
-                MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
+                MainUtil.sendMessage(player, C.NOT_VALID_NUMBER, "(0, 256)");
+                MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
                 return false;
             }
         } else if (args.length != 1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
+            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot regenallroads <world> [height]");
             return false;
         }
         PlotArea area = PS.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
-            C.NOT_VALID_PLOT_WORLD.send(plr, args[0]);
+            C.NOT_VALID_PLOT_WORLD.send(player, args[0]);
             return false;
         }
         String name = args[0];
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
-            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+            MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
             return false;
         }
         Set<ChunkLoc> chunks = ChunkManager.manager.getChunkChunks(name);
-        MainUtil.sendMessage(plr, "&cIf no schematic is set, the following will not do anything");
-        MainUtil.sendMessage(plr, "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
-        MainUtil.sendMessage(plr, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
-        MainUtil.sendMessage(plr, "&6Estimated time: &7" + chunks.size() + " seconds");
+        MainUtil.sendMessage(player, "&cIf no schematic is set, the following will not do anything");
+        MainUtil.sendMessage(player, "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
+        MainUtil.sendMessage(player, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
+        MainUtil.sendMessage(player, "&6Estimated time: &7" + chunks.size() + " seconds");
         boolean result = HybridUtils.manager.scheduleRoadUpdate(area, height);
         if (!result) {
-            MainUtil.sendMessage(plr, "&cCannot schedule mass schematic update! (Is one already in progress?)");
+            MainUtil.sendMessage(player, "&cCannot schedule mass schematic update! (Is one already in progress?)");
             return false;
         }
         return true;

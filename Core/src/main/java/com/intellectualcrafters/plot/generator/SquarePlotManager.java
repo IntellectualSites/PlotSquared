@@ -19,7 +19,7 @@ import java.util.Iterator;
 public abstract class SquarePlotManager extends GridPlotManager {
 
     @Override
-    public boolean clearPlot(PlotArea plotworld, final Plot plot, final Runnable whenDone) {
+    public boolean clearPlot(PlotArea plotArea, final Plot plot, final Runnable whenDone) {
         final HashSet<RegionWrapper> regions = plot.getRegions();
         Runnable run = new Runnable() {
             @Override
@@ -41,18 +41,18 @@ public abstract class SquarePlotManager extends GridPlotManager {
     }
 
     @Override
-    public Location getPlotTopLocAbs(PlotArea plotworld, PlotId plotid) {
-        SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
-        int px = plotid.x;
-        int pz = plotid.y;
+    public Location getPlotTopLocAbs(PlotArea plotArea, PlotId plotId) {
+        SquarePlotWorld dpw = (SquarePlotWorld) plotArea;
+        int px = plotId.x;
+        int pz = plotId.y;
         int x = (dpw.ROAD_OFFSET_X + (px * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - (int) Math.floor(dpw.ROAD_WIDTH / 2) - 1;
         int z = (dpw.ROAD_OFFSET_Z + (pz * (dpw.ROAD_WIDTH + dpw.PLOT_WIDTH))) - (int) Math.floor(dpw.ROAD_WIDTH / 2) - 1;
-        return new Location(plotworld.worldname, x, Math.min(plotworld.MAX_BUILD_HEIGHT, 255), z);
+        return new Location(plotArea.worldname, x, Math.min(plotArea.MAX_BUILD_HEIGHT, 255), z);
     }
 
     @Override
-    public PlotId getPlotIdAbs(PlotArea plotworld, int x, int y, int z) {
-        SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
+    public PlotId getPlotIdAbs(PlotArea plotArea, int x, int y, int z) {
+        SquarePlotWorld dpw = (SquarePlotWorld) plotArea;
         if (dpw.ROAD_OFFSET_X != 0) {
             x -= dpw.ROAD_OFFSET_X;
         }
@@ -97,10 +97,10 @@ public abstract class SquarePlotManager extends GridPlotManager {
     }
 
     @Override
-    public PlotId getPlotId(PlotArea plotworld, int x, int y, int z) {
+    public PlotId getPlotId(PlotArea plotArea, int x, int y, int z) {
         try {
-            SquarePlotWorld dpw = (SquarePlotWorld) plotworld;
-            if (plotworld == null) {
+            SquarePlotWorld dpw = (SquarePlotWorld) plotArea;
+            if (plotArea == null) {
                 return null;
             }
             x -= dpw.ROAD_OFFSET_X;
@@ -144,7 +144,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             if (hash == 0) {
                 return id;
             }
-            Plot plot = plotworld.getOwnedPlotAbs(id);
+            Plot plot = plotArea.getOwnedPlotAbs(id);
             // Not merged, and standing on road
             if (plot == null) {
                 return null;
@@ -177,7 +177,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             }
             PS.debug("invalid location: " + Arrays.toString(merged));
         } catch (Exception ignored) {
-            PS.debug("Invalid plot / road width in settings.yml for world: " + plotworld.worldname);
+            PS.debug("Invalid plot / road width in settings.yml for world: " + plotArea.worldname);
         }
         return null;
     }

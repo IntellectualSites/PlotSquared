@@ -18,23 +18,23 @@ public class PlayerEvents183 implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBigBoom(BlockExplodeEvent event) {
         Block block = event.getBlock();
-        Location loc = BukkitUtil.getLocation(block.getLocation());
-        String world = loc.getWorld();
+        Location location = BukkitUtil.getLocation(block.getLocation());
+        String world = location.getWorld();
         if (!PS.get().hasPlotArea(world)) {
             return;
         }
-        PlotArea area = loc.getPlotArea();
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             Iterator<Block> iterator = event.blockList().iterator();
             while (iterator.hasNext()) {
-                loc = BukkitUtil.getLocation(iterator.next().getLocation());
-                if (loc.getPlotArea() != null) {
+                location = BukkitUtil.getLocation(iterator.next().getLocation());
+                if (location.getPlotArea() != null) {
                     iterator.remove();
                 }
             }
             return;
         }
-        Plot plot = area.getOwnedPlot(loc);
+        Plot plot = area.getOwnedPlot(location);
         if (plot == null || !plot.getFlag(Flags.EXPLOSION).or(false)) {
             event.setCancelled(true);
         }

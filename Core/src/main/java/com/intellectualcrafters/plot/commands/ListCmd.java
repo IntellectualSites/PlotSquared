@@ -83,14 +83,14 @@ public class ListCmd extends SubCommand {
         return args.toArray(new String[args.size()]);
     }
 
-    public void noArgs(PlotPlayer plr) {
-        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + Arrays.toString(getArgumentList(plr)));
+    public void noArgs(PlotPlayer player) {
+        MainUtil.sendMessage(player, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + Arrays.toString(getArgumentList(player)));
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length < 1) {
-            noArgs(plr);
+            noArgs(player);
             return false;
         }
         int page = 0;
@@ -108,70 +108,70 @@ public class ListCmd extends SubCommand {
 
         List<Plot> plots = null;
 
-        String world = plr.getLocation().getWorld();
-        PlotArea area = plr.getApplicablePlotArea();
+        String world = player.getLocation().getWorld();
+        PlotArea area = player.getApplicablePlotArea();
         String arg = args[0].toLowerCase();
         boolean sort = true;
         switch (arg) {
             case "mine":
-                if (!Permissions.hasPermission(plr, "plots.list.mine")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.mine");
+                if (!Permissions.hasPermission(player, "plots.list.mine")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.mine");
                     return false;
                 }
                 sort = false;
-                plots = PS.get().sortPlotsByTemp(PS.get().getBasePlots(plr));
+                plots = PS.get().sortPlotsByTemp(PS.get().getBasePlots(player));
                 break;
             case "shared":
-                if (!Permissions.hasPermission(plr, "plots.list.shared")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.shared");
+                if (!Permissions.hasPermission(player, "plots.list.shared")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.shared");
                     return false;
                 }
                 plots = new ArrayList<>();
                 for (Plot plot : PS.get().getPlots()) {
-                    if (plot.getTrusted().contains(plr.getUUID()) || plot.getMembers().contains(plr.getUUID())) {
+                    if (plot.getTrusted().contains(player.getUUID()) || plot.getMembers().contains(player.getUUID())) {
                         plots.add(plot);
                     }
                 }
                 break;
             case "world":
-                if (!Permissions.hasPermission(plr, "plots.list.world")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world");
+                if (!Permissions.hasPermission(player, "plots.list.world")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.world");
                     return false;
                 }
-                if (!Permissions.hasPermission(plr, "plots.list.world." + world)) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + world);
+                if (!Permissions.hasPermission(player, "plots.list.world." + world)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.world." + world);
                     return false;
                 }
                 plots = new ArrayList<>(PS.get().getPlots(world));
                 break;
             case "expired":
-                if (!Permissions.hasPermission(plr, "plots.list.expired")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.expired");
+                if (!Permissions.hasPermission(player, "plots.list.expired")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.expired");
                     return false;
                 }
                 plots = ExpireManager.IMP == null ? new ArrayList<Plot>() : new ArrayList<>(ExpireManager.IMP.getPendingExpired());
                 break;
             case "area":
-                if (!Permissions.hasPermission(plr, "plots.list.area")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.area");
+                if (!Permissions.hasPermission(player, "plots.list.area")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.area");
                     return false;
                 }
-                if (!Permissions.hasPermission(plr, "plots.list.world." + world)) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + world);
+                if (!Permissions.hasPermission(player, "plots.list.world." + world)) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.world." + world);
                     return false;
                 }
                 plots = area == null ? new ArrayList<Plot>() : new ArrayList<>(area.getPlots());
                 break;
             case "all":
-                if (!Permissions.hasPermission(plr, "plots.list.all")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.all");
+                if (!Permissions.hasPermission(player, "plots.list.all")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.all");
                     return false;
                 }
                 plots = new ArrayList<>(PS.get().getPlots());
                 break;
             case "done":
-                if (!Permissions.hasPermission(plr, "plots.list.done")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.done");
+                if (!Permissions.hasPermission(player, "plots.list.done")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.done");
                     return false;
                 }
                 plots = new ArrayList<>();
@@ -199,8 +199,8 @@ public class ListCmd extends SubCommand {
                 sort = false;
                 break;
             case "top":
-                if (!Permissions.hasPermission(plr, "plots.list.top")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.top");
+                if (!Permissions.hasPermission(player, "plots.list.top")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.top");
                     return false;
                 }
                 plots = new ArrayList<>(PS.get().getPlots());
@@ -236,8 +236,8 @@ public class ListCmd extends SubCommand {
                 sort = false;
                 break;
             case "forsale":
-                if (!Permissions.hasPermission(plr, "plots.list.forsale")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.forsale");
+                if (!Permissions.hasPermission(player, "plots.list.forsale")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.forsale");
                     return false;
                 }
                 if (EconHandler.manager == null) {
@@ -252,8 +252,8 @@ public class ListCmd extends SubCommand {
                 }
                 break;
             case "unowned":
-                if (!Permissions.hasPermission(plr, "plots.list.unowned")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.unowned");
+                if (!Permissions.hasPermission(player, "plots.list.unowned")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.unowned");
                     return false;
                 }
                 plots = new ArrayList<>();
@@ -264,8 +264,8 @@ public class ListCmd extends SubCommand {
                 }
                 break;
             case "unknown":
-                if (!Permissions.hasPermission(plr, "plots.list.unknown")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.unknown");
+                if (!Permissions.hasPermission(player, "plots.list.unknown")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.unknown");
                     return false;
                 }
                 plots = new ArrayList<>();
@@ -279,12 +279,12 @@ public class ListCmd extends SubCommand {
                 }
                 break;
             case "fuzzy":
-                if (!Permissions.hasPermission(plr, "plots.list.fuzzy")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.fuzzy");
+                if (!Permissions.hasPermission(player, "plots.list.fuzzy")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.fuzzy");
                     return false;
                 }
                 if (args.length < (page == -1 ? 2 : 3)) {
-                    C.COMMAND_SYNTAX.send(plr, "/plot list fuzzy <search...> [#]");
+                    C.COMMAND_SYNTAX.send(player, "/plot list fuzzy <search...> [#]");
                     return false;
                 }
                 String term;
@@ -298,12 +298,12 @@ public class ListCmd extends SubCommand {
                 break;
             default:
                 if (PS.get().hasPlotArea(args[0])) {
-                    if (!Permissions.hasPermission(plr, "plots.list.world")) {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world");
+                    if (!Permissions.hasPermission(player, "plots.list.world")) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.world");
                         return false;
                     }
-                    if (!Permissions.hasPermission(plr, "plots.list.world." + args[0])) {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.world." + args[0]);
+                    if (!Permissions.hasPermission(player, "plots.list.world." + args[0])) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.world." + args[0]);
                         return false;
                     }
                     plots = new ArrayList<>(PS.get().getPlots(args[0]));
@@ -316,8 +316,8 @@ public class ListCmd extends SubCommand {
                     } catch (Exception ignored) {}
                 }
                 if (uuid != null) {
-                    if (!Permissions.hasPermission(plr, "plots.list.player")) {
-                        MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.list.player");
+                    if (!Permissions.hasPermission(player, "plots.list.player")) {
+                        MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.list.player");
                         return false;
                     }
                     sort = false;
@@ -327,15 +327,15 @@ public class ListCmd extends SubCommand {
         }
 
         if (plots == null) {
-            sendMessage(plr, C.DID_YOU_MEAN, new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
+            sendMessage(player, C.DID_YOU_MEAN, new StringComparison<>(args[0], new String[]{"mine", "shared", "world", "all"}).getBestMatch());
             return false;
         }
 
         if (plots.isEmpty()) {
-            MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
+            MainUtil.sendMessage(player, C.FOUND_NO_PLOTS);
             return false;
         }
-        displayPlots(plr, plots, 12, page, area, args, sort);
+        displayPlots(player, plots, 12, page, area, args, sort);
         return true;
     }
 

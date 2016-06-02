@@ -61,12 +61,12 @@ public class EntityWrapper {
     public EntityWrapper(Entity entity, short depth) {
         this.hash = entity.getEntityId();
         this.depth = depth;
-        Location loc = entity.getLocation();
-        this.yaw = loc.getYaw();
-        this.pitch = loc.getPitch();
-        this.x = loc.getX();
-        this.y = loc.getY();
-        this.z = loc.getZ();
+        Location location = entity.getLocation();
+        this.yaw = location.getYaw();
+        this.pitch = location.getPitch();
+        this.x = location.getX();
+        this.y = location.getY();
+        this.z = location.getZ();
         this.type = entity.getType();
         if (depth == 0) {
             return;
@@ -376,10 +376,10 @@ public class EntityWrapper {
         this.lived.persistent = lived.getRemoveWhenFarAway();
         this.lived.leashed = lived.isLeashed();
         if (this.lived.leashed) {
-            Location loc = lived.getLeashHolder().getLocation();
-            this.lived.leash_x = (short) (this.x - loc.getBlockX());
-            this.lived.leash_y = (short) (this.y - loc.getBlockY());
-            this.lived.leash_z = (short) (this.z - loc.getBlockZ());
+            Location location = lived.getLeashHolder().getLocation();
+            this.lived.leash_x = (short) (this.x - location.getBlockX());
+            this.lived.leash_y = (short) (this.y - location.getBlockY());
+            this.lived.leash_z = (short) (this.z - location.getBlockZ());
         }
         EntityEquipment equipment = lived.getEquipment();
         this.lived.equipped = equipment != null;
@@ -435,27 +435,27 @@ public class EntityWrapper {
     }
 
     public Entity spawn(World world, int x_offset, int z_offset) {
-        Location loc = new Location(world, this.x + x_offset, this.y, this.z + z_offset);
-        loc.setYaw(this.yaw);
-        loc.setPitch(this.pitch);
+        Location location = new Location(world, this.x + x_offset, this.y, this.z + z_offset);
+        location.setYaw(this.yaw);
+        location.setPitch(this.pitch);
         if (!this.type.isSpawnable()) {
             return null;
         }
         Entity entity;
         switch (this.type) {
             case DROPPED_ITEM:
-                return world.dropItem(loc, this.stack);
+                return world.dropItem(location, this.stack);
             case PLAYER:
             case LEASH_HITCH:
                 return null;
             case ITEM_FRAME:
-                entity = world.spawn(loc, ItemFrame.class);
+                entity = world.spawn(location, ItemFrame.class);
                 break;
             case PAINTING:
-                entity = world.spawn(loc, Painting.class);
+                entity = world.spawn(location, Painting.class);
                 break;
             default:
-                entity = world.spawnEntity(loc, this.type);
+                entity = world.spawnEntity(location, this.type);
                 break;
         }
         if (this.depth == 0) {

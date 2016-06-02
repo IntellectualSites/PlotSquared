@@ -24,31 +24,31 @@ public class Target extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
-        Location plrLocation = plr.getLocation();
-        if (!plrLocation.isPlotArea()) {
-            MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+    public boolean onCommand(PlotPlayer player, String[] args) {
+        Location location = player.getLocation();
+        if (!location.isPlotArea()) {
+            MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         Plot target = null;
         if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
             int distance = Integer.MAX_VALUE;
-            for (Plot plot : PS.get().getPlots(plrLocation.getWorld())) {
-                double current = plot.getCenter().getEuclideanDistanceSquared(plrLocation);
+            for (Plot plot : PS.get().getPlots(location.getWorld())) {
+                double current = plot.getCenter().getEuclideanDistanceSquared(location);
                 if (current < distance) {
                     distance = (int) current;
                     target = plot;
                 }
             }
             if (target == null) {
-                MainUtil.sendMessage(plr, C.FOUND_NO_PLOTS);
+                MainUtil.sendMessage(player, C.FOUND_NO_PLOTS);
                 return false;
             }
-        } else if ((target = MainUtil.getPlotFromString(plr, args[0], true)) == null) {
+        } else if ((target = MainUtil.getPlotFromString(player, args[0], true)) == null) {
             return false;
         }
-        plr.setCompassTarget(target.getCenter());
-        MainUtil.sendMessage(plr, C.COMPASS_TARGET);
+        player.setCompassTarget(target.getCenter());
+        MainUtil.sendMessage(player, C.COMPASS_TARGET);
         return true;
     }
 }

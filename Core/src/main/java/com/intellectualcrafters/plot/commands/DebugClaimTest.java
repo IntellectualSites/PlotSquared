@@ -32,7 +32,7 @@ import java.util.UUID;
 public class DebugClaimTest extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 3) {
             return !MainUtil
                     .sendMessage(
@@ -42,7 +42,7 @@ public class DebugClaimTest extends SubCommand {
         }
         PlotArea area = PS.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
-            C.NOT_VALID_PLOT_WORLD.send(plr, args[0]);
+            C.NOT_VALID_PLOT_WORLD.send(player, args[0]);
             return false;
         }
         PlotId min, max;
@@ -52,18 +52,18 @@ public class DebugClaimTest extends SubCommand {
             min = PlotId.fromString(args[1]);
             max = PlotId.fromString(args[2]);
         } catch (Exception ignored) {
-            return !MainUtil.sendMessage(plr,
+            return !MainUtil.sendMessage(player,
                     "&cInvalid min/max values. &7The values are to Plot IDs in the format &cX;Y &7where X;Y are the plot coords\nThe conversion "
                             + "will only check the plots in the selected area.");
         }
-        MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
-        MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
+        MainUtil.sendMessage(player, "&3Sign Block&8->&3PlotSquared&8: &7Beginning sign to plot conversion. This may take a while...");
+        MainUtil.sendMessage(player, "&3Sign Block&8->&3PlotSquared&8: Found an excess of 250,000 chunks. Limiting search radius... (~3.8 min)");
         PlotManager manager = area.getPlotManager();
         ArrayList<Plot> plots = new ArrayList<>();
         for (PlotId id : MainUtil.getPlotSelectionIds(min, max)) {
             Plot plot = area.getPlotAbs(id);
             if (plot.hasOwner()) {
-                MainUtil.sendMessage(plr, " - &cDB Already contains: " + plot.getId());
+                MainUtil.sendMessage(player, " - &cDB Already contains: " + plot.getId());
                 continue;
             }
             Location loc = manager.getSignLoc(area, plot);
@@ -91,29 +91,29 @@ public class DebugClaimTest extends SubCommand {
                         uuid = UUIDHandler.getUUID(line, null);
                     }
                     if (uuid != null) {
-                        MainUtil.sendMessage(plr, " - &aFound plot: " + plot.getId() + " : " + line);
+                        MainUtil.sendMessage(player, " - &aFound plot: " + plot.getId() + " : " + line);
                         plot.setOwner(uuid);
                         plots.add(plot);
                     } else {
-                        MainUtil.sendMessage(plr, " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
+                        MainUtil.sendMessage(player, " - &cInvalid PlayerName: " + plot.getId() + " : " + line);
                     }
                 }
             }
         }
         if (!plots.isEmpty()) {
-            MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
+            MainUtil.sendMessage(player, "&3Sign Block&8->&3PlotSquared&8: &7Updating '" + plots.size() + "' plots!");
             DBFunc.createPlotsAndData(plots, new Runnable() {
                 @Override
                 public void run() {
-                    MainUtil.sendMessage(plr, "&6Database update finished!");
+                    MainUtil.sendMessage(player, "&6Database update finished!");
                 }
             });
             for (Plot plot : plots) {
                 plot.create();
             }
-            MainUtil.sendMessage(plr, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
+            MainUtil.sendMessage(player, "&3Sign Block&8->&3PlotSquared&8: &7Complete!");
         } else {
-            MainUtil.sendMessage(plr, "No plots were found for the given search.");
+            MainUtil.sendMessage(player, "No plots were found for the given search.");
         }
         return true;
     }

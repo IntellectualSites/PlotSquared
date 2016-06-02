@@ -109,6 +109,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -609,44 +610,44 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void blockDestroy(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
-        PlotArea area = loc.getPlotArea();
+        Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-        Plot plot = area.getPlotAbs(loc);
+        Plot plot = area.getPlotAbs(location);
         if (plot != null) {
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (event.getBlock().getY() == 0) {
-                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL);
+                if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
+                    MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL);
                     event.setCancelled(true);
                     return;
                 }
             }
             if (!plot.hasOwner()) {
-                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
+                if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
+                MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_UNOWNED);
                 event.setCancelled(true);
                 return;
             }
-            if (!plot.isAdded(pp.getUUID())) {
+            if (!plot.isAdded(plotPlayer.getUUID())) {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get()
                         .contains(new PlotBlock((short) block.getTypeId(), block.getData()))) {
                     return;
                 }
-                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
+                if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
+                MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_DESTROY_OTHER);
                 event.setCancelled(true);
             } else if (Settings.DONE_RESTRICTS_BUILDING && plot.getFlags().containsKey(Flags.DONE)) {
-                if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
+                if (!Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, C.PERMISSION_ADMIN_BUILD_OTHER);
                     event.setCancelled(true);
                     return;
                 }
@@ -822,19 +823,19 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             if (!plot.hasOwner()) {
-                PlotPlayer pp = BukkitUtil.getPlayer(player);
-                if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
+                PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+                if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
                 event.setCancelled(true);
                 return;
             }
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
-            if (!plot.isAdded(pp.getUUID())) {
+            PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+            if (!plot.isAdded(plotPlayer.getUUID())) {
                 Optional<HashSet<PlotBlock>> destroy = plot.getFlag(Flags.BREAK);
                 Block block = event.getBlock();
                 if (destroy.isPresent() && destroy.get().contains(new PlotBlock((short) block.getTypeId(), block.getData())) || Permissions
-                        .hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
+                        .hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
                 event.setCancelled(true);
@@ -842,8 +843,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             return;
         }
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
-        if (Permissions.hasPermission(pp, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
+        PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+        if (Permissions.hasPermission(plotPlayer, C.PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
         event.setCancelled(true);
@@ -2169,70 +2170,70 @@ public class PlayerEvents extends PlotListener implements Listener {
             player = null;
         }
         if (player != null) {
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (victim instanceof Hanging) { // hanging
-                if (plot != null && (plot.getFlag(Flags.HANGING_BREAK, false) || plot.isAdded(pp.getUUID()))) {
+                if (plot != null && (plot.getFlag(Flags.HANGING_BREAK, false) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.destroy." + stub)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.destroy." + stub);
+                if (!Permissions.hasPermission(plotPlayer, "plots.admin.destroy." + stub)) {
+                    MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.destroy." + stub);
                     return false;
                 }
             } else if (victim.getEntityId() == 30) {
-                if (plot != null && (plot.getFlag(Flags.MISC_BREAK, false) || plot.isAdded(pp.getUUID()))) {
+                if (plot != null && (plot.getFlag(Flags.MISC_BREAK, false) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.destroy." + stub)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.destroy." + stub);
+                if (!Permissions.hasPermission(plotPlayer, "plots.admin.destroy." + stub)) {
+                    MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.destroy." + stub);
                     return false;
                 }
             } else if (victim instanceof Monster || victim instanceof EnderDragon) { // victim is monster
                 if (plot != null && (plot.getFlag(Flags.HOSTILE_ATTACK, false) || plot.getFlag(Flags.PVE, false) || plot
-                        .isAdded(pp.getUUID()))) {
+                        .isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
+                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                    MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
                     return false;
                 }
             } else if (victim instanceof Tameable) { // victim is tameable
-                if (plot != null && (plot.getFlag(Flags.TAMED_ATTACK, false) || plot.getFlag(Flags.PVE, false) || plot.isAdded(pp.getUUID()))) {
+                if (plot != null && (plot.getFlag(Flags.TAMED_ATTACK, false) || plot.getFlag(Flags.PVE, false) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
+                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                    MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
                     return false;
                 }
             } else if (victim instanceof Player) {
                 if (plot != null) {
-                    if (Flags.PVP.isFalse(plot) && !Permissions.hasPermission(pp, "plots.admin.pvp." + stub)) {
-                        MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pvp." + stub);
+                    if (Flags.PVP.isFalse(plot) && !Permissions.hasPermission(plotPlayer, "plots.admin.pvp." + stub)) {
+                        MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.pvp." + stub);
                         return false;
                     } else {
                         return true;
                     }
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.pvp." + stub)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pvp." + stub);
+                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pvp." + stub)) {
+                    MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.pvp." + stub);
                     return false;
                 }
             } else if (victim instanceof Creature) { // victim is animal
                 if (plot != null && (plot.getFlag(Flags.ANIMAL_ATTACK, false) || plot.getFlag(Flags.PVE, false) || plot
-                        .isAdded(pp.getUUID()))) {
+                        .isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
+                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                    MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
                     return false;
                 }
             } else if (victim instanceof Vehicle) { // Vehicles are managed in vehicle destroy event
                 return true;
             } else { // victim is something else
-                if (plot != null && (plot.getFlag(Flags.PVE, false) || plot.isAdded(pp.getUUID()))) {
+                if (plot != null && (plot.getFlag(Flags.PVE, false) || plot.isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(pp, "plots.admin.pve." + stub)) {
-                    MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
+                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                    MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.pve." + stub);
                     return false;
                 }
             }
@@ -2249,22 +2250,22 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (area == null) {
             return;
         }
-        Player p = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(p);
+        Player player = event.getPlayer();
+        PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
         Plot plot = area.getPlot(l);
         if (plot == null) {
-            if (!Permissions.hasPermission(pp, "plots.admin.projectile.road")) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.projectile.road");
+            if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.road")) {
+                MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.projectile.road");
                 event.setHatching(false);
             }
         } else if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(pp, "plots.admin.projectile.unowned")) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.projectile.unowned");
+            if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.unowned")) {
+                MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.projectile.unowned");
                 event.setHatching(false);
             }
-        } else if (!plot.isAdded(pp.getUUID())) {
-            if (!Permissions.hasPermission(pp, "plots.admin.projectile.other")) {
-                MainUtil.sendMessage(pp, C.NO_PERMISSION_EVENT, "plots.admin.projectile.other");
+        } else if (!plot.isAdded(plotPlayer.getUUID())) {
+            if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.other")) {
+                MainUtil.sendMessage(plotPlayer, C.NO_PERMISSION_EVENT, "plots.admin.projectile.other");
                 event.setHatching(false);
             }
         }
@@ -2272,14 +2273,14 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void blockCreate(BlockPlaceEvent event) {
-        Location loc = BukkitUtil.getLocation(event.getBlock().getLocation());
-        PlotArea area = loc.getPlotArea();
+        Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
         Player player = event.getPlayer();
         PlotPlayer pp = BukkitUtil.getPlayer(player);
-        Plot plot = area.getPlotAbs(loc);
+        Plot plot = area.getPlotAbs(location);
         if (plot != null) {
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, C.PERMISSION_ADMIN_BUILD_UNOWNED)) {
@@ -2313,7 +2314,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     sendBlockChange(block.getLocation(), block.getType(), block.getData());
                 }
             }
-            if (loc.getY() > area.MAX_BUILD_HEIGHT && loc.getY() < area.MIN_BUILD_HEIGHT && !Permissions
+            if (location.getY() > area.MAX_BUILD_HEIGHT && location.getY() < area.MIN_BUILD_HEIGHT && !Permissions
                     .hasPermission(pp, C.PERMISSION_ADMIN_BUILD_HEIGHTLIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(pp, C.HEIGHT_LIMIT.s().replace("{limit}", String.valueOf(area.MAX_BUILD_HEIGHT)));

@@ -74,10 +74,10 @@ public class Template extends SubCommand {
         }
     }
 
-    public static byte[] getBytes(PlotArea plotworld) {
-        ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + plotworld.worldname);
+    public static byte[] getBytes(PlotArea plotArea) {
+        ConfigurationSection section = PS.get().config.getConfigurationSection("worlds." + plotArea.worldname);
         YamlConfiguration config = new YamlConfiguration();
-        String generator = SetupUtils.manager.getGenerator(plotworld);
+        String generator = SetupUtils.manager.getGenerator(plotArea);
         if (generator != null) {
             config.set("generator.plugin", generator);
         }
@@ -103,34 +103,34 @@ public class Template extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length != 2 && args.length != 3) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
+                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot template export <world>");
                     return true;
                 } else if (args[0].equalsIgnoreCase("import")) {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
+                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
                     return true;
                 }
             }
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template <import|export> <world> [template]");
+            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot template <import|export> <world> [template]");
             return true;
         }
         final String world = args[1];
         switch (args[0].toLowerCase()) {
             case "import": {
                 if (args.length != 3) {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
+                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot template import <world> <template>");
                     return false;
                 }
                 if (PS.get().hasPlotArea(world)) {
-                    MainUtil.sendMessage(plr, C.SETUP_WORLD_TAKEN, world);
+                    MainUtil.sendMessage(player, C.SETUP_WORLD_TAKEN, world);
                     return false;
                 }
                 boolean result = extractAllFiles(world, args[2]);
                 if (!result) {
-                    MainUtil.sendMessage(plr, "&cInvalid template file: " + args[2] + ".template");
+                    MainUtil.sendMessage(player, "&cInvalid template file: " + args[2] + ".template");
                     return false;
                 }
                 File worldFile = new File(PS.get().IMP.getDirectory() + File.separator + "templates" + File.separator + "tmp-data.yml");
@@ -158,20 +158,20 @@ public class Template extends SubCommand {
                 SetQueue.IMP.addTask(new Runnable() {
                     @Override
                     public void run() {
-                        MainUtil.sendMessage(plr, "Done!");
-                        plr.teleport(WorldUtil.IMP.getSpawn(world));
+                        MainUtil.sendMessage(player, "Done!");
+                        player.teleport(WorldUtil.IMP.getSpawn(world));
                     }
                 });
                 return true;
             }
             case "export":
                 if (args.length != 2) {
-                    MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot template export <world>");
+                    MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot template export <world>");
                     return false;
                 }
                 final PlotArea area = PS.get().getPlotAreaByString(world);
                 if (area == null) {
-                    MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD);
+                    MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD);
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();
@@ -182,15 +182,15 @@ public class Template extends SubCommand {
                             manager.exportTemplate(area);
                         } catch (Exception e) { // Must recover from any exception thrown a third party template manager
                             e.printStackTrace();
-                            MainUtil.sendMessage(plr, "Failed: " + e.getMessage());
+                            MainUtil.sendMessage(player, "Failed: " + e.getMessage());
                             return;
                         }
-                        MainUtil.sendMessage(plr, "Done!");
+                        MainUtil.sendMessage(player, "Done!");
                     }
                 });
                 return true;
             default:
-                C.COMMAND_SYNTAX.send(plr, getUsage());
+                C.COMMAND_SYNTAX.send(player, getUsage());
         }
         return false;
     }

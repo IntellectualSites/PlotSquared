@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.plotsquared.general.commands.Command;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class Trust extends Command {
         checkTrue(plot.isOwner(player.getUUID()) || Permissions.hasPermission(player, "plots.admin.command.trust"), C.NO_PLOT_PERMS);
         checkTrue(args.length == 1, C.COMMAND_SYNTAX, getUsage());
         final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-        checkTrue(uuids != null && !uuids.isEmpty(), C.INVALID_PLAYER, args[0]);
+        checkTrue(!uuids.isEmpty(), C.INVALID_PLAYER, args[0]);
         Iterator<UUID> iter = uuids.iterator();
         int size = plot.getTrusted().size() + plot.getMembers().size();
         while (iter.hasNext()) {

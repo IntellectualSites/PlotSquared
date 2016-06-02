@@ -27,10 +27,10 @@ import java.util.Map.Entry;
 public class HybridPlotManager extends ClassicPlotManager {
 
     @Override
-    public void exportTemplate(PlotArea plotworld) throws IOException {
+    public void exportTemplate(PlotArea plotArea) throws IOException {
         HashSet<FileBytes> files = new HashSet<>(
-                Collections.singletonList(new FileBytes("templates/tmp-data.yml", Template.getBytes(plotworld))));
-        String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotworld.worldname + File.separator;
+                Collections.singletonList(new FileBytes("templates/tmp-data.yml", Template.getBytes(plotArea))));
+        String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plotArea.worldname + File.separator;
         String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + "__TEMP_DIR__" + File.separator;
         try {
             File sideroad = MainUtil.getFile(PS.get().IMP.getDirectory(), dir + "sideroad.schematic");
@@ -48,7 +48,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Template.zipAll(plotworld.worldname, files);
+        Template.zipAll(plotArea.worldname, files);
     }
 
     @Override
@@ -97,16 +97,16 @@ public class HybridPlotManager extends ClassicPlotManager {
     }
 
     @Override
-    public boolean createRoadSouth(PlotArea plotworld, Plot plot) {
-        super.createRoadSouth(plotworld, plot);
-        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+    public boolean createRoadSouth(PlotArea plotArea, Plot plot) {
+        super.createRoadSouth(plotArea, plot);
+        HybridPlotWorld hpw = (HybridPlotWorld) plotArea;
         PlotId id = plot.getId();
         PlotId id2 = new PlotId(id.x, id.y + 1);
         Location bot = getPlotBottomLocAbs(hpw, id2);
         Location top = getPlotTopLocAbs(hpw, id);
-        Location pos1 = new Location(plotworld.worldname, bot.getX() - 1, 0, top.getZ() + 1);
-        Location pos2 = new Location(plotworld.worldname, top.getX() + 1, 255, bot.getZ());
-        MainUtil.resetBiome(plotworld, pos1, pos2);
+        Location pos1 = new Location(plotArea.worldname, bot.getX() - 1, 0, top.getZ() + 1);
+        Location pos2 = new Location(plotArea.worldname, top.getX() + 1, 255, bot.getZ());
+        MainUtil.resetBiome(plotArea, pos1, pos2);
         if (!hpw.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
@@ -115,9 +115,9 @@ public class HybridPlotManager extends ClassicPlotManager {
     }
 
     @Override
-    public boolean createRoadSouthEast(PlotArea plotworld, Plot plot) {
-        super.createRoadSouthEast(plotworld, plot);
-        HybridPlotWorld hpw = (HybridPlotWorld) plotworld;
+    public boolean createRoadSouthEast(PlotArea plotArea, Plot plot) {
+        super.createRoadSouthEast(plotArea, plot);
+        HybridPlotWorld hpw = (HybridPlotWorld) plotArea;
         PlotId id = plot.getId();
         PlotId id2 = new PlotId(id.x + 1, id.y + 1);
         Location pos1 = getPlotTopLocAbs(hpw, id).add(1, 0, 1);
@@ -139,13 +139,13 @@ public class HybridPlotManager extends ClassicPlotManager {
      * to have 512x512 sized plots. </p>
      */
     @Override
-    public boolean clearPlot(PlotArea plotworld, Plot plot, final Runnable whenDone) {
-        final String world = plotworld.worldname;
-        final HybridPlotWorld dpw = (HybridPlotWorld) plotworld;
+    public boolean clearPlot(PlotArea plotArea, Plot plot, final Runnable whenDone) {
+        final String world = plotArea.worldname;
+        final HybridPlotWorld dpw = (HybridPlotWorld) plotArea;
         Location pos1 = plot.getBottomAbs();
         Location pos2 = plot.getExtendedTopAbs();
         // If augmented
-        final boolean canRegen = (plotworld.TYPE == 0) && (plotworld.TERRAIN == 0);
+        final boolean canRegen = (plotArea.TYPE == 0) && (plotArea.TERRAIN == 0);
         // The component blocks
         final PlotBlock[] plotfloor = dpw.TOP_BLOCK;
         final PlotBlock[] filling = dpw.MAIN_BLOCK;
@@ -197,10 +197,10 @@ public class HybridPlotManager extends ClassicPlotManager {
         return true;
     }
 
-    public void pastePlotSchematic(HybridPlotWorld plotworld, Location l1, Location l2) {
-        if (!plotworld.PLOT_SCHEMATIC) {
+    public void pastePlotSchematic(HybridPlotWorld plotWorld, Location l1, Location l2) {
+        if (!plotWorld.PLOT_SCHEMATIC) {
             return;
         }
-        createSchemAbs(plotworld, l1, l2, false);
+        createSchemAbs(plotWorld, l1, l2, false);
     }
 }

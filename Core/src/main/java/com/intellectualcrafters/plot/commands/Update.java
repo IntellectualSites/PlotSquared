@@ -21,7 +21,7 @@ import java.net.URL;
 public class Update extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         URL url;
         if (args.length == 0) {
             url = Updater.getUpdate();
@@ -29,20 +29,20 @@ public class Update extends SubCommand {
             try {
                 url = new URL(args[0]);
             } catch (MalformedURLException ignored) {
-                MainUtil.sendMessage(plr, "&cInvalid URL: " + args[0]);
-                MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot update [url]");
+                MainUtil.sendMessage(player, "&cInvalid URL: " + args[0]);
+                MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot update [url]");
                 return false;
             }
         } else {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, getUsage().replaceAll("\\{label\\}", "plot"));
+            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, getUsage().replaceAll("\\{label\\}", "plot"));
             return false;
         }
         if (url == null) {
-            MainUtil.sendMessage(plr, "&cNo update found!");
-            MainUtil.sendMessage(plr, "&cTo manually specify an update URL: /plot update <url>");
+            MainUtil.sendMessage(player, "&cNo update found!");
+            MainUtil.sendMessage(player, "&cTo manually specify an update URL: /plot update <url>");
             return false;
         }
-        if (PS.get().update(plr, url) && (url == PS.get().update)) {
+        if (PS.get().update(player, url) && (url == PS.get().update)) {
             PS.get().update = null;
         }
         return true;

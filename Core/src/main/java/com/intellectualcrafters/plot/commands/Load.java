@@ -29,40 +29,40 @@ import java.util.List;
 public class Load extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
 
         if (!Settings.METRICS) {
-            MainUtil.sendMessage(plr,
+            MainUtil.sendMessage(player,
                     "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
             return false;
         }
-        String world = plr.getLocation().getWorld();
+        String world = player.getLocation().getWorld();
         if (!PS.get().hasPlotArea(world)) {
-            return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            return !sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = plr.getCurrentPlot();
+        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.load")) {
-            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.load")) {
+            MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
             return false;
         }
 
         if (args.length != 0) {
             if (args.length == 1) {
-                List<String> schematics = plr.getMeta("plot_schematics");
+                List<String> schematics = player.getMeta("plot_schematics");
                 if (schematics == null) {
                     // No schematics found:
-                    MainUtil.sendMessage(plr, C.LOAD_NULL);
+                    MainUtil.sendMessage(player, C.LOAD_NULL);
                     return false;
                 }
                 String schematic;
@@ -70,26 +70,26 @@ public class Load extends SubCommand {
                     schematic = schematics.get(Integer.parseInt(args[0]) - 1);
                 } catch (NumberFormatException ignored) {
                     // use /plot load <index>
-                    MainUtil.sendMessage(plr, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ')');
+                    MainUtil.sendMessage(player, C.NOT_VALID_NUMBER, "(1, " + schematics.size() + ')');
                     return false;
                 }
                 final URL url;
                 try {
-                    url = new URL(Settings.WEB_URL + "saves/" + plr.getUUID() + '/' + schematic + ".schematic");
+                    url = new URL(Settings.WEB_URL + "saves/" + player.getUUID() + '/' + schematic + ".schematic");
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
-                    MainUtil.sendMessage(plr, C.LOAD_FAILED);
+                    MainUtil.sendMessage(player, C.LOAD_FAILED);
                     return false;
                 }
                 plot.addRunning();
-                MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
+                MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
                 TaskManager.runTaskAsync(new Runnable() {
                     @Override
                     public void run() {
                         Schematic schematic = SchematicHandler.manager.getSchematic(url);
                         if (schematic == null) {
                             plot.removeRunning();
-                            sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
+                            sendMessage(player, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
                             return;
                         }
                         SchematicHandler.manager.paste(schematic, plot, 0, 0, 0, true, new RunnableVal<Boolean>() {
@@ -97,9 +97,9 @@ public class Load extends SubCommand {
                             public void run(Boolean value) {
                                 plot.removeRunning();
                                 if (value) {
-                                    sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
+                                    sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
                                 } else {
-                                    sendMessage(plr, C.SCHEMATIC_PASTE_FAILED);
+                                    sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
                                 }
                             }
                         });
@@ -108,30 +108,30 @@ public class Load extends SubCommand {
                 return true;
             }
             plot.removeRunning();
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot load <index>");
+            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot load <index>");
             return false;
         }
 
         // list schematics
 
-        List<String> schematics = plr.getMeta("plot_schematics");
+        List<String> schematics = player.getMeta("plot_schematics");
         if (schematics == null) {
             plot.addRunning();
             TaskManager.runTaskAsync(new Runnable() {
                 @Override
                 public void run() {
-                    List<String> schematics = SchematicHandler.manager.getSaves(plr.getUUID());
+                    List<String> schematics = SchematicHandler.manager.getSaves(player.getUUID());
                     plot.removeRunning();
                     if ((schematics == null) || schematics.isEmpty()) {
-                        MainUtil.sendMessage(plr, C.LOAD_FAILED);
+                        MainUtil.sendMessage(player, C.LOAD_FAILED);
                         return;
                     }
-                    plr.setMeta("plot_schematics", schematics);
-                    displaySaves(plr);
+                    player.setMeta("plot_schematics", schematics);
+                    displaySaves(player);
                 }
             });
         } else {
-            displaySaves(plr);
+            displaySaves(player);
         }
         return true;
     }

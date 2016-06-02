@@ -28,6 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -192,9 +193,9 @@ public class PlotAPI {
     @Deprecated
     public String[] getPermissions() {
         ArrayList<String> perms = new ArrayList<>();
-        for (C c : C.values()) {
-            if ("static.permissions".equals(c.getCategory())) {
-                perms.add(c.s());
+        for (C caption : C.values()) {
+            if ("static.permissions".equals(caption.getCategory())) {
+                perms.add(caption.s());
             }
         }
         return perms.toArray(new String[perms.size()]);
@@ -249,7 +250,7 @@ public class PlotAPI {
      */
     public Set<PlotArea> getPlotAreas(World world) {
         if (world == null) {
-            return new HashSet<>();
+            return Collections.emptySet();
         }
         return PS.get().getPlotAreas(world.getName());
     }
@@ -661,8 +662,8 @@ public class PlotAPI {
      *
      */
     public int getAllowedPlots(Player player) {
-        PlotPlayer pp = PlotPlayer.wrap(player);
-        return pp.getAllowedPlots();
+        PlotPlayer plotPlayer = PlotPlayer.wrap(player);
+        return plotPlayer.getAllowedPlots();
     }
 
     /**

@@ -17,26 +17,26 @@ public class Permissions {
     /**
      * Check if a player has a permission (C class helps keep track of permissions).
      * @param player
-     * @param c
+     * @param caption
      * @return
      */
-    public static boolean hasPermission(PlotPlayer player, C c) {
-        return hasPermission(player, c.s());
+    public static boolean hasPermission(PlotPlayer player, C caption) {
+        return hasPermission(player, caption.s());
     }
     
     /**
-     * Check if a PlotPlayer has a permission
+     * Check if a {@link PlotPlayer} has a permission.
      * @param player
-     * @param perm
+     * @param permission
      * @return
      */
-    public static boolean hasPermission(PlotPlayer player, String perm) {
+    public static boolean hasPermission(PlotPlayer player, String permission) {
         if (!Settings.PERMISSION_CACHING) {
-            return hasPermission((CommandCaller) player, perm);
+            return hasPermission((CommandCaller) player, permission);
         }
         HashMap<String, Boolean> map = player.getMeta("perm");
         if (map != null) {
-            Boolean result = map.get(perm);
+            Boolean result = map.get(permission);
             if (result != null) {
                 return result;
             }
@@ -44,19 +44,19 @@ public class Permissions {
             map = new HashMap<>();
             player.setMeta("perm", map);
         }
-        boolean result = hasPermission((CommandCaller) player, perm);
-        map.put(perm, result);
+        boolean result = hasPermission((CommandCaller) player, permission);
+        map.put(permission, result);
         return result;
     }
     
     /**
-     * Check if a CommandCaller (PlotPlayer implements CommandCaller) has a permission.
-     * @param player
+     * Check if a {@code CommandCaller} has a permission.
+     * @param caller
      * @param permission
      * @return
      */
-    public static boolean hasPermission(CommandCaller player, String permission) {
-        if (player.hasPermission(permission) || player.hasPermission(C.PERMISSION_ADMIN.s())) {
+    public static boolean hasPermission(CommandCaller caller, String permission) {
+        if (caller.hasPermission(permission) || caller.hasPermission(C.PERMISSION_ADMIN.s())) {
             return true;
         }
         permission = permission.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
@@ -65,7 +65,7 @@ public class Permissions {
         for (int i = 0; i <= (nodes.length - 1); i++) {
             n.append(nodes[i] + ".");
             if (!permission.equals(n + C.PERMISSION_STAR.s())) {
-                if (player.hasPermission(n + C.PERMISSION_STAR.s())) {
+                if (caller.hasPermission(n + C.PERMISSION_STAR.s())) {
                     return true;
                 }
             }

@@ -28,11 +28,11 @@ public class SpongeSetupUtils extends SetupUtils {
     }
     
     @Override
-    public String getGenerator(final PlotArea plotworld) {
+    public String getGenerator(final PlotArea plotArea) {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
-        final World world = SpongeUtil.getWorld(plotworld.worldname);
+        final World world = SpongeUtil.getWorld(plotArea.worldname);
         if (world == null) {
             return null;
         }

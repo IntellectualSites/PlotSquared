@@ -15,7 +15,7 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class DebugLoadTest extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         PS.get().plots_tmp = DBFunc.getPlots();
         return true;
     }

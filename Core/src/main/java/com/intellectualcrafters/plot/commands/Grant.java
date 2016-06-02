@@ -9,6 +9,7 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.Permissions;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.UUID;
 
 @CommandDeclaration(
@@ -20,21 +21,21 @@ import java.util.UUID;
 public class Grant extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
             case "add":
             case "check":
-                if (Permissions.hasPermission(plr, "plots.grant." + arg0)) {
-                    C.NO_PERMISSION.send(plr, "plots.grant." + arg0);
+                if (Permissions.hasPermission(player, "plots.grant." + arg0)) {
+                    C.NO_PERMISSION.send(player, "plots.grant." + arg0);
                     return false;
                 }
                 if (args.length > 2) {
                     break;
                 }
-                final UUID uuid = args.length == 2 ? UUIDHandler.getUUIDFromString(args[1]) : plr.getUUID();
+                final UUID uuid = args.length == 2 ? UUIDHandler.getUUIDFromString(args[1]) : player.getUUID();
                 if (uuid == null) {
-                    C.INVALID_PLAYER.send(plr, args[1]);
+                    C.INVALID_PLAYER.send(player, args[1]);
                     return false;
                 }
                 MainUtil.getPersistentMeta(uuid, "grantedPlots", new RunnableVal<byte[]>() {
@@ -42,7 +43,7 @@ public class Grant extends SubCommand {
                     public void run(byte[] array) {
                         if (arg0.equals("check")) { // check
                             int granted = array == null ? 0 : ByteArrayUtilities.bytesToInteger(array);
-                            C.GRANTED_PLOTS.send(plr, granted);
+                            C.GRANTED_PLOTS.send(player, granted);
                         } else { // add
                             int amount = 1 + (array == null ? 0 : ByteArrayUtilities.bytesToInteger(array));
                             boolean replace = array != null;
@@ -52,7 +53,7 @@ public class Grant extends SubCommand {
                 });
                 return true;
         }
-        C.COMMAND_SYNTAX.send(plr, getUsage());
+        C.COMMAND_SYNTAX.send(player, getUsage());
         return false;
     }
 

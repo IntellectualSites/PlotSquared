@@ -28,31 +28,31 @@ import java.util.UUID;
 public class Save extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
 
         if (!Settings.METRICS) {
-            MainUtil.sendMessage(plr,
+            MainUtil.sendMessage(player,
                     "&cPlease enable metrics in order to use this command.\n&7 - Or host it yourself if you don't like the free service");
             return false;
         }
-        String world = plr.getLocation().getWorld();
+        String world = player.getLocation().getWorld();
         if (!PS.get().hasPlotArea(world)) {
-            return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            return !sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = plr.getCurrentPlot();
+        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.save")) {
-            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.save")) {
+            MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
             return false;
         }
         plot.addRunning();
@@ -69,17 +69,17 @@ public class Save extends SubCommand {
                         PlotId id = plot.getId();
                         String world = plot.getArea().toString().replaceAll(";", "-").replaceAll("[^A-Za-z0-9]", "");
                         final String file = time + '_' + world + '_' + id.x + '_' + id.y + '_' + size + '_' + name;
-                        UUID uuid = plr.getUUID();
+                        UUID uuid = player.getUUID();
                         SchematicHandler.manager.upload(value, uuid, file, new RunnableVal<URL>() {
                             @Override
                             public void run(URL url) {
                                 plot.removeRunning();
                                 if (url == null) {
-                                    MainUtil.sendMessage(plr, C.SAVE_FAILED);
+                                    MainUtil.sendMessage(player, C.SAVE_FAILED);
                                     return;
                                 }
-                                MainUtil.sendMessage(plr, C.SAVE_SUCCESS);
-                                List<String> schematics = plr.getMeta("plot_schematics");
+                                MainUtil.sendMessage(player, C.SAVE_SUCCESS);
+                                List<String> schematics = player.getMeta("plot_schematics");
                                 if (schematics != null) {
                                     schematics.add(file);
                                 }

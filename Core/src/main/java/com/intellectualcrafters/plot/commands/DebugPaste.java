@@ -21,7 +21,7 @@ import java.io.IOException;
 public class DebugPaste extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
@@ -31,7 +31,7 @@ public class DebugPaste extends SubCommand {
                     try {
                         latestLOG = HastebinUtility.upload(new File(PS.get().IMP.getDirectory(), "../../logs/latest.log"));
                     } catch (IOException ignored) {
-                        MainUtil.sendMessage(plr, "&clatest.log is too big to be pasted, will ignore");
+                        MainUtil.sendMessage(player, "&clatest.log is too big to be pasted, will ignore");
                         latestLOG = "too big :(";
                     }
                     StringBuilder b = new StringBuilder();
@@ -68,7 +68,7 @@ public class DebugPaste extends SubCommand {
                     b.append("\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
 
                     String link = HastebinUtility.upload(b.toString());
-                    plr.sendMessage(C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
+                    player.sendMessage(C.DEBUG_REPORT_CREATED.s().replace("%url%", link));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

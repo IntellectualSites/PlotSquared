@@ -33,37 +33,37 @@ public class SchematicCmd extends SubCommand {
     private boolean running = false;
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length < 1) {
-            sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
+            sendMessage(player, C.SCHEMATIC_MISSING_ARG);
             return true;
         }
         String arg = args[0].toLowerCase();
         switch (arg) {
             case "paste": {
-                if (!Permissions.hasPermission(plr, "plots.schematic.paste")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.paste");
+                if (!Permissions.hasPermission(player, "plots.schematic.paste")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.schematic.paste");
                     return false;
                 }
                 if (args.length < 2) {
-                    sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
+                    sendMessage(player, C.SCHEMATIC_MISSING_ARG);
                     break;
                 }
-                Location loc = plr.getLocation();
+                Location loc = player.getLocation();
                 final Plot plot = loc.getPlotAbs();
                 if (plot == null) {
-                    return !sendMessage(plr, C.NOT_IN_PLOT);
+                    return !sendMessage(player, C.NOT_IN_PLOT);
                 }
                 if (!plot.hasOwner()) {
-                    MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+                    MainUtil.sendMessage(player, C.PLOT_UNOWNED);
                     return false;
                 }
-                if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.schematic.paste")) {
-                    MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+                if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.schematic.paste")) {
+                    MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                     return false;
                 }
                 if (this.running) {
-                    MainUtil.sendMessage(plr, "&cTask is already running.");
+                    MainUtil.sendMessage(player, "&cTask is already running.");
                     return false;
                 }
                 final String location = args[1];
@@ -80,7 +80,7 @@ public class SchematicCmd extends SubCommand {
                                 schematic = SchematicHandler.manager.getSchematic(url);
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent url: " + location);
+                                sendMessage(player, C.SCHEMATIC_INVALID, "non-existent url: " + location);
                                 SchematicCmd.this.running = false;
                                 return;
                             }
@@ -89,7 +89,7 @@ public class SchematicCmd extends SubCommand {
                         }
                         if (schematic == null) {
                             SchematicCmd.this.running = false;
-                            sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
+                            sendMessage(player, C.SCHEMATIC_INVALID, "non-existent or not in gzip format");
                             return;
                         }
                         SchematicHandler.manager.paste(schematic, plot, 0, 0, 0, true, new RunnableVal<Boolean>() {
@@ -97,9 +97,9 @@ public class SchematicCmd extends SubCommand {
                             public void run(Boolean value) {
                                 SchematicCmd.this.running = false;
                                 if (value) {
-                                    sendMessage(plr, C.SCHEMATIC_PASTE_SUCCESS);
+                                    sendMessage(player, C.SCHEMATIC_PASTE_SUCCESS);
                                 } else {
-                                    sendMessage(plr, C.SCHEMATIC_PASTE_FAILED);
+                                    sendMessage(player, C.SCHEMATIC_PASTE_FAILED);
                                 }
                             }
                         });
@@ -141,81 +141,81 @@ public class SchematicCmd extends SubCommand {
             //            }
             case "saveall":
             case "exportall": {
-                if (!(plr instanceof ConsolePlayer)) {
-                    MainUtil.sendMessage(plr, C.NOT_CONSOLE);
+                if (!(player instanceof ConsolePlayer)) {
+                    MainUtil.sendMessage(player, C.NOT_CONSOLE);
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(plr, "&cNeed world argument. Use &7/plots sch exportall <area>");
+                    MainUtil.sendMessage(player, "&cNeed world argument. Use &7/plots sch exportall <area>");
                     return false;
                 }
                 PlotArea area = PS.get().getPlotAreaByString(args[1]);
                 if (area == null) {
-                    C.NOT_VALID_PLOT_WORLD.send(plr, args[1]);
+                    C.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;
                 }
                 Collection<Plot> plots = area.getPlots();
                 if (plots.isEmpty()) {
-                    MainUtil.sendMessage(plr, "&cInvalid world. Use &7/plots sch exportall <area>");
+                    MainUtil.sendMessage(player, "&cInvalid world. Use &7/plots sch exportall <area>");
                     return false;
                 }
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
                     @Override
                     public void run() {
-                        MainUtil.sendMessage(plr, "&aFinished mass export");
+                        MainUtil.sendMessage(player, "&aFinished mass export");
                     }
                 });
                 if (!result) {
-                    MainUtil.sendMessage(plr, "&cTask is already running.");
+                    MainUtil.sendMessage(player, "&cTask is already running.");
                     return false;
                 } else {
-                    MainUtil.sendMessage(plr, "&3PlotSquared&8->&3Schematic&8: &7Mass export has started. This may take a while.");
-                    MainUtil.sendMessage(plr, "&3PlotSquared&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
+                    MainUtil.sendMessage(player, "&3PlotSquared&8->&3Schematic&8: &7Mass export has started. This may take a while.");
+                    MainUtil.sendMessage(player, "&3PlotSquared&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
                 }
                 break;
             }
             case "export":
             case "save":
-                if (!Permissions.hasPermission(plr, "plots.schematic.save")) {
-                    MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.schematic.save");
+                if (!Permissions.hasPermission(player, "plots.schematic.save")) {
+                    MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.schematic.save");
                     return false;
                 }
                 if (this.running) {
-                    MainUtil.sendMessage(plr, "&cTask is already running.");
+                    MainUtil.sendMessage(player, "&cTask is already running.");
                     return false;
                 }
-                Location loc = plr.getLocation();
-                Plot plot = loc.getPlotAbs();
+                Location location = player.getLocation();
+                Plot plot = location.getPlotAbs();
                 if (plot == null) {
-                    return !sendMessage(plr, C.NOT_IN_PLOT);
+                    return !sendMessage(player, C.NOT_IN_PLOT);
                 }
                 if (!plot.hasOwner()) {
-                    MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+                    MainUtil.sendMessage(player, C.PLOT_UNOWNED);
                     return false;
                 }
-                if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.schematic.save")) {
-                    MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+                if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.schematic.save")) {
+                    MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                     return false;
                 }
-                loc.getWorld();
-                Collection<Plot> plots = new ArrayList<Plot>();
+                location.getWorld();
+                Collection<Plot> plots = new ArrayList<>();
                 plots.add(plot);
                 boolean result = SchematicHandler.manager.exportAll(plots, null, null, new Runnable() {
                     @Override
                     public void run() {
-                        MainUtil.sendMessage(plr, "&aFinished export");
+                        MainUtil.sendMessage(player, "&aFinished export");
                         SchematicCmd.this.running = false;
                     }
                 });
                 if (!result) {
-                    MainUtil.sendMessage(plr, "&cTask is already running.");
+                    MainUtil.sendMessage(player, "&cTask is already running.");
                     return false;
                 } else {
-                    MainUtil.sendMessage(plr, "&7Starting export...");
+                    MainUtil.sendMessage(player, "&7Starting export...");
                 }
                 break;
             default:
-                sendMessage(plr, C.SCHEMATIC_MISSING_ARG);
+                sendMessage(player, C.SCHEMATIC_MISSING_ARG);
                 break;
         }
         return true;

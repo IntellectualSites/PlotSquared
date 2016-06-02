@@ -51,40 +51,40 @@ public class Merge extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
-        Location loc = plr.getLocationFull();
+    public boolean onCommand(final PlotPlayer player, String[] args) {
+        Location loc = player.getLocationFull();
         final Plot plot = loc.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        UUID uuid = plr.getUUID();
+        UUID uuid = player.getUUID();
         if (!plot.isOwner(uuid)) {
-            if (!Permissions.hasPermission(plr, "plots.admin.command.merge")) {
-                MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+            if (!Permissions.hasPermission(player, "plots.admin.command.merge")) {
+                MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                 return false;
             } else {
                 uuid = plot.owner;
             }
         }
-        final PlotArea plotworld = plot.getArea();
-        final double price = plotworld.PRICES.containsKey("merge") ? plotworld.PRICES.get("merge") : 0;
-        if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d && EconHandler.manager.getMoney(plr) < price) {
-            sendMessage(plr, C.CANNOT_AFFORD_MERGE, String.valueOf(price));
+        final PlotArea plotArea = plot.getArea();
+        final double price = plotArea.PRICES.containsKey("merge") ? plotArea.PRICES.get("merge") : 0;
+        if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d && EconHandler.manager.getMoney(player) < price) {
+            sendMessage(player, C.CANNOT_AFFORD_MERGE, String.valueOf(price));
             return false;
         }
         final int size = plot.getConnectedPlots().size();
-        final int maxSize = Permissions.hasPermissionRange(plr, "plots.merge", Settings.MAX_PLOTS);
+        final int maxSize = Permissions.hasPermissionRange(player, "plots.merge", Settings.MAX_PLOTS);
         if (size - 1 > maxSize) {
-            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.merge." + (size + 1));
+            MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.merge." + (size + 1));
             return false;
         }
         int direction = -1;
         if (args.length == 0) {
-            switch (direction(plr.getLocationFull().getYaw())) {
+            switch (direction(player.getLocationFull().getYaw())) {
                 case "NORTH":
                     direction = 0;
                     break;
@@ -105,14 +105,14 @@ public class Merge extends SubCommand {
                     terrain = "true".equalsIgnoreCase(args[1]);
                 }
                 if (plot.autoMerge(-1, maxSize, uuid, terrain)) {
-                    if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d) {
-                        EconHandler.manager.withdrawMoney(plr, price);
-                        sendMessage(plr, C.REMOVED_BALANCE, String.valueOf(price));
+                    if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
+                        EconHandler.manager.withdrawMoney(player, price);
+                        sendMessage(player, C.REMOVED_BALANCE, String.valueOf(price));
                     }
-                    MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
+                    MainUtil.sendMessage(player, C.SUCCESS_MERGE);
                     return true;
                 }
-                MainUtil.sendMessage(plr, C.NO_AVAILABLE_AUTOMERGE);
+                MainUtil.sendMessage(player, C.NO_AVAILABLE_AUTOMERGE);
                 return false;
 
             }
@@ -124,8 +124,8 @@ public class Merge extends SubCommand {
             }
         }
         if (direction == -1) {
-            MainUtil.sendMessage(plr, C.COMMAND_SYNTAX, "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
-            MainUtil.sendMessage(plr, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
+            MainUtil.sendMessage(player, C.COMMAND_SYNTAX, "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
+            MainUtil.sendMessage(player, C.DIRECTION.s().replaceAll("%dir%", direction(loc.getYaw())));
             return false;
         }
         final boolean terrain;
@@ -135,20 +135,20 @@ public class Merge extends SubCommand {
             terrain = Settings.MERGE_REMOVES_ROADS;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
-            if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d) {
-                EconHandler.manager.withdrawMoney(plr, price);
-                sendMessage(plr, C.REMOVED_BALANCE, String.valueOf(price));
+            if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
+                EconHandler.manager.withdrawMoney(player, price);
+                sendMessage(player, C.REMOVED_BALANCE, String.valueOf(price));
             }
-            MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
+            MainUtil.sendMessage(player, C.SUCCESS_MERGE);
             return true;
         }
         Plot adjacent = plot.getRelative(direction);
         if (adjacent == null || !adjacent.hasOwner() || adjacent.getMerged((direction + 2) % 4) || adjacent.isOwner(uuid)) {
-            MainUtil.sendMessage(plr, C.NO_AVAILABLE_AUTOMERGE);
+            MainUtil.sendMessage(player, C.NO_AVAILABLE_AUTOMERGE);
             return false;
         }
-        if (!Permissions.hasPermission(plr, C.PERMISSION_MERGE_OTHER)) {
-            MainUtil.sendMessage(plr, C.NO_PERMISSION, C.PERMISSION_MERGE_OTHER);
+        if (!Permissions.hasPermission(player, C.PERMISSION_MERGE_OTHER)) {
+            MainUtil.sendMessage(player, C.NO_PERMISSION, C.PERMISSION_MERGE_OTHER);
             return false;
         }
         java.util.Set<UUID> uuids = adjacent.getOwners();
@@ -165,33 +165,33 @@ public class Merge extends SubCommand {
                 public void run() {
                     MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
                     plot.autoMerge(dir, maxSize - size, owner, terrain);
-                    PlotPlayer pp = UUIDHandler.getPlayer(plr.getUUID());
+                    PlotPlayer pp = UUIDHandler.getPlayer(player.getUUID());
                     if (pp == null) {
                         sendMessage(accepter, C.MERGE_NOT_VALID);
                         return;
                     }
-                    if (EconHandler.manager != null && plotworld.USE_ECONOMY && price > 0d) {
-                        if (EconHandler.manager.getMoney(plr) < price) {
-                            sendMessage(plr, C.CANNOT_AFFORD_MERGE, String.valueOf(price));
+                    if (EconHandler.manager != null && plotArea.USE_ECONOMY && price > 0d) {
+                        if (EconHandler.manager.getMoney(player) < price) {
+                            sendMessage(player, C.CANNOT_AFFORD_MERGE, String.valueOf(price));
                             return;
                         }
-                        EconHandler.manager.withdrawMoney(plr, price);
-                        sendMessage(plr, C.REMOVED_BALANCE, String.valueOf(price));
+                        EconHandler.manager.withdrawMoney(player, price);
+                        sendMessage(player, C.REMOVED_BALANCE, String.valueOf(price));
                     }
-                    MainUtil.sendMessage(plr, C.SUCCESS_MERGE);
+                    MainUtil.sendMessage(player, C.SUCCESS_MERGE);
                 }
             };
-            if (hasConfirmation(plr)) {
-                CmdConfirm.addPending(accepter, C.MERGE_REQUEST_CONFIRM.s().replaceAll("%s", plr.getName()), run);
+            if (hasConfirmation(player)) {
+                CmdConfirm.addPending(accepter, C.MERGE_REQUEST_CONFIRM.s().replaceAll("%s", player.getName()), run);
             } else {
                 run.run();
             }
         }
         if (!isOnline) {
-            MainUtil.sendMessage(plr, C.NO_AVAILABLE_AUTOMERGE);
+            MainUtil.sendMessage(player, C.NO_AVAILABLE_AUTOMERGE);
             return false;
         }
-        MainUtil.sendMessage(plr, C.MERGE_REQUESTED);
+        MainUtil.sendMessage(player, C.MERGE_REQUESTED);
         return true;
     }
 }

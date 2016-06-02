@@ -19,18 +19,18 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Desc extends SetCommand {
 
     @Override
-    public boolean set(PlotPlayer plr, Plot plot, String desc) {
+    public boolean set(PlotPlayer player, Plot plot, String desc) {
         if (desc.isEmpty()) {
             plot.removeFlag(Flags.DESCRIPTION);
-            MainUtil.sendMessage(plr, C.DESC_UNSET);
+            MainUtil.sendMessage(player, C.DESC_UNSET);
             return true;
         }
         boolean result = FlagManager.addPlotFlag(plot, Flags.DESCRIPTION, desc);
         if (!result) {
-            MainUtil.sendMessage(plr, C.FLAG_NOT_ADDED);
+            MainUtil.sendMessage(player, C.FLAG_NOT_ADDED);
             return false;
         }
-        MainUtil.sendMessage(plr, C.DESC_SET);
+        MainUtil.sendMessage(player, C.DESC_SET);
         return true;
     }
 }

@@ -619,35 +619,35 @@ public class MainUtil {
     /**
      * Send a message to the player.
      *
-     * @param plr Player to receive message
-     * @param c   Caption to send
+     * @param player the recipient of the message
+     * @param caption the message to send
      *
      * @return boolean success
      */
-    public static boolean sendMessage(PlotPlayer plr, C c, String... args) {
-        return sendMessage(plr, c, (Object[]) args);
+    public static boolean sendMessage(PlotPlayer player, C caption, String... args) {
+        return sendMessage(player, caption, (Object[]) args);
     }
 
     /**
      * Send a message to the player
      *
-     * @param plr Player to receive message
-     * @param c   Caption to send
+     * @param player the recipient of the message
+     * @param caption the message to send
      *
      * @return boolean success
      */
-    public static boolean sendMessage(final PlotPlayer plr, final C c, final Object... args) {
-        if (c.s().isEmpty()) {
+    public static boolean sendMessage(final PlotPlayer player, final C caption, final Object... args) {
+        if (caption.s().isEmpty()) {
             return true;
         }
         TaskManager.runTaskAsync(new Runnable() {
             @Override
             public void run() {
-                String m = C.format(c, args);
-                if (plr == null) {
+                String m = C.format(caption, args);
+                if (player == null) {
                     PS.log(m);
                 } else {
-                    plr.sendMessage(m);
+                    player.sendMessage(m);
                 }
             }
         });
@@ -696,11 +696,11 @@ public class MainUtil {
 
     public static Set<UUID> getUUIDsFromString(String list) {
         String[] split = list.split(",");
-        HashSet<UUID> result = new HashSet<UUID>();
+        HashSet<UUID> result = new HashSet<>();
         for (String name : split) {
-            if (name.length() == 0) {
+            if (name.isEmpty()) {
                 // Invalid
-                return null;
+                return Collections.emptySet();
             }
             if (name.equals("*")) {
                 result.add(DBFunc.everyone);
@@ -711,12 +711,12 @@ public class MainUtil {
                     result.add(UUID.fromString(name));
                     continue;
                 } catch (IllegalArgumentException ignored) {
-                    return null;
+                    return Collections.emptySet();
                 }
             }
             UUID uuid = UUIDHandler.getUUID(name, null);
             if (uuid == null) {
-                return null;
+                return Collections.emptySet();
             }
             result.add(uuid);
         }
@@ -856,9 +856,9 @@ public class MainUtil {
     }
 
     public static void getPersistentMeta(UUID uuid, final String key, final RunnableVal<byte[]> result) {
-        PlotPlayer pp = UUIDHandler.getPlayer(uuid);
-        if (pp != null) {
-            result.run(pp.getPersistentMeta(key));
+        PlotPlayer player = UUIDHandler.getPlayer(uuid);
+        if (player != null) {
+            result.run(player.getPersistentMeta(key));
         } else {
             DBFunc.dbManager.getPersistentMeta(uuid, new RunnableVal<Map<String, byte[]>>() {
                 @Override

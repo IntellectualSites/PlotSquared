@@ -15,13 +15,13 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Debug extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             StringBuilder msg = new StringBuilder();
-            for (C c : C.values()) {
-                msg.append(c.s()).append("\n");
+            for (C caption : C.values()) {
+                msg.append(caption.s()).append("\n");
             }
-            MainUtil.sendMessage(plr, msg.toString());
+            MainUtil.sendMessage(player, msg.toString());
             return true;
         }
         StringBuilder information = new StringBuilder();
@@ -35,7 +35,7 @@ public class Debug extends SubCommand {
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", C.values().length));
         information.append(getLine(line, "View all captions", "/plot debug msg"));
-        MainUtil.sendMessage(plr, information.toString());
+        MainUtil.sendMessage(player, information.toString());
         return true;
     }
 

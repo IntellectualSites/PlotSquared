@@ -51,23 +51,23 @@ public class Auto extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
-        PlotArea plotarea = plr.getApplicablePlotArea();
+    public boolean onCommand(PlotPlayer player, String[] args) {
+        PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
-            MainUtil.sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            MainUtil.sendMessage(player, C.NOT_IN_PLOT_WORLD);
             return false;
         }
         int size_x = 1;
         int size_z = 1;
         String schematic = null;
         if (args.length > 0) {
-            if (Permissions.hasPermission(plr, "plots.auto.mega")) {
+            if (Permissions.hasPermission(player, "plots.auto.mega")) {
                 try {
                     String[] split = args[0].split(",|;");
                     size_x = Integer.parseInt(split[0]);
                     size_z = Integer.parseInt(split[1]);
                     if (size_x < 1 || size_z < 1) {
-                        MainUtil.sendMessage(plr, "&cError: size<=0");
+                        MainUtil.sendMessage(player, "&cError: size<=0");
                     }
                     if (args.length > 1) {
                         schematic = args[1];
@@ -87,31 +87,31 @@ public class Auto extends SubCommand {
             }
         }
         if (size_x * size_z > Settings.MAX_AUTO_SIZE) {
-            MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
+            MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, Settings.MAX_AUTO_SIZE + "");
             return false;
         }
-        int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(plotarea.worldname);
-        int diff = currentPlots - plr.getAllowedPlots();
+        int currentPlots = Settings.GLOBAL_LIMIT ? player.getPlotCount() : player.getPlotCount(plotarea.worldname);
+        int diff = currentPlots - player.getAllowedPlots();
         if (diff + size_x * size_z > 0) {
             if (diff < 0) {
-                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
+                MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
                 return false;
-            } else if (plr.hasPersistentMeta("grantedPlots")) {
-                int grantedPlots = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
+            } else if (player.hasPersistentMeta("grantedPlots")) {
+                int grantedPlots = ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
                 if (grantedPlots - diff < size_x * size_z) {
-                    plr.removePersistentMeta("grantedPlots");
-                    return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                    player.removePersistentMeta("grantedPlots");
+                    return sendMessage(player, C.CANT_CLAIM_MORE_PLOTS);
                 } else {
                     int left = grantedPlots - diff - size_x * size_z;
                     if (left == 0) {
-                        plr.removePersistentMeta("grantedPlots");
+                        player.removePersistentMeta("grantedPlots");
                     } else {
-                        plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(left));
+                        player.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(left));
                     }
-                    sendMessage(plr, C.REMOVED_GRANTED_PLOT, "" + left, "" + (grantedPlots - left));
+                    sendMessage(player, C.REMOVED_GRANTED_PLOT, "" + left, "" + (grantedPlots - left));
                 }
             } else {
-                MainUtil.sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                MainUtil.sendMessage(player, C.CANT_CLAIM_MORE_PLOTS);
                 return false;
             }
         }
@@ -119,21 +119,21 @@ public class Auto extends SubCommand {
             double cost = plotarea.PRICES.get("claim");
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
-                if (EconHandler.manager.getMoney(plr) < cost) {
-                    sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
+                if (EconHandler.manager.getMoney(player) < cost) {
+                    sendMessage(player, C.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
                 }
-                EconHandler.manager.withdrawMoney(plr, cost);
-                sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+                EconHandler.manager.withdrawMoney(player, cost);
+                sendMessage(player, C.REMOVED_BALANCE, cost + "");
             }
         }
         if (schematic != null && !schematic.isEmpty()) {
             if (!plotarea.SCHEMATICS.contains(schematic.toLowerCase())) {
-                sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
+                sendMessage(player, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 return true;
             }
-            if (!Permissions.hasPermission(plr, "plots.claim." + schematic) && !Permissions.hasPermission(plr, "plots.admin.command.schematic")) {
-                MainUtil.sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+            if (!Permissions.hasPermission(player, "plots.claim." + schematic) && !Permissions.hasPermission(player, "plots.admin.command.schematic")) {
+                MainUtil.sendMessage(player, C.NO_SCHEMATIC_PERMISSION, schematic);
                 return true;
             }
         }
@@ -149,14 +149,14 @@ public class Auto extends SubCommand {
             for (int i = 0; i <= max; i++) {
                 PlotId currentId = new PlotId(origin.x + id.x, origin.y + id.y);
                 Plot current = plotarea.getPlotAbs(currentId);
-                if (current.canClaim(plr)) {
-                    current.claim(plr, true, null);
+                if (current.canClaim(player)) {
+                    current.claim(player, true, null);
                     return true;
                 }
                 id = getNextPlotId(id, 1);
             }
             // no free plots
-            MainUtil.sendMessage(plr, C.NO_FREE_PLOTS);
+            MainUtil.sendMessage(player, C.NO_FREE_PLOTS);
             return false;
         }
         plotarea.setMeta("lastPlot", new PlotId(0, 0));
@@ -164,12 +164,12 @@ public class Auto extends SubCommand {
             PlotId start = getNextPlotId(getLastPlotId(plotarea), 1);
             PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);
             plotarea.setMeta("lastPlot", start);
-            if (plotarea.canClaim(plr, start, end)) {
+            if (plotarea.canClaim(player, start, end)) {
                 for (int i = start.x; i <= end.x; i++) {
                     for (int j = start.y; j <= end.y; j++) {
                         Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
                         boolean teleport = i == end.x && j == end.y;
-                        plot.claim(plr, teleport, null);
+                        plot.claim(player, teleport, null);
                     }
                 }
                 if (size_x != 1 || size_z != 1) {

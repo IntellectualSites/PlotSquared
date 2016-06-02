@@ -19,16 +19,16 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Biome extends SetCommand {
 
     @Override
-    public boolean set(final PlotPlayer plr, final Plot plot, final String value) {
+    public boolean set(final PlotPlayer player, final Plot plot, final String value) {
         int biome = WorldUtil.IMP.getBiomeFromString(value);
         if (biome == -1) {
             String biomes = StringMan.join(WorldUtil.IMP.getBiomeList(), C.BLOCK_LIST_SEPARATER.s());
-            C.NEED_BIOME.send(plr);
-            MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + biomes);
+            C.NEED_BIOME.send(player);
+            MainUtil.sendMessage(player, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + biomes);
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
             return false;
         }
         plot.addRunning();
@@ -36,7 +36,7 @@ public class Biome extends SetCommand {
             @Override
             public void run() {
                 plot.removeRunning();
-                MainUtil.sendMessage(plr, C.BIOME_SET_TO.s() + value.toLowerCase());
+                MainUtil.sendMessage(player, C.BIOME_SET_TO.s() + value.toLowerCase());
             }
         });
         return true;

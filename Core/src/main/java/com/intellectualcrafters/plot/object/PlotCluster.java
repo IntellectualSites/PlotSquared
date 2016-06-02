@@ -85,12 +85,12 @@ public class PlotCluster {
         return (1 + this.pos2.x - this.pos1.x) * (1 + this.pos2.y - this.pos1.y);
     }
 
-    public void setArea(PlotArea plotarea) {
+    public void setArea(PlotArea plotArea) {
         if (this.area != null) {
             this.area.removeCluster(this);
         }
-        this.area = plotarea;
-        plotarea.addCluster(this);
+        this.area = plotArea;
+        plotArea.addCluster(this);
     }
     
     @Override

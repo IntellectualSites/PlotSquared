@@ -24,26 +24,26 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Delete extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
 
-        Location loc = plr.getLocation();
+        Location loc = player.getLocation();
         final Plot plot = loc.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            return !sendMessage(plr, C.PLOT_UNOWNED);
+            return !sendMessage(player, C.PLOT_UNOWNED);
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.delete")) {
-            return !sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.delete")) {
+            return !sendMessage(player, C.NO_PLOT_PERMS);
         }
-        final PlotArea plotworld = plot.getArea();
+        final PlotArea plotArea = plot.getArea();
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
         Runnable run = new Runnable() {
             @Override
             public void run() {
                 if (plot.getRunning() > 0) {
-                    MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+                    MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
                     return;
                 }
                 final long start = System.currentTimeMillis();
@@ -51,25 +51,25 @@ public class Delete extends SubCommand {
                     @Override
                     public void run() {
                         plot.removeRunning();
-                        if ((EconHandler.manager != null) && plotworld.USE_ECONOMY) {
-                            double value = plotworld.PRICES.get("sell") * plots.size();
+                        if ((EconHandler.manager != null) && plotArea.USE_ECONOMY) {
+                            double value = plotArea.PRICES.get("sell") * plots.size();
                             if (value > 0d) {
-                                EconHandler.manager.depositMoney(plr, value);
-                                sendMessage(plr, C.ADDED_BALANCE, String.valueOf(value));
+                                EconHandler.manager.depositMoney(player, value);
+                                sendMessage(player, C.ADDED_BALANCE, String.valueOf(value));
                             }
                         }
-                        MainUtil.sendMessage(plr, C.CLEARING_DONE, System.currentTimeMillis() - start);
+                        MainUtil.sendMessage(player, C.CLEARING_DONE, System.currentTimeMillis() - start);
                     }
                 });
                 if (result) {
                     plot.addRunning();
                 } else {
-                    MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+                    MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
                 }
             }
         };
-        if (hasConfirmation(plr)) {
-            CmdConfirm.addPending(plr, getCommandString() + ' ' + plot.getId(), run);
+        if (hasConfirmation(player)) {
+            CmdConfirm.addPending(player, getCommandString() + ' ' + plot.getId(), run);
         } else {
             TaskManager.runTask(run);
         }

@@ -23,7 +23,7 @@ import java.util.Objects;
 public class Reload extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
@@ -78,10 +78,10 @@ public class Reload extends SubCommand {
                 }
             });
             PS.get().config.save(PS.get().configFile);
-            MainUtil.sendMessage(plr, C.RELOADED_CONFIGS);
+            MainUtil.sendMessage(player, C.RELOADED_CONFIGS);
         } catch (InvalidConfigurationException | IOException e) {
             e.printStackTrace();
-            MainUtil.sendMessage(plr, C.RELOAD_FAILED);
+            MainUtil.sendMessage(player, C.RELOAD_FAILED);
         }
         return true;
     }

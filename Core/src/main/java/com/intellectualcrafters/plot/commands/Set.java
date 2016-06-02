@@ -47,25 +47,25 @@ public class Set extends SubCommand {
             }
 
             @Override
-            public boolean set(PlotPlayer plr, final Plot plot, String value) {
-                PlotArea plotworld = plr.getLocation().getPlotArea();
-                PlotManager manager = plr.getLocation().getPlotManager();
-                String[] components = manager.getPlotComponents(plotworld, plot.getId());
-                boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(plr.getUUID());
+            public boolean set(PlotPlayer player, final Plot plot, String value) {
+                PlotArea plotArea = player.getLocation().getPlotArea();
+                PlotManager manager = player.getLocation().getPlotManager();
+                String[] components = manager.getPlotComponents(plotArea, plot.getId());
+                boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(player.getUUID());
 
                 String[] args = value.split(" ");
                 String material = StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
 
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
-                        if (!Permissions.hasPermission(plr, "plots.set." + component)) {
-                            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.set." + component);
+                        if (!Permissions.hasPermission(player, "plots.set." + component)) {
+                            MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.set." + component);
                             return false;
                         }
                         PlotBlock[] blocks;
                         try {
                             if (args.length < 2) {
-                                MainUtil.sendMessage(plr, C.NEED_BLOCK);
+                                MainUtil.sendMessage(player, C.NEED_BLOCK);
                                 return true;
                             }
                             String[] split = material.split(",");
@@ -73,7 +73,7 @@ public class Set extends SubCommand {
                             for (int i = 0; i < blocks.length; i++) {
                                 PlotBlock block = blocks[i];
                                 if (block == null) {
-                                    MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, split[i]);
+                                    MainUtil.sendMessage(player, C.NOT_VALID_BLOCK, split[i]);
                                     String name;
                                     if (split[i].contains("%")) {
                                         name = split[i].split("%")[1];
@@ -84,36 +84,36 @@ public class Set extends SubCommand {
                                     if (match != null) {
                                         name = WorldUtil.IMP.getClosestMatchingName(match.best);
                                         if (name != null) {
-                                            MainUtil.sendMessage(plr, C.DID_YOU_MEAN, name.toLowerCase());
+                                            MainUtil.sendMessage(player, C.DID_YOU_MEAN, name.toLowerCase());
                                         }
                                     }
                                     return false;
                                 } else if (!allowUnsafe && !WorldUtil.IMP.isBlockSolid(block)) {
-                                    MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
+                                    MainUtil.sendMessage(player, C.NOT_ALLOWED_BLOCK, block.toString());
                                     return false;
                                 }
                             }
                             if (!allowUnsafe) {
                                 for (PlotBlock block : blocks) {
                                     if (!WorldUtil.IMP.isBlockSolid(block)) {
-                                        MainUtil.sendMessage(plr, C.NOT_ALLOWED_BLOCK, block.toString());
+                                        MainUtil.sendMessage(player, C.NOT_ALLOWED_BLOCK, block.toString());
                                         return false;
                                     }
                                 }
                             }
                         } catch (Exception ignored) {
-                            MainUtil.sendMessage(plr, C.NOT_VALID_BLOCK, material);
+                            MainUtil.sendMessage(player, C.NOT_VALID_BLOCK, material);
                             return false;
                         }
                         if (plot.getRunning() > 0) {
-                            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+                            MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
                             return false;
                         }
                         plot.addRunning();
                         for (Plot current : plot.getConnectedPlots()) {
                             current.setComponent(component, blocks);
                         }
-                        MainUtil.sendMessage(plr, C.GENERATING_COMPONENT);
+                        MainUtil.sendMessage(player, C.GENERATING_COMPONENT);
                         SetQueue.IMP.addTask(new Runnable() {
                             @Override
                             public void run() {
@@ -128,37 +128,37 @@ public class Set extends SubCommand {
         };
     }
 
-    public boolean noArgs(PlotPlayer plr) {
+    public boolean noArgs(PlotPlayer player) {
         ArrayList<String> newValues = new ArrayList<>();
         newValues.addAll(Arrays.asList("biome", "alias", "home", "flag"));
-        Plot plot = plr.getCurrentPlot();
+        Plot plot = player.getCurrentPlot();
         if (plot != null) {
             newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
         }
-        MainUtil.sendMessage(plr, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(newValues, C.BLOCK_LIST_SEPARATER.formatted()));
+        MainUtil.sendMessage(player, C.SUBCOMMAND_SET_OPTIONS_HEADER.s() + StringMan.join(newValues, C.BLOCK_LIST_SEPARATER.formatted()));
         return false;
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length == 0) {
-            return noArgs(plr);
+            return noArgs(player);
         }
         Command cmd = MainCommand.getInstance().getCommand("set" + args[0]);
         if (cmd != null) {
-            cmd.execute(plr, Arrays.copyOfRange(args, 1, args.length), null, null);
+            cmd.execute(player, Arrays.copyOfRange(args, 1, args.length), null, null);
             return true;
         }
         // Additional checks
-        Plot plot = plr.getCurrentPlot();
+        Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            MainUtil.sendMessage(plr, C.NOT_IN_PLOT);
+            MainUtil.sendMessage(player, C.NOT_IN_PLOT);
             return false;
         }
         // components
         HashSet<String> components = new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getArea(), plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
-            return this.component.onCommand(plr, Arrays.copyOfRange(args, 0, args.length));
+            return this.component.onCommand(player, Arrays.copyOfRange(args, 0, args.length));
         }
         // flag
         Flag<?> flag = FlagManager.getFlag(args[0].toLowerCase());
@@ -169,9 +169,9 @@ public class Set extends SubCommand {
                     a.append(" ").append(args[x]);
                 }
             }
-            MainCommand.onCommand(plr, ("flag set " + args[0] + a.toString()).split(" "));
+            MainCommand.onCommand(player, ("flag set " + args[0] + a.toString()).split(" "));
             return true;
         }
-        return noArgs(plr);
+        return noArgs(player);
     }
 }

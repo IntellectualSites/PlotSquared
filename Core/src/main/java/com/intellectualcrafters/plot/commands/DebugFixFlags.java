@@ -30,13 +30,13 @@ public class DebugFixFlags extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         PlotArea area = PS.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
-            MainUtil.sendMessage(plr, C.NOT_VALID_PLOT_WORLD, args[0]);
+            MainUtil.sendMessage(player, C.NOT_VALID_PLOT_WORLD, args[0]);
             return false;
         }
-        MainUtil.sendMessage(plr, "&8--- &6Starting task &8 ---");
+        MainUtil.sendMessage(player, "&8--- &6Starting task &8 ---");
         for (Plot plot : area.getPlots()) {
             HashMap<Flag<?>, Object> flags = plot.getFlags();
             Iterator<Entry<Flag<?>, Object>> i = flags.entrySet().iterator();
@@ -51,7 +51,7 @@ public class DebugFixFlags extends SubCommand {
                 DBFunc.setFlags(plot, plot.getFlags());
             }
         }
-        MainUtil.sendMessage(plr, "&aDone!");
+        MainUtil.sendMessage(player, "&aDone!");
         return true;
     }
 }

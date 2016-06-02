@@ -28,7 +28,7 @@ import java.util.Map.Entry;
         category = CommandCategory.ADMINISTRATION)
 public class Setup extends SubCommand {
 
-    public void displayGenerators(PlotPlayer plr) {
+    public void displayGenerators(PlotPlayer player) {
         StringBuilder message = new StringBuilder();
         message.append("&6What generator do you want?");
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
@@ -40,32 +40,32 @@ public class Setup extends SubCommand {
                 message.append("\n&8 - &7").append(entry.getKey()).append(" (Unknown structure)");
             }
         }
-        MainUtil.sendMessage(plr, message.toString());
+        MainUtil.sendMessage(player, message.toString());
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         // going through setup
-        SetupObject object = plr.getMeta("setup");
+        SetupObject object = player.getMeta("setup");
         if (object == null) {
             object = new SetupObject();
-            plr.setMeta("setup", object);
+            player.setMeta("setup", object);
             SetupUtils.manager.updateGenerators();
-            sendMessage(plr, C.SETUP_INIT);
-            displayGenerators(plr);
+            sendMessage(player, C.SETUP_INIT);
+            displayGenerators(player);
             return false;
         }
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("cancel")) {
-                plr.deleteMeta("setup");
-                MainUtil.sendMessage(plr, "&aCancelled setup");
+                player.deleteMeta("setup");
+                MainUtil.sendMessage(player, "&aCancelled setup");
                 return false;
             }
             if (args[0].equalsIgnoreCase("back")) {
                 if (object.setup_index > 0) {
                     object.setup_index--;
                     ConfigurationNode node = object.step[object.setup_index];
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, node.getDescription(), node.getType().getType(),
+                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, node.getDescription(), node.getType().getType(),
                             String.valueOf(node.getDefaultValue()));
                     return false;
                 } else if (object.current > 0) {
@@ -78,15 +78,15 @@ public class Setup extends SubCommand {
             case 0:  // choose generator
                 if (args.length != 1 || !SetupUtils.generators.containsKey(args[0])) {
                     String prefix = "\n&8 - &7";
-                    MainUtil.sendMessage(plr, "&cYou must choose a generator!" + prefix + StringMan.join(SetupUtils.generators.keySet(), prefix)
+                    MainUtil.sendMessage(player, "&cYou must choose a generator!" + prefix + StringMan.join(SetupUtils.generators.keySet(), prefix)
                             .replaceAll("PlotSquared", "&2PlotSquared"));
-                    sendMessage(plr, C.SETUP_INIT);
+                    sendMessage(player, C.SETUP_INIT);
                     return false;
                 }
                 object.setupGenerator = args[0];
                 object.current++;
                 String partial = "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots";
-                MainUtil.sendMessage(plr, "&6What world type do you want?\n&8 - &2DEFAULT&8 - &7Standard plot generation"
+                MainUtil.sendMessage(player, "&6What world type do you want?\n&8 - &2DEFAULT&8 - &7Standard plot generation"
                         + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + partial);
                 break;
             case 1:  // choose world type
@@ -100,13 +100,13 @@ public class Setup extends SubCommand {
                 types.add("augmented");
                 types.add("partial");
                 if (args.length != 1 || !types.contains(args[0].toLowerCase())) {
-                    MainUtil.sendMessage(plr, "&cYou must choose a world type!");
+                    MainUtil.sendMessage(player, "&cYou must choose a world type!");
                     for (String type : types) {
                         int i = allTypes.indexOf(type);
                         if (type.equals("default")) {
-                            MainUtil.sendMessage(plr, "&8 - &2" + type + " &8-&7 " + allDesc.get(i));
+                            MainUtil.sendMessage(player, "&8 - &2" + type + " &8-&7 " + allDesc.get(i));
                         } else {
-                            MainUtil.sendMessage(plr, "&8 - &7" + type + " &8-&7 " + allDesc.get(i));
+                            MainUtil.sendMessage(player, "&8 - &7" + type + " &8-&7 " + allDesc.get(i));
                         }
                     }
                     return false;
@@ -122,12 +122,12 @@ public class Setup extends SubCommand {
                         SetupUtils.generators.get(object.plotManager).getPlotGenerator().processSetup(object);
                     }
                     if (object.step.length == 0) {
-                        MainUtil.sendMessage(plr, "&6What do you want your world to be called?");
+                        MainUtil.sendMessage(player, "&6What do you want your world to be called?");
                         object.setup_index = 0;
                         return true;
                     }
                     ConfigurationNode step = object.step[object.setup_index];
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
                             String.valueOf(step.getDefaultValue()));
                 } else {
                     if (gen.isFull()) {
@@ -138,16 +138,16 @@ public class Setup extends SubCommand {
                         SetupUtils.generators.get(object.plotManager).getPlotGenerator().processSetup(object);
                     } else {
                         object.plotManager = "PlotSquared";
-                        MainUtil.sendMessage(plr, "&c[WARNING] The specified generator does not identify as BukkitPlotGenerator");
-                        MainUtil.sendMessage(plr, "&7 - You may need to manually configure the other plugin");
+                        MainUtil.sendMessage(player, "&c[WARNING] The specified generator does not identify as BukkitPlotGenerator");
+                        MainUtil.sendMessage(player, "&7 - You may need to manually configure the other plugin");
                         object.step = SetupUtils.generators.get(object.plotManager).getPlotGenerator()
                                 .getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null).getSettingNodes();
                     }
                     if (object.type == 2) {
-                        MainUtil.sendMessage(plr, "What would you like this area called?");
+                        MainUtil.sendMessage(player, "What would you like this area called?");
                         object.current++;
                     } else {
-                        MainUtil.sendMessage(plr, "&6What terrain would you like in plots?"
+                        MainUtil.sendMessage(player, "&6What terrain would you like in plots?"
                                 + "\n&8 - &2NONE&8 - &7No terrain at all"
                                 + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
                                 + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
@@ -158,42 +158,42 @@ public class Setup extends SubCommand {
                 break;
             case 2:  // area id
                 if (!StringMan.isAlphanumericUnd(args[0])) {
-                    MainUtil.sendMessage(plr, "&cThe area id must be alphanumerical!");
+                    MainUtil.sendMessage(player, "&cThe area id must be alphanumerical!");
                     return false;
                 }
                 for (PlotArea area : PS.get().getPlotAreas()) {
                     if (area.id != null && area.id.equalsIgnoreCase(args[0])) {
-                        MainUtil.sendMessage(plr, "&cYou must choose an area id that is not in use!");
+                        MainUtil.sendMessage(player, "&cYou must choose an area id that is not in use!");
                         return false;
                     }
                 }
                 object.id = args[0];
                 object.current++;
-                MainUtil.sendMessage(plr, "&6What should be the minimum Plot Id?");
+                MainUtil.sendMessage(player, "&6What should be the minimum Plot Id?");
                 break;
             case 3:  // min
                 object.min = PlotId.fromString(args[0]);
                 if (object.min == null) {
-                    MainUtil.sendMessage(plr, "&cYou must choose a valid minimum PlotId!");
+                    MainUtil.sendMessage(player, "&cYou must choose a valid minimum PlotId!");
                     return false;
                 }
                 object.current++;
-                MainUtil.sendMessage(plr, "&6What should be the maximum Plot Id?");
+                MainUtil.sendMessage(player, "&6What should be the maximum Plot Id?");
                 break;
             case 4:
                 // max
                 PlotId id = PlotId.fromString(args[0]);
                 if (id == null) {
-                    MainUtil.sendMessage(plr, "&cYou must choose a valid maximum PlotId!");
+                    MainUtil.sendMessage(player, "&cYou must choose a valid maximum PlotId!");
                     return false;
                 }
                 if (id.x <= object.min.x || id.y <= object.min.y) {
-                    MainUtil.sendMessage(plr, "&cThe max PlotId must be greater than the minimum!");
+                    MainUtil.sendMessage(player, "&cThe max PlotId must be greater than the minimum!");
                     return false;
                 }
                 object.max = id;
                 object.current++;
-                MainUtil.sendMessage(plr, "&6What terrain would you like in plots?"
+                MainUtil.sendMessage(player, "&6What terrain would you like in plots?"
                         + "\n&8 - &2NONE&8 - &7No terrain at all"
                         + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
                         + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
@@ -202,7 +202,7 @@ public class Setup extends SubCommand {
             case 5: { // Choose terrain
                 List<String> terrain = Arrays.asList("none", "ore", "road", "all");
                 if (args.length != 1 || !terrain.contains(args[0].toLowerCase())) {
-                    MainUtil.sendMessage(plr, "&cYou must choose the terrain!"
+                    MainUtil.sendMessage(player, "&cYou must choose the terrain!"
                             + "\n&8 - &2NONE&8 - &7No terrain at all"
                             + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
                             + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
@@ -216,58 +216,58 @@ public class Setup extends SubCommand {
                             .getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null).getSettingNodes();
                 }
                 ConfigurationNode step = object.step[object.setup_index];
-                sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
                         String.valueOf(step.getDefaultValue()));
                 break;
             }
             case 6:  // world setup
                 if (object.setup_index == object.step.length) {
-                    MainUtil.sendMessage(plr, "&6What do you want your world to be called?");
+                    MainUtil.sendMessage(player, "&6What do you want your world to be called?");
                     object.setup_index = 0;
                     object.current++;
                     return true;
                 }
                 ConfigurationNode step = object.step[object.setup_index];
                 if (args.length < 1) {
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
                             String.valueOf(step.getDefaultValue()));
                     return false;
                 }
                 boolean valid = step.isValid(args[0]);
                 if (valid) {
-                    sendMessage(plr, C.SETUP_VALID_ARG, step.getConstant(), args[0]);
+                    sendMessage(player, C.SETUP_VALID_ARG, step.getConstant(), args[0]);
                     step.setValue(args[0]);
                     object.setup_index++;
                     if (object.setup_index == object.step.length) {
-                        onCommand(plr, args);
+                        onCommand(player, args);
                         return false;
                     }
                     step = object.step[object.setup_index];
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
                             String.valueOf(step.getDefaultValue()));
                     return false;
                 } else {
-                    sendMessage(plr, C.SETUP_INVALID_ARG, args[0], step.getConstant());
-                    sendMessage(plr, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
+                    sendMessage(player, C.SETUP_INVALID_ARG, args[0], step.getConstant());
+                    sendMessage(player, C.SETUP_STEP, object.setup_index + 1, step.getDescription(), step.getType().getType(),
                             String.valueOf(step.getDefaultValue()));
                     return false;
                 }
             case 7:
                 if (args.length != 1) {
-                    MainUtil.sendMessage(plr, "&cYou need to choose a world name!");
+                    MainUtil.sendMessage(player, "&cYou need to choose a world name!");
                     return false;
                 }
                 if (WorldUtil.IMP.isWorld(args[0])) {
                     if (PS.get().hasPlotArea(args[0])) {
-                        MainUtil.sendMessage(plr, "&cThat world name is already taken!");
+                        MainUtil.sendMessage(player, "&cThat world name is already taken!");
                         return false;
                     }
-                    MainUtil.sendMessage(plr,
+                    MainUtil.sendMessage(player,
                             "&cThe world you specified already exists. After restarting, new terrain will use PlotSquared, however you may need to "
                                     + "reset the world for it to generate correctly!");
                 }
                 object.world = args[0];
-                plr.deleteMeta("setup");
+                player.deleteMeta("setup");
                 String world;
                 if (object.setupManager == null) {
                     world = SetupUtils.manager.setupWorld(object);
@@ -275,12 +275,12 @@ public class Setup extends SubCommand {
                     world = object.setupManager.setupWorld(object);
                 }
                 try {
-                    plr.teleport(WorldUtil.IMP.getSpawn(world));
+                    player.teleport(WorldUtil.IMP.getSpawn(world));
                 } catch (Exception e) {
-                    plr.sendMessage("&cAn error occurred. See console for more information");
+                    player.sendMessage("&cAn error occurred. See console for more information");
                     e.printStackTrace();
                 }
-                sendMessage(plr, C.SETUP_FINISHED, object.world);
+                sendMessage(player, C.SETUP_FINISHED, object.world);
         }
         return false;
     }

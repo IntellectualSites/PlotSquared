@@ -13,7 +13,7 @@ public abstract class PlotGenerator<T> {
         this.generator = generator;
     }
 
-    public abstract void initialize(PlotArea plotworld);
+    public abstract void initialize(PlotArea plotArea);
 
     /**
      * TYPE = 2;

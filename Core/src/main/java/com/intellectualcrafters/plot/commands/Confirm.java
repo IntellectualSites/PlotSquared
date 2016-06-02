@@ -15,15 +15,15 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Confirm extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
-        CmdInstance command = CmdConfirm.getPending(plr);
+    public boolean onCommand(PlotPlayer player, String[] args) {
+        CmdInstance command = CmdConfirm.getPending(player);
         if (command == null) {
-            MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
+            MainUtil.sendMessage(player, C.FAILED_CONFIRM);
             return false;
         }
-        CmdConfirm.removePending(plr);
+        CmdConfirm.removePending(player);
         if ((System.currentTimeMillis() - command.timestamp) > 20000) {
-            MainUtil.sendMessage(plr, C.FAILED_CONFIRM);
+            MainUtil.sendMessage(player, C.FAILED_CONFIRM);
             return false;
         }
         TaskManager.runTask(command.command);

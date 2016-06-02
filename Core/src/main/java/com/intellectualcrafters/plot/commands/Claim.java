@@ -20,61 +20,61 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Claim extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
         String schematic = "";
         if (args.length >= 1) {
             schematic = args[0];
         }
-        Location loc = plr.getLocation();
+        Location loc = player.getLocation();
         Plot plot = loc.getPlotAbs();
         if (plot == null) {
-            return sendMessage(plr, C.NOT_IN_PLOT);
+            return sendMessage(player, C.NOT_IN_PLOT);
         }
-        int currentPlots = Settings.GLOBAL_LIMIT ? plr.getPlotCount() : plr.getPlotCount(loc.getWorld());
+        int currentPlots = Settings.GLOBAL_LIMIT ? player.getPlotCount() : player.getPlotCount(loc.getWorld());
         int grants = 0;
-        if (currentPlots >= plr.getAllowedPlots()) {
-            if (plr.hasPersistentMeta("grantedPlots")) {
-                grants = ByteArrayUtilities.bytesToInteger(plr.getPersistentMeta("grantedPlots"));
+        if (currentPlots >= player.getAllowedPlots()) {
+            if (player.hasPersistentMeta("grantedPlots")) {
+                grants = ByteArrayUtilities.bytesToInteger(player.getPersistentMeta("grantedPlots"));
                 if (grants <= 0) {
-                    plr.removePersistentMeta("grantedPlots");
-                    return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                    player.removePersistentMeta("grantedPlots");
+                    return sendMessage(player, C.CANT_CLAIM_MORE_PLOTS);
                 }
             } else {
-                return sendMessage(plr, C.CANT_CLAIM_MORE_PLOTS);
+                return sendMessage(player, C.CANT_CLAIM_MORE_PLOTS);
             }
         }
-        if (!plot.canClaim(plr)) {
-            return sendMessage(plr, C.PLOT_IS_CLAIMED);
+        if (!plot.canClaim(player)) {
+            return sendMessage(player, C.PLOT_IS_CLAIMED);
         }
         PlotArea world = plot.getArea();
         if ((EconHandler.manager != null) && world.USE_ECONOMY) {
             double cost = world.PRICES.get("claim");
             if (cost > 0d) {
-                if (EconHandler.manager.getMoney(plr) < cost) {
-                    return sendMessage(plr, C.CANNOT_AFFORD_PLOT, "" + cost);
+                if (EconHandler.manager.getMoney(player) < cost) {
+                    return sendMessage(player, C.CANNOT_AFFORD_PLOT, "" + cost);
                 }
-                EconHandler.manager.withdrawMoney(plr, cost);
-                sendMessage(plr, C.REMOVED_BALANCE, cost + "");
+                EconHandler.manager.withdrawMoney(player, cost);
+                sendMessage(player, C.REMOVED_BALANCE, cost + "");
             }
         }
         if (grants > 0) {
             if (grants == 1) {
-                plr.removePersistentMeta("grantedPlots");
+                player.removePersistentMeta("grantedPlots");
             } else {
-                plr.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grants - 1));
+                player.setPersistentMeta("grantedPlots", ByteArrayUtilities.integerToBytes(grants - 1));
             }
-            sendMessage(plr, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
+            sendMessage(player, C.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
         }
         if (!schematic.isEmpty()) {
             if (world.SCHEMATIC_CLAIM_SPECIFY) {
                 if (!world.SCHEMATICS.contains(schematic.toLowerCase())) {
-                    return sendMessage(plr, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
+                    return sendMessage(player, C.SCHEMATIC_INVALID, "non-existent: " + schematic);
                 }
-                if (!Permissions.hasPermission(plr, "plots.claim." + schematic) && !Permissions.hasPermission(plr, "plots.admin.command.schematic")) {
-                    return sendMessage(plr, C.NO_SCHEMATIC_PERMISSION, schematic);
+                if (!Permissions.hasPermission(player, "plots.claim." + schematic) && !Permissions.hasPermission(player, "plots.admin.command.schematic")) {
+                    return sendMessage(player, C.NO_SCHEMATIC_PERMISSION, schematic);
                 }
             }
         }
-        return plot.claim(plr, false, schematic) || sendMessage(plr, C.PLOT_NOT_CLAIMED);
+        return plot.claim(player, false, schematic) || sendMessage(player, C.PLOT_NOT_CLAIMED);
     }
 }

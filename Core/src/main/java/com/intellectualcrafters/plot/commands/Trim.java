@@ -127,18 +127,18 @@ public class Trim extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
-            C.COMMAND_SYNTAX.send(plr, getUsage());
+            C.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
         final String world = args[0];
         if (!WorldUtil.IMP.isWorld(world) || !PS.get().hasPlotArea(world)) {
-            MainUtil.sendMessage(plr, C.NOT_VALID_WORLD);
+            MainUtil.sendMessage(player, C.NOT_VALID_WORLD);
             return false;
         }
         if (Trim.TASK) {
-            C.TRIM_IN_PROGRESS.send(plr);
+            C.TRIM_IN_PROGRESS.send(player);
             return false;
         }
         Trim.TASK = true;
@@ -156,7 +156,7 @@ public class Trim extends SubCommand {
                         public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
-                                plr.sendMessage("Trim done!");
+                                player.sendMessage("Trim done!");
                                 return;
                             }
                             Iterator<ChunkLoc> iterator = nonViable.iterator();

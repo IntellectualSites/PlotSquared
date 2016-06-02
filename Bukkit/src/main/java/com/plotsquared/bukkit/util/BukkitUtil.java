@@ -43,7 +43,7 @@ public class BukkitUtil extends WorldUtil {
     private static Player lastPlayer = null;
     private static PlotPlayer lastPlotPlayer = null;
 
-    public static void removePlayer(String plr) {
+    public static void removePlayer(String player) {
         lastPlayer = null;
         lastPlotPlayer = null;
     }
@@ -62,9 +62,9 @@ public class BukkitUtil extends WorldUtil {
             return lastPlotPlayer;
         }
         String name = player.getName();
-        PlotPlayer pp = UUIDHandler.getPlayer(name);
-        if (pp != null) {
-            return pp;
+        PlotPlayer plotPlayer = UUIDHandler.getPlayer(name);
+        if (plotPlayer != null) {
+            return plotPlayer;
         }
         lastPlotPlayer = new BukkitPlayer(player);
         UUIDHandler.getPlayers().put(name, lastPlotPlayer);
@@ -102,15 +102,15 @@ public class BukkitUtil extends WorldUtil {
     }
 
     public static Location getLocation(Entity entity) {
-        org.bukkit.Location loc = entity.getLocation();
-        String world = loc.getWorld().getName();
-        return new Location(world, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+        org.bukkit.Location location = entity.getLocation();
+        String world = location.getWorld().getName();
+        return new Location(world, location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     public static Location getLocationFull(Entity entity) {
-        org.bukkit.Location loc = entity.getLocation();
-        return new Location(loc.getWorld().getName(), MathMan.roundInt(loc.getX()), MathMan.roundInt(loc.getY()), MathMan.roundInt(loc.getZ()),
-                loc.getYaw(), loc.getPitch());
+        org.bukkit.Location location = entity.getLocation();
+        return new Location(location.getWorld().getName(), MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()),
+                location.getYaw(), location.getPitch());
     }
 
     @Override
@@ -158,8 +158,8 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public Location getSpawn(PlotPlayer pp) {
-        return getLocation(((BukkitPlayer) pp).player.getBedSpawnLocation());
+    public Location getSpawn(PlotPlayer player) {
+        return getLocation(((BukkitPlayer) player).player.getBedSpawnLocation());
     }
 
     @Override
@@ -190,9 +190,9 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public int getBiomeFromString(String biomeStr) {
+    public int getBiomeFromString(String biomeString) {
         try {
-            Biome biome = Biome.valueOf(biomeStr.toUpperCase());
+            Biome biome = Biome.valueOf(biomeString.toUpperCase());
             return Arrays.asList(Biome.values()).indexOf(biome);
         } catch (IllegalArgumentException ignored) {
             return -1;
@@ -300,9 +300,9 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public void setBiomes(String worldName, RegionWrapper region, String biomeStr) {
+    public void setBiomes(String worldName, RegionWrapper region, String biomeString) {
         World world = getWorld(worldName);
-        Biome biome = Biome.valueOf(biomeStr.toUpperCase());
+        Biome biome = Biome.valueOf(biomeString.toUpperCase());
         for (int x = region.minX; x <= region.maxX; x++) {
             for (int z = region.minZ; z <= region.maxZ; z++) {
                 world.setBiome(x, z, biome);

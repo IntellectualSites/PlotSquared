@@ -18,30 +18,30 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class Continue extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
-        Plot plot = plr.getCurrentPlot();
+    public boolean onCommand(PlotPlayer player, String[] args) {
+        Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.continue")) {
-            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.continue")) {
+            MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
         if (!plot.hasFlag(Flags.DONE)) {
-            MainUtil.sendMessage(plr, C.DONE_NOT_DONE);
+            MainUtil.sendMessage(player, C.DONE_NOT_DONE);
             return false;
         }
         int size = plot.getConnectedPlots().size();
-        if (Settings.DONE_COUNTS_TOWARDS_LIMIT && (plr.getAllowedPlots() < plr.getPlotCount() + size)) {
-            MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command.continue");
+        if (Settings.DONE_COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots() < player.getPlotCount() + size)) {
+            MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.admin.command.continue");
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
             return false;
         }
         plot.removeFlag(Flags.DONE);
-        MainUtil.sendMessage(plr, C.DONE_REMOVED);
+        MainUtil.sendMessage(player, C.DONE_REMOVED);
         return true;
     }
 }

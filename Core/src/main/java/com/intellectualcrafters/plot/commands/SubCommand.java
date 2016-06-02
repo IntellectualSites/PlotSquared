@@ -28,7 +28,7 @@ public abstract class SubCommand extends Command {
     }
 
 
-    public abstract boolean onCommand(PlotPlayer plr, String[] args);
+    public abstract boolean onCommand(PlotPlayer player, String[] args);
 
     public boolean sendMessage(PlotPlayer player, C message, Object... args) {
         message.send(player, args);

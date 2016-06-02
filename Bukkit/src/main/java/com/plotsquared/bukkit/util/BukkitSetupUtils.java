@@ -179,11 +179,11 @@ public class BukkitSetupUtils extends SetupUtils {
     }
 
     @Override
-    public String getGenerator(PlotArea plotworld) {
+    public String getGenerator(PlotArea plotArea) {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
-        World world = Bukkit.getWorld(plotworld.worldname);
+        World world = Bukkit.getWorld(plotArea.worldname);
         if (world == null) {
             return null;
         }

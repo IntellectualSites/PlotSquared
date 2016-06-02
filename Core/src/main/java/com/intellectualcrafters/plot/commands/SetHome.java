@@ -19,24 +19,24 @@ import com.plotsquared.general.commands.CommandDeclaration;
 public class SetHome extends SetCommand {
 
     @Override
-    public boolean set(PlotPlayer plr, Plot plot, String value) {
+    public boolean set(PlotPlayer player, Plot plot, String value) {
         switch (value.toLowerCase()) {
             case "unset":
             case "remove":
             case "none": {
                 Plot base = plot.getBasePlot(false);
                 base.setHome(null);
-                return MainUtil.sendMessage(plr, C.POSITION_UNSET);
+                return MainUtil.sendMessage(player, C.POSITION_UNSET);
             }
             case "":
                 Plot base = plot.getBasePlot(false);
                 Location bot = base.getBottomAbs();
-                Location loc = plr.getLocationFull();
+                Location loc = player.getLocationFull();
                 BlockLoc rel = new BlockLoc(loc.getX() - bot.getX(), loc.getY(), loc.getZ() - bot.getZ(), loc.getYaw(), loc.getPitch());
                 base.setHome(rel);
-                return MainUtil.sendMessage(plr, C.POSITION_SET);
+                return MainUtil.sendMessage(player, C.POSITION_SET);
             default:
-                MainUtil.sendMessage(plr, C.HOME_ARGUMENT);
+                MainUtil.sendMessage(player, C.HOME_ARGUMENT);
                 return false;
         }
     }

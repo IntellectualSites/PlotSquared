@@ -11,32 +11,32 @@ import com.intellectualcrafters.plot.util.StringMan;
 public abstract class SetCommand extends SubCommand {
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
-        Location loc = plr.getLocation();
+    public boolean onCommand(PlotPlayer player, String[] args) {
+        Location loc = player.getLocation();
         Plot plot = loc.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(plr, "plots.admin.command." + getFullId())) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command." + getFullId());
-                MainUtil.sendMessage(plr, C.PLOT_NOT_CLAIMED);
+            if (!Permissions.hasPermission(player, "plots.admin.command." + getFullId())) {
+                MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.admin.command." + getFullId());
+                MainUtil.sendMessage(player, C.PLOT_NOT_CLAIMED);
                 return false;
             }
         }
-        if (!plot.isOwner(plr.getUUID())) {
-            if (!Permissions.hasPermission(plr, "plots.admin.command." + getFullId())) {
-                MainUtil.sendMessage(plr, C.NO_PERMISSION, "plots.admin.command." + getFullId());
-                MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.isOwner(player.getUUID())) {
+            if (!Permissions.hasPermission(player, "plots.admin.command." + getFullId())) {
+                MainUtil.sendMessage(player, C.NO_PERMISSION, "plots.admin.command." + getFullId());
+                MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
                 return false;
             }
         }
         if (args.length == 0) {
-            return set(plr, plot, "");
+            return set(player, plot, "");
         }
-        return set(plr, plot, StringMan.join(args, " "));
+        return set(player, plot, StringMan.join(args, " "));
     }
 
-    public abstract boolean set(PlotPlayer plr, Plot plot, String value);
+    public abstract boolean set(PlotPlayer player, Plot plot, String value);
 
 }

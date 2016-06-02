@@ -29,28 +29,28 @@ public class Condense extends SubCommand {
     public static boolean TASK = false;
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length != 2 && args.length != 3) {
-            MainUtil.sendMessage(plr, "/plot condense <area> <start|stop|info> [radius]");
+            MainUtil.sendMessage(player, "/plot condense <area> <start|stop|info> [radius]");
             return false;
         }
         PlotArea area = PS.get().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.worldname)) {
-            MainUtil.sendMessage(plr, "INVALID AREA");
+            MainUtil.sendMessage(player, "INVALID AREA");
             return false;
         }
         switch (args[1].toLowerCase()) {
             case "start": {
                 if (args.length == 2) {
-                    MainUtil.sendMessage(plr, "/plot condense " + area.toString() + " start <radius>");
+                    MainUtil.sendMessage(player, "/plot condense " + area.toString() + " start <radius>");
                     return false;
                 }
                 if (Condense.TASK) {
-                    MainUtil.sendMessage(plr, "TASK ALREADY STARTED");
+                    MainUtil.sendMessage(player, "TASK ALREADY STARTED");
                     return false;
                 }
                 if (!MathMan.isInteger(args[2])) {
-                    MainUtil.sendMessage(plr, "INVALID RADIUS");
+                    MainUtil.sendMessage(player, "INVALID RADIUS");
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
@@ -93,7 +93,7 @@ public class Condense extends SubCommand {
                 int size = allPlots.size();
                 int minimumRadius = (int) Math.ceil(Math.sqrt(size) / 2 + 1);
                 if (radius < minimumRadius) {
-                    MainUtil.sendMessage(plr, "RADIUS TOO SMALL");
+                    MainUtil.sendMessage(player, "RADIUS TOO SMALL");
                     return false;
                 }
                 List<PlotId> toMove = new ArrayList<>(getPlots(allPlots, radius));
@@ -107,19 +107,19 @@ public class Condense extends SubCommand {
                     start = Auto.getNextPlotId(start, 1);
                 }
                 if (free.isEmpty() || toMove.isEmpty()) {
-                    MainUtil.sendMessage(plr, "NO FREE PLOTS FOUND");
+                    MainUtil.sendMessage(player, "NO FREE PLOTS FOUND");
                     return false;
                 }
-                MainUtil.sendMessage(plr, "TASK STARTED...");
+                MainUtil.sendMessage(player, "TASK STARTED...");
                 Runnable run = new Runnable() {
                     @Override
                     public void run() {
                         if (!Condense.TASK) {
-                            MainUtil.sendMessage(plr, "TASK CANCELLED.");
+                            MainUtil.sendMessage(player, "TASK CANCELLED.");
                         }
                         if (allPlots.isEmpty()) {
                             Condense.TASK = false;
-                            MainUtil.sendMessage(plr, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
+                            MainUtil.sendMessage(player, "TASK COMPLETE. PLEASE VERIFY THAT NO NEW PLOTS HAVE BEEN CLAIMED DURING TASK.");
                             return;
                         }
                         final Runnable task = this;
@@ -137,7 +137,7 @@ public class Condense extends SubCommand {
                                 @Override
                                 public void run() {
                                     if (result.get()) {
-                                        MainUtil.sendMessage(plr, "Moving: " + origin + " -> " + possible);
+                                        MainUtil.sendMessage(player, "Moving: " + origin + " -> " + possible);
                                         TaskManager.runTaskLater(task, 1);
                                     }
                                 }
@@ -148,11 +148,11 @@ public class Condense extends SubCommand {
                         }
                         if (free.isEmpty()) {
                             Condense.TASK = false;
-                            MainUtil.sendMessage(plr, "TASK FAILED. NO FREE PLOTS FOUND!");
+                            MainUtil.sendMessage(player, "TASK FAILED. NO FREE PLOTS FOUND!");
                             return;
                         }
                         if (i >= free.size()) {
-                            MainUtil.sendMessage(plr, "SKIPPING COMPLEX PLOT: " + origin);
+                            MainUtil.sendMessage(player, "SKIPPING COMPLEX PLOT: " + origin);
                         }
                     }
                 };
@@ -162,19 +162,19 @@ public class Condense extends SubCommand {
             }
             case "stop":
                 if (!Condense.TASK) {
-                    MainUtil.sendMessage(plr, "TASK ALREADY STOPPED");
+                    MainUtil.sendMessage(player, "TASK ALREADY STOPPED");
                     return false;
                 }
                 Condense.TASK = false;
-                MainUtil.sendMessage(plr, "TASK STOPPED");
+                MainUtil.sendMessage(player, "TASK STOPPED");
                 return true;
             case "info":
                 if (args.length == 2) {
-                    MainUtil.sendMessage(plr, "/plot condense " + area.toString() + " info <radius>");
+                    MainUtil.sendMessage(player, "/plot condense " + area.toString() + " info <radius>");
                     return false;
                 }
                 if (!MathMan.isInteger(args[2])) {
-                    MainUtil.sendMessage(plr, "INVALID RADIUS");
+                    MainUtil.sendMessage(player, "INVALID RADIUS");
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
@@ -182,22 +182,22 @@ public class Condense extends SubCommand {
                 int size = plots.size();
                 int minimumRadius = (int) Math.ceil(Math.sqrt(size) / 2 + 1);
                 if (radius < minimumRadius) {
-                    MainUtil.sendMessage(plr, "RADIUS TOO SMALL");
+                    MainUtil.sendMessage(player, "RADIUS TOO SMALL");
                     return false;
                 }
                 int maxMove = getPlots(plots, minimumRadius).size();
                 int userMove = getPlots(plots, radius).size();
-                MainUtil.sendMessage(plr, "=== DEFAULT EVAL ===");
-                MainUtil.sendMessage(plr, "MINIMUM RADIUS: " + minimumRadius);
-                MainUtil.sendMessage(plr, "MAXIMUM MOVES: " + maxMove);
-                MainUtil.sendMessage(plr, "=== INPUT EVAL ===");
-                MainUtil.sendMessage(plr, "INPUT RADIUS: " + radius);
-                MainUtil.sendMessage(plr, "ESTIMATED MOVES: " + userMove);
-                MainUtil.sendMessage(plr, "ESTIMATED TIME: No idea, times will drastically change based on the system performance and load");
-                MainUtil.sendMessage(plr, "&e - Radius is measured in plot width");
+                MainUtil.sendMessage(player, "=== DEFAULT EVAL ===");
+                MainUtil.sendMessage(player, "MINIMUM RADIUS: " + minimumRadius);
+                MainUtil.sendMessage(player, "MAXIMUM MOVES: " + maxMove);
+                MainUtil.sendMessage(player, "=== INPUT EVAL ===");
+                MainUtil.sendMessage(player, "INPUT RADIUS: " + radius);
+                MainUtil.sendMessage(player, "ESTIMATED MOVES: " + userMove);
+                MainUtil.sendMessage(player, "ESTIMATED TIME: No idea, times will drastically change based on the system performance and load");
+                MainUtil.sendMessage(player, "&e - Radius is measured in plot width");
                 return true;
         }
-        MainUtil.sendMessage(plr, "/plot condense " + area.worldname + " <start|stop|info> [radius]");
+        MainUtil.sendMessage(player, "/plot condense " + area.worldname + " <start|stop|info> [radius]");
         return false;
     }
 

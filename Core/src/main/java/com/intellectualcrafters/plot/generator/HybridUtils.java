@@ -130,14 +130,14 @@ public abstract class HybridUtils {
         if (whenDone == null) {
             return;
         }
-        PlotArea plotworld = plot.getArea();
-        if (!(plotworld instanceof ClassicPlotWorld)) {
+        PlotArea plotArea = plot.getArea();
+        if (!(plotArea instanceof ClassicPlotWorld)) {
             whenDone.value = -1;
             TaskManager.runTask(whenDone);
             return;
         }
         whenDone.value = 0;
-        final ClassicPlotWorld cpw = (ClassicPlotWorld) plotworld;
+        final ClassicPlotWorld cpw = (ClassicPlotWorld) plotArea;
         final ArrayDeque<RegionWrapper> zones = new ArrayDeque<>(plot.getRegions());
         Runnable run = new Runnable() {
             @Override
@@ -339,13 +339,13 @@ public abstract class HybridUtils {
         int z = chunk.z << 4;
         int ex = x + 15;
         int ez = z + 15;
-        HybridPlotWorld plotworld = (HybridPlotWorld) area;
-        extend = Math.min(extend, 255 - plotworld.ROAD_HEIGHT - plotworld.SCHEMATIC_HEIGHT);
-        if (!plotworld.ROAD_SCHEMATIC_ENABLED) {
+        HybridPlotWorld plotWorld = (HybridPlotWorld) area;
+        extend = Math.min(extend, 255 - plotWorld.ROAD_HEIGHT - plotWorld.SCHEMATIC_HEIGHT);
+        if (!plotWorld.ROAD_SCHEMATIC_ENABLED) {
             return false;
         }
         boolean toCheck = false;
-        if (plotworld.TYPE == 2) {
+        if (plotWorld.TYPE == 2) {
             boolean c1 = area.contains(x, z);
             boolean c2 = area.contains(ex, ez);
             if (!c1 && !c2) {
@@ -355,10 +355,10 @@ public abstract class HybridUtils {
             }
         }
         PlotManager manager = area.getPlotManager();
-        PlotId id1 = manager.getPlotId(plotworld, x, 0, z);
-        PlotId id2 = manager.getPlotId(plotworld, ex, 0, ez);
-        x -= plotworld.ROAD_OFFSET_X;
-        z -= plotworld.ROAD_OFFSET_Z;
+        PlotId id1 = manager.getPlotId(plotWorld, x, 0, z);
+        PlotId id2 = manager.getPlotId(plotWorld, ex, 0, ez);
+        x -= plotWorld.ROAD_OFFSET_X;
+        z -= plotWorld.ROAD_OFFSET_Z;
         if (id1 == null || id2 == null || id1 != id2) {
             boolean result = ChunkManager.manager.loadChunk(area.worldname, chunk, false);
             if (result) {
@@ -374,7 +374,7 @@ public abstract class HybridUtils {
                         toCheck = true;
                     }
                 }
-                int size = plotworld.SIZE;
+                int size = plotWorld.SIZE;
                 for (int X = 0; X < 16; X++) {
                     short absX = (short) ((x + X) % size);
                     for (int Z = 0; Z < 16; Z++) {
@@ -387,24 +387,24 @@ public abstract class HybridUtils {
                         }
                         boolean condition;
                         if (toCheck) {
-                            condition = manager.getPlotId(plotworld, x + X + plotworld.ROAD_OFFSET_X, 1, z + Z + plotworld.ROAD_OFFSET_Z) == null;
+                            condition = manager.getPlotId(plotWorld, x + X + plotWorld.ROAD_OFFSET_X, 1, z + Z + plotWorld.ROAD_OFFSET_Z) == null;
                             //                            condition = MainUtil.isPlotRoad(new Location(plotworld.worldname, x + X, 1, z + Z));
                         } else {
-                            boolean gx = absX > plotworld.PATH_WIDTH_LOWER;
-                            boolean gz = absZ > plotworld.PATH_WIDTH_LOWER;
-                            boolean lx = absX < plotworld.PATH_WIDTH_UPPER;
-                            boolean lz = absZ < plotworld.PATH_WIDTH_UPPER;
+                            boolean gx = absX > plotWorld.PATH_WIDTH_LOWER;
+                            boolean gz = absZ > plotWorld.PATH_WIDTH_LOWER;
+                            boolean lx = absX < plotWorld.PATH_WIDTH_UPPER;
+                            boolean lz = absZ < plotWorld.PATH_WIDTH_UPPER;
                             condition = !gx || !gz || !lx || !lz;
                         }
                         if (condition) {
-                            HashMap<Integer, PlotBlock> blocks = plotworld.G_SCH.get(MathMan.pair(absX, absZ));
-                            for (short y = (short) plotworld.ROAD_HEIGHT; y <= plotworld.ROAD_HEIGHT + plotworld.SCHEMATIC_HEIGHT + extend; y++) {
-                                SetQueue.IMP.setBlock(area.worldname, x + X + plotworld.ROAD_OFFSET_X, y, z + Z + plotworld.ROAD_OFFSET_Z, 0);
+                            HashMap<Integer, PlotBlock> blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
+                            for (short y = (short) plotWorld.ROAD_HEIGHT; y <= plotWorld.ROAD_HEIGHT + plotWorld.SCHEMATIC_HEIGHT + extend; y++) {
+                                SetQueue.IMP.setBlock(area.worldname, x + X + plotWorld.ROAD_OFFSET_X, y, z + Z + plotWorld.ROAD_OFFSET_Z, 0);
                             }
                             if (blocks != null) {
                                 for (Entry<Integer, PlotBlock> entry : blocks.entrySet()) {
-                                    SetQueue.IMP.setBlock(area.worldname, x + X + plotworld.ROAD_OFFSET_X, entry.getKey(),
-                                            z + Z + plotworld.ROAD_OFFSET_Z, entry.getValue());
+                                    SetQueue.IMP.setBlock(area.worldname, x + X + plotWorld.ROAD_OFFSET_X, entry.getKey(),
+                                            z + Z + plotWorld.ROAD_OFFSET_Z, entry.getValue());
                                 }
                             }
                         }

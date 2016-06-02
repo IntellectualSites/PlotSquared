@@ -14,8 +14,9 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.*;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 
 @CommandDeclaration(command = "deny",
         aliases = {"d", "ban"},
@@ -30,74 +31,74 @@ public class Deny extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
+    public boolean onCommand(PlotPlayer player, String[] args) {
 
-        Location location = plr.getLocation();
+        Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.deny")) {
-            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.deny")) {
+            MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }
         Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-        if (uuids == null || uuids.isEmpty()) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+        if (uuids.isEmpty()) {
+            MainUtil.sendMessage(player, C.INVALID_PLAYER, args[0]);
             return false;
         }
         Iterator<UUID> iter = uuids.iterator();
         while (iter.hasNext()) {
             UUID uuid = iter.next();
-            if (uuid == DBFunc.everyone && !(Permissions.hasPermission(plr, "plots.deny.everyone") || Permissions.hasPermission(plr, "plots.admin.command.deny"))) {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER, MainUtil.getName(uuid));
+            if (uuid == DBFunc.everyone && !(Permissions.hasPermission(player, "plots.deny.everyone") || Permissions.hasPermission(player, "plots.admin.command.deny"))) {
+                MainUtil.sendMessage(player, C.INVALID_PLAYER, MainUtil.getName(uuid));
                 continue;
             }
             if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(plr, C.ALREADY_OWNER, MainUtil.getName(uuid));
+                MainUtil.sendMessage(player, C.ALREADY_OWNER, MainUtil.getName(uuid));
                 return false;
             }
 
             if (plot.getDenied().contains(uuid)) {
-                MainUtil.sendMessage(plr, C.ALREADY_ADDED, MainUtil.getName(uuid));
+                MainUtil.sendMessage(player, C.ALREADY_ADDED, MainUtil.getName(uuid));
                 return false;
             }
             plot.removeMember(uuid);
             plot.removeTrusted(uuid);
             plot.addDenied(uuid);
-            EventUtil.manager.callDenied(plr, plot, uuid, true);
+            EventUtil.manager.callDenied(player, plot, uuid, true);
             if (!uuid.equals(DBFunc.everyone)) {
                 handleKick(UUIDHandler.getPlayer(uuid), plot);
             } else {
-                for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                    handleKick(pp, plot);
+                for (PlotPlayer plotPlayer : plot.getPlayersInPlot()) {
+                    handleKick(plotPlayer, plot);
                 }
             }
         }
         if (!uuids.isEmpty()) {
-            MainUtil.sendMessage(plr, C.DENIED_ADDED);
+            MainUtil.sendMessage(player, C.DENIED_ADDED);
         }
         return true;
     }
 
-    private void handleKick(PlotPlayer pp, Plot plot) {
-        if (pp == null) {
+    private void handleKick(PlotPlayer player, Plot plot) {
+        if (player == null) {
             return;
         }
-        if (!plot.equals(pp.getCurrentPlot())) {
+        if (!plot.equals(player.getCurrentPlot())) {
             return;
         }
-        if (pp.hasPermission("plots.admin.entry.denied")) {
+        if (player.hasPermission("plots.admin.entry.denied")) {
             return;
         }
-        if (pp.getGameMode() == PlotGameMode.SPECTATOR) {
-            pp.stopSpectating();
+        if (player.getGameMode() == PlotGameMode.SPECTATOR) {
+            player.stopSpectating();
         }
-        pp.teleport(WorldUtil.IMP.getSpawn(pp.getLocation().getWorld()));
-        MainUtil.sendMessage(pp, C.YOU_GOT_DENIED);
+        player.teleport(WorldUtil.IMP.getSpawn(player.getLocation().getWorld()));
+        MainUtil.sendMessage(player, C.YOU_GOT_DENIED);
     }
 }

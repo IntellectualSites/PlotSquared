@@ -29,7 +29,7 @@ import java.util.UUID;
 public class Purge extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
+    public boolean onCommand(final PlotPlayer player, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -43,7 +43,7 @@ public class Purge extends SubCommand {
         for (String arg : args) {
             String[] split = arg.split(":");
             if (split.length != 2) {
-                C.COMMAND_SYNTAX.send(plr, getUsage());
+                C.COMMAND_SYNTAX.send(player, getUsage());
                 return false;
             }
             switch (split[0].toLowerCase()) {
@@ -55,7 +55,7 @@ public class Purge extends SubCommand {
                 case "a":
                     area = PS.get().getPlotAreaByString(split[1]);
                     if (area == null) {
-                        C.NOT_VALID_PLOT_WORLD.send(plr, split[1]);
+                        C.NOT_VALID_PLOT_WORLD.send(player, split[1]);
                         return false;
                     }
                     break;
@@ -63,7 +63,7 @@ public class Purge extends SubCommand {
                 case "id":
                     id = PlotId.fromString(split[1]);
                     if (id == null) {
-                        C.NOT_VALID_PLOT_ID.send(plr, split[1]);
+                        C.NOT_VALID_PLOT_ID.send(player, split[1]);
                         return false;
                     }
                     break;
@@ -71,7 +71,7 @@ public class Purge extends SubCommand {
                 case "o":
                     owner = UUIDHandler.getUUID(split[1], null);
                     if (owner == null) {
-                        C.INVALID_PLAYER.send(plr, split[1]);
+                        C.INVALID_PLAYER.send(player, split[1]);
                         return false;
                     }
                     break;
@@ -79,7 +79,7 @@ public class Purge extends SubCommand {
                 case "s":
                     added = UUIDHandler.getUUID(split[1], null);
                     if (added == null) {
-                        C.INVALID_PLAYER.send(plr, split[1]);
+                        C.INVALID_PLAYER.send(player, split[1]);
                         return false;
                     }
                     break;
@@ -139,7 +139,7 @@ public class Purge extends SubCommand {
             }
         }
         if (toDelete.isEmpty()) {
-            C.FOUND_NO_PLOTS.send(plr);
+            C.FOUND_NO_PLOTS.send(player);
             return false;
         }
         String cmd = "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
@@ -158,11 +158,11 @@ public class Purge extends SubCommand {
                     }
                 }
                 DBFunc.purgeIds(ids);
-                C.PURGE_SUCCESS.send(plr, ids.size() + "/" + toDelete.size());
+                C.PURGE_SUCCESS.send(player, ids.size() + "/" + toDelete.size());
             }
         };
-        if (hasConfirmation(plr)) {
-            CmdConfirm.addPending(plr, cmd, run);
+        if (hasConfirmation(player)) {
+            CmdConfirm.addPending(player, cmd, run);
         } else {
             run.run();
         }

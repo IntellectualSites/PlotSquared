@@ -376,8 +376,8 @@ public class BukkitChunkManager extends ChunkManager {
         int tz = pos2.getZ();
         for (Entity entity : entities) {
             if (!(entity instanceof Player)) {
-                org.bukkit.Location loc = entity.getLocation();
-                if (loc.getX() >= bx && loc.getX() <= tx && loc.getZ() >= bz && loc.getZ() <= tz) {
+                org.bukkit.Location location = entity.getLocation();
+                if (location.getX() >= bx && location.getX() <= tx && location.getZ() >= bz && location.getZ() <= tz) {
                     entity.remove();
                 }
             }
@@ -472,15 +472,15 @@ public class BukkitChunkManager extends ChunkManager {
         int[] count = new int[6];
         if (doWhole) {
             for (Entity entity : entities) {
-                org.bukkit.Location loc = entity.getLocation();
-                Chunk chunk = loc.getChunk();
+                org.bukkit.Location location = entity.getLocation();
+                Chunk chunk = location.getChunk();
                 if (chunks.contains(chunk)) {
                     int X = chunk.getX();
                     int Z = chunk.getZ();
                     if (X > bx && X < tx && Z > bz && Z < tz) {
                         count(count, entity);
                     } else {
-                        Plot other = area.getPlot(BukkitUtil.getLocation(loc));
+                        Plot other = area.getPlot(BukkitUtil.getLocation(location));
                         if (plot.equals(other)) {
                             count(count, entity);
                         }

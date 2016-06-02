@@ -10,8 +10,10 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @CommandDeclaration(
         command = "remove",
@@ -28,18 +30,18 @@ public class Remove extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
-        Location loc = plr.getLocation();
-        Plot plot = loc.getPlotAbs();
+    public boolean onCommand(PlotPlayer player, String[] args) {
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
-        if (!plot.isOwner(plr.getUUID()) && !Permissions.hasPermission(plr, "plots.admin.command.remove")) {
-            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+        if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.remove")) {
+            MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return true;
         }
         int count = 0;
@@ -65,7 +67,7 @@ public class Remove extends SubCommand {
             }
             default:
                 Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-                if (uuids != null) {
+                if (uuids.isEmpty()) {
                     for (UUID uuid : uuids) {
                         if (plot.getTrusted().contains(uuid)) {
                             if (plot.removeTrusted(uuid)) {
@@ -85,10 +87,10 @@ public class Remove extends SubCommand {
                 break;
         }
         if (count == 0) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            MainUtil.sendMessage(player, C.INVALID_PLAYER, args[0]);
             return false;
         } else {
-            MainUtil.sendMessage(plr, C.REMOVED_PLAYERS, count + "");
+            MainUtil.sendMessage(player, C.REMOVED_PLAYERS, count + "");
         }
         return true;
     }

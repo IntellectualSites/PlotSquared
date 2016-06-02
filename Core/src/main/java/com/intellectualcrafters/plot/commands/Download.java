@@ -28,30 +28,30 @@ import java.net.URL;
 public class Download extends SubCommand {
 
     @Override
-    public boolean onCommand(final PlotPlayer plr, String[] args) {
-        String world = plr.getLocation().getWorld();
+    public boolean onCommand(final PlotPlayer player, String[] args) {
+        String world = player.getLocation().getWorld();
         if (!PS.get().hasPlotArea(world)) {
-            return !sendMessage(plr, C.NOT_IN_PLOT_WORLD);
+            return !sendMessage(player, C.NOT_IN_PLOT_WORLD);
         }
-        final Plot plot = plr.getCurrentPlot();
+        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(plr, C.PLOT_UNOWNED);
+            MainUtil.sendMessage(player, C.PLOT_UNOWNED);
             return false;
         }
         if ((Settings.DOWNLOAD_REQUIRES_DONE && (!plot.getFlag(Flags.DONE).isPresent())) && !Permissions
-                .hasPermission(plr, "plots.admin.command.download")) {
-            MainUtil.sendMessage(plr, C.DONE_NOT_DONE);
+                .hasPermission(player, "plots.admin.command.download")) {
+            MainUtil.sendMessage(player, C.DONE_NOT_DONE);
             return false;
         }
-        if ((!plot.isOwner(plr.getUUID()))) {
-            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+        if ((!plot.isOwner(player.getUUID()))) {
+            MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(plr, C.WAIT_FOR_TIMER);
+            MainUtil.sendMessage(player, C.WAIT_FOR_TIMER);
             return false;
         }
         if (args.length == 0 || (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
@@ -64,20 +64,20 @@ public class Download extends SubCommand {
                         @Override
                         public void run(URL url) {
                             if (url == null) {
-                                MainUtil.sendMessage(plr, C.GENERATING_LINK_FAILED);
+                                MainUtil.sendMessage(player, C.GENERATING_LINK_FAILED);
                                 return;
                             }
-                            MainUtil.sendMessage(plr, url.toString());
+                            MainUtil.sendMessage(player, url.toString());
                         }
                     });
                 }
             });
         } else if (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "bo3", "bo2", "b03", "b02")) {
-            if (!Permissions.hasPermission(plr, "plots.download.bo3")) {
-                C.NO_PERMISSION.send(plr, "plots.download.bo3");
+            if (!Permissions.hasPermission(player, "plots.download.bo3")) {
+                C.NO_PERMISSION.send(player, "plots.download.bo3");
             }
             if (plot.getVolume() > 128d * 128d * 256) {
-                C.SCHEMATIC_TOO_LARGE.send(plr);
+                C.SCHEMATIC_TOO_LARGE.send(player);
                 return false;
             }
             plot.addRunning();
@@ -86,34 +86,34 @@ public class Download extends SubCommand {
                 public void run(URL url) {
                     plot.removeRunning();
                     if (url == null) {
-                        MainUtil.sendMessage(plr, C.GENERATING_LINK_FAILED);
+                        MainUtil.sendMessage(player, C.GENERATING_LINK_FAILED);
                         return;
                     }
-                    MainUtil.sendMessage(plr, url.toString());
+                    MainUtil.sendMessage(player, url.toString());
                 }
             });
         } else if (args.length == 1 && StringMan.isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
-            if (!Permissions.hasPermission(plr, "plots.download.world")) {
-                C.NO_PERMISSION.send(plr, "plots.download.world");
+            if (!Permissions.hasPermission(player, "plots.download.world")) {
+                C.NO_PERMISSION.send(player, "plots.download.world");
             }
-            MainUtil.sendMessage(plr, "&cNote: The `.mca` files are 512x512");
+            MainUtil.sendMessage(player, "&cNote: The `.mca` files are 512x512");
             plot.addRunning();
             WorldUtil.IMP.upload(plot, null, null, new RunnableVal<URL>() {
                 @Override
                 public void run(URL url) {
                     plot.removeRunning();
                     if (url == null) {
-                        MainUtil.sendMessage(plr, C.GENERATING_LINK_FAILED);
+                        MainUtil.sendMessage(player, C.GENERATING_LINK_FAILED);
                         return;
                     }
-                    MainUtil.sendMessage(plr, url.toString());
+                    MainUtil.sendMessage(player, url.toString());
                 }
             });
         } else {
-            C.COMMAND_SYNTAX.send(plr, getUsage());
+            C.COMMAND_SYNTAX.send(player, getUsage());
             return false;
         }
-        MainUtil.sendMessage(plr, C.GENERATING_LINK);
+        MainUtil.sendMessage(player, C.GENERATING_LINK);
         return true;
     }
 }

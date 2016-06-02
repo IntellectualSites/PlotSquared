@@ -280,7 +280,6 @@ public class FastQueue_1_8_3 extends SlowQueue {
             if (fixAll && !(boolean) this.methodAreNeighborsLoaded.of(c).call(1)) {
                 World world = chunk.getWorld();
                 ChunkWrapper wrapper = bc.getChunkWrapper();
-                String worldName = wrapper.world;
                 for (int x = wrapper.x - 1; x <= wrapper.x + 1; x++) {
                     for (int z = wrapper.z - 1; z <= wrapper.z + 1; z++) {
                         if (x != 0 && z != 0) {
@@ -288,7 +287,7 @@ public class FastQueue_1_8_3 extends SlowQueue {
                             while (!other.isLoaded()) {
                                 other.load(true);
                             }
-                            ChunkManager.manager.loadChunk(worldName, new ChunkLoc(x, z), true);
+                            ChunkManager.manager.loadChunk(wrapper.world, new ChunkLoc(x, z), true);
                         }
                     }
                 }

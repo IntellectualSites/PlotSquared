@@ -13,63 +13,63 @@ public abstract class PlotManager {
      * Plot locations (methods with Abs in them will not need to consider mega
      * plots).
      */
-    public abstract PlotId getPlotIdAbs(PlotArea plotworld, int x, int y, int z);
+    public abstract PlotId getPlotIdAbs(PlotArea plotArea, int x, int y, int z);
 
-    public abstract PlotId getPlotId(PlotArea plotworld, int x, int y, int z);
+    public abstract PlotId getPlotId(PlotArea plotArea, int x, int y, int z);
 
     // If you have a circular plot, just return the corner if it were a square
-    public abstract Location getPlotBottomLocAbs(PlotArea plotworld, PlotId plotid);
+    public abstract Location getPlotBottomLocAbs(PlotArea plotArea, PlotId plotId);
 
     // the same applies here
-    public abstract Location getPlotTopLocAbs(PlotArea plotworld, PlotId plotid);
+    public abstract Location getPlotTopLocAbs(PlotArea plotArea, PlotId plotId);
 
     /*
      * Plot clearing (return false if you do not support some method)
      */
-    public abstract boolean clearPlot(PlotArea plotworld, Plot plot, Runnable whenDone);
+    public abstract boolean clearPlot(PlotArea plotArea, Plot plot, Runnable whenDone);
 
-    public abstract boolean claimPlot(PlotArea plotworld, Plot plot);
+    public abstract boolean claimPlot(PlotArea plotArea, Plot plot);
 
-    public abstract boolean unclaimPlot(PlotArea plotworld, Plot plot, Runnable whenDone);
+    public abstract boolean unclaimPlot(PlotArea plotArea, Plot plot, Runnable whenDone);
 
-    public abstract Location getSignLoc(PlotArea plotworld, Plot plot);
+    public abstract Location getSignLoc(PlotArea plotArea, Plot plot);
 
     /*
      * Plot set functions (return false if you do not support the specific set
      * method).
      */
-    public abstract String[] getPlotComponents(PlotArea plotworld, PlotId plotid);
+    public abstract String[] getPlotComponents(PlotArea plotArea, PlotId plotId);
 
-    public abstract boolean setComponent(PlotArea plotworld, PlotId plotid, String component, PlotBlock[] blocks);
+    public abstract boolean setComponent(PlotArea plotArea, PlotId plotId, String component, PlotBlock[] blocks);
 
     /*
      * PLOT MERGING (return false if your generator does not support plot
      * merging).
      */
-    public abstract boolean createRoadEast(PlotArea plotworld, Plot plot);
+    public abstract boolean createRoadEast(PlotArea plotArea, Plot plot);
 
-    public abstract boolean createRoadSouth(PlotArea plotworld, Plot plot);
+    public abstract boolean createRoadSouth(PlotArea plotArea, Plot plot);
 
-    public abstract boolean createRoadSouthEast(PlotArea plotworld, Plot plot);
+    public abstract boolean createRoadSouthEast(PlotArea plotArea, Plot plot);
 
-    public abstract boolean removeRoadEast(PlotArea plotworld, Plot plot);
+    public abstract boolean removeRoadEast(PlotArea plotArea, Plot plot);
 
-    public abstract boolean removeRoadSouth(PlotArea plotworld, Plot plot);
+    public abstract boolean removeRoadSouth(PlotArea plotArea, Plot plot);
 
-    public abstract boolean removeRoadSouthEast(PlotArea plotworld, Plot plot);
+    public abstract boolean removeRoadSouthEast(PlotArea plotArea, Plot plot);
 
-    public abstract boolean startPlotMerge(PlotArea plotworld, ArrayList<PlotId> plotIds);
+    public abstract boolean startPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds);
 
-    public abstract boolean startPlotUnlink(PlotArea plotworld, ArrayList<PlotId> plotIds);
+    public abstract boolean startPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds);
 
-    public abstract boolean finishPlotMerge(PlotArea plotworld, ArrayList<PlotId> plotIds);
+    public abstract boolean finishPlotMerge(PlotArea plotArea, ArrayList<PlotId> plotIds);
 
-    public abstract boolean finishPlotUnlink(PlotArea plotworld, ArrayList<PlotId> plotIds);
+    public abstract boolean finishPlotUnlink(PlotArea plotArea, ArrayList<PlotId> plotIds);
 
-    public void exportTemplate(PlotArea plotworld) throws IOException {
+    public void exportTemplate(PlotArea plotArea) throws IOException {
         HashSet<FileBytes> files = new HashSet<>(
-                Collections.singletonList(new FileBytes("templates/tmp-data.yml", Template.getBytes(plotworld))));
-        Template.zipAll(plotworld.worldname, files);
+                Collections.singletonList(new FileBytes("templates/tmp-data.yml", Template.getBytes(plotArea))));
+        Template.zipAll(plotArea.worldname, files);
     }
 
 }

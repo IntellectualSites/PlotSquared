@@ -11,6 +11,7 @@ import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -29,19 +30,19 @@ public class Kick extends SubCommand {
     }
 
     @Override
-    public boolean onCommand(PlotPlayer plr, String[] args) {
-        Location location = plr.getLocation();
+    public boolean onCommand(PlotPlayer player, String[] args) {
+        Location location = player.getLocation();
         Plot plot = location.getPlot();
         if (plot == null) {
-            return !sendMessage(plr, C.NOT_IN_PLOT);
+            return !sendMessage(player, C.NOT_IN_PLOT);
         }
-        if ((!plot.hasOwner() || !plot.isOwner(plr.getUUID())) && !Permissions.hasPermission(plr, "plots.admin.command.kick")) {
-            MainUtil.sendMessage(plr, C.NO_PLOT_PERMS);
+        if ((!plot.hasOwner() || !plot.isOwner(player.getUUID())) && !Permissions.hasPermission(player, "plots.admin.command.kick")) {
+            MainUtil.sendMessage(player, C.NO_PLOT_PERMS);
             return false;
         }
         Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-        if (uuids == null) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+        if (uuids.isEmpty()) {
+            MainUtil.sendMessage(player, C.INVALID_PLAYER, args[0]);
             return false;
         }
         Set<PlotPlayer> players = new HashSet<>();
@@ -55,33 +56,33 @@ public class Kick extends SubCommand {
                 players.add(pp);
             }
         }
-        players.remove(plr); // Don't ever kick the calling player
+        players.remove(player); // Don't ever kick the calling player
         if (players.isEmpty()) {
-            MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+            MainUtil.sendMessage(player, C.INVALID_PLAYER, args[0]);
             return false;
         }
-        for (PlotPlayer player : players) {
-            Location location2 = player.getLocation();
-            if (!plr.getLocation().getWorld().equals(location2.getWorld()) || !plot.equals(location2.getPlot())) {
-                MainUtil.sendMessage(plr, C.INVALID_PLAYER, args[0]);
+        for (PlotPlayer player2 : players) {
+            Location location2 = player2.getLocation();
+            if (!player2.getLocation().getWorld().equals(location2.getWorld()) || !plot.equals(location2.getPlot())) {
+                MainUtil.sendMessage(player2, C.INVALID_PLAYER, args[0]);
                 return false;
             }
-            if (player.hasPermission("plots.admin.entry.denied")) {
-                C.CANNOT_KICK_PLAYER.send(plr, player.getName());
+            if (player2.hasPermission("plots.admin.entry.denied")) {
+                C.CANNOT_KICK_PLAYER.send(player2, player2.getName());
                 return false;
             }
             Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
-            C.YOU_GOT_KICKED.send(player);
+            C.YOU_GOT_KICKED.send(player2);
             if (plot.equals(spawn.getPlot())) {
-                Location newSpawn = WorldUtil.IMP.getSpawn(player);
+                Location newSpawn = WorldUtil.IMP.getSpawn(player2);
                 if (plot.equals(newSpawn.getPlot())) {
                     // Kick from server if you can't be teleported to spawn
-                    player.kick(C.YOU_GOT_KICKED.s());
+                    player2.kick(C.YOU_GOT_KICKED.s());
                 } else {
-                    player.teleport(newSpawn);
+                    player2.teleport(newSpawn);
                 }
             } else {
-                player.teleport(spawn);
+                player2.teleport(spawn);
             }
         }
         return true;
