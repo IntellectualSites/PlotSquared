@@ -18,8 +18,7 @@ import com.intellectualcrafters.plot.util.WorldUtil;
 import com.plotsquared.sponge.SpongeMain;
 import com.plotsquared.sponge.object.SpongePlayer;
 import net.minecraft.block.Block;
-import net.minecraft.world.biome.BiomeGenBase;
-import org.apache.commons.lang3.NotImplementedException;
+import net.minecraft.world.biome.Biome;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
@@ -42,6 +41,7 @@ import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 import org.spongepowered.api.world.extent.Extent;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -113,7 +113,7 @@ public class SpongeUtil extends WorldUtil {
     }
 
     public static BiomeType getBiome(int index) {
-        return (BiomeType) BiomeGenBase.getBiome(index);
+        return (BiomeType) Biome.getBiome(index);
     }
 
     public static Text getText(String m) {
@@ -349,9 +349,9 @@ public class SpongeUtil extends WorldUtil {
     }
 
     @Override
-    public Location getSpawn(PlotPlayer pp) {
-        throw new NotImplementedException("TODO IMPLEMENT THIS");    // TODO FIXME
-        // Probably can call a respawn event and get the location from there
+    public Location getSpawn(PlotPlayer plotPlayer) {
+        World world = getWorld(plotPlayer.getLocation().getWorld());
+        return SpongeUtil.getLocation(world.getSpawnLocation());
     }
 
     @Override
@@ -371,7 +371,12 @@ public class SpongeUtil extends WorldUtil {
 
     @Override
     public void saveWorld(String worldName) {
-        throw new NotImplementedException("TODO WIP"); // TODO FIXME
+        try {
+            SpongeUtil.getWorld(worldName).save();
+        } catch (IOException e) {
+            e.printStackTrace();
+            PS.debug("Failed to save world.");
+        }
     }
 
     @Override

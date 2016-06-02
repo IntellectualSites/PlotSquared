@@ -10,7 +10,6 @@ import com.intellectualcrafters.plot.util.MainUtil;
 import com.intellectualcrafters.plot.util.ReflectionUtils;
 import com.plotsquared.sponge.util.SpongeUtil;
 import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.world.WorldCreationSettings;
 import org.spongepowered.api.world.biome.BiomeGenerationSettings;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
@@ -19,6 +18,7 @@ import org.spongepowered.api.world.gen.BiomeGenerator;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,10 +69,10 @@ public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWra
     }
     
     @Override
-    public void modifyWorldGenerator(WorldCreationSettings settings, DataContainer data, WorldGenerator wg) {
-        String worldName = settings.getWorldName();
-        wg.setBaseGenerationPopulator(new SpongeTerrainGen(this, this.plotGenerator));
-        wg.setBiomeGenerator(new BiomeGenerator() {
+    public void modifyWorldGenerator(WorldProperties world, DataContainer settings, WorldGenerator worldGenerator) {
+        String worldName = world.getWorldName();
+        worldGenerator.setBaseGenerationPopulator(new SpongeTerrainGen(this, this.plotGenerator));
+        worldGenerator.setBiomeGenerator(new BiomeGenerator() {
             @Override
             public void generateBiomes(MutableBiomeArea buffer) {
                 PlotArea area = PS.get().getPlotArea(worldName, null);
@@ -89,13 +89,13 @@ public class SpongePlotGenerator implements WorldGeneratorModifier, GeneratorWra
         }
         });
         for (BiomeType type : ReflectionUtils.<BiomeType> getStaticFields(BiomeTypes.class)) {
-            BiomeGenerationSettings biomeSettings = wg.getBiomeSettings(type);
+            BiomeGenerationSettings biomeSettings = worldGenerator.getBiomeSettings(type);
             biomeSettings.getGenerationPopulators().clear();
             biomeSettings.getPopulators().clear();
             biomeSettings.getGroundCoverLayers().clear();
     }
-        wg.getGenerationPopulators().clear();
-        wg.getPopulators().clear();
+        worldGenerator.getGenerationPopulators().clear();
+        worldGenerator.getPopulators().clear();
         PS.get().loadWorld(worldName, this);
     }
     

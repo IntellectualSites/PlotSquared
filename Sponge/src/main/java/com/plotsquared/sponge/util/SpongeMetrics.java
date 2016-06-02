@@ -402,9 +402,7 @@ public class SpongeMetrics {
         // Server software specific section
         final String pluginName = plugin.getName();
         final boolean onlineMode = game.getServer().getOnlineMode(); // TRUE if online mode is enabled
-        final String pluginVersion = plugin.getVersion().get();
-        // TODO no visible way to get MC version at the moment
-        // TODO added by game.getPlatform().getMinecraftVersion() -- impl in 2.1
+        final String pluginVersion = plugin.getVersion().orElse("unknown");
         final String serverVersion = String.format("%s %s", "Sponge", game.getPlatform().getMinecraftVersion());
         final int playersOnline = game.getServer().getOnlinePlayers().size();
 

@@ -185,40 +185,40 @@ public class SpongePlayer extends PlotPlayer {
                 this.player.playSound(null, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2256:
-                this.player.playSound(SoundTypes.RECORDS_11, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_11, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2257:
-                this.player.playSound(SoundTypes.RECORDS_13, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_13, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2258:
-                this.player.playSound(SoundTypes.RECORDS_BLOCKS, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_BLOCKS, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2259:
-                this.player.playSound(SoundTypes.RECORDS_CAT, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_CAT, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2260:
-                this.player.playSound(SoundTypes.RECORDS_CHIRP, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_CHIRP, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2261:
-                this.player.playSound(SoundTypes.RECORDS_FAR, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_FAR, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2262:
-                this.player.playSound(SoundTypes.RECORDS_MALL, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_MALL, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2263:
-                this.player.playSound(SoundTypes.RECORDS_MELLOHI, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_MELLOHI, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2264:
-                this.player.playSound(SoundTypes.RECORDS_STAL, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_STAL, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2265:
-                this.player.playSound(SoundTypes.RECORDS_STRAD, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_STRAD, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2266:
-                this.player.playSound(SoundTypes.RECORDS_WAIT, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_WAIT, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
             case 2267:
-                this.player.playSound(SoundTypes.RECORDS_WARD, SpongeUtil.getLocation(location).getPosition(), 1);
+                this.player.playSound(SoundTypes.RECORD_WARD, SpongeUtil.getLocation(location).getPosition(), 1);
                 break;
         }
     }

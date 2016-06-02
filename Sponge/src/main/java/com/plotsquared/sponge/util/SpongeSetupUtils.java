@@ -13,8 +13,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.DimensionTypes;
 import org.spongepowered.api.world.GeneratorTypes;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.WorldCreationSettings;
-import org.spongepowered.api.world.WorldCreationSettings.Builder;
+import org.spongepowered.api.world.WorldArchetype;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.storage.WorldProperties;
@@ -24,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 public class SpongeSetupUtils extends SetupUtils {
     
@@ -140,32 +140,44 @@ public class SpongeSetupUtils extends SetupUtils {
         if (object.setupGenerator != null) {
             // create world with generator
             GeneratorWrapper<?> gw = SetupUtils.generators.get(object.setupGenerator);
-            WorldGeneratorModifier wgm = (WorldGeneratorModifier) gw.getPlatformGenerator();
+            WorldArchetype wgm = (WorldArchetype) gw.getPlatformGenerator();
             
-            WorldCreationSettings settings = Sponge.getRegistry().createBuilder(Builder.class)
-            .name(object.world)
+            WorldArchetype settings = WorldArchetype.builder()
             .loadsOnStartup(true)
             .keepsSpawnLoaded(true)
             .dimension(DimensionTypes.OVERWORLD)
             .generator(GeneratorTypes.OVERWORLD)
             .usesMapFeatures(false)
             .enabled(true)
-            .generatorModifiers(wgm)
-            .build();
-            WorldProperties properties = Sponge.getServer().createWorldProperties(settings).get();
-            World worldObj = Sponge.getServer().loadWorld(properties).get();
+            //.generatorModifiers(wgm)
+            .build("PS",object.world);
+            WorldProperties properties = null;
+            try {
+                properties = Sponge.getServer().createWorldProperties(object.world, settings);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            World worldObj;
+            Optional<World> world1 = Sponge.getServer().loadWorld(properties);
+            if (world1.isPresent()) {
+                worldObj = world1.get();
+            }
         } else {
             // create vanilla world
-            WorldCreationSettings settings = Sponge.getRegistry().createBuilder(Builder.class)
-            .name(object.world)
+            WorldArchetype settings = WorldArchetype.builder()
             .loadsOnStartup(true)
             .keepsSpawnLoaded(true)
             .dimension(DimensionTypes.OVERWORLD)
             .generator(GeneratorTypes.OVERWORLD)
             .usesMapFeatures(true)
             .enabled(true)
-            .build();
-            WorldProperties properties = Sponge.getServer().createWorldProperties(settings).get();
+            .build("PS",object.world);
+            WorldProperties properties = null;
+            try {
+                properties = Sponge.getServer().createWorldProperties(object.world, settings);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             World worldObj = Sponge.getServer().loadWorld(properties).get();
         }
         return object.world;

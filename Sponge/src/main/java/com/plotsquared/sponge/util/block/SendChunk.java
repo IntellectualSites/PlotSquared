@@ -13,7 +13,7 @@ import com.plotsquared.sponge.util.SpongeUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.play.server.S21PacketChunkData;
+import net.minecraft.network.play.server.SPacketChunkData;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
@@ -81,9 +81,9 @@ public class SendChunk {
                     continue;
                 }
                 chunks.remove(chunk);
-                NetHandlerPlayServer con = nmsPlayerMP.playerNetServerHandler;
+                NetHandlerPlayServer con = nmsPlayerMP.connection;
                 net.minecraft.world.chunk.Chunk  nmsChunk = (net.minecraft.world.chunk.Chunk) chunk;
-                S21PacketChunkData packet = new S21PacketChunkData(nmsChunk, true, 65535);
+                SPacketChunkData packet = new SPacketChunkData(nmsChunk, 65535);
                 con.sendPacket(packet);
             }
         }

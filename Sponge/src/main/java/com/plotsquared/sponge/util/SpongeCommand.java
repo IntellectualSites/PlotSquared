@@ -22,33 +22,36 @@ import java.util.UUID;
 public class SpongeCommand implements CommandCallable {
     
     @Override
-    public CommandResult process(CommandSource cmd, String string) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
         TaskManager.runTask(() -> {
-            String id = cmd.getIdentifier();
-            PlotPlayer pp;
+            String id = source.getIdentifier();
+            PlotPlayer plotPlayer = null;
             try {
                 UUID uuid = UUID.fromString(id);
-                Player player = SpongeMain.THIS.getServer().getPlayer(uuid).get();
-                pp = SpongeUtil.getPlayer(player);
+
+                Optional<Player> player = SpongeMain.THIS.getServer().getPlayer(uuid);
+                if (player.isPresent()) {
+                    plotPlayer = SpongeUtil.getPlayer(player.get());
+                }
             } catch (Exception ignored) {
-                pp = ConsolePlayer.getConsole();
+                plotPlayer = ConsolePlayer.getConsole();
             }
-            MainCommand.onCommand(pp, string.isEmpty() ? new String[]{} : string.split(" "));
+            MainCommand.onCommand(plotPlayer, arguments.isEmpty() ? new String[]{} : arguments.split(" "));
         });
         return CommandResult.success();
     }
     
     @Override
-    public List<String> getSuggestions(CommandSource source, String s) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
         if (!(source instanceof Player)) {
             return null;
         }
         PlotPlayer player = SpongeUtil.getPlayer((Player) source);
-        String[] args = s.split(" ");
+        String[] args = arguments.split(" ");
         if (args.length == 0) {
             return Collections.singletonList(MainCommand.getInstance().toString());
         }
-        Collection objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
+        Collection objects = MainCommand.getInstance().tab(player, args, arguments.endsWith(" "));
         if (objects == null) {
             return null;
         }
@@ -60,22 +63,22 @@ public class SpongeCommand implements CommandCallable {
 }
     
     @Override
-    public boolean testPermission(CommandSource cmd) {
+    public boolean testPermission(CommandSource source) {
         return true;
     }
     
     @Override
-    public Optional<? extends Text> getShortDescription(CommandSource cmd) {
+    public Optional<Text> getShortDescription(CommandSource source) {
         return Optional.of(Text.of("Shows plot help"));
     }
     
     @Override
-    public Optional<? extends Text> getHelp(CommandSource cmd) {
+    public Optional<Text> getHelp(CommandSource source) {
         return Optional.of(Text.of("/plot"));
     }
     
     @Override
-    public Text getUsage(CommandSource cmd) {
+    public Text getUsage(CommandSource source) {
         return Text.of("/plot <command>");
     }
     

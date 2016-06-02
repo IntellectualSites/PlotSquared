@@ -64,7 +64,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                 schematic.put("WEOffsetY", new IntTag("WEOffsetY", 0));
                 schematic.put("WEOffsetZ", new IntTag("WEOffsetZ", 0));
                 // Arrays of data types
-                List<Tag> tileEntities = new ArrayList<Tag>();
+                List<Tag> tileEntities = new ArrayList<>();
                 byte[] blocks = new byte[width * height * length];
                 byte[] blockData = new byte[width * height * length];
                 // Queue
@@ -78,7 +78,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                 public void run() {
                                     schematic.put("Blocks", new ByteArrayTag("Blocks", blocks));
                                     schematic.put("Data", new ByteArrayTag("Data", blockData));
-                                    schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<Tag>()));
+                                    schematic.put("Entities", new ListTag("Entities", CompoundTag.class, new ArrayList<>()));
                                     schematic.put("TileEntities", new ListTag("TileEntities", CompoundTag.class, tileEntities));
                                     whenDone.value = new CompoundTag("Schematic", schematic);
                                     TaskManager.runTask(whenDone);
@@ -105,7 +105,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                         int sy = pos1.getY();
                         int ey = pos2.getY();
                         // Generate list of chunks
-                        ArrayList<ChunkLoc> chunks = new ArrayList<ChunkLoc>();
+                        ArrayList<ChunkLoc> chunks = new ArrayList<>();
                         for (int x = bcx; x <= tcx; x++) {
                             for (int z = bcz; z <= tcz; z++) {
                                 chunks.add(new ChunkLoc(x, z));
@@ -270,7 +270,7 @@ public class SpongeSchematicHandler extends SchematicHandler {
                                                             rawTag = null;
                                                         }
                                                         if (rawTag != null) {
-                                                            Map<String, Tag> values = new HashMap<String, Tag>();
+                                                            Map<String, Tag> values = new HashMap<>();
                                                             for (Entry<String, Tag> entry : rawTag.getValue().entrySet()) {
                                                                 values.put(entry.getKey(), entry.getValue());
                                                             }

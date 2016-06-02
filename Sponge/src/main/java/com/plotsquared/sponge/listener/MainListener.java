@@ -41,7 +41,7 @@ import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.NotifyNeighborBlockEvent;
 import org.spongepowered.api.event.command.SendCommandEvent;
 import org.spongepowered.api.event.entity.BreedEntityEvent;
-import org.spongepowered.api.event.entity.DisplaceEntityEvent;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
@@ -643,12 +643,15 @@ public class MainListener {
     }
     
     @Listener
-    public void onMove(DisplaceEntityEvent.TargetPlayer event) {
+    public void onMove(MoveEntityEvent event) {
+        if (!(event.getTargetEntity() instanceof Player)) {
+            return;
+        }
         org.spongepowered.api.world.Location<World> from = event.getFromTransform().getLocation();
         org.spongepowered.api.world.Location<World> to = event.getToTransform().getLocation();
         int x2;
         if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
-            Player player = event.getTargetEntity();
+            Player player = (Player) event.getTargetEntity();
             PlotPlayer pp = SpongeUtil.getPlayer(player);
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
@@ -697,7 +700,7 @@ public class MainListener {
         }
         int z2;
         if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
-            Player player = event.getTargetEntity();
+            Player player = (Player) event.getTargetEntity();
             PlotPlayer pp = SpongeUtil.getPlayer(player);
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());

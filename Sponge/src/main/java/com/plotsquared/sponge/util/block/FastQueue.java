@@ -8,11 +8,11 @@ import com.intellectualcrafters.plot.util.SetQueue;
 import com.intellectualcrafters.plot.util.SetQueue.ChunkWrapper;
 import com.intellectualcrafters.plot.util.TaskManager;
 import com.plotsquared.sponge.util.SpongeUtil;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ClassInheritanceMultiMap;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.BlockStateContainer;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
@@ -132,11 +132,11 @@ public class FastQueue extends SlowQueue {
                 ExtendedBlockStorage section = sections[j];
                 if ((section == null) || (fs.getCount(j) >= 4096)) {
                     section = new ExtendedBlockStorage(j << 4, flag);
-                    section.setData(newArray);
+                    //section.setData(newArray); //todo
                     sections[j] = section;
                     continue;
                 }
-                char[] currentArray = section.getData();
+                BlockStateContainer currentArray = section.getData();
                 boolean fill = true;
                 for (int k = 0; k < newArray.length; k++) {
                     char n = newArray[k];
@@ -146,10 +146,10 @@ public class FastQueue extends SlowQueue {
                             continue;
                         case 1:
                             fill = false;
-                            currentArray[k] = 0;
+                            //currentArray[k] = 0; //todo
                             continue;
                         default:
-                            currentArray[k] = n;
+                            //currentArray[k] = n; //todo
                             continue;
                     }
                 }
@@ -226,10 +226,11 @@ public class FastQueue extends SlowQueue {
                 if ((bc.getRelight(j) == 0 && !fixAll) || bc.getCount(j) == 0 || (bc.getCount(j) >= 4096 && bc.getAir(j) == 0)) {
                     continue;
                 }
-                char[] array = section.getData();
+                BlockStateContainer array = section.getData();
                 int l = PseudoRandom.random.random(2);
-                for (int k = 0; k < array.length; k++) {
-                    int i = array[k];
+                for (int k = 0; k < array.getSerializedSize(); k++) {
+                    int i = 0;
+                    //i = array[k]; //todo
                     if (i < 16) {
                         continue;
                     }
@@ -285,7 +286,8 @@ public class FastQueue extends SlowQueue {
     }
 
     public boolean isSolid(int i) {
-        return i != 0 && Block.getBlockById(i).isOpaqueCube();
+        //return i != 0 && Block.getBlockById(i).isOpaqueCube();
+        throw new UnsupportedOperationException("Unsupported");
     }
 
     public int getId(ExtendedBlockStorage[] sections, int x, int y, int z) {
@@ -300,9 +302,10 @@ public class FastQueue extends SlowQueue {
         if (section == null) {
             return 0;
         }
-        char[] array = section.getData();
+        BlockStateContainer array = section.getData();
         int j = MainUtil.CACHE_J[y][x][z];
-        return array[j] >> 4;
+        //return array[j] >> 4; //todo: fix for 1.9.4
+        return 0;
     }
 
     /**
