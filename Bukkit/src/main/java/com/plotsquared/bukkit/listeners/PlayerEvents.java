@@ -109,7 +109,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -780,7 +779,10 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlot(location);
-        switch (block.getType()) {
+        if (plot == null) {
+            return;
+        }
+        switch (event.getSource().getType()) {
             case GRASS:
                 if (Flags.GRASS_GROW.isFalse(plot)) {
                     event.setCancelled(true);
