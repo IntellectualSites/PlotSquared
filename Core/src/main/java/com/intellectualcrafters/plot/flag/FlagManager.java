@@ -100,7 +100,7 @@ public class FlagManager {
         StringBuilder flag_string = new StringBuilder();
         int i = 0;
         for (Map.Entry<Flag<?>, Object> entry : flags.entrySet()) {
-            Flag<?> flag = entry.getKey();
+            Flag flag = entry.getKey();
             if (i != 0) {
                 flag_string.append(',');
             }

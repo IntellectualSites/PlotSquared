@@ -6,9 +6,9 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.io.ByteSink;
+import com.google.common.io.ByteSource;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 import com.google.common.primitives.Primitives;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -167,13 +167,13 @@ public class NbtFactory {
      * @return The decoded NBT compound.
      * @throws IOException If anything went wrong.
      */
-    public static NbtCompound fromStream(InputSupplier<? extends InputStream> stream, StreamOptions option) throws IOException {
+    public static NbtCompound fromStream(ByteSource stream, StreamOptions option) throws IOException {
         InputStream input = null;
         DataInputStream data = null;
         boolean suppress = true;
 
         try {
-            input = stream.getInput();
+            input = stream.openStream();
             if (option == StreamOptions.GZIP_COMPRESSION) {
                 data = new DataInputStream(new BufferedInputStream(new GZIPInputStream(input)));
             } else {

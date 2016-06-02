@@ -1,8 +1,8 @@
 package com.plotsquared.bukkit.uuid;
 
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
-import com.google.common.io.InputSupplier;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.config.C;
 import com.intellectualcrafters.plot.config.Settings;
@@ -21,8 +21,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -90,12 +88,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     HashSet<UUID> all = UUIDHandler.getAllUUIDS();
                     PS.debug("&aFast mode UUID caching enabled!");
                     File playerDataFolder = new File(container, world + File.separator + "playerdata");
-                    String[] dat = playerDataFolder.list(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File f, String s) {
-                            return s.endsWith(".dat");
-                        }
-                    });
+                    String[] dat = playerDataFolder.list(new DatFileFilter());
                     boolean check = all.isEmpty();
                     if (dat != null) {
                         for (String current : dat) {
@@ -103,16 +96,20 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                             try {
                                 UUID uuid = UUID.fromString(s);
                                 if (check || all.remove(uuid)) {
-                                    File file = new File(playerDataFolder + File.separator + current);
-                                    InputSupplier<FileInputStream> is = com.google.common.io.Files.newInputStreamSupplier(file);
+                                    File file = new File(playerDataFolder, current);
+                                    ByteSource is = com.google.common.io.Files.asByteSource(file);
                                     NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
-                                    NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
-                                    String name = (String) bukkit.get("lastKnownName");
-                                    long last = (long) bukkit.get("lastPlayed");
-                                    if (ExpireManager.IMP != null) {
-                                        ExpireManager.IMP.storeDate(uuid, last);
+                                    if (!compound.containsKey("bukkit")) {
+                                        PS.debug("ERROR: Player data does not contain the the key \"bukkit\"");
+                                    } else {
+                                        NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
+                                        String name = (String) bukkit.get("lastKnownName");
+                                        long last = (long) bukkit.get("lastPlayed");
+                                        if (ExpireManager.IMP != null) {
+                                            ExpireManager.IMP.storeDate(uuid, last);
+                                        }
+                                        toAdd.put(new StringWrapper(name), uuid);
                                     }
-                                    toAdd.put(new StringWrapper(name), uuid);
                                 }
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -132,21 +129,14 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                 }
                 HashBiMap<StringWrapper, UUID> toAdd = HashBiMap.create(new HashMap<StringWrapper, UUID>());
                 toAdd.put(new StringWrapper("*"), DBFunc.everyone);
-                HashSet<String> worlds = new HashSet<>();
-                worlds.add(world);
-                worlds.add("world");
+                HashSet<String> worlds = Sets.newHashSet(world, "world");
                 HashSet<UUID> uuids = new HashSet<>();
                 HashSet<String> names = new HashSet<>();
                 File playerDataFolder = null;
                 for (String worldName : worlds) {
                     // Getting UUIDs
                     playerDataFolder = new File(container, worldName + File.separator + "playerdata");
-                    String[] dat = playerDataFolder.list(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File f, String s) {
-                            return s.endsWith(".dat");
-                        }
-                    });
+                    String[] dat = playerDataFolder.list(new DatFileFilter());
                     if ((dat != null) && (dat.length != 0)) {
                         for (String current : dat) {
                             String s = current.replaceAll(".dat$", "");
@@ -161,12 +151,7 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                     }
                     // Getting names
                     File playersFolder = new File(worldName + File.separator + "players");
-                    dat = playersFolder.list(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File f, String s) {
-                            return s.endsWith(".dat");
-                        }
-                    });
+                    dat = playersFolder.list(new DatFileFilter());
                     if ((dat != null) && (dat.length != 0)) {
                         for (String current : dat) {
                             names.add(current.replaceAll(".dat$", ""));
@@ -182,22 +167,26 @@ public class FileUUIDHandler extends UUIDHandlerImplementation {
                         }
                         ByteSource is = com.google.common.io.Files.asByteSource(file);
                         NbtFactory.NbtCompound compound = NbtFactory.fromStream(is, NbtFactory.StreamOptions.GZIP_COMPRESSION);
-                        NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
-                        String name = (String) bukkit.get("lastKnownName");
-                        long last = (long) bukkit.get("lastPlayed");
-                        if (Settings.OFFLINE_MODE) {
-                            if (Settings.UUID_LOWERCASE && !name.toLowerCase().equals(name)) {
-                                uuid = FileUUIDHandler.this.uuidWrapper.getUUID(name);
-                            } else {
-                                long most = (long) compound.get("UUIDMost");
-                                long least = (long) compound.get("UUIDLeast");
-                                uuid = new UUID(most, least);
+                        if (!compound.containsKey("bukkit")) {
+                            PS.debug("ERROR: Player data does not contain the the key \"bukkit\"");
+                        } else {
+                            NbtFactory.NbtCompound bukkit = (NbtFactory.NbtCompound) compound.get("bukkit");
+                            String name = (String) bukkit.get("lastKnownName");
+                            long last = (long) bukkit.get("lastPlayed");
+                            if (Settings.OFFLINE_MODE) {
+                                if (Settings.UUID_LOWERCASE && !name.toLowerCase().equals(name)) {
+                                    uuid = FileUUIDHandler.this.uuidWrapper.getUUID(name);
+                                } else {
+                                    long most = (long) compound.get("UUIDMost");
+                                    long least = (long) compound.get("UUIDLeast");
+                                    uuid = new UUID(most, least);
+                                }
                             }
+                            if (ExpireManager.IMP != null) {
+                                ExpireManager.IMP.storeDate(uuid, last);
+                            }
+                            toAdd.put(new StringWrapper(name), uuid);
                         }
-                        if (ExpireManager.IMP != null) {
-                            ExpireManager.IMP.storeDate(uuid, last);
-                        }
-                        toAdd.put(new StringWrapper(name), uuid);
                     } catch (Exception ignored) {
                         PS.debug(C.PREFIX + "&6Invalid PlayerData: " + uuid.toString() + ".dat");
                     }

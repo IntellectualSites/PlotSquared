@@ -339,7 +339,7 @@ public enum C {
     MERGE_ACCEPTED("$2The merge request has been accepted", "Merge"),
     SUCCESS_MERGE("$2Plots have been merged!", "Merge"),
     MERGE_REQUESTED("$2Successfully sent a merge request", "Merge"),
-    MERGE_REQUEST_CONFIRM("merge request from %s", "Permission"),
+    MERGE_REQUEST_CONFIRM("Merge request from %s", "Permission"),
     NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%", "Merge"),
     NO_AVAILABLE_AUTOMERGE("$2You do not own any adjacent plots in the specified direction or are not allowed to merge to the required size.",
             "Merge"),

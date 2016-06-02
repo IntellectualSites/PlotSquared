@@ -165,8 +165,8 @@ public class Merge extends SubCommand {
                 public void run() {
                     MainUtil.sendMessage(accepter, C.MERGE_ACCEPTED);
                     plot.autoMerge(dir, maxSize - size, owner, terrain);
-                    PlotPlayer pp = UUIDHandler.getPlayer(player.getUUID());
-                    if (pp == null) {
+                    PlotPlayer plotPlayer = UUIDHandler.getPlayer(player.getUUID());
+                    if (plotPlayer == null) {
                         sendMessage(accepter, C.MERGE_NOT_VALID);
                         return;
                     }

@@ -1,5 +1,6 @@
 package com.plotsquared.bukkit.commands;
 
+import com.google.common.collect.Sets;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.commands.CommandCategory;
 import com.intellectualcrafters.plot.commands.RequiredType;
@@ -17,6 +18,7 @@ import com.intellectualcrafters.plot.util.TaskManager;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
 import com.intellectualcrafters.plot.uuid.UUIDWrapper;
+import com.plotsquared.bukkit.uuid.DatFileFilter;
 import com.plotsquared.bukkit.uuid.DefaultUUIDWrapper;
 import com.plotsquared.bukkit.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.uuid.OfflineUUIDWrapper;
@@ -24,7 +26,6 @@ import com.plotsquared.general.commands.Argument;
 import com.plotsquared.general.commands.CommandDeclaration;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -102,19 +103,12 @@ public class DebugUUID extends SubCommand {
 
         MainUtil.sendMessage(player, "&7 - Collecting playerdata");
 
-        HashSet<String> worlds = new HashSet<>();
-        worlds.add(WorldUtil.IMP.getMainWorld());
-        worlds.add("world");
+        HashSet<String> worlds = Sets.newHashSet(WorldUtil.IMP.getMainWorld(), "world");
         HashSet<UUID> uuids = new HashSet<>();
         HashSet<String> names = new HashSet<>();
         for (String worldName : worlds) {
             File playerDataFolder = new File(worldName + File.separator + "playerdata");
-            String[] dat = playerDataFolder.list(new FilenameFilter() {
-                @Override
-                public boolean accept(File f, String s) {
-                    return s.endsWith(".dat");
-                }
-            });
+            String[] dat = playerDataFolder.list(new DatFileFilter());
             if (dat != null) {
                 for (String current : dat) {
                     String s = current.replaceAll(".dat$", "");
@@ -127,12 +121,7 @@ public class DebugUUID extends SubCommand {
                 }
             }
             File playersFolder = new File(worldName + File.separator + "players");
-            dat = playersFolder.list(new FilenameFilter() {
-                @Override
-                public boolean accept(File f, String s) {
-                    return s.endsWith(".dat");
-                }
-            });
+            dat = playersFolder.list(new DatFileFilter());
             if (dat != null) {
                 for (String current : dat) {
                     names.add(current.replaceAll(".dat$", ""));
