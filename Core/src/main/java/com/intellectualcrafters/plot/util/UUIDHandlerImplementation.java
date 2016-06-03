@@ -90,11 +90,14 @@ public abstract class UUIDHandlerImplementation {
 
     public boolean add(final StringWrapper name, final UUID uuid) {
         if (uuid == null) {
+            PS.debug("UUID cannot be null!");
             return false;
         }
         if (name == null) {
             try {
                 this.unknown.add(uuid);
+                PS.debug("UUID of: " + uuid.toString() + " was added to unknown list because the name provided was null.");
+                Thread.dumpStack();
             } catch (Exception e) {
                 PS.log("&c(minor) Invalid UUID mapping: " + uuid);
                 e.printStackTrace();
