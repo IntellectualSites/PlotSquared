@@ -1389,7 +1389,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     i = 0;
             }
             int cap = plot.getFlag(flag, Integer.MAX_VALUE);
-            if (cap != Integer.MAX_VALUE) {
+            if (cap == Integer.MAX_VALUE) {
                 continue;
             }
             if (mobs == null) {
